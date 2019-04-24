@@ -62,7 +62,7 @@ func BoolSlice(src []bool) []*bool {
 	return dst
 }
 
-// Int returns a pointer to the int value passed in.
+// Int32 returns a pointer to the int32 value passed in.
 func Int32(v int32) *int32 {
 	return &v
 }
@@ -107,7 +107,7 @@ func Uint32Slice(src []uint32) []*uint32 {
 	return dst
 }
 
-// Int64 returns a pointer to the uint64 value passed in.
+// Uint64 returns a pointer to the uint64 value passed in.
 func Uint64(v uint64) *uint64 {
 	return &v
 }

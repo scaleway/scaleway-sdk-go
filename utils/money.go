@@ -18,6 +18,7 @@ type Money struct {
 	Nanos int32 `json:"nanos,omitempty"`
 }
 
+// NewMoneyFromFloat conerts a float with currency to a Money object.
 func NewMoneyFromFloat(value float64, currency string) *Money {
 	return &Money{
 		CurrencyCode: currency,
@@ -26,6 +27,7 @@ func NewMoneyFromFloat(value float64, currency string) *Money {
 	}
 }
 
+// ToFloat converts a Money object to a float.
 func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1000000000
 }
