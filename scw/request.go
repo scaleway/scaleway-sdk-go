@@ -10,6 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 )
 
+// ScalewayRequest contains all the contents related to performing a request on the Scaleway API.
 type ScalewayRequest struct {
 	Method  string
 	Path    string
@@ -19,6 +20,8 @@ type ScalewayRequest struct {
 	Ctx     context.Context
 }
 
+// Do performs an HTTP request based on the ScalewayRequest object.
+// RequestOptions (TODO) are executed on the ScalewayRequest.
 func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response, error) {
 	if req == nil {
 		return nil, fmt.Errorf("request must be non-nil")

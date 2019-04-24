@@ -10,6 +10,10 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 )
 
+// Client is the Scaleway client which performs API requests.
+//
+// This client should be passed in the `NewApi` functions whenever an API instance is created.
+// Creating a Client is done with the `NewClient` function.
 type Client struct {
 	httpClient *http.Client
 	auth       auth.Auth
@@ -17,13 +21,10 @@ type Client struct {
 	userAgent  string
 }
 
-func defaultOptions() []ClientOption {
-	return []ClientOption{
-		WithEndpoint("https://api.scaleway.com"),
-		WithUserAgent(userAgent),
-	}
-}
-
+// NewClient instantiates a new Client object.
+//
+// Zero or more ClientOption object can be passed as a parameter.
+// These options will then be applied to the client.
 func NewClient(opts ...ClientOption) (*Client, error) {
 	s := newSettings()
 
@@ -59,6 +60,13 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		baseUrl:    s.Url,
 		userAgent:  s.UserAgent,
 	}, nil
+}
+
+func defaultOptions() []ClientOption {
+	return []ClientOption{
+		WithEndpoint("https://api.scaleway.com"),
+		WithUserAgent(userAgent),
+	}
 }
 
 func newHttpClient() *http.Client {
