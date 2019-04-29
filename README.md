@@ -38,6 +38,7 @@ import (
 
 func main() {
 
+	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
 	)
@@ -45,8 +46,10 @@ func main() {
 		panic(err)
 	}
 
+	// Create SDK objects for Scaleway Instance product
 	instanceApi := instance.NewApi(client)
 
+	// Call the ListServers method on the Instance SDK
 	response, err := instanceApi.ListServers(&instance.ListServersRequest{
 		Zone: scw.ZoneFrPar1,
 	})
@@ -54,6 +57,7 @@ func main() {
 		panic(err)
 	}
 
+	// Do something with the response...
 	for _, server := range response.Servers {
 		fmt.Println("Server", server.Id, server.Name)
 	}
