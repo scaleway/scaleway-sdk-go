@@ -27,7 +27,7 @@ func Example_apiClient() {
 
 }
 
-func Example_getServers() {
+func Example_listServers() {
 
 	// Create a Scaleway client
 	client, err := scw.NewClient(
