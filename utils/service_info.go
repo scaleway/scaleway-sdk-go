@@ -1,7 +1,7 @@
 package utils
 
-// ServiceInfo contains an API information.
-// This information is only here for debugging. Do not really on this value for your project.
+// ServiceInfo contains API metadata
+// These metadata are only here for debugging. Do not rely on these values
 type ServiceInfo struct {
 	// Name is the name of the API
 	Name string `json:"name"`
