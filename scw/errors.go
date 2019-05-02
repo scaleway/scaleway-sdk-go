@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-type errorResponse struct {
+// ResponseError is an error type for the Scaleway API
+type ResponseError struct {
 	// Message is a human-friendly error message
 	Message string `json:"message"`
 
@@ -16,16 +17,16 @@ type errorResponse struct {
 	// Fields contains detail about validation error
 	Fields map[string][]string `json:"fields,omitempty"`
 
-	// statusCode is the HTTP status code received
-	statusCode int `json:"-"`
+	// StatusCode is the HTTP status code received
+	StatusCode int `json:"-"`
 }
 
-func hasErrorResponse(res *http.Response) error {
+func hasResponseError(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
 	}
-	newErr := &errorResponse{
-		statusCode: res.StatusCode,
+	newErr := &ResponseError{
+		StatusCode: res.StatusCode,
 	}
 
 	if res.Body == nil {
@@ -42,8 +43,8 @@ func hasErrorResponse(res *http.Response) error {
 	return newErr
 }
 
-func (e *errorResponse) Error() string {
-	s := fmt.Sprintf("received status code %d", e.statusCode)
+func (e *ResponseError) Error() string {
+	s := fmt.Sprintf("received status code %d", e.StatusCode)
 
 	if e.Type != "" {
 		s = fmt.Sprintf("%s: error type is %s", s, e.Type)
