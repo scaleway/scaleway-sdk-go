@@ -10,25 +10,25 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
-func TestHasErrorResponseWithStatus200(t *testing.T) {
+func TestHasResponseErrorWithStatus200(t *testing.T) {
 
 	res := &http.Response{StatusCode: 200}
 
-	newErr := hasErrorResponse(res)
+	newErr := hasResponseError(res)
 	testhelpers.Ok(t, newErr)
 
 }
 
-func TestHasErrorResponseWithoutBody(t *testing.T) {
+func TestHasResponseErrorWithoutBody(t *testing.T) {
 
 	res := &http.Response{StatusCode: 400}
 
-	newErr := hasErrorResponse(res)
+	newErr := hasResponseError(res)
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 
 }
 
-func TestHasErrorResponseWithValidError(t *testing.T) {
+func TestHasResponseErrorWithValidError(t *testing.T) {
 
 	var (
 		errorMessage    = "some message"
@@ -38,11 +38,11 @@ func TestHasErrorResponseWithValidError(t *testing.T) {
 	)
 
 	// Create expected error response
-	testErrorReponse := &errorResponse{
+	testErrorReponse := &ResponseError{
 		Message:    errorMessage,
 		Type:       errorType,
 		Fields:     errorFields,
-		statusCode: errorStatusCode,
+		StatusCode: errorStatusCode,
 	}
 
 	// Create response body with marshalled error response
@@ -50,8 +50,8 @@ func TestHasErrorResponseWithValidError(t *testing.T) {
 	testhelpers.Ok(t, err)
 	res := &http.Response{StatusCode: errorStatusCode, Body: ioutil.NopCloser(bytes.NewReader(bodyBytes))}
 
-	// Test hasErrorResponse()
-	newErr := hasErrorResponse(res)
+	// Test hasResponseError()
+	newErr := hasResponseError(res)
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 	testhelpers.Equals(t, testErrorReponse, newErr)
 

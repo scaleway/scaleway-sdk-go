@@ -47,7 +47,7 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 		return nil, err
 	}
 
-	err = hasErrorResponse(resp)
+	err = hasResponseError(resp)
 	if err != nil {
 		return nil, err
 	}
