@@ -23,10 +23,10 @@ func WithAuth(accessKey, secretKey string) ClientOption {
 	}
 }
 
-// WithEndpoint client option overrides the endpoint URL of the Scaleway API to the given URL.
-func WithEndpoint(url string) ClientOption {
+// WithApiUrl client option overrides the API URL of the Scaleway API to the given URL.
+func WithApiUrl(apiUrl string) ClientOption {
 	return func(s *settings) {
-		s.Url = url
+		s.ApiUrl = apiUrl
 	}
 }
 

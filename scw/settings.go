@@ -9,7 +9,7 @@ import (
 )
 
 type settings struct {
-	Url                   string
+	ApiUrl                string
 	Token                 auth.Auth
 	UserAgent             string
 	HttpClient            *http.Client
@@ -36,9 +36,9 @@ func (s *settings) validate() error {
 		return fmt.Errorf("no credential option provided")
 	}
 
-	_, err = url.Parse(s.Url)
+	_, err = url.Parse(s.ApiUrl)
 	if err != nil {
-		return fmt.Errorf("invalid url %s: %s", s.Url, err)
+		return fmt.Errorf("invalid url %s: %s", s.ApiUrl, err)
 	}
 
 	return nil

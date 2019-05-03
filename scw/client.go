@@ -17,7 +17,7 @@ import (
 type Client struct {
 	httpClient            *http.Client
 	auth                  auth.Auth
-	baseUrl               string
+	apiUrl                string
 	userAgent             string
 	defaultOrganizationId string
 	defaultRegion         Region
@@ -60,7 +60,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	return &Client{
 		auth:                  s.Token,
 		httpClient:            s.HttpClient,
-		baseUrl:               s.Url,
+		apiUrl:                s.ApiUrl,
 		userAgent:             s.UserAgent,
 		defaultOrganizationId: s.DefaultOrganizationId,
 		defaultRegion:         s.DefaultRegion,
@@ -70,7 +70,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 func defaultOptions() []ClientOption {
 	return []ClientOption{
-		WithEndpoint("https://api.scaleway.com"),
+		WithApiUrl("https://api.scaleway.com"),
 		WithUserAgent(userAgent),
 	}
 }
