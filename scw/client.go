@@ -15,10 +15,13 @@ import (
 // This client should be passed in the `NewApi` functions whenever an API instance is created.
 // Creating a Client is done with the `NewClient` function.
 type Client struct {
-	httpClient *http.Client
-	auth       auth.Auth
-	baseUrl    string
-	userAgent  string
+	httpClient            *http.Client
+	auth                  auth.Auth
+	apiUrl                string
+	userAgent             string
+	defaultOrganizationId string
+	defaultRegion         Region
+	defaultZone           Zone
 }
 
 // NewClient instantiates a new Client object.
@@ -38,15 +41,15 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// dial the API
-	if s.HttpClient == nil {
-		s.HttpClient = newHttpClient()
+	if s.httpClient == nil {
+		s.httpClient = newHttpClient()
 	}
 
 	// insecure mode
-	if s.Insecure {
-		clientTransport, ok := s.HttpClient.Transport.(*http.Transport)
+	if s.insecure {
+		clientTransport, ok := s.httpClient.Transport.(*http.Transport)
 		if !ok {
-			return nil, fmt.Errorf("cannot use insecure mode with HTTP client of type %T", s.HttpClient.Transport)
+			return nil, fmt.Errorf("cannot use insecure mode with HTTP client of type %T", s.httpClient.Transport)
 		}
 		if clientTransport.TLSClientConfig == nil {
 			clientTransport.TLSClientConfig = &tls.Config{}
@@ -55,16 +58,31 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	return &Client{
-		auth:       s.Token,
-		httpClient: s.HttpClient,
-		baseUrl:    s.Url,
-		userAgent:  s.UserAgent,
+		auth:                  s.token,
+		httpClient:            s.httpClient,
+		apiUrl:                s.apiUrl,
+		userAgent:             s.userAgent,
+		defaultOrganizationId: s.defaultOrganizationId,
+		defaultRegion:         s.defaultRegion,
+		defaultZone:           s.defaultZone,
 	}, nil
+}
+
+func (c *Client) GetDefaultOrganizationId() string {
+	return c.defaultOrganizationId
+}
+
+func (c *Client) GetDefaultRegion() Region {
+	return c.defaultRegion
+}
+
+func (c *Client) GetDefaultZone() Zone {
+	return c.defaultZone
 }
 
 func defaultOptions() []ClientOption {
 	return []ClientOption{
-		WithEndpoint("https://api.scaleway.com"),
+		WithApiUrl("https://api.scaleway.com"),
 		WithUserAgent(userAgent),
 	}
 }

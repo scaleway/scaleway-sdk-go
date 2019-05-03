@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	URL = "https://example.com/"
+	apiUrl = "https://example.com/"
 )
 
 func TestSettings(t *testing.T) {
@@ -18,8 +18,8 @@ func TestSettings(t *testing.T) {
 
 	// Apply
 	var funcToApply ClientOption = func(s *settings) {
-		s.Token = auth.NewToken(testAccessKey, testSecretKey)
-		s.Url = URL
+		s.token = auth.NewToken(testAccessKey, testSecretKey)
+		s.apiUrl = apiUrl
 	}
 
 	s.apply([]ClientOption{funcToApply})
@@ -35,7 +35,7 @@ func TestSettingsInvalidToken(t *testing.T) {
 
 	// Apply
 	var setURL ClientOption = func(s *settings) {
-		s.Url = URL
+		s.apiUrl = apiUrl
 	}
 
 	s.apply([]ClientOption{setURL})
@@ -51,8 +51,8 @@ func TestSettingsInvalidURL(t *testing.T) {
 
 	// Apply
 	var setTokenUnsetURL ClientOption = func(s *settings) {
-		s.Url = ":test"
-		s.Token = auth.NewToken(testAccessKey, testSecretKey)
+		s.apiUrl = ":test"
+		s.token = auth.NewToken(testAccessKey, testSecretKey)
 	}
 
 	s.apply([]ClientOption{setTokenUnsetURL})

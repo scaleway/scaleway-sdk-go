@@ -9,12 +9,14 @@ import (
 )
 
 type settings struct {
-	Url           string
-	Token         auth.Auth
-	DefaultRegion string
-	UserAgent     string
-	HttpClient    *http.Client
-	Insecure      bool
+	apiUrl                string
+	token                 auth.Auth
+	userAgent             string
+	httpClient            *http.Client
+	insecure              bool
+	defaultOrganizationId string
+	defaultRegion         Region
+	defaultZone           Zone
 }
 
 func newSettings() *settings {
@@ -30,13 +32,13 @@ func (s *settings) apply(opts []ClientOption) {
 
 func (s *settings) validate() error {
 	var err error
-	if s.Token == nil {
+	if s.token == nil {
 		return fmt.Errorf("no credential option provided")
 	}
 
-	_, err = url.Parse(s.Url)
+	_, err = url.Parse(s.apiUrl)
 	if err != nil {
-		return fmt.Errorf("invalid url %s: %s", s.Url, err)
+		return fmt.Errorf("invalid url %s: %s", s.apiUrl, err)
 	}
 
 	return nil

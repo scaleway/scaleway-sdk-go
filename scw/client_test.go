@@ -9,10 +9,13 @@ import (
 )
 
 const (
-	testEndpoint    = "https://api.example.com/"
-	defaultEndpoint = "https://api.scaleway.com"
-	testAccessKey   = "some access key"
-	testSecretKey   = "some secret key"
+	testApiUrl                = "https://api.example.com/"
+	defaultApiUrl             = "https://api.scaleway.com"
+	testAccessKey             = "some access key"
+	testSecretKey             = "some secret key"
+	testDefaultOrganizationId = "some default organization id"
+	testDefaultRegion         = RegionFrPar
+	testDefaultZone           = ZoneFrPar1
 )
 
 func TestNewClientWithDefaults(t *testing.T) {
@@ -25,7 +28,7 @@ func TestNewClientWithDefaults(t *testing.T) {
 	client, err := NewClient(options...)
 	testhelpers.Ok(t, err)
 
-	testhelpers.Equals(t, defaultEndpoint, client.baseUrl)
+	testhelpers.Equals(t, defaultApiUrl, client.apiUrl)
 	testhelpers.Equals(t, auth.NewNoAuth(), client.auth)
 
 }
@@ -35,17 +38,24 @@ func TestNewClientWithOptions(t *testing.T) {
 	someHTTPClient := &http.Client{}
 
 	options := []ClientOption{
-		WithEndpoint(testEndpoint),
+		WithApiUrl(testApiUrl),
 		WithAuth(testAccessKey, testSecretKey),
 		WithHttpClient(someHTTPClient),
+		WithDefaultOrganizationId(testDefaultOrganizationId),
+		WithDefaultRegion(testDefaultRegion),
+		WithDefaultZone(testDefaultZone),
 	}
 
 	client, err := NewClient(options...)
 	testhelpers.Ok(t, err)
 
-	testhelpers.Equals(t, testEndpoint, client.baseUrl)
+	testhelpers.Equals(t, testApiUrl, client.apiUrl)
 	testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 
 	testhelpers.Equals(t, someHTTPClient, client.httpClient)
+
+	testhelpers.Equals(t, testDefaultOrganizationId, client.GetDefaultOrganizationId())
+	testhelpers.Equals(t, testDefaultRegion, client.GetDefaultRegion())
+	testhelpers.Equals(t, testDefaultZone, client.GetDefaultZone())
 
 }
