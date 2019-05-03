@@ -68,6 +68,18 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) GetDefaultOrganizationId() string {
+	return c.defaultOrganizationId
+}
+
+func (c *Client) GetDefaultRegion() Region {
+	return c.defaultRegion
+}
+
+func (c *Client) GetDefaultZone() Zone {
+	return c.defaultZone
+}
+
 func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithApiUrl("https://api.scaleway.com"),

@@ -54,8 +54,8 @@ func TestNewClientWithOptions(t *testing.T) {
 
 	testhelpers.Equals(t, someHTTPClient, client.httpClient)
 
-	testhelpers.Equals(t, testDefaultOrganizationId, client.defaultOrganizationId)
-	testhelpers.Equals(t, testDefaultRegion, client.defaultRegion)
-	testhelpers.Equals(t, testDefaultZone, client.defaultZone)
+	testhelpers.Equals(t, testDefaultOrganizationId, client.GetDefaultOrganizationId())
+	testhelpers.Equals(t, testDefaultRegion, client.GetDefaultRegion())
+	testhelpers.Equals(t, testDefaultZone, client.GetDefaultZone())
 
 }
