@@ -27,6 +27,11 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 		return nil, fmt.Errorf("request must be non-nil")
 	}
 
+	// apply request options
+	for _, opt := range opts {
+		opt(req)
+	}
+
 	// build url
 	url, err := req.getURL(c.apiUrl)
 	if err != nil {
@@ -40,6 +45,9 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	}
 
 	request.Header = req.getAllHeaders(c.auth, c.userAgent)
+	if req.Ctx != nil {
+		request = request.WithContext(req.Ctx)
+	}
 
 	// execute request
 	resp, err := c.httpClient.Do(request)
