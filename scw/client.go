@@ -15,10 +15,13 @@ import (
 // This client should be passed in the `NewApi` functions whenever an API instance is created.
 // Creating a Client is done with the `NewClient` function.
 type Client struct {
-	httpClient *http.Client
-	auth       auth.Auth
-	baseUrl    string
-	userAgent  string
+	httpClient            *http.Client
+	auth                  auth.Auth
+	baseUrl               string
+	userAgent             string
+	defaultOrganizationId string
+	defaultRegion         Region
+	defaultZone           Zone
 }
 
 // NewClient instantiates a new Client object.
@@ -55,10 +58,13 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	return &Client{
-		auth:       s.Token,
-		httpClient: s.HttpClient,
-		baseUrl:    s.Url,
-		userAgent:  s.UserAgent,
+		auth:                  s.Token,
+		httpClient:            s.HttpClient,
+		baseUrl:               s.Url,
+		userAgent:             s.UserAgent,
+		defaultOrganizationId: s.DefaultOrganizationId,
+		defaultRegion:         s.DefaultRegion,
+		defaultZone:           s.DefaultZone,
 	}, nil
 }
 

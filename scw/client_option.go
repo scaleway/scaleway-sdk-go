@@ -44,9 +44,36 @@ func WithUserAgent(ua string) ClientOption {
 	}
 }
 
-// WithHttpClient client options allows passing a custom http.Client which will be used for all requests.
+// WithHttpClient client option allows passing a custom http.Client which will be used for all requests.
 func WithHttpClient(httpClient *http.Client) ClientOption {
 	return func(s *settings) {
 		s.HttpClient = httpClient
+	}
+}
+
+// WithDefaultOrganizationId client option sets the client default organization ID.
+//
+// It will be used as the default value of the organization_id field in all requests made with this client.
+func WithDefaultOrganizationId(organizationId string) ClientOption {
+	return func(s *settings) {
+		s.DefaultOrganizationId = organizationId
+	}
+}
+
+// WithDefaultRegion client option sets the client default region.
+//
+// It will be used as the default value of the region field in all requests made with this client.
+func WithDefaultRegion(region Region) ClientOption {
+	return func(s *settings) {
+		s.DefaultRegion = region
+	}
+}
+
+// WithDefaultZone client option sets the client default zone.
+//
+// It will be used as the default value of the zone field in all requests made with this client.
+func WithDefaultZone(zone Zone) ClientOption {
+	return func(s *settings) {
+		s.DefaultZone = zone
 	}
 }

@@ -9,10 +9,13 @@ import (
 )
 
 const (
-	testEndpoint    = "https://api.example.com/"
-	defaultEndpoint = "https://api.scaleway.com"
-	testAccessKey   = "some access key"
-	testSecretKey   = "some secret key"
+	testEndpoint              = "https://api.example.com/"
+	defaultEndpoint           = "https://api.scaleway.com"
+	testAccessKey             = "some access key"
+	testSecretKey             = "some secret key"
+	testDefaultOrganizationId = "some default organization id"
+	testDefaultRegion         = RegionFrPar
+	testDefaultZone           = ZoneFrPar1
 )
 
 func TestNewClientWithDefaults(t *testing.T) {
@@ -38,6 +41,9 @@ func TestNewClientWithOptions(t *testing.T) {
 		WithEndpoint(testEndpoint),
 		WithAuth(testAccessKey, testSecretKey),
 		WithHttpClient(someHTTPClient),
+		WithDefaultOrganizationId(testDefaultOrganizationId),
+		WithDefaultRegion(testDefaultRegion),
+		WithDefaultZone(testDefaultZone),
 	}
 
 	client, err := NewClient(options...)
@@ -47,5 +53,9 @@ func TestNewClientWithOptions(t *testing.T) {
 	testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 
 	testhelpers.Equals(t, someHTTPClient, client.httpClient)
+
+	testhelpers.Equals(t, testDefaultOrganizationId, client.defaultOrganizationId)
+	testhelpers.Equals(t, testDefaultRegion, client.defaultRegion)
+	testhelpers.Equals(t, testDefaultZone, client.defaultZone)
 
 }
