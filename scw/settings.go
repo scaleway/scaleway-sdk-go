@@ -9,12 +9,11 @@ import (
 )
 
 type settings struct {
-	Url        string
-	Token      auth.Auth
-	UserAgent  string
-	HttpClient *http.Client
-	Insecure   bool
-
+	Url                   string
+	Token                 auth.Auth
+	UserAgent             string
+	HttpClient            *http.Client
+	Insecure              bool
 	DefaultOrganizationId string
 	DefaultRegion         Region
 	DefaultZone           Zone
