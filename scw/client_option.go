@@ -12,42 +12,42 @@ type ClientOption func(*settings)
 // WithoutAuth client option sets the client token to an empty token.
 func WithoutAuth() ClientOption {
 	return func(s *settings) {
-		s.Token = auth.NewNoAuth()
+		s.token = auth.NewNoAuth()
 	}
 }
 
 // WithAuth client option sets the client access key and secret key.
 func WithAuth(accessKey, secretKey string) ClientOption {
 	return func(s *settings) {
-		s.Token = auth.NewToken(accessKey, secretKey)
+		s.token = auth.NewToken(accessKey, secretKey)
 	}
 }
 
 // WithApiUrl client option overrides the API URL of the Scaleway API to the given URL.
 func WithApiUrl(apiUrl string) ClientOption {
 	return func(s *settings) {
-		s.ApiUrl = apiUrl
+		s.apiUrl = apiUrl
 	}
 }
 
 // WithInsecure client option enables insecure transport on the client.
 func WithInsecure() ClientOption {
 	return func(s *settings) {
-		s.Insecure = true
+		s.insecure = true
 	}
 }
 
 // WithUserAgent client option overrides the default user agent of the SDK.
 func WithUserAgent(ua string) ClientOption {
 	return func(s *settings) {
-		s.UserAgent = ua
+		s.userAgent = ua
 	}
 }
 
 // WithHttpClient client option allows passing a custom http.Client which will be used for all requests.
 func WithHttpClient(httpClient *http.Client) ClientOption {
 	return func(s *settings) {
-		s.HttpClient = httpClient
+		s.httpClient = httpClient
 	}
 }
 
@@ -56,7 +56,7 @@ func WithHttpClient(httpClient *http.Client) ClientOption {
 // It will be used as the default value of the organization_id field in all requests made with this client.
 func WithDefaultOrganizationId(organizationId string) ClientOption {
 	return func(s *settings) {
-		s.DefaultOrganizationId = organizationId
+		s.defaultOrganizationId = organizationId
 	}
 }
 
@@ -65,7 +65,7 @@ func WithDefaultOrganizationId(organizationId string) ClientOption {
 // It will be used as the default value of the region field in all requests made with this client.
 func WithDefaultRegion(region Region) ClientOption {
 	return func(s *settings) {
-		s.DefaultRegion = region
+		s.defaultRegion = region
 	}
 }
 
@@ -74,6 +74,6 @@ func WithDefaultRegion(region Region) ClientOption {
 // It will be used as the default value of the zone field in all requests made with this client.
 func WithDefaultZone(zone Zone) ClientOption {
 	return func(s *settings) {
-		s.DefaultZone = zone
+		s.defaultZone = zone
 	}
 }

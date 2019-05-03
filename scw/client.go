@@ -41,15 +41,15 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// dial the API
-	if s.HttpClient == nil {
-		s.HttpClient = newHttpClient()
+	if s.httpClient == nil {
+		s.httpClient = newHttpClient()
 	}
 
 	// insecure mode
-	if s.Insecure {
-		clientTransport, ok := s.HttpClient.Transport.(*http.Transport)
+	if s.insecure {
+		clientTransport, ok := s.httpClient.Transport.(*http.Transport)
 		if !ok {
-			return nil, fmt.Errorf("cannot use insecure mode with HTTP client of type %T", s.HttpClient.Transport)
+			return nil, fmt.Errorf("cannot use insecure mode with HTTP client of type %T", s.httpClient.Transport)
 		}
 		if clientTransport.TLSClientConfig == nil {
 			clientTransport.TLSClientConfig = &tls.Config{}
@@ -58,13 +58,13 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	return &Client{
-		auth:                  s.Token,
-		httpClient:            s.HttpClient,
-		apiUrl:                s.ApiUrl,
-		userAgent:             s.UserAgent,
-		defaultOrganizationId: s.DefaultOrganizationId,
-		defaultRegion:         s.DefaultRegion,
-		defaultZone:           s.DefaultZone,
+		auth:                  s.token,
+		httpClient:            s.httpClient,
+		apiUrl:                s.apiUrl,
+		userAgent:             s.userAgent,
+		defaultOrganizationId: s.defaultOrganizationId,
+		defaultRegion:         s.defaultRegion,
+		defaultZone:           s.defaultZone,
 	}, nil
 }
 
