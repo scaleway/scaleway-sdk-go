@@ -38,11 +38,11 @@ func Load() (*configV2, error) {
 	}
 
 	// STEP 2: try to load new config file
-	V2Path, V2PathOk := GetConfigV2FilePath()
-	if V2PathOk && fileExist(V2Path) {
+	v2Path, v2PathOk := GetConfigV2FilePath()
+	if v2PathOk && fileExist(v2Path) {
 		file, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read config file %s: %s", V2Path, err)
+			return nil, fmt.Errorf("cannot read config file %s: %s", v2Path, err)
 		}
 
 		confV2, err := unmarshalConfV2(file)
@@ -53,22 +53,22 @@ func Load() (*configV2, error) {
 	}
 
 	// STEP 3: try to load V1 config file
-	V1Path, V1PathOk := GetConfigV1FilePath()
-	if !V1PathOk {
+	v1Path, v1PathOk := GetConfigV1FilePath()
+	if !v1PathOk {
 		return (&configV2{}).catchInvalidProfile()
 	}
-	file, err := ioutil.ReadFile(V1Path)
+	file, err := ioutil.ReadFile(v1Path)
 	if err != nil {
 		return (&configV2{}).catchInvalidProfile() // ignore if file doesn't exist
 	}
 	confV1, err := unmarshalConfV1(file)
 	if err != nil {
-		return nil, fmt.Errorf("content of config file %s is invalid yaml: %s", V1Path, err)
+		return nil, fmt.Errorf("content of config file %s is invalid yaml: %s", v1Path, err)
 	}
 
 	// STEP 4: migrate V1 config to V2 config file
-	if V2PathOk {
-		err = migrateV1toV2(confV1, V2Path)
+	if v2PathOk {
+		err = migrateV1toV2(confV1, v2Path)
 		if err != nil {
 			return nil, err
 		}
