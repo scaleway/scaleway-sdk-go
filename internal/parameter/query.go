@@ -8,10 +8,12 @@ import (
 
 // AddToQuery add a key/value pair to an URL query
 func AddToQuery(query url.Values, key string, value interface{}) {
-	if value == nil {
+	elemValue := reflect.ValueOf(value)
+
+	if elemValue.Kind() == reflect.Invalid || elemValue.Kind() == reflect.Ptr && elemValue.IsNil() {
 		return
 	}
-	elemValue := reflect.ValueOf(value)
+
 	for elemValue.Kind() == reflect.Ptr {
 		elemValue = reflect.ValueOf(value).Elem()
 	}
