@@ -13,11 +13,12 @@ import (
 
 func TestLoad(t *testing.T) {
 	tests := []struct {
-		name        string
-		env         map[string]string
-		files       map[string]string
-		expected    *configV2
-		expectedErr string
+		name          string
+		env           map[string]string
+		files         map[string]string
+		expected      *configV2
+		expectedErr   string
+		expectedFiles map[string]string
 	}{
 		// valid config
 		{
@@ -25,34 +26,81 @@ func TestLoad(t *testing.T) {
 			expected: &configV2{},
 		},
 		{
-			name: "Custom config file is empty",
+			name: "No config file",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/fake/test.conf",
+				"HOME": "{HOME}",
+			},
+			expected: &configV2{},
+		},
+		{
+			name: "Custom config file is empty", // custom config path
+			env: map[string]string{
+				scwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
-				"fake/test.conf": emptyFile,
+				"valid1/test.conf": emptyFile,
 			},
 			expected: &configV2{},
 		},
 		{
 			name: "Custom config file with valid V1",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/fake/test.conf",
+				scwConfigPathEnv: "{HOME}/valid2/test.conf",
 			},
 			files: map[string]string{
-				"fake/test.conf": v1ValidConfigFile,
+				"valid2/test.conf": v1ValidConfigFile,
 			},
 			expected: v1ValidConfig,
 		},
 		{
 			name: "Custom config file with valid V2",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/fake/test.conf",
+				scwConfigPathEnv: "{HOME}/valid3/test.conf",
 			},
 			files: map[string]string{
-				"fake/test.conf": v2SimpleValidConfigFile,
+				"valid3/test.conf": v2SimpleValidConfigFile,
 			},
 			expected: v2SimpleValidConfig,
+		},
+		{
+			name: "Default config path with valid V2", // default config path
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+			expected: v2SimpleValidConfig,
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+		},
+		{
+			name: "Default config path with valid V1",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".scwrc": v1ValidConfigFile,
+			},
+			expected: v1ValidConfig,
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2FromV1ConfigFile,
+			},
+		},
+		{
+			name: "Default config path with valid V2 and valid V1",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+				".scwrc":                  v1ValidConfigFile,
+			},
+			expected: v2SimpleValidConfig,
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
 		},
 
 		// errors
@@ -62,6 +110,36 @@ func TestLoad(t *testing.T) {
 				scwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
 			expectedErr: "cannot read $SCW_CONFIG_PATH: open {HOME}/fake/test.conf: no such file or directory",
+		},
+		{
+			name: "Err: custom config file with invalid V2",
+			env: map[string]string{
+				scwConfigPathEnv: "{HOME}/invalid1/test.conf",
+			},
+			files: map[string]string{
+				"invalid1/test.conf": v2SimpleInValidConfigFile,
+			},
+			expectedErr: "content of $SCW_CONFIG_PATH ({HOME}/invalid1/test.conf) is invalid: yaml: found unexpected end of stream",
+		},
+		{
+			name: "Err: default config path with invalid V2",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleInValidConfigFile,
+			},
+			expectedErr: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
+		},
+		{
+			name: "Err: default config path with invalid V1",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".scwrc": v1InValidConfigFile,
+			},
+			expectedErr: "content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
 		},
 	}
 	dir, err := ioutil.TempDir("", "home")
@@ -90,17 +168,28 @@ func TestLoad(t *testing.T) {
 
 			// load config
 			config, err := Load()
+
+			// test expected outputs
 			if test.expectedErr != "" {
+				testhelpers.Assert(t, err != nil, "error should not be nil")
 				testhelpers.Equals(t, strings.Replace(test.expectedErr, "{HOME}", dir, -1), err.Error())
 			} else {
 				testhelpers.Ok(t, err)
 			}
 			testhelpers.Equals(t, test.expected, config)
 
+			// test expected files
+			for path, expectedContent := range test.expectedFiles {
+				targetPath := filepath.Join(dir, path)
+				content, err := ioutil.ReadFile(targetPath)
+				testhelpers.Ok(t, err)
+				testhelpers.Equals(t, expectedContent, string(content))
+				testhelpers.Ok(t, os.RemoveAll(targetPath)) // delete at the end
+			}
+
 			// remove config file(s)
 			for path := range test.files {
 				testhelpers.Ok(t, os.RemoveAll(filepath.Join(dir, path)))
-
 			}
 		})
 	}
@@ -144,6 +233,12 @@ default_organization_id: "` + v2ValidDefaultOrganizationID + `"
 default_region: "` + v2ValidDefaultRegion + `"
 `
 
+var v2SimpleInValidConfigFile = `insecure: "bool""`
+
+var v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
+default_organization_id: ` + v1ValidOrganizationID + `
+`
+
 // v1 config
 var (
 	v1ValidOrganizationID = "29aa5db6-1d6d-404e-890d-f896913f9ec1"
@@ -163,3 +258,9 @@ var v1ValidConfigFile = `{
 "token":"` + v1ValidToken + `",
 "version":"` + v1Version + `"
 }`
+
+var v1InValidConfigFile = `
+"organization":"` + v1ValidOrganizationID + `",
+"token":"` + v1ValidToken + `",
+"version":"` + v1Version + `"
+`

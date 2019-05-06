@@ -62,20 +62,20 @@ type Config interface {
 
 type configV2 struct {
 	profile       `yaml:",inline"`
-	ActiveProfile *string             `yaml:"active_profile"`
-	Profiles      map[string]*profile `yaml:"profiles"`
+	ActiveProfile *string             `yaml:"active_profile,omitempty"`
+	Profiles      map[string]*profile `yaml:"profiles,omitempty"`
 
 	withProfile string
 }
 
 type profile struct {
-	AccessKey             *string `yaml:"access_key"`
-	SecretKey             *string `yaml:"secret_key"`
-	ApiUrl                *string `yaml:"api_url"`
-	Insecure              *bool   `yaml:"insecure"`
-	DefaultOrganizationId *string `yaml:"default_organization_id"`
-	DefaultRegion         *string `yaml:"default_region"`
-	DefaultZone           *string `yaml:"default_zone"`
+	AccessKey             *string `yaml:"access_key,omitempty"`
+	SecretKey             *string `yaml:"secret_key,omitempty"`
+	ApiUrl                *string `yaml:"api_url,omitempty"`
+	Insecure              *bool   `yaml:"insecure,omitempty"`
+	DefaultOrganizationId *string `yaml:"default_organization_id,omitempty"`
+	DefaultRegion         *string `yaml:"default_region,omitempty"`
+	DefaultZone           *string `yaml:"default_zone,omitempty"`
 }
 
 func unmarshalConfV2(content []byte) (*configV2, error) {

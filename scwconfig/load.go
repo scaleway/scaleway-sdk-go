@@ -30,7 +30,7 @@ func Load() (*configV2, error) {
 		}
 		confV2, err := unmarshalConfV2(content)
 		if err != nil {
-			return nil, fmt.Errorf("content of $%s (%s) is invalid yaml: %s", scwConfigPathEnv, configPath, err)
+			return nil, fmt.Errorf("content of $%s (%s) is invalid: %s", scwConfigPathEnv, configPath, err)
 		}
 
 		return confV2.catchInvalidProfile()
@@ -41,12 +41,12 @@ func Load() (*configV2, error) {
 	if v2PathOk && fileExist(v2Path) {
 		file, err := ioutil.ReadFile(v2Path)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read config file %s: %s", v2Path, err)
+			return nil, fmt.Errorf("cannot read config file: %s", err)
 		}
 
 		confV2, err := unmarshalConfV2(file)
 		if err != nil {
-			return nil, fmt.Errorf("content of config file %s is invalid yaml: %s", configPath, err)
+			return nil, fmt.Errorf("content of config file %s is invalid: %s", v2Path, err)
 		}
 		return confV2.catchInvalidProfile()
 	}
@@ -62,7 +62,7 @@ func Load() (*configV2, error) {
 	}
 	confV1, err := unmarshalConfV1(file)
 	if err != nil {
-		return nil, fmt.Errorf("content of config file %s is invalid yaml: %s", v1Path, err)
+		return nil, fmt.Errorf("content of config file %s is invalid json: %s", v1Path, err)
 	}
 
 	// STEP 4: migrate V1 config to V2 config file
