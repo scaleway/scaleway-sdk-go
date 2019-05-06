@@ -22,7 +22,7 @@ func Load() (*configV2, error) {
 	if configPath != "" {
 		content, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read $%s (%s): %s", scwConfigPathEnv, configPath, err)
+			return nil, fmt.Errorf("cannot read $%s: %s", scwConfigPathEnv, err)
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {

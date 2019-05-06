@@ -61,7 +61,7 @@ type Config interface {
 }
 
 type configV2 struct {
-	profile
+	profile       `yaml:",inline"`
 	ActiveProfile *string             `yaml:"active_profile"`
 	Profiles      map[string]*profile `yaml:"profiles"`
 
@@ -73,9 +73,9 @@ type profile struct {
 	SecretKey             *string `yaml:"secret_key"`
 	ApiUrl                *string `yaml:"api_url"`
 	Insecure              *bool   `yaml:"insecure"`
-	DefaultOrganizationId *string `yaml:"default_region"`
-	DefaultRegion         *string `yaml:"default_zone"`
-	DefaultZone           *string `yaml:"default_organization_id"`
+	DefaultOrganizationId *string `yaml:"default_organization_id"`
+	DefaultRegion         *string `yaml:"default_region"`
+	DefaultZone           *string `yaml:"default_zone"`
 }
 
 func unmarshalConfV2(content []byte) (*configV2, error) {
@@ -93,6 +93,9 @@ func (c *configV2) catchInvalidProfile() (*configV2, error) {
 	activeProfile, err := c.getActiveProfile()
 	if err != nil {
 		return nil, err
+	}
+	if activeProfile == "" {
+		return c, nil
 	}
 
 	_, exist := c.Profiles[activeProfile]
