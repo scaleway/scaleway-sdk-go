@@ -342,9 +342,6 @@ type BackendServerStats struct {
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
 }
 
-type Empty struct {
-}
-
 type Frontend struct {
 	Id string `json:"id,omitempty"`
 
@@ -585,23 +582,13 @@ type ListLbsResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
-type ServiceInfo struct {
-	Name string `json:"name,omitempty"`
-
-	Description string `json:"description,omitempty"`
-
-	Version string `json:"version,omitempty"`
-
-	DocumentationUrl *string `json:"documentation_url,omitempty"`
-}
-
 // Service Api
 
 type GetServiceInfoRequest struct {
 	Region scw.Region `json:"-"`
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*ServiceInfo, error) {
+func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*utils.ServiceInfo, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -616,7 +603,7 @@ func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*ServiceInfo, error) {
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp ServiceInfo
+	var resp utils.ServiceInfo
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
