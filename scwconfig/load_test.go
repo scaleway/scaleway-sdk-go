@@ -77,7 +77,7 @@ func TestLoad(t *testing.T) {
 			// set up env
 			os.Clearenv()
 			for key, value := range test.env {
-				value = strings.ReplaceAll(value, "{HOME}", dir)
+				value = strings.Replace(value, "{HOME}", dir, -1)
 				testhelpers.Ok(t, os.Setenv(key, value))
 			}
 
@@ -91,7 +91,7 @@ func TestLoad(t *testing.T) {
 			// load config
 			config, err := Load()
 			if test.expectedErr != "" {
-				testhelpers.Equals(t, strings.ReplaceAll(test.expectedErr, "{HOME}", dir), err.Error())
+				testhelpers.Equals(t, strings.Replace(test.expectedErr, "{HOME}", dir, -1), err.Error())
 			} else {
 				testhelpers.Ok(t, err)
 			}
