@@ -17,13 +17,12 @@ func LoadWithProfile(profileName string) (*configV2, error) {
 }
 
 func Load() (*configV2, error) {
-
 	// STEP 1: try to load config file from SCW_CONFIG_PATH
 	configPath := os.Getenv(scwConfigPathEnv)
 	if configPath != "" {
 		content, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read $SCW_CONFIG_PATH (%s): %s", configPath, err)
+			return nil, fmt.Errorf("cannot read $%s (%s): %s", scwConfigPathEnv, configPath, err)
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {
@@ -31,7 +30,7 @@ func Load() (*configV2, error) {
 		}
 		confV2, err := unmarshalConfV2(content)
 		if err != nil {
-			return nil, fmt.Errorf("content of $SCW_CONFIG_PATH (%s) is invalid yaml: %s", configPath, err)
+			return nil, fmt.Errorf("content of $%s (%s) is invalid yaml: %s", scwConfigPathEnv, configPath, err)
 		}
 
 		return confV2.catchInvalidProfile()
@@ -40,7 +39,7 @@ func Load() (*configV2, error) {
 	// STEP 2: try to load new config file
 	v2Path, v2PathOk := GetConfigV2FilePath()
 	if v2PathOk && fileExist(v2Path) {
-		file, err := ioutil.ReadFile(configPath)
+		file, err := ioutil.ReadFile(v2Path)
 		if err != nil {
 			return nil, fmt.Errorf("cannot read config file %s: %s", v2Path, err)
 		}
@@ -75,7 +74,6 @@ func Load() (*configV2, error) {
 	}
 
 	return confV1.toV2().catchInvalidProfile()
-
 }
 
 func fileExist(name string) bool {

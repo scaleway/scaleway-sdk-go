@@ -155,7 +155,6 @@ func (c *configV2) GetSecretKey() string {
 		return *c.SecretKey
 	}
 	return ""
-
 }
 
 func (c *configV2) GetApiUrl() string {
@@ -187,7 +186,10 @@ func (c *configV2) GetInsecure() bool {
 	}
 
 	// STEP 2: active profile
-	activeProfile, _ := c.getActiveProfile()
+	activeProfile, err := c.getActiveProfile()
+	if err != nil {
+		// TODO: log invalid bool
+	}
 	if activeProfile != "" && c.Profiles[activeProfile].Insecure != nil {
 		return *c.Profiles[activeProfile].Insecure
 	}
@@ -268,6 +270,7 @@ func getenv(upToDateKey string, deprecatedKeys ...string) string {
 	for _, key := range deprecatedKeys {
 		value = os.Getenv(key)
 		if value != "" {
+			// TODO: log deprecated
 			return value
 		}
 	}
