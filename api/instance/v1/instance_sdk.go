@@ -144,6 +144,16 @@ type ServerState string
 const (
 	// ServerStateRunning is [insert doc].
 	ServerStateRunning = ServerState("running")
+	// ServerStateStopped is [insert doc].
+	ServerStateStopped = ServerState("stopped")
+	// ServerStateStoppedInPlace is [insert doc].
+	ServerStateStoppedInPlace = ServerState("stopped in place")
+	// ServerStateStarting is [insert doc].
+	ServerStateStarting = ServerState("starting")
+	// ServerStateStopping is [insert doc].
+	ServerStateStopping = ServerState("stopping")
+	// ServerStateLocked is [insert doc].
+	ServerStateLocked = ServerState("locked")
 )
 
 type SnapshotState string
@@ -207,7 +217,7 @@ type Bootscript struct {
 	Id string `json:"id,omitempty"`
 	// Initrd: display the initrd (initial ramdisk) configuration
 	Initrd string `json:"initrd,omitempty"`
-	// Kernel: display the servers kernel version
+	// Kernel: display the server kernel version
 	Kernel string `json:"kernel,omitempty"`
 	// Organization: display the bootscripts organization
 	Organization string `json:"organization,omitempty"`
@@ -269,9 +279,6 @@ type Dashboard struct {
 	SecurityGroupsCount uint32 `json:"security_groups_count,omitempty"`
 
 	IpsUnused uint32 `json:"ips_unused,omitempty"`
-}
-
-type Empty struct {
 }
 
 type GetBootscriptResponse struct {
@@ -458,59 +465,59 @@ type SecurityRule struct {
 }
 
 type Server struct {
-	// Id: display the servers unique ID
+	// Id: display the server unique ID
 	Id string `json:"id,omitempty"`
-	// Image: provide information on the servers image
+	// Image: provide information on the server image
 	Image *Image `json:"image,omitempty"`
-	// Name: display the servers name
+	// Name: display the server name
 	Name string `json:"name,omitempty"`
-	// Organization: display the servers organization
+	// Organization: display the server organization
 	Organization string `json:"organization,omitempty"`
-	// PrivateIp: display the servers private IP address
+	// PrivateIp: display the server private IP address
 	PrivateIp *string `json:"private_ip,omitempty"`
-	// PublicIp: display the servers public IP address
+	// PublicIp: display the server public IP address
 	PublicIp *ServerIp `json:"public_ip,omitempty"`
-	// State: display the servers state
+	// State: display the server state
 	State ServerState `json:"state,omitempty"`
-	// BootType: display the servers boot type
+	// BootType: display the server boot type
 	BootType ServerBootType `json:"boot_type,omitempty"`
-	// Tags: display the servers associated tags
+	// Tags: display the server associated tags
 	Tags []string `json:"tags,omitempty"`
-	// Volumes: display the servers volumes
+	// Volumes: display the server volumes
 	Volumes map[string]*Volume `json:"volumes,omitempty"`
-	// Bootscript: display the servers bootscript
+	// Bootscript: display the server bootscript
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
-	// DynamicPublicIp: display the servers dynamic public IP
+	// DynamicPublicIp: display the server dynamic public IP
 	DynamicPublicIp bool `json:"dynamic_public_ip,omitempty"`
-	// CommercialType: display the servers commercial type (e.g. GP1-M)
+	// CommercialType: display the server commercial type (e.g. GP1-M)
 	CommercialType string `json:"commercial_type,omitempty"`
-	// CreationDate: display the servers creation date
+	// CreationDate: display the server creation date
 	CreationDate time.Time `json:"creation_date,omitempty"`
 	// DynamicIpRequired: display if a dynamic IP is required
 	DynamicIpRequired bool `json:"dynamic_ip_required,omitempty"`
 	// EnableIpv6: display if IPv6 is enabled
-	EnableIpv6 string `json:"enable_ipv6,omitempty"`
+	EnableIpv6 bool `json:"enable_ipv6,omitempty"`
 	// ExtraNetworks: display information about additional network interfaces
 	ExtraNetworks []string `json:"extra_networks,omitempty"`
-	// Hostname: display the servers host name
+	// Hostname: display the server host name
 	Hostname string `json:"hostname,omitempty"`
 	// AllowedActions: provide as list of allowed actions on the server
 	AllowedActions []ServerAction `json:"allowed_actions,omitempty"`
-	// Arch: display the servers arch
+	// Arch: display the server arch
 	Arch Arch `json:"arch,omitempty"`
-	// Ipv6: display the servers IPv6 address
+	// Ipv6: display the server IPv6 address
 	Ipv6 *ServerIpv6 `json:"ipv6,omitempty"`
-	// Location: display the servers location
+	// Location: display the server location
 	Location *ServerLocation `json:"location,omitempty"`
-	// Maintenances: display the servers planned maintenances
+	// Maintenances: display the server planned maintenances
 	Maintenances []*ServerMaintenance `json:"maintenances,omitempty"`
-	// ModificationDate: display the servers modification date
+	// ModificationDate: display the server modification date
 	ModificationDate time.Time `json:"modification_date,omitempty"`
-	// Protected: display the servers protection option is activated
+	// Protected: display the server protection option is activated
 	Protected bool `json:"protected,omitempty"`
-	// SecurityGroup: display the servers security group
+	// SecurityGroup: display the server security group
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
-	// StateDetail: display the servers state_detail
+	// StateDetail: display the server state_detail
 	StateDetail string `json:"state_detail,omitempty"`
 }
 
@@ -521,14 +528,14 @@ type ServerActionResponse struct {
 type ServerIp struct {
 	// Id: display the unique ID of the IP address
 	Id string `json:"id,omitempty"`
-	// Address: display the servers public IPv4 IP-Address
+	// Address: display the server public IPv4 IP-Address
 	Address net.IP `json:"address,omitempty"`
 	// Dynamic: display information if the IP address will be considered as dynamic
 	Dynamic bool `json:"dynamic,omitempty"`
 }
 
 type ServerIpv6 struct {
-	// Address: display the servers IPv6 IP-Address
+	// Address: display the server IPv6 IP-Address
 	Address net.IP `json:"address,omitempty"`
 	// Gateway: display the IPv6 IP-addresses gateway
 	Gateway string `json:"gateway,omitempty"`
@@ -835,13 +842,13 @@ func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error)
 
 type CreateServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// Name: display the servers name
+	// Name: display the server name
 	Name string `json:"name,omitempty"`
 	// DynamicIpRequired: define if a dynamic IP is required for the instance
 	DynamicIpRequired bool `json:"dynamic_ip_required,omitempty"`
-	// CommercialType: define the servers commercial type (i.e. GP1-S)
+	// CommercialType: define the server commercial type (i.e. GP1-S)
 	CommercialType string `json:"commercial_type,omitempty"`
-	// Image: define the servers image file
+	// Image: define the server image id
 	Image string `json:"image,omitempty"`
 	// Volumes: define the volumes attached to the server
 	Volumes map[string]*VolumeTemplate `json:"volumes,omitempty"`
@@ -851,7 +858,7 @@ type CreateServerRequest struct {
 	PublicIp string `json:"public_ip,omitempty"`
 	// BootType: define the boot type you want to use
 	BootType ServerBootType `json:"boot_type,omitempty"`
-	// Organization: define the servers organization
+	// Organization: define the server organization
 	Organization string `json:"organization,omitempty"`
 }
 
@@ -945,59 +952,59 @@ func (s *Api) GetServer(req *GetServerRequest) (*GetServerResponse, error) {
 
 type SetServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// Id: display the servers unique ID
+	// Id: display the server unique ID
 	Id string `json:"-"`
-	// Name: display the servers name
+	// Name: display the server name
 	Name string `json:"name,omitempty"`
-	// Organization: display the servers organization
+	// Organization: display the server organization
 	Organization string `json:"organization,omitempty"`
 	// AllowedActions: provide as list of allowed actions on the server
 	AllowedActions []ServerAction `json:"allowed_actions,omitempty"`
-	// Tags: display the servers associated tags
+	// Tags: display the server associated tags
 	Tags []string `json:"tags,omitempty"`
-	// CommercialType: display the servers commercial type (e.g. GP1-M)
+	// CommercialType: display the server commercial type (e.g. GP1-M)
 	CommercialType string `json:"commercial_type,omitempty"`
-	// CreationDate: display the servers creation date
+	// CreationDate: display the server creation date
 	CreationDate time.Time `json:"creation_date,omitempty"`
 	// DynamicIpRequired: display if a dynamic IP is required
 	DynamicIpRequired bool `json:"dynamic_ip_required,omitempty"`
-	// DynamicPublicIp: display the servers dynamic public IP
+	// DynamicPublicIp: display the server dynamic public IP
 	DynamicPublicIp bool `json:"dynamic_public_ip,omitempty"`
 	// EnableIpv6: display if IPv6 is enabled
-	EnableIpv6 string `json:"enable_ipv6,omitempty"`
+	EnableIpv6 bool `json:"enable_ipv6,omitempty"`
 	// ExtraNetworks: display information about additional network interfaces
 	ExtraNetworks []string `json:"extra_networks,omitempty"`
-	// Hostname: display the servers host name
+	// Hostname: display the server host name
 	Hostname string `json:"hostname,omitempty"`
-	// Image: provide information on the servers image
+	// Image: provide information on the server image
 	Image *Image `json:"image,omitempty"`
-	// Protected: display the servers protection option is activated
+	// Protected: display the server protection option is activated
 	Protected bool `json:"protected,omitempty"`
-	// PrivateIp: display the servers private IP address
+	// PrivateIp: display the server private IP address
 	PrivateIp *string `json:"private_ip,omitempty"`
-	// PublicIp: display the servers public IP address
+	// PublicIp: display the server public IP address
 	PublicIp *ServerIp `json:"public_ip,omitempty"`
-	// ModificationDate: display the servers modification date
+	// ModificationDate: display the server modification date
 	ModificationDate time.Time `json:"modification_date,omitempty"`
-	// State: display the servers state
+	// State: display the server state
 	State ServerState `json:"state,omitempty"`
-	// Location: display the servers location
+	// Location: display the server location
 	Location *ServerLocation `json:"location,omitempty"`
-	// Ipv6: display the servers IPv6 address
+	// Ipv6: display the server IPv6 address
 	Ipv6 *ServerIpv6 `json:"ipv6,omitempty"`
-	// Bootscript: display the servers bootscript
+	// Bootscript: display the server bootscript
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
-	// BootType: display the servers boot type
+	// BootType: display the server boot type
 	BootType ServerBootType `json:"boot_type,omitempty"`
-	// Volumes: display the servers volumes
+	// Volumes: display the server volumes
 	Volumes map[string]*Volume `json:"volumes,omitempty"`
-	// SecurityGroup: display the servers security group
+	// SecurityGroup: display the server security group
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
-	// Maintenances: display the servers planned maintenances
+	// Maintenances: display the server planned maintenances
 	Maintenances []*ServerMaintenance `json:"maintenances,omitempty"`
-	// StateDetail: display the servers state_detail
+	// StateDetail: display the server state_detail
 	StateDetail string `json:"state_detail,omitempty"`
-	// Arch: display the servers arch
+	// Arch: display the server arch
 	Arch Arch `json:"arch,omitempty"`
 }
 
@@ -1128,7 +1135,7 @@ type ServerActionRequest struct {
 
 // ServerAction: perform action
 //
-// Perform power related actions on a servers
+// Perform power related actions on a server
 func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, error) {
 	var err error
 
@@ -1225,7 +1232,7 @@ type SetServerUserDataRequest struct {
 
 	Key string `json:"-"`
 
-	Content utils.File
+	Content *utils.File
 }
 
 // SetServerUserData: add/Set user data
