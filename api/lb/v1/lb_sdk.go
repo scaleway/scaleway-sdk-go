@@ -591,6 +591,10 @@ type GetServiceInfoRequest struct {
 func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*utils.ServiceInfo, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "",
@@ -627,6 +631,16 @@ type ListLbsRequest struct {
 
 func (s *Api) ListLbs(req *ListLbsRequest) (*ListLbsResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.OrganizationId == nil || *req.OrganizationId == "" {
+		req.OrganizationId = &val
+	}
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
@@ -672,6 +686,14 @@ type CreateLbRequest struct {
 func (s *Api) CreateLb(req *CreateLbRequest) (*Lb, error) {
 	var err error
 
+	if req.OrganizationId == "" {
+		req.OrganizationId = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs",
@@ -707,6 +729,10 @@ type GetLbRequest struct {
 func (s *Api) GetLb(req *GetLbRequest) (*Lb, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "",
@@ -741,6 +767,10 @@ type UpdateLbRequest struct {
 
 func (s *Api) UpdateLb(req *UpdateLbRequest) (*Lb, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
@@ -778,6 +808,11 @@ type DeleteLbRequest struct {
 
 func (s *Api) DeleteLb(req *DeleteLbRequest) error {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "release_ip", req.ReleaseIp)
 
@@ -811,6 +846,16 @@ type ListIPsRequest struct {
 // ListIPs: list IPs
 func (s *Api) ListIPs(req *ListIPsRequest) (*ListIpsResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.OrganizationId == nil || *req.OrganizationId == "" {
+		req.OrganizationId = &val
+	}
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -850,6 +895,10 @@ type GetIpRequest struct {
 func (s *Api) GetIp(req *GetIpRequest) (*Ip, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IpId) + "",
@@ -880,6 +929,10 @@ type ReleaseIpRequest struct {
 func (s *Api) ReleaseIp(req *ReleaseIpRequest) error {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IpId) + "",
@@ -904,6 +957,11 @@ type UpdateIpRequest struct {
 
 func (s *Api) UpdateIp(req *UpdateIpRequest) (*Ip, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "reverse", req.Reverse)
 
@@ -944,6 +1002,11 @@ type ListBackendsRequest struct {
 
 func (s *Api) ListBackends(req *ListBackendsRequest) (*ListBackendsResponse, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
@@ -1046,6 +1109,10 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 func (s *Api) CreateBackend(req *CreateBackendRequest) (*Backend, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/backends",
@@ -1080,6 +1147,10 @@ type GetBackendRequest struct {
 
 func (s *Api) GetBackend(req *GetBackendRequest) (*Backend, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1172,6 +1243,10 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 func (s *Api) UpdateBackend(req *UpdateBackendRequest) (*Backend, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
@@ -1207,6 +1282,10 @@ type DeleteBackendRequest struct {
 func (s *Api) DeleteBackend(req *DeleteBackendRequest) error {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
@@ -1231,6 +1310,10 @@ type AddBackendServersRequest struct {
 
 func (s *Api) AddBackendServers(req *AddBackendServersRequest) (*Backend, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
@@ -1269,6 +1352,10 @@ type RemoveBackendServersRequest struct {
 func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest) (*Backend, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
@@ -1305,6 +1392,10 @@ type SetBackendServersRequest struct {
 
 func (s *Api) SetBackendServers(req *SetBackendServersRequest) (*Backend, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
@@ -1421,6 +1512,10 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest) (*HealthCheck, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/healthcheck",
@@ -1463,6 +1558,11 @@ type ListFrontendsRequest struct {
 
 func (s *Api) ListFrontends(req *ListFrontendsRequest) (*ListFrontendsResponse, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
@@ -1539,6 +1639,10 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 func (s *Api) CreateFrontend(req *CreateFrontendRequest) (*Frontend, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/frontends",
@@ -1573,6 +1677,10 @@ type GetFrontendRequest struct {
 
 func (s *Api) GetFrontend(req *GetFrontendRequest) (*Frontend, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1643,6 +1751,10 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 func (s *Api) UpdateFrontend(req *UpdateFrontendRequest) (*Frontend, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
@@ -1678,6 +1790,10 @@ type DeleteFrontendRequest struct {
 func (s *Api) DeleteFrontend(req *DeleteFrontendRequest) error {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
@@ -1700,6 +1816,10 @@ type GetLbStatsRequest struct {
 
 func (s *Api) GetLbStats(req *GetLbStatsRequest) (*LbStats, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1737,6 +1857,11 @@ type ListAclsRequest struct {
 
 func (s *Api) ListAcls(req *ListAclsRequest) (*ListAclResponse, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -1781,6 +1906,10 @@ type CreateAclRequest struct {
 func (s *Api) CreateAcl(req *CreateAclRequest) (*Acl, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "/acls",
@@ -1815,6 +1944,10 @@ type GetAclRequest struct {
 
 func (s *Api) GetAcl(req *GetAclRequest) (*Acl, error) {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1853,6 +1986,10 @@ type UpdateAclRequest struct {
 func (s *Api) UpdateAcl(req *UpdateAclRequest) (*Acl, error) {
 	var err error
 
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.AclId) + "",
@@ -1887,6 +2024,10 @@ type DeleteAclRequest struct {
 
 func (s *Api) DeleteAcl(req *DeleteAclRequest) error {
 	var err error
+
+	if req.Region == "" {
+		req.Region = s.client.GetDefaultRegion()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",

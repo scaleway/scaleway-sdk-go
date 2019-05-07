@@ -738,6 +738,10 @@ type GetServerTypesAvailabilityRequest struct {
 // Get availibility for all server types
 func (s *Api) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest) (*GetServerTypesAvailabilityResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -776,6 +780,10 @@ type ListServersTypesRequest struct {
 // Get server types technical details
 func (s *Api) ListServersTypes(req *ListServersTypesRequest) (*ListServersTypesResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -814,6 +822,15 @@ type ListServersRequest struct {
 // ListServers: list servers
 func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -866,6 +883,14 @@ type CreateServerRequest struct {
 func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers",
@@ -904,6 +929,10 @@ type DeleteServerRequest struct {
 func (s *Api) DeleteServer(req *DeleteServerRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "",
@@ -929,6 +958,10 @@ type GetServerRequest struct {
 // Get the details of a specified Server
 func (s *Api) GetServer(req *GetServerRequest) (*GetServerResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1011,6 +1044,14 @@ type SetServerRequest struct {
 func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.Id) + "",
@@ -1067,6 +1108,10 @@ type UpdateServerRequest struct {
 func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "",
@@ -1105,6 +1150,10 @@ type ListServerActionsRequest struct {
 func (s *Api) ListServerActions(req *ListServerActionsRequest) (*ListServerActionsResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "/action",
@@ -1138,6 +1187,10 @@ type ServerActionRequest struct {
 // Perform power related actions on a server
 func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
@@ -1177,6 +1230,10 @@ type ListServerUserDataRequest struct {
 func (s *Api) ListServerUserData(req *ListServerUserDataRequest) (*ListServerUserDataResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "/user_data",
@@ -1211,6 +1268,10 @@ type DeleteServerUserDataRequest struct {
 func (s *Api) DeleteServerUserData(req *DeleteServerUserDataRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "/user_data/" + fmt.Sprint(req.Key) + "",
@@ -1240,6 +1301,10 @@ type SetServerUserDataRequest struct {
 // Add or update a user data with the given key on a server
 func (s *Api) SetServerUserData(req *SetServerUserDataRequest) error {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
@@ -1274,6 +1339,10 @@ type GetServerUserDataRequest struct {
 // Get the content of a user data with the given key on a server
 func (s *Api) GetServerUserData(req *GetServerUserDataRequest) (*utils.File, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1316,6 +1385,15 @@ type ListImagesRequest struct {
 // List all images available in an account
 func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1357,6 +1435,10 @@ type GetImageRequest struct {
 func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.ImageId) + "",
@@ -1396,6 +1478,14 @@ type CreateImageRequest struct {
 // CreateImage: create image
 func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error) {
 	var err error
+
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
@@ -1457,6 +1547,14 @@ type SetImageRequest struct {
 func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.Id) + "",
@@ -1495,6 +1593,10 @@ type DeleteImageRequest struct {
 func (s *Api) DeleteImage(req *DeleteImageRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.ImageId) + "",
@@ -1524,6 +1626,15 @@ type ListSnapshotsRequest struct {
 // ListSnapshots: list snapshots
 func (s *Api) ListSnapshots(req *ListSnapshotsRequest) (*ListSnapshotsResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1565,6 +1676,14 @@ type CreateSnapshotRequest struct {
 func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
@@ -1602,6 +1721,10 @@ type GetSnapshotRequest struct {
 // Get details of a snapshot with the given id
 func (s *Api) GetSnapshot(req *GetSnapshotRequest) (*GetSnapshotResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1651,6 +1774,14 @@ type SetSnapshotRequest struct {
 func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.Id) + "",
@@ -1689,6 +1820,10 @@ type DeleteSnapshotRequest struct {
 func (s *Api) DeleteSnapshot(req *DeleteSnapshotRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotId) + "",
@@ -1718,6 +1853,15 @@ type ListVolumesRequest struct {
 // ListVolumes: list volumes
 func (s *Api) ListVolumes(req *ListVolumesRequest) (*ListVolumesResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1780,6 +1924,14 @@ func (m *CreateVolumeRequest) GetFrom() From {
 func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
@@ -1817,6 +1969,10 @@ type GetVolumeRequest struct {
 // Get details of a volume with the given id
 func (s *Api) GetVolume(req *GetVolumeRequest) (*GetVolumeResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1868,6 +2024,14 @@ type SetVolumeRequest struct {
 func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.Id) + "",
@@ -1906,6 +2070,10 @@ type DeleteVolumeRequest struct {
 func (s *Api) DeleteVolume(req *DeleteVolumeRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeId) + "",
@@ -1935,6 +2103,15 @@ type ListSecurityGroupsRequest struct {
 // List all security groups available in an account
 func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest) (*ListSecurityGroupsResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1981,6 +2158,10 @@ type CreateSecurityGroupRequest struct {
 func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest) (*CreateSecurityGroupResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups",
@@ -2019,6 +2200,10 @@ type GetSecurityGroupRequest struct {
 func (s *Api) GetSecurityGroup(req *GetSecurityGroupRequest) (*GetSecurityGroupResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupId) + "",
@@ -2048,6 +2233,10 @@ type DeleteSecurityGroupRequest struct {
 // DeleteSecurityGroup: delete security group
 func (s *Api) DeleteSecurityGroup(req *DeleteSecurityGroupRequest) error {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
@@ -2097,6 +2286,14 @@ type SetSecurityGroupRequest struct {
 func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGroupResponse, error) {
 	var err error
 
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.Id) + "",
@@ -2136,6 +2333,10 @@ type ListSecurityGroupRulesRequest struct {
 // ListSecurityGroupRules: list rules
 func (s *Api) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest) (*ListSecurityGroupRulesResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -2187,6 +2388,10 @@ type CreateSecurityGroupRuleRequest struct {
 func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest) (*CreateSecurityGroupRuleResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupId) + "/rules",
@@ -2227,6 +2432,10 @@ type DeleteSecurityGroupRuleRequest struct {
 func (s *Api) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupId) + "/rules/" + fmt.Sprint(req.SecurityRuleId) + "",
@@ -2254,6 +2463,10 @@ type GetSecurityGroupRuleRequest struct {
 // Get details of a security group rule with the given id
 func (s *Api) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest) (*GetSecurityGroupRuleResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2286,6 +2499,14 @@ type ListIpsRequest struct {
 // ListIps: list IPs
 func (s *Api) ListIps(req *ListIpsRequest) (*ListIpsResponse, error) {
 	var err error
+
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
@@ -2322,6 +2543,14 @@ type CreateIpRequest struct {
 // CreateIp: reseve an IP
 func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
 	var err error
+
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
@@ -2361,6 +2590,10 @@ type GetIpRequest struct {
 func (s *Api) GetIp(req *GetIpRequest) (*GetIpResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
@@ -2397,6 +2630,14 @@ type SetIpRequest struct {
 
 func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 	var err error
+
+	if req.Organization == "" {
+		req.Organization = s.client.GetDefaultOrganizationId()
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
@@ -2438,6 +2679,10 @@ type UpdateIpRequest struct {
 func (s *Api) UpdateIp(req *UpdateIpRequest) (*UpdateIpResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
@@ -2476,6 +2721,10 @@ type DeleteIpRequest struct {
 func (s *Api) DeleteIp(req *DeleteIpRequest) error {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
@@ -2505,6 +2754,10 @@ type ListBootscriptsRequest struct {
 // ListBootscripts: list bootscripts
 func (s *Api) ListBootscripts(req *ListBootscriptsRequest) (*ListBootscriptsResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "arch", req.Arch)
 	parameter.AddToQuery(query, "title", req.Title)
@@ -2544,6 +2797,10 @@ type GetBootscriptRequest struct {
 func (s *Api) GetBootscript(req *GetBootscriptRequest) (*GetBootscriptResponse, error) {
 	var err error
 
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/bootscripts/" + fmt.Sprint(req.BootscriptId) + "",
@@ -2570,6 +2827,10 @@ type GetServiceInfoRequest struct {
 
 func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2599,6 +2860,15 @@ type GetDashboardRequest struct {
 
 func (s *Api) GetDashboard(req *GetDashboardRequest) (*GetDashboardResponse, error) {
 	var err error
+
+	val := s.client.GetDefaultOrganizationId()
+	if req.Organization == nil || *req.Organization == "" {
+		req.Organization = &val
+	}
+
+	if req.Zone == "" {
+		req.Zone = s.client.GetDefaultZone()
+	}
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 
