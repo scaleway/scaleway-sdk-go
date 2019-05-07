@@ -238,7 +238,7 @@ func (c *configV2) GetDefaultRegion() string {
 	}
 
 	// STEP 3: default profile
-	if c.DefaultOrganizationId != nil {
+	if c.DefaultRegion != nil {
 		return v1RegionToV2(*c.DefaultRegion)
 	}
 	return ""

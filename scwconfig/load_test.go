@@ -2,7 +2,6 @@ package scwconfig
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -117,7 +116,7 @@ func TestLoad(t *testing.T) {
 				scwConfigPathEnv: "{HOME}/invalid1/test.conf",
 			},
 			files: map[string]string{
-				"invalid1/test.conf": v2SimpleInValidConfigFile,
+				"invalid1/test.conf": v2SimpleInvalidConfigFile,
 			},
 			expectedErr: "content of $SCW_CONFIG_PATH ({HOME}/invalid1/test.conf) is invalid: yaml: found unexpected end of stream",
 		},
@@ -127,7 +126,7 @@ func TestLoad(t *testing.T) {
 				"HOME": "{HOME}",
 			},
 			files: map[string]string{
-				".config/scw/config.yaml": v2SimpleInValidConfigFile,
+				".config/scw/config.yaml": v2SimpleInvalidConfigFile,
 			},
 			expectedErr: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
 		},
@@ -137,34 +136,35 @@ func TestLoad(t *testing.T) {
 				"HOME": "{HOME}",
 			},
 			files: map[string]string{
-				".scwrc": v1InValidConfigFile,
+				".scwrc": v1InvalidConfigFile,
 			},
 			expectedErr: "content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
 		},
+		{
+			name: "Err: default config path with invalid profile",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleConfigFileWithInvalidProfile,
+			},
+			expectedErr: "profile flantier does not exist in config file {HOME}/.config/scw/config.yaml",
+		},
 	}
-	dir, err := ioutil.TempDir("", "home")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
 
-	defer resetEnv(t, os.Environ())
+	// create home dir
+	dir := initEnv(t)
+
+	// delete home dir and reset env variables
+	defer resetEnv(t, os.Environ(), dir)
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			// set up env
-			os.Clearenv()
-			for key, value := range test.env {
-				value = strings.Replace(value, "{HOME}", dir, -1)
-				testhelpers.Ok(t, os.Setenv(key, value))
-			}
+			// set up env and config file(s)
+			setEnv(t, test.env, test.files, dir)
 
-			// set up config file(s)
-			for path, content := range test.files {
-				targetPath := filepath.Join(dir, path)
-				testhelpers.Ok(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
-				testhelpers.Ok(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
-			}
+			// remove config file(s)
+			defer cleanEnv(t, test.files, dir)
 
 			// load config
 			config, err := Load()
@@ -186,18 +186,41 @@ func TestLoad(t *testing.T) {
 				testhelpers.Equals(t, expectedContent, string(content))
 				testhelpers.Ok(t, os.RemoveAll(targetPath)) // delete at the end
 			}
-
-			// remove config file(s)
-			for path := range test.files {
-				testhelpers.Ok(t, os.RemoveAll(filepath.Join(dir, path)))
-			}
 		})
 	}
+}
 
+func initEnv(t *testing.T) string {
+	dir, err := ioutil.TempDir("", "home")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return dir
+}
+
+func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
+	for path := range files {
+		testhelpers.Ok(t, os.RemoveAll(filepath.Join(homeDir, path)))
+	}
+}
+
+func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
+	os.Clearenv()
+	for key, value := range env {
+		value = strings.Replace(value, "{HOME}", homeDir, -1)
+		testhelpers.Ok(t, os.Setenv(key, value))
+	}
+
+	for path, content := range files {
+		targetPath := filepath.Join(homeDir, path)
+		testhelpers.Ok(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
+		testhelpers.Ok(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+	}
 }
 
 // function taken from https://golang.org/src/os/env_test.go
-func resetEnv(t *testing.T, origEnv []string) {
+func resetEnv(t *testing.T, origEnv []string, homeDir string) {
+	testhelpers.Ok(t, os.RemoveAll(homeDir))
 	for _, pair := range origEnv {
 		// Environment variables on Windows can begin with =
 		// https://blogs.msdn.com/b/oldnewthing/archive/2010/05/06/10008132.aspx
@@ -207,60 +230,3 @@ func resetEnv(t *testing.T, origEnv []string) {
 		}
 	}
 }
-
-const emptyFile = ""
-
-// v2 config
-var (
-	v2ValidAccessKey             = "ACCESS_KEY"
-	v2ValidSecretKey             = "539a6564-bf92-4dc9-a0d4-50e3ca827ecb"
-	v2ValidDefaultOrganizationID = "d45a075f-18a1-4e9f-824e-43914a3ae8bd"
-	v2ValidDefaultRegion         = "fr-par"
-)
-var v2SimpleValidConfig = &configV2{
-	profile: profile{
-		AccessKey:             &v2ValidAccessKey,
-		SecretKey:             &v2ValidSecretKey,
-		DefaultOrganizationId: &v2ValidDefaultOrganizationID,
-		DefaultRegion:         &v2ValidDefaultRegion,
-	},
-}
-
-var v2SimpleValidConfigFile = `
-access_key: "` + v2ValidAccessKey + `"
-secret_key: "` + v2ValidSecretKey + `"
-default_organization_id: "` + v2ValidDefaultOrganizationID + `"
-default_region: "` + v2ValidDefaultRegion + `"
-`
-
-var v2SimpleInValidConfigFile = `insecure: "bool""`
-
-var v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
-default_organization_id: ` + v1ValidOrganizationID + `
-`
-
-// v1 config
-var (
-	v1ValidOrganizationID = "29aa5db6-1d6d-404e-890d-f896913f9ec1"
-	v1ValidToken          = "a057b0c1-eb47-4bf8-a589-72c1f2029515"
-	v1Version             = "1.19"
-)
-
-var v1ValidConfig = &configV2{
-	profile: profile{
-		SecretKey:             &v1ValidToken,
-		DefaultOrganizationId: &v1ValidOrganizationID,
-	},
-}
-
-var v1ValidConfigFile = `{
-"organization":"` + v1ValidOrganizationID + `",
-"token":"` + v1ValidToken + `",
-"version":"` + v1Version + `"
-}`
-
-var v1InValidConfigFile = `
-"organization":"` + v1ValidOrganizationID + `",
-"token":"` + v1ValidToken + `",
-"version":"` + v1Version + `"
-`
