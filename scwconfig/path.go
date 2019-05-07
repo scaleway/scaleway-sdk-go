@@ -56,7 +56,6 @@ func GetScwConfigDir() (string, error) {
 		return "", err
 	}
 	return filepath.Join(homeDir, ".config", "scw"), nil
-
 }
 
 // GetHomeDir returns the path to your home directory

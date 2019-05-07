@@ -11,7 +11,6 @@ import (
 
 // Environment variables
 const (
-
 	// Up-to-date
 	scwConfigPathEnv            = "SCW_CONFIG_PATH"
 	scwAccessKeyEnv             = "SCW_ACCESS_KEY"
@@ -86,7 +85,6 @@ func unmarshalConfV2(content []byte) (*configV2, error) {
 		return nil, err
 	}
 	return &config, nil
-
 }
 
 func (c *configV2) catchInvalidProfile() (*configV2, error) {
