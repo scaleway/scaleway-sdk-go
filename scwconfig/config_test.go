@@ -7,6 +7,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
+// TestConfig tests config getters return correct values
 func TestConfig(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -195,8 +196,58 @@ func TestConfig(t *testing.T) {
 			expectedDefaultRegion:         v2ValidDefaultRegion2,
 			expectedDefaultZone:           v2ValidDefaultZone2,
 		},
+		{
+			name: "Complete config with active profile env variable and all env variables",
+			env: map[string]string{
+				"HOME":                      "{HOME}",
+				scwActiveProfileEnv:         v2ValidProfile,
+				scwAccessKeyEnv:             v2ValidAccessKey,
+				scwSecretKeyEnv:             v2ValidSecretKey,
+				scwApiUrlEnv:                v2ValidApiUrl,
+				scwInsecureEnv:              "false",
+				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
+				scwDefaultRegionEnv:         v2ValidDefaultRegion,
+				scwDefaultZoneEnv:           v2ValidDefaultZone,
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2CompleteValidConfigFile,
+			},
+			expectedAccessKey:             v2ValidAccessKey,
+			expectedSecretKey:             v2ValidSecretKey,
+			expectedApiUrl:                v2ValidApiUrl,
+			expectedInsecure:              false,
+			expectedDefaultOrganizationId: v2ValidDefaultOrganizationID,
+			expectedDefaultRegion:         v2ValidDefaultRegion,
+			expectedDefaultZone:           v2ValidDefaultZone,
+		},
 
-		// todo: legacy env variables
+		// legacy env variables
+		{
+			name: "No config with terraform legacy env variables",
+			env: map[string]string{
+				terraformAccessKeyEnv:    v2ValidAccessKey,
+				terraformSecretKeyEnv:    v2ValidSecretKey,
+				terraformOrganizationEnv: v2ValidDefaultOrganizationID,
+				terraformRegionEnv:       v2ValidDefaultRegion,
+			},
+			expectedAccessKey:             v2ValidAccessKey,
+			expectedSecretKey:             v2ValidSecretKey,
+			expectedDefaultOrganizationId: v2ValidDefaultOrganizationID,
+			expectedDefaultRegion:         v2ValidDefaultRegion,
+		},
+		{
+			name: "No config with CLI legacy env variables",
+			env: map[string]string{
+				cliSecretKeyEnv:    v2ValidSecretKey2,
+				cliOrganizationEnv: v2ValidDefaultOrganizationID2,
+				cliRegionEnv:       v2ValidDefaultRegion2,
+				cliTLSVerifyEnv:    v2ValidInsecure2,
+			},
+			expectedSecretKey:             v2ValidSecretKey2,
+			expectedInsecure:              true,
+			expectedDefaultOrganizationId: v2ValidDefaultOrganizationID2,
+			expectedDefaultRegion:         v2ValidDefaultRegion2,
+		},
 	}
 
 	// create home dir

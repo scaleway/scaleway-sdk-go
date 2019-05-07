@@ -10,6 +10,13 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
+// TestLoad tests all valid configuration files:
+// - v2 config
+// - v1 to v2 config migration
+// - custom-path with v2 config
+// - custom-path with v1 config
+// - XDG config path with v2 config
+// - Windows config path with v2 config
 func TestLoad(t *testing.T) {
 	tests := []struct {
 		name          string
@@ -32,7 +39,7 @@ func TestLoad(t *testing.T) {
 			expected: &configV2{},
 		},
 		{
-			name: "Custom config file is empty", // custom config path
+			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
@@ -42,7 +49,7 @@ func TestLoad(t *testing.T) {
 			expected: &configV2{},
 		},
 		{
-			name: "Custom config file with valid V1",
+			name: "Custom-path config with valid V1",
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/valid2/test.conf",
 			},
@@ -52,7 +59,7 @@ func TestLoad(t *testing.T) {
 			expected: v1ValidConfig,
 		},
 		{
-			name: "Custom config file with valid V2",
+			name: "Custom-path config with valid V2",
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/valid3/test.conf",
 			},
@@ -62,7 +69,7 @@ func TestLoad(t *testing.T) {
 			expected: v2SimpleValidConfig,
 		},
 		{
-			name: "Default config path with valid V2", // default config path
+			name: "Default config with valid V2", // default config path
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -75,7 +82,7 @@ func TestLoad(t *testing.T) {
 			},
 		},
 		{
-			name: "Default config path with valid V1",
+			name: "Default config with valid V1",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -88,7 +95,7 @@ func TestLoad(t *testing.T) {
 			},
 		},
 		{
-			name: "Default config path with valid V2 and valid V1",
+			name: "Default config with valid V2 and valid V1",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -101,17 +108,38 @@ func TestLoad(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
 		},
+		{
+			name: "XDG config with valid V2",
+			env: map[string]string{
+				"HOME":          "{HOME}",
+				xdgConfigDirEnv: "{HOME}/plop",
+			},
+			files: map[string]string{
+				"plop/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+			expected: v2SimpleValidConfig,
+		},
+		{
+			name: "Windows config with valid V2",
+			env: map[string]string{
+				windowsHomeDirEnv: "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+			expected: v2SimpleValidConfig,
+		},
 
 		// errors
 		{
-			name: "Err: custom config file does not exist",
+			name: "Err: custom-path config does not exist",
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
 			expectedErr: "cannot read $SCW_CONFIG_PATH: open {HOME}/fake/test.conf: no such file or directory",
 		},
 		{
-			name: "Err: custom config file with invalid V2",
+			name: "Err: custom-path config with invalid V2",
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/invalid1/test.conf",
 			},
@@ -121,7 +149,7 @@ func TestLoad(t *testing.T) {
 			expectedErr: "content of $SCW_CONFIG_PATH ({HOME}/invalid1/test.conf) is invalid: yaml: found unexpected end of stream",
 		},
 		{
-			name: "Err: default config path with invalid V2",
+			name: "Err: default config with invalid V2",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -131,7 +159,7 @@ func TestLoad(t *testing.T) {
 			expectedErr: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
 		},
 		{
-			name: "Err: default config path with invalid V1",
+			name: "Err: default config with invalid V1",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -141,7 +169,7 @@ func TestLoad(t *testing.T) {
 			expectedErr: "content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
 		},
 		{
-			name: "Err: default config path with invalid profile",
+			name: "Err: default config with invalid profile",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
