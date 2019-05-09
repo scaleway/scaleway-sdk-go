@@ -296,7 +296,7 @@ func (c *configV2) GetDefaultRegion() (string, bool) {
 	var defaultRegion string
 	switch {
 	case envExist:
-		defaultRegion = envValue
+		defaultRegion = v1RegionToV2(envValue)
 	case activeProfile != "" && c.Profiles[activeProfile].DefaultRegion != nil:
 		defaultRegion = *c.Profiles[activeProfile].DefaultRegion
 	case c.DefaultRegion != nil:
