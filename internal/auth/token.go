@@ -7,6 +7,8 @@ type token struct {
 	secretKey string
 }
 
+// NewToken create a token authentication from an
+// access key and a secret key
 func NewToken(accessKey, secretKey string) *token {
 	return &token{accessKey: accessKey, secretKey: secretKey}
 }

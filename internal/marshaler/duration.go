@@ -29,7 +29,7 @@ func (d Duration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(int64(d / milliSec))
 }
 
-// MarshalJSON decodes milliseconds to Duration.
+// UnmarshalJSON decodes milliseconds to Duration.
 func (d *Duration) UnmarshalJSON(b []byte) error {
 	var tmp int64
 	err := json.Unmarshal(b, &tmp)
@@ -106,7 +106,7 @@ func (d LongDuration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(int64(d / day))
 }
 
-// MarshalJSON decodes days to LongDuration.
+// UnmarshalJSON decodes days to LongDuration.
 func (d *LongDuration) UnmarshalJSON(b []byte) error {
 	var tmp int64
 	err := json.Unmarshal(b, &tmp)
@@ -117,7 +117,7 @@ func (d *LongDuration) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// DurationSlice is a slice of *LongDuration
+// LongDurationSlice is a slice of *LongDuration
 type LongDurationSlice []*LongDuration
 
 // NewLongDurationSlice converts a []*time.Duration to a LongDurationSlice type.

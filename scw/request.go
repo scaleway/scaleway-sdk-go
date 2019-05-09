@@ -33,7 +33,7 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	}
 
 	// build url
-	url, err := req.getURL(c.apiUrl)
+	url, err := req.getURL(c.apiURL)
 	if err != nil {
 		return nil, err
 	}
