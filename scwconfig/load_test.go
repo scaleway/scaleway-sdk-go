@@ -203,8 +203,8 @@ func TestLoad(t *testing.T) {
 				testhelpers.Equals(t, strings.Replace(test.expectedErr, "{HOME}", dir, -1), err.Error())
 			} else {
 				testhelpers.Ok(t, err)
+				testhelpers.Equals(t, test.expected, config)
 			}
-			testhelpers.Equals(t, test.expected, config)
 
 			// test expected files
 			for path, expectedContent := range test.expectedFiles {
