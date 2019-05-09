@@ -70,21 +70,21 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 // GetDefaultOrganizationID return the default organization ID
 // of the client. This value can be set from the client option
-// WithDefaultOrganizationID().
+// WithDefaultOrganizationID(). Be aware this value can be empty.
 func (c *Client) GetDefaultOrganizationID() string {
 	return c.defaultOrganizationID
 }
 
 // GetDefaultRegion return the default region of the client.
 // This value can be set from the client option
-// WithDefaultRegion().
+// WithDefaultRegion(). Be aware this value can be empty.
 func (c *Client) GetDefaultRegion() Region {
 	return c.defaultRegion
 }
 
 // GetDefaultZone return the default zone of the client.
 // This value can be set from the client option
-// WithDefaultZone().
+// WithDefaultZone(). Be aware this value can be empty.
 func (c *Client) GetDefaultZone() Zone {
 	return c.defaultZone
 }

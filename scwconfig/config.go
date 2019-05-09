@@ -52,13 +52,13 @@ const (
 // Config interface is made of getters to retrieve
 // the config field by field.
 type Config interface {
-	GetAccessKey() (string, bool)
-	GetSecretKey() (string, bool)
-	GetAPIURL() (string, bool)
-	GetInsecure() (bool, bool)
-	GetDefaultOrganizationID() (string, bool)
-	GetDefaultRegion() (string, bool)
-	GetDefaultZone() (string, bool)
+	GetAccessKey() (accessKey string, exist bool)
+	GetSecretKey() (secretKey string, exist bool)
+	GetAPIURL() (apiURL string, exist bool)
+	GetInsecure() (insecure bool, exist bool)
+	GetDefaultOrganizationID() (defaultOrganizationID string, exist bool)
+	GetDefaultRegion() (defaultRegion string, exist bool)
+	GetDefaultZone() (defaultZone string, exist bool)
 }
 
 type configV2 struct {
