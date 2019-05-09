@@ -9,15 +9,18 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
+// Body is an HTTP Body with a content-type
 type Body struct {
 	io.ReadCloser
 	contentType string
 }
 
+// ContentType return the content type of the body
 func (b *Body) ContentType() string {
 	return b.contentType
 }
 
+// MarshalBody marshal a request to the adequate body
 func MarshalBody(body interface{}) (*Body, error) {
 	res := &Body{}
 
