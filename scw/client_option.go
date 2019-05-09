@@ -23,10 +23,10 @@ func WithAuth(accessKey, secretKey string) ClientOption {
 	}
 }
 
-// WithApiUrl client option overrides the API URL of the Scaleway API to the given URL.
-func WithApiUrl(apiUrl string) ClientOption {
+// WithAPIURL client option overrides the API URL of the Scaleway API to the given URL.
+func WithAPIURL(apiURL string) ClientOption {
 	return func(s *settings) {
-		s.apiUrl = apiUrl
+		s.apiURL = apiURL
 	}
 }
 
@@ -44,19 +44,19 @@ func WithUserAgent(ua string) ClientOption {
 	}
 }
 
-// WithHttpClient client option allows passing a custom http.Client which will be used for all requests.
-func WithHttpClient(httpClient *http.Client) ClientOption {
+// WithHTTPClient client option allows passing a custom http.Client which will be used for all requests.
+func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(s *settings) {
 		s.httpClient = httpClient
 	}
 }
 
-// WithDefaultOrganizationId client option sets the client default organization ID.
+// WithDefaultOrganizationID client option sets the client default organization ID.
 //
 // It will be used as the default value of the organization_id field in all requests made with this client.
-func WithDefaultOrganizationId(organizationId string) ClientOption {
+func WithDefaultOrganizationID(organizationID string) ClientOption {
 	return func(s *settings) {
-		s.defaultOrganizationId = organizationId
+		s.defaultOrganizationID = organizationID
 	}
 }
 

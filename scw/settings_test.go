@@ -4,12 +4,11 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
 const (
-	apiUrl = "https://example.com/"
+	apiURL = "https://example.com/"
 )
 
 func TestSettings(t *testing.T) {
@@ -19,7 +18,7 @@ func TestSettings(t *testing.T) {
 	// Apply
 	var funcToApply ClientOption = func(s *settings) {
 		s.token = auth.NewToken(testAccessKey, testSecretKey)
-		s.apiUrl = apiUrl
+		s.apiURL = apiURL
 	}
 
 	s.apply([]ClientOption{funcToApply})
@@ -35,7 +34,7 @@ func TestSettingsInvalidToken(t *testing.T) {
 
 	// Apply
 	var setURL ClientOption = func(s *settings) {
-		s.apiUrl = apiUrl
+		s.apiURL = apiURL
 	}
 
 	s.apply([]ClientOption{setURL})
@@ -51,7 +50,7 @@ func TestSettingsInvalidURL(t *testing.T) {
 
 	// Apply
 	var setTokenUnsetURL ClientOption = func(s *settings) {
-		s.apiUrl = ":test"
+		s.apiURL = ":test"
 		s.token = auth.NewToken(testAccessKey, testSecretKey)
 	}
 

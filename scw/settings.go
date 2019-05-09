@@ -9,12 +9,12 @@ import (
 )
 
 type settings struct {
-	apiUrl                string
+	apiURL                string
 	token                 auth.Auth
 	userAgent             string
 	httpClient            *http.Client
 	insecure              bool
-	defaultOrganizationId string
+	defaultOrganizationID string
 	defaultRegion         Region
 	defaultZone           Zone
 }
@@ -36,9 +36,9 @@ func (s *settings) validate() error {
 		return fmt.Errorf("no credential option provided")
 	}
 
-	_, err = url.Parse(s.apiUrl)
+	_, err = url.Parse(s.apiURL)
 	if err != nil {
-		return fmt.Errorf("invalid url %s: %s", s.apiUrl, err)
+		return fmt.Errorf("invalid url %s: %s", s.apiURL, err)
 	}
 
 	return nil

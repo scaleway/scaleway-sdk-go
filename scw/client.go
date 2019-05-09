@@ -17,9 +17,9 @@ import (
 type Client struct {
 	httpClient            *http.Client
 	auth                  auth.Auth
-	apiUrl                string
+	apiURL                string
 	userAgent             string
-	defaultOrganizationId string
+	defaultOrganizationID string
 	defaultRegion         Region
 	defaultZone           Zone
 }
@@ -42,7 +42,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// dial the API
 	if s.httpClient == nil {
-		s.httpClient = newHttpClient()
+		s.httpClient = newHTTPClient()
 	}
 
 	// insecure mode
@@ -60,34 +60,43 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	return &Client{
 		auth:                  s.token,
 		httpClient:            s.httpClient,
-		apiUrl:                s.apiUrl,
+		apiURL:                s.apiURL,
 		userAgent:             s.userAgent,
-		defaultOrganizationId: s.defaultOrganizationId,
+		defaultOrganizationID: s.defaultOrganizationID,
 		defaultRegion:         s.defaultRegion,
 		defaultZone:           s.defaultZone,
 	}, nil
 }
 
-func (c *Client) GetDefaultOrganizationId() string {
-	return c.defaultOrganizationId
+// GetDefaultOrganizationID return the default organization ID
+// of the client. This value can be set from the client option
+// WithDefaultOrganizationID().
+func (c *Client) GetDefaultOrganizationID() string {
+	return c.defaultOrganizationID
 }
 
+// GetDefaultRegion return the default region of the client.
+// This value can be set from the client option
+// WithDefaultRegion().
 func (c *Client) GetDefaultRegion() Region {
 	return c.defaultRegion
 }
 
+// GetDefaultZone return the default zone of the client.
+// This value can be set from the client option
+// WithDefaultZone().
 func (c *Client) GetDefaultZone() Zone {
 	return c.defaultZone
 }
 
 func defaultOptions() []ClientOption {
 	return []ClientOption{
-		WithApiUrl("https://api.scaleway.com"),
+		WithAPIURL("https://api.scaleway.com"),
 		WithUserAgent(userAgent),
 	}
 }
 
-func newHttpClient() *http.Client {
+func newHTTPClient() *http.Client {
 	return &http.Client{
 		Timeout: 9 * time.Second,
 		Transport: &http.Transport{
