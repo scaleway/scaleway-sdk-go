@@ -38,10 +38,10 @@ func Example_listServers() {
 	}
 
 	// Create SDK objects for Scaleway Instance product
-	instanceApi := instance.NewApi(client)
+	instanceAPI := instance.NewApi(client)
 
 	// Call the ListServers method on the Instance SDK
-	response, err := instanceApi.ListServers(&instance.ListServersRequest{
+	response, err := instanceAPI.ListServers(&instance.ListServersRequest{
 		Zone: scw.ZoneFrPar1,
 	})
 	if err != nil {
@@ -63,10 +63,10 @@ func Example_createLoadBalancer() {
 	}
 
 	// Create SDK objects for Scaleway Load Balancer product
-	lbApi := lb.NewApi(client)
+	lbAPI := lb.NewApi(client)
 
 	// Call the CreateLb method on the LB SDK to create a new load balancer.
-	newLb, err := lbApi.CreateLb(&lb.CreateLbRequest{
+	newLb, err := lbAPI.CreateLb(&lb.CreateLbRequest{
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
 		OrganizationId: "000a115d-2852-4b0a-9ce8-47f1134ba95a",

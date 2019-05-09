@@ -16,7 +16,7 @@ const (
 	scwAccessKeyEnv             = "SCW_ACCESS_KEY"
 	scwSecretKeyEnv             = "SCW_SECRET_KEY"
 	scwActiveProfileEnv         = "SCW_PROFILE"
-	scwApiUrlEnv                = "SCW_API_URL"
+	scwAPIURLEnv                = "SCW_API_URL"
 	scwInsecureEnv              = "SCW_INSECURE"
 	scwDefaultOrganizationIDEnv = "SCW_DEFAULT_ORGANIZATION_ID"
 	scwDefaultRegionEnv         = "SCW_DEFAULT_REGION"
@@ -40,7 +40,7 @@ const (
 	cliSecureExecEnv      = "SCW_SECURE_EXEC"
 	cliGatewayEnv         = "SCW_GATEWAY"
 	cliSensitiveEnv       = "SCW_SENSITIVE"
-	cliAccountApiEnv      = "SCW_ACCOUNT_API"
+	cliAccountAPIEnv      = "SCW_ACCOUNT_API"
 	cliMetadataAPIEnv     = "SCW_METADATA_API"
 	cliMarketPlaceAPIEnv  = "SCW_MARKETPLACE_API"
 	cliComputePar1APIEnv  = "SCW_COMPUTE_PAR1_API"
@@ -49,14 +49,16 @@ const (
 	cliTargetArchEnv      = "SCW_TARGET_ARCH"
 )
 
+// Config interface is made of getters to retrieve
+// the config field by field.
 type Config interface {
-	GetAccessKey() string
-	GetSecretKey() string
-	GetApiUrl() string
-	GetInsecure() bool
-	GetDefaultOrganizationId() string
-	GetDefaultRegion() string
-	GetDefaultZone() string
+	GetAccessKey() (string, bool)
+	GetSecretKey() (string, bool)
+	GetAPIURL() (string, bool)
+	GetInsecure() (bool, bool)
+	GetDefaultOrganizationID() (string, bool)
+	GetDefaultRegion() (string, bool)
+	GetDefaultZone() (string, bool)
 }
 
 type configV2 struct {
@@ -64,15 +66,17 @@ type configV2 struct {
 	ActiveProfile *string             `yaml:"active_profile,omitempty"`
 	Profiles      map[string]*profile `yaml:"profiles,omitempty"`
 
+	// withProfile is used by LoadWithProfile to handle the following priority order:
+	// c.withProfile > os.Getenv("SCW_PROFILE") > c.ActiveProfile
 	withProfile string
 }
 
 type profile struct {
 	AccessKey             *string `yaml:"access_key,omitempty"`
 	SecretKey             *string `yaml:"secret_key,omitempty"`
-	ApiUrl                *string `yaml:"api_url,omitempty"`
+	APIURL                *string `yaml:"api_url,omitempty"`
 	Insecure              *bool   `yaml:"insecure,omitempty"`
-	DefaultOrganizationId *string `yaml:"default_organization_id,omitempty"`
+	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
 	DefaultRegion         *string `yaml:"default_region,omitempty"`
 	DefaultZone           *string `yaml:"default_zone,omitempty"`
 }
@@ -111,172 +115,251 @@ func (c *configV2) getActiveProfile() (string, error) {
 		return os.Getenv(scwActiveProfileEnv), nil
 	case c.ActiveProfile != nil:
 		if *c.ActiveProfile == "" {
-			return "", fmt.Errorf("empty active profile %s", inConfigFile())
+			return "", fmt.Errorf("active_profile key cannot be empty %s", inConfigFile())
 		}
 		return *c.ActiveProfile, nil
 	default:
 		return "", nil
 	}
 }
-func (c *configV2) GetAccessKey() string {
-	// STEP 1: getenv
-	accessKey := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
-	if accessKey != "" {
-		return accessKey
-	}
 
-	// STEP 2: active profile
+// GetAccessKey retrieve the access key from the config.
+// It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetAccessKey() (string, bool) {
+	envValue, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].AccessKey != nil {
-		return *c.Profiles[activeProfile].AccessKey
+
+	var accessKey string
+	switch {
+	case envExist:
+		accessKey = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].AccessKey != nil:
+		accessKey = *c.Profiles[activeProfile].AccessKey
+	case c.AccessKey != nil:
+		accessKey = *c.AccessKey
+	default:
+		// warning:
+		return "", false
 	}
 
-	// STEP 3: default profile
-	if c.AccessKey != nil {
-		return *c.AccessKey
+	if accessKey == "" {
+		// warning : empty value
 	}
-	return ""
+
+	return accessKey, true
 }
 
-func (c *configV2) GetSecretKey() string {
-	// STEP 1: getenv
-	secretKey := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
-	if secretKey != "" {
-		return secretKey
-	}
-
-	// STEP 2: active profile
+// GetSecretKey retrieve the secret key from the config.
+// It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetSecretKey() (string, bool) {
+	envValue, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].SecretKey != nil {
-		return *c.Profiles[activeProfile].SecretKey
+
+	var secretKey string
+	switch {
+	case envExist:
+		secretKey = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].SecretKey != nil:
+		secretKey = *c.Profiles[activeProfile].SecretKey
+	case c.SecretKey != nil:
+		secretKey = *c.SecretKey
+	default:
+		// warning:
+		return "", false
 	}
 
-	// STEP 3: default profile
-	if c.SecretKey != nil {
-		return *c.SecretKey
+	if secretKey == "" {
+		// warning : empty value
 	}
-	return ""
+
+	return secretKey, true
 }
 
-func (c *configV2) GetApiUrl() string {
-	// STEP 1: getenv
-	apiUrl := getenv(scwApiUrlEnv)
-	if apiUrl != "" {
-		return apiUrl
-	}
-
-	// STEP 2: active profile
+// GetAPIURL retrieve the api url from the config.
+// It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetAPIURL() (string, bool) {
+	envValue, envExist := getenv(scwAPIURLEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].ApiUrl != nil {
-		return *c.Profiles[activeProfile].ApiUrl
+
+	var apiURL string
+	switch {
+	case envExist:
+		apiURL = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].APIURL != nil:
+		apiURL = *c.Profiles[activeProfile].APIURL
+	case c.APIURL != nil:
+		apiURL = *c.APIURL
+	default:
+		return "", false
 	}
 
-	// STEP 3: default profile
-	if c.ApiUrl != nil {
-		return *c.ApiUrl
+	if apiURL == "" {
+		// warning
 	}
-	return ""
+
+	return apiURL, true
 }
 
-func (c *configV2) GetInsecure() bool {
-	// STEP 1: getenv
-	insecure := getenv(scwInsecureEnv, cliTLSVerifyEnv)
-	if insecure != "" {
-		insecureBool, _ := strconv.ParseBool(insecure)
-		return insecureBool
-	}
-
-	// STEP 2: active profile
-	activeProfile, err := c.getActiveProfile()
-	if err != nil {
-		// TODO: log invalid bool
-	}
-	if activeProfile != "" && c.Profiles[activeProfile].Insecure != nil {
-		return *c.Profiles[activeProfile].Insecure
-	}
-
-	// STEP 3: default profile
-	if c.Insecure != nil {
-		return *c.Insecure
-	}
-	return false
-}
-
-func (c *configV2) GetDefaultOrganizationId() string {
-	// STEP 1: getenv
-	defaultOrg := getenv(scwDefaultOrganizationIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
-	if defaultOrg != "" {
-		return defaultOrg
-	}
-
-	// STEP 2: active profile
+// GetInsecure retrieve the insecure flag from the config.
+// It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetInsecure() (bool, bool) {
+	envValue, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].DefaultOrganizationId != nil {
-		return *c.Profiles[activeProfile].DefaultOrganizationId
+
+	var insecure bool
+	var err error
+	switch {
+	case envExist:
+		insecure, err = strconv.ParseBool(envValue)
+		if err != nil {
+			// todo: warning
+		}
+	case activeProfile != "" && c.Profiles[activeProfile].Insecure != nil:
+		insecure = *c.Profiles[activeProfile].Insecure
+	case c.Insecure != nil:
+		insecure = *c.Insecure
+	default:
+		return false, false
 	}
 
-	// STEP 3: default profile
-	if c.DefaultOrganizationId != nil {
-		return *c.DefaultOrganizationId
-	}
-	return ""
+	return insecure, true
 }
 
-func (c *configV2) GetDefaultRegion() string {
-	// STEP 1: getenv
-	defaultRegion := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
-	if defaultRegion != "" {
-		return v1RegionToV2(defaultRegion)
-	}
-
-	// STEP 2: active profile
+// GetDefaultOrganizationID retrieve the default organization ID
+// from the config. It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetDefaultOrganizationID() (string, bool) {
+	envValue, envExist := getenv(scwDefaultOrganizationIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].DefaultRegion != nil {
-		return v1RegionToV2(*c.Profiles[activeProfile].DefaultRegion)
+
+	var defaultOrg string
+	switch {
+	case envExist:
+		defaultOrg = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].DefaultOrganizationID != nil:
+		defaultOrg = *c.Profiles[activeProfile].DefaultOrganizationID
+	case c.DefaultOrganizationID != nil:
+		defaultOrg = *c.DefaultOrganizationID
+	default:
+		return "", false
 	}
 
-	// STEP 3: default profile
-	if c.DefaultRegion != nil {
-		return v1RegionToV2(*c.DefaultRegion)
+	// todo: validate format
+	if defaultOrg == "" {
+		// todo: warning
 	}
-	return ""
+
+	return defaultOrg, true
 }
 
-func (c *configV2) GetDefaultZone() string {
-	// STEP 1: getenv
-	defaultZone := getenv(scwDefaultZoneEnv)
-	if defaultZone != "" {
-		return defaultZone
-	}
-
-	// STEP 2: active profile
+// GetDefaultRegion retrieve the default region
+// from the config. It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetDefaultRegion() (string, bool) {
+	envValue, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
 	activeProfile, _ := c.getActiveProfile()
-	if activeProfile != "" && c.Profiles[activeProfile].DefaultZone != nil {
-		return *c.Profiles[activeProfile].DefaultZone
+
+	var defaultRegion string
+	switch {
+	case envExist:
+		defaultRegion = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].DefaultRegion != nil:
+		defaultRegion = *c.Profiles[activeProfile].DefaultRegion
+	case c.DefaultRegion != nil:
+		defaultRegion = *c.DefaultRegion
+	default:
+		return "", false
 	}
 
-	// STEP 3: default profile
-	if c.DefaultZone != nil {
-		return *c.DefaultZone
+	// todo: validate format
+	if defaultRegion == "" {
+		// todo: warning
 	}
-	return ""
+
+	return defaultRegion, true
 }
 
-func getenv(upToDateKey string, deprecatedKeys ...string) string {
-	value := os.Getenv(upToDateKey)
-	if value != "" {
-		return value
+// GetDefaultZone retrieve the default zone
+// from the config. It will check the following order:
+// env, legacy env, active profile, default profile
+//
+// If the config is present in one of the above environment the
+// value (which may be empty) is returned and the boolean is true.
+// Otherwise the returned value will be empty and the boolean will
+// be false.
+func (c *configV2) GetDefaultZone() (string, bool) {
+	envValue, envExist := getenv(scwDefaultZoneEnv)
+	activeProfile, _ := c.getActiveProfile()
+
+	var defaultZone string
+	switch {
+	case envExist:
+		defaultZone = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].DefaultZone != nil:
+		defaultZone = *c.Profiles[activeProfile].DefaultZone
+	case c.DefaultZone != nil:
+		defaultZone = *c.DefaultZone
+	default:
+		return "", false
+	}
+
+	// todo: validate format
+	if defaultZone == "" {
+		// todo: warning
+	}
+
+	return defaultZone, true
+}
+
+func getenv(upToDateKey string, deprecatedKeys ...string) (string, bool) {
+	value, exist := os.LookupEnv(upToDateKey)
+	if exist {
+		return value, true
 	}
 
 	for _, key := range deprecatedKeys {
-		value = os.Getenv(key)
-		if value != "" {
+		value, exist := os.LookupEnv(key)
+		if exist {
 			// TODO: log deprecated
-			return value
+			return value, true
 		}
 	}
 
-	return ""
+	return "", false
 }
 
 const (
@@ -308,7 +391,7 @@ func unmarshalConfV1(content []byte) (*configV1, error) {
 func (v1 *configV1) toV2() *configV2 {
 	return &configV2{
 		profile: profile{
-			DefaultOrganizationId: &v1.Organization,
+			DefaultOrganizationID: &v1.Organization,
 			SecretKey:             &v1.Token,
 			// ignore v1 version
 		},

@@ -6,17 +6,25 @@ import (
 	"os"
 )
 
-func LoadWithProfile(profileName string) (*configV2, error) {
+// LoadWithProfile call Load() and set withProfile with the profile name.
+func LoadWithProfile(profileName string) (Config, error) {
 	config, err := Load()
 	if err != nil {
 		return nil, err
 	}
 
-	config.withProfile = profileName
-	return config.catchInvalidProfile()
+	v2Loaded := config.(*configV2)
+	v2Loaded.withProfile = profileName
+	return v2Loaded.catchInvalidProfile()
 }
 
-func Load() (*configV2, error) {
+// Load config in the following order:
+// - config file from SCW_CONFIG_PATH (V2 or V1)
+// - config file V2
+// - config file V1
+// When the latest is found it migrates the V1 config
+// to a V2 config following the V2 config path.
+func Load() (Config, error) {
 	// STEP 1: try to load config file from SCW_CONFIG_PATH
 	configPath := os.Getenv(scwConfigPathEnv)
 	if configPath != "" {
@@ -36,7 +44,7 @@ func Load() (*configV2, error) {
 		return confV2.catchInvalidProfile()
 	}
 
-	// STEP 2: try to load new config file
+	// STEP 2: try to load config file V2
 	v2Path, v2PathOk := GetConfigV2FilePath()
 	if v2PathOk && fileExist(v2Path) {
 		file, err := ioutil.ReadFile(v2Path)
@@ -51,7 +59,7 @@ func Load() (*configV2, error) {
 		return confV2.catchInvalidProfile()
 	}
 
-	// STEP 3: try to load V1 config file
+	// STEP 3: try to load config file V1
 	v1Path, v1PathOk := GetConfigV1FilePath()
 	if !v1PathOk {
 		return (&configV2{}).catchInvalidProfile()
