@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/scwconfig"
 )
 
 // ClientOption is a function which applies options to a settings object.
@@ -48,6 +49,42 @@ func WithUserAgent(ua string) ClientOption {
 func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(s *settings) {
 		s.httpClient = httpClient
+	}
+}
+
+// WithConfig client option configure a client with Scaleway configuration.
+func WithConfig(config scwconfig.Config) ClientOption {
+	return func(s *settings) {
+		accessKey, accessKeyExist := config.GetAccessKey()
+		secretKey, secretKeyExist := config.GetSecretKey()
+		if accessKeyExist && secretKeyExist {
+			s.token = auth.NewToken(accessKey, secretKey)
+		}
+
+		apiURL, exist := config.GetAPIURL()
+		if exist {
+			s.apiURL = apiURL
+		}
+
+		insecure, exist := config.GetInsecure()
+		if exist {
+			s.insecure = insecure
+		}
+
+		defaultOrganizationID, exist := config.GetDefaultOrganizationID()
+		if exist {
+			s.defaultOrganizationID = defaultOrganizationID
+		}
+
+		defaultRegion, exist := config.GetDefaultRegion()
+		if exist {
+			s.defaultRegion = Region(defaultRegion)
+		}
+
+		defaultZone, exist := config.GetDefaultZone()
+		if exist {
+			s.defaultZone = Zone(defaultZone)
+		}
 	}
 }
 
