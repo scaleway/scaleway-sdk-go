@@ -823,7 +823,7 @@ type ListServersRequest struct {
 func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
@@ -884,7 +884,7 @@ func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, err
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1045,7 +1045,7 @@ func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1386,7 +1386,7 @@ type ListImagesRequest struct {
 func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
@@ -1480,7 +1480,7 @@ func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error)
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1548,7 +1548,7 @@ func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1627,7 +1627,7 @@ type ListSnapshotsRequest struct {
 func (s *Api) ListSnapshots(req *ListSnapshotsRequest) (*ListSnapshotsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
@@ -1677,7 +1677,7 @@ func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotRespons
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1775,7 +1775,7 @@ func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error)
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -1854,7 +1854,7 @@ type ListVolumesRequest struct {
 func (s *Api) ListVolumes(req *ListVolumesRequest) (*ListVolumesResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
@@ -1925,7 +1925,7 @@ func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, err
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2025,7 +2025,7 @@ func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2104,7 +2104,7 @@ type ListSecurityGroupsRequest struct {
 func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest) (*ListSecurityGroupsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
@@ -2287,7 +2287,7 @@ func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGro
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2501,7 +2501,7 @@ func (s *Api) ListIps(req *ListIpsRequest) (*ListIpsResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2545,7 +2545,7 @@ func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2632,7 +2632,7 @@ func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationId()
+		req.Organization = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Zone == "" {
@@ -2861,7 +2861,7 @@ type GetDashboardRequest struct {
 func (s *Api) GetDashboard(req *GetDashboardRequest) (*GetDashboardResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationId()
+	val := s.client.GetDefaultOrganizationID()
 	if req.Organization == nil || *req.Organization == "" {
 		req.Organization = &val
 	}
