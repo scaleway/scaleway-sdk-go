@@ -96,7 +96,7 @@ func isEnabled(envKey string) bool {
 
 	value, err := strconv.ParseBool(env)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "environment variable %s has invalid boolean value\n", envKey)
+		fmt.Fprintf(os.Stderr, "ERROR: environment variable %s has invalid boolean value\n", envKey)
 	}
 
 	return value
