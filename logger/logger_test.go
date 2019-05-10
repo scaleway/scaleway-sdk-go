@@ -9,32 +9,27 @@ import (
 )
 
 var (
-	expectedError   = logEvent{"ab", LogLevelError}
-	expectedErrorf  = logEvent{"cd", LogLevelError}
-	expectedErrorln = logEvent{"e f", LogLevelError}
+	expectedError   = "ERROR: ab"
+	expectedErrorf  = "ERROR: cd"
+	expectedErrorln = "ERROR: e f"
 
-	expectedWarning   = logEvent{"gh", LogLevelWarning}
-	expectedWarningf  = logEvent{"ij", LogLevelWarning}
-	expectedWarningln = logEvent{"k l", LogLevelWarning}
+	expectedWarning   = "WARNING: gh"
+	expectedWarningf  = "WARNING: ij"
+	expectedWarningln = "WARNING: k l"
 
-	expectedInfo   = logEvent{"mn", LogLevelInfo}
-	expectedInfof  = logEvent{"op", LogLevelInfo}
-	expectedInfoln = logEvent{"q r", LogLevelInfo}
+	expectedInfo   = "INFO: mn"
+	expectedInfof  = "INFO: op"
+	expectedInfoln = "INFO: q r"
 
-	expectedDebug   = logEvent{"st", LogLevelDebug}
-	expectedDebugf  = logEvent{"uv", LogLevelDebug}
-	expectedDebugln = logEvent{"w x", LogLevelDebug}
+	expectedDebug   = "DEBUG: st"
+	expectedDebugf  = "DEBUG: uv"
+	expectedDebugln = "DEBUG: w x"
 )
-
-type logEvent struct {
-	msg   string
-	level LogLevel
-}
 
 func TestDebug(t *testing.T) {
 	buf := &bytes.Buffer{}
 	logThings(newLogger(buf, LogLevelDebug))
-	testThings(t, []logEvent{
+	testThings(t, []string{
 		expectedError,
 		expectedErrorf,
 		expectedErrorln,
@@ -53,7 +48,7 @@ func TestDebug(t *testing.T) {
 func TestInfo(t *testing.T) {
 	buf := &bytes.Buffer{}
 	logThings(newLogger(buf, LogLevelInfo))
-	testThings(t, []logEvent{
+	testThings(t, []string{
 		expectedError,
 		expectedErrorf,
 		expectedErrorln,
@@ -69,7 +64,7 @@ func TestInfo(t *testing.T) {
 func TestWarning(t *testing.T) {
 	buf := &bytes.Buffer{}
 	logThings(newLogger(buf, LogLevelWarning))
-	testThings(t, []logEvent{
+	testThings(t, []string{
 		expectedError,
 		expectedErrorf,
 		expectedErrorln,
@@ -82,21 +77,19 @@ func TestWarning(t *testing.T) {
 func TestError(t *testing.T) {
 	buf := &bytes.Buffer{}
 	logThings(newLogger(buf, LogLevelError))
-	testThings(t, []logEvent{
+	testThings(t, []string{
 		expectedError,
 		expectedErrorf,
 		expectedErrorln,
 	}, buf.String())
 }
 
-func testThings(t *testing.T, expectedEvents []logEvent, actualOutput string) {
+func testThings(t *testing.T, expectedEvents []string, actualOutput string) {
 	lines := strings.Split(actualOutput, "\n")
 	for i, line := range lines[:len(lines)-1] { // last line is always empty
 		tmp := strings.Split(line, " ")
-		actualLevel := tmp[0][:len(tmp[0])-1]       // remove the ":" at the end
-		actualMessage := strings.Join(tmp[3:], " ") // everything after XXXX: XXXX/XX/XX XX:XX:XX
-		testhelpers.Equals(t, expectedEvents[i].msg, actualMessage)
-		testhelpers.Equals(t, severityName[expectedEvents[i].level], actualLevel)
+		actualMessage := strings.Join(append([]string{tmp[0]}, tmp[3:]...), " ") // date and hour is not kept
+		testhelpers.Equals(t, expectedEvents[i], actualMessage)
 	}
 }
 
