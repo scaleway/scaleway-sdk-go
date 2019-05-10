@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 type settings struct {
@@ -15,8 +16,8 @@ type settings struct {
 	httpClient            *http.Client
 	insecure              bool
 	defaultOrganizationID string
-	defaultRegion         Region
-	defaultZone           Zone
+	defaultRegion         utils.Region
+	defaultZone           utils.Zone
 }
 
 func newSettings() *settings {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
@@ -14,8 +15,8 @@ const (
 	testAccessKey             = "ACCESS_KEY"
 	testSecretKey             = "539a6564-bf92-4dc9-a0d4-50e3ca827ecb"
 	testDefaultOrganizationID = "d45a075f-18a1-4e9f-824e-43914a3ae8bd"
-	testDefaultRegion         = RegionFrPar
-	testDefaultZone           = ZoneFrPar1
+	testDefaultRegion         = utils.RegionFrPar
+	testDefaultZone           = utils.ZoneFrPar1
 	testInsecure              = true
 )
 
@@ -39,23 +40,23 @@ type TestConfig struct{}
 func (c *TestConfig) GetAccessKey() (string, bool) {
 	return testAccessKey, true
 }
-func (c *TestConfig) GetSecretKey() (secretKey string, exist bool) {
+func (c *TestConfig) GetSecretKey() (string, bool) {
 	return testSecretKey, true
 }
-func (c *TestConfig) GetAPIURL() (apiURL string, exist bool) {
+func (c *TestConfig) GetAPIURL() (string, bool) {
 	return testAPIURL, true
 }
-func (c *TestConfig) GetInsecure() (insecure bool, exist bool) {
+func (c *TestConfig) GetInsecure() (bool, bool) {
 	return testInsecure, true
 }
-func (c *TestConfig) GetDefaultOrganizationID() (defaultOrganizationID string, exist bool) {
+func (c *TestConfig) GetDefaultOrganizationID() (string, bool) {
 	return testDefaultOrganizationID, true
 }
-func (c *TestConfig) GetDefaultRegion() (defaultRegion string, exist bool) {
-	return string(testDefaultRegion), true
+func (c *TestConfig) GetDefaultRegion() (utils.Region, bool) {
+	return testDefaultRegion, true
 }
-func (c *TestConfig) GetDefaultZone() (defaultZone string, exist bool) {
-	return string(testDefaultZone), true
+func (c *TestConfig) GetDefaultZone() (utils.Zone, bool) {
+	return testDefaultZone, true
 }
 
 func TestNewClientWithOptions(t *testing.T) {

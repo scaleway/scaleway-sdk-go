@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/scaleway/scaleway-sdk-go/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -57,8 +58,8 @@ type Config interface {
 	GetAPIURL() (apiURL string, exist bool)
 	GetInsecure() (insecure bool, exist bool)
 	GetDefaultOrganizationID() (defaultOrganizationID string, exist bool)
-	GetDefaultRegion() (defaultRegion string, exist bool)
-	GetDefaultZone() (defaultZone string, exist bool)
+	GetDefaultRegion() (defaultRegion utils.Region, exist bool)
+	GetDefaultZone() (defaultZone utils.Zone, exist bool)
 }
 
 type configV2 struct {
@@ -289,7 +290,7 @@ func (c *configV2) GetDefaultOrganizationID() (string, bool) {
 // value (which may be empty) is returned and the boolean is true.
 // Otherwise the returned value will be empty and the boolean will
 // be false.
-func (c *configV2) GetDefaultRegion() (string, bool) {
+func (c *configV2) GetDefaultRegion() (utils.Region, bool) {
 	envValue, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
 	activeProfile, _ := c.getActiveProfile()
 
@@ -310,7 +311,7 @@ func (c *configV2) GetDefaultRegion() (string, bool) {
 		// todo: warning
 	}
 
-	return defaultRegion, true
+	return utils.Region(defaultRegion), true
 }
 
 // GetDefaultZone retrieve the default zone
@@ -321,7 +322,7 @@ func (c *configV2) GetDefaultRegion() (string, bool) {
 // value (which may be empty) is returned and the boolean is true.
 // Otherwise the returned value will be empty and the boolean will
 // be false.
-func (c *configV2) GetDefaultZone() (string, bool) {
+func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
 	envValue, envExist := getenv(scwDefaultZoneEnv)
 	activeProfile, _ := c.getActiveProfile()
 
@@ -342,7 +343,7 @@ func (c *configV2) GetDefaultZone() (string, bool) {
 		// todo: warning
 	}
 
-	return defaultZone, true
+	return utils.Zone(defaultZone), true
 }
 
 func getenv(upToDateKey string, deprecatedKeys ...string) (string, bool) {

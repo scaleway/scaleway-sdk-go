@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 

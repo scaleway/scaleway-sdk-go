@@ -5,6 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/scwconfig"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // ClientOption is a function which applies options to a settings object.
@@ -78,12 +79,12 @@ func WithConfig(config scwconfig.Config) ClientOption {
 
 		defaultRegion, exist := config.GetDefaultRegion()
 		if exist {
-			s.defaultRegion = Region(defaultRegion)
+			s.defaultRegion = defaultRegion
 		}
 
 		defaultZone, exist := config.GetDefaultZone()
 		if exist {
-			s.defaultZone = Zone(defaultZone)
+			s.defaultZone = defaultZone
 		}
 	}
 }
@@ -100,7 +101,7 @@ func WithDefaultOrganizationID(organizationID string) ClientOption {
 // WithDefaultRegion client option sets the client default region.
 //
 // It will be used as the default value of the region field in all requests made with this client.
-func WithDefaultRegion(region Region) ClientOption {
+func WithDefaultRegion(region utils.Region) ClientOption {
 	return func(s *settings) {
 		s.defaultRegion = region
 	}
@@ -109,7 +110,7 @@ func WithDefaultRegion(region Region) ClientOption {
 // WithDefaultZone client option sets the client default zone.
 //
 // It will be used as the default value of the zone field in all requests made with this client.
-func WithDefaultZone(zone Zone) ClientOption {
+func WithDefaultZone(zone utils.Zone) ClientOption {
 	return func(s *settings) {
 		s.defaultZone = zone
 	}

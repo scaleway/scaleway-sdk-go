@@ -6,6 +6,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/api/lb/v1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func Example_apiClient() {
@@ -42,7 +43,7 @@ func Example_listServers() {
 
 	// Call the ListServers method on the Instance SDK
 	response, err := instanceAPI.ListServers(&instance.ListServersRequest{
-		Zone: scw.ZoneFrPar1,
+		Zone: utils.ZoneFrPar1,
 	})
 	if err != nil {
 		// handle error
@@ -70,7 +71,7 @@ func Example_createLoadBalancer() {
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
 		OrganizationId: "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-		Region:         scw.RegionFrPar,
+		Region:         utils.RegionFrPar,
 	})
 
 	if err != nil {
