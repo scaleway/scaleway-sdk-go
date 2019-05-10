@@ -6,6 +6,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/api/lb/v1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/scwconfig"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -14,6 +15,28 @@ func Example_apiClient() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+	)
+	if err != nil {
+		// handle error
+	}
+
+	// Create SDK objects for specific Scaleway Products
+	instance := instance.NewApi(client)
+	lb := lb.NewApi(client)
+
+	// Start using the SDKs
+	_, _ = instance, lb
+
+}
+
+func Example_apiClientWithConfig() {
+
+	// Get Scaleway Config
+	config, err := scwconfig.Load() // Get your credentials at https://console.scaleway.com/account/credentials
+
+	// Create a Scaleway client
+	client, err := scw.NewClient(
+		scw.WithConfig(config),
 	)
 	if err != nil {
 		// handle error
