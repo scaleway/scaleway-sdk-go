@@ -55,9 +55,9 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 // WithConfig client option configure a client with Scaleway configuration.
 func WithConfig(config scwconfig.Config) ClientOption {
 	return func(s *settings) {
-		accessKey, accessKeyExist := config.GetAccessKey()
+		accessKey, _ := config.GetAccessKey()
 		secretKey, secretKeyExist := config.GetSecretKey()
-		if accessKeyExist && secretKeyExist {
+		if secretKeyExist {
 			s.token = auth.NewToken(accessKey, secretKey)
 		}
 

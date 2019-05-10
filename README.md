@@ -34,13 +34,20 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/scwconfig"
 )
 
 func main() {
 
+	// Get Scaleway Config
+	config, err := scwconfig.Load() // Get your credentials at https://console.scaleway.com/account/credentials
+	if err != nil {
+    panic(err)
+  }
+
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithConfig(config),
 	)
 	if err != nil {
 		panic(err)

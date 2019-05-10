@@ -12,7 +12,7 @@ const (
 	testAPIURL                = "https://api.example.com/"
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "ACCESS_KEY"
-	testSecretKey             = "SECRET_KEY"
+	testSecretKey             = "539a6564-bf92-4dc9-a0d4-50e3ca827ecb"
 	testDefaultOrganizationID = "d45a075f-18a1-4e9f-824e-43914a3ae8bd"
 	testDefaultRegion         = RegionFrPar
 	testDefaultZone           = ZoneFrPar1
@@ -95,8 +95,8 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
 		clientTransport, ok := client.httpClient.Transport.(*http.Transport)
-		testhelpers.Equals(t, true, ok)
-		testhelpers.NotNil(t, clientTransport.TLSClientConfig)
+		testhelpers.Assert(t, ok, "clientTransport must be not nil")
+		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
 
 		testhelpers.Equals(t, testDefaultOrganizationID, client.GetDefaultOrganizationID())

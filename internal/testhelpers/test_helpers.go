@@ -34,12 +34,3 @@ func Equals(tb testing.TB, exp, act interface{}) {
 		tb.FailNow()
 	}
 }
-
-// NotNil check if val is not nil.
-func NotNil(tb testing.TB, val interface{}) {
-	if val == nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d: expected a not nil value \033[39m\n\n", filepath.Base(file), line)
-		tb.FailNow()
-	}
-}
