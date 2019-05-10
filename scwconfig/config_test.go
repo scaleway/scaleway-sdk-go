@@ -5,9 +5,18 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func s(value string) *string {
+	return &value
+}
+
+func r(value utils.Region) *utils.Region {
+	return &value
+}
+
+func z(value utils.Zone) *utils.Zone {
 	return &value
 }
 
@@ -28,8 +37,8 @@ func TestConfig(t *testing.T) {
 		expectedAPIURL                *string
 		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
-		expectedDefaultRegion         *string
-		expectedDefaultZone           *string
+		expectedDefaultRegion         *utils.Region
+		expectedDefaultZone           *utils.Zone
 	}{
 		// no env variables
 		{
@@ -72,7 +81,7 @@ func TestConfig(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
 		},
 		{
 			name: "Simple config with valid V2", // default config path
@@ -85,7 +94,7 @@ func TestConfig(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
 		},
 		{
 			name: "Simple config with valid V1",
@@ -110,7 +119,7 @@ func TestConfig(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
 		},
 		{
 			name: "Complete config",
@@ -125,8 +134,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedDefaultZone:           s(v2ValidDefaultZone),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone)),
 		},
 		{
 			name: "Complete config with active profile",
@@ -141,8 +150,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
-			expectedDefaultZone:           s(v2ValidDefaultZone2),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone2)),
 		},
 
 		// up-to-date env variables
@@ -162,8 +171,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedDefaultZone:           s(v2ValidDefaultZone),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone)),
 		},
 		{
 			name: "Complete config file with env variables",
@@ -185,8 +194,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
-			expectedDefaultZone:           s(v2ValidDefaultZone2),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone2)),
 		},
 		{
 			name: "Complete config with active profile env variable",
@@ -202,8 +211,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
-			expectedDefaultZone:           s(v2ValidDefaultZone2),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone2)),
 		},
 		{
 			name: "Complete config with active profile env variable and all env variables",
@@ -226,8 +235,8 @@ func TestConfig(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedDefaultZone:           s(v2ValidDefaultZone),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:           z(utils.Zone(v2ValidDefaultZone)),
 		},
 
 		// legacy env variables
@@ -242,7 +251,7 @@ func TestConfig(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion)),
 		},
 		{
 			name: "No config with CLI legacy env variables",
@@ -255,7 +264,7 @@ func TestConfig(t *testing.T) {
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
+			expectedDefaultRegion:         r(utils.Region(v2ValidDefaultRegion2)),
 		},
 	}
 
@@ -329,20 +338,20 @@ const emptyFile = ""
 // v2 config
 var (
 	v2ValidAccessKey2             = "ACCESS_KEY2"
-	v2ValidSecretKey2             = "23cd9bbf-519f-4fc8-912e-83bbd18e4247"
+	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
 	v2ValidInsecure2              = "true"
-	v2ValidDefaultOrganizationID2 = "76ca3ea8-0a29-4e39-b4ae-f7a770868072"
-	v2ValidDefaultRegion2         = "fr-par"
-	v2ValidDefaultZone2           = "fr-par-2"
+	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
+	v2ValidDefaultRegion2         = string(utils.RegionFrPar)
+	v2ValidDefaultZone2           = string(utils.ZoneFrPar2)
 
 	v2ValidAccessKey             = "ACCESS_KEY"
-	v2ValidSecretKey             = "539a6564-bf92-4dc9-a0d4-50e3ca827ecb"
+	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
 	v2ValidInsecure              = "false"
-	v2ValidDefaultOrganizationID = "d45a075f-18a1-4e9f-824e-43914a3ae8bd"
-	v2ValidDefaultRegion         = "nl-ams"
-	v2ValidDefaultZone           = "nl-ams-1"
+	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	v2ValidDefaultRegion         = string(utils.RegionNlAms)
+	v2ValidDefaultZone           = string(utils.ZoneNlAms1)
 	v2ValidProfile               = "flantier"
 
 	v2SimpleValidConfig = &configV2{

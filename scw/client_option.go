@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/scwconfig"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // ClientOption is a function which applies options to a settings object.
@@ -51,6 +53,43 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 	}
 }
 
+// WithConfig client option configure a client with Scaleway configuration.
+func WithConfig(config scwconfig.Config) ClientOption {
+	return func(s *settings) {
+		// The access key is not used for API authentications.
+		accessKey, _ := config.GetAccessKey()
+		secretKey, secretKeyExist := config.GetSecretKey()
+		if secretKeyExist {
+			s.token = auth.NewToken(accessKey, secretKey)
+		}
+
+		apiURL, exist := config.GetAPIURL()
+		if exist {
+			s.apiURL = apiURL
+		}
+
+		insecure, exist := config.GetInsecure()
+		if exist {
+			s.insecure = insecure
+		}
+
+		defaultOrganizationID, exist := config.GetDefaultOrganizationID()
+		if exist {
+			s.defaultOrganizationID = defaultOrganizationID
+		}
+
+		defaultRegion, exist := config.GetDefaultRegion()
+		if exist {
+			s.defaultRegion = defaultRegion
+		}
+
+		defaultZone, exist := config.GetDefaultZone()
+		if exist {
+			s.defaultZone = defaultZone
+		}
+	}
+}
+
 // WithDefaultOrganizationID client option sets the client default organization ID.
 //
 // It will be used as the default value of the organization_id field in all requests made with this client.
@@ -63,7 +102,7 @@ func WithDefaultOrganizationID(organizationID string) ClientOption {
 // WithDefaultRegion client option sets the client default region.
 //
 // It will be used as the default value of the region field in all requests made with this client.
-func WithDefaultRegion(region Region) ClientOption {
+func WithDefaultRegion(region utils.Region) ClientOption {
 	return func(s *settings) {
 		s.defaultRegion = region
 	}
@@ -72,7 +111,7 @@ func WithDefaultRegion(region Region) ClientOption {
 // WithDefaultZone client option sets the client default zone.
 //
 // It will be used as the default value of the zone field in all requests made with this client.
-func WithDefaultZone(zone Zone) ClientOption {
+func WithDefaultZone(zone utils.Zone) ClientOption {
 	return func(s *settings) {
 		s.defaultZone = zone
 	}

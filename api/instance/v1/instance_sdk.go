@@ -726,7 +726,7 @@ type VolumeTemplate struct {
 // Service Api
 
 type GetServerTypesAvailabilityRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	PerPage *int32 `json:"-"`
 
@@ -768,7 +768,7 @@ func (s *Api) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest)
 }
 
 type ListServersTypesRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	PerPage *int32 `json:"-"`
 
@@ -810,7 +810,7 @@ func (s *Api) ListServersTypes(req *ListServersTypesRequest) (*ListServersTypesR
 }
 
 type ListServersRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -858,7 +858,7 @@ func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error)
 }
 
 type CreateServerRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 	// Name: display the server name
 	Name string `json:"name,omitempty"`
 	// DynamicIpRequired: define if a dynamic IP is required for the instance
@@ -918,7 +918,7 @@ func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, err
 }
 
 type DeleteServerRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 }
@@ -948,7 +948,7 @@ func (s *Api) DeleteServer(req *DeleteServerRequest) error {
 }
 
 type GetServerRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 }
@@ -984,7 +984,7 @@ func (s *Api) GetServer(req *GetServerRequest) (*GetServerResponse, error) {
 }
 
 type SetServerRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 	// Id: display the server unique ID
 	Id string `json:"-"`
 	// Name: display the server name
@@ -1079,7 +1079,7 @@ func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 }
 
 type UpdateServerRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 
@@ -1139,7 +1139,7 @@ func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, err
 }
 
 type ListServerActionsRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 }
@@ -1175,7 +1175,7 @@ func (s *Api) ListServerActions(req *ListServerActionsRequest) (*ListServerActio
 }
 
 type ServerActionRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 
@@ -1219,7 +1219,7 @@ func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, err
 }
 
 type ListServerUserDataRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 }
@@ -1255,7 +1255,7 @@ func (s *Api) ListServerUserData(req *ListServerUserDataRequest) (*ListServerUse
 }
 
 type DeleteServerUserDataRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 
@@ -1287,7 +1287,7 @@ func (s *Api) DeleteServerUserData(req *DeleteServerUserDataRequest) error {
 }
 
 type SetServerUserDataRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 
@@ -1327,7 +1327,7 @@ func (s *Api) SetServerUserData(req *SetServerUserDataRequest) error {
 }
 
 type GetServerUserDataRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ServerId string `json:"-"`
 
@@ -1365,7 +1365,7 @@ func (s *Api) GetServerUserData(req *GetServerUserDataRequest) (*utils.File, err
 }
 
 type ListImagesRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -1424,7 +1424,7 @@ func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
 }
 
 type GetImageRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ImageId string `json:"-"`
 }
@@ -1460,7 +1460,7 @@ func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
 }
 
 type CreateImageRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -1514,7 +1514,7 @@ func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error)
 }
 
 type SetImageRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Id string `json:"-"`
 
@@ -1582,7 +1582,7 @@ func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
 }
 
 type DeleteImageRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	ImageId string `json:"-"`
 }
@@ -1612,7 +1612,7 @@ func (s *Api) DeleteImage(req *DeleteImageRequest) error {
 }
 
 type ListSnapshotsRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -1663,7 +1663,7 @@ func (s *Api) ListSnapshots(req *ListSnapshotsRequest) (*ListSnapshotsResponse, 
 }
 
 type CreateSnapshotRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	VolumeId string `json:"volume_id,omitempty"`
 
@@ -1711,7 +1711,7 @@ func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotRespons
 }
 
 type GetSnapshotRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SnapshotId string `json:"-"`
 }
@@ -1747,7 +1747,7 @@ func (s *Api) GetSnapshot(req *GetSnapshotRequest) (*GetSnapshotResponse, error)
 }
 
 type SetSnapshotRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Id string `json:"-"`
 
@@ -1809,7 +1809,7 @@ func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error)
 }
 
 type DeleteSnapshotRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SnapshotId string `json:"-"`
 }
@@ -1839,7 +1839,7 @@ func (s *Api) DeleteSnapshot(req *DeleteSnapshotRequest) error {
 }
 
 type ListVolumesRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -1890,7 +1890,7 @@ func (s *Api) ListVolumes(req *ListVolumesRequest) (*ListVolumesResponse, error)
 }
 
 type CreateVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -1959,7 +1959,7 @@ func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, err
 }
 
 type GetVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	VolumeId string `json:"-"`
 }
@@ -1995,7 +1995,7 @@ func (s *Api) GetVolume(req *GetVolumeRequest) (*GetVolumeResponse, error) {
 }
 
 type SetVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 	// Id: display the volumes unique ID
 	Id string `json:"-"`
 	// Name: display the volumes names
@@ -2059,7 +2059,7 @@ func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
 }
 
 type DeleteVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	VolumeId string `json:"-"`
 }
@@ -2089,7 +2089,7 @@ func (s *Api) DeleteVolume(req *DeleteVolumeRequest) error {
 }
 
 type ListSecurityGroupsRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -2139,7 +2139,7 @@ func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest) (*ListSecurityG
 }
 
 type CreateSecurityGroupRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -2189,7 +2189,7 @@ func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest) (*CreateSecur
 }
 
 type GetSecurityGroupRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 }
@@ -2225,7 +2225,7 @@ func (s *Api) GetSecurityGroup(req *GetSecurityGroupRequest) (*GetSecurityGroupR
 }
 
 type DeleteSecurityGroupRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 }
@@ -2253,7 +2253,7 @@ func (s *Api) DeleteSecurityGroup(req *DeleteSecurityGroupRequest) error {
 }
 
 type SetSecurityGroupRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 	// Id: display the security groups' unique ID
 	Id string `json:"-"`
 	// Name: display the security groups name
@@ -2321,7 +2321,7 @@ func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGro
 }
 
 type ListSecurityGroupRulesRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 
@@ -2363,7 +2363,7 @@ func (s *Api) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest) (*ListS
 }
 
 type CreateSecurityGroupRuleRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 
@@ -2419,7 +2419,7 @@ func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest) (*Cre
 }
 
 type DeleteSecurityGroupRuleRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 
@@ -2451,7 +2451,7 @@ func (s *Api) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest) error
 }
 
 type GetSecurityGroupRuleRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	SecurityGroupId string `json:"-"`
 
@@ -2489,7 +2489,7 @@ func (s *Api) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest) (*GetSecuri
 }
 
 type ListIpsRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization string `json:"-"`
 
@@ -2533,7 +2533,7 @@ func (s *Api) ListIps(req *ListIpsRequest) (*ListIpsResponse, error) {
 }
 
 type CreateIpRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization string `json:"organization,omitempty"`
 
@@ -2579,7 +2579,7 @@ func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
 }
 
 type GetIpRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	IpId string `json:"-"`
 }
@@ -2615,7 +2615,7 @@ func (s *Api) GetIp(req *GetIpRequest) (*GetIpResponse, error) {
 }
 
 type SetIpRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Id string `json:"-"`
 
@@ -2666,7 +2666,7 @@ func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 }
 
 type UpdateIpRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	IpId string `json:"-"`
 
@@ -2710,7 +2710,7 @@ func (s *Api) UpdateIp(req *UpdateIpRequest) (*UpdateIpResponse, error) {
 }
 
 type DeleteIpRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	IpId string `json:"-"`
 }
@@ -2740,7 +2740,7 @@ func (s *Api) DeleteIp(req *DeleteIpRequest) error {
 }
 
 type ListBootscriptsRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Arch *string `json:"-"`
 
@@ -2786,7 +2786,7 @@ func (s *Api) ListBootscripts(req *ListBootscriptsRequest) (*ListBootscriptsResp
 }
 
 type GetBootscriptRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	BootscriptId string `json:"-"`
 }
@@ -2822,7 +2822,7 @@ func (s *Api) GetBootscript(req *GetBootscriptRequest) (*GetBootscriptResponse, 
 }
 
 type GetServiceInfoRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 }
 
 func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoResponse, error) {
@@ -2853,7 +2853,7 @@ func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoRespons
 }
 
 type GetDashboardRequest struct {
-	Zone scw.Zone `json:"-"`
+	Zone utils.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 }

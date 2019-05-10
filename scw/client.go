@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // Client is the Scaleway client which performs API requests.
@@ -20,8 +21,8 @@ type Client struct {
 	apiURL                string
 	userAgent             string
 	defaultOrganizationID string
-	defaultRegion         Region
-	defaultZone           Zone
+	defaultRegion         utils.Region
+	defaultZone           utils.Zone
 }
 
 // NewClient instantiates a new Client object.
@@ -78,14 +79,14 @@ func (c *Client) GetDefaultOrganizationID() string {
 // GetDefaultRegion return the default region of the client.
 // This value can be set from the client option
 // WithDefaultRegion(). Be aware this value can be empty.
-func (c *Client) GetDefaultRegion() Region {
+func (c *Client) GetDefaultRegion() utils.Region {
 	return c.defaultRegion
 }
 
 // GetDefaultZone return the default zone of the client.
 // This value can be set from the client option
 // WithDefaultZone(). Be aware this value can be empty.
-func (c *Client) GetDefaultZone() Zone {
+func (c *Client) GetDefaultZone() utils.Zone {
 	return c.defaultZone
 }
 
