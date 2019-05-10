@@ -8,22 +8,22 @@ import (
 type LogLevel int
 
 const (
-	// debugLog indicates Debug severity.
-	debugLog LogLevel = iota
-	// infoLog indicates Info severity.
-	infoLog
-	// warningLog indicates Warning severity.
-	warningLog
-	// errorLog indicates Error severity.
-	errorLog
+	// LogLevelDebug indicates Debug severity.
+	LogLevelDebug LogLevel = iota
+	// LogLevelInfo indicates Info severity.
+	LogLevelInfo
+	// LogLevelWarning indicates Warning severity.
+	LogLevelWarning
+	// LogLevelError indicates Error severity.
+	LogLevelError
 )
 
 // severityName contains the string representation of each severity.
 var severityName = []string{
-	debugLog:   "DEBUG",
-	infoLog:    "INFO",
-	warningLog: "WARNING",
-	errorLog:   "ERROR",
+	LogLevelDebug:   "DEBUG",
+	LogLevelInfo:    "INFO",
+	LogLevelWarning: "WARNING",
+	LogLevelError:   "ERROR",
 }
 
 // Logger does underlying logging work for scaleway-sdk-go.
@@ -67,9 +67,9 @@ func SetLevel(level LogLevel) {
 // Debug logs will be written to debugW.
 func NewLogger(debugW, infoW, warningW, errorW io.Writer) Logger {
 	var m []*log.Logger
-	m = append(m, log.New(debugW, severityName[debugLog]+": ", log.LstdFlags))
-	m = append(m, log.New(io.MultiWriter(debugW, infoW), severityName[infoLog]+": ", log.LstdFlags))
-	m = append(m, log.New(io.MultiWriter(debugW, infoW, warningW), severityName[warningLog]+": ", log.LstdFlags))
-	m = append(m, log.New(io.MultiWriter(debugW, infoW, warningW, errorW), severityName[errorLog]+": ", log.LstdFlags))
+	m = append(m, log.New(debugW, severityName[LogLevelDebug]+": ", log.LstdFlags))
+	m = append(m, log.New(io.MultiWriter(debugW, infoW), severityName[LogLevelInfo]+": ", log.LstdFlags))
+	m = append(m, log.New(io.MultiWriter(debugW, infoW, warningW), severityName[LogLevelWarning]+": ", log.LstdFlags))
+	m = append(m, log.New(io.MultiWriter(debugW, infoW, warningW, errorW), severityName[LogLevelError]+": ", log.LstdFlags))
 	return &loggerT{m: m}
 }
