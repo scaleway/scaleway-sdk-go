@@ -32,7 +32,10 @@ func Example_apiClient() {
 func Example_apiClientWithConfig() {
 
 	// Get Scaleway Config
-	config, err := scwconfig.Load() // Get your credentials at https://console.scaleway.com/account/credentials
+	config, err := scwconfig.Load()
+	if err != nil {
+		// handle error
+	}
 
 	// Create a Scaleway client
 	client, err := scw.NewClient(

@@ -56,6 +56,7 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 // WithConfig client option configure a client with Scaleway configuration.
 func WithConfig(config scwconfig.Config) ClientOption {
 	return func(s *settings) {
+		// The access key is not used for API authentications.
 		accessKey, _ := config.GetAccessKey()
 		secretKey, secretKeyExist := config.GetSecretKey()
 		if secretKeyExist {
