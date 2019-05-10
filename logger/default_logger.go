@@ -2,13 +2,32 @@ package logger
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 )
 
-var logger = newLogger(LogLevelWarning)
+var logger = newLogger(os.Stderr, LogLevelWarning)
+
+// Debug logs to the DEBUG log.
+func Debug(args ...interface{}) { logger.Debug(args...) }
+func (g *loggerT) Debug(args ...interface{}) {
+	g.m[LogLevelDebug].Print(args...)
+}
+
+// Debugf logs to the DEBUG log. Arguments are handled in the manner of fmt.Printf.
+func Debugf(format string, args ...interface{}) { logger.Debugf(format, args...) }
+func (g *loggerT) Debugf(format string, args ...interface{}) {
+	g.m[LogLevelDebug].Printf(format, args...)
+}
+
+// Debugln logs to the DEBUG log. Arguments are handled in the manner of fmt.Println.
+func Debugln(args ...interface{}) { logger.Debugln(args...) }
+func (g *loggerT) Debugln(args ...interface{}) {
+	g.m[LogLevelDebug].Println(args...)
+}
 
 // Info logs to the INFO log.
 func Info(args ...interface{}) { logger.Info(args...) }
@@ -69,30 +88,6 @@ type loggerT struct {
 	m []*log.Logger
 }
 
-// newLogger creates a logger to be used as default logger.
-// All logs are written to stderr.
-func newLogger(level LogLevel) Logger {
-	errorW := ioutil.Discard
-	warningW := ioutil.Discard
-	infoW := ioutil.Discard
-	debugW := ioutil.Discard
-	if isEnabled("SCW_DEBUG") {
-		level = LogLevelDebug
-	}
-	switch level {
-	case LogLevelDebug:
-		debugW = os.Stderr
-	case LogLevelInfo:
-		infoW = os.Stderr
-	case LogLevelWarning:
-		warningW = os.Stderr
-	case LogLevelError:
-		errorW = os.Stderr
-	}
-
-	return NewLogger(debugW, infoW, warningW, errorW)
-}
-
 func isEnabled(envKey string) bool {
 	env, exist := os.LookupEnv(envKey)
 	if !exist {
@@ -105,4 +100,28 @@ func isEnabled(envKey string) bool {
 	}
 
 	return value
+}
+
+// newLogger creates a logger to be used as default logger.
+// All logs are written to stderr.
+func newLogger(w io.Writer, level LogLevel) Logger {
+	errorW := ioutil.Discard
+	warningW := ioutil.Discard
+	infoW := ioutil.Discard
+	debugW := ioutil.Discard
+	if isEnabled("SCW_DEBUG") {
+		level = LogLevelDebug
+	}
+	switch level {
+	case LogLevelDebug:
+		debugW = w
+	case LogLevelInfo:
+		infoW = w
+	case LogLevelWarning:
+		warningW = w
+	case LogLevelError:
+		errorW = w
+	}
+
+	return NewLogger(debugW, infoW, warningW, errorW)
 }

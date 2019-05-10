@@ -3,6 +3,7 @@ package logger
 import (
 	"io"
 	"log"
+	"os"
 )
 
 type LogLevel int
@@ -28,6 +29,12 @@ var severityName = []string{
 
 // Logger does underlying logging work for scaleway-sdk-go.
 type Logger interface {
+	// Debug logs to DEBUG log. Arguments are handled in the manner of fmt.Print.
+	Debug(args ...interface{})
+	// Debugln logs to DEBUG log. Arguments are handled in the manner of fmt.Println.
+	Debugln(args ...interface{})
+	// Debugf logs to DEBUG log. Arguments are handled in the manner of fmt.Printf.
+	Debugf(format string, args ...interface{})
 	// Info logs to INFO log. Arguments are handled in the manner of fmt.Print.
 	Info(args ...interface{})
 	// Infoln logs to INFO log. Arguments are handled in the manner of fmt.Println.
@@ -57,7 +64,7 @@ func SetLogger(l Logger) {
 // SetLevel create a new default logger with the given log level.
 // Not mutex-protected, should be called before any scaleway-sdk-go functions.
 func SetLevel(level LogLevel) {
-	logger = newLogger(level)
+	logger = newLogger(os.Stderr, level)
 }
 
 // NewLogger creates a logger with the provided writers.
