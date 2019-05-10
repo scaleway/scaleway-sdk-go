@@ -34,13 +34,16 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func main() {
 
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		// Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
 	)
 	if err != nil {
 		panic(err)
@@ -51,7 +54,7 @@ func main() {
 
 	// Call the ListServers method on the Instance SDK
 	response, err := instanceApi.ListServers(&instance.ListServersRequest{
-		Zone: scw.ZoneFrPar1,
+		Zone: utils.ZoneFrPar1,
 	})
 	if err != nil {
 		panic(err)
