@@ -13,8 +13,8 @@ const (
 	testAPIURL                = "https://api.example.com/"
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "ACCESS_KEY"
-	testSecretKey             = "7363616C-6577-6573-6862-6F7579616161" // | xxd -ps -r
-	testDefaultOrganizationID = "6170692E-7363-616C-6577-61792E636F6D" // | xxd -ps -r
+	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
+	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	testDefaultRegion         = utils.RegionFrPar
 	testDefaultZone           = utils.ZoneFrPar1
 	testInsecure              = true

@@ -338,18 +338,18 @@ const emptyFile = ""
 // v2 config
 var (
 	v2ValidAccessKey2             = "ACCESS_KEY2"
-	v2ValidSecretKey2             = "6F6E6574-6F72-756C-6C74-68656D616C6C" // | xxd -ps -r
+	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
 	v2ValidInsecure2              = "true"
-	v2ValidDefaultOrganizationID2 = "6D6F7264-6F72-6772-6561-74616761696E" // | xxd -ps -r
+	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultRegion2         = string(utils.RegionFrPar)
 	v2ValidDefaultZone2           = string(utils.ZoneFrPar2)
 
 	v2ValidAccessKey             = "ACCESS_KEY"
-	v2ValidSecretKey             = "7363616C-6577-6573-6862-6F7579616161" // | xxd -ps -r
+	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
 	v2ValidInsecure              = "false"
-	v2ValidDefaultOrganizationID = "6170692E-7363-616C-6577-61792E636F6D" // | xxd -ps -r
+	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	v2ValidDefaultRegion         = string(utils.RegionNlAms)
 	v2ValidDefaultZone           = string(utils.ZoneNlAms1)
 	v2ValidProfile               = "flantier"
