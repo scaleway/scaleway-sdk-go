@@ -901,7 +901,7 @@ func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, err
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1062,7 +1062,7 @@ func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1122,7 +1122,7 @@ func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, err
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1202,7 +1202,7 @@ func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, err
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1316,7 +1316,7 @@ func (s *Api) SetServerUserData(req *SetServerUserDataRequest) error {
 		return err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	_, err = s.client.Do(scwReq)
 
@@ -1497,7 +1497,7 @@ func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error)
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1565,7 +1565,7 @@ func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1694,7 +1694,7 @@ func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotRespons
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1792,7 +1792,7 @@ func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error)
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1942,7 +1942,7 @@ func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, err
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2042,7 +2042,7 @@ func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2172,7 +2172,7 @@ func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest) (*CreateSecur
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2304,7 +2304,7 @@ func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGro
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2402,7 +2402,7 @@ func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest) (*Cre
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2562,7 +2562,7 @@ func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2649,7 +2649,7 @@ func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2693,7 +2693,7 @@ func (s *Api) UpdateIp(req *UpdateIpRequest) (*UpdateIpResponse, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 

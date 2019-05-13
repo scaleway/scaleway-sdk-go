@@ -704,7 +704,7 @@ func (s *Api) CreateLb(req *CreateLbRequest) (*Lb, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -782,7 +782,7 @@ func (s *Api) UpdateLb(req *UpdateLbRequest) (*Lb, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1123,7 +1123,7 @@ func (s *Api) CreateBackend(req *CreateBackendRequest) (*Backend, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1257,7 +1257,7 @@ func (s *Api) UpdateBackend(req *UpdateBackendRequest) (*Backend, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1325,7 +1325,7 @@ func (s *Api) AddBackendServers(req *AddBackendServersRequest) (*Backend, error)
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1366,7 +1366,7 @@ func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest) (*Backend, 
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1407,7 +1407,7 @@ func (s *Api) SetBackendServers(req *SetBackendServersRequest) (*Backend, error)
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1526,7 +1526,7 @@ func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest) (*HealthCheck, er
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1653,7 +1653,7 @@ func (s *Api) CreateFrontend(req *CreateFrontendRequest) (*Frontend, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1765,7 +1765,7 @@ func (s *Api) UpdateFrontend(req *UpdateFrontendRequest) (*Frontend, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -1920,7 +1920,7 @@ func (s *Api) CreateAcl(req *CreateAclRequest) (*Acl, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
@@ -2000,7 +2000,7 @@ func (s *Api) UpdateAcl(req *UpdateAclRequest) (*Acl, error) {
 		return nil, err
 	}
 	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body
+	scwReq.Body = body.Reader
 
 	scwResp, err := s.client.Do(scwReq)
 
