@@ -9,12 +9,18 @@ import (
 	"strconv"
 )
 
-var logger = newLogger(os.Stderr, LogLevelWarning)
+var DefaultLogger = newLogger(os.Stderr, LogLevelWarning)
+var logger Logger = DefaultLogger
 
-// Debug logs to the DEBUG log.
-func Debug(args ...interface{}) { logger.Debug(args...) }
-func (g *loggerT) Debug(args ...interface{}) {
-	g.m[LogLevelDebug].Print(args...)
+// loggerT is the default logger used by scaleway-sdk-go.
+type loggerT struct {
+	m [4]*log.Logger
+}
+
+// ResetLogger create a new default logger.
+// Not mutex-protected, should be called before any scaleway-sdk-go functions.
+func (g *loggerT) ResetLogger(w io.Writer, level LogLevel) {
+	g.m = newLogger(w, level).m
 }
 
 // Debugf logs to the DEBUG log. Arguments are handled in the manner of fmt.Printf.
@@ -23,34 +29,10 @@ func (g *loggerT) Debugf(format string, args ...interface{}) {
 	g.m[LogLevelDebug].Printf(format, args...)
 }
 
-// Debugln logs to the DEBUG log. Arguments are handled in the manner of fmt.Println.
-func Debugln(args ...interface{}) { logger.Debugln(args...) }
-func (g *loggerT) Debugln(args ...interface{}) {
-	g.m[LogLevelDebug].Println(args...)
-}
-
-// Info logs to the INFO log.
-func Info(args ...interface{}) { logger.Info(args...) }
-func (g *loggerT) Info(args ...interface{}) {
-	g.m[LogLevelInfo].Print(args...)
-}
-
 // Infof logs to the INFO log. Arguments are handled in the manner of fmt.Printf.
 func Infof(format string, args ...interface{}) { logger.Infof(format, args...) }
 func (g *loggerT) Infof(format string, args ...interface{}) {
 	g.m[LogLevelInfo].Printf(format, args...)
-}
-
-// Infoln logs to the INFO log. Arguments are handled in the manner of fmt.Println.
-func Infoln(args ...interface{}) { logger.Infoln(args...) }
-func (g *loggerT) Infoln(args ...interface{}) {
-	g.m[LogLevelInfo].Println(args...)
-}
-
-// Warning logs to the WARNING log.
-func Warning(args ...interface{}) { logger.Warning(args...) }
-func (g *loggerT) Warning(args ...interface{}) {
-	g.m[LogLevelWarning].Print(args...)
 }
 
 // Warningf logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
@@ -59,33 +41,10 @@ func (g *loggerT) Warningf(format string, args ...interface{}) {
 	g.m[LogLevelWarning].Printf(format, args...)
 }
 
-// Warningln logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
-func Warningln(args ...interface{}) { logger.Warningln(args...) }
-func (g *loggerT) Warningln(args ...interface{}) {
-	g.m[LogLevelWarning].Println(args...)
-}
-
-// Error logs to the ERROR log.
-func Error(args ...interface{}) { logger.Error(args...) }
-func (g *loggerT) Error(args ...interface{}) {
-	g.m[LogLevelError].Print(args...)
-}
-
 // Errorf logs to the ERROR log. Arguments are handled in the manner of fmt.Printf.
 func Errorf(format string, args ...interface{}) { logger.Errorf(format, args...) }
 func (g *loggerT) Errorf(format string, args ...interface{}) {
 	g.m[LogLevelError].Printf(format, args...)
-}
-
-// Errorln logs to the ERROR log. Arguments are handled in the manner of fmt.Println.
-func Errorln(args ...interface{}) { logger.Errorln(args...) }
-func (g *loggerT) Errorln(args ...interface{}) {
-	g.m[LogLevelError].Println(args...)
-}
-
-// loggerT is the default logger used by scaleway-sdk-go.
-type loggerT struct {
-	m []*log.Logger
 }
 
 func isEnabled(envKey string) bool {
@@ -103,8 +62,8 @@ func isEnabled(envKey string) bool {
 }
 
 // newLogger creates a logger to be used as default logger.
-// All logs are written to stderr.
-func newLogger(w io.Writer, level LogLevel) Logger {
+// All logs are written to w.
+func newLogger(w io.Writer, level LogLevel) *loggerT {
 	errorW := ioutil.Discard
 	warningW := ioutil.Discard
 	infoW := ioutil.Discard
@@ -123,5 +82,14 @@ func newLogger(w io.Writer, level LogLevel) Logger {
 		errorW = w
 	}
 
-	return NewLogger(debugW, infoW, warningW, errorW)
+	// Error logs will be written to errorW, warningW, infoW and debugW.
+	// Warning logs will be written to warningW, infoW and debugW.
+	// Info logs will be written to infoW and debugW.
+	// Debug logs will be written to debugW.
+	var m [4]*log.Logger
+	m[LogLevelError] = log.New(io.MultiWriter(debugW, infoW, warningW, errorW), severityName[LogLevelError]+": ", log.LstdFlags)
+	m[LogLevelWarning] = log.New(io.MultiWriter(debugW, infoW, warningW), severityName[LogLevelWarning]+": ", log.LstdFlags)
+	m[LogLevelInfo] = log.New(io.MultiWriter(debugW, infoW), severityName[LogLevelInfo]+": ", log.LstdFlags)
+	m[LogLevelDebug] = log.New(debugW, severityName[LogLevelDebug]+": ", log.LstdFlags)
+	return &loggerT{m: m}
 }
