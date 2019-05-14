@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
@@ -63,23 +65,38 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 
 }
 
-func TestGetHeadersWithBody(t *testing.T) {
+func TestSetBody(t *testing.T) {
+
+	body := struct {
+		Region  utils.Region   `json:"-"`
+		Id      string         `json:"-"`
+		Name    string         `json:"name,omitempty"`
+		Slice   []string       `json:"slice,omitempty"`
+		Flag    bool           `json:"flag,omitempty"`
+		Timeout *time.Duration `json:"timeout,omitempty"`
+	}{
+		Region:  utils.RegionNlAms,
+		Id:      "plop",
+		Name:    "plop",
+		Slice:   []string{"plop", "plop"},
+		Flag:    true,
+		Timeout: utils.Duration(time.Second),
+	}
+
 	req := ScalewayRequest{
-		Headers: http.Header{
-			testHeaderKey: []string{testHeaderVal},
-		},
-		Body: bytes.NewReader([]byte(testBody)),
-	}
-	token := auth.NewToken(testSecretKey, testTokenKey)
-
-	expectedHeaders := http.Header{
-		testHeaderKey:  []string{testHeaderVal},
-		"x-auth-token": []string{testTokenKey},
-		"Content-Type": []string{"application/json"},
-		"User-Agent":   []string{testUserAgent},
+		Headers: http.Header{},
 	}
 
-	allHeaders := req.getAllHeaders(token, testUserAgent)
+	testhelpers.Ok(t, req.SetBody(body))
 
-	testhelpers.Equals(t, expectedHeaders, allHeaders)
+	r, isBytesReader := req.Body.(*bytes.Reader)
+
+	testhelpers.Assert(t, isBytesReader, "req.Body should be bytes Reader")
+
+	b := make([]byte, r.Len())
+	_, err := r.Read(b)
+	testhelpers.Ok(t, err)
+
+	testhelpers.Equals(t, `{"name":"plop","slice":["plop","plop"],"flag":true,"timeout":1000000000}`, string(b))
+
 }
