@@ -118,6 +118,33 @@ func TestSetBody(t *testing.T) {
 	_, err := r.Read(b)
 	testhelpers.Ok(t, err)
 
+	testhelpers.Equals(t, []string{"application/json"}, req.Headers["Content-Type"])
 	testhelpers.Equals(t, `{"name":"plop","slice":["plop","plop"],"flag":true,"timeout":1000000000}`, string(b))
+
+}
+
+func TestSetFileBody(t *testing.T) {
+
+	body := &utils.File{
+		Content:     bytes.NewReader([]byte(testBody)),
+		ContentType: "plain/text",
+	}
+
+	req := ScalewayRequest{
+		Headers: http.Header{},
+	}
+
+	testhelpers.Ok(t, req.SetBody(body))
+
+	r, isBytesReader := req.Body.(*bytes.Reader)
+
+	testhelpers.Assert(t, isBytesReader, "req.Body should be bytes Reader")
+
+	b := make([]byte, r.Len())
+	_, err := r.Read(b)
+	testhelpers.Ok(t, err)
+
+	testhelpers.Equals(t, []string{"plain/text"}, req.Headers["Content-Type"])
+	testhelpers.Equals(t, `some body`, string(b))
 
 }
