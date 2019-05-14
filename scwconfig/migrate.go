@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"gopkg.in/yaml.v2"
 )
 
@@ -22,7 +23,7 @@ func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	// STEP 1: create dir
 	err := os.MkdirAll(filepath.Dir(targetPath), 0700)
 	if err != nil {
-		// TODO: log.Debug err
+		logger.Debugf("mkdir did not work on %s: %s", filepath.Dir(targetPath), err)
 		return nil
 	}
 
@@ -36,10 +37,11 @@ func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	// STEP 3: save config
 	err = ioutil.WriteFile(targetPath, file, defaultConfigPermission)
 	if err != nil {
-		// TODO: log.Debug err
+		logger.Debugf("cannot write file %s: %s", targetPath, err)
 		return nil
 	}
 
-	// STEP 4: return new config
+	// STEP 4: log success
+	logger.Infof("config successfully migrated to %s", targetPath)
 	return nil
 }

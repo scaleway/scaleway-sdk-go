@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 	"gopkg.in/yaml.v2"
 )
@@ -145,12 +146,12 @@ func (c *configV2) GetAccessKey() (string, bool) {
 	case c.AccessKey != nil:
 		accessKey = *c.AccessKey
 	default:
-		// warning:
+		logger.Warningf("no access key found")
 		return "", false
 	}
 
 	if accessKey == "" {
-		// warning : empty value
+		logger.Warningf("access key is empty")
 	}
 
 	return accessKey, true
@@ -177,12 +178,12 @@ func (c *configV2) GetSecretKey() (string, bool) {
 	case c.SecretKey != nil:
 		secretKey = *c.SecretKey
 	default:
-		// warning:
+		logger.Warningf("no secret key found")
 		return "", false
 	}
 
 	if secretKey == "" {
-		// warning : empty value
+		logger.Warningf("secret key is empty")
 	}
 
 	return secretKey, true
@@ -213,7 +214,7 @@ func (c *configV2) GetAPIURL() (string, bool) {
 	}
 
 	if apiURL == "" {
-		// warning
+		logger.Warningf("api URL is empty")
 	}
 
 	return apiURL, true
@@ -237,7 +238,7 @@ func (c *configV2) GetInsecure() (bool, bool) {
 	case envExist:
 		insecure, err = strconv.ParseBool(envValue)
 		if err != nil {
-			// todo: warning
+			logger.Warningf("'%s' cannot be parsed as boolean", envValue)
 		}
 	case activeProfile != "" && c.Profiles[activeProfile].Insecure != nil:
 		insecure = *c.Profiles[activeProfile].Insecure
@@ -276,7 +277,7 @@ func (c *configV2) GetDefaultOrganizationID() (string, bool) {
 
 	// todo: validate format
 	if defaultOrg == "" {
-		// todo: warning
+		logger.Warningf("default oranization ID is empty")
 	}
 
 	return defaultOrg, true
@@ -308,7 +309,7 @@ func (c *configV2) GetDefaultRegion() (utils.Region, bool) {
 
 	// todo: validate format
 	if defaultRegion == "" {
-		// todo: warning
+		logger.Warningf("default region is empty")
 	}
 
 	return utils.Region(defaultRegion), true
@@ -340,7 +341,7 @@ func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
 
 	// todo: validate format
 	if defaultZone == "" {
-		// todo: warning
+		logger.Warningf("default zone is empty")
 	}
 
 	return utils.Zone(defaultZone), true
@@ -349,13 +350,14 @@ func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
 func getenv(upToDateKey string, deprecatedKeys ...string) (string, bool) {
 	value, exist := os.LookupEnv(upToDateKey)
 	if exist {
+		logger.Infof("reading value from $%s", upToDateKey)
 		return value, true
 	}
 
 	for _, key := range deprecatedKeys {
 		value, exist := os.LookupEnv(key)
 		if exist {
-			// TODO: log deprecated
+			logger.Warningf("reading value from $%s: deprecated variable", key)
 			return value, true
 		}
 	}

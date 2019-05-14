@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 // LoadWithProfile call Load() and set withProfile with the profile name.
@@ -34,6 +36,7 @@ func Load() (Config, error) {
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {
+			logger.Warningf("loaded config V1 from %s: config V1 is deprecated, please switch your config file to the V2", configPath)
 			return confV1.toV2().catchInvalidProfile()
 		}
 		confV2, err := unmarshalConfV2(content)
@@ -41,6 +44,7 @@ func Load() (Config, error) {
 			return nil, fmt.Errorf("content of $%s (%s) is invalid: %s", scwConfigPathEnv, configPath, err)
 		}
 
+		logger.Infof("successfully loaded config V2 from %s", configPath)
 		return confV2.catchInvalidProfile()
 	}
 
@@ -56,16 +60,20 @@ func Load() (Config, error) {
 		if err != nil {
 			return nil, fmt.Errorf("content of config file %s is invalid: %s", v2Path, err)
 		}
+
+		logger.Infof("successfully loaded config V2 from %s", v2Path)
 		return confV2.catchInvalidProfile()
 	}
 
 	// STEP 3: try to load config file V1
 	v1Path, v1PathOk := GetConfigV1FilePath()
 	if !v1PathOk {
+		logger.Infof("config file not found: no home directory")
 		return (&configV2{}).catchInvalidProfile()
 	}
 	file, err := ioutil.ReadFile(v1Path)
 	if err != nil {
+		logger.Infof("config file not found: %s", err)
 		return (&configV2{}).catchInvalidProfile() // ignore if file doesn't exist
 	}
 	confV1, err := unmarshalConfV1(file)

@@ -10,6 +10,7 @@ import (
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -24,7 +25,7 @@ type ScalewayRequest struct {
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.
-// RequestOptions (TODO) are executed on the ScalewayRequest.
+// RequestOptions are executed on the ScalewayRequest.
 func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response, error) {
 	if req == nil {
 		return nil, fmt.Errorf("request must be non-nil")
@@ -40,6 +41,7 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	if err != nil {
 		return nil, err
 	}
+	logger.Debugf("creating %s request on %s", req.Method, url.String())
 
 	// build request
 	request, err := http.NewRequest(req.Method, url.String(), req.Body)
@@ -48,6 +50,7 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	}
 
 	request.Header = req.getAllHeaders(c.auth, c.userAgent)
+
 	if req.Ctx != nil {
 		request = request.WithContext(req.Ctx)
 	}
@@ -78,6 +81,9 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string) htt
 			allHeaders.Set(key, v)
 		}
 	}
+
+	logger.Debugf("headers: %v", allHeaders)
+
 	return allHeaders
 }
 
@@ -102,6 +108,7 @@ func (req *ScalewayRequest) SetBody(body interface{}) error {
 	case *utils.File:
 		contentType = b.ContentType
 		content = b.Content
+		logger.Debugf("file request with %s content type", contentType)
 	default:
 		buf, err := json.Marshal(body)
 		if err != nil {
@@ -109,6 +116,7 @@ func (req *ScalewayRequest) SetBody(body interface{}) error {
 		}
 		contentType = "application/json"
 		content = bytes.NewReader(buf)
+		logger.Debugf("json request: '%s'", string(buf))
 	}
 
 	req.Headers.Set("Content-Type", contentType)

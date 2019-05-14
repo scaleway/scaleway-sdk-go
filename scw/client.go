@@ -49,6 +49,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	// insecure mode
 	if s.insecure {
 		setInsecureMode(s.httpClient)
+	} else {
+		logger.Debugf("use insecure mode")
 	}
 
 	return &Client{
@@ -117,4 +119,5 @@ func setInsecureMode(c httpClient) {
 		transportClient.TLSClientConfig = &tls.Config{}
 	}
 	transportClient.TLSClientConfig.InsecureSkipVerify = true
+	logger.Debugf("use TLS mode")
 }
