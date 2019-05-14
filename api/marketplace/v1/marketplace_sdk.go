@@ -127,7 +127,7 @@ type Version struct {
 type GetServiceInfoRequest struct {
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoResponse, error) {
+func (s *Api) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*GetServiceInfoResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -136,7 +136,7 @@ func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoRespons
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -156,7 +156,7 @@ type ListImagesRequest struct {
 	Page *int32 `json:"-"`
 }
 
-func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
+func (s *Api) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
 	query := url.Values{}
@@ -170,7 +170,7 @@ func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -188,7 +188,7 @@ type GetImageRequest struct {
 	ImageId string `json:"-"`
 }
 
-func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
+func (s *Api) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -197,7 +197,7 @@ func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -215,7 +215,7 @@ type ListVersionsRequest struct {
 	ImageId string `json:"-"`
 }
 
-func (s *Api) ListVersions(req *ListVersionsRequest) (*ListVersionsResponse, error) {
+func (s *Api) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -224,7 +224,7 @@ func (s *Api) ListVersions(req *ListVersionsRequest) (*ListVersionsResponse, err
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -244,7 +244,7 @@ type GetVersionRequest struct {
 	VersionId string `json:"-"`
 }
 
-func (s *Api) GetVersion(req *GetVersionRequest) (*GetVersionResponse, error) {
+func (s *Api) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*GetVersionResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -253,7 +253,7 @@ func (s *Api) GetVersion(req *GetVersionRequest) (*GetVersionResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
