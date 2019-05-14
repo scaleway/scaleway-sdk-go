@@ -1,13 +1,16 @@
 package scw
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // ScalewayRequest contains all the contents related to performing a request on the Scaleway API.
@@ -87,4 +90,29 @@ func (req *ScalewayRequest) getURL(baseURL string) (*url.URL, error) {
 	url.RawQuery = req.Query.Encode()
 
 	return url, nil
+}
+
+// SetBody json marshal the given body and write the json content type
+// to the request. It also catches when body is a file.
+func (req *ScalewayRequest) SetBody(body interface{}) error {
+	var contentType string
+	var content io.Reader
+
+	switch b := body.(type) {
+	case *utils.File:
+		contentType = b.ContentType
+		content = b.Content
+	default:
+		buf, err := json.Marshal(body)
+		if err != nil {
+			return err
+		}
+		contentType = "application/json"
+		content = bytes.NewReader(buf)
+	}
+
+	req.Headers.Add("Content-Type", contentType)
+	req.Body = content
+
+	return nil
 }
