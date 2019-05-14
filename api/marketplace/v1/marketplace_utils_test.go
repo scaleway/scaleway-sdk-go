@@ -13,7 +13,7 @@ import (
 func TestGetImageByName(t *testing.T) {
 
 	// Setup recorder and scw client
-	r, err := recorder.NewAsMode("fixtures/marketplace", recorder.ModeReplaying, nil)
+	r, err := recorder.NewAsMode("testdata/go-vcr", recorder.ModeReplaying, nil)
 	if err != nil {
 		testhelpers.Ok(t, err)
 	}
@@ -34,7 +34,7 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewApi(client)
 
-		imageID, err := marketplaceAPI.GetImageByName("Docker", utils.ZoneFrPar1, "C1")
+		imageID, err := marketplaceAPI.FindLocalImageIDByName("Docker", utils.ZoneFrPar1, "C1")
 		testhelpers.Ok(t, err)
 
 		// Docker C1 at par1: 45a7e942-1fb0-48c0-bbf6-0acb9af24604
@@ -47,7 +47,7 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewApi(client)
 
-		_, err := marketplaceAPI.GetImageByName("foo-bar-image", "", "")
+		_, err := marketplaceAPI.FindLocalImageIDByName("foo-bar-image", "", "")
 		testhelpers.Assert(t, err != nil, "Should have error")
 
 	})
