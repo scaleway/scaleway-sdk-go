@@ -1,6 +1,10 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/scaleway/scaleway-sdk-go/logger"
+)
 
 // Zone is an availability zone
 type Zone string
@@ -13,6 +17,25 @@ const (
 	// ZoneNlAms1 represents the nl-ams-1 zone
 	ZoneNlAms1 = Zone("nl-ams-1")
 )
+
+var (
+	// AllZones is an array that list all zones
+	AllZones = []Zone{
+		ZoneFrPar1,
+		ZoneFrPar2,
+		ZoneNlAms1,
+	}
+)
+
+// Exists checks whether a zone exists
+func (zone *Zone) Exists() bool {
+	for _, z := range AllZones {
+		if z == *zone {
+			return true
+		}
+	}
+	return false
+}
 
 // Region is a geographical location
 type Region string
@@ -32,6 +55,16 @@ var (
 	}
 )
 
+// Exists checks whether a region exists
+func (region *Region) Exists() bool {
+	for _, r := range AllRegions {
+		if r == *region {
+			return true
+		}
+	}
+	return false
+}
+
 // GetZones is a function that returns the zones for the specified region
 func (region Region) GetZones() []Zone {
 	switch region {
@@ -48,14 +81,19 @@ func (region Region) GetZones() []Zone {
 func ParseZone(zone string) (Zone, error) {
 	switch zone {
 	case "par1":
-		// LEGACY
+		// would be triggered by API market place
+		// logger.Warningf("par1 is a deprecated name for zone, use fr-par-1 instead")
 		return ZoneFrPar1, nil
 	case "ams1":
-		// LEGACY
+		// would be triggered by API market place
+		// logger.Warningf("ams1 is a deprecated name for zone, use nl-ams-1 instead")
 		return ZoneNlAms1, nil
 	default:
-		return Zone(zone), nil
-		// TODO: Add a warning message when unknown zone
+		newZone := Zone(zone)
+		if !newZone.Exists() {
+			logger.Warningf("%s is an unknown zone", newZone)
+		}
+		return newZone, nil
 	}
 }
 
@@ -82,14 +120,19 @@ func (zone *Zone) UnmarshalJSON(input []byte) error {
 func ParseRegion(region string) (Region, error) {
 	switch region {
 	case "par1":
-		// LEGACY
+		// would be triggered by API market place
+		// logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
 		return RegionFrPar, nil
 	case "ams1":
-		// LEGACY
+		// would be triggered by API market place
+		// logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
 		return RegionNlAms, nil
 	default:
-		return Region(region), nil
-		// TODO: Add a warning message when unknown zone
+		newRegion := Region(region)
+		if !newRegion.Exists() {
+			logger.Warningf("%s is an unknown region", newRegion)
+		}
+		return newRegion, nil
 	}
 }
 
