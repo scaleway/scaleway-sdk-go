@@ -39,7 +39,7 @@ func (image *Image) getLatestVersion() (*Version, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("no available version could be found for the image")
+	return nil, fmt.Errorf("latest version could not be found for image %s", image.Name)
 }
 
 // FindLocalImageIDByName search for an image with the given name (exact match) in the given region
