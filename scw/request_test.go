@@ -65,6 +65,27 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 
 }
 
+func TestGetHeadersWithBody(t *testing.T) {
+	req := ScalewayRequest{
+		Headers: http.Header{
+			testHeaderKey: []string{testHeaderVal},
+		},
+		Body: bytes.NewReader([]byte(testBody)),
+	}
+	token := auth.NewToken(testSecretKey, testTokenKey)
+
+	expectedHeaders := http.Header{
+		testHeaderKey:  []string{testHeaderVal},
+		"x-auth-token": []string{testTokenKey},
+		"Content-Type": []string{"application/json"},
+		"User-Agent":   []string{testUserAgent},
+	}
+
+	allHeaders := req.getAllHeaders(token, testUserAgent)
+
+	testhelpers.Equals(t, expectedHeaders, allHeaders)
+}
+
 func TestSetBody(t *testing.T) {
 
 	body := struct {
