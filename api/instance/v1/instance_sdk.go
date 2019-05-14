@@ -1079,31 +1079,51 @@ func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 }
 
 type UpdateServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone utils.Zone
 
-	ServerId string `json:"-"`
+	ServerId string
 
-	Name *string `json:"name,omitempty"`
+	Name *string
 
-	BootType ServerBootType `json:"boot_type,omitempty"`
+	BootType ServerBootType
 
-	Tags *[]string `json:"tags,omitempty"`
+	Tags *[]string
 
-	Volumes map[string]*VolumeTemplate `json:"volumes,omitempty"`
+	Volumes map[string]*VolumeTemplate
 
-	Bootscript *Bootscript `json:"bootscript,omitempty"`
+	Bootscript *Bootscript
 
-	DynamicIpRequired *bool `json:"dynamic_ip_required,omitempty"`
+	DynamicIpRequired *bool
 
-	EnableIpv6 *bool `json:"enable_ipv6,omitempty"`
+	EnableIpv6 *bool
 
-	ExtraNetworks *[]string `json:"extra_networks,omitempty"`
+	ExtraNetworks *[]string
 
-	Protected bool `json:"protected,omitempty"`
+	Protected *bool
 
-	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
+	SecurityGroup *SecurityGroupSummary
+
+	Override  map[string]interface{}	// override all arguments for deleting
 }
 
+func (this *UpdateServerRequest) MarshalJSON() ([]byte, error) {
+	OverrideTmp:=make(map[string]interface{})
+	for n,v:=range this.Override{
+		OverrideTmp[n]=v
+	}
+	if this.Name!=nil {	OverrideTmp["name"]=this.Name}
+	OverrideTmp["boot_type"]=this.BootType	// Obligation
+	if this.Tags!=nil {	OverrideTmp["tags"]=this.Tags}
+	if this.Volumes!=nil {	OverrideTmp["volumes"]=this.Volumes}
+	if this.Bootscript!=nil {	OverrideTmp["bootscript"]=this.Bootscript}
+	if this.DynamicIpRequired!=nil {	OverrideTmp["dynamic_ip_required"]=this.DynamicIpRequired}
+	if this.EnableIpv6!=nil {	OverrideTmp["enable_ipv6"]=this.EnableIpv6}
+	if this.ExtraNetworks!=nil {	OverrideTmp["extra_networks"]=this.ExtraNetworks}
+	if this.Protected!=nil {	OverrideTmp["protected"]=this.Protected}
+	if this.SecurityGroup!=nil {	OverrideTmp["security_group"]=this.SecurityGroup}
+
+	return json.Marshal(OverrideTmp)
+}
 // UpdateServer: update server
 func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, error) {
 	var err error
@@ -2678,10 +2698,13 @@ type UpdateIpRequest struct {
 }
 
 func (this *UpdateIpRequest) MarshalJSON() ([]byte, error) {
-	if this.Override==nil {
-		this.Override=make(map[string]interface{})
+	OverrideTmp:=make(map[string]interface{})
+	for n,v:=range this.Override{
+		OverrideTmp[n]=v
 	}
-	return json.Marshal(this.Override)
+	if this.Reverse!=nil{	OverrideTmp["reverse"]=this.Reverse	}
+	if this.Server!=nil{	OverrideTmp["server"]=this.Server	}
+	return json.Marshal(OverrideTmp)
 }
 
 // UpdateIp: update IP
