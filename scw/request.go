@@ -111,7 +111,7 @@ func (req *ScalewayRequest) SetBody(body interface{}) error {
 		content = bytes.NewReader(buf)
 	}
 
-	req.Headers.Add("Content-Type", contentType)
+	req.Headers.Set("Content-Type", contentType)
 	req.Body = content
 
 	return nil
