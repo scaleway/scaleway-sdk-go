@@ -2666,13 +2666,22 @@ func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 }
 
 type UpdateIpRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone utils.Zone
 
-	IpId string `json:"-"`
+	IpId string
 
-	Reverse *string `json:"reverse,omitempty"`
+	Reverse *string
 
-	Server *string `json:"server,omitempty"`
+	Server *string
+
+	Override  map[string]interface{}
+}
+
+func (this *UpdateIpRequest) MarshalJSON() ([]byte, error) {
+	if this.Override==nil {
+		this.Override=make(map[string]interface{})
+	}
+	return json.Marshal(this.Override)
 }
 
 // UpdateIp: update IP
