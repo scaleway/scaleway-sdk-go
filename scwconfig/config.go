@@ -277,7 +277,7 @@ func (c *configV2) GetDefaultOrganizationID() (string, bool) {
 
 	// todo: validate format
 	if defaultOrg == "" {
-		logger.Warningf("default oranization ID is empty")
+		logger.Warningf("default organization ID is empty")
 	}
 
 	return defaultOrg, true
