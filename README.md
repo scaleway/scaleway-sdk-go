@@ -12,14 +12,13 @@
 
 Scaleway is an Iliad Group brand supplying a range of pioneering cloud infrastructure covering a full range of services for professionals: public cloud services with Scaleway, private infrastructure with Scaleway Datacenter and bare-metal cloud services with Online by Scaleway.
 
-
 ## Documentation
 
 - [Godoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
 - [Developer website](https://developers.scaleway.com) (API documentation)
 
 ## Installation
-    
+
 ```bash
 go get github.com/scaleway/scaleway-sdk-go
 ```
