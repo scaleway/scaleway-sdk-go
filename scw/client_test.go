@@ -124,7 +124,7 @@ func (fakeHTTPClient) RoundTrip(*http.Request) (*http.Response, error) {
 // TestSetInsecureMode test if setInsecureMode panic when given custom HTTP client
 func TestSetInsecureMode(t *testing.T) {
 	var buf bytes.Buffer
-	logger.DefaultLogger.ResetLogger(&buf, logger.LogLevelWarning)
+	logger.DefaultLogger.Init(&buf, logger.LogLevelWarning)
 
 	// custom Transport client
 	clientWithFakeTransport := newHTTPClient()
@@ -142,5 +142,5 @@ func TestSetInsecureMode(t *testing.T) {
 	testhelpers.Equals(t, "cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
 	testhelpers.Equals(t, "cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
-	logger.DefaultLogger.ResetLogger(os.Stderr, logger.LogLevelWarning)
+	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
 }
