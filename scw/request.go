@@ -92,8 +92,6 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string) htt
 		}
 	}
 
-	logger.Debugf("headers: %v", allHeaders)
-
 	return allHeaders
 }
 
@@ -118,7 +116,6 @@ func (req *ScalewayRequest) SetBody(body interface{}) error {
 	case *utils.File:
 		contentType = b.ContentType
 		content = b.Content
-		logger.Debugf("file request with %s content type", contentType)
 	default:
 		buf, err := json.Marshal(body)
 		if err != nil {
@@ -126,7 +123,6 @@ func (req *ScalewayRequest) SetBody(body interface{}) error {
 		}
 		contentType = "application/json"
 		content = bytes.NewReader(buf)
-		logger.Debugf("json request: '%s'", string(buf))
 	}
 
 	req.Headers.Set("Content-Type", contentType)
