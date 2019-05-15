@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -53,6 +54,15 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 
 	if req.Ctx != nil {
 		request = request.WithContext(req.Ctx)
+	}
+
+	if logger.V(logger.LogLevelDebug) {
+		dump, err := httputil.DumpRequestOut(request, true)
+		if err != nil {
+			logger.Warningf("cannot dump outgoing request: %s", err)
+		} else {
+			logger.Debugf("dumping http request:\n" + string(dump))
+		}
 	}
 
 	// execute request

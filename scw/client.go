@@ -49,10 +49,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	// insecure mode
 	if s.insecure {
 		setInsecureMode(s.httpClient)
-		logger.Debugf("using insecure mode")
+		logger.Debugf("client: using insecure mode")
 	} else {
-		logger.Debugf("using TLS mode")
+		logger.Debugf("client: using TLS mode")
 	}
+
+	logger.Debugf("creating a new client with sdk version " + version)
 
 	return &Client{
 		auth:                  s.token,
