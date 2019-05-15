@@ -1085,7 +1085,7 @@ type UpdateServerRequest struct {
 
 	Name *string
 
-	BootType ServerBootType
+	BootType *ServerBootType
 
 	Tags *[]string
 
@@ -1112,7 +1112,7 @@ func (this *UpdateServerRequest) MarshalJSON() ([]byte, error) {
 		OverrideTmp[n]=v
 	}
 	if this.Name!=nil {	OverrideTmp["name"]=this.Name}
-	OverrideTmp["boot_type"]=this.BootType	// Obligation
+	if this.BootType!=nil {	OverrideTmp["boot_type"]=this.BootType		}
 	if this.Tags!=nil {	OverrideTmp["tags"]=this.Tags}
 	if this.Volumes!=nil {	OverrideTmp["volumes"]=this.Volumes}
 	if this.Bootscript!=nil {	OverrideTmp["bootscript"]=this.Bootscript}
