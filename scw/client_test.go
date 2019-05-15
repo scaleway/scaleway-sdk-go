@@ -1,11 +1,15 @@
 package scw
 
 import (
+	"bytes"
 	"net/http"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -95,7 +99,7 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
-		clientTransport, ok := client.httpClient.Transport.(*http.Transport)
+		clientTransport, ok := client.httpClient.(*http.Client).Transport.(*http.Transport)
 		testhelpers.Assert(t, ok, "clientTransport must be not nil")
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
@@ -105,4 +109,38 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, testDefaultZone, client.GetDefaultZone())
 	})
 
+}
+
+type fakeHTTPClient struct{}
+
+func (fakeHTTPClient) Do(*http.Request) (*http.Response, error) {
+	return nil, nil
+}
+
+func (fakeHTTPClient) RoundTrip(*http.Request) (*http.Response, error) {
+	return nil, nil
+}
+
+// TestSetInsecureMode test if setInsecureMode panic when given custom HTTP client
+func TestSetInsecureMode(t *testing.T) {
+	var buf bytes.Buffer
+	logger.DefaultLogger.ResetLogger(&buf, logger.LogLevelWarning)
+
+	// custom Transport client
+	clientWithFakeTransport := newHTTPClient()
+	clientWithFakeTransport.Transport = fakeHTTPClient{}
+	setInsecureMode(clientWithFakeTransport)
+
+	// custom HTTP client
+	setInsecureMode(fakeHTTPClient{})
+
+	// check log messages
+	lines := strings.Split(buf.String(), "\n")
+	getLogMessage := func(s string) string {
+		return strings.Join(strings.Split(s, " ")[3:], " ")
+	}
+	testhelpers.Equals(t, "cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
+	testhelpers.Equals(t, "cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
+
+	logger.DefaultLogger.ResetLogger(os.Stderr, logger.LogLevelWarning)
 }

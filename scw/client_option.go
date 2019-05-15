@@ -11,6 +11,18 @@ import (
 // ClientOption is a function which applies options to a settings object.
 type ClientOption func(*settings)
 
+// httpClient wraps the net/http Client Do method
+type httpClient interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
+// WithHTTPClient client option allows passing a custom http.Client which will be used for all requests.
+func WithHTTPClient(httpClient httpClient) ClientOption {
+	return func(s *settings) {
+		s.httpClient = httpClient
+	}
+}
+
 // WithoutAuth client option sets the client token to an empty token.
 func WithoutAuth() ClientOption {
 	return func(s *settings) {
@@ -43,13 +55,6 @@ func WithInsecure() ClientOption {
 func WithUserAgent(ua string) ClientOption {
 	return func(s *settings) {
 		s.userAgent = ua
-	}
-}
-
-// WithHTTPClient client option allows passing a custom http.Client which will be used for all requests.
-func WithHTTPClient(httpClient *http.Client) ClientOption {
-	return func(s *settings) {
-		s.httpClient = httpClient
 	}
 }
 

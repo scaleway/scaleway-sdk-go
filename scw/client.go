@@ -2,12 +2,12 @@ package scw
 
 import (
 	"crypto/tls"
-	"fmt"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -16,7 +16,7 @@ import (
 // This client should be passed in the `NewApi` functions whenever an API instance is created.
 // Creating a Client is done with the `NewClient` function.
 type Client struct {
-	httpClient            *http.Client
+	httpClient            httpClient
 	auth                  auth.Auth
 	apiURL                string
 	userAgent             string
@@ -48,14 +48,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// insecure mode
 	if s.insecure {
-		clientTransport, ok := s.httpClient.Transport.(*http.Transport)
-		if !ok {
-			return nil, fmt.Errorf("cannot use insecure mode with HTTP client of type %T", s.httpClient.Transport)
-		}
-		if clientTransport.TLSClientConfig == nil {
-			clientTransport.TLSClientConfig = &tls.Config{}
-		}
-		clientTransport.TLSClientConfig.InsecureSkipVerify = true
+		setInsecureMode(s.httpClient)
 	}
 
 	return &Client{
@@ -107,4 +100,21 @@ func newHTTPClient() *http.Client {
 			MaxIdleConnsPerHost:   20,
 		},
 	}
+}
+
+func setInsecureMode(c httpClient) {
+	standardHTTPClient, ok := c.(*http.Client)
+	if !ok {
+		logger.Warningf("cannot use insecure mode with HTTP client of type %T", c)
+		return
+	}
+	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
+	if !ok {
+		logger.Warningf("cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+		return
+	}
+	if transportClient.TLSClientConfig == nil {
+		transportClient.TLSClientConfig = &tls.Config{}
+	}
+	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }

@@ -2,7 +2,6 @@ package scw
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -13,7 +12,7 @@ type settings struct {
 	apiURL                string
 	token                 auth.Auth
 	userAgent             string
-	httpClient            *http.Client
+	httpClient            httpClient
 	insecure              bool
 	defaultOrganizationID string
 	defaultRegion         utils.Region
