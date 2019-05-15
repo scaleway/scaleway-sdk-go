@@ -103,7 +103,7 @@ func newHTTPClient() *http.Client {
 		Transport: &http.Transport{
 			DialContext:           (&net.Dialer{Timeout: 5 * time.Second}).DialContext,
 			TLSHandshakeTimeout:   5 * time.Second,
-			ResponseHeaderTimeout: 8 * time.Second,
+			ResponseHeaderTimeout: 30 * time.Second,
 			MaxIdleConnsPerHost:   20,
 		},
 	}
