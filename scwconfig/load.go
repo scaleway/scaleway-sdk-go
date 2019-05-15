@@ -36,7 +36,7 @@ func Load() (Config, error) {
 	if configPath != "" {
 		content, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read $%s: %s", scwConfigPathEnv, err)
+			return nil, fmt.Errorf("cannot read %s: %s", scwConfigPathEnv, err)
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {
@@ -45,7 +45,7 @@ func Load() (Config, error) {
 		}
 		confV2, err := unmarshalConfV2(content)
 		if err != nil {
-			return nil, fmt.Errorf("content of $%s (%s) is invalid: %s", scwConfigPathEnv, configPath, err)
+			return nil, fmt.Errorf("content of %s (%s) is invalid: %s", scwConfigPathEnv, configPath, err)
 		}
 
 		logger.Infof("successfully loaded config V2 from %s", configPath)

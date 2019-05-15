@@ -238,7 +238,7 @@ func (c *configV2) GetInsecure() (bool, bool) {
 	case envExist:
 		insecure, err = strconv.ParseBool(envValue)
 		if err != nil {
-			logger.Warningf("env variable $%s cannot be parsed: %s is invalid boolean ", envKey, envValue)
+			logger.Warningf("env variable %s cannot be parsed: %s is invalid boolean ", envKey, envValue)
 			return false, false
 		}
 
@@ -355,14 +355,15 @@ func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
 func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
 	value, exist := os.LookupEnv(upToDateKey)
 	if exist {
-		logger.Infof("reading value from $%s", upToDateKey)
+		logger.Infof("reading value from %s", upToDateKey)
 		return value, upToDateKey, true
 	}
 
 	for _, key := range deprecatedKeys {
 		value, exist := os.LookupEnv(key)
 		if exist {
-			logger.Warningf("reading value from $%s: deprecated variable", key)
+			logger.Infof("reading value from %s", key)
+			logger.Warningf("%s is deprecated, please use %s instead", key, upToDateKey)
 			return value, key, true
 		}
 	}
