@@ -8,6 +8,10 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
+const (
+	documentationLink = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scwconfig/README.md"
+)
+
 // LoadWithProfile call Load() and set withProfile with the profile name.
 func LoadWithProfile(profileName string) (Config, error) {
 	config, err := Load()
@@ -36,7 +40,7 @@ func Load() (Config, error) {
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {
-			logger.Warningf("loaded config V1 from %s: config V1 is deprecated, please switch your config file to the V2", configPath)
+			logger.Warningf("loaded config V1 from %s: config V1 is deprecated, please switch your config file to the V2: %s", configPath, documentationLink)
 			return confV1.toV2().catchInvalidProfile()
 		}
 		confV2, err := unmarshalConfV2(content)
