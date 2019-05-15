@@ -48,8 +48,11 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// insecure mode
 	if s.insecure {
+		logger.Debugf("client: using insecure mode")
 		setInsecureMode(s.httpClient)
 	}
+
+	logger.Debugf("client: using sdk version " + version)
 
 	return &Client{
 		auth:                  s.token,
@@ -105,12 +108,12 @@ func newHTTPClient() *http.Client {
 func setInsecureMode(c httpClient) {
 	standardHTTPClient, ok := c.(*http.Client)
 	if !ok {
-		logger.Warningf("cannot use insecure mode with HTTP client of type %T", c)
+		logger.Warningf("client: cannot use insecure mode with HTTP client of type %T", c)
 		return
 	}
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
-		logger.Warningf("cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
 		return
 	}
 	if transportClient.TLSClientConfig == nil {

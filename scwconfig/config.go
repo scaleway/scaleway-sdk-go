@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 	"gopkg.in/yaml.v2"
 )
@@ -133,7 +134,7 @@ func (c *configV2) getActiveProfile() (string, error) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetAccessKey() (string, bool) {
-	envValue, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
+	envValue, _, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var accessKey string
@@ -145,12 +146,12 @@ func (c *configV2) GetAccessKey() (string, bool) {
 	case c.AccessKey != nil:
 		accessKey = *c.AccessKey
 	default:
-		// warning:
+		logger.Warningf("no access key found")
 		return "", false
 	}
 
 	if accessKey == "" {
-		// warning : empty value
+		logger.Warningf("access key is empty")
 	}
 
 	return accessKey, true
@@ -165,7 +166,7 @@ func (c *configV2) GetAccessKey() (string, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetSecretKey() (string, bool) {
-	envValue, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
+	envValue, _, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var secretKey string
@@ -177,12 +178,12 @@ func (c *configV2) GetSecretKey() (string, bool) {
 	case c.SecretKey != nil:
 		secretKey = *c.SecretKey
 	default:
-		// warning:
+		logger.Warningf("no secret key found")
 		return "", false
 	}
 
 	if secretKey == "" {
-		// warning : empty value
+		logger.Warningf("secret key is empty")
 	}
 
 	return secretKey, true
@@ -197,7 +198,7 @@ func (c *configV2) GetSecretKey() (string, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetAPIURL() (string, bool) {
-	envValue, envExist := getenv(scwAPIURLEnv)
+	envValue, _, envExist := getenv(scwAPIURLEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var apiURL string
@@ -213,7 +214,7 @@ func (c *configV2) GetAPIURL() (string, bool) {
 	}
 
 	if apiURL == "" {
-		// warning
+		logger.Warningf("api URL is empty")
 	}
 
 	return apiURL, true
@@ -228,7 +229,7 @@ func (c *configV2) GetAPIURL() (string, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetInsecure() (bool, bool) {
-	envValue, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
+	envValue, envKey, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var insecure bool
@@ -237,7 +238,12 @@ func (c *configV2) GetInsecure() (bool, bool) {
 	case envExist:
 		insecure, err = strconv.ParseBool(envValue)
 		if err != nil {
-			// todo: warning
+			logger.Warningf("env variable %s cannot be parsed: %s is invalid boolean ", envKey, envValue)
+			return false, false
+		}
+
+		if envKey == cliTLSVerifyEnv {
+			insecure = !insecure // TLSVerify is the inverse of Insecure
 		}
 	case activeProfile != "" && c.Profiles[activeProfile].Insecure != nil:
 		insecure = *c.Profiles[activeProfile].Insecure
@@ -259,7 +265,7 @@ func (c *configV2) GetInsecure() (bool, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetDefaultOrganizationID() (string, bool) {
-	envValue, envExist := getenv(scwDefaultOrganizationIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
+	envValue, _, envExist := getenv(scwDefaultOrganizationIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var defaultOrg string
@@ -276,7 +282,7 @@ func (c *configV2) GetDefaultOrganizationID() (string, bool) {
 
 	// todo: validate format
 	if defaultOrg == "" {
-		// todo: warning
+		logger.Warningf("default organization ID is empty")
 	}
 
 	return defaultOrg, true
@@ -291,7 +297,7 @@ func (c *configV2) GetDefaultOrganizationID() (string, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetDefaultRegion() (utils.Region, bool) {
-	envValue, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
+	envValue, _, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var defaultRegion string
@@ -308,7 +314,7 @@ func (c *configV2) GetDefaultRegion() (utils.Region, bool) {
 
 	// todo: validate format
 	if defaultRegion == "" {
-		// todo: warning
+		logger.Warningf("default region is empty")
 	}
 
 	return utils.Region(defaultRegion), true
@@ -323,7 +329,7 @@ func (c *configV2) GetDefaultRegion() (utils.Region, bool) {
 // Otherwise the returned value will be empty and the boolean will
 // be false.
 func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
-	envValue, envExist := getenv(scwDefaultZoneEnv)
+	envValue, _, envExist := getenv(scwDefaultZoneEnv)
 	activeProfile, _ := c.getActiveProfile()
 
 	var defaultZone string
@@ -340,27 +346,29 @@ func (c *configV2) GetDefaultZone() (utils.Zone, bool) {
 
 	// todo: validate format
 	if defaultZone == "" {
-		// todo: warning
+		logger.Warningf("default zone is empty")
 	}
 
 	return utils.Zone(defaultZone), true
 }
 
-func getenv(upToDateKey string, deprecatedKeys ...string) (string, bool) {
+func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
 	value, exist := os.LookupEnv(upToDateKey)
 	if exist {
-		return value, true
+		logger.Infof("reading value from %s", upToDateKey)
+		return value, upToDateKey, true
 	}
 
 	for _, key := range deprecatedKeys {
 		value, exist := os.LookupEnv(key)
 		if exist {
-			// TODO: log deprecated
-			return value, true
+			logger.Infof("reading value from %s", key)
+			logger.Warningf("%s is deprecated, please use %s instead", key, upToDateKey)
+			return value, key, true
 		}
 	}
 
-	return "", false
+	return "", "", false
 }
 
 const (
@@ -402,8 +410,10 @@ func (v1 *configV1) toV2() *configV2 {
 func v1RegionToV2(region string) string {
 	switch region {
 	case v1RegionFrPar:
+		logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
 		return "fr-par"
 	case v1RegionNlAms:
+		logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
 		return "nl-ams"
 	default:
 		return region
