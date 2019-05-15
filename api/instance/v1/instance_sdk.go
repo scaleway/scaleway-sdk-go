@@ -362,7 +362,7 @@ type Ip struct {
 
 	Reverse string `json:"reverse,omitempty"`
 
-	Server string `json:"server,omitempty"`
+	Server *ServerSummary `json:"server,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
 }
@@ -2593,7 +2593,7 @@ type SetIpRequest struct {
 
 	Reverse string `json:"reverse,omitempty"`
 
-	Server string `json:"server,omitempty"`
+	Server *ServerSummary `json:"server,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
 }
