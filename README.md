@@ -67,6 +67,70 @@ func main() {
 }
 ```
 
+## Create And Modifie instance
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
+	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/utils"
+)
+
+func main() {
+
+	// Create a Scaleway client
+	client, err := scw.NewClient(
+		// Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Create SDK objects for Scaleway Instance product
+	instanceApi := instance.NewApi(client)
+
+	// Create Server
+	var request instance.CreateServerRequest
+	request.Zone=utils.ZoneFrPar1
+	request.Name="archie.test"
+	request.DynamicIpRequired=false
+	request.CommercialType="GP1-S"
+	request.Image="43a60ffc-6afd-4b09-8a74-b8da67a0f95d"
+	request.EnableIpv6=false
+	request.DynamicIpRequired=false
+	request.BootType=instance.ServerBootTypeLocal
+	response,err:=instanceApi.CreateServer(&request)
+	if err!=nil{
+		fmt.Println("error",err)
+	}
+
+	// stop server
+	_,err=instanceApi.ServerAction(&instance.ServerActionRequest{
+		Zone: utils.ZoneFrPar1,
+		ServerId: response.Server.Id,
+		Action: instance.ServerActionPoweroff,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Please wait for it to stop")
+	<-time.After(2*time.Minute)
+
+	// detache IP
+	_,err:=instanceApi.UpdateIp(&instance.UpdateIpRequest{	
+		Zone: utils.ZoneFrPar1,
+		IpId:server.PublicIp.Id,
+		Override:map[string]interface{}{"server":nil},
+	})
+
+}
+```
 ## Development
 
 This repository is at its early stage and is still in active development.
