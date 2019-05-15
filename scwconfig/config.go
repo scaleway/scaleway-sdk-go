@@ -241,6 +241,10 @@ func (c *configV2) GetInsecure() (bool, bool) {
 			logger.Warningf("env variable $%s cannot be parsed: %s is invalid boolean ", envKey, envValue)
 			return false, false
 		}
+
+		if envKey == cliTLSVerifyEnv {
+			insecure = !insecure // TLSVerify is the inverse of Insecure
+		}
 	case activeProfile != "" && c.Profiles[activeProfile].Insecure != nil:
 		insecure = *c.Profiles[activeProfile].Insecure
 	case c.Insecure != nil:

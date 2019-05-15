@@ -259,7 +259,7 @@ func TestConfig(t *testing.T) {
 				cliSecretKeyEnv:    v2ValidSecretKey2,
 				cliOrganizationEnv: v2ValidDefaultOrganizationID2,
 				cliRegionEnv:       v2ValidDefaultRegion2,
-				cliTLSVerifyEnv:    v2ValidInsecure2,
+				cliTLSVerifyEnv:    "false",
 			},
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedInsecure:              b(true),
