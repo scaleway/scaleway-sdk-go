@@ -139,8 +139,8 @@ func TestSetInsecureMode(t *testing.T) {
 	getLogMessage := func(s string) string {
 		return strings.Join(strings.Split(s, " ")[3:], " ")
 	}
-	testhelpers.Equals(t, "cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
-	testhelpers.Equals(t, "cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
+	testhelpers.Equals(t, "client: cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
+	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
 }
