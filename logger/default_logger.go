@@ -48,9 +48,9 @@ func (g *loggerT) Errorf(format string, args ...interface{}) {
 	g.m[LogLevelError].Printf(format, args...)
 }
 
-// V reports whether verbosity level l is at least the requested verbose level.
-func V(level LogLevel) bool { return logger.V(level) }
-func (g *loggerT) V(level LogLevel) bool {
+// ShouldLog reports whether verbosity level l is at least the requested verbose level.
+func ShouldLog(level LogLevel) bool { return logger.ShouldLog(level) }
+func (g *loggerT) ShouldLog(level LogLevel) bool {
 	return level <= g.v
 }
 

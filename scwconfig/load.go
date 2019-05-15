@@ -36,16 +36,17 @@ func Load() (Config, error) {
 	if configPath != "" {
 		content, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read %s: %s", scwConfigPathEnv, err)
+			return nil, fmt.Errorf("cannot read config file %s: %s", scwConfigPathEnv, err)
 		}
 		confV1, err := unmarshalConfV1(content)
 		if err == nil {
+			// do not migrate automatically when using SCW_CONFIG_PATH
 			logger.Warningf("loaded config V1 from %s: config V1 is deprecated, please switch your config file to the V2: %s", configPath, documentationLink)
 			return confV1.toV2().catchInvalidProfile()
 		}
 		confV2, err := unmarshalConfV2(content)
 		if err != nil {
-			return nil, fmt.Errorf("content of %s (%s) is invalid: %s", scwConfigPathEnv, configPath, err)
+			return nil, fmt.Errorf("content of config file %s is invalid: %s", configPath, err)
 		}
 
 		logger.Infof("successfully loaded config V2 from %s", configPath)
@@ -70,6 +71,7 @@ func Load() (Config, error) {
 	}
 
 	// STEP 3: try to load config file V1
+	logger.Debugf("no config V2 found, fall back to config V1")
 	v1Path, v1PathOk := GetConfigV1FilePath()
 	if !v1PathOk {
 		logger.Infof("config file not found: no home directory")
@@ -77,7 +79,7 @@ func Load() (Config, error) {
 	}
 	file, err := ioutil.ReadFile(v1Path)
 	if err != nil {
-		logger.Infof("config file not found: %s", err)
+		logger.Infof("cannot read config file: %s", err)
 		return (&configV2{}).catchInvalidProfile() // ignore if file doesn't exist
 	}
 	confV1, err := unmarshalConfV1(file)

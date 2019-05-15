@@ -56,7 +56,7 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 		request = request.WithContext(req.Ctx)
 	}
 
-	if logger.V(logger.LogLevelDebug) {
+	if logger.ShouldLog(logger.LogLevelDebug) {
 		dump, err := httputil.DumpRequestOut(request, true)
 		if err != nil {
 			logger.Warningf("cannot dump outgoing request: %s", err)
