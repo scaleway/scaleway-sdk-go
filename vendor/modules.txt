@@ -1,2 +1,5 @@
+# github.com/dnaeon/go-vcr v1.0.1
+github.com/dnaeon/go-vcr/recorder
+github.com/dnaeon/go-vcr/cassette
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2

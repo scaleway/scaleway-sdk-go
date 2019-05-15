@@ -15,11 +15,12 @@ var logger Logger = DefaultLogger
 // loggerT is the default logger used by scaleway-sdk-go.
 type loggerT struct {
 	m [4]*log.Logger
+	v LogLevel
 }
 
-// ResetLogger create a new default logger.
+// Init create a new default logger.
 // Not mutex-protected, should be called before any scaleway-sdk-go functions.
-func (g *loggerT) ResetLogger(w io.Writer, level LogLevel) {
+func (g *loggerT) Init(w io.Writer, level LogLevel) {
 	g.m = newLogger(w, level).m
 }
 
@@ -45,6 +46,12 @@ func (g *loggerT) Warningf(format string, args ...interface{}) {
 func Errorf(format string, args ...interface{}) { logger.Errorf(format, args...) }
 func (g *loggerT) Errorf(format string, args ...interface{}) {
 	g.m[LogLevelError].Printf(format, args...)
+}
+
+// ShouldLog reports whether verbosity level l is at least the requested verbose level.
+func ShouldLog(level LogLevel) bool { return logger.ShouldLog(level) }
+func (g *loggerT) ShouldLog(level LogLevel) bool {
+	return level <= g.v
 }
 
 func isEnabled(envKey string) bool {
@@ -91,5 +98,5 @@ func newLogger(w io.Writer, level LogLevel) *loggerT {
 	m[LogLevelWarning] = log.New(io.MultiWriter(debugW, infoW, warningW), severityName[LogLevelWarning]+": ", log.LstdFlags)
 	m[LogLevelInfo] = log.New(io.MultiWriter(debugW, infoW), severityName[LogLevelInfo]+": ", log.LstdFlags)
 	m[LogLevelDebug] = log.New(debugW, severityName[LogLevelDebug]+": ", log.LstdFlags)
-	return &loggerT{m: m}
+	return &loggerT{m: m, v: level}
 }

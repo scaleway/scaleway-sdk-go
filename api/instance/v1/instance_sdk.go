@@ -362,7 +362,7 @@ type Ip struct {
 
 	Reverse string `json:"reverse,omitempty"`
 
-	Server string `json:"server,omitempty"`
+	Server *ServerSummary `json:"server,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
 }
@@ -736,7 +736,7 @@ type GetServerTypesAvailabilityRequest struct {
 // GetServerTypesAvailability: get availability
 //
 // Get availibility for all server types
-func (s *Api) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest) (*GetServerTypesAvailabilityResponse, error) {
+func (s *Api) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest, opts ...scw.RequestOption) (*GetServerTypesAvailabilityResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -753,7 +753,7 @@ func (s *Api) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest)
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -778,7 +778,7 @@ type ListServersTypesRequest struct {
 // ListServersTypes: list server types
 //
 // Get server types technical details
-func (s *Api) ListServersTypes(req *ListServersTypesRequest) (*ListServersTypesResponse, error) {
+func (s *Api) ListServersTypes(req *ListServersTypesRequest, opts ...scw.RequestOption) (*ListServersTypesResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -795,7 +795,7 @@ func (s *Api) ListServersTypes(req *ListServersTypesRequest) (*ListServersTypesR
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -820,7 +820,7 @@ type ListServersRequest struct {
 }
 
 // ListServers: list servers
-func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error) {
+func (s *Api) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -843,7 +843,7 @@ func (s *Api) ListServers(req *ListServersRequest) (*ListServersResponse, error)
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -880,7 +880,7 @@ type CreateServerRequest struct {
 }
 
 // CreateServer: create server
-func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, error) {
+func (s *Api) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -896,14 +896,12 @@ func (s *Api) CreateServer(req *CreateServerRequest) (*CreateServerResponse, err
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -926,7 +924,7 @@ type DeleteServerRequest struct {
 // DeleteServer: delete server
 //
 // Delete a server with the given id
-func (s *Api) DeleteServer(req *DeleteServerRequest) error {
+func (s *Api) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -939,7 +937,7 @@ func (s *Api) DeleteServer(req *DeleteServerRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -956,7 +954,7 @@ type GetServerRequest struct {
 // GetServer: get server
 //
 // Get the details of a specified Server
-func (s *Api) GetServer(req *GetServerRequest) (*GetServerResponse, error) {
+func (s *Api) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetServerResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -969,7 +967,7 @@ func (s *Api) GetServer(req *GetServerRequest) (*GetServerResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1041,7 +1039,7 @@ type SetServerRequest struct {
 	Arch Arch `json:"arch,omitempty"`
 }
 
-func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
+func (s *Api) SetServer(req *SetServerRequest, opts ...scw.RequestOption) (*SetServerResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1057,14 +1055,12 @@ func (s *Api) SetServer(req *SetServerRequest) (*SetServerResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1125,7 +1121,7 @@ func (this *UpdateServerRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(OverrideTmp)
 }
 // UpdateServer: update server
-func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, error) {
+func (s *Api) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1137,14 +1133,12 @@ func (s *Api) UpdateServer(req *UpdateServerRequest) (*UpdateServerResponse, err
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1167,7 +1161,7 @@ type ListServerActionsRequest struct {
 // ListServerActions: list server actions
 //
 // Liste all actions that can currently be performed on a server
-func (s *Api) ListServerActions(req *ListServerActionsRequest) (*ListServerActionsResponse, error) {
+func (s *Api) ListServerActions(req *ListServerActionsRequest, opts ...scw.RequestOption) (*ListServerActionsResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1180,7 +1174,7 @@ func (s *Api) ListServerActions(req *ListServerActionsRequest) (*ListServerActio
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1205,7 +1199,7 @@ type ServerActionRequest struct {
 // ServerAction: perform action
 //
 // Perform power related actions on a server
-func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, error) {
+func (s *Api) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) (*ServerActionResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1217,14 +1211,12 @@ func (s *Api) ServerAction(req *ServerActionRequest) (*ServerActionResponse, err
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "/action",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1247,7 +1239,7 @@ type ListServerUserDataRequest struct {
 // ListServerUserData: list user data
 //
 // List all user data keys register on a given server
-func (s *Api) ListServerUserData(req *ListServerUserDataRequest) (*ListServerUserDataResponse, error) {
+func (s *Api) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.RequestOption) (*ListServerUserDataResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1260,7 +1252,7 @@ func (s *Api) ListServerUserData(req *ListServerUserDataRequest) (*ListServerUse
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1285,7 +1277,7 @@ type DeleteServerUserDataRequest struct {
 // DeleteServerUserData: delete user data
 //
 // Delete the given key from a server user data
-func (s *Api) DeleteServerUserData(req *DeleteServerUserDataRequest) error {
+func (s *Api) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1298,7 +1290,7 @@ func (s *Api) DeleteServerUserData(req *DeleteServerUserDataRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1319,7 +1311,7 @@ type SetServerUserDataRequest struct {
 // SetServerUserData: add/Set user data
 //
 // Add or update a user data with the given key on a server
-func (s *Api) SetServerUserData(req *SetServerUserDataRequest) error {
+func (s *Api) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1331,14 +1323,12 @@ func (s *Api) SetServerUserData(req *SetServerUserDataRequest) error {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerId) + "/user_data/" + fmt.Sprint(req.Key) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req.Content)
+	err = scwReq.SetBody(req.Content)
 	if err != nil {
 		return err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1357,7 +1347,7 @@ type GetServerUserDataRequest struct {
 // GetServerUserData: get user data
 //
 // Get the content of a user data with the given key on a server
-func (s *Api) GetServerUserData(req *GetServerUserDataRequest) (*utils.File, error) {
+func (s *Api) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (*utils.File, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1370,7 +1360,7 @@ func (s *Api) GetServerUserData(req *GetServerUserDataRequest) (*utils.File, err
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1403,7 +1393,7 @@ type ListImagesRequest struct {
 // ListImages: list images
 //
 // List all images available in an account
-func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
+func (s *Api) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -1429,7 +1419,7 @@ func (s *Api) ListImages(req *ListImagesRequest) (*ListImagesResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1452,7 +1442,7 @@ type GetImageRequest struct {
 // GetImage: get image
 //
 // Get details of an image with the given id
-func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
+func (s *Api) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1465,7 +1455,7 @@ func (s *Api) GetImage(req *GetImageRequest) (*GetImageResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1496,7 +1486,7 @@ type CreateImageRequest struct {
 }
 
 // CreateImage: create image
-func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error) {
+func (s *Api) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*CreateImageResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1512,14 +1502,12 @@ func (s *Api) CreateImage(req *CreateImageRequest) (*CreateImageResponse, error)
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1564,7 +1552,7 @@ type SetImageRequest struct {
 // SetImage: update image
 //
 // Replace all image properties with an image message
-func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
+func (s *Api) SetImage(req *SetImageRequest, opts ...scw.RequestOption) (*SetImageResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1580,14 +1568,12 @@ func (s *Api) SetImage(req *SetImageRequest) (*SetImageResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1610,7 +1596,7 @@ type DeleteImageRequest struct {
 // DeleteImage: delete image
 //
 // Delete the image with the given id
-func (s *Api) DeleteImage(req *DeleteImageRequest) error {
+func (s *Api) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1623,7 +1609,7 @@ func (s *Api) DeleteImage(req *DeleteImageRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1644,7 +1630,7 @@ type ListSnapshotsRequest struct {
 }
 
 // ListSnapshots: list snapshots
-func (s *Api) ListSnapshots(req *ListSnapshotsRequest) (*ListSnapshotsResponse, error) {
+func (s *Api) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -1668,7 +1654,7 @@ func (s *Api) ListSnapshots(req *ListSnapshotsRequest) (*ListSnapshotsResponse, 
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1693,7 +1679,7 @@ type CreateSnapshotRequest struct {
 }
 
 // CreateSnapshot: create snapshot
-func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotResponse, error) {
+func (s *Api) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*CreateSnapshotResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1709,14 +1695,12 @@ func (s *Api) CreateSnapshot(req *CreateSnapshotRequest) (*CreateSnapshotRespons
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1739,7 +1723,7 @@ type GetSnapshotRequest struct {
 // GetSnapshot: get snapshot
 //
 // Get details of a snapshot with the given id
-func (s *Api) GetSnapshot(req *GetSnapshotRequest) (*GetSnapshotResponse, error) {
+func (s *Api) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*GetSnapshotResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1752,7 +1736,7 @@ func (s *Api) GetSnapshot(req *GetSnapshotRequest) (*GetSnapshotResponse, error)
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1791,7 +1775,7 @@ type SetSnapshotRequest struct {
 // SetSnapshot: update snapshot
 //
 // Replace all snapshot properties with a snapshot message
-func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error) {
+func (s *Api) SetSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*SetSnapshotResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1807,14 +1791,12 @@ func (s *Api) SetSnapshot(req *SetSnapshotRequest) (*SetSnapshotResponse, error)
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1837,7 +1819,7 @@ type DeleteSnapshotRequest struct {
 // DeleteSnapshot: delete snapshot
 //
 // Delete the snapshot with the given id
-func (s *Api) DeleteSnapshot(req *DeleteSnapshotRequest) error {
+func (s *Api) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1850,7 +1832,7 @@ func (s *Api) DeleteSnapshot(req *DeleteSnapshotRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1871,7 +1853,7 @@ type ListVolumesRequest struct {
 }
 
 // ListVolumes: list volumes
-func (s *Api) ListVolumes(req *ListVolumesRequest) (*ListVolumesResponse, error) {
+func (s *Api) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -1895,7 +1877,7 @@ func (s *Api) ListVolumes(req *ListVolumesRequest) (*ListVolumesResponse, error)
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1941,7 +1923,7 @@ func (m *CreateVolumeRequest) GetFrom() From {
 }
 
 // CreateVolume: create volume
-func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, error) {
+func (s *Api) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*CreateVolumeResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1957,14 +1939,12 @@ func (s *Api) CreateVolume(req *CreateVolumeRequest) (*CreateVolumeResponse, err
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1987,7 +1967,7 @@ type GetVolumeRequest struct {
 // GetVolume: get volume
 //
 // Get details of a volume with the given id
-func (s *Api) GetVolume(req *GetVolumeRequest) (*GetVolumeResponse, error) {
+func (s *Api) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetVolumeResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2000,7 +1980,7 @@ func (s *Api) GetVolume(req *GetVolumeRequest) (*GetVolumeResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2041,7 +2021,7 @@ type SetVolumeRequest struct {
 // SetVolume: update volume
 //
 // Replace all volume properties with a volume message
-func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
+func (s *Api) SetVolume(req *SetVolumeRequest, opts ...scw.RequestOption) (*SetVolumeResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2057,14 +2037,12 @@ func (s *Api) SetVolume(req *SetVolumeRequest) (*SetVolumeResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2087,7 +2065,7 @@ type DeleteVolumeRequest struct {
 // DeleteVolume: delete volume
 //
 // Delete the volume with the given id
-func (s *Api) DeleteVolume(req *DeleteVolumeRequest) error {
+func (s *Api) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -2100,7 +2078,7 @@ func (s *Api) DeleteVolume(req *DeleteVolumeRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -2121,7 +2099,7 @@ type ListSecurityGroupsRequest struct {
 // ListSecurityGroups: list security groups
 //
 // List all security groups available in an account
-func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest) (*ListSecurityGroupsResponse, error) {
+func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.RequestOption) (*ListSecurityGroupsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -2144,7 +2122,7 @@ func (s *Api) ListSecurityGroups(req *ListSecurityGroupsRequest) (*ListSecurityG
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2175,7 +2153,7 @@ type CreateSecurityGroupRequest struct {
 }
 
 // CreateSecurityGroup: create security group
-func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest) (*CreateSecurityGroupResponse, error) {
+func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.RequestOption) (*CreateSecurityGroupResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2187,14 +2165,12 @@ func (s *Api) CreateSecurityGroup(req *CreateSecurityGroupRequest) (*CreateSecur
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2217,7 +2193,7 @@ type GetSecurityGroupRequest struct {
 // GetSecurityGroup: get security group
 //
 // Get the details of a Security Group with the given id
-func (s *Api) GetSecurityGroup(req *GetSecurityGroupRequest) (*GetSecurityGroupResponse, error) {
+func (s *Api) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.RequestOption) (*GetSecurityGroupResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2230,7 +2206,7 @@ func (s *Api) GetSecurityGroup(req *GetSecurityGroupRequest) (*GetSecurityGroupR
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2251,7 +2227,7 @@ type DeleteSecurityGroupRequest struct {
 }
 
 // DeleteSecurityGroup: delete security group
-func (s *Api) DeleteSecurityGroup(req *DeleteSecurityGroupRequest) error {
+func (s *Api) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -2264,7 +2240,7 @@ func (s *Api) DeleteSecurityGroup(req *DeleteSecurityGroupRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -2303,7 +2279,7 @@ type SetSecurityGroupRequest struct {
 // SetSecurityGroup: update security group
 //
 // Replace all security group properties with a security group message
-func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGroupResponse, error) {
+func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest, opts ...scw.RequestOption) (*UpdateSecurityGroupResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2319,14 +2295,12 @@ func (s *Api) SetSecurityGroup(req *SetSecurityGroupRequest) (*UpdateSecurityGro
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2351,7 +2325,7 @@ type ListSecurityGroupRulesRequest struct {
 }
 
 // ListSecurityGroupRules: list rules
-func (s *Api) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest) (*ListSecurityGroupRulesResponse, error) {
+func (s *Api) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ...scw.RequestOption) (*ListSecurityGroupRulesResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2368,7 +2342,7 @@ func (s *Api) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest) (*ListS
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2405,7 +2379,7 @@ type CreateSecurityGroupRuleRequest struct {
 }
 
 // CreateSecurityGroupRule: create rule
-func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest) (*CreateSecurityGroupRuleResponse, error) {
+func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts ...scw.RequestOption) (*CreateSecurityGroupRuleResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2417,14 +2391,12 @@ func (s *Api) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest) (*Cre
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupId) + "/rules",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2449,7 +2421,7 @@ type DeleteSecurityGroupRuleRequest struct {
 // DeleteSecurityGroupRule: delete rule
 //
 // Delete a security group rule with the given id
-func (s *Api) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest) error {
+func (s *Api) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -2462,7 +2434,7 @@ func (s *Api) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest) error
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -2481,7 +2453,7 @@ type GetSecurityGroupRuleRequest struct {
 // GetSecurityGroupRule: get rule
 //
 // Get details of a security group rule with the given id
-func (s *Api) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest) (*GetSecurityGroupRuleResponse, error) {
+func (s *Api) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw.RequestOption) (*GetSecurityGroupRuleResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2494,7 +2466,7 @@ func (s *Api) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest) (*GetSecuri
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2517,7 +2489,7 @@ type ListIpsRequest struct {
 }
 
 // ListIps: list IPs
-func (s *Api) ListIps(req *ListIpsRequest) (*ListIpsResponse, error) {
+func (s *Api) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2538,7 +2510,7 @@ func (s *Api) ListIps(req *ListIpsRequest) (*ListIpsResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2561,7 +2533,7 @@ type CreateIpRequest struct {
 }
 
 // CreateIp: reseve an IP
-func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
+func (s *Api) CreateIp(req *CreateIpRequest, opts ...scw.RequestOption) (*CreateIpResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2577,14 +2549,12 @@ func (s *Api) CreateIp(req *CreateIpRequest) (*CreateIpResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2607,7 +2577,7 @@ type GetIpRequest struct {
 // GetIp: get IP
 //
 // Get details of an IP with the given id
-func (s *Api) GetIp(req *GetIpRequest) (*GetIpResponse, error) {
+func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*GetIpResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2620,7 +2590,7 @@ func (s *Api) GetIp(req *GetIpRequest) (*GetIpResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2643,12 +2613,12 @@ type SetIpRequest struct {
 
 	Reverse string `json:"reverse,omitempty"`
 
-	Server string `json:"server,omitempty"`
+	Server *ServerSummary `json:"server,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
 }
 
-func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
+func (s *Api) SetIp(req *SetIpRequest, opts ...scw.RequestOption) (*SetIpResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2664,14 +2634,12 @@ func (s *Api) SetIp(req *SetIpRequest) (*SetIpResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.Id) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2708,7 +2676,7 @@ func (this *UpdateIpRequest) MarshalJSON() ([]byte, error) {
 }
 
 // UpdateIp: update IP
-func (s *Api) UpdateIp(req *UpdateIpRequest) (*UpdateIpResponse, error) {
+func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*UpdateIpResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2720,14 +2688,12 @@ func (s *Api) UpdateIp(req *UpdateIpRequest) (*UpdateIpResponse, error) {
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2750,7 +2716,7 @@ type DeleteIpRequest struct {
 // DeleteIp: delete IP
 //
 // Delete the IP with the given id
-func (s *Api) DeleteIp(req *DeleteIpRequest) error {
+func (s *Api) DeleteIp(req *DeleteIpRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -2763,7 +2729,7 @@ func (s *Api) DeleteIp(req *DeleteIpRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -2784,7 +2750,7 @@ type ListBootscriptsRequest struct {
 }
 
 // ListBootscripts: list bootscripts
-func (s *Api) ListBootscripts(req *ListBootscriptsRequest) (*ListBootscriptsResponse, error) {
+func (s *Api) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOption) (*ListBootscriptsResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2803,7 +2769,7 @@ func (s *Api) ListBootscripts(req *ListBootscriptsRequest) (*ListBootscriptsResp
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2826,7 +2792,7 @@ type GetBootscriptRequest struct {
 // GetBootscript: get bootscripts
 //
 // Get details of a bootscript with the given id
-func (s *Api) GetBootscript(req *GetBootscriptRequest) (*GetBootscriptResponse, error) {
+func (s *Api) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption) (*GetBootscriptResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2839,7 +2805,7 @@ func (s *Api) GetBootscript(req *GetBootscriptRequest) (*GetBootscriptResponse, 
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2857,7 +2823,7 @@ type GetServiceInfoRequest struct {
 	Zone utils.Zone `json:"-"`
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoResponse, error) {
+func (s *Api) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*GetServiceInfoResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2870,7 +2836,7 @@ func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*GetServiceInfoRespons
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2890,7 +2856,7 @@ type GetDashboardRequest struct {
 	Organization *string `json:"-"`
 }
 
-func (s *Api) GetDashboard(req *GetDashboardRequest) (*GetDashboardResponse, error) {
+func (s *Api) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) (*GetDashboardResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -2911,7 +2877,7 @@ func (s *Api) GetDashboard(req *GetDashboardRequest) (*GetDashboardResponse, err
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err

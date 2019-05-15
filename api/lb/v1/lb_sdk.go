@@ -397,23 +397,26 @@ type HealthCheck struct {
 
 	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	TcpConfig *HealthCheckTcpConfig `json:"tcp_config,omitempty"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older versions, use TCP check
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 	// LdapConfig: the response is analyzed to find an LDAPv3 response message
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
 	// RedisConfig: the response is analyzed to find the +PONG response message
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	HttpConfig *HealthCheckHttpConfig `json:"http_config,omitempty"`
+
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	HttpsConfig *HealthCheckHttpsConfig `json:"https_config,omitempty"`
 }
 
 func (m *HealthCheck) GetConfig() Config {
@@ -430,6 +433,8 @@ func (m *HealthCheck) GetConfig() Config {
 		return ConfigRedisConfig{*m.RedisConfig}
 	case m.HttpConfig != nil:
 		return ConfigHttpConfig{*m.HttpConfig}
+	case m.HttpsConfig != nil:
+		return ConfigHttpsConfig{*m.HttpsConfig}
 	}
 	return nil
 }
@@ -471,6 +476,14 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 }
 
 type HealthCheckHttpConfig struct {
+	Uri string `json:"uri,omitempty"`
+
+	Method string `json:"method,omitempty"`
+
+	Code *int32 `json:"code,omitempty"`
+}
+
+type HealthCheckHttpsConfig struct {
 	Uri string `json:"uri,omitempty"`
 
 	Method string `json:"method,omitempty"`
@@ -588,7 +601,7 @@ type GetServiceInfoRequest struct {
 	Region utils.Region `json:"-"`
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*utils.ServiceInfo, error) {
+func (s *Api) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*utils.ServiceInfo, error) {
 	var err error
 
 	if req.Region == "" {
@@ -601,7 +614,7 @@ func (s *Api) GetServiceInfo(req *GetServiceInfoRequest) (*utils.ServiceInfo, er
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -629,7 +642,7 @@ type ListLbsRequest struct {
 	OrganizationId *string `json:"-"`
 }
 
-func (s *Api) ListLbs(req *ListLbsRequest) (*ListLbsResponse, error) {
+func (s *Api) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -655,7 +668,7 @@ func (s *Api) ListLbs(req *ListLbsRequest) (*ListLbsResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -683,7 +696,7 @@ type CreateLbRequest struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-func (s *Api) CreateLb(req *CreateLbRequest) (*Lb, error) {
+func (s *Api) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.OrganizationId == "" {
@@ -699,14 +712,12 @@ func (s *Api) CreateLb(req *CreateLbRequest) (*Lb, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -726,7 +737,7 @@ type GetLbRequest struct {
 	LbId string `json:"-"`
 }
 
-func (s *Api) GetLb(req *GetLbRequest) (*Lb, error) {
+func (s *Api) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.Region == "" {
@@ -739,7 +750,7 @@ func (s *Api) GetLb(req *GetLbRequest) (*Lb, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -765,7 +776,7 @@ type UpdateLbRequest struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-func (s *Api) UpdateLb(req *UpdateLbRequest) (*Lb, error) {
+func (s *Api) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.Region == "" {
@@ -777,14 +788,12 @@ func (s *Api) UpdateLb(req *UpdateLbRequest) (*Lb, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -806,7 +815,7 @@ type DeleteLbRequest struct {
 	ReleaseIp bool `json:"-"`
 }
 
-func (s *Api) DeleteLb(req *DeleteLbRequest) error {
+func (s *Api) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -823,7 +832,7 @@ func (s *Api) DeleteLb(req *DeleteLbRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -844,7 +853,7 @@ type ListIPsRequest struct {
 }
 
 // ListIPs: list IPs
-func (s *Api) ListIPs(req *ListIPsRequest) (*ListIpsResponse, error) {
+func (s *Api) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
@@ -869,7 +878,7 @@ func (s *Api) ListIPs(req *ListIPsRequest) (*ListIpsResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -892,7 +901,7 @@ type GetIpRequest struct {
 }
 
 // GetIp: get IP
-func (s *Api) GetIp(req *GetIpRequest) (*Ip, error) {
+func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*Ip, error) {
 	var err error
 
 	if req.Region == "" {
@@ -905,7 +914,7 @@ func (s *Api) GetIp(req *GetIpRequest) (*Ip, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -926,7 +935,7 @@ type ReleaseIpRequest struct {
 }
 
 // ReleaseIp: release IP
-func (s *Api) ReleaseIp(req *ReleaseIpRequest) error {
+func (s *Api) ReleaseIp(req *ReleaseIpRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -939,7 +948,7 @@ func (s *Api) ReleaseIp(req *ReleaseIpRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -955,7 +964,7 @@ type UpdateIpRequest struct {
 	Reverse *string `json:"-"`
 }
 
-func (s *Api) UpdateIp(req *UpdateIpRequest) (*Ip, error) {
+func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*Ip, error) {
 	var err error
 
 	if req.Region == "" {
@@ -972,7 +981,7 @@ func (s *Api) UpdateIp(req *UpdateIpRequest) (*Ip, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1000,7 +1009,7 @@ type ListBackendsRequest struct {
 	PageSize *int32 `json:"-"`
 }
 
-func (s *Api) ListBackends(req *ListBackendsRequest) (*ListBackendsResponse, error) {
+func (s *Api) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1020,7 +1029,7 @@ func (s *Api) ListBackends(req *ListBackendsRequest) (*ListBackendsResponse, err
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1106,7 +1115,7 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) CreateBackend(req *CreateBackendRequest) (*Backend, error) {
+func (s *Api) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1118,14 +1127,12 @@ func (s *Api) CreateBackend(req *CreateBackendRequest) (*Backend, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/backends",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1145,7 +1152,7 @@ type GetBackendRequest struct {
 	BackendId string `json:"-"`
 }
 
-func (s *Api) GetBackend(req *GetBackendRequest) (*Backend, error) {
+func (s *Api) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1158,7 +1165,7 @@ func (s *Api) GetBackend(req *GetBackendRequest) (*Backend, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1240,7 +1247,7 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateBackend(req *UpdateBackendRequest) (*Backend, error) {
+func (s *Api) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1252,14 +1259,12 @@ func (s *Api) UpdateBackend(req *UpdateBackendRequest) (*Backend, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1279,7 +1284,7 @@ type DeleteBackendRequest struct {
 	BackendId string `json:"-"`
 }
 
-func (s *Api) DeleteBackend(req *DeleteBackendRequest) error {
+func (s *Api) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1292,7 +1297,7 @@ func (s *Api) DeleteBackend(req *DeleteBackendRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1308,7 +1313,7 @@ type AddBackendServersRequest struct {
 	ServerIp []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) AddBackendServers(req *AddBackendServersRequest) (*Backend, error) {
+func (s *Api) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1320,14 +1325,12 @@ func (s *Api) AddBackendServers(req *AddBackendServersRequest) (*Backend, error)
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1349,7 +1352,7 @@ type RemoveBackendServersRequest struct {
 	ServerIp []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest) (*Backend, error) {
+func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1361,14 +1364,12 @@ func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest) (*Backend, 
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1390,7 +1391,7 @@ type SetBackendServersRequest struct {
 	ServerIp []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) SetBackendServers(req *SetBackendServersRequest) (*Backend, error) {
+func (s *Api) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1402,14 +1403,12 @@ func (s *Api) SetBackendServers(req *SetBackendServersRequest) (*Backend, error)
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1436,23 +1435,26 @@ type UpdateHealthCheckRequest struct {
 	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 	// LdapConfig: the response is analyzed to find an LDAPv3 response message
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
 	// RedisConfig: the response is analyzed to find the +PONG response message
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	TcpConfig *HealthCheckTcpConfig `json:"tcp_config,omitempty"`
 
-	// Precisely one of HttpConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
 	HttpConfig *HealthCheckHttpConfig `json:"http_config,omitempty"`
+
+	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	HttpsConfig *HealthCheckHttpsConfig `json:"https_config,omitempty"`
 }
 
 func (m *UpdateHealthCheckRequest) GetConfig() Config {
@@ -1469,6 +1471,8 @@ func (m *UpdateHealthCheckRequest) GetConfig() Config {
 		return ConfigTcpConfig{*m.TcpConfig}
 	case m.HttpConfig != nil:
 		return ConfigHttpConfig{*m.HttpConfig}
+	case m.HttpsConfig != nil:
+		return ConfigHttpsConfig{*m.HttpsConfig}
 	}
 	return nil
 }
@@ -1509,7 +1513,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest) (*HealthCheck, error) {
+func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1521,14 +1525,12 @@ func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest) (*HealthCheck, er
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/healthcheck",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1556,7 +1558,7 @@ type ListFrontendsRequest struct {
 	PageSize *int32 `json:"-"`
 }
 
-func (s *Api) ListFrontends(req *ListFrontendsRequest) (*ListFrontendsResponse, error) {
+func (s *Api) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1576,7 +1578,7 @@ func (s *Api) ListFrontends(req *ListFrontendsRequest) (*ListFrontendsResponse, 
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1636,7 +1638,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) CreateFrontend(req *CreateFrontendRequest) (*Frontend, error) {
+func (s *Api) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1648,14 +1650,12 @@ func (s *Api) CreateFrontend(req *CreateFrontendRequest) (*Frontend, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/frontends",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1675,7 +1675,7 @@ type GetFrontendRequest struct {
 	FrontendId string `json:"-"`
 }
 
-func (s *Api) GetFrontend(req *GetFrontendRequest) (*Frontend, error) {
+func (s *Api) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1688,7 +1688,7 @@ func (s *Api) GetFrontend(req *GetFrontendRequest) (*Frontend, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1748,7 +1748,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateFrontend(req *UpdateFrontendRequest) (*Frontend, error) {
+func (s *Api) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1760,14 +1760,12 @@ func (s *Api) UpdateFrontend(req *UpdateFrontendRequest) (*Frontend, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1787,7 +1785,7 @@ type DeleteFrontendRequest struct {
 	FrontendId string `json:"-"`
 }
 
-func (s *Api) DeleteFrontend(req *DeleteFrontendRequest) error {
+func (s *Api) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1800,7 +1798,7 @@ func (s *Api) DeleteFrontend(req *DeleteFrontendRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -1814,7 +1812,7 @@ type GetLbStatsRequest struct {
 	LbId string `json:"-"`
 }
 
-func (s *Api) GetLbStats(req *GetLbStatsRequest) (*LbStats, error) {
+func (s *Api) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1827,7 +1825,7 @@ func (s *Api) GetLbStats(req *GetLbStatsRequest) (*LbStats, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1855,7 +1853,7 @@ type ListAclsRequest struct {
 	Name *string `json:"-"`
 }
 
-func (s *Api) ListAcls(req *ListAclsRequest) (*ListAclResponse, error) {
+func (s *Api) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAclResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1875,7 +1873,7 @@ func (s *Api) ListAcls(req *ListAclsRequest) (*ListAclResponse, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1903,7 +1901,7 @@ type CreateAclRequest struct {
 	Index int32 `json:"index,omitempty"`
 }
 
-func (s *Api) CreateAcl(req *CreateAclRequest) (*Acl, error) {
+func (s *Api) CreateAcl(req *CreateAclRequest, opts ...scw.RequestOption) (*Acl, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1915,14 +1913,12 @@ func (s *Api) CreateAcl(req *CreateAclRequest) (*Acl, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "/acls",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1942,7 +1938,7 @@ type GetAclRequest struct {
 	AclId string `json:"-"`
 }
 
-func (s *Api) GetAcl(req *GetAclRequest) (*Acl, error) {
+func (s *Api) GetAcl(req *GetAclRequest, opts ...scw.RequestOption) (*Acl, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1955,7 +1951,7 @@ func (s *Api) GetAcl(req *GetAclRequest) (*Acl, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -1983,7 +1979,7 @@ type UpdateAclRequest struct {
 	Index int32 `json:"index,omitempty"`
 }
 
-func (s *Api) UpdateAcl(req *UpdateAclRequest) (*Acl, error) {
+func (s *Api) UpdateAcl(req *UpdateAclRequest, opts ...scw.RequestOption) (*Acl, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1995,14 +1991,12 @@ func (s *Api) UpdateAcl(req *UpdateAclRequest) (*Acl, error) {
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.AclId) + "",
 		Headers: http.Header{},
 	}
-	body, err := marshaler.MarshalBody(req)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
-	scwReq.Headers.Add("Content-Type", body.ContentType())
-	scwReq.Body = body.Reader
 
-	scwResp, err := s.client.Do(scwReq)
+	scwResp, err := s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return nil, err
@@ -2022,7 +2016,7 @@ type DeleteAclRequest struct {
 	AclId string `json:"-"`
 }
 
-func (s *Api) DeleteAcl(req *DeleteAclRequest) error {
+func (s *Api) DeleteAcl(req *DeleteAclRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -2035,7 +2029,7 @@ func (s *Api) DeleteAcl(req *DeleteAclRequest) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq)
+	_, err = s.client.Do(scwReq, opts...)
 
 	if err != nil {
 		return err
@@ -2087,4 +2081,11 @@ type ConfigHttpConfig struct {
 }
 
 func (ConfigHttpConfig) isConfig() {
+}
+
+type ConfigHttpsConfig struct {
+	Value HealthCheckHttpsConfig
+}
+
+func (ConfigHttpsConfig) isConfig() {
 }

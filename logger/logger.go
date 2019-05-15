@@ -31,6 +31,8 @@ type Logger interface {
 	Warningf(format string, args ...interface{})
 	// Errorf logs to ERROR log. Arguments are handled in the manner of fmt.Printf.
 	Errorf(format string, args ...interface{})
+	// ShouldLog reports whether verbosity level l is at least the requested verbose level.
+	ShouldLog(level LogLevel) bool
 }
 
 // SetLogger sets logger that is used in by the SDK.

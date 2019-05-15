@@ -136,7 +136,7 @@ func TestLoad(t *testing.T) {
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
-			expectedErr: "cannot read $SCW_CONFIG_PATH: open {HOME}/fake/test.conf: no such file or directory",
+			expectedErr: "cannot read config file SCW_CONFIG_PATH: open {HOME}/fake/test.conf: no such file or directory",
 		},
 		{
 			name: "Err: custom-path config with invalid V2",
@@ -146,7 +146,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				"invalid1/test.conf": v2SimpleInvalidConfigFile,
 			},
-			expectedErr: "content of $SCW_CONFIG_PATH ({HOME}/invalid1/test.conf) is invalid: yaml: found unexpected end of stream",
+			expectedErr: "content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
 		},
 		{
 			name: "Err: default config with invalid V2",
