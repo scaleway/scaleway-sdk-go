@@ -17,9 +17,9 @@ type loggerT struct {
 	m [4]*log.Logger
 }
 
-// ResetLogger create a new default logger.
+// Init create a new default logger.
 // Not mutex-protected, should be called before any scaleway-sdk-go functions.
-func (g *loggerT) ResetLogger(w io.Writer, level LogLevel) {
+func (g *loggerT) Init(w io.Writer, level LogLevel) {
 	g.m = newLogger(w, level).m
 }
 
