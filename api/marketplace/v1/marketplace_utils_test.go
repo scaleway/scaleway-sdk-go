@@ -17,7 +17,9 @@ func TestGetImageByName(t *testing.T) {
 	if err != nil {
 		testhelpers.Ok(t, err)
 	}
-	defer r.Stop() // Make sure recorder is stopped once done with it
+	defer func() {
+		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
 
 	httpClient := &http.Client{Transport: r}
 
