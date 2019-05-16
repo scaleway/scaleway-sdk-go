@@ -33,7 +33,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	var (
 		errorMessage    = "some message"
 		errorType       = "some type"
-		errorFields     = map[string][]string{"some_field": []string{"some_value"}}
+		errorFields     = map[string][]string{"some_field": {"some_value"}}
 		errorStatusCode = 400
 	)
 
