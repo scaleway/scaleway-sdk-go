@@ -12,9 +12,9 @@ interactions:
     url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/1c91be6a-7f22-42aa-84d9-e83479613db0
     method: PATCH
   response:
-    body: '{"ip": {"organization": "e49695be-9e0c-4ac7-9969-9a026a3f1aac", "reverse":
+    body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
       null, "id": "1c91be6a-7f22-42aa-84d9-e83479613db0", "server": {"id": "5ee00b7a-0eba-4f5c-84ce-8f0f32177e2a",
-      "name": "scw-affectionate-jackson"}, "address": "1.1.1.1"}}'
+      "name": "scw-affectionate-jackson"}, "address": "51.158.120.111"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -25,7 +25,43 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 15 May 2019 15:52:58 GMT
+      - Thu, 16 May 2019 09:31:08 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: '{"server":null}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/1c91be6a-7f22-42aa-84d9-e83479613db0
+    method: PATCH
+  response:
+    body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
+      null, "id": "1c91be6a-7f22-42aa-84d9-e83479613db0", "server": null, "address":
+      "51.158.120.111"}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "172"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 16 May 2019 09:31:17 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
