@@ -3,12 +3,13 @@ package instance
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
 func TestAttachIP(t *testing.T) {
 
-	client, r, err := testhelpers.CreateRecordedScwClient()
+	client, r, err := httprecorder.CreateRecordedScwClient()
 	testhelpers.Ok(t, err)
 	defer r.Stop() // Make sure recorder is stopped once done with it
 
