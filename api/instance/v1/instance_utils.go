@@ -9,20 +9,16 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
-// AttachIpRequest contains the parameters to attach an IP to a server
-type AttachIpRequest struct {
-	Zone   utils.Zone `json:"-"`
-	IpId   string     `json:"-"`
-	Server *string    `json:"server"`
+// AttachIPRequest contains the parameters to attach an IP to a server
+type AttachIPRequest struct {
+	Zone     utils.Zone `json:"-"`
+	IPID     string     `json:"-"`
+	ServerID string     `json:"server"`
 }
 
-// AttachIp attaches an IP to a server.
-func (s *Api) AttachIp(req *AttachIpRequest, opts ...scw.RequestOption) (*Ip, error) {
+// AttachIP attaches an IP to a server.
+func (s *Api) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Ip, error) {
 	var err error
-
-	if req.Server == nil || *req.Server == "" {
-		return nil, fmt.Errorf("couldn't attach ip: server id was not given")
-	}
 
 	if req.Zone == "" {
 		req.Zone = s.client.GetDefaultZone()
@@ -30,7 +26,7 @@ func (s *Api) AttachIp(req *AttachIpRequest, opts ...scw.RequestOption) (*Ip, er
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -52,14 +48,14 @@ func (s *Api) AttachIp(req *AttachIpRequest, opts ...scw.RequestOption) (*Ip, er
 	return resp.Ip, nil
 }
 
-// AttachIpRequest contains the parameters to detach an IP from a server
-type DetachIpRequest struct {
+// DetachIPRequest contains the parameters to detach an IP from a server
+type DetachIPRequest struct {
 	Zone utils.Zone `json:"-"`
-	IpId string     `json:"-"`
+	IPID string     `json:"-"`
 }
 
-// AttachIp detaches an IP from a server.
-func (s *Api) DetachIp(req *DetachIpRequest, opts ...scw.RequestOption) (*Ip, error) {
+// DetachIP detaches an IP from a server.
+func (s *Api) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Ip, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -74,7 +70,7 @@ func (s *Api) DetachIp(req *DetachIpRequest, opts ...scw.RequestOption) (*Ip, er
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IpId) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Headers: http.Header{},
 	}
 

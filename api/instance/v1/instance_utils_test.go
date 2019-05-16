@@ -15,20 +15,24 @@ func TestAttachIP(t *testing.T) {
 
 	instanceAPI := NewApi(client)
 
-	server := "5ee00b7a-0eba-4f5c-84ce-8f0f32177e2a"
+	const (
+		serverID = "5ee00b7a-0eba-4f5c-84ce-8f0f32177e2a"
+		ipID     = "1c91be6a-7f22-42aa-84d9-e83479613db0"
+		zone     = "fr-par-1"
+	)
 
-	ip, err := instanceAPI.AttachIp(&AttachIpRequest{
-		IpId:   "1c91be6a-7f22-42aa-84d9-e83479613db0",
-		Zone:   "fr-par-1",
-		Server: &server,
+	ip, err := instanceAPI.AttachIP(&AttachIPRequest{
+		IPID:     ipID,
+		Zone:     zone,
+		ServerID: serverID,
 	})
 
 	testhelpers.Ok(t, err)
-	testhelpers.Equals(t, server, ip.Server.Id)
+	testhelpers.Equals(t, serverID, ip.Server.Id)
 
-	ip, err = instanceAPI.DetachIp(&DetachIpRequest{
-		IpId: "1c91be6a-7f22-42aa-84d9-e83479613db0",
-		Zone: "fr-par-1",
+	ip, err = instanceAPI.DetachIP(&DetachIPRequest{
+		IPID: ipID,
+		Zone: zone,
 	})
 
 	testhelpers.Ok(t, err)

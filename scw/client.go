@@ -92,7 +92,7 @@ func defaultOptions() []ClientOption {
 
 func newHTTPClient() *http.Client {
 	return &http.Client{
-		Timeout: 9 * time.Second,
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			DialContext:           (&net.Dialer{Timeout: 5 * time.Second}).DialContext,
 			TLSHandshakeTimeout:   5 * time.Second,
