@@ -34,14 +34,14 @@ var (
 	_ = parameter.AddToQuery
 )
 
-// Api: marketplace API
-type Api struct {
+// API: marketplace API
+type API struct {
 	client *scw.Client
 }
 
-// NewApi returns a Api object from a Scaleway client.
-func NewApi(client *scw.Client) *Api {
-	return &Api{
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
 		client: client,
 	}
 }
@@ -51,7 +51,7 @@ type GetImageResponse struct {
 }
 
 type GetServiceInfoResponse struct {
-	Api string `json:"api,omitempty"`
+	API string `json:"api,omitempty"`
 
 	Description string `json:"description,omitempty"`
 
@@ -63,7 +63,7 @@ type GetVersionResponse struct {
 }
 
 type Image struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 
@@ -95,7 +95,7 @@ type ListVersionsResponse struct {
 }
 
 type LocalImage struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Arch string `json:"arch,omitempty"`
 
@@ -105,13 +105,13 @@ type LocalImage struct {
 }
 
 type Organization struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 }
 
 type Version struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 
@@ -122,12 +122,12 @@ type Version struct {
 	LocalImages []*LocalImage `json:"local_images,omitempty"`
 }
 
-// Service Api
+// Service API
 
 type GetServiceInfoRequest struct {
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*GetServiceInfoResponse, error) {
+func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*GetServiceInfoResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
@@ -156,7 +156,7 @@ type ListImagesRequest struct {
 	Page *int32 `json:"-"`
 }
 
-func (s *Api) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
+func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
 	query := url.Values{}
@@ -185,15 +185,15 @@ func (s *Api) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 }
 
 type GetImageRequest struct {
-	ImageId string `json:"-"`
+	ImageID string `json:"-"`
 }
 
-func (s *Api) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
+func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageId) + "",
+		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "",
 		Headers: http.Header{},
 	}
 
@@ -212,15 +212,15 @@ func (s *Api) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 }
 
 type ListVersionsRequest struct {
-	ImageId string `json:"-"`
+	ImageID string `json:"-"`
 }
 
-func (s *Api) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
+func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageId) + "/versions",
+		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "/versions",
 		Headers: http.Header{},
 	}
 
@@ -239,17 +239,17 @@ func (s *Api) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 }
 
 type GetVersionRequest struct {
-	ImageId string `json:"-"`
+	ImageID string `json:"-"`
 
-	VersionId string `json:"-"`
+	VersionID string `json:"-"`
 }
 
-func (s *Api) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*GetVersionResponse, error) {
+func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*GetVersionResponse, error) {
 	var err error
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageId) + "/versions/" + fmt.Sprint(req.VersionId) + "",
+		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "/versions/" + fmt.Sprint(req.VersionID) + "",
 		Headers: http.Header{},
 	}
 
