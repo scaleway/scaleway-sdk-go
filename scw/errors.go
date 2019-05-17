@@ -19,6 +19,9 @@ type ResponseError struct {
 
 	// StatusCode is the HTTP status code received
 	StatusCode int `json:"-"`
+
+	// Status is the HTTP status received
+	Status string `json:"-"`
 }
 
 func hasResponseError(res *http.Response) error {
@@ -27,6 +30,7 @@ func hasResponseError(res *http.Response) error {
 	}
 	newErr := &ResponseError{
 		StatusCode: res.StatusCode,
+		Status:     res.Status,
 	}
 
 	if res.Body == nil {
@@ -44,18 +48,15 @@ func hasResponseError(res *http.Response) error {
 }
 
 func (e *ResponseError) Error() string {
-	s := fmt.Sprintf("received status code %d", e.StatusCode)
-
-	if e.Type != "" {
-		s = fmt.Sprintf("%s: error type is %s", s, e.Type)
-	}
+	s := fmt.Sprintf("scaleway-sdk-go: http error %s", e.Status)
 
 	if e.Message != "" {
 		s = fmt.Sprintf("%s: %s", s, e.Message)
 	}
 
 	if len(e.Fields) > 0 {
-		s = fmt.Sprintf("%s: details: %v", s, e.Fields)
+		s = fmt.Sprintf("%s: %v", s, e.Fields)
 	}
+
 	return s
 }
