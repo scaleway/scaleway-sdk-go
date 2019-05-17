@@ -2750,9 +2750,9 @@ type updateIpRequest struct {
 
 	IpId string `json:"-"`
 
-	Reverse *string `json:"reverse,omitempty"`
+	Reverse **string `json:"reverse,omitempty"`
 
-	Server *string `json:"server"`
+	Server **string `json:"server,omitempty"`
 }
 
 // updateIp: update IP
