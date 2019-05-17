@@ -21,21 +21,21 @@ func TestAttachIP(t *testing.T) {
 		zone     = "fr-par-1"
 	)
 
-	ip, err := instanceAPI.AttachIP(&AttachIPRequest{
+	ipAttachResponse, err := instanceAPI.AttachIP(&AttachIPRequest{
 		IPID:     ipID,
 		Zone:     zone,
 		ServerID: serverID,
 	})
 
 	testhelpers.Ok(t, err)
-	testhelpers.Equals(t, serverID, ip.Server.Id)
+	testhelpers.Equals(t, serverID, ipAttachResponse.IP.Server.Id)
 
-	ip, err = instanceAPI.DetachIP(&DetachIPRequest{
+	ipDetachResponse, err := instanceAPI.DetachIP(&DetachIPRequest{
 		IPID: ipID,
 		Zone: zone,
 	})
 
 	testhelpers.Ok(t, err)
-	testhelpers.Assert(t, nil == ip.Server, "Server object should be nil for detached IP.")
+	testhelpers.Assert(t, nil == ipDetachResponse.IP.Server, "Server object should be nil for detached IP.")
 
 }

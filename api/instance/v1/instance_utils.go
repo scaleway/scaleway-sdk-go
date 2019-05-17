@@ -1,10 +1,6 @@
 package instance
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
@@ -16,36 +12,23 @@ type AttachIPRequest struct {
 	ServerID string     `json:"server"`
 }
 
+// AttachIPResponse contains the updated IP after detaching
+type AttachIPResponse struct {
+	IP *Ip
+}
+
 // AttachIP attaches an IP to a server.
-func (s *Api) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Ip, error) {
-	var err error
-
-	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
-		Headers: http.Header{},
-	}
-	err = scwReq.SetBody(req)
+func (s *Api) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
+	ipResponse, err := s.updateIp(&updateIpRequest{
+		Zone:   req.Zone,
+		IpId:   req.IPID,
+		Server: &req.ServerID,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
-	var resp UpdateIpResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp.Ip, nil
+	return &AttachIPResponse{IP: ipResponse.Ip}, nil
 }
 
 // DetachIPRequest contains the parameters to detach an IP from a server
@@ -54,41 +37,21 @@ type DetachIPRequest struct {
 	IPID string     `json:"-"`
 }
 
+// DetachIPResponse contains the updated IP after detaching
+type DetachIPResponse struct {
+	IP *Ip
+}
+
 // DetachIP detaches an IP from a server.
-func (s *Api) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Ip, error) {
-	var err error
-
-	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
-	}
-
-	detachReq := &struct {
-		Server *string `json:"server"`
-	}{
+func (s *Api) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
+	ipResponse, err := s.updateIp(&updateIpRequest{
+		Zone:   req.Zone,
+		IpId:   req.IPID,
 		Server: nil,
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(detachReq)
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
-	var resp UpdateIpResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp.Ip, nil
+	return &DetachIPResponse{IP: ipResponse.Ip}, nil
 }
