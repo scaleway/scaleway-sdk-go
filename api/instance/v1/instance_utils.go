@@ -19,10 +19,11 @@ type AttachIPResponse struct {
 
 // AttachIP attaches an IP to a server.
 func (s *Api) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
+	var ptrServerID = &req.ServerID
 	ipResponse, err := s.updateIp(&updateIpRequest{
 		Zone:   req.Zone,
 		IpId:   req.IPID,
-		Server: &req.ServerID,
+		Server: &ptrServerID,
 	})
 	if err != nil {
 		return nil, err
@@ -44,10 +45,11 @@ type DetachIPResponse struct {
 
 // DetachIP detaches an IP from a server.
 func (s *Api) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
+	var ptrServerID *string
 	ipResponse, err := s.updateIp(&updateIpRequest{
 		Zone:   req.Zone,
 		IpId:   req.IPID,
-		Server: nil,
+		Server: &ptrServerID,
 	})
 	if err != nil {
 		return nil, err
