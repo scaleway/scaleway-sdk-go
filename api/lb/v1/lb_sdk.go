@@ -34,39 +34,55 @@ var (
 	_ = parameter.AddToQuery
 )
 
-// Api: this API allows you to manage your Load Balancer service
-type Api struct {
+// API: this API allows you to manage your Load Balancer service
+type API struct {
 	client *scw.Client
 }
 
-// NewApi returns a Api object from a Scaleway client.
-func NewApi(client *scw.Client) *Api {
-	return &Api{
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
 		client: client,
 	}
 }
 
-type AclActionType string
+type ACLActionType string
 
 const (
-	// AclActionTypeAllow is [insert doc].
-	AclActionTypeAllow = AclActionType("allow")
-	// AclActionTypeDeny is [insert doc].
-	AclActionTypeDeny = AclActionType("deny")
+	// ACLActionTypeAllow is [insert doc].
+	ACLActionTypeAllow = ACLActionType("allow")
+	// ACLActionTypeDeny is [insert doc].
+	ACLActionTypeDeny = ACLActionType("deny")
 )
 
-type AclHttpFilter string
+func (enum ACLActionType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "allow"
+	}
+	return string(enum)
+}
+
+type ACLHTTPFilter string
 
 const (
-	// AclHttpFilterAclHttpFilterNone is [insert doc].
-	AclHttpFilterAclHttpFilterNone = AclHttpFilter("acl_http_filter_none")
-	// AclHttpFilterPathBegin is [insert doc].
-	AclHttpFilterPathBegin = AclHttpFilter("path_begin")
-	// AclHttpFilterPathEnd is [insert doc].
-	AclHttpFilterPathEnd = AclHttpFilter("path_end")
-	// AclHttpFilterRegex is [insert doc].
-	AclHttpFilterRegex = AclHttpFilter("regex")
+	// ACLHTTPFilterACLHTTPFilterNone is [insert doc].
+	ACLHTTPFilterACLHTTPFilterNone = ACLHTTPFilter("acl_http_filter_none")
+	// ACLHTTPFilterPathBegin is [insert doc].
+	ACLHTTPFilterPathBegin = ACLHTTPFilter("path_begin")
+	// ACLHTTPFilterPathEnd is [insert doc].
+	ACLHTTPFilterPathEnd = ACLHTTPFilter("path_end")
+	// ACLHTTPFilterRegex is [insert doc].
+	ACLHTTPFilterRegex = ACLHTTPFilter("regex")
 )
+
+func (enum ACLHTTPFilter) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "acl_http_filter_none"
+	}
+	return string(enum)
+}
 
 type BackendServerStatsHealthCheckStatus string
 
@@ -83,6 +99,14 @@ const (
 	BackendServerStatsHealthCheckStatusCondpass = BackendServerStatsHealthCheckStatus("condpass")
 )
 
+func (enum BackendServerStatsHealthCheckStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
 type BackendServerStatsServerState string
 
 const (
@@ -96,6 +120,14 @@ const (
 	BackendServerStatsServerStateStopping = BackendServerStatsServerState("stopping")
 )
 
+func (enum BackendServerStatsServerState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "stopped"
+	}
+	return string(enum)
+}
+
 type ForwardPortAlgorithm string
 
 const (
@@ -104,6 +136,14 @@ const (
 	// ForwardPortAlgorithmLeastconn is [insert doc].
 	ForwardPortAlgorithmLeastconn = ForwardPortAlgorithm("leastconn")
 )
+
+func (enum ForwardPortAlgorithm) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "roundrobin"
+	}
+	return string(enum)
+}
 
 type InstanceStatus string
 
@@ -122,6 +162,14 @@ const (
 	InstanceStatusLocked = InstanceStatus("locked")
 )
 
+func (enum InstanceStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
 type LbStatus string
 
 const (
@@ -139,18 +187,34 @@ const (
 	LbStatusLocked = LbStatus("locked")
 )
 
-type ListAclRequestOrderBy string
+func (enum LbStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+type ListACLRequestOrderBy string
 
 const (
-	// ListAclRequestOrderByCreatedAtAsc is [insert doc].
-	ListAclRequestOrderByCreatedAtAsc = ListAclRequestOrderBy("created_at_asc")
-	// ListAclRequestOrderByCreatedAtDesc is [insert doc].
-	ListAclRequestOrderByCreatedAtDesc = ListAclRequestOrderBy("created_at_desc")
-	// ListAclRequestOrderByNameAsc is [insert doc].
-	ListAclRequestOrderByNameAsc = ListAclRequestOrderBy("name_asc")
-	// ListAclRequestOrderByNameDesc is [insert doc].
-	ListAclRequestOrderByNameDesc = ListAclRequestOrderBy("name_desc")
+	// ListACLRequestOrderByCreatedAtAsc is [insert doc].
+	ListACLRequestOrderByCreatedAtAsc = ListACLRequestOrderBy("created_at_asc")
+	// ListACLRequestOrderByCreatedAtDesc is [insert doc].
+	ListACLRequestOrderByCreatedAtDesc = ListACLRequestOrderBy("created_at_desc")
+	// ListACLRequestOrderByNameAsc is [insert doc].
+	ListACLRequestOrderByNameAsc = ListACLRequestOrderBy("name_asc")
+	// ListACLRequestOrderByNameDesc is [insert doc].
+	ListACLRequestOrderByNameDesc = ListACLRequestOrderBy("name_desc")
 )
+
+func (enum ListACLRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
 
 type ListBackendsRequestOrderBy string
 
@@ -165,6 +229,14 @@ const (
 	ListBackendsRequestOrderByNameDesc = ListBackendsRequestOrderBy("name_desc")
 )
 
+func (enum ListBackendsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
 type ListFrontendsRequestOrderBy string
 
 const (
@@ -177,6 +249,14 @@ const (
 	// ListFrontendsRequestOrderByNameDesc is [insert doc].
 	ListFrontendsRequestOrderByNameDesc = ListFrontendsRequestOrderBy("name_desc")
 )
+
+func (enum ListFrontendsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
 
 type ListLbsRequestOrderBy string
 
@@ -191,6 +271,14 @@ const (
 	ListLbsRequestOrderByNameDesc = ListLbsRequestOrderBy("name_desc")
 )
 
+func (enum ListLbsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
 type OnMarkedDownAction string
 
 const (
@@ -200,14 +288,30 @@ const (
 	OnMarkedDownActionShutdownSessions = OnMarkedDownAction("shutdown_sessions")
 )
 
+func (enum OnMarkedDownAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "on_marked_down_action_none"
+	}
+	return string(enum)
+}
+
 type Protocol string
 
 const (
-	// ProtocolTcp is [insert doc].
-	ProtocolTcp = Protocol("tcp")
-	// ProtocolHttp is [insert doc].
-	ProtocolHttp = Protocol("http")
+	// ProtocolTCP is [insert doc].
+	ProtocolTCP = Protocol("tcp")
+	// ProtocolHTTP is [insert doc].
+	ProtocolHTTP = Protocol("http")
 )
+
+func (enum Protocol) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "tcp"
+	}
+	return string(enum)
+}
 
 type StickySessionsType string
 
@@ -220,42 +324,50 @@ const (
 	StickySessionsTypeTable = StickySessionsType("table")
 )
 
-// Acl: the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
-type Acl struct {
-	// Id: iD of your ACL ressource
-	Id string `json:"id,omitempty"`
+func (enum StickySessionsType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "none"
+	}
+	return string(enum)
+}
+
+// ACL: the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
+type ACL struct {
+	// ID: iD of your ACL ressource
+	ID string `json:"id,omitempty"`
 	// Name: name of you ACL ressource
 	Name string `json:"name,omitempty"`
 	// Match: see the AclMatch object description
-	Match *AclMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match,omitempty"`
 	// Action: see the AclAction object description
-	Action *AclAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action,omitempty"`
 	// Frontend: see the Frontend object description
 	Frontend *Frontend `json:"frontend,omitempty"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
-// AclAction: action if your ACL filter match
-type AclAction struct {
+// ACLAction: action if your ACL filter match
+type ACLAction struct {
 	// Type: <allow> or <deny> request
-	Type AclActionType `json:"type,omitempty"`
+	Type ACLActionType `json:"type,omitempty"`
 }
 
-// AclMatch: settings of your ACL filter
-type AclMatch struct {
-	// IpSubnet: this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
-	IpSubnet []*string `json:"ip_subnet,omitempty"`
-	// HttpFilter: you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
-	HttpFilter AclHttpFilter `json:"http_filter,omitempty"`
+// ACLMatch: settings of your ACL filter
+type ACLMatch struct {
+	// IPSubnet: this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
+	IPSubnet []*string `json:"ip_subnet,omitempty"`
+	// HTTPFilter: you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
+	HTTPFilter ACLHTTPFilter `json:"http_filter,omitempty"`
 
-	HttpFilterValue []*string `json:"http_filter_value,omitempty"`
+	HTTPFilterValue []*string `json:"http_filter_value,omitempty"`
 	// Invert: by default match filter is a IF condition. You can set invert to true to have a unless condition
 	Invert bool `json:"invert,omitempty"`
 }
 
 type Backend struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 
@@ -328,12 +440,12 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 
 // BackendServerStats: state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
 type BackendServerStats struct {
-	// InstanceId: iD of your loadbalancer cluster server
-	InstanceId string `json:"instance_id,omitempty"`
-	// BackendId: iD of your Backend
-	BackendId string `json:"backend_id,omitempty"`
-	// Ip: iPv4 or IPv6 address of the server backend
-	Ip string `json:"ip,omitempty"`
+	// InstanceID: iD of your loadbalancer cluster server
+	InstanceID string `json:"instance_id,omitempty"`
+	// BackendID: iD of your Backend
+	BackendID string `json:"backend_id,omitempty"`
+	// IP: iPv4 or IPv6 address of the server backend
+	IP string `json:"ip,omitempty"`
 	// ServerState: server operational state (stopped/starting/running/stopping)
 	ServerState BackendServerStatsServerState `json:"server_state,omitempty"`
 	// ServerStateChangedAt: time since last operational change
@@ -343,7 +455,7 @@ type BackendServerStats struct {
 }
 
 type Frontend struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 
@@ -397,32 +509,32 @@ type HealthCheck struct {
 
 	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	TcpConfig *HealthCheckTcpConfig `json:"tcp_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older versions, use TCP check
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 	// LdapConfig: the response is analyzed to find an LDAPv3 response message
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
 	// RedisConfig: the response is analyzed to find the +PONG response message
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	HttpConfig *HealthCheckHttpConfig `json:"http_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	HttpsConfig *HealthCheckHttpsConfig `json:"https_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 }
 
 func (m *HealthCheck) GetConfig() Config {
 	switch {
-	case m.TcpConfig != nil:
-		return ConfigTcpConfig{*m.TcpConfig}
+	case m.TCPConfig != nil:
+		return ConfigTCPConfig{*m.TCPConfig}
 	case m.MysqlConfig != nil:
 		return ConfigMysqlConfig{*m.MysqlConfig}
 	case m.PgsqlConfig != nil:
@@ -431,10 +543,10 @@ func (m *HealthCheck) GetConfig() Config {
 		return ConfigLdapConfig{*m.LdapConfig}
 	case m.RedisConfig != nil:
 		return ConfigRedisConfig{*m.RedisConfig}
-	case m.HttpConfig != nil:
-		return ConfigHttpConfig{*m.HttpConfig}
-	case m.HttpsConfig != nil:
-		return ConfigHttpsConfig{*m.HttpsConfig}
+	case m.HTTPConfig != nil:
+		return ConfigHTTPConfig{*m.HTTPConfig}
+	case m.HTTPSConfig != nil:
+		return ConfigHTTPSConfig{*m.HTTPSConfig}
 	}
 	return nil
 }
@@ -475,16 +587,16 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-type HealthCheckHttpConfig struct {
-	Uri string `json:"uri,omitempty"`
+type HealthCheckHTTPConfig struct {
+	URI string `json:"uri,omitempty"`
 
 	Method string `json:"method,omitempty"`
 
 	Code *int32 `json:"code,omitempty"`
 }
 
-type HealthCheckHttpsConfig struct {
-	Uri string `json:"uri,omitempty"`
+type HealthCheckHTTPSConfig struct {
+	URI string `json:"uri,omitempty"`
 
 	Method string `json:"method,omitempty"`
 
@@ -505,35 +617,35 @@ type HealthCheckPgsqlConfig struct {
 type HealthCheckRedisConfig struct {
 }
 
-type HealthCheckTcpConfig struct {
+type HealthCheckTCPConfig struct {
 }
 
-type Instance struct {
-	Id string `json:"id,omitempty"`
+type IP struct {
+	ID string `json:"id,omitempty"`
 
-	Status InstanceStatus `json:"status,omitempty"`
+	IPAddress string `json:"ip_address,omitempty"`
 
-	IpAddress string `json:"ip_address,omitempty"`
+	OrganizationID string `json:"organization_id,omitempty"`
 
-	Region utils.Region `json:"region,omitempty"`
-}
-
-type Ip struct {
-	Id string `json:"id,omitempty"`
-
-	IpAddress string `json:"ip_address,omitempty"`
-
-	OrganizationId string `json:"organization_id,omitempty"`
-
-	LbId *string `json:"lb_id,omitempty"`
+	LbID *string `json:"lb_id,omitempty"`
 
 	Reverse string `json:"reverse,omitempty"`
 
 	Region utils.Region `json:"region,omitempty"`
 }
 
+type Instance struct {
+	ID string `json:"id,omitempty"`
+
+	Status InstanceStatus `json:"status,omitempty"`
+
+	IPAddress string `json:"ip_address,omitempty"`
+
+	Region utils.Region `json:"region,omitempty"`
+}
+
 type Lb struct {
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
 
@@ -543,9 +655,9 @@ type Lb struct {
 
 	Instances []*Instance `json:"instances,omitempty"`
 
-	OrganizationId string `json:"organization_id,omitempty"`
+	OrganizationID string `json:"organization_id,omitempty"`
 
-	Ip []*Ip `json:"ip,omitempty"`
+	IP []*IP `json:"ip,omitempty"`
 
 	Tags []string `json:"tags,omitempty"`
 
@@ -561,9 +673,9 @@ type LbStats struct {
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats,omitempty"`
 }
 
-type ListAclResponse struct {
+type ListACLResponse struct {
 	// Acls: list of Acl object (see Acl object description)
-	Acls []*Acl `json:"acls,omitempty"`
+	Acls []*ACL `json:"acls,omitempty"`
 	// TotalCount: result count
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
@@ -584,7 +696,7 @@ type ListFrontendsResponse struct {
 
 type ListIpsResponse struct {
 	// Ips: list IP address object
-	Ips []*Ip `json:"ips,omitempty"`
+	Ips []*IP `json:"ips,omitempty"`
 	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
@@ -595,13 +707,13 @@ type ListLbsResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
-// Service Api
+// Service API
 
 type GetServiceInfoRequest struct {
 	Region utils.Region `json:"-"`
 }
 
-func (s *Api) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*utils.ServiceInfo, error) {
+func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*utils.ServiceInfo, error) {
 	var err error
 
 	if req.Region == "" {
@@ -639,15 +751,15 @@ type ListLbsRequest struct {
 
 	Page *int32 `json:"-"`
 
-	OrganizationId *string `json:"-"`
+	OrganizationID *string `json:"-"`
 }
 
-func (s *Api) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
+func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.OrganizationId == nil || *req.OrganizationId == "" {
-		req.OrganizationId = &val
+	if req.OrganizationID == nil || *req.OrganizationID == "" {
+		req.OrganizationID = &val
 	}
 
 	if req.Region == "" {
@@ -659,7 +771,7 @@ func (s *Api) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationId)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -684,23 +796,23 @@ func (s *Api) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 
 type CreateLbRequest struct {
 	Region utils.Region `json:"-"`
-	// OrganizationId: owner of resources
-	OrganizationId string `json:"organization_id,omitempty"`
+	// OrganizationID: owner of resources
+	OrganizationID string `json:"organization_id,omitempty"`
 	// Name: resource names
 	Name string `json:"name,omitempty"`
 	// Description: resource description
 	Description string `json:"description,omitempty"`
-	// IpId: just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later.
-	IpId *string `json:"ip_id,omitempty"`
+	// IPID: just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later.
+	IPID *string `json:"ip_id,omitempty"`
 	// Tags: list of keyword
 	Tags []string `json:"tags,omitempty"`
 }
 
-func (s *Api) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
-	if req.OrganizationId == "" {
-		req.OrganizationId = s.client.GetDefaultOrganizationID()
+	if req.OrganizationID == "" {
+		req.OrganizationID = s.client.GetDefaultOrganizationID()
 	}
 
 	if req.Region == "" {
@@ -734,10 +846,10 @@ func (s *Api) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 type GetLbRequest struct {
 	Region utils.Region `json:"-"`
 
-	LbId string `json:"-"`
+	LbID string `json:"-"`
 }
 
-func (s *Api) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.Region == "" {
@@ -746,7 +858,7 @@ func (s *Api) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
 		Headers: http.Header{},
 	}
 
@@ -766,8 +878,8 @@ func (s *Api) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 
 type UpdateLbRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name,omitempty"`
 	// Description: resource description
@@ -776,7 +888,7 @@ type UpdateLbRequest struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-func (s *Api) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.Region == "" {
@@ -785,7 +897,7 @@ func (s *Api) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -809,13 +921,13 @@ func (s *Api) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 
 type DeleteLbRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
-	// ReleaseIp: set true if you don't want to keep this IP address
-	ReleaseIp bool `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
+	// ReleaseIP: set true if you don't want to keep this IP address
+	ReleaseIP bool `json:"-"`
 }
 
-func (s *Api) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
+func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -823,11 +935,11 @@ func (s *Api) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "release_ip", req.ReleaseIp)
+	parameter.AddToQuery(query, "release_ip", req.ReleaseIP)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -846,19 +958,19 @@ type ListIPsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: set the maximum list size
 	PageSize *int32 `json:"-"`
-	// IpAddress: use this to search by IP address
-	IpAddress *string `json:"-"`
+	// IPAddress: use this to search by IP address
+	IPAddress *string `json:"-"`
 
-	OrganizationId *string `json:"-"`
+	OrganizationID *string `json:"-"`
 }
 
 // ListIPs: list IPs
-func (s *Api) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
+func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.OrganizationId == nil || *req.OrganizationId == "" {
-		req.OrganizationId = &val
+	if req.OrganizationID == nil || *req.OrganizationID == "" {
+		req.OrganizationID = &val
 	}
 
 	if req.Region == "" {
@@ -868,8 +980,8 @@ func (s *Api) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "ip_address", req.IpAddress)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationId)
+	parameter.AddToQuery(query, "ip_address", req.IPAddress)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -892,16 +1004,16 @@ func (s *Api) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	return &resp, nil
 }
 
-type GetIpRequest struct {
+type GetIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IpId:
+	// IPID:
 	//
 	// IP address ID
-	IpId string `json:"-"`
+	IPID string `json:"-"`
 }
 
-// GetIp: get IP
-func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*Ip, error) {
+// GetIP: get IP
+func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
 	if req.Region == "" {
@@ -910,7 +1022,7 @@ func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*Ip, error) {
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IpId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Headers: http.Header{},
 	}
 
@@ -920,7 +1032,7 @@ func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*Ip, error) {
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp Ip
+	var resp IP
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -928,14 +1040,14 @@ func (s *Api) GetIp(req *GetIpRequest, opts ...scw.RequestOption) (*Ip, error) {
 	return &resp, nil
 }
 
-type ReleaseIpRequest struct {
+type ReleaseIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IpId: iP address ID
-	IpId string `json:"-"`
+	// IPID: iP address ID
+	IPID string `json:"-"`
 }
 
-// ReleaseIp: release IP
-func (s *Api) ReleaseIp(req *ReleaseIpRequest, opts ...scw.RequestOption) error {
+// ReleaseIP: release IP
+func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -944,7 +1056,7 @@ func (s *Api) ReleaseIp(req *ReleaseIpRequest, opts ...scw.RequestOption) error 
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IpId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Headers: http.Header{},
 	}
 
@@ -956,15 +1068,15 @@ func (s *Api) ReleaseIp(req *ReleaseIpRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
-type UpdateIpRequest struct {
+type UpdateIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IpId: iP address ID
-	IpId string `json:"-"`
+	// IPID: iP address ID
+	IPID string `json:"-"`
 	// Reverse: reverse DNS
 	Reverse *string `json:"-"`
 }
 
-func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*Ip, error) {
+func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
 	if req.Region == "" {
@@ -976,7 +1088,7 @@ func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*Ip, er
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IpId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -987,7 +1099,7 @@ func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*Ip, er
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp Ip
+	var resp IP
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -997,8 +1109,8 @@ func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*Ip, er
 
 type ListBackendsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
 	// OrderBy: choose order of response
@@ -1009,7 +1121,7 @@ type ListBackendsRequest struct {
 	PageSize *int32 `json:"-"`
 }
 
-func (s *Api) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
+func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1024,7 +1136,7 @@ func (s *Api) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1045,8 +1157,8 @@ func (s *Api) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 
 type CreateBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name,omitempty"`
 	// ForwardProtocol: backend protocol. TCP or HTTP
@@ -1061,8 +1173,8 @@ type CreateBackendRequest struct {
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
 	// HealthCheck: see the Healthcheck object description
 	HealthCheck *HealthCheck `json:"health_check,omitempty"`
-	// ServerIp: backend server IP addresses list (IPv4 or IPv6)
-	ServerIp []string `json:"server_ip,omitempty"`
+	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
+	ServerIP []string `json:"server_ip,omitempty"`
 	// SendProxyV2: enables PROXY protocol version 2 (must be supported by backend servers)
 	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
 	// TimeoutServer: maximum server connection inactivity time
@@ -1115,7 +1227,7 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1124,7 +1236,7 @@ func (s *Api) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1148,11 +1260,11 @@ func (s *Api) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 
 type GetBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID
-	BackendId string `json:"-"`
+	// BackendID: backend ID
+	BackendID string `json:"-"`
 }
 
-func (s *Api) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1161,7 +1273,7 @@ func (s *Api) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1181,8 +1293,8 @@ func (s *Api) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 
 type UpdateBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID to update
-	BackendId string `json:"-"`
+	// BackendID: backend ID to update
+	BackendID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name,omitempty"`
 	// ForwardProtocol: backend protocol. TCP or HTTP
@@ -1247,7 +1359,7 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1256,7 +1368,7 @@ func (s *Api) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1280,11 +1392,11 @@ func (s *Api) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 
 type DeleteBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: iD of the backend to delete
-	BackendId string `json:"-"`
+	// BackendID: iD of the backend to delete
+	BackendID string `json:"-"`
 }
 
-func (s *Api) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
+func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1293,7 +1405,7 @@ func (s *Api) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1307,13 +1419,13 @@ func (s *Api) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 
 type AddBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID
-	BackendId string `json:"-"`
-	// ServerIp: set all IPs to remove of your backend
-	ServerIp []string `json:"server_ip,omitempty"`
+	// BackendID: backend ID
+	BackendID string `json:"-"`
+	// ServerIP: set all IPs to remove of your backend
+	ServerIP []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1322,7 +1434,7 @@ func (s *Api) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1346,13 +1458,13 @@ func (s *Api) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 
 type RemoveBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID
-	BackendId string `json:"-"`
-	// ServerIp: set all IPs to remove of your backend
-	ServerIp []string `json:"server_ip,omitempty"`
+	// BackendID: backend ID
+	BackendID string `json:"-"`
+	// ServerIP: set all IPs to remove of your backend
+	ServerIP []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1361,7 +1473,7 @@ func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1385,13 +1497,13 @@ func (s *Api) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 
 type SetBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID
-	BackendId string `json:"-"`
-	// ServerIp: set all IPs to add of your backend and remove all other
-	ServerIp []string `json:"server_ip,omitempty"`
+	// BackendID: backend ID
+	BackendID string `json:"-"`
+	// ServerIP: set all IPs to add of your backend and remove all other
+	ServerIP []string `json:"server_ip,omitempty"`
 }
 
-func (s *Api) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
+func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1400,7 +1512,7 @@ func (s *Api) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/servers",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1424,8 +1536,8 @@ func (s *Api) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 
 type UpdateHealthCheckRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendId: backend ID
-	BackendId string `json:"-"`
+	// BackendID: backend ID
+	BackendID string `json:"-"`
 	// Port: specify the port used to health check
 	Port int32 `json:"port,omitempty"`
 	// CheckDelay: time between two consecutive health checks
@@ -1435,26 +1547,26 @@ type UpdateHealthCheckRequest struct {
 	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 	// LdapConfig: the response is analyzed to find an LDAPv3 response message
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
 	// RedisConfig: the response is analyzed to find the +PONG response message
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	TcpConfig *HealthCheckTcpConfig `json:"tcp_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	HttpConfig *HealthCheckHttpConfig `json:"http_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
 
-	// Precisely one of HttpConfig, HttpsConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TcpConfig must be set.
-	HttpsConfig *HealthCheckHttpsConfig `json:"https_config,omitempty"`
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 }
 
 func (m *UpdateHealthCheckRequest) GetConfig() Config {
@@ -1467,12 +1579,12 @@ func (m *UpdateHealthCheckRequest) GetConfig() Config {
 		return ConfigRedisConfig{*m.RedisConfig}
 	case m.PgsqlConfig != nil:
 		return ConfigPgsqlConfig{*m.PgsqlConfig}
-	case m.TcpConfig != nil:
-		return ConfigTcpConfig{*m.TcpConfig}
-	case m.HttpConfig != nil:
-		return ConfigHttpConfig{*m.HttpConfig}
-	case m.HttpsConfig != nil:
-		return ConfigHttpsConfig{*m.HttpsConfig}
+	case m.TCPConfig != nil:
+		return ConfigTCPConfig{*m.TCPConfig}
+	case m.HTTPConfig != nil:
+		return ConfigHTTPConfig{*m.HTTPConfig}
+	case m.HTTPSConfig != nil:
+		return ConfigHTTPSConfig{*m.HTTPSConfig}
 	}
 	return nil
 }
@@ -1513,7 +1625,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
+func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1522,7 +1634,7 @@ func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendId) + "/healthcheck",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/healthcheck",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1546,8 +1658,8 @@ func (s *Api) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 type ListFrontendsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
 	// OrderBy: response order
@@ -1558,7 +1670,7 @@ type ListFrontendsRequest struct {
 	PageSize *int32 `json:"-"`
 }
 
-func (s *Api) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
+func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1573,7 +1685,7 @@ func (s *Api) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1594,14 +1706,14 @@ func (s *Api) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 
 type CreateFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name,omitempty"`
 	// InboundPort: tCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port,omitempty"`
-	// BackendId: backend ID
-	BackendId string `json:"backend_id,omitempty"`
+	// BackendID: backend ID
+	BackendID string `json:"backend_id,omitempty"`
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
 }
@@ -1638,7 +1750,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
+func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1647,7 +1759,7 @@ func (s *Api) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1671,11 +1783,11 @@ func (s *Api) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 
 type GetFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendId: frontend ID
-	FrontendId string `json:"-"`
+	// FrontendID: frontend ID
+	FrontendID string `json:"-"`
 }
 
-func (s *Api) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
+func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1684,7 +1796,7 @@ func (s *Api) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1704,14 +1816,14 @@ func (s *Api) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 
 type UpdateFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendId: frontend ID
-	FrontendId string `json:"-"`
+	// FrontendID: frontend ID
+	FrontendID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name,omitempty"`
 	// InboundPort: tCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port,omitempty"`
-	// BackendId: backend ID
-	BackendId string `json:"backend_id,omitempty"`
+	// BackendID: backend ID
+	BackendID string `json:"backend_id,omitempty"`
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
 }
@@ -1748,7 +1860,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-func (s *Api) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
+func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1757,7 +1869,7 @@ func (s *Api) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1781,11 +1893,11 @@ func (s *Api) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 
 type DeleteFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendId: frontend ID to delete
-	FrontendId string `json:"-"`
+	// FrontendID: frontend ID to delete
+	FrontendID string `json:"-"`
 }
 
-func (s *Api) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
+func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1794,7 +1906,7 @@ func (s *Api) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1808,11 +1920,11 @@ func (s *Api) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 
 type GetLbStatsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbId: load Balancer ID
-	LbId string `json:"-"`
+	// LbID: load Balancer ID
+	LbID string `json:"-"`
 }
 
-func (s *Api) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
+func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1821,7 +1933,7 @@ func (s *Api) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbId) + "/stats",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/stats",
 		Headers: http.Header{},
 	}
 
@@ -1841,10 +1953,10 @@ func (s *Api) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 type ListAclsRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendId: iD of your frontend
-	FrontendId string `json:"-"`
+	// FrontendID: iD of your frontend
+	FrontendID string `json:"-"`
 	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
-	OrderBy ListAclRequestOrderBy `json:"-"`
+	OrderBy ListACLRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
 	// PageSize: set the maximum list size
@@ -1853,7 +1965,7 @@ type ListAclsRequest struct {
 	Name *string `json:"-"`
 }
 
-func (s *Api) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAclResponse, error) {
+func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1868,7 +1980,7 @@ func (s *Api) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAc
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "/acls",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "/acls",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1879,7 +1991,7 @@ func (s *Api) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAc
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp ListAclResponse
+	var resp ListACLResponse
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -1887,21 +1999,21 @@ func (s *Api) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAc
 	return &resp, nil
 }
 
-type CreateAclRequest struct {
+type CreateACLRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendId: iD of your frontend
-	FrontendId string `json:"-"`
+	// FrontendID: iD of your frontend
+	FrontendID string `json:"-"`
 	// Name: name of your ACL ressource
 	Name string `json:"name,omitempty"`
 	// Action: see the AclAction object description
-	Action *AclAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action,omitempty"`
 	// Match: see the AclMatch object description
-	Match *AclMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match,omitempty"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
-func (s *Api) CreateAcl(req *CreateAclRequest, opts ...scw.RequestOption) (*Acl, error) {
+func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1910,7 +2022,7 @@ func (s *Api) CreateAcl(req *CreateAclRequest, opts ...scw.RequestOption) (*Acl,
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendId) + "/acls",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "/acls",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -1924,7 +2036,7 @@ func (s *Api) CreateAcl(req *CreateAclRequest, opts ...scw.RequestOption) (*Acl,
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp Acl
+	var resp ACL
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -1932,13 +2044,13 @@ func (s *Api) CreateAcl(req *CreateAclRequest, opts ...scw.RequestOption) (*Acl,
 	return &resp, nil
 }
 
-type GetAclRequest struct {
+type GetACLRequest struct {
 	Region utils.Region `json:"-"`
-	// AclId: iD of your ACL ressource
-	AclId string `json:"-"`
+	// ACLID: iD of your ACL ressource
+	ACLID string `json:"-"`
 }
 
-func (s *Api) GetAcl(req *GetAclRequest, opts ...scw.RequestOption) (*Acl, error) {
+func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1947,7 +2059,7 @@ func (s *Api) GetAcl(req *GetAclRequest, opts ...scw.RequestOption) (*Acl, error
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.AclId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1957,7 +2069,7 @@ func (s *Api) GetAcl(req *GetAclRequest, opts ...scw.RequestOption) (*Acl, error
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp Acl
+	var resp ACL
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -1965,21 +2077,21 @@ func (s *Api) GetAcl(req *GetAclRequest, opts ...scw.RequestOption) (*Acl, error
 	return &resp, nil
 }
 
-type UpdateAclRequest struct {
+type UpdateACLRequest struct {
 	Region utils.Region `json:"-"`
-	// AclId: iD of your ACL ressource
-	AclId string `json:"-"`
+	// ACLID: iD of your ACL ressource
+	ACLID string `json:"-"`
 	// Name: name of your ACL ressource
 	Name string `json:"name,omitempty"`
 	// Action: see the AclAction object description
-	Action *AclAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action,omitempty"`
 	// Match: see the AclMatch object description
-	Match *AclMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match,omitempty"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
-func (s *Api) UpdateAcl(req *UpdateAclRequest, opts ...scw.RequestOption) (*Acl, error) {
+func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1988,7 +2100,7 @@ func (s *Api) UpdateAcl(req *UpdateAclRequest, opts ...scw.RequestOption) (*Acl,
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.AclId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
 		Headers: http.Header{},
 	}
 	err = scwReq.SetBody(req)
@@ -2002,7 +2114,7 @@ func (s *Api) UpdateAcl(req *UpdateAclRequest, opts ...scw.RequestOption) (*Acl,
 		return nil, err
 	}
 	defer scwResp.Body.Close()
-	var resp Acl
+	var resp ACL
 	err = json.NewDecoder(scwResp.Body).Decode(&resp)
 	if err != nil {
 		return nil, err
@@ -2010,13 +2122,13 @@ func (s *Api) UpdateAcl(req *UpdateAclRequest, opts ...scw.RequestOption) (*Acl,
 	return &resp, nil
 }
 
-type DeleteAclRequest struct {
+type DeleteACLRequest struct {
 	Region utils.Region `json:"-"`
-	// AclId: iD of your ACL ressource
-	AclId string `json:"-"`
+	// ACLID: iD of your ACL ressource
+	ACLID string `json:"-"`
 }
 
-func (s *Api) DeleteAcl(req *DeleteAclRequest, opts ...scw.RequestOption) error {
+func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -2025,7 +2137,7 @@ func (s *Api) DeleteAcl(req *DeleteAclRequest, opts ...scw.RequestOption) error 
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.AclId) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
 		Headers: http.Header{},
 	}
 
@@ -2069,23 +2181,23 @@ type ConfigPgsqlConfig struct {
 func (ConfigPgsqlConfig) isConfig() {
 }
 
-type ConfigTcpConfig struct {
-	Value HealthCheckTcpConfig
+type ConfigTCPConfig struct {
+	Value HealthCheckTCPConfig
 }
 
-func (ConfigTcpConfig) isConfig() {
+func (ConfigTCPConfig) isConfig() {
 }
 
-type ConfigHttpConfig struct {
-	Value HealthCheckHttpConfig
+type ConfigHTTPConfig struct {
+	Value HealthCheckHTTPConfig
 }
 
-func (ConfigHttpConfig) isConfig() {
+func (ConfigHTTPConfig) isConfig() {
 }
 
-type ConfigHttpsConfig struct {
-	Value HealthCheckHttpsConfig
+type ConfigHTTPSConfig struct {
+	Value HealthCheckHTTPSConfig
 }
 
-func (ConfigHttpsConfig) isConfig() {
+func (ConfigHTTPSConfig) isConfig() {
 }

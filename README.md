@@ -49,7 +49,7 @@ func main() {
 	}
 
 	// Create SDK objects for Scaleway Instance product
-	instanceApi := instance.NewApi(client)
+	instanceApi := instance.NewAPI(client)
 
 	// Call the ListServers method on the Instance SDK
 	response, err := instanceApi.ListServers(&instance.ListServersRequest{
@@ -61,7 +61,7 @@ func main() {
 
 	// Do something with the response...
 	for _, server := range response.Servers {
-		fmt.Println("Server", server.Id, server.Name)
+		fmt.Println("Server", server.ID, server.Name)
 	}
 
 }
