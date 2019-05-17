@@ -18,7 +18,7 @@ This document will cover how to contribute to the project and report issues.
 ## Reporting security issues
 
 At Scaleway we take security seriously.
-If you have any issue regarding security, please notify us by sending an email to [opensource@scaleway.com](mailto:opensource@scaleway.com).
+If you have any issue regarding security, please notify us by sending an email to [security@scaleway.com](mailto:security@scaleway.com).
 
 Please _DO NOT_ create a GitHub issue.
 

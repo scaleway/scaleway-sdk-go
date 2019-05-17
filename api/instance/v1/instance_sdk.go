@@ -55,6 +55,14 @@ const (
 	ArchArm = Arch("arm")
 )
 
+func (enum Arch) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "x86_64"
+	}
+	return string(enum)
+}
+
 type GetServerTypesAvailabilityResponseAvailability string
 
 const (
@@ -65,6 +73,14 @@ const (
 	// GetServerTypesAvailabilityResponseAvailabilityShortage is [insert doc].
 	GetServerTypesAvailabilityResponseAvailabilityShortage = GetServerTypesAvailabilityResponseAvailability("shortage")
 )
+
+func (enum GetServerTypesAvailabilityResponseAvailability) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
 
 type ImageState string
 
@@ -77,6 +93,14 @@ const (
 	ImageStateError = ImageState("error")
 )
 
+func (enum ImageState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
 type SecurityGroupPolicy string
 
 const (
@@ -85,6 +109,14 @@ const (
 	// SecurityGroupPolicyDrop is [insert doc].
 	SecurityGroupPolicyDrop = SecurityGroupPolicy("drop")
 )
+
+func (enum SecurityGroupPolicy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "accept"
+	}
+	return string(enum)
+}
 
 type SecurityRuleAction string
 
@@ -95,6 +127,14 @@ const (
 	SecurityRuleActionDrop = SecurityRuleAction("drop")
 )
 
+func (enum SecurityRuleAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "accept"
+	}
+	return string(enum)
+}
+
 type SecurityRuleDirection string
 
 const (
@@ -103,6 +143,14 @@ const (
 	// SecurityRuleDirectionOutbound is [insert doc].
 	SecurityRuleDirectionOutbound = SecurityRuleDirection("outbound")
 )
+
+func (enum SecurityRuleDirection) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "inbound"
+	}
+	return string(enum)
+}
 
 type SecurityRuleProtocol string
 
@@ -114,6 +162,14 @@ const (
 	// SecurityRuleProtocolIcmp is [insert doc].
 	SecurityRuleProtocolIcmp = SecurityRuleProtocol("icmp")
 )
+
+func (enum SecurityRuleProtocol) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "tcp"
+	}
+	return string(enum)
+}
 
 type ServerAction string
 
@@ -132,12 +188,28 @@ const (
 	ServerActionReboot = ServerAction("reboot")
 )
 
+func (enum ServerAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "poweron"
+	}
+	return string(enum)
+}
+
 type ServerBootType string
 
 const (
 	// ServerBootTypeLocal is [insert doc].
 	ServerBootTypeLocal = ServerBootType("local")
 )
+
+func (enum ServerBootType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "local"
+	}
+	return string(enum)
+}
 
 type ServerState string
 
@@ -156,6 +228,14 @@ const (
 	ServerStateLocked = ServerState("locked")
 )
 
+func (enum ServerState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "running"
+	}
+	return string(enum)
+}
+
 type SnapshotState string
 
 const (
@@ -166,6 +246,14 @@ const (
 	// SnapshotStateError is [insert doc].
 	SnapshotStateError = SnapshotState("error")
 )
+
+func (enum SnapshotState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
 
 type TaskStatus string
 
@@ -182,6 +270,14 @@ const (
 	TaskStatusRetry = TaskStatus("retry")
 )
 
+func (enum TaskStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "pending"
+	}
+	return string(enum)
+}
+
 type VolumeState string
 
 const (
@@ -193,6 +289,14 @@ const (
 	VolumeStateError = VolumeState("error")
 )
 
+func (enum VolumeState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
 type VolumeType string
 
 const (
@@ -203,6 +307,14 @@ const (
 	// VolumeTypeRSsd is [insert doc].
 	VolumeTypeRSsd = VolumeType("r_ssd")
 )
+
+func (enum VolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "l_ssd"
+	}
+	return string(enum)
+}
 
 type Bootscript struct {
 	// Arch: display the bootscripts arch
@@ -2633,18 +2745,18 @@ func (s *Api) SetIp(req *SetIpRequest, opts ...scw.RequestOption) (*SetIpRespons
 	return &resp, nil
 }
 
-type UpdateIpRequest struct {
+type updateIpRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	IpId string `json:"-"`
 
 	Reverse *string `json:"reverse,omitempty"`
 
-	Server *string `json:"server,omitempty"`
+	Server *string `json:"server"`
 }
 
-// UpdateIp: update IP
-func (s *Api) UpdateIp(req *UpdateIpRequest, opts ...scw.RequestOption) (*UpdateIpResponse, error) {
+// updateIp: update IP
+func (s *Api) updateIp(req *updateIpRequest, opts ...scw.RequestOption) (*UpdateIpResponse, error) {
 	var err error
 
 	if req.Zone == "" {

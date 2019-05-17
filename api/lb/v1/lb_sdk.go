@@ -55,6 +55,14 @@ const (
 	AclActionTypeDeny = AclActionType("deny")
 )
 
+func (enum AclActionType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "allow"
+	}
+	return string(enum)
+}
+
 type AclHttpFilter string
 
 const (
@@ -67,6 +75,14 @@ const (
 	// AclHttpFilterRegex is [insert doc].
 	AclHttpFilterRegex = AclHttpFilter("regex")
 )
+
+func (enum AclHttpFilter) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "acl_http_filter_none"
+	}
+	return string(enum)
+}
 
 type BackendServerStatsHealthCheckStatus string
 
@@ -83,6 +99,14 @@ const (
 	BackendServerStatsHealthCheckStatusCondpass = BackendServerStatsHealthCheckStatus("condpass")
 )
 
+func (enum BackendServerStatsHealthCheckStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
 type BackendServerStatsServerState string
 
 const (
@@ -96,6 +120,14 @@ const (
 	BackendServerStatsServerStateStopping = BackendServerStatsServerState("stopping")
 )
 
+func (enum BackendServerStatsServerState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "stopped"
+	}
+	return string(enum)
+}
+
 type ForwardPortAlgorithm string
 
 const (
@@ -104,6 +136,14 @@ const (
 	// ForwardPortAlgorithmLeastconn is [insert doc].
 	ForwardPortAlgorithmLeastconn = ForwardPortAlgorithm("leastconn")
 )
+
+func (enum ForwardPortAlgorithm) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "roundrobin"
+	}
+	return string(enum)
+}
 
 type InstanceStatus string
 
@@ -122,6 +162,14 @@ const (
 	InstanceStatusLocked = InstanceStatus("locked")
 )
 
+func (enum InstanceStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
 type LbStatus string
 
 const (
@@ -139,6 +187,14 @@ const (
 	LbStatusLocked = LbStatus("locked")
 )
 
+func (enum LbStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
 type ListAclRequestOrderBy string
 
 const (
@@ -151,6 +207,14 @@ const (
 	// ListAclRequestOrderByNameDesc is [insert doc].
 	ListAclRequestOrderByNameDesc = ListAclRequestOrderBy("name_desc")
 )
+
+func (enum ListAclRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
 
 type ListBackendsRequestOrderBy string
 
@@ -165,6 +229,14 @@ const (
 	ListBackendsRequestOrderByNameDesc = ListBackendsRequestOrderBy("name_desc")
 )
 
+func (enum ListBackendsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
 type ListFrontendsRequestOrderBy string
 
 const (
@@ -177,6 +249,14 @@ const (
 	// ListFrontendsRequestOrderByNameDesc is [insert doc].
 	ListFrontendsRequestOrderByNameDesc = ListFrontendsRequestOrderBy("name_desc")
 )
+
+func (enum ListFrontendsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
 
 type ListLbsRequestOrderBy string
 
@@ -191,6 +271,14 @@ const (
 	ListLbsRequestOrderByNameDesc = ListLbsRequestOrderBy("name_desc")
 )
 
+func (enum ListLbsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
 type OnMarkedDownAction string
 
 const (
@@ -200,6 +288,14 @@ const (
 	OnMarkedDownActionShutdownSessions = OnMarkedDownAction("shutdown_sessions")
 )
 
+func (enum OnMarkedDownAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "on_marked_down_action_none"
+	}
+	return string(enum)
+}
+
 type Protocol string
 
 const (
@@ -208,6 +304,14 @@ const (
 	// ProtocolHttp is [insert doc].
 	ProtocolHttp = Protocol("http")
 )
+
+func (enum Protocol) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "tcp"
+	}
+	return string(enum)
+}
 
 type StickySessionsType string
 
@@ -219,6 +323,14 @@ const (
 	// StickySessionsTypeTable is [insert doc].
 	StickySessionsTypeTable = StickySessionsType("table")
 )
+
+func (enum StickySessionsType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "none"
+	}
+	return string(enum)
+}
 
 // Acl: the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
 type Acl struct {
