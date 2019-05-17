@@ -1,5 +1,7 @@
 package logger
 
+import "os"
+
 type LogLevel int
 
 const (
@@ -39,4 +41,10 @@ type Logger interface {
 // Not mutex-protected, should be called before any scaleway-sdk-go functions.
 func SetLogger(l Logger) {
 	logger = l
+}
+
+// EnableDebugMode enable LogLevelDebug on the default logger.
+// If a custom logger was provided with SetLogger this method has no effect.
+func EnableDebugMode() {
+	DefaultLogger.Init(os.Stderr, LogLevelDebug)
 }
