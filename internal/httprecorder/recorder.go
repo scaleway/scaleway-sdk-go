@@ -67,12 +67,18 @@ func CreateRecordedScwClient() (*scw.Client, *recorder.Recorder, error) {
 			scw.WithAuth(accessKey, secretKey),
 			scw.WithHTTPClient(httpClient),
 		)
+		if err != nil {
+			return nil, nil, err
+		}
 	} else {
 		// No need for auth when using casette
 		client, err = scw.NewClient(
 			scw.WithoutAuth(),
 			scw.WithHTTPClient(httpClient),
 		)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	return client, r, nil

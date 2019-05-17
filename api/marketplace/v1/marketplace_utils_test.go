@@ -12,7 +12,9 @@ func TestGetImageByName(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient()
 	testhelpers.Ok(t, err)
-	defer r.Stop() // Make sure recorder is stopped once done with it
+	defer func() {
+		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
 
 	t.Run("matching input for GetImageByName", func(t *testing.T) {
 
