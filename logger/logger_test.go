@@ -2,6 +2,7 @@ package logger
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 
@@ -51,6 +52,16 @@ func TestError(t *testing.T) {
 	testThings(t, []string{
 		expectedErrorf,
 	}, buf.String())
+}
+
+func TestEnableDebugMode(t *testing.T) {
+	_defaultLogger := DefaultLogger
+
+	DefaultLogger = newLogger(os.Stderr, LogLevelWarning)
+	EnableDebugMode()
+	testhelpers.Equals(t, true, DefaultLogger.ShouldLog(LogLevelDebug))
+
+	DefaultLogger = _defaultLogger
 }
 
 func testThings(t *testing.T, expectedEvents []string, actualOutput string) {
