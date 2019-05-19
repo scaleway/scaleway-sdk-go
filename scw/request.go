@@ -7,11 +7,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -23,60 +21,6 @@ type ScalewayRequest struct {
 	Query   url.Values
 	Body    io.Reader
 	Ctx     context.Context
-}
-
-// Do performs an HTTP request based on the ScalewayRequest object.
-// RequestOptions are executed on the ScalewayRequest.
-func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response, error) {
-	if req == nil {
-		return nil, fmt.Errorf("request must be non-nil")
-	}
-
-	// apply request options
-	for _, opt := range opts {
-		opt(req)
-	}
-
-	// build url
-	url, err := req.getURL(c.apiURL)
-	if err != nil {
-		return nil, err
-	}
-	logger.Debugf("creating %s request on %s", req.Method, url.String())
-
-	// build request
-	request, err := http.NewRequest(req.Method, url.String(), req.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	request.Header = req.getAllHeaders(c.auth, c.userAgent)
-
-	if req.Ctx != nil {
-		request = request.WithContext(req.Ctx)
-	}
-
-	if logger.ShouldLog(logger.LogLevelDebug) {
-		dump, err := httputil.DumpRequestOut(request, true)
-		if err != nil {
-			logger.Warningf("cannot dump outgoing request: %s", err)
-		} else {
-			logger.Debugf("dumping http request:\n" + string(dump))
-		}
-	}
-
-	// execute request
-	resp, err := c.httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-
-	err = hasResponseError(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
