@@ -23,6 +23,7 @@ type Client struct {
 	defaultOrganizationID string
 	defaultRegion         utils.Region
 	defaultZone           utils.Zone
+	PaginationConfig
 }
 
 // NewClient instantiates a new Client object.
@@ -90,6 +91,10 @@ func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithAPIURL("https://api.scaleway.com"),
 		WithUserAgent(userAgent),
+		WithPaginationConfig(&PaginationConfig{
+			Full:     false,
+			PageSize: 50,
+		}),
 	}
 }
 

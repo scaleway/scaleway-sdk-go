@@ -17,6 +17,7 @@ type settings struct {
 	defaultOrganizationID string
 	defaultRegion         utils.Region
 	defaultZone           utils.Zone
+	paginationConfig      PaginationConfig
 }
 
 func newSettings() *settings {

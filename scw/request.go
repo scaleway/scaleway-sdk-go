@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"reflect"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/logger"
@@ -23,13 +24,20 @@ type ScalewayRequest struct {
 	Query   url.Values
 	Body    io.Reader
 	Ctx     context.Context
+
+	Pagination RequestPagination
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.
 // RequestOptions are executed on the ScalewayRequest.
-func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption) error {
 	if req == nil {
-		return nil, fmt.Errorf("request must be non-nil")
+		return fmt.Errorf("request must be non-nil")
+	}
+
+	// PSEUDO CODE
+	if IsFullPaginationEnabled {
+		c.doFullPagination(req, res, opts...)
 	}
 
 	// apply request options
@@ -40,14 +48,14 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	// build url
 	url, err := req.getURL(c.apiURL)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	logger.Debugf("creating %s request on %s", req.Method, url.String())
 
 	// build request
 	request, err := http.NewRequest(req.Method, url.String(), req.Body)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	request.Header = req.getAllHeaders(c.auth, c.userAgent)
@@ -66,17 +74,47 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	}
 
 	// execute request
-	resp, err := c.httpClient.Do(request)
+	httpRes, err := c.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = hasResponseError(resp)
+	err = hasResponseError(httpRes)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resp, nil
+	defer httpRes.Body.Close()
+	err = json.NewDecoder(httpRes.Body).Decode(&res)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) doFullPagination(req *ScalewayRequest, res interface{}, opts ...RequestOption) error {
+	req.Pagination.Page = 1        // Init pagination
+	err := c.Do(req, res, opts...) // Do first request
+	if err != nil {
+		return err
+	}
+
+	total := reflect.ValueOf(res).FieldByName("TotalCount").Uint() // We could all use tag to fiend correct field
+	slice := reflect.ValueOf(res).FieldByName("????").Interface().([]interface{})
+
+	// Loop all page
+	for i := uint64(0); i < total; i++ {
+		r := reflect.New(reflect.ValueOf(res).Type())
+		req.Pagination.Page = 1      // Init pagination
+		err := c.Do(req, r, opts...) // Do first request
+		if err != nil {
+			return err
+		}
+		slice = append(slice, reflect.ValueOf(res).FieldByName("????").Interface().([]interface{})...)
+	}
+	reflect.ValueOf(res).FieldByName("????").Set(reflect.ValueOf(slice))
+	return nil
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.

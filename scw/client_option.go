@@ -121,3 +121,14 @@ func WithDefaultZone(zone utils.Zone) ClientOption {
 		s.defaultZone = zone
 	}
 }
+
+func WithPaginationConfig(paginationConfig *PaginationConfig) ClientOption {
+	return func(s *settings) {
+		s.paginationConfig = *paginationConfig
+	}
+}
+
+func WithoutPagination() ClientOption {
+	return func(s *settings) {
+	}
+}

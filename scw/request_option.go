@@ -11,3 +11,9 @@ func WithContext(ctx context.Context) RequestOption {
 		s.Ctx = ctx
 	}
 }
+
+func WithPage(page uint) RequestOption {
+	return func(s *ScalewayRequest) {
+		s.Pagination.Page = page
+	}
+}
