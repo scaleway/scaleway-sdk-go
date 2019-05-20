@@ -35,6 +35,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 		errorType       = "some type"
 		errorFields     = map[string][]string{"some_field": {"some_value"}}
 		errorStatusCode = 400
+		errorStatus     = "400 Bad Request"
 	)
 
 	// Create expected error response
@@ -43,12 +44,13 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 		Type:       errorType,
 		Fields:     errorFields,
 		StatusCode: errorStatusCode,
+		Status:     errorStatus,
 	}
 
 	// Create response body with marshalled error response
 	bodyBytes, err := json.Marshal(testErrorReponse)
 	testhelpers.Ok(t, err)
-	res := &http.Response{StatusCode: errorStatusCode, Body: ioutil.NopCloser(bytes.NewReader(bodyBytes))}
+	res := &http.Response{Status: errorStatus, StatusCode: errorStatusCode, Body: ioutil.NopCloser(bytes.NewReader(bodyBytes))}
 
 	// Test hasResponseError()
 	newErr := hasResponseError(res)
