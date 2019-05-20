@@ -3,7 +3,7 @@ package marketplace
 import (
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/httprecorder"
+	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
