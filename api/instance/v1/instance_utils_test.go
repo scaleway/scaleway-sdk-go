@@ -19,9 +19,9 @@ func TestAttachIP(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		serverID     = ""
-		ipID         = ""
-		volumeID     = ""
+		serverID     string
+		ipID         string
+		volumeID     string
 		zone         = utils.ZoneFrPar1
 		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
@@ -90,6 +90,7 @@ func TestAttachIP(t *testing.T) {
 		Zone: zone,
 		IPID: ipID,
 	})
+	testhelpers.Ok(t, err)
 
 	// Delete Server
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
