@@ -57,3 +57,27 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Detach
 
 	return &DetachIPResponse{IP: ipResponse.IP}, nil
 }
+
+// UpdateIPRequest contains the parameters to updaten an IP
+type UpdateIPRequest struct {
+	Zone    utils.Zone `json:"-"`
+	IPID    string     `json:"-"`
+	Reverse *string    `json:"reverse"`
+}
+
+// UpdateIP updates an IP
+func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
+	if *req.Reverse == "" {
+		req.Reverse = nil
+	}
+	ipResponse, err := s.updateIP(&updateIPRequest{
+		Zone:    req.Zone,
+		IPID:    req.IPID,
+		Reverse: &req.Reverse,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &UpdateIPResponse{IP: ipResponse.IP}, nil
+}
