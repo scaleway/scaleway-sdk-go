@@ -25,7 +25,7 @@ func (version *Version) getLocalImage(zone utils.Zone, commercialType string) (*
 		}
 	}
 
-	return nil, fmt.Errorf("couldn't find compatible local image for this image version (%s)", version.Id)
+	return nil, fmt.Errorf("couldn't find compatible local image for this image version (%s)", version.ID)
 
 }
 
@@ -34,7 +34,7 @@ func (version *Version) getLocalImage(zone utils.Zone, commercialType string) (*
 func (image *Image) getLatestVersion() (*Version, error) {
 
 	for _, version := range image.Versions {
-		if version.Id == image.CurrentPublicVersion {
+		if version.ID == image.CurrentPublicVersion {
 			return version, nil
 		}
 	}
@@ -44,7 +44,7 @@ func (image *Image) getLatestVersion() (*Version, error) {
 
 // FindLocalImageIDByName search for an image with the given name (exact match) in the given region
 // it returns the latest version of this specific image.
-func (s *Api) FindLocalImageIDByName(imageName string, zone utils.Zone, commercialType string) (string, error) {
+func (s *API) FindLocalImageIDByName(imageName string, zone utils.Zone, commercialType string) (string, error) {
 
 	listImageRequest := &ListImagesRequest{}
 	listImageResponse, err := s.ListImages(listImageRequest)
@@ -72,7 +72,7 @@ func (s *Api) FindLocalImageIDByName(imageName string, zone utils.Zone, commerci
 				return "", fmt.Errorf("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s): %s", imageName, zone, commercialType, err)
 			}
 
-			return localImage.Id, nil
+			return localImage.ID, nil
 		}
 
 	}

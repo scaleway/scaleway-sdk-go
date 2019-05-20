@@ -16,7 +16,7 @@ func TestAttachIP(t *testing.T) {
 		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewApi(client)
+	instanceAPI := NewAPI(client)
 
 	var (
 		serverID     = ""
@@ -36,18 +36,18 @@ func TestAttachIP(t *testing.T) {
 		Image:        image,
 	})
 	testhelpers.Ok(t, err)
-	serverID = createServerResponse.Server.Id
+	serverID = createServerResponse.Server.ID
 	for _, volume := range createServerResponse.Server.Volumes {
-		volumeID = volume.Id
+		volumeID = volume.ID
 	}
 
 	// Create IP
-	createIPResponse, err := instanceAPI.CreateIp(&CreateIpRequest{
+	createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
 		Zone:         zone,
 		Organization: organization,
 	})
 	testhelpers.Ok(t, err)
-	ipID = createIPResponse.Ip.Id
+	ipID = createIPResponse.IP.ID
 
 	// Attach IP
 	ipAttachResponse, err := instanceAPI.AttachIP(&AttachIPRequest{
@@ -57,7 +57,7 @@ func TestAttachIP(t *testing.T) {
 	})
 
 	testhelpers.Ok(t, err)
-	testhelpers.Equals(t, serverID, ipAttachResponse.IP.Server.Id)
+	testhelpers.Equals(t, serverID, ipAttachResponse.IP.Server.ID)
 
 	// Detach IP
 	ipDetachResponse, err := instanceAPI.DetachIP(&DetachIPRequest{
@@ -86,22 +86,22 @@ func TestAttachIP(t *testing.T) {
 	testhelpers.Equals(t, "", ipDeleteReverseResponse.IP.Reverse)
 
 	// Delete IP
-	err = instanceAPI.DeleteIp(&DeleteIpRequest{
+	err = instanceAPI.DeleteIP(&DeleteIPRequest{
 		Zone: zone,
-		IpId: ipID,
+		IPID: ipID,
 	})
 
 	// Delete Server
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     zone,
-		ServerId: serverID,
+		ServerID: serverID,
 	})
 	testhelpers.Ok(t, err)
 
 	// Delete Volume
 	err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
 		Zone:     zone,
-		VolumeId: volumeID,
+		VolumeID: volumeID,
 	})
 	testhelpers.Ok(t, err)
 

@@ -14,22 +14,22 @@ type AttachIPRequest struct {
 
 // AttachIPResponse contains the updated IP after detaching
 type AttachIPResponse struct {
-	IP *Ip
+	IP *IP
 }
 
 // AttachIP attaches an IP to a server.
-func (s *Api) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
+func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
 	var ptrServerID = &req.ServerID
-	ipResponse, err := s.updateIp(&updateIpRequest{
+	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
-		IpId:   req.IPID,
+		IPID:   req.IPID,
 		Server: &ptrServerID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &AttachIPResponse{IP: ipResponse.Ip}, nil
+	return &AttachIPResponse{IP: ipResponse.IP}, nil
 }
 
 // DetachIPRequest contains the parameters to detach an IP from a server
@@ -40,22 +40,22 @@ type DetachIPRequest struct {
 
 // DetachIPResponse contains the updated IP after detaching
 type DetachIPResponse struct {
-	IP *Ip
+	IP *IP
 }
 
 // DetachIP detaches an IP from a server.
-func (s *Api) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
+func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
 	var ptrServerID *string
-	ipResponse, err := s.updateIp(&updateIpRequest{
+	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
-		IpId:   req.IPID,
+		IPID:   req.IPID,
 		Server: &ptrServerID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &DetachIPResponse{IP: ipResponse.Ip}, nil
+	return &DetachIPResponse{IP: ipResponse.IP}, nil
 }
 
 // SetReverseForIPRequest contains the parameters to set the reverse DNS for an IP
@@ -67,22 +67,22 @@ type SetReverseForIPRequest struct {
 
 // SetReverseForIPResponse contains the updated IP after setting the reverse
 type SetReverseForIPResponse struct {
-	IP *Ip
+	IP *IP
 }
 
 // SetReverseForIP sets the reverse DNS for an IP.
-func (s *Api) SetReverseForIP(req *SetReverseForIPRequest, opts ...scw.RequestOption) (*SetReverseForIPResponse, error) {
+func (s *API) SetReverseForIP(req *SetReverseForIPRequest, opts ...scw.RequestOption) (*SetReverseForIPResponse, error) {
 	var ptrReverse = &req.Reverse
-	ipResponse, err := s.updateIp(&updateIpRequest{
+	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:    req.Zone,
-		IpId:    req.IPID,
+		IPID:    req.IPID,
 		Reverse: &ptrReverse,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &SetReverseForIPResponse{IP: ipResponse.Ip}, nil
+	return &SetReverseForIPResponse{IP: ipResponse.IP}, nil
 }
 
 // DeleteReverseForIPRequest contains the parameters to set the reverse DNS for an IP
@@ -93,20 +93,20 @@ type DeleteReverseForIPRequest struct {
 
 // DeleteReverseForIPResponse contains the updated IP after setting the reverse
 type DeleteReverseForIPResponse struct {
-	IP *Ip
+	IP *IP
 }
 
 // DeleteReverseForIP removes the reverse DNS of an IP.
-func (s *Api) DeleteReverseForIP(req *DeleteReverseForIPRequest, opts ...scw.RequestOption) (*DeleteReverseForIPResponse, error) {
+func (s *API) DeleteReverseForIP(req *DeleteReverseForIPRequest, opts ...scw.RequestOption) (*DeleteReverseForIPResponse, error) {
 	var ptrReverse *string
-	ipResponse, err := s.updateIp(&updateIpRequest{
+	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:    req.Zone,
-		IpId:    req.IPID,
+		IPID:    req.IPID,
 		Reverse: &ptrReverse,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &DeleteReverseForIPResponse{IP: ipResponse.Ip}, nil
+	return &DeleteReverseForIPResponse{IP: ipResponse.IP}, nil
 }
