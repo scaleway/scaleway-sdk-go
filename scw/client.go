@@ -138,15 +138,6 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 		request.Header = originalHeaders
 	}
 
-	if logger.ShouldLog(logger.LogLevelDebug) {
-		dump, err := httputil.DumpRequestOut(request, true)
-		if err != nil {
-			logger.Warningf("cannot dump outgoing request: %s", err)
-		} else {
-			logger.Debugf("dumping http request:\n" + string(dump))
-		}
-	}
-
 	// execute request
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
