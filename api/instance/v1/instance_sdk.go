@@ -936,7 +936,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 
@@ -1489,7 +1489,7 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 
@@ -1726,7 +1726,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 
@@ -1949,7 +1949,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 
@@ -2195,7 +2195,7 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 
@@ -2940,7 +2940,7 @@ func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) 
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.Organization == nil || *req.Organization == "" {
+	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
 		req.Organization = &val
 	}
 

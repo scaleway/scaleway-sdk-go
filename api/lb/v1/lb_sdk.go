@@ -758,7 +758,7 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.OrganizationID == nil || *req.OrganizationID == "" {
+	if (req.OrganizationID == nil || *req.OrganizationID == "") && string(val) != "" {
 		req.OrganizationID = &val
 	}
 
@@ -969,7 +969,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	var err error
 
 	val := s.client.GetDefaultOrganizationID()
-	if req.OrganizationID == nil || *req.OrganizationID == "" {
+	if (req.OrganizationID == nil || *req.OrganizationID == "") && string(val) != "" {
 		req.OrganizationID = &val
 	}
 
