@@ -13,3 +13,7 @@ func NewNoAuth() *noAuth {
 func (t *noAuth) Headers() http.Header {
 	return http.Header{}
 }
+
+func (t *noAuth) AnonymizedHeaders() http.Header {
+	return http.Header{}
+}

@@ -59,7 +59,7 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 		"User-Agent":   []string{testUserAgent},
 	}
 
-	allHeaders := req.getAllHeaders(token, testUserAgent)
+	allHeaders := req.getAllHeaders(token, testUserAgent, false)
 
 	testhelpers.Equals(t, expectedHeaders, allHeaders)
 
@@ -81,7 +81,7 @@ func TestGetHeadersWithBody(t *testing.T) {
 		"User-Agent":   []string{testUserAgent},
 	}
 
-	allHeaders := req.getAllHeaders(token, testUserAgent)
+	allHeaders := req.getAllHeaders(token, testUserAgent, false)
 
 	testhelpers.Equals(t, expectedHeaders, allHeaders)
 }
