@@ -113,10 +113,29 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 		return nil, err
 	}
 
-	request.Header = req.getAllHeaders(c.auth, c.userAgent)
+	request.Header = req.getAllHeaders(c.auth, c.userAgent, false)
 
 	if req.Ctx != nil {
 		request = request.WithContext(req.Ctx)
+	}
+
+	if logger.ShouldLog(logger.LogLevelDebug) {
+
+		// Keep original headers (before anonymization)
+		originalHeaders := request.Header
+
+		// Get anonymized headers
+		request.Header = req.getAllHeaders(c.auth, c.userAgent, true)
+
+		dump, err := httputil.DumpRequestOut(request, true)
+		if err != nil {
+			logger.Warningf("cannot dump outgoing request: %s", err)
+		} else {
+			logger.Debugf("dumping http request:\n" + string(dump))
+		}
+
+		// Restore original headers before sending the request
+		request.Header = originalHeaders
 	}
 
 	if logger.ShouldLog(logger.LogLevelDebug) {
