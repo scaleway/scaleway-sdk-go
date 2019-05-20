@@ -55,11 +55,11 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 
 	expectedHeaders := http.Header{
 		testHeaderKey:  []string{testHeaderVal},
-		"x-auth-token": []string{testTokenKey},
+		"X-Auth-Token": []string{testTokenKey},
 		"User-Agent":   []string{testUserAgent},
 	}
 
-	allHeaders := req.getAllHeaders(token, testUserAgent)
+	allHeaders := req.getAllHeaders(token, testUserAgent, false)
 
 	testhelpers.Equals(t, expectedHeaders, allHeaders)
 
@@ -76,12 +76,12 @@ func TestGetHeadersWithBody(t *testing.T) {
 
 	expectedHeaders := http.Header{
 		testHeaderKey:  []string{testHeaderVal},
-		"x-auth-token": []string{testTokenKey},
+		"X-Auth-Token": []string{testTokenKey},
 		"Content-Type": []string{"application/json"},
 		"User-Agent":   []string{testUserAgent},
 	}
 
-	allHeaders := req.getAllHeaders(token, testUserAgent)
+	allHeaders := req.getAllHeaders(token, testUserAgent, false)
 
 	testhelpers.Equals(t, expectedHeaders, allHeaders)
 }

@@ -24,8 +24,14 @@ type ScalewayRequest struct {
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
-func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string) http.Header {
-	allHeaders := token.Headers()
+func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string, anonymized bool) http.Header {
+	var allHeaders http.Header
+	if anonymized {
+		allHeaders = token.AnonymizedHeaders()
+	} else {
+		allHeaders = token.Headers()
+	}
+
 	allHeaders.Set("User-Agent", userAgent)
 	if req.Body != nil {
 		allHeaders.Set("content-type", "application/json")
