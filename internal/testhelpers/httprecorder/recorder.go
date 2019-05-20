@@ -1,7 +1,6 @@
 package httprecorder
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -56,18 +55,8 @@ func CreateRecordedScwClient() (*scw.Client, *recorder.Recorder, error) {
 			return nil, nil, err
 		}
 
-		accessKey, exists := config.GetAccessKey()
-		if !exists {
-			return nil, nil, fmt.Errorf("need access key to update cassette")
-		}
-
-		secretKey, exists := config.GetSecretKey()
-		if !exists {
-			return nil, nil, fmt.Errorf("need secret key to update cassette")
-		}
-
 		client, err = scw.NewClient(
-			scw.WithAuth(accessKey, secretKey),
+			scw.WithConfig(config),
 			scw.WithHTTPClient(httpClient),
 		)
 		if err != nil {
