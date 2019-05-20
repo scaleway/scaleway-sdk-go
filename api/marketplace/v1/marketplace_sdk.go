@@ -136,14 +136,9 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp GetServiceInfoResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -170,14 +165,9 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListImagesResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -197,14 +187,9 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp GetImageResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -224,14 +209,9 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListVersionsResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -253,14 +233,9 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ge
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp GetVersionResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
