@@ -1,35 +1,20 @@
 package marketplace
 
 import (
-	"net/http"
 	"testing"
 
-	"github.com/dnaeon/go-vcr/recorder"
+	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func TestGetImageByName(t *testing.T) {
 
-	// Setup recorder and scw client
-	r, err := recorder.NewAsMode("testdata/go-vcr", recorder.ModeReplaying, nil)
-	if err != nil {
-		testhelpers.Ok(t, err)
-	}
+	client, r, err := httprecorder.CreateRecordedScwClient()
+	testhelpers.Ok(t, err)
 	defer func() {
 		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
-
-	httpClient := &http.Client{Transport: r}
-
-	client, err := scw.NewClient(
-		scw.WithoutAuth(),
-		scw.WithHTTPClient(httpClient),
-	)
-	if err != nil {
-		testhelpers.Ok(t, err)
-	}
 
 	t.Run("matching input for GetImageByName", func(t *testing.T) {
 
