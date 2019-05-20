@@ -34,7 +34,7 @@ var (
 	_ = parameter.AddToQuery
 )
 
-// API: marketplace API
+// API marketplace API
 type API struct {
 	client *scw.Client
 }
