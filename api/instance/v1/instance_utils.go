@@ -12,7 +12,7 @@ type AttachIPRequest struct {
 	ServerID string     `json:"server_id"`
 }
 
-// AttachIPResponse contains the updated IP after detaching
+// AttachIPResponse contains the updated IP after attaching
 type AttachIPResponse struct {
 	IP *IP
 }
