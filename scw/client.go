@@ -2,6 +2,7 @@ package scw
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -90,9 +91,9 @@ func (c *Client) GetDefaultZone() utils.Zone {
 
 // Do performs an HTTP request based on the ScalewayRequest object.
 // RequestOptions are executed on the ScalewayRequest.
-func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Do(req *ScalewayRequest, response interface{}, opts ...RequestOption) error {
 	if req == nil {
-		return nil, fmt.Errorf("request must be non-nil")
+		return fmt.Errorf("request must be non-nil")
 	}
 
 	// apply request options
@@ -103,14 +104,14 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	// build url
 	url, err := req.getURL(c.apiURL)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	logger.Debugf("creating %s request on %s", req.Method, url.String())
 
 	// build request
 	request, err := http.NewRequest(req.Method, url.String(), req.Body)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	request.Header = req.getAllHeaders(c.auth, c.userAgent, false)
@@ -141,15 +142,21 @@ func (c *Client) Do(req *ScalewayRequest, opts ...RequestOption) (*http.Response
 	// execute request
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = hasResponseError(resp)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resp, nil
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func defaultOptions() []ClientOption {
