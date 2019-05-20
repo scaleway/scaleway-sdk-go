@@ -91,7 +91,7 @@ func (c *Client) GetDefaultZone() utils.Zone {
 
 // Do performs an HTTP request based on the ScalewayRequest object.
 // RequestOptions are executed on the ScalewayRequest.
-func (c *Client) Do(req *ScalewayRequest, response interface{}, opts ...RequestOption) error {
+func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption) (err error) {
 	if req == nil {
 		return fmt.Errorf("request must be non-nil")
 	}
@@ -145,15 +145,20 @@ func (c *Client) Do(req *ScalewayRequest, response interface{}, opts ...RequestO
 		return err
 	}
 
+	defer func() {
+		err = resp.Body.Close()
+	}()
+
 	err = hasResponseError(resp)
 	if err != nil {
 		return err
 	}
 
-	defer resp.Body.Close()
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		return err
+	if res != nil {
+		err = json.NewDecoder(resp.Body).Decode(&res)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
