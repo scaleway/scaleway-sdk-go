@@ -58,7 +58,8 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Detach
 	return &DetachIPResponse{IP: ipResponse.IP}, nil
 }
 
-// UpdateIPRequest contains the parameters to updaten an IP
+// UpdateIPRequest contains the parameters to update an IP
+// if Reverse is an empty string, the reverse will be removed
 type UpdateIPRequest struct {
 	Zone    utils.Zone `json:"-"`
 	IPID    string     `json:"-"`
@@ -67,7 +68,7 @@ type UpdateIPRequest struct {
 
 // UpdateIP updates an IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
-	if *req.Reverse == "" {
+	if req.Reverse != nil && *req.Reverse == "" {
 		req.Reverse = nil
 	}
 	ipResponse, err := s.updateIP(&updateIPRequest{
