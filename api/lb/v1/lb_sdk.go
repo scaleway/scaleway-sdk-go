@@ -34,7 +34,7 @@ var (
 	_ = parameter.AddToQuery
 )
 
-// API: this API allows you to manage your Load Balancer service
+// API this API allows you to manage your Load Balancer service
 type API struct {
 	client *scw.Client
 }
@@ -332,37 +332,37 @@ func (enum StickySessionsType) String() string {
 	return string(enum)
 }
 
-// ACL: the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
+// ACL the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
 type ACL struct {
-	// ID: iD of your ACL ressource
+	// ID iD of your ACL ressource
 	ID string `json:"id,omitempty"`
-	// Name: name of you ACL ressource
+	// Name name of you ACL ressource
 	Name string `json:"name,omitempty"`
-	// Match: see the AclMatch object description
+	// Match see the AclMatch object description
 	Match *ACLMatch `json:"match,omitempty"`
-	// Action: see the AclAction object description
+	// Action see the AclAction object description
 	Action *ACLAction `json:"action,omitempty"`
-	// Frontend: see the Frontend object description
+	// Frontend see the Frontend object description
 	Frontend *Frontend `json:"frontend,omitempty"`
-	// Index: order between your Acls (ascending order, 0 is first acl executed)
+	// Index order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
-// ACLAction: action if your ACL filter match
+// ACLAction action if your ACL filter match
 type ACLAction struct {
-	// Type: <allow> or <deny> request
+	// Type <allow> or <deny> request
 	Type ACLActionType `json:"type,omitempty"`
 }
 
-// ACLMatch: settings of your ACL filter
+// ACLMatch settings of your ACL filter
 type ACLMatch struct {
-	// IPSubnet: this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
+	// IPSubnet this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
 	IPSubnet []*string `json:"ip_subnet,omitempty"`
-	// HTTPFilter: you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
+	// HTTPFilter you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
 	HTTPFilter ACLHTTPFilter `json:"http_filter,omitempty"`
 
 	HTTPFilterValue []*string `json:"http_filter_value,omitempty"`
-	// Invert: by default match filter is a IF condition. You can set invert to true to have a unless condition
+	// Invert by default match filter is a IF condition. You can set invert to true to have a unless condition
 	Invert bool `json:"invert,omitempty"`
 }
 
@@ -438,19 +438,19 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// BackendServerStats: state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
+// BackendServerStats state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
 type BackendServerStats struct {
-	// InstanceID: iD of your loadbalancer cluster server
+	// InstanceID iD of your loadbalancer cluster server
 	InstanceID string `json:"instance_id,omitempty"`
-	// BackendID: iD of your Backend
+	// BackendID iD of your Backend
 	BackendID string `json:"backend_id,omitempty"`
-	// IP: iPv4 or IPv6 address of the server backend
+	// IP iPv4 or IPv6 address of the server backend
 	IP string `json:"ip,omitempty"`
-	// ServerState: server operational state (stopped/starting/running/stopping)
+	// ServerState server operational state (stopped/starting/running/stopping)
 	ServerState BackendServerStatsServerState `json:"server_state,omitempty"`
-	// ServerStateChangedAt: time since last operational change
+	// ServerStateChangedAt time since last operational change
 	ServerStateChangedAt time.Time `json:"server_state_changed_at,omitempty"`
-	// LastHealthCheckStatus: last health check status (unknown/neutral/failed/passed/condpass)
+	// LastHealthCheckStatus last health check status (unknown/neutral/failed/passed/condpass)
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
 }
 
@@ -511,16 +511,16 @@ type HealthCheck struct {
 
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-	// MysqlConfig: the check requires MySQL >=3.22, for older versions, use TCP check
+	// MysqlConfig the check requires MySQL >=3.22, for older versions, use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-	// LdapConfig: the response is analyzed to find an LDAPv3 response message
+	// LdapConfig the response is analyzed to find an LDAPv3 response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig: the response is analyzed to find the +PONG response message
+	// RedisConfig the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
@@ -669,35 +669,35 @@ type Lb struct {
 }
 
 type LbStats struct {
-	// BackendServersStats: list stats object of your loadbalancer (See the BackendServerStats object description)
+	// BackendServersStats list stats object of your loadbalancer (See the BackendServerStats object description)
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats,omitempty"`
 }
 
 type ListACLResponse struct {
-	// Acls: list of Acl object (see Acl object description)
+	// Acls list of Acl object (see Acl object description)
 	Acls []*ACL `json:"acls,omitempty"`
-	// TotalCount: result count
+	// TotalCount result count
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListBackendsResponse struct {
-	// Backends: list Backend objects of a Load Balancer
+	// Backends list Backend objects of a Load Balancer
 	Backends []*Backend `json:"backends,omitempty"`
-	// TotalCount: total count, wihtout pagination
+	// TotalCount total count, wihtout pagination
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListFrontendsResponse struct {
-	// Frontends: list frontends object of your loadbalancer
+	// Frontends list frontends object of your loadbalancer
 	Frontends []*Frontend `json:"frontends,omitempty"`
-	// TotalCount: total count, wihtout pagination
+	// TotalCount total count, wihtout pagination
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListIpsResponse struct {
-	// Ips: list IP address object
+	// Ips list IP address object
 	Ips []*IP `json:"ips,omitempty"`
-	// TotalCount: total count, wihtout pagination
+	// TotalCount total count, wihtout pagination
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
@@ -742,7 +742,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 
 type ListLbsRequest struct {
 	Region utils.Region `json:"-"`
-	// Name: use this to search by name
+	// Name use this to search by name
 	Name *string `json:"-"`
 
 	OrderBy ListLbsRequestOrderBy `json:"-"`
@@ -796,15 +796,15 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 
 type CreateLbRequest struct {
 	Region utils.Region `json:"-"`
-	// OrganizationID: owner of resources
+	// OrganizationID owner of resources
 	OrganizationID string `json:"organization_id,omitempty"`
-	// Name: resource names
+	// Name resource names
 	Name string `json:"name,omitempty"`
-	// Description: resource description
+	// Description resource description
 	Description string `json:"description,omitempty"`
-	// IPID: just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later.
+	// IPID just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later.
 	IPID *string `json:"ip_id,omitempty"`
-	// Tags: list of keyword
+	// Tags list of keyword
 	Tags []string `json:"tags,omitempty"`
 }
 
@@ -878,13 +878,13 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 
 type UpdateLbRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// Name: resource name
+	// Name resource name
 	Name string `json:"name,omitempty"`
-	// Description: resource description
+	// Description resource description
 	Description string `json:"description,omitempty"`
-	// Tags: list of keywords
+	// Tags list of keywords
 	Tags []string `json:"tags,omitempty"`
 }
 
@@ -921,9 +921,9 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 
 type DeleteLbRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// ReleaseIP: set true if you don't want to keep this IP address
+	// ReleaseIP set true if you don't want to keep this IP address
 	ReleaseIP bool `json:"-"`
 }
 
@@ -954,17 +954,17 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 
 type ListIPsRequest struct {
 	Region utils.Region `json:"-"`
-	// Page: page number
+	// Page page number
 	Page *int32 `json:"-"`
-	// PageSize: set the maximum list size
+	// PageSize set the maximum list size
 	PageSize *int32 `json:"-"`
-	// IPAddress: use this to search by IP address
+	// IPAddress use this to search by IP address
 	IPAddress *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
 }
 
-// ListIPs: list IPs
+// ListIPs list IPs
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
@@ -1006,13 +1006,13 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 
 type GetIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IPID:
+	// IPID
 	//
 	// IP address ID
 	IPID string `json:"-"`
 }
 
-// GetIP: get IP
+// GetIP get IP
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1042,11 +1042,11 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 
 type ReleaseIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IPID: iP address ID
+	// IPID iP address ID
 	IPID string `json:"-"`
 }
 
-// ReleaseIP: release IP
+// ReleaseIP release IP
 func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1070,9 +1070,9 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 
 type UpdateIPRequest struct {
 	Region utils.Region `json:"-"`
-	// IPID: iP address ID
+	// IPID iP address ID
 	IPID string `json:"-"`
-	// Reverse: reverse DNS
+	// Reverse reverse DNS
 	Reverse *string `json:"-"`
 }
 
@@ -1109,15 +1109,15 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type ListBackendsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// Name: use this to search by name
+	// Name use this to search by name
 	Name *string `json:"-"`
-	// OrderBy: choose order of response
+	// OrderBy choose order of response
 	OrderBy ListBackendsRequestOrderBy `json:"-"`
-	// Page: page number
+	// Page page number
 	Page *int32 `json:"-"`
-	// PageSize: set the maximum list sizes
+	// PageSize set the maximum list sizes
 	PageSize *int32 `json:"-"`
 }
 
@@ -1157,33 +1157,33 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 
 type CreateBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// Name: resource name
+	// Name resource name
 	Name string `json:"name,omitempty"`
-	// ForwardProtocol: backend protocol. TCP or HTTP
+	// ForwardProtocol backend protocol. TCP or HTTP
 	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
-	// ForwardPort: user sessions will be forwarded to this port of backend servers
+	// ForwardPort user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port,omitempty"`
-	// ForwardPortAlgorithm: load balancing algorithm
+	// ForwardPortAlgorithm load balancing algorithm
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
-	// StickySessions: enables cookie-based session persistence
+	// StickySessions enables cookie-based session persistence
 	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
-	// HealthCheck: see the Healthcheck object description
+	// HealthCheck see the Healthcheck object description
 	HealthCheck *HealthCheck `json:"health_check,omitempty"`
-	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
+	// ServerIP backend server IP addresses list (IPv4 or IPv6)
 	ServerIP []string `json:"server_ip,omitempty"`
-	// SendProxyV2: enables PROXY protocol version 2 (must be supported by backend servers)
+	// SendProxyV2 enables PROXY protocol version 2 (must be supported by backend servers)
 	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
-	// TimeoutConnect: maximum initical server connection establishment time
+	// TimeoutConnect maximum initical server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
-	// OnMarkedDownAction: modify what occurs when a backend server is marked down
+	// OnMarkedDownAction modify what occurs when a backend server is marked down
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
 }
 
@@ -1260,7 +1260,7 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 
 type GetBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"-"`
 }
 
@@ -1293,29 +1293,29 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 
 type UpdateBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID to update
+	// BackendID backend ID to update
 	BackendID string `json:"-"`
-	// Name: resource name
+	// Name resource name
 	Name string `json:"name,omitempty"`
-	// ForwardProtocol: backend protocol. TCP or HTTP
+	// ForwardProtocol backend protocol. TCP or HTTP
 	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
-	// ForwardPort: user sessions will be forwarded to this port of backend servers
+	// ForwardPort user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port,omitempty"`
-	// ForwardPortAlgorithm: load balancing algorithm
+	// ForwardPortAlgorithm load balancing algorithm
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
-	// StickySessions: enable cookie-based session persistence
+	// StickySessions enable cookie-based session persistence
 	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
-	// SendProxyV2: enables PROXY protocol version 2 (must be supported by backend servers)
+	// SendProxyV2 enables PROXY protocol version 2 (must be supported by backend servers)
 	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
-	// TimeoutConnect: maximum initial server connection establishment time
+	// TimeoutConnect maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
-	// OnMarkedDownAction: modify what occurs when a backend server is marked down
+	// OnMarkedDownAction modify what occurs when a backend server is marked down
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
 }
 
@@ -1392,7 +1392,7 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 
 type DeleteBackendRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: iD of the backend to delete
+	// BackendID iD of the backend to delete
 	BackendID string `json:"-"`
 }
 
@@ -1419,9 +1419,9 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 
 type AddBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"-"`
-	// ServerIP: set all IPs to remove of your backend
+	// ServerIP set all IPs to remove of your backend
 	ServerIP []string `json:"server_ip,omitempty"`
 }
 
@@ -1458,9 +1458,9 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 
 type RemoveBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"-"`
-	// ServerIP: set all IPs to remove of your backend
+	// ServerIP set all IPs to remove of your backend
 	ServerIP []string `json:"server_ip,omitempty"`
 }
 
@@ -1497,9 +1497,9 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 
 type SetBackendServersRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"-"`
-	// ServerIP: set all IPs to add of your backend and remove all other
+	// ServerIP set all IPs to add of your backend and remove all other
 	ServerIP []string `json:"server_ip,omitempty"`
 }
 
@@ -1536,23 +1536,23 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 
 type UpdateHealthCheckRequest struct {
 	Region utils.Region `json:"-"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"-"`
-	// Port: specify the port used to health check
+	// Port specify the port used to health check
 	Port int32 `json:"port,omitempty"`
-	// CheckDelay: time between two consecutive health checks
+	// CheckDelay time between two consecutive health checks
 	CheckDelay *time.Duration `json:"check_delay,omitempty"`
-	// CheckTimeout: additional check timeout, after the connection has been already established
+	// CheckTimeout additional check timeout, after the connection has been already established
 	CheckTimeout *time.Duration `json:"check_timeout,omitempty"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
+	// CheckMaxRetries number of consecutive unsuccessful health checks, after wich the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
-	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
+	// MysqlConfig the check requires MySQL >=3.22, for older version, please use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-	// LdapConfig: the response is analyzed to find an LDAPv3 response message
+	// LdapConfig the response is analyzed to find an LDAPv3 response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig: the response is analyzed to find the +PONG response message
+	// RedisConfig the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
@@ -1658,15 +1658,15 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 type ListFrontendsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// Name: use this to search by name
+	// Name use this to search by name
 	Name *string `json:"-"`
-	// OrderBy: response order
+	// OrderBy response order
 	OrderBy ListFrontendsRequestOrderBy `json:"-"`
-	// Page: page number
+	// Page page number
 	Page *int32 `json:"-"`
-	// PageSize: set the maximum list sizes
+	// PageSize set the maximum list sizes
 	PageSize *int32 `json:"-"`
 }
 
@@ -1706,15 +1706,15 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 
 type CreateFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// Name: resource name
+	// Name resource name
 	Name string `json:"name,omitempty"`
-	// InboundPort: tCP port to listen on the front side
+	// InboundPort tCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port,omitempty"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"backend_id,omitempty"`
-	// TimeoutClient: set the maximum inactivity time on the client side
+	// TimeoutClient set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
 }
 
@@ -1783,7 +1783,7 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 
 type GetFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendID: frontend ID
+	// FrontendID frontend ID
 	FrontendID string `json:"-"`
 }
 
@@ -1816,15 +1816,15 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 
 type UpdateFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendID: frontend ID
+	// FrontendID frontend ID
 	FrontendID string `json:"-"`
-	// Name: resource name
+	// Name resource name
 	Name string `json:"name,omitempty"`
-	// InboundPort: tCP port to listen on the front side
+	// InboundPort tCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port,omitempty"`
-	// BackendID: backend ID
+	// BackendID backend ID
 	BackendID string `json:"backend_id,omitempty"`
-	// TimeoutClient: client session maximum inactivity time
+	// TimeoutClient client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
 }
 
@@ -1893,7 +1893,7 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 
 type DeleteFrontendRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendID: frontend ID to delete
+	// FrontendID frontend ID to delete
 	FrontendID string `json:"-"`
 }
 
@@ -1920,7 +1920,7 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 
 type GetLbStatsRequest struct {
 	Region utils.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID load Balancer ID
 	LbID string `json:"-"`
 }
 
@@ -1953,15 +1953,15 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 type ListAclsRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendID: iD of your frontend
+	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy you can order the response by created_at asc/desc or name asc/desc
 	OrderBy ListACLRequestOrderBy `json:"-"`
-	// Page: page number
+	// Page page number
 	Page *int32 `json:"-"`
-	// PageSize: set the maximum list size
+	// PageSize set the maximum list size
 	PageSize *int32 `json:"-"`
-	// Name: filter acl per name
+	// Name filter acl per name
 	Name *string `json:"-"`
 }
 
@@ -2001,15 +2001,15 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 
 type CreateACLRequest struct {
 	Region utils.Region `json:"-"`
-	// FrontendID: iD of your frontend
+	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
-	// Name: name of your ACL ressource
+	// Name name of your ACL ressource
 	Name string `json:"name,omitempty"`
-	// Action: see the AclAction object description
+	// Action see the AclAction object description
 	Action *ACLAction `json:"action,omitempty"`
-	// Match: see the AclMatch object description
+	// Match see the AclMatch object description
 	Match *ACLMatch `json:"match,omitempty"`
-	// Index: order between your Acls (ascending order, 0 is first acl executed)
+	// Index order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
@@ -2046,7 +2046,7 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type GetACLRequest struct {
 	Region utils.Region `json:"-"`
-	// ACLID: iD of your ACL ressource
+	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 }
 
@@ -2079,15 +2079,15 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 
 type UpdateACLRequest struct {
 	Region utils.Region `json:"-"`
-	// ACLID: iD of your ACL ressource
+	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
-	// Name: name of your ACL ressource
+	// Name name of your ACL ressource
 	Name string `json:"name,omitempty"`
-	// Action: see the AclAction object description
+	// Action see the AclAction object description
 	Action *ACLAction `json:"action,omitempty"`
-	// Match: see the AclMatch object description
+	// Match see the AclMatch object description
 	Match *ACLMatch `json:"match,omitempty"`
-	// Index: order between your Acls (ascending order, 0 is first acl executed)
+	// Index order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index,omitempty"`
 }
 
@@ -2124,7 +2124,7 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type DeleteACLRequest struct {
 	Region utils.Region `json:"-"`
-	// ACLID: iD of your ACL ressource
+	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 }
 
