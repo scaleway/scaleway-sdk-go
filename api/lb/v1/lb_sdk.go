@@ -726,14 +726,9 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp utils.ServiceInfo
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -780,14 +775,9 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListLbsResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -829,14 +819,9 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Lb
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -862,14 +847,9 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Lb
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -905,14 +885,9 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Lb
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -944,8 +919,7 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq, opts...)
-
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
 		return err
 	}
@@ -990,14 +964,9 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListIpsResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1026,14 +995,9 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp IP
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1060,8 +1024,7 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq, opts...)
-
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
 		return err
 	}
@@ -1093,14 +1056,9 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp IP
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1141,14 +1099,9 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListBackendsResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1244,14 +1197,9 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1277,14 +1225,9 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1376,14 +1319,9 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1409,8 +1347,7 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq, opts...)
-
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
 		return err
 	}
@@ -1442,14 +1379,9 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1481,14 +1413,9 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1520,14 +1447,9 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Backend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1642,14 +1564,9 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp HealthCheck
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1690,14 +1607,9 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListFrontendsResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1767,14 +1679,9 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Frontend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1800,14 +1707,9 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Frontend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1877,14 +1779,9 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp Frontend
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1910,8 +1807,7 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq, opts...)
-
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
 		return err
 	}
@@ -1937,14 +1833,9 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp LbStats
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1985,14 +1876,9 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ListACLResponse
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2030,14 +1916,9 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ACL
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2063,14 +1944,9 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 		Headers: http.Header{},
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ACL
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2108,14 +1984,9 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 		return nil, err
 	}
 
-	scwResp, err := s.client.Do(scwReq, opts...)
-
-	if err != nil {
-		return nil, err
-	}
-	defer scwResp.Body.Close()
 	var resp ACL
-	err = json.NewDecoder(scwResp.Body).Decode(&resp)
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2141,8 +2012,7 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 		Headers: http.Header{},
 	}
 
-	_, err = s.client.Do(scwReq, opts...)
-
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
 		return err
 	}
