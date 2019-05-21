@@ -1168,7 +1168,7 @@ type UpdateServerRequest struct {
 
 	Tags *[]string `json:"tags,omitempty"`
 
-	Volumes map[string]*VolumeTemplate `json:"volumes,omitempty"`
+	Volumes *map[string]*VolumeTemplate `json:"volumes,omitempty"`
 
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
 
