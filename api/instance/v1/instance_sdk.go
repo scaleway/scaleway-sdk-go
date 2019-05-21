@@ -974,6 +974,8 @@ type CreateServerRequest struct {
 	BootType ServerBootType `json:"boot_type,omitempty"`
 	// Organization define the server organization
 	Organization string `json:"organization,omitempty"`
+	// Tags define the server tags
+	Tags []string `json:"tags,omitempty"`
 }
 
 // CreateServer create server
@@ -1176,7 +1178,7 @@ type UpdateServerRequest struct {
 
 	ExtraNetworks *[]string `json:"extra_networks,omitempty"`
 
-	Protected bool `json:"protected,omitempty"`
+	Protected *bool `json:"protected,omitempty"`
 
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
 }
