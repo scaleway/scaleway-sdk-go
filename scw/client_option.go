@@ -127,6 +127,6 @@ func WithDefaultZone(zone utils.Zone) ClientOption {
 // It will be used as the default value of the page_size field in all requests made with this client.
 func WithDefaultPageSize(pageSize int32) ClientOption {
 	return func(s *settings) {
-		s.defaultPageSize = pageSize
+		s.defaultPageSize = &pageSize
 	}
 }

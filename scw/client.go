@@ -104,7 +104,10 @@ func (c *Client) GetDefaultZone() (utils.Zone, bool) {
 // This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
 func (c *Client) GetDefaultPageSize() (int32, bool) {
-	return *c.defaultPageSize, c.defaultPageSize != nil
+	if c.defaultPageSize != nil {
+		return *c.defaultPageSize, true
+	}
+	return 0, false
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.
