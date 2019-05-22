@@ -68,13 +68,17 @@ type UpdateIPRequest struct {
 
 // UpdateIP updates an IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
-	if req.Reverse != nil && *req.Reverse == "" {
-		req.Reverse = nil
+	var reverse **string
+	if req.Reverse != nil {
+		if *req.Reverse == "" {
+			req.Reverse = nil
+		}
+		reverse = &req.Reverse
 	}
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:    req.Zone,
 		IPID:    req.IPID,
-		Reverse: &req.Reverse,
+		Reverse: reverse,
 	})
 	if err != nil {
 		return nil, err

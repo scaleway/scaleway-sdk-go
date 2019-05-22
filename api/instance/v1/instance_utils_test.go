@@ -77,6 +77,15 @@ func TestAttachIP(t *testing.T) {
 	testhelpers.Ok(t, err)
 	testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
 
+	// Omitempty reverse
+	ipSetReverseResponse, err = instanceAPI.UpdateIP(&UpdateIPRequest{
+		IPID:    ipID,
+		Zone:    zone,
+		Reverse: nil,
+	})
+	testhelpers.Ok(t, err)
+	testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
+
 	// Unset reverse
 	emptyReverse := ""
 	ipDeleteReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
