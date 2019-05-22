@@ -717,7 +717,8 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -752,13 +753,14 @@ type ListLbsRequest struct {
 func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && string(val) != "" {
-		req.OrganizationID = &val
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -802,11 +804,13 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	var err error
 
 	if req.OrganizationID == "" {
-		req.OrganizationID = s.client.GetDefaultOrganizationID()
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
 	}
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -814,6 +818,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -838,7 +843,8 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -872,7 +878,8 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -880,6 +887,7 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -906,7 +914,8 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -942,13 +951,14 @@ type ListIPsRequest struct {
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && string(val) != "" {
-		req.OrganizationID = &val
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -986,7 +996,8 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1015,7 +1026,8 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1043,7 +1055,8 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -1083,7 +1096,8 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -1184,7 +1198,8 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1192,6 +1207,7 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1216,7 +1232,8 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1306,7 +1323,8 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1314,6 +1332,7 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1338,7 +1357,8 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1366,7 +1386,8 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1374,6 +1395,7 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1400,7 +1422,8 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1408,6 +1431,7 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1434,7 +1458,8 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1442,6 +1467,7 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1551,7 +1577,8 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1559,6 +1586,7 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/healthcheck",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1591,7 +1619,8 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -1666,7 +1695,8 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1674,6 +1704,7 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1698,7 +1729,8 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1766,7 +1798,8 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1774,6 +1807,7 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1798,7 +1832,8 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1824,7 +1859,8 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1860,7 +1896,8 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	query := url.Values{}
@@ -1903,7 +1940,8 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1911,6 +1949,7 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "/acls",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1935,7 +1974,8 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1971,7 +2011,8 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1979,6 +2020,7 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2003,7 +2045,8 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 	var err error
 
 	if req.Region == "" {
-		req.Region = s.client.GetDefaultRegion()
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
 	}
 
 	scwReq := &scw.ScalewayRequest{

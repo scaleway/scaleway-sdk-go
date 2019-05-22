@@ -852,8 +852,10 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -889,8 +891,10 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -925,14 +929,16 @@ type ListServersRequest struct {
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -983,11 +989,13 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -995,6 +1003,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1022,7 +1031,8 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1051,7 +1061,8 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetS
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1131,11 +1142,13 @@ func (s *API) SetServer(req *SetServerRequest, opts ...scw.RequestOption) (*SetS
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1143,6 +1156,7 @@ func (s *API) SetServer(req *SetServerRequest, opts ...scw.RequestOption) (*SetS
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1188,7 +1202,8 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1196,6 +1211,7 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1223,7 +1239,8 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1256,7 +1273,8 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1264,6 +1282,7 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/action",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1291,7 +1310,8 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1324,7 +1344,8 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1357,7 +1378,8 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1365,6 +1387,7 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/user_data/" + fmt.Sprint(req.Key) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req.Content)
 	if err != nil {
 		return err
@@ -1392,7 +1415,8 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1432,14 +1456,16 @@ type ListImagesRequest struct {
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1477,7 +1503,8 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1516,11 +1543,13 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1528,6 +1557,7 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1577,11 +1607,13 @@ func (s *API) SetImage(req *SetImageRequest, opts ...scw.RequestOption) (*SetIma
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1589,6 +1621,7 @@ func (s *API) SetImage(req *SetImageRequest, opts ...scw.RequestOption) (*SetIma
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1616,7 +1649,8 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1648,14 +1682,16 @@ type ListSnapshotsRequest struct {
 func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1693,11 +1729,13 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1705,6 +1743,7 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1732,7 +1771,8 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1779,11 +1819,13 @@ func (s *API) SetSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1791,6 +1833,7 @@ func (s *API) SetSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1818,7 +1861,8 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1850,14 +1894,16 @@ type ListVolumesRequest struct {
 func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -1916,11 +1962,13 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1928,6 +1976,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -1955,7 +2004,8 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2004,11 +2054,13 @@ func (s *API) SetVolume(req *SetVolumeRequest, opts ...scw.RequestOption) (*SetV
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2016,6 +2068,7 @@ func (s *API) SetVolume(req *SetVolumeRequest, opts ...scw.RequestOption) (*SetV
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2043,7 +2096,8 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2075,14 +2129,16 @@ type ListSecurityGroupsRequest struct {
 func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.RequestOption) (*ListSecurityGroupsResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -2125,7 +2181,8 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2133,6 +2190,7 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2160,7 +2218,8 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2189,7 +2248,8 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2240,11 +2300,13 @@ func (s *API) SetSecurityGroup(req *SetSecurityGroupRequest, opts ...scw.Request
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2252,6 +2314,7 @@ func (s *API) SetSecurityGroup(req *SetSecurityGroupRequest, opts ...scw.Request
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2281,8 +2344,10 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -2330,7 +2395,8 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2338,6 +2404,7 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2367,7 +2434,8 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2398,7 +2466,8 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2429,12 +2498,15 @@ func (s *API) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsR
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
@@ -2468,11 +2540,13 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2480,6 +2554,7 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2507,7 +2582,8 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2543,11 +2619,13 @@ func (s *API) SetIP(req *SetIPRequest, opts ...scw.RequestOption) (*SetIPRespons
 	var err error
 
 	if req.Organization == "" {
-		req.Organization = s.client.GetDefaultOrganizationID()
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2555,6 +2633,7 @@ func (s *API) SetIP(req *SetIPRequest, opts ...scw.RequestOption) (*SetIPRespons
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.ID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2584,7 +2663,8 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2592,6 +2672,7 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
 		Headers: http.Header{},
 	}
+
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
@@ -2619,7 +2700,8 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2652,8 +2734,10 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "arch", req.Arch)
 	parameter.AddToQuery(query, "title", req.Title)
@@ -2689,7 +2773,8 @@ func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2715,7 +2800,8 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	var err error
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2742,14 +2828,16 @@ type GetDashboardRequest struct {
 func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) (*GetDashboardResponse, error) {
 	var err error
 
-	val := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && string(val) != "" {
-		req.Organization = &val
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
-		req.Zone = s.client.GetDefaultZone()
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 

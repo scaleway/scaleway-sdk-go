@@ -5,59 +5,97 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
 	apiURL = "https://example.com/"
 )
 
+var (
+	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	defaultRegion         = utils.RegionNlAms
+	defaultZone           = utils.ZoneNlAms1
+)
+
 func TestSettings(t *testing.T) {
-	// New
-	s := newSettings()
 
-	// Apply
-	var funcToApply ClientOption = func(s *settings) {
-		s.token = auth.NewToken(testAccessKey, testSecretKey)
-		s.apiURL = apiURL
+	testCases := []struct {
+		name         string
+		clientOption ClientOption
+		errStr       string
+	}{
+		{
+			name: "Create a valid client option",
+			clientOption: func(s *settings) {
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.apiURL = apiURL
+				s.defaultOrganizationID = &defaultOrganizationID
+				s.defaultRegion = &defaultRegion
+				s.defaultZone = &defaultZone
+			},
+		},
+		{
+			name: "Should throw an credential error",
+			clientOption: func(s *settings) {
+				s.apiURL = apiURL
+			},
+			errStr: "no credential option provided",
+		},
+		{
+			name: "Should throw an url error",
+			clientOption: func(s *settings) {
+				s.apiURL = ":test"
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+			},
+			errStr: "invalid url :test: parse :test: missing protocol scheme",
+		},
+		{
+			name: "Should throw an organization id error",
+			clientOption: func(s *settings) {
+				v := ""
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.defaultOrganizationID = &v
+			},
+			errStr: "default organization id cannot be empty",
+		},
+		{
+			name: "Should throw a region error",
+			clientOption: func(s *settings) {
+				v := utils.Region("")
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.defaultRegion = &v
+			},
+			errStr: "default region cannot be empty",
+		},
+		{
+			name: "Should throw a zone error",
+			clientOption: func(s *settings) {
+				v := utils.Zone("")
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.defaultZone = &v
+			},
+			errStr: "default zone cannot be empty",
+		},
 	}
 
-	s.apply([]ClientOption{funcToApply})
+	for _, c := range testCases {
+		t.Run(c.name, func(t *testing.T) {
+			// New
+			s := newSettings()
 
-	// Validate
-	err := s.validate()
-	testhelpers.Ok(t, err)
-}
+			// Apply
+			s.apply([]ClientOption{c.clientOption})
 
-func TestSettingsInvalidToken(t *testing.T) {
-	// New
-	s := newSettings()
+			// Validate
+			err := s.validate()
 
-	// Apply
-	var setURL ClientOption = func(s *settings) {
-		s.apiURL = apiURL
+			if c.errStr != "" {
+				testhelpers.Assert(t, err != nil, "Should have error")
+				testhelpers.Equals(t, c.errStr, err.Error())
+			} else {
+				testhelpers.Ok(t, err)
+			}
+		})
 	}
-
-	s.apply([]ClientOption{setURL})
-
-	// Validate without auth
-	err := s.validate()
-	testhelpers.Assert(t, err != nil, "Should have error")
-	testhelpers.Equals(t, "no credential option provided", err.Error())
-}
-func TestSettingsInvalidURL(t *testing.T) {
-	// New
-	s := newSettings()
-
-	// Apply
-	var setTokenUnsetURL ClientOption = func(s *settings) {
-		s.apiURL = ":test"
-		s.token = auth.NewToken(testAccessKey, testSecretKey)
-	}
-
-	s.apply([]ClientOption{setTokenUnsetURL})
-
-	err := s.validate()
-
-	testhelpers.Assert(t, err != nil, "Should have error")
-	testhelpers.Equals(t, "invalid url :test: parse :test: missing protocol scheme", err.Error())
 }
