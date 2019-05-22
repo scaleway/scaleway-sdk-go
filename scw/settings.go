@@ -17,6 +17,7 @@ type settings struct {
 	defaultOrganizationID *string
 	defaultRegion         *utils.Region
 	defaultZone           *utils.Zone
+	defaultPageSize       *int32
 }
 
 func newSettings() *settings {
@@ -53,6 +54,10 @@ func (s *settings) validate() error {
 	// TODO: Check Zone format
 	if s.defaultZone != nil && *s.defaultZone == "" {
 		return fmt.Errorf("default zone cannot be empty")
+	}
+
+	if s.defaultPageSize != nil && *s.defaultPageSize == 0 {
+		return fmt.Errorf("default zone cannot be <= 0")
 	}
 
 	return nil

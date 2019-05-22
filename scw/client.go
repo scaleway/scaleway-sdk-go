@@ -26,6 +26,7 @@ type Client struct {
 	defaultOrganizationID *string
 	defaultRegion         *utils.Region
 	defaultZone           *utils.Zone
+	defaultPageSize       *int32
 }
 
 // NewClient instantiates a new Client object.
@@ -65,6 +66,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		defaultOrganizationID: s.defaultOrganizationID,
 		defaultRegion:         s.defaultRegion,
 		defaultZone:           s.defaultZone,
+		defaultPageSize:       s.defaultPageSize,
 	}, nil
 }
 
@@ -96,6 +98,13 @@ func (c *Client) GetDefaultZone() (utils.Zone, bool) {
 		return *c.defaultZone, true
 	}
 	return utils.Zone(""), false
+}
+
+// GetDefaultPageSize return the default page size of the client.
+// This value can be set from the client option
+// WithDefaultPageSize(). Be aware this value can be empty.
+func (c *Client) GetDefaultPageSize() (int32, bool) {
+	return *c.defaultPageSize, c.defaultPageSize != nil
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.
