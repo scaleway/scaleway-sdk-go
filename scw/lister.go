@@ -8,8 +8,8 @@ import (
 )
 
 type lister interface {
-	GetTotalCount() int
-	Append(interface{}) (int, error)
+	UnsafeGetTotalCount() int
+	UnsafeAppend(interface{}) (int, error)
 }
 
 // doListAll collect all pages of a List request and aggregate all results on a single response.
@@ -32,14 +32,14 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 			}
 
 			// append results
-			n, err = response.Append(nextPage)
+			n, err = response.UnsafeAppend(nextPage)
 			if err != nil {
 				return err
 			}
 
 			// set total count on first request
 			if totalCount == math.MaxUint32 {
-				totalCount = nextPage.(lister).GetTotalCount()
+				totalCount = nextPage.(lister).UnsafeGetTotalCount()
 			}
 		}
 		return nil

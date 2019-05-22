@@ -707,17 +707,18 @@ type ListLbsResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
-func (r *ListLbsResponse) GetTotalCount() int {
+func (r *ListLbsResponse) UnsafeGetTotalCount() int {
 	return int(r.TotalCount)
 }
 
-func (r *ListLbsResponse) Append(res interface{}) (int, error) {
+func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListLbsResponse)
 	if !ok {
 		return 0, fmt.Errorf("%T type cannot be appended with type %T", res, r)
 	}
 
 	r.Lbs = append(r.Lbs, results.Lbs...)
+	r.TotalCount += uint32(len(r.Lbs))
 	return len(results.Lbs), nil
 }
 
