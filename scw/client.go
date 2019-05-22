@@ -72,21 +72,30 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 // of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
 func (c *Client) GetDefaultOrganizationID() (string, bool) {
-	return *c.defaultOrganizationID, c.defaultOrganizationID != nil
+	if c.defaultOrganizationID != nil {
+		return *c.defaultOrganizationID, true
+	}
+	return "", false
 }
 
 // GetDefaultRegion return the default region of the client.
 // This value can be set in the client option
 // WithDefaultRegion(). Be aware this value can be empty.
 func (c *Client) GetDefaultRegion() (utils.Region, bool) {
-	return *c.defaultRegion, c.defaultRegion != nil
+	if c.defaultRegion != nil {
+		return *c.defaultRegion, true
+	}
+	return utils.Region(""), false
 }
 
 // GetDefaultZone return the default zone of the client.
 // This value can be set in the client option
 // WithDefaultZone(). Be aware this value can be empty.
 func (c *Client) GetDefaultZone() (utils.Zone, bool) {
-	return *c.defaultZone, c.defaultZone != nil
+	if c.defaultZone != nil {
+		return *c.defaultZone, true
+	}
+	return utils.Zone(""), false
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.
