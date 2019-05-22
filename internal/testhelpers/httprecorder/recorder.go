@@ -1,6 +1,7 @@
 package httprecorder
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -22,7 +23,7 @@ var UpdateCassette = false
 //
 // To update the cassette files, add  `UPDATE` to the environment variables.
 // When using `UPDATE`, also the `SCW_ACCESS_KEY` and `SCW_SECRET_KEY` must be set.
-func CreateRecordedScwClient() (*scw.Client, *recorder.Recorder, error) {
+func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Recorder, error) {
 
 	_, UpdateCassette := os.LookupEnv("UPDATE")
 
@@ -32,7 +33,7 @@ func CreateRecordedScwClient() (*scw.Client, *recorder.Recorder, error) {
 	}
 
 	// Setup recorder and scw client
-	r, err := recorder.NewAsMode("testdata/go-vcr", recorderMode, nil)
+	r, err := recorder.NewAsMode(fmt.Sprintf("testdata/%s", cassetteName), recorderMode, nil)
 	if err != nil {
 		return nil, nil, err
 	}

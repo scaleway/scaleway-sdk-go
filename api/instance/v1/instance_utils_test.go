@@ -10,7 +10,7 @@ import (
 
 func TestAttachIP(t *testing.T) {
 
-	client, r, err := httprecorder.CreateRecordedScwClient()
+	client, r, err := httprecorder.CreateRecordedScwClient("utils-test")
 	testhelpers.Ok(t, err)
 	defer func() {
 		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it

@@ -3,14 +3,14 @@ package marketplace
 import (
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func TestGetImageByName(t *testing.T) {
 
-	client, r, err := httprecorder.CreateRecordedScwClient()
+	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
 	testhelpers.Ok(t, err)
 	defer func() {
 		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
