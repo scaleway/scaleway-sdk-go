@@ -16,9 +16,9 @@ func WithContext(ctx context.Context) RequestOption {
 
 // WithAllPages aggregate all pages in the response of a List request.
 // Will error when pagination is not supported on the request.
-func WithAllPages(ctx context.Context) RequestOption {
+func WithAllPages() RequestOption {
 	return func(s *requestSettings) {
-		s.ctx = ctx
+		s.allPages = true
 	}
 }
 

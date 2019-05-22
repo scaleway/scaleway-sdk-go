@@ -714,7 +714,7 @@ func (r *ListLbsResponse) GetTotalCount() int {
 func (r *ListLbsResponse) Append(res interface{}) (int, error) {
 	results, ok := res.(*ListLbsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type does not match with %T", res, r)
+		return 0, fmt.Errorf("%T type cannot be appended with type %T", res, r)
 	}
 
 	r.Lbs = append(r.Lbs, results.Lbs...)
