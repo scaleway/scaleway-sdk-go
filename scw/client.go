@@ -101,7 +101,7 @@ func (c *Client) GetDefaultZone() (utils.Zone, bool) {
 }
 
 // GetDefaultPageSize return the default page size of the client.
-// This value can be set from the client option
+// This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
 func (c *Client) GetDefaultPageSize() (int32, bool) {
 	return *c.defaultPageSize, c.defaultPageSize != nil
