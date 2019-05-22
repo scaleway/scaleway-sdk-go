@@ -29,7 +29,14 @@ type Client struct {
 	defaultPageSize       *int32
 }
 
-// NewClient instantiates a new Client object.
+func defaultOptions() []ClientOption {
+	return []ClientOption{
+		WithAPIURL("https://api.scaleway.com"),
+		WithUserAgent(userAgent),
+	}
+}
+
+// NewClient instantiate a new Client object.
 //
 // Zero or more ClientOption object can be passed as a parameter.
 // These options will then be applied to the client.
@@ -110,16 +117,35 @@ func (c *Client) GetDefaultPageSize() (int32, bool) {
 	return 0, false
 }
 
-// Do performs an HTTP request based on the ScalewayRequest object.
-// RequestOptions are executed on the ScalewayRequest.
+// Do apply perform HTTP request(s) based on the ScalewayRequest object.
+// RequestOptions are applied prior to doing the request.
 func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption) (err error) {
-	if req == nil {
-		return fmt.Errorf("request must be non-nil")
-	}
+	requestSettings := newRequestSettings()
 
 	// apply request options
-	for _, opt := range opts {
-		opt(req)
+	requestSettings.apply(opts)
+
+	// validate request options
+	err = requestSettings.validate()
+	if err != nil {
+		return err
+	}
+
+	if requestSettings.ctx != nil {
+		req.Ctx = requestSettings.ctx
+	}
+
+	if requestSettings.allPages {
+		return c.doListAll(req, res)
+	}
+
+	return c.do(req, res)
+}
+
+// do perform a single HTTP request based on the ScalewayRequest object.
+func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
+	if req == nil {
+		return fmt.Errorf("request must be non-nil")
 	}
 
 	// build url
@@ -183,13 +209,6 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 	}
 
 	return nil
-}
-
-func defaultOptions() []ClientOption {
-	return []ClientOption{
-		WithAPIURL("https://api.scaleway.com"),
-		WithUserAgent(userAgent),
-	}
 }
 
 func newHTTPClient() *http.Client {
