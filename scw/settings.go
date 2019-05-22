@@ -56,8 +56,8 @@ func (s *settings) validate() error {
 		return fmt.Errorf("default zone cannot be empty")
 	}
 
-	if s.defaultPageSize != nil && *s.defaultPageSize == 0 {
-		return fmt.Errorf("default zone cannot be <= 0")
+	if s.defaultPageSize != nil && *s.defaultPageSize <= 0 {
+		return fmt.Errorf("default page size cannot be <= 0")
 	}
 
 	return nil
