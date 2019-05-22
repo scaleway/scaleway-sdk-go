@@ -45,10 +45,12 @@ func (s *settings) validate() error {
 		return fmt.Errorf("default organization id cannot be empty")
 	}
 
+	// TODO: Check Region format
 	if s.defaultRegion != nil && *s.defaultRegion == "" {
 		return fmt.Errorf("default region cannot be empty")
 	}
 
+	// TODO: Check Zone format
 	if s.defaultZone != nil && *s.defaultZone == "" {
 		return fmt.Errorf("default zone cannot be empty")
 	}
