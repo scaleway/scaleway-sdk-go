@@ -23,9 +23,9 @@ type Client struct {
 	auth                  auth.Auth
 	apiURL                string
 	userAgent             string
-	defaultOrganizationID string
-	defaultRegion         utils.Region
-	defaultZone           utils.Zone
+	defaultOrganizationID *string
+	defaultRegion         *utils.Region
+	defaultZone           *utils.Zone
 }
 
 // NewClient instantiates a new Client object.
@@ -69,24 +69,33 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 }
 
 // GetDefaultOrganizationID return the default organization ID
-// of the client. This value can be set from the client option
+// of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
-func (c *Client) GetDefaultOrganizationID() string {
-	return c.defaultOrganizationID
+func (c *Client) GetDefaultOrganizationID() (string, bool) {
+	if c.defaultOrganizationID != nil {
+		return *c.defaultOrganizationID, true
+	}
+	return "", false
 }
 
 // GetDefaultRegion return the default region of the client.
-// This value can be set from the client option
+// This value can be set in the client option
 // WithDefaultRegion(). Be aware this value can be empty.
-func (c *Client) GetDefaultRegion() utils.Region {
-	return c.defaultRegion
+func (c *Client) GetDefaultRegion() (utils.Region, bool) {
+	if c.defaultRegion != nil {
+		return *c.defaultRegion, true
+	}
+	return utils.Region(""), false
 }
 
 // GetDefaultZone return the default zone of the client.
-// This value can be set from the client option
+// This value can be set in the client option
 // WithDefaultZone(). Be aware this value can be empty.
-func (c *Client) GetDefaultZone() utils.Zone {
-	return c.defaultZone
+func (c *Client) GetDefaultZone() (utils.Zone, bool) {
+	if c.defaultZone != nil {
+		return *c.defaultZone, true
+	}
+	return utils.Zone(""), false
 }
 
 // Do performs an HTTP request based on the ScalewayRequest object.

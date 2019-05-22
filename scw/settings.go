@@ -14,9 +14,9 @@ type settings struct {
 	userAgent             string
 	httpClient            httpClient
 	insecure              bool
-	defaultOrganizationID string
-	defaultRegion         utils.Region
-	defaultZone           utils.Zone
+	defaultOrganizationID *string
+	defaultRegion         *utils.Region
+	defaultZone           *utils.Zone
 }
 
 func newSettings() *settings {
@@ -27,7 +27,6 @@ func (s *settings) apply(opts []ClientOption) {
 	for _, opt := range opts {
 		opt(s)
 	}
-
 }
 
 func (s *settings) validate() error {
@@ -39,6 +38,21 @@ func (s *settings) validate() error {
 	_, err = url.Parse(s.apiURL)
 	if err != nil {
 		return fmt.Errorf("invalid url %s: %s", s.apiURL, err)
+	}
+
+	// TODO: Check OrganizationID format
+	if s.defaultOrganizationID != nil && *s.defaultOrganizationID == "" {
+		return fmt.Errorf("default organization id cannot be empty")
+	}
+
+	// TODO: Check Region format
+	if s.defaultRegion != nil && *s.defaultRegion == "" {
+		return fmt.Errorf("default region cannot be empty")
+	}
+
+	// TODO: Check Zone format
+	if s.defaultZone != nil && *s.defaultZone == "" {
+		return fmt.Errorf("default zone cannot be empty")
 	}
 
 	return nil

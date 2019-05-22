@@ -80,17 +80,17 @@ func WithConfig(config scwconfig.Config) ClientOption {
 
 		defaultOrganizationID, exist := config.GetDefaultOrganizationID()
 		if exist {
-			s.defaultOrganizationID = defaultOrganizationID
+			s.defaultOrganizationID = &defaultOrganizationID
 		}
 
 		defaultRegion, exist := config.GetDefaultRegion()
 		if exist {
-			s.defaultRegion = defaultRegion
+			s.defaultRegion = &defaultRegion
 		}
 
 		defaultZone, exist := config.GetDefaultZone()
 		if exist {
-			s.defaultZone = defaultZone
+			s.defaultZone = &defaultZone
 		}
 	}
 }
@@ -100,7 +100,7 @@ func WithConfig(config scwconfig.Config) ClientOption {
 // It will be used as the default value of the organization_id field in all requests made with this client.
 func WithDefaultOrganizationID(organizationID string) ClientOption {
 	return func(s *settings) {
-		s.defaultOrganizationID = organizationID
+		s.defaultOrganizationID = &organizationID
 	}
 }
 
@@ -109,7 +109,7 @@ func WithDefaultOrganizationID(organizationID string) ClientOption {
 // It will be used as the default value of the region field in all requests made with this client.
 func WithDefaultRegion(region utils.Region) ClientOption {
 	return func(s *settings) {
-		s.defaultRegion = region
+		s.defaultRegion = &region
 	}
 }
 
@@ -118,6 +118,6 @@ func WithDefaultRegion(region utils.Region) ClientOption {
 // It will be used as the default value of the zone field in all requests made with this client.
 func WithDefaultZone(zone utils.Zone) ClientOption {
 	return func(s *settings) {
-		s.defaultZone = zone
+		s.defaultZone = &zone
 	}
 }

@@ -85,9 +85,17 @@ func TestNewClientWithOptions(t *testing.T) {
 
 		testhelpers.Equals(t, someHTTPClient, client.httpClient)
 
-		testhelpers.Equals(t, testDefaultOrganizationID, client.GetDefaultOrganizationID())
-		testhelpers.Equals(t, testDefaultRegion, client.GetDefaultRegion())
-		testhelpers.Equals(t, testDefaultZone, client.GetDefaultZone())
+		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
+		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
+		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
+
+		defaultRegion, exist := client.GetDefaultRegion()
+		testhelpers.Equals(t, testDefaultRegion, defaultRegion)
+		testhelpers.Assert(t, exist, "defaultRegion must exist")
+
+		defaultZone, exist := client.GetDefaultZone()
+		testhelpers.Equals(t, testDefaultZone, defaultZone)
+		testhelpers.Assert(t, exist, "defaultZone must exist")
 	})
 
 	t.Run("With scwconfig", func(t *testing.T) {
@@ -104,9 +112,17 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
 
-		testhelpers.Equals(t, testDefaultOrganizationID, client.GetDefaultOrganizationID())
-		testhelpers.Equals(t, testDefaultRegion, client.GetDefaultRegion())
-		testhelpers.Equals(t, testDefaultZone, client.GetDefaultZone())
+		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
+		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
+		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
+
+		defaultRegion, exist := client.GetDefaultRegion()
+		testhelpers.Equals(t, testDefaultRegion, defaultRegion)
+		testhelpers.Assert(t, exist, "defaultRegion must exist")
+
+		defaultZone, exist := client.GetDefaultZone()
+		testhelpers.Equals(t, testDefaultZone, defaultZone)
+		testhelpers.Assert(t, exist, "defaultZone must exist")
 	})
 
 }
