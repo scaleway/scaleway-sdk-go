@@ -707,6 +707,20 @@ type ListLbsResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
+func (r *ListLbsResponse) GetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+func (r *ListLbsResponse) Append(res interface{}) (int, error) {
+	results, ok := res.(*ListLbsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type does not match with %T", res, r)
+	}
+
+	r.Lbs = append(r.Lbs, results.Lbs...)
+	return len(results.Lbs), nil
+}
+
 // Service API
 
 type GetServiceInfoRequest struct {
