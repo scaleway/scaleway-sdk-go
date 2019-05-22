@@ -25,6 +25,7 @@ func TestAttachIP(t *testing.T) {
 		zone         = utils.ZoneFrPar1
 		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
+		reverse      = "1.1.1.1"
 	)
 
 	// Create server
@@ -66,6 +67,34 @@ func TestAttachIP(t *testing.T) {
 
 	testhelpers.Ok(t, err)
 	testhelpers.Assert(t, nil == ipDetachResponse.IP.Server, "Server object should be nil for detached IP.")
+
+	// Set reverse
+	ipSetReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
+		IPID:    ipID,
+		Zone:    zone,
+		Reverse: &reverse,
+	})
+	testhelpers.Ok(t, err)
+	testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
+
+	// Omitempty reverse
+	ipSetReverseResponse, err = instanceAPI.UpdateIP(&UpdateIPRequest{
+		IPID:    ipID,
+		Zone:    zone,
+		Reverse: nil,
+	})
+	testhelpers.Ok(t, err)
+	testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
+
+	// Unset reverse
+	emptyReverse := ""
+	ipDeleteReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
+		IPID:    ipID,
+		Zone:    zone,
+		Reverse: &emptyReverse,
+	})
+	testhelpers.Ok(t, err)
+	testhelpers.Equals(t, "", ipDeleteReverseResponse.IP.Reverse)
 
 	// Delete IP
 	err = instanceAPI.DeleteIP(&DeleteIPRequest{
