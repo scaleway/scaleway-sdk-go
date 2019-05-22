@@ -1,6 +1,8 @@
 package instance
 
 import (
+	"fmt"
+
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
@@ -85,4 +87,101 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*Update
 	}
 
 	return &UpdateIPResponse{IP: ipResponse.IP}, nil
+}
+
+// AttachVolumeRequest contains the parameters to attach a volume to a server
+type AttachVolumeRequest struct {
+	Zone     utils.Zone `json:"-"`
+	ServerID string     `json:"-"`
+	VolumeID string     `json:"-"`
+}
+
+// AttachVolumeResponse [TODO]
+type AttachVolumeResponse struct {
+	Server *Server `json:"-"`
+}
+
+// volumesToVolumeTemplates converts a map of *Volume to a map of *VolumeTemplate
+// so it can be used in a UpdateServer request
+func volumesToVolumeTemplates(volumes map[string]*Volume) map[string]*VolumeTemplate {
+	volumeTemplates := map[string]*VolumeTemplate{}
+	for key, volume := range volumes {
+		volumeTemplates[key] = &VolumeTemplate{ID: volume.ID, Name: volume.Name}
+	}
+	return volumeTemplates
+}
+
+// AttachVolume attaches a volume to a server
+func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) (*AttachVolumeResponse, error) {
+	// get server with volumes
+	getServerResponse, err := s.GetServer(&GetServerRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	volumes := getServerResponse.Server.Volumes
+
+	newVolumes := volumesToVolumeTemplates(volumes)
+
+	// add volume to volumes list
+	newVolumes[fmt.Sprintf("%d", len(volumes))] = &VolumeTemplate{ID: req.VolumeID, Name: req.VolumeID /* name is ignored on this PATCH */}
+
+	// update server
+	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+		Volumes:  &newVolumes,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &AttachVolumeResponse{Server: updateServerResponse.Server}, nil
+}
+
+// DetachVolumeRequest contains the parameters to detach a volume from a server
+type DetachVolumeRequest struct {
+	Zone     utils.Zone `json:"-"`
+	ServerID string     `json:"-"`
+	VolumeID string     `json:"-"`
+}
+
+// DetachVolumeResponse [TODO]
+type DetachVolumeResponse struct {
+	Server *Server `json:"-"`
+}
+
+// DetachVolume detaches a volume from a server
+func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) (*DetachVolumeResponse, error) {
+	// get server with volumes
+	getServerResponse, err := s.GetServer(&GetServerRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	volumes := getServerResponse.Server.Volumes
+	// remove volume from volumes list
+	for key, volume := range volumes {
+		if volume.ID == req.VolumeID {
+			delete(volumes, key)
+		}
+	}
+
+	newVolumes := volumesToVolumeTemplates(volumes)
+
+	// update server
+	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+		Volumes:  &newVolumes,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &DetachVolumeResponse{Server: updateServerResponse.Server}, nil
 }
