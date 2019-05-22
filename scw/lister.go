@@ -2,6 +2,7 @@ package scw
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 )
@@ -17,7 +18,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	case lister:
 		n := 0
 		page := 1 // start at page 1
-		totalCount := -1
+		totalCount := math.MaxUint32
 		for i := 0; i < totalCount; i += n {
 			// set current page
 			req.Query.Set("page", strconv.Itoa(page))
@@ -37,7 +38,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 			}
 
 			// set total count on first request
-			if totalCount == -1 {
+			if totalCount == math.MaxUint32 {
 				totalCount = nextPage.(lister).GetTotalCount()
 			}
 		}
