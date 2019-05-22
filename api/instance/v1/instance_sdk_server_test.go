@@ -48,6 +48,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Ok(t, err)
 		serverID = createServerResponse.Server.ID
 
+		testhelpers.Assert(t, createServerResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, 1 == len(createServerResponse.Server.Volumes), "should have exactly one volume because we didn't pass volumes map in the requests.")
 		for _, volume := range createServerResponse.Server.Volumes {
 			volumeID = volume.ID
