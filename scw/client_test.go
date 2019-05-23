@@ -21,7 +21,7 @@ const (
 	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	testDefaultRegion         = utils.RegionFrPar
 	testDefaultZone           = utils.ZoneFrPar1
-	testDefaultPageSize       = 5
+	testDefaultPageSize       = int32(5)
 	testInsecure              = true
 )
 
@@ -130,9 +130,8 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, testDefaultZone, defaultZone)
 		testhelpers.Assert(t, exist, "defaultZone must exist")
 
-		defaultPageSize, exist := client.GetDefaultPageSize()
-		testhelpers.Equals(t, testDefaultPageSize, defaultPageSize)
-		testhelpers.Assert(t, exist, "defaultPageSize must exist")
+		_, exist = client.GetDefaultPageSize()
+		testhelpers.Assert(t, !exist, "defaultPageSize must not exist")
 	})
 
 }
