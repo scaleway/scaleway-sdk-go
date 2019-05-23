@@ -117,7 +117,7 @@ func (c *Client) GetDefaultPageSize() (int32, bool) {
 	return 0, false
 }
 
-// Do perform HTTP request(s) based on the ScalewayRequest object.
+// Do performs HTTP request(s) based on the ScalewayRequest object.
 // RequestOptions are applied prior to doing the request.
 func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption) (err error) {
 	requestSettings := newRequestSettings()
@@ -142,7 +142,7 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 	return c.do(req, res)
 }
 
-// do perform a single HTTP request based on the ScalewayRequest object.
+// do performs a single HTTP request based on the ScalewayRequest object.
 func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 	if req == nil {
 		return fmt.Errorf("request must be non-nil")

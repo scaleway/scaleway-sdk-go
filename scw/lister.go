@@ -13,7 +13,7 @@ type lister interface {
 	UnsafeAppend(interface{}) (int, error)
 }
 
-// doListAll collect all pages of a List request and aggregate all results on a single response.
+// doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 	// restore original query parameters at the end of the function
@@ -60,7 +60,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	return fmt.Errorf("%T does not support pagination", res)
 }
 
-// newPage return a variable set to the zero value of the given type
+// newPage returns a variable set to the zero value of the given type
 func newPage(v interface{}) interface{} {
 	// reflect.New always create a pointer, that's why we use reflect.Indirect before
 	return reflect.New(reflect.Indirect(reflect.ValueOf(v)).Type()).Interface()
