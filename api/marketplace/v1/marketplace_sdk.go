@@ -154,6 +154,11 @@ type ListImagesRequest struct {
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)

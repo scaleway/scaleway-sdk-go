@@ -763,6 +763,11 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 		req.Region = defaultRegion
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
@@ -961,6 +966,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 		req.Region = defaultRegion
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -1098,6 +1108,11 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
 	}
 
 	query := url.Values{}
@@ -1623,6 +1638,11 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
@@ -1898,6 +1918,11 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
 	}
 
 	query := url.Values{}
