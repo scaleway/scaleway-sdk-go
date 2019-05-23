@@ -156,7 +156,7 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 
 	defer func() {
 		tmpErr := resp.Body.Close()
-		if tmpErr != nil {
+		if err == nil && tmpErr != nil {
 			err = tmpErr
 		}
 	}()
