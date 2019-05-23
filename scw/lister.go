@@ -3,6 +3,7 @@ package scw
 import (
 	"fmt"
 	"math"
+	"net/url"
 	"reflect"
 	"strconv"
 )
@@ -14,6 +15,17 @@ type lister interface {
 
 // doListAll collect all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
+
+	// restore original query parameters at the end of the function
+	originalQuery := url.Values{}
+	for k, v := range req.Query {
+		originalQuery[k] = v
+	}
+	defer func() {
+		req.Query = originalQuery
+	}()
+
+	// check for lister interface
 	switch response := res.(type) {
 	case lister:
 		n := 0
