@@ -96,7 +96,7 @@ type AttachVolumeRequest struct {
 	VolumeID string     `json:"-"`
 }
 
-// AttachVolumeResponse [TODO]
+// AttachVolumeResponse contains the updated server after attaching a volume
 type AttachVolumeResponse struct {
 	Server *Server `json:"-"`
 }
@@ -126,7 +126,12 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 	newVolumes := volumesToVolumeTemplates(volumes)
 
 	// add volume to volumes list
-	newVolumes[fmt.Sprintf("%d", len(volumes))] = &VolumeTemplate{ID: req.VolumeID, Name: req.VolumeID /* name is ignored on this PATCH */}
+	key := fmt.Sprintf("%d", len(volumes))
+	newVolumes[key] = &VolumeTemplate{
+		ID: req.VolumeID,
+		// name is ignored on this PATCH
+		Name: req.VolumeID,
+	}
 
 	// update server
 	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
@@ -148,7 +153,7 @@ type DetachVolumeRequest struct {
 	VolumeID string     `json:"-"`
 }
 
-// DetachVolumeResponse [TODO]
+// DetachVolumeResponse contains the updated server after detaching a volume
 type DetachVolumeResponse struct {
 	Server *Server `json:"-"`
 }

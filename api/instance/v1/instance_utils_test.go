@@ -8,7 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
-func TestAttachIP(t *testing.T) {
+func TestInstanceHelpers(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("utils-test")
 	testhelpers.Ok(t, err)
