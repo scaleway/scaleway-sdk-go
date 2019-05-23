@@ -122,3 +122,25 @@ func TestServerUpdate(t *testing.T) {
 	})
 
 }
+
+func TestCreateServerWithIncorrectBody(t *testing.T) {
+
+	client, r, err := httprecorder.CreateRecordedScwClient("server-incorrect-body")
+	testhelpers.Ok(t, err)
+	defer func() {
+		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
+
+	instanceAPI := NewAPI(client)
+
+	var (
+		zone = utils.ZoneFrPar1
+	)
+
+	// Create server
+	_, err = instanceAPI.CreateServer(&CreateServerRequest{
+		Zone: zone,
+	})
+	testhelpers.Assert(t, err != nil, "This request should error")
+
+}
