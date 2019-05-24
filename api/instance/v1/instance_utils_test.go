@@ -112,7 +112,6 @@ func TestInstanceHelpers(t *testing.T) {
 
 		detachVolumeResponse, err := instanceAPI.DetachVolume(&DetachVolumeRequest{
 			Zone:     zone,
-			ServerID: serverID,
 			VolumeID: volumeID,
 		})
 		testhelpers.Ok(t, err)

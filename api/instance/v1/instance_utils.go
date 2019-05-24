@@ -149,7 +149,6 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 // DetachVolumeRequest contains the parameters to detach a volume from a server
 type DetachVolumeRequest struct {
 	Zone     utils.Zone `json:"-"`
-	ServerID string     `json:"-"`
 	VolumeID string     `json:"-"`
 }
 
@@ -160,10 +159,23 @@ type DetachVolumeResponse struct {
 
 // DetachVolume detaches a volume from a server
 func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) (*DetachVolumeResponse, error) {
+	// get volume
+	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
+		Zone:     req.Zone,
+		VolumeID: req.VolumeID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if getVolumeResponse.Volume == nil || getVolumeResponse.Volume.Server == nil {
+		return nil, fmt.Errorf("expected volume to have value in response")
+	}
+	serverID := getVolumeResponse.Volume.Server.ID
+
 	// get server with volumes
 	getServerResponse, err := s.GetServer(&GetServerRequest{
 		Zone:     req.Zone,
-		ServerID: req.ServerID,
+		ServerID: serverID,
 	})
 	if err != nil {
 		return nil, err
@@ -181,7 +193,7 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	// update server
 	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
 		Zone:     req.Zone,
-		ServerID: req.ServerID,
+		ServerID: serverID,
 		Volumes:  &newVolumes,
 	})
 	if err != nil {
