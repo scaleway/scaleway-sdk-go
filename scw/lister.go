@@ -19,7 +19,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	if response, isLister := res.(lister); isLister {
 
 		pageCount := math.MaxUint32
-		for page := 1; page <= pageCount; page += 1 {
+		for page := 1; page <= pageCount; page++ {
 			// set current page
 			req.Query.Set("page", strconv.Itoa(page))
 
