@@ -209,6 +209,7 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 		if err != nil {
 			return err
 		}
+
 	}
 
 	return nil
