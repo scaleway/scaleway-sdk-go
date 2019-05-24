@@ -9,8 +9,6 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
     url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers
     method: POST
   response:
@@ -21,43 +19,43 @@ interactions:
       false, "bootcmdargs": "LINUX_COMMON scaleway boot=local nbd.max_part=16", "architecture":
       "x86_64", "title": "x86_64 mainline 4.9.93 rev1", "dtb": "", "organization":
       "11111111-1111-4111-8111-111111111111", "id": "15fbd2f7-a0f9-412b-8502-6a44da8d98b8",
-      "public": true}, "from_server": null, "arch": "x86_64", "id": "f974feac-abae-4365-b988-8ec7d1cec10d",
+      "public": false}, "from_server": null, "arch": "x86_64", "id": "f974feac-abae-4365-b988-8ec7d1cec10d",
       "root_volume": {"size": 10000000000, "id": "dd5f5c10-23b1-4c9c-8445-eb6740957c84",
       "volume_type": "l_ssd", "name": "snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13"},
       "name": "Ubuntu Bionic Beaver", "modification_date": "2019-03-05T13:32:29.274319+00:00",
       "state": "available", "organization": "51b656e3-4865-41e8-adbc-0c45bdd780db",
-      "extra_volumes": {}, "public": true}, "creation_date": "2019-05-22T08:52:41.193508+00:00",
-      "public_ip": null, "private_ip": null, "id": "58188161-d1ce-470a-bb0f-aefe8f74f346",
-      "dynamic_ip_required": true, "modification_date": "2019-05-22T08:52:41.543062+00:00",
+      "extra_volumes": {}, "public": true}, "creation_date": "2019-05-23T15:49:33.711516+00:00",
+      "public_ip": null, "private_ip": null, "id": "d22f787c-7fe5-4e41-ab51-cbeee054a7b0",
+      "dynamic_ip_required": true, "modification_date": "2019-05-23T15:49:34.057229+00:00",
       "enable_ipv6": false, "hostname": "instance-utils-test", "state": "stopped",
       "bootscript": {"kernel": "http://169.254.42.24/kernel/x86_64-mainline-lts-4.9-4.9.93-rev1/vmlinuz-4.9.93",
       "initrd": "http://169.254.42.24/initrd/initrd-Linux-x86_64-v3.14.6.gz", "default":
       false, "bootcmdargs": "LINUX_COMMON scaleway boot=local nbd.max_part=16", "architecture":
       "x86_64", "title": "x86_64 mainline 4.9.93 rev1", "dtb": "", "organization":
       "11111111-1111-4111-8111-111111111111", "id": "15fbd2f7-a0f9-412b-8502-6a44da8d98b8",
-      "public": true}, "location": null, "boot_type": "bootscript", "ipv6": null,
+      "public": false}, "location": null, "boot_type": "bootscript", "ipv6": null,
       "commercial_type": "START1-S", "tags": [], "arch": "x86_64", "extra_networks":
       [], "compute_cluster": null, "name": "instance_utils_test", "protected": false,
       "volumes": {"0": {"size": 50000000000, "state": "available", "name": "snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13",
-      "modification_date": "2019-05-22T08:52:41.462047+00:00", "organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3",
-      "export_uri": null, "creation_date": "2019-05-22T08:52:41.193508+00:00", "id":
-      "afeb6f55-7f8f-4c39-bf29-0b5a37a3f37c", "volume_type": "l_ssd", "server": {"id":
-      "58188161-d1ce-470a-bb0f-aefe8f74f346", "name": "instance_utils_test"}}}, "security_group":
+      "modification_date": "2019-05-23T15:49:33.979031+00:00", "organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3",
+      "export_uri": null, "creation_date": "2019-05-23T15:49:33.711516+00:00", "id":
+      "8d546865-6719-4ea6-840f-341f46a18986", "volume_type": "l_ssd", "server": {"id":
+      "d22f787c-7fe5-4e41-ab51-cbeee054a7b0", "name": "instance_utils_test"}}}, "security_group":
       {"id": "9f073e03-5511-4863-ae23-9cb0deb82426", "name": "Default security group"},
       "organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"}}'
     headers:
       Cache-Control:
       - no-cache
       Content-Length:
-      - "2714"
+      - "2716"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:41 GMT
+      - Thu, 23 May 2019 15:49:33 GMT
       Location:
-      - https://cp-par1.scaleway.com/servers/58188161-d1ce-470a-bb0f-aefe8f74f346
+      - https://cp-par1.scaleway.com/servers/d22f787c-7fe5-4e41-ab51-cbeee054a7b0
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -77,14 +75,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
     url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips
     method: POST
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      null, "id": "71452cea-c051-4627-9210-c6ed506de400", "server": null, "address":
-      "163.172.137.8"}}'
+      null, "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": null, "address":
+      "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -95,9 +91,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:42 GMT
+      - Thu, 23 May 2019 15:49:34 GMT
       Location:
-      - https://cp-par1.scaleway.com/ips/71452cea-c051-4627-9210-c6ed506de400
+      - https://cp-par1.scaleway.com/ips/2b0108cd-9385-4eb5-878c-6e781b135410
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -110,21 +106,19 @@ interactions:
     code: 201
     duration: ""
 - request:
-    body: '{"server":"58188161-d1ce-470a-bb0f-aefe8f74f346"}'
+    body: '{"server":"d22f787c-7fe5-4e41-ab51-cbeee054a7b0"}'
     form: {}
     headers:
       Content-Type:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: PATCH
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      null, "id": "71452cea-c051-4627-9210-c6ed506de400", "server": {"id": "58188161-d1ce-470a-bb0f-aefe8f74f346",
-      "name": "instance_utils_test"}, "address": "163.172.137.8"}}'
+      null, "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": {"id": "d22f787c-7fe5-4e41-ab51-cbeee054a7b0",
+      "name": "instance_utils_test"}, "address": "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -135,7 +129,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:50 GMT
+      - Thu, 23 May 2019 15:49:34 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -155,14 +149,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: PATCH
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      null, "id": "71452cea-c051-4627-9210-c6ed506de400", "server": null, "address":
-      "163.172.137.8"}}'
+      null, "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": null, "address":
+      "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -173,7 +165,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:50 GMT
+      - Thu, 23 May 2019 15:49:39 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -193,14 +185,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: PATCH
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      "1.1.1.1", "id": "71452cea-c051-4627-9210-c6ed506de400", "server": null, "address":
-      "163.172.137.8"}}'
+      "1.1.1.1", "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": null, "address":
+      "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -211,7 +201,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:51 GMT
+      - Thu, 23 May 2019 15:49:48 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -231,14 +221,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: PATCH
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      "1.1.1.1", "id": "71452cea-c051-4627-9210-c6ed506de400", "server": null, "address":
-      "163.172.137.8"}}'
+      "1.1.1.1", "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": null, "address":
+      "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -249,7 +237,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:51 GMT
+      - Thu, 23 May 2019 15:49:56 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -269,14 +257,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: PATCH
   response:
     body: '{"ip": {"organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "reverse":
-      null, "id": "71452cea-c051-4627-9210-c6ed506de400", "server": null, "address":
-      "163.172.137.8"}}'
+      null, "id": "2b0108cd-9385-4eb5-878c-6e781b135410", "server": null, "address":
+      "51.158.78.242"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -287,7 +273,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:51 GMT
+      - Thu, 23 May 2019 15:50:04 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -305,9 +291,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/71452cea-c051-4627-9210-c6ed506de400
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/2b0108cd-9385-4eb5-878c-6e781b135410
     method: DELETE
   response:
     body: ""
@@ -319,7 +303,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:51 GMT
+      - Thu, 23 May 2019 15:50:04 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -337,9 +321,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/58188161-d1ce-470a-bb0f-aefe8f74f346
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d22f787c-7fe5-4e41-ab51-cbeee054a7b0
     method: DELETE
   response:
     body: ""
@@ -351,7 +333,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:51 GMT
+      - Thu, 23 May 2019 15:50:04 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -369,9 +351,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0
-      X-Auth-Token:
-      - f9f4770d-e8cf-4137-b1de-9cda55e199c3
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/afeb6f55-7f8f-4c39-bf29-0b5a37a3f37c
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/8d546865-6719-4ea6-840f-341f46a18986
     method: DELETE
   response:
     body: ""
@@ -383,7 +363,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 22 May 2019 08:52:52 GMT
+      - Thu, 23 May 2019 15:50:04 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
@@ -27,6 +28,16 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	_, UpdateCassette := os.LookupEnv("UPDATE")
 
+	var config scwconfig.Config
+	var err error
+
+	if UpdateCassette {
+		config, err = scwconfig.Load()
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
 	recorderMode := recorder.ModeReplaying
 	if UpdateCassette {
 		recorderMode = recorder.ModeRecording
@@ -41,6 +52,15 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	// Add a filter which removes Authorization headers from all requests:
 	r.AddFilter(func(i *cassette.Interaction) error {
 		delete(i.Request.Headers, "x-auth-token")
+		delete(i.Request.Headers, "X-Auth-Token")
+
+		if UpdateCassette {
+			secretKey, _ := config.GetSecretKey()
+			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
+				panic(fmt.Errorf("found secret key in cassette"))
+			}
+		}
+
 		return nil
 	})
 
@@ -51,11 +71,6 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	if UpdateCassette {
 		// When updating the recoreded test requests, we need the access key and secret key.
-		config, err := scwconfig.Load()
-		if err != nil {
-			return nil, nil, err
-		}
-
 		client, err = scw.NewClient(
 			scw.WithConfig(config),
 			scw.WithHTTPClient(httpClient),
