@@ -10,44 +10,59 @@ var (
 	defaultTimeout  = time.Minute * 5
 )
 
-// WaitOptions defines the waiting options.
+type IntervalStrategy func() <-chan time.Time
+
+// WaitSyncConfig defines the waiting options.
 type WaitSyncConfig struct {
-	get      func() (value interface{}, err error, stopCondition bool)
-	interval func() <-chan time.Time
+	// This method will be called from another goroutine.
+	get      func() (value interface{}, err error, isTerminal bool)
+	interval IntervalStrategy
 	timeout  time.Duration
 }
 
+// LinearIntervalStrategy defines a linear interval duration.
+func LinearIntervalStrategy(interval time.Duration) IntervalStrategy {
+	return func() <-chan time.Time {
+		return time.After(interval)
+	}
+}
+
+// FibonacciIntervalStrategy defines an interval duration who follow the Fibonacci sequence.
+func FibonacciIntervalStrategy(base time.Duration, factor float32) IntervalStrategy {
+	var x, y float32 = 0, 1
+
+	return func() <-chan time.Time {
+		x, y = y, x+(y*factor)
+		return time.After(time.Duration(x) * base)
+	}
+}
+
 // WaitSync waits and returns when a given stop condition is true or if an error occurs.
-//
-// In this sync implementation, the timeout could be longer than expected.
 func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	// initialize configuration
 	if config.interval == nil {
-		config.interval = func() <-chan time.Time {
-			return time.After(defaultInterval)
-		}
+		config.interval = LinearIntervalStrategy(defaultInterval)
 	}
 	if config.timeout == 0 {
 		config.timeout = defaultTimeout
 	}
 
-	type payload struct {
-		value interface{}
-		err   error
-	}
-
-	result := make(chan payload, 1)
-	timeout := make(chan bool, 1)
+	resultValue := make(chan interface{})
+	resultErr := make(chan error)
+	timeout := make(chan bool)
 
 	go func() {
 		for {
 			// get the payload
 			value, err, stopCondition := config.get()
-			p := payload{value, err}
 
 			// send the payload
-			if err != nil || stopCondition {
-				result <- p
+			if err != nil {
+				resultErr <- err
+				return
+			}
+			if stopCondition {
+				resultValue <- value
 				return
 			}
 
@@ -63,11 +78,10 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 
 	// waiting for a result or a timeout
 	select {
-	case res := <-result:
-		if res.err != nil {
-			return nil, err
-		}
-		return res.value, nil
+	case val := <-resultValue:
+		return val, nil
+	case err := <-resultErr:
+		return nil, err
 	case <-time.After(config.timeout):
 		timeout <- true
 		return nil, fmt.Errorf("timeout after %v", config.timeout)
