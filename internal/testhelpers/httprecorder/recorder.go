@@ -1,7 +1,6 @@
 package httprecorder
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -58,7 +57,7 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		if UpdateCassette {
 			secretKey, _ := config.GetSecretKey()
 			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
-				panic(errors.New("found secret key in cassette"))
+				panic(fmt.Errorf("found secret key in cassette"))
 			}
 		}
 
