@@ -156,26 +156,26 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 	logger.Debugf("creating %s request on %s", req.Method, url.String())
 
 	// build request
-	request, err := http.NewRequest(req.Method, url.String(), req.Body)
+	httpRequest, err := http.NewRequest(req.Method, url.String(), req.Body)
 	if err != nil {
 		return err
 	}
 
-	request.Header = req.getAllHeaders(c.auth, c.userAgent, false)
+	httpRequest.Header = req.getAllHeaders(c.auth, c.userAgent, false)
 
 	if req.Ctx != nil {
-		request = request.WithContext(req.Ctx)
+		httpRequest = httpRequest.WithContext(req.Ctx)
 	}
 
 	if logger.ShouldLog(logger.LogLevelDebug) {
 
 		// Keep original headers (before anonymization)
-		originalHeaders := request.Header
+		originalHeaders := httpRequest.Header
 
 		// Get anonymized headers
-		request.Header = req.getAllHeaders(c.auth, c.userAgent, true)
+		httpRequest.Header = req.getAllHeaders(c.auth, c.userAgent, true)
 
-		dump, err := httputil.DumpRequestOut(request, true)
+		dump, err := httputil.DumpRequestOut(httpRequest, true)
 		if err != nil {
 			logger.Warningf("cannot dump outgoing request: %s", err)
 		} else {
@@ -183,29 +183,29 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 		}
 
 		// Restore original headers before sending the request
-		request.Header = originalHeaders
+		httpRequest.Header = originalHeaders
 	}
 
 	// execute request
-	resp, err := c.httpClient.Do(request)
+	httpResponse, err := c.httpClient.Do(httpRequest)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		tmpErr := resp.Body.Close()
-		if err == nil && tmpErr != nil {
-			err = tmpErr
+		closeErr := httpResponse.Body.Close()
+		if err == nil && closeErr != nil {
+			err = closeErr
 		}
 	}()
 
-	err = hasResponseError(resp)
+	err = hasResponseError(httpResponse)
 	if err != nil {
 		return err
 	}
 
 	if res != nil {
-		err = json.NewDecoder(resp.Body).Decode(&res)
+		err = json.NewDecoder(httpResponse.Body).Decode(&res)
 		if err != nil {
 			return err
 		}
