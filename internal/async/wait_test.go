@@ -40,7 +40,6 @@ func getFibonacciInterval() func() <-chan time.Time {
 	x, y := 0, 1
 	return func() <-chan time.Time {
 		x, y = y, x+y
-		fmt.Println("fib>", time.Duration(x)*time.Second)
 		return time.After(time.Duration(x) * time.Second)
 	}
 }
@@ -133,7 +132,6 @@ func TestWaitSync(t *testing.T) {
 				acc := terminalValue.(*value)
 				testhelpers.Equals(t, exp.doneIterations, acc.doneIterations)
 
-				fmt.Println(exp.totalDuration, acc.totalDuration-flakiness, acc.totalDuration+flakiness)
 				ok := exp.totalDuration > acc.totalDuration-flakiness && exp.totalDuration < acc.totalDuration+flakiness
 				testhelpers.Assert(t, ok, "totalDuration don't match the target: (acc: %v, exp: %v)", acc.totalDuration, exp.totalDuration)
 			}

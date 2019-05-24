@@ -23,7 +23,6 @@ type WaitSyncConfig struct {
 func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	// initialize configuration
 	if config.interval == nil {
-		fmt.Println("config.interval is nil")
 		config.interval = func() <-chan time.Time {
 			return time.After(defaultInterval)
 		}
