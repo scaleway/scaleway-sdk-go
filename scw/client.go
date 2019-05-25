@@ -242,3 +242,25 @@ func setInsecureMode(c httpClient) {
 	}
 	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }
+
+func hasResponseError(res *http.Response) error {
+	if res.StatusCode >= 200 && res.StatusCode <= 299 {
+		return nil
+	}
+
+	newErr := &ResponseError{
+		StatusCode: res.StatusCode,
+		Status:     res.Status,
+	}
+
+	if res.Body == nil {
+		return newErr
+	}
+
+	err := json.NewDecoder(res.Body).Decode(newErr)
+	if err != nil {
+		return err
+	}
+
+	return newErr
+}
