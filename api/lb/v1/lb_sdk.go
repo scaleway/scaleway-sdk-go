@@ -707,21 +707,6 @@ type ListLbsResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
-func (r *ListLbsResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
-}
-
-func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, error) {
-	results, ok := res.(*ListLbsResponse)
-	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended with type %T", res, r)
-	}
-
-	r.Lbs = append(r.Lbs, results.Lbs...)
-	r.TotalCount += uint32(len(r.Lbs))
-	return len(results.Lbs), nil
-}
-
 // Service API
 
 type GetServiceInfoRequest struct {
@@ -804,6 +789,25 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListLbsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListLbsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Lbs = append(r.Lbs, results.Lbs...)
+	r.TotalCount += uint32(len(results.Lbs))
+	return len(results.Lbs), nil
 }
 
 type CreateLbRequest struct {
@@ -1008,6 +1012,25 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListIpsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListIpsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Ips = append(r.Ips, results.Ips...)
+	r.TotalCount += uint32(len(results.Ips))
+	return len(results.Ips), nil
+}
+
 type GetIPRequest struct {
 	Region utils.Region `json:"-"`
 	// IPID
@@ -1150,6 +1173,25 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBackendsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListBackendsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Backends = append(r.Backends, results.Backends...)
+	r.TotalCount += uint32(len(results.Backends))
+	return len(results.Backends), nil
 }
 
 type CreateBackendRequest struct {
@@ -1680,6 +1722,25 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFrontendsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListFrontendsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Frontends = append(r.Frontends, results.Frontends...)
+	r.TotalCount += uint32(len(results.Frontends))
+	return len(results.Frontends), nil
+}
+
 type CreateFrontendRequest struct {
 	Region utils.Region `json:"-"`
 	// LbID load Balancer ID
@@ -1960,6 +2021,25 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListACLResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListACLResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Acls = append(r.Acls, results.Acls...)
+	r.TotalCount += uint32(len(results.Acls))
+	return len(results.Acls), nil
 }
 
 type CreateACLRequest struct {
