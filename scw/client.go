@@ -198,6 +198,14 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 			err = closeErr
 		}
 	}()
+	if logger.ShouldLog(logger.LogLevelDebug) {
+		dump, err := httputil.DumpResponse(httpResponse, true)
+		if err != nil {
+			logger.Warningf("cannot dump ingoing response: %s", err)
+		} else {
+			logger.Debugf("dumping http response:\n" + string(dump))
+		}
+	}
 
 	err = hasResponseError(httpResponse)
 	if err != nil {
