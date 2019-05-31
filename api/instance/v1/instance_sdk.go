@@ -573,7 +573,7 @@ type SecurityGroup struct {
 	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 	// Servers list of servers attached to this security group
-	Servers map[string]*ServerSummary `json:"servers,omitempty"`
+	Servers []*ServerSummary `json:"servers,omitempty"`
 	// Stateful true if the security group is stateful
 	Stateful bool `json:"stateful,omitempty"`
 }

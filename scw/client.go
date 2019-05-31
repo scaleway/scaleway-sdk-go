@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"strconv"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -209,6 +210,17 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 		if err != nil {
 			return err
 		}
+
+		// Handle instance API X-Total-Count header
+		xTotalCountStr := httpResponse.Header.Get("X-Total-Count")
+		if legacyLister, isLegacyLister := res.(legacyLister); isLegacyLister && xTotalCountStr != "" {
+			xTotalCount, err := strconv.Atoi(xTotalCountStr)
+			if err != nil {
+				return err
+			}
+			legacyLister.UnsafeSetTotalCount(xTotalCount)
+		}
+
 	}
 
 	return nil
