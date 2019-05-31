@@ -351,6 +351,8 @@ type ACL struct {
 // ACLAction action if your ACL filter match
 type ACLAction struct {
 	// Type <allow> or <deny> request
+	//
+	// Default value: allow
 	Type ACLActionType `json:"type,omitempty"`
 }
 
@@ -359,6 +361,8 @@ type ACLMatch struct {
 	// IPSubnet this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
 	IPSubnet []*string `json:"ip_subnet,omitempty"`
 	// HTTPFilter you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
+	//
+	// Default value: acl_http_filter_none
 	HTTPFilter ACLHTTPFilter `json:"http_filter,omitempty"`
 
 	HTTPFilterValue []*string `json:"http_filter_value,omitempty"`
@@ -370,13 +374,19 @@ type Backend struct {
 	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
-
+	// ForwardProtocol
+	//
+	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
 
 	ForwardPort int32 `json:"forward_port,omitempty"`
-
+	// ForwardPortAlgorithm
+	//
+	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
-
+	// StickySessions
+	//
+	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
 
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
@@ -394,7 +404,9 @@ type Backend struct {
 	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
 
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
-
+	// OnMarkedDownAction
+	//
+	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
 }
 
@@ -447,10 +459,14 @@ type BackendServerStats struct {
 	// IP iPv4 or IPv6 address of the server backend
 	IP string `json:"ip,omitempty"`
 	// ServerState server operational state (stopped/starting/running/stopping)
+	//
+	// Default value: stopped
 	ServerState BackendServerStatsServerState `json:"server_state,omitempty"`
 	// ServerStateChangedAt time since last operational change
 	ServerStateChangedAt time.Time `json:"server_state_changed_at,omitempty"`
 	// LastHealthCheckStatus last health check status (unknown/neutral/failed/passed/condpass)
+	//
+	// Default value: unknown
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
 }
 
@@ -636,7 +652,9 @@ type IP struct {
 
 type Instance struct {
 	ID string `json:"id,omitempty"`
-
+	// Status
+	//
+	// Default value: unknown
 	Status InstanceStatus `json:"status,omitempty"`
 
 	IPAddress string `json:"ip_address,omitempty"`
@@ -650,7 +668,9 @@ type Lb struct {
 	Name string `json:"name,omitempty"`
 
 	Description string `json:"description,omitempty"`
-
+	// Status
+	//
+	// Default value: unknown
 	Status LbStatus `json:"status,omitempty"`
 
 	Instances []*Instance `json:"instances,omitempty"`
@@ -721,6 +741,10 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "",
@@ -740,7 +764,9 @@ type ListLbsRequest struct {
 	Region utils.Region `json:"-"`
 	// Name use this to search by name
 	Name *string `json:"-"`
-
+	// OrderBy
+	//
+	// Default value: created_at_asc
 	OrderBy ListLbsRequestOrderBy `json:"-"`
 
 	PageSize *int32 `json:"-"`
@@ -774,6 +800,10 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -837,6 +867,10 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs",
@@ -869,6 +903,14 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -904,6 +946,14 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -944,6 +994,14 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "release_ip", req.ReleaseIP)
+
+	if fmt.Sprint(req.Region) == "" {
+		return fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return fmt.Errorf("field LbID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
@@ -995,6 +1053,10 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "ip_address", req.IPAddress)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1048,6 +1110,14 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, fmt.Errorf("field IPID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
@@ -1076,6 +1146,14 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return fmt.Errorf("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1110,6 +1188,14 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	query := url.Values{}
 	parameter.AddToQuery(query, "reverse", req.Reverse)
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, fmt.Errorf("field IPID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
@@ -1133,6 +1219,8 @@ type ListBackendsRequest struct {
 	// Name use this to search by name
 	Name *string `json:"-"`
 	// OrderBy choose order of response
+	//
+	// Default value: created_at_asc
 	OrderBy ListBackendsRequestOrderBy `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
@@ -1158,6 +1246,14 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1201,12 +1297,18 @@ type CreateBackendRequest struct {
 	// Name resource name
 	Name string `json:"name,omitempty"`
 	// ForwardProtocol backend protocol. TCP or HTTP
+	//
+	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
 	// ForwardPort user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port,omitempty"`
 	// ForwardPortAlgorithm load balancing algorithm
+	//
+	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
 	// StickySessions enables cookie-based session persistence
+	//
+	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
 	// StickySessionsCookieName cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
@@ -1223,6 +1325,8 @@ type CreateBackendRequest struct {
 	// TimeoutTunnel maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
 	// OnMarkedDownAction modify what occurs when a backend server is marked down
+	//
+	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
 }
 
@@ -1274,6 +1378,14 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
@@ -1308,6 +1420,14 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
@@ -1330,12 +1450,18 @@ type UpdateBackendRequest struct {
 	// Name resource name
 	Name string `json:"name,omitempty"`
 	// ForwardProtocol backend protocol. TCP or HTTP
+	//
+	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
 	// ForwardPort user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port,omitempty"`
 	// ForwardPortAlgorithm load balancing algorithm
+	//
+	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
 	// StickySessions enable cookie-based session persistence
+	//
+	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
 	// StickySessionsCookieName cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
@@ -1348,6 +1474,8 @@ type UpdateBackendRequest struct {
 	// TimeoutTunnel maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
 	// OnMarkedDownAction modify what occurs when a backend server is marked down
+	//
+	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
 }
 
@@ -1399,6 +1527,14 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
@@ -1433,6 +1569,14 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return fmt.Errorf("field BackendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "",
@@ -1460,6 +1604,14 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1498,6 +1650,14 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/servers",
@@ -1532,6 +1692,14 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1653,6 +1821,14 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackendID) == "" {
+		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/backends/" + fmt.Sprint(req.BackendID) + "/healthcheck",
@@ -1680,6 +1856,8 @@ type ListFrontendsRequest struct {
 	// Name use this to search by name
 	Name *string `json:"-"`
 	// OrderBy response order
+	//
+	// Default value: created_at_asc
 	OrderBy ListFrontendsRequestOrderBy `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
@@ -1705,6 +1883,14 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1795,6 +1981,14 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
@@ -1827,6 +2021,14 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1898,6 +2100,14 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
@@ -1932,6 +2142,14 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return fmt.Errorf("field FrontendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
@@ -1959,6 +2177,14 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, fmt.Errorf("field LbID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/stats",
@@ -1979,6 +2205,8 @@ type ListAclsRequest struct {
 	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
 	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	//
+	// Default value: created_at_asc
 	OrderBy ListACLRequestOrderBy `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
@@ -2006,6 +2234,14 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2064,6 +2300,14 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "/acls",
@@ -2096,6 +2340,14 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return nil, fmt.Errorf("field ACLID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2135,6 +2387,14 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 		req.Region = defaultRegion
 	}
 
+	if fmt.Sprint(req.Region) == "" {
+		return nil, fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return nil, fmt.Errorf("field ACLID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
@@ -2167,6 +2427,14 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return fmt.Errorf("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return fmt.Errorf("field ACLID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{

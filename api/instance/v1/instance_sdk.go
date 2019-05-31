@@ -318,6 +318,8 @@ func (enum VolumeType) String() string {
 
 type Bootscript struct {
 	// Arch display the bootscripts arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 	// Bootcmdargs display the bootscript parameters
 	Bootcmdargs string `json:"bootcmdargs,omitempty"`
@@ -457,7 +459,9 @@ type Image struct {
 	ID string `json:"id,omitempty"`
 
 	Name string `json:"name,omitempty"`
-
+	// Arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 
 	CreationDate time.Time `json:"creation_date,omitempty"`
@@ -475,28 +479,40 @@ type Image struct {
 	Public bool `json:"public,omitempty"`
 
 	RootVolume *VolumeTemplate `json:"root_volume,omitempty"`
-
+	// State
+	//
+	// Default value: available
 	State ImageState `json:"state,omitempty"`
 }
 
 type ListBootscriptsResponse struct {
 	Bootscripts []*Bootscript `json:"bootscripts,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListImagesResponse struct {
 	Images []*Image `json:"images,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListIpsResponse struct {
 	Ips []*IP `json:"ips,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListSecurityGroupRulesResponse struct {
 	SecurityRules []*SecurityRule `json:"security_rules,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListSecurityGroupsResponse struct {
 	SecurityGroups []*SecurityGroup `json:"security_groups,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListServerActionsResponse struct {
@@ -509,18 +525,26 @@ type ListServerUserDataResponse struct {
 
 type ListServersResponse struct {
 	Servers []*Server `json:"servers,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListServersTypesResponse struct {
 	Servers map[string]*ServerTypeDefinition `json:"servers,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListSnapshotsResponse struct {
 	Snapshots []*Snapshot `json:"snapshots,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListVolumesResponse struct {
 	Volumes []*Volume `json:"volumes,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type SecurityGroup struct {
@@ -537,12 +561,16 @@ type SecurityGroup struct {
 	// EnableDefaultSecurity display if the security group is set as default
 	EnableDefaultSecurity bool `json:"enable_default_security,omitempty"`
 	// InboundDefaultPolicy display the default inbound policy
+	//
+	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
 	// Organization display the security groups organization ID
 	Organization string `json:"organization,omitempty"`
 	// OrganizationDefault display if the security group is set as organization default
 	OrganizationDefault bool `json:"organization_default,omitempty"`
 	// OutboundDefaultPolicy display the default outbound policy
+	//
+	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 	// Servers list of servers attached to this security group
 	Servers map[string]*ServerSummary `json:"servers,omitempty"`
@@ -558,11 +586,17 @@ type SecurityGroupSummary struct {
 
 type SecurityRule struct {
 	ID string `json:"id,omitempty"`
-
+	// Protocol
+	//
+	// Default value: tcp
 	Protocol SecurityRuleProtocol `json:"protocol,omitempty"`
-
+	// Direction
+	//
+	// Default value: inbound
 	Direction SecurityRuleDirection `json:"direction,omitempty"`
-
+	// Action
+	//
+	// Default value: accept
 	Action SecurityRuleAction `json:"action,omitempty"`
 
 	IPRange string `json:"ip_range,omitempty"`
@@ -590,8 +624,12 @@ type Server struct {
 	// PublicIP display the server public IP address
 	PublicIP *ServerIP `json:"public_ip,omitempty"`
 	// State display the server state
+	//
+	// Default value: running
 	State ServerState `json:"state,omitempty"`
 	// BootType display the server boot type
+	//
+	// Default value: local
 	BootType ServerBootType `json:"boot_type,omitempty"`
 	// Tags display the server associated tags
 	Tags []string `json:"tags,omitempty"`
@@ -616,6 +654,8 @@ type Server struct {
 	// AllowedActions provide as list of allowed actions on the server
 	AllowedActions []ServerAction `json:"allowed_actions,omitempty"`
 	// Arch display the server arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 	// IPv6 display the server IPv6 address
 	IPv6 *ServerIPv6 `json:"ipv6,omitempty"`
@@ -692,7 +732,9 @@ type ServerTypeDefinition struct {
 	Gpu *uint64 `json:"gpu,omitempty"`
 
 	RAM uint64 `json:"ram,omitempty"`
-
+	// Arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 
 	Baremetal bool `json:"baremetal,omitempty"`
@@ -748,11 +790,15 @@ type Snapshot struct {
 	Name string `json:"name,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
-
+	// VolumeType
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 
 	Size uint64 `json:"size,omitempty"`
-
+	// State
+	//
+	// Default value: available
 	State SnapshotState `json:"state,omitempty"`
 
 	BaseVolume *SnapshotBaseVolume `json:"base_volume,omitempty"`
@@ -782,6 +828,8 @@ type Task struct {
 	// StartedAt display the task start date
 	StartedAt time.Time `json:"started_at,omitempty"`
 	// Status display the task status
+	//
+	// Default value: pending
 	Status TaskStatus `json:"status,omitempty"`
 	// TerminatedAt display the task end date
 	TerminatedAt time.Time `json:"terminated_at,omitempty"`
@@ -813,12 +861,16 @@ type Volume struct {
 	// Size display the volumes disk size
 	Size uint64 `json:"size,omitempty"`
 	// VolumeType display the volumes type
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 	// CreationDate display the volumes creation date
 	CreationDate time.Time `json:"creation_date,omitempty"`
 	// ModificationDate display the volumes modification date
 	ModificationDate time.Time `json:"modification_date,omitempty"`
 	// State display the volumes state
+	//
+	// Default value: available
 	State VolumeState `json:"state,omitempty"`
 }
 
@@ -830,6 +882,8 @@ type VolumeTemplate struct {
 	// Size display the volumes disk size
 	Size uint64 `json:"size,omitempty"`
 	// VolumeType display the volumes type
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 	// Organization the organization ID
 	Organization string `json:"organization,omitempty"`
@@ -864,6 +918,10 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -908,6 +966,10 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -959,6 +1021,10 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers",
@@ -973,6 +1039,25 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListServersResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Servers = append(r.Servers, results.Servers...)
+	r.TotalCount += uint32(len(results.Servers))
+	return len(results.Servers), nil
 }
 
 type CreateServerRequest struct {
@@ -992,6 +1077,8 @@ type CreateServerRequest struct {
 	// PublicIP define the public IPv4 attached to the server
 	PublicIP string `json:"public_ip,omitempty"`
 	// BootType define the boot type you want to use
+	//
+	// Default value: local
 	BootType ServerBootType `json:"boot_type,omitempty"`
 	// Organization define the server organization
 	Organization string `json:"organization,omitempty"`
@@ -1011,6 +1098,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1050,6 +1141,14 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "",
@@ -1078,6 +1177,14 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetS
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1132,6 +1239,8 @@ type SetServerRequest struct {
 	// ModificationDate display the server modification date
 	ModificationDate time.Time `json:"modification_date,omitempty"`
 	// State display the server state
+	//
+	// Default value: running
 	State ServerState `json:"state,omitempty"`
 	// Location display the server location
 	Location *ServerLocation `json:"location,omitempty"`
@@ -1140,6 +1249,8 @@ type SetServerRequest struct {
 	// Bootscript display the server bootscript
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
 	// BootType display the server boot type
+	//
+	// Default value: local
 	BootType ServerBootType `json:"boot_type,omitempty"`
 	// Volumes display the server volumes
 	Volumes map[string]*Volume `json:"volumes,omitempty"`
@@ -1150,6 +1261,8 @@ type SetServerRequest struct {
 	// StateDetail display the server state_detail
 	StateDetail string `json:"state_detail,omitempty"`
 	// Arch display the server arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 }
 
@@ -1164,6 +1277,14 @@ func (s *API) SetServer(req *SetServerRequest, opts ...scw.RequestOption) (*SetS
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1192,7 +1313,9 @@ type UpdateServerRequest struct {
 	ServerID string `json:"-"`
 
 	Name *string `json:"name,omitempty"`
-
+	// BootType
+	//
+	// Default value: local
 	BootType ServerBootType `json:"boot_type,omitempty"`
 
 	Tags *[]string `json:"tags,omitempty"`
@@ -1219,6 +1342,14 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1258,6 +1389,14 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/action",
@@ -1277,7 +1416,9 @@ type ServerActionRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	ServerID string `json:"-"`
-
+	// Action
+	//
+	// Default value: poweron
 	Action ServerAction `json:"action,omitempty"`
 }
 
@@ -1290,6 +1431,14 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1329,6 +1478,14 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/user_data",
@@ -1363,6 +1520,18 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Key) == "" {
+		return fmt.Errorf("field Key cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/user_data/" + fmt.Sprint(req.Key) + "",
@@ -1395,6 +1564,18 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Key) == "" {
+		return fmt.Errorf("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1432,6 +1613,18 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Key) == "" {
+		return nil, fmt.Errorf("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1494,6 +1687,10 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "public", req.Public)
 	parameter.AddToQuery(query, "arch", req.Arch)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images",
@@ -1508,6 +1705,25 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListImagesResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Images = append(r.Images, results.Images...)
+	r.TotalCount += uint32(len(results.Images))
+	return len(results.Images), nil
 }
 
 type GetImageRequest struct {
@@ -1525,6 +1741,14 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, fmt.Errorf("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1546,7 +1770,9 @@ type CreateImageRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
-
+	// Arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 
 	DefaultBootscript *Bootscript `json:"default_bootscript,omitempty"`
@@ -1570,6 +1796,10 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1598,7 +1828,9 @@ type SetImageRequest struct {
 	ID string `json:"-"`
 
 	Name string `json:"name,omitempty"`
-
+	// Arch
+	//
+	// Default value: x86_64
 	Arch Arch `json:"arch,omitempty"`
 
 	CreationDate time.Time `json:"creation_date,omitempty"`
@@ -1616,7 +1848,9 @@ type SetImageRequest struct {
 	Public bool `json:"public,omitempty"`
 
 	RootVolume *VolumeTemplate `json:"root_volume,omitempty"`
-
+	// State
+	//
+	// Default value: available
 	State ImageState `json:"state,omitempty"`
 }
 
@@ -1634,6 +1868,14 @@ func (s *API) SetImage(req *SetImageRequest, opts ...scw.RequestOption) (*SetIma
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1671,6 +1913,14 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ImageID) == "" {
+		return fmt.Errorf("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1723,6 +1973,10 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
@@ -1737,6 +1991,25 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListSnapshotsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Snapshots = append(r.Snapshots, results.Snapshots...)
+	r.TotalCount += uint32(len(results.Snapshots))
+	return len(results.Snapshots), nil
 }
 
 type CreateSnapshotRequest struct {
@@ -1761,6 +2034,10 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1800,6 +2077,14 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, fmt.Errorf("field SnapshotID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
@@ -1823,11 +2108,15 @@ type SetSnapshotRequest struct {
 	Name string `json:"name,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
-
+	// VolumeType
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 
 	Size uint64 `json:"size,omitempty"`
-
+	// State
+	//
+	// Default value: available
 	State SnapshotState `json:"state,omitempty"`
 
 	BaseVolume *SnapshotBaseVolume `json:"base_volume,omitempty"`
@@ -1851,6 +2140,14 @@ func (s *API) SetSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1888,6 +2185,14 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return fmt.Errorf("field SnapshotID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1940,6 +2245,10 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
@@ -1956,13 +2265,34 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListVolumesResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Volumes = append(r.Volumes, results.Volumes...)
+	r.TotalCount += uint32(len(results.Volumes))
+	return len(results.Volumes), nil
+}
+
 type CreateVolumeRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
-
+	// VolumeType
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
@@ -1999,6 +2329,10 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2038,6 +2372,14 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return nil, fmt.Errorf("field VolumeID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
@@ -2064,6 +2406,8 @@ type SetVolumeRequest struct {
 	// Size display the volumes disk size
 	Size uint64 `json:"size,omitempty"`
 	// VolumeType display the volumes type
+	//
+	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 	// CreationDate display the volumes creation date
 	CreationDate time.Time `json:"creation_date,omitempty"`
@@ -2074,6 +2418,8 @@ type SetVolumeRequest struct {
 	// Server display information about the server attached to the volume
 	Server *ServerSummary `json:"server,omitempty"`
 	// State display the volumes state
+	//
+	// Default value: available
 	State VolumeState `json:"state,omitempty"`
 }
 
@@ -2091,6 +2437,14 @@ func (s *API) SetVolume(req *SetVolumeRequest, opts ...scw.RequestOption) (*SetV
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2128,6 +2482,14 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return fmt.Errorf("field VolumeID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2179,6 +2541,10 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups",
@@ -2195,6 +2561,25 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListSecurityGroupsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.SecurityGroups = append(r.SecurityGroups, results.SecurityGroups...)
+	r.TotalCount += uint32(len(results.SecurityGroups))
+	return len(results.SecurityGroups), nil
+}
+
 type CreateSecurityGroupRequest struct {
 	Zone utils.Zone `json:"-"`
 
@@ -2205,9 +2590,13 @@ type CreateSecurityGroupRequest struct {
 	OrganizationDefault bool `json:"organization_default,omitempty"`
 
 	Stateful bool `json:"stateful,omitempty"`
-
+	// InboundDefaultPolicy
+	//
+	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
-
+	// OutboundDefaultPolicy
+	//
+	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 }
 
@@ -2218,6 +2607,10 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2257,6 +2650,14 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "",
@@ -2287,6 +2688,14 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return fmt.Errorf("field SecurityGroupID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "",
@@ -2311,8 +2720,12 @@ type SetSecurityGroupRequest struct {
 	// EnableDefaultSecurity display if the security group is set as default
 	EnableDefaultSecurity bool `json:"enable_default_security,omitempty"`
 	// InboundDefaultPolicy display the default inbound policy
+	//
+	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
 	// OutboundDefaultPolicy display the default outbound policy
+	//
+	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 	// Organization display the security groups organization ID
 	Organization string `json:"organization,omitempty"`
@@ -2342,6 +2755,14 @@ func (s *API) SetSecurityGroup(req *SetSecurityGroupRequest, opts ...scw.Request
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2392,6 +2813,14 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules",
@@ -2408,15 +2837,40 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSecurityGroupRulesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListSecurityGroupRulesResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.SecurityRules = append(r.SecurityRules, results.SecurityRules...)
+	r.TotalCount += uint32(len(results.SecurityRules))
+	return len(results.SecurityRules), nil
+}
+
 type CreateSecurityGroupRuleRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
-
+	// Protocol
+	//
+	// Default value: tcp
 	Protocol SecurityRuleProtocol `json:"protocol,omitempty"`
-
+	// Direction
+	//
+	// Default value: inbound
 	Direction SecurityRuleDirection `json:"direction,omitempty"`
-
+	// Action
+	//
+	// Default value: accept
 	Action SecurityRuleAction `json:"action,omitempty"`
 
 	IPRange string `json:"ip_range,omitempty"`
@@ -2437,6 +2891,14 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2478,6 +2940,18 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return fmt.Errorf("field SecurityGroupID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityRuleID) == "" {
+		return fmt.Errorf("field SecurityRuleID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityRuleID) + "",
@@ -2510,6 +2984,18 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityRuleID) == "" {
+		return nil, fmt.Errorf("field SecurityRuleID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityRuleID) + "",
@@ -2531,6 +3017,10 @@ type ListIpsRequest struct {
 	Organization string `json:"-"`
 
 	Name *string `json:"-"`
+
+	PerPage *int32 `json:"-"`
+
+	Page *int32 `json:"-"`
 }
 
 // ListIps list IPs
@@ -2547,9 +3037,20 @@ func (s *API) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsR
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2565,6 +3066,25 @@ func (s *API) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListIpsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListIpsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Ips = append(r.Ips, results.Ips...)
+	r.TotalCount += uint32(len(results.Ips))
+	return len(results.Ips), nil
 }
 
 type CreateIPRequest struct {
@@ -2587,6 +3107,10 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2624,6 +3148,14 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, fmt.Errorf("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2668,6 +3200,14 @@ func (s *API) SetIP(req *SetIPRequest, opts ...scw.RequestOption) (*SetIPRespons
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, fmt.Errorf("field ID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.ID) + "",
@@ -2707,6 +3247,14 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, fmt.Errorf("field IPID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
@@ -2744,6 +3292,14 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 		req.Zone = defaultZone
 	}
 
+	if fmt.Sprint(req.Zone) == "" {
+		return fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return fmt.Errorf("field IPID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
@@ -2767,6 +3323,10 @@ type ListBootscriptsRequest struct {
 	Default *bool `json:"-"`
 
 	Public *bool `json:"-"`
+
+	PerPage *int32 `json:"-"`
+
+	Page *int32 `json:"-"`
 }
 
 // ListBootscripts list bootscripts
@@ -2778,11 +3338,22 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "arch", req.Arch)
 	parameter.AddToQuery(query, "title", req.Title)
 	parameter.AddToQuery(query, "default", req.Default)
 	parameter.AddToQuery(query, "public", req.Public)
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2800,6 +3371,25 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBootscriptsResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (int, error) {
+	results, ok := res.(*ListBootscriptsResponse)
+	if !ok {
+		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Bootscripts = append(r.Bootscripts, results.Bootscripts...)
+	r.TotalCount += uint32(len(results.Bootscripts))
+	return len(results.Bootscripts), nil
+}
+
 type GetBootscriptRequest struct {
 	Zone utils.Zone `json:"-"`
 
@@ -2815,6 +3405,14 @@ func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BootscriptID) == "" {
+		return nil, fmt.Errorf("field BootscriptID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2842,6 +3440,10 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2880,6 +3482,10 @@ func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) 
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, fmt.Errorf("field Zone cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
