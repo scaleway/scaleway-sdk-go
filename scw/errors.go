@@ -43,21 +43,3 @@ func (e *ResponseError) Error() string {
 
 // isScwSdkError implement SdkError interface
 func (e *ResponseError) isScwSdkError() {}
-
-// StringError is a basic string error
-type stringError struct {
-	str string
-}
-
-func (e *stringError) Error() string {
-	return e.str
-}
-
-// isScwSdkError implement SdkError interface
-func (e *stringError) isScwSdkError() {}
-
-func errorf(format string, args ...interface{}) error {
-	return &stringError{
-		str: fmt.Sprintf(format, args...),
-	}
-}
