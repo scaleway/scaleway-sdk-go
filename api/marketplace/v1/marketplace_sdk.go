@@ -186,6 +186,10 @@ type GetImageRequest struct {
 func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "",
@@ -207,6 +211,10 @@ type ListVersionsRequest struct {
 
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
+
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -231,6 +239,14 @@ type GetVersionRequest struct {
 
 func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*GetVersionResponse, error) {
 	var err error
+
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VersionID) == "" {
+		return nil, fmt.Errorf("field VersionID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
