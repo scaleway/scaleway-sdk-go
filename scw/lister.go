@@ -12,6 +12,10 @@ type lister interface {
 	UnsafeAppend(interface{}) (int, error)
 }
 
+type legacyLister interface {
+	UnsafeSetTotalCount(totalCount int)
+}
+
 // doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
