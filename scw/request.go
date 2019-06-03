@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -46,10 +46,10 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string, ano
 }
 
 // getURL constructs a URL based on the base url and the client.
-func (req *ScalewayRequest) getURL(baseURL string) (*url.URL, error) {
+func (req *ScalewayRequest) getURL(baseURL string) (*url.URL, SdkError) {
 	url, err := url.Parse(baseURL + req.Path)
 	if err != nil {
-		return nil, fmt.Errorf("invalid url %s: %s", baseURL+req.Path, err)
+		return nil, errors.New("invalid url %s: %s", baseURL+req.Path, err)
 	}
 	url.RawQuery = req.Query.Encode()
 

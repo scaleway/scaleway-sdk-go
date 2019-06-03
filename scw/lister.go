@@ -1,15 +1,16 @@
 package scw
 
 import (
-	"fmt"
 	"math"
 	"reflect"
 	"strconv"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
 
 type lister interface {
 	UnsafeGetTotalCount() int
-	UnsafeAppend(interface{}) (int, error)
+	UnsafeAppend(interface{}) (int, SdkError)
 }
 
 type legacyLister interface {
@@ -17,7 +18,7 @@ type legacyLister interface {
 }
 
 // doListAll collects all pages of a List request and aggregate all results on a single response.
-func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
+func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err SdkError) {
 
 	// check for lister interface
 	if response, isLister := res.(lister); isLister {
@@ -29,7 +30,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 			// request the next page
 			nextPage := newPage(response)
-			err := c.Do(req, nextPage)
+			err := c.do(req, nextPage)
 			if err != nil {
 				return err
 			}
@@ -53,7 +54,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 		return nil
 	}
 
-	return fmt.Errorf("%T does not support pagination", res)
+	return errors.New("%T does not support pagination", res)
 }
 
 // newPage returns a variable set to the zero value of the given type

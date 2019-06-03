@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -1055,7 +1056,7 @@ func (r *ListServersResponse) UnsafeGetTotalCount() int {
 func (r *ListServersResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListServersResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Servers = append(r.Servers, results.Servers...)
@@ -1721,7 +1722,7 @@ func (r *ListImagesResponse) UnsafeGetTotalCount() int {
 func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListImagesResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Images = append(r.Images, results.Images...)
@@ -2007,7 +2008,7 @@ func (r *ListSnapshotsResponse) UnsafeGetTotalCount() int {
 func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListSnapshotsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Snapshots = append(r.Snapshots, results.Snapshots...)
@@ -2279,7 +2280,7 @@ func (r *ListVolumesResponse) UnsafeGetTotalCount() int {
 func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListVolumesResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Volumes = append(r.Volumes, results.Volumes...)
@@ -2578,7 +2579,7 @@ func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() int {
 func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListSecurityGroupsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.SecurityGroups = append(r.SecurityGroups, results.SecurityGroups...)
@@ -2854,7 +2855,7 @@ func (r *ListSecurityGroupRulesResponse) UnsafeGetTotalCount() int {
 func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListSecurityGroupRulesResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.SecurityRules = append(r.SecurityRules, results.SecurityRules...)
@@ -3085,7 +3086,7 @@ func (r *ListIpsResponse) UnsafeGetTotalCount() int {
 func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListIpsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Ips = append(r.Ips, results.Ips...)
@@ -3388,7 +3389,7 @@ func (r *ListBootscriptsResponse) UnsafeGetTotalCount() int {
 func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListBootscriptsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Bootscripts = append(r.Bootscripts, results.Bootscripts...)

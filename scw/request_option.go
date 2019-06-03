@@ -37,7 +37,7 @@ func (s *requestSettings) apply(opts []RequestOption) {
 	}
 }
 
-func (s *requestSettings) validate() error {
+func (s *requestSettings) validate() SdkError {
 	// nothing so far
 	return nil
 }

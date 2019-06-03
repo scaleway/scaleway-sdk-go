@@ -3,7 +3,6 @@ package scw
 import (
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
@@ -144,22 +144,22 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 }
 
 // do performs a single HTTP request based on the ScalewayRequest object.
-func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
+func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr SdkError) {
 	if req == nil {
-		return fmt.Errorf("request must be non-nil")
+		return errors.New("request must be non-nil")
 	}
 
 	// build url
-	url, err := req.getURL(c.apiURL)
-	if err != nil {
-		return err
+	url, sdkErr := req.getURL(c.apiURL)
+	if sdkErr != nil {
+		return sdkErr
 	}
 	logger.Debugf("creating %s request on %s", req.Method, url.String())
 
 	// build request
 	httpRequest, err := http.NewRequest(req.Method, url.String(), req.Body)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not create request")
 	}
 
 	httpRequest.Header = req.getAllHeaders(c.auth, c.userAgent, false)
@@ -190,13 +190,13 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 	// execute request
 	httpResponse, err := c.httpClient.Do(httpRequest)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error executing request")
 	}
 
 	defer func() {
 		closeErr := httpResponse.Body.Close()
-		if err == nil && closeErr != nil {
-			err = closeErr
+		if sdkErr == nil && closeErr != nil {
+			sdkErr = errors.Wrap(closeErr, "could not close http response")
 		}
 	}()
 	if logger.ShouldLog(logger.LogLevelDebug) {
@@ -208,15 +208,15 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 		}
 	}
 
-	err = hasResponseError(httpResponse)
+	sdkErr = hasResponseError(httpResponse)
 	if err != nil {
-		return err
+		return sdkErr
 	}
 
 	if res != nil {
 		err = json.NewDecoder(httpResponse.Body).Decode(&res)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not parse response body")
 		}
 
 		// Handle instance API X-Total-Count header
@@ -224,7 +224,7 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (err error) {
 		if legacyLister, isLegacyLister := res.(legacyLister); isLegacyLister && xTotalCountStr != "" {
 			xTotalCount, err := strconv.Atoi(xTotalCountStr)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "could not parse X-Total-Count header")
 			}
 			legacyLister.UnsafeSetTotalCount(xTotalCount)
 		}
@@ -263,7 +263,7 @@ func setInsecureMode(c httpClient) {
 	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }
 
-func hasResponseError(res *http.Response) error {
+func hasResponseError(res *http.Response) SdkError {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
 	}
@@ -279,7 +279,7 @@ func hasResponseError(res *http.Response) error {
 
 	err := json.NewDecoder(res.Body).Decode(newErr)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not parse error response body")
 	}
 
 	return newErr
