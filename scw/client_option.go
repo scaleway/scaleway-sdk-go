@@ -78,9 +78,9 @@ func WithConfig(config scwconfig.Config) ClientOption {
 			s.insecure = insecure
 		}
 
-		defaultOrganizationID, exist := config.GetDefaultOrganizationID()
+		defaultProjectID, exist := config.GetDefaultProjectID()
 		if exist {
-			s.defaultOrganizationID = &defaultOrganizationID
+			s.defaultProjectID = &defaultProjectID
 		}
 
 		defaultRegion, exist := config.GetDefaultRegion()
@@ -95,12 +95,12 @@ func WithConfig(config scwconfig.Config) ClientOption {
 	}
 }
 
-// WithDefaultOrganizationID client option sets the client default organization ID.
+// WithDefaultProjectID client option sets the client default project ID.
 //
-// It will be used as the default value of the organization_id field in all requests made with this client.
-func WithDefaultOrganizationID(organizationID string) ClientOption {
+// It will be used as the default value of the project_id field in all requests made with this client.
+func WithDefaultProjectID(projectID string) ClientOption {
 	return func(s *settings) {
-		s.defaultOrganizationID = &organizationID
+		s.defaultProjectID = &projectID
 	}
 }
 

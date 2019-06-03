@@ -20,14 +20,14 @@ import (
 // This client should be passed in the `NewApi` functions whenever an API instance is created.
 // Creating a Client is done with the `NewClient` function.
 type Client struct {
-	httpClient            httpClient
-	auth                  auth.Auth
-	apiURL                string
-	userAgent             string
-	defaultOrganizationID *string
-	defaultRegion         *utils.Region
-	defaultZone           *utils.Zone
-	defaultPageSize       *int32
+	httpClient       httpClient
+	auth             auth.Auth
+	apiURL           string
+	userAgent        string
+	defaultProjectID *string
+	defaultRegion    *utils.Region
+	defaultZone      *utils.Zone
+	defaultPageSize  *int32
 }
 
 func defaultOptions() []ClientOption {
@@ -67,23 +67,23 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	logger.Debugf("client: using sdk version " + version)
 
 	return &Client{
-		auth:                  s.token,
-		httpClient:            s.httpClient,
-		apiURL:                s.apiURL,
-		userAgent:             s.userAgent,
-		defaultOrganizationID: s.defaultOrganizationID,
-		defaultRegion:         s.defaultRegion,
-		defaultZone:           s.defaultZone,
-		defaultPageSize:       s.defaultPageSize,
+		auth:             s.token,
+		httpClient:       s.httpClient,
+		apiURL:           s.apiURL,
+		userAgent:        s.userAgent,
+		defaultProjectID: s.defaultProjectID,
+		defaultRegion:    s.defaultRegion,
+		defaultZone:      s.defaultZone,
+		defaultPageSize:  s.defaultPageSize,
 	}, nil
 }
 
-// GetDefaultOrganizationID return the default organization ID
+// GetDefaultProjectID return the default project ID
 // of the client. This value can be set in the client option
-// WithDefaultOrganizationID(). Be aware this value can be empty.
-func (c *Client) GetDefaultOrganizationID() (string, bool) {
-	if c.defaultOrganizationID != nil {
-		return *c.defaultOrganizationID, true
+// WithDefaultProjectID(). Be aware this value can be empty.
+func (c *Client) GetDefaultProjectID() (string, bool) {
+	if c.defaultProjectID != nil {
+		return *c.defaultProjectID, true
 	}
 	return "", false
 }
