@@ -995,6 +995,8 @@ type ListServersRequest struct {
 	PerPage *int32 `json:"-"`
 
 	Page *int32 `json:"-"`
+
+	Name *string `json:"-"`
 }
 
 // ListServers list servers
@@ -1020,6 +1022,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, fmt.Errorf("field Zone cannot be empty in request")
@@ -2513,6 +2516,8 @@ type ListSecurityGroupsRequest struct {
 	PerPage *int32 `json:"-"`
 
 	Page *int32 `json:"-"`
+
+	Name *string `json:"-"`
 }
 
 // ListSecurityGroups list security groups
@@ -2540,6 +2545,7 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, fmt.Errorf("field Zone cannot be empty in request")
@@ -2736,7 +2742,7 @@ type SetSecurityGroupRequest struct {
 	// ModificationDate display the security group modification date
 	ModificationDate time.Time `json:"modification_date,omitempty"`
 	// Servers list of servers attached to this security group
-	Servers map[string]*ServerSummary `json:"servers,omitempty"`
+	Servers []*ServerSummary `json:"servers,omitempty"`
 	// Stateful true if the security group is stateful
 	Stateful bool `json:"stateful,omitempty"`
 }
