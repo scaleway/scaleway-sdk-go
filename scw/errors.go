@@ -6,7 +6,8 @@ import (
 
 // SdkError is a base interface for all Scaleway SDK errors.
 type SdkError interface {
-	isScwSdkError()
+	Error() string
+	IsScwSdkError()
 }
 
 // ResponseError is an error type for the Scaleway API
@@ -41,5 +42,5 @@ func (e *ResponseError) Error() string {
 	return s
 }
 
-// isScwSdkError implement SdkError interface
-func (e *ResponseError) isScwSdkError() {}
+// IsScwSdkError implement SdkError interface
+func (e *ResponseError) IsScwSdkError() {}
