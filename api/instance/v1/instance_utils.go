@@ -206,49 +206,49 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	return &DetachVolumeResponse{Server: updateServerResponse.Server}, nil
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListServersResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
-func (r *ListBootscriptsResponse) ListImagesResponse(totalCount int) {
+func (r *ListBootscriptsResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListIpsResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListSecurityGroupRulesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListSecurityGroupsResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListServersTypesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListSnapshotsResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
+// UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListVolumesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
