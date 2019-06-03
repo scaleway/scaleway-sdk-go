@@ -743,7 +743,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -803,7 +803,7 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -830,7 +830,7 @@ func (r *ListLbsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListLbsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -869,7 +869,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -907,11 +907,11 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -950,11 +950,11 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -997,11 +997,11 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	parameter.AddToQuery(query, "release_ip", req.ReleaseIP)
 
 	if fmt.Sprint(req.Region) == "" {
-		return fmt.Errorf("field Region cannot be empty in request")
+		return errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return fmt.Errorf("field LbID cannot be empty in request")
+		return errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1056,7 +1056,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1083,7 +1083,7 @@ func (r *ListIpsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListIpsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1112,11 +1112,11 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return nil, fmt.Errorf("field IPID cannot be empty in request")
+		return nil, errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1150,11 +1150,11 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return fmt.Errorf("field Region cannot be empty in request")
+		return errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return fmt.Errorf("field IPID cannot be empty in request")
+		return errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1190,11 +1190,11 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	parameter.AddToQuery(query, "reverse", req.Reverse)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return nil, fmt.Errorf("field IPID cannot be empty in request")
+		return nil, errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1249,11 +1249,11 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1280,7 +1280,7 @@ func (r *ListBackendsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListBackendsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1380,11 +1380,11 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1422,11 +1422,11 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1529,11 +1529,11 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1571,11 +1571,11 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return fmt.Errorf("field Region cannot be empty in request")
+		return errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return fmt.Errorf("field BackendID cannot be empty in request")
+		return errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1608,11 +1608,11 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1652,11 +1652,11 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1696,11 +1696,11 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1823,11 +1823,11 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BackendID) == "" {
-		return nil, fmt.Errorf("field BackendID cannot be empty in request")
+		return nil, errors.New("field BackendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1886,11 +1886,11 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1917,7 +1917,7 @@ func (r *ListFrontendsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListFrontendsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1983,11 +1983,11 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2025,11 +2025,11 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.FrontendID) == "" {
-		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+		return nil, errors.New("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2102,11 +2102,11 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.FrontendID) == "" {
-		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+		return nil, errors.New("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2144,11 +2144,11 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return fmt.Errorf("field Region cannot be empty in request")
+		return errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.FrontendID) == "" {
-		return fmt.Errorf("field FrontendID cannot be empty in request")
+		return errors.New("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2179,11 +2179,11 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.LbID) == "" {
-		return nil, fmt.Errorf("field LbID cannot be empty in request")
+		return nil, errors.New("field LbID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2237,11 +2237,11 @@ func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListAC
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.FrontendID) == "" {
-		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+		return nil, errors.New("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2268,7 +2268,7 @@ func (r *ListACLResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListACLResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2302,11 +2302,11 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.FrontendID) == "" {
-		return nil, fmt.Errorf("field FrontendID cannot be empty in request")
+		return nil, errors.New("field FrontendID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2344,11 +2344,11 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ACLID) == "" {
-		return nil, fmt.Errorf("field ACLID cannot be empty in request")
+		return nil, errors.New("field ACLID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2389,11 +2389,11 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return nil, fmt.Errorf("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ACLID) == "" {
-		return nil, fmt.Errorf("field ACLID cannot be empty in request")
+		return nil, errors.New("field ACLID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2431,11 +2431,11 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return fmt.Errorf("field Region cannot be empty in request")
+		return errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ACLID) == "" {
-		return fmt.Errorf("field ACLID cannot be empty in request")
+		return errors.New("field ACLID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
