@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -832,7 +833,7 @@ func (r *ListLbsResponse) UnsafeGetTotalCount() int {
 func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListLbsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Lbs = append(r.Lbs, results.Lbs...)
@@ -1085,7 +1086,7 @@ func (r *ListIpsResponse) UnsafeGetTotalCount() int {
 func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListIpsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Ips = append(r.Ips, results.Ips...)
@@ -1282,7 +1283,7 @@ func (r *ListBackendsResponse) UnsafeGetTotalCount() int {
 func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListBackendsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Backends = append(r.Backends, results.Backends...)
@@ -1919,7 +1920,7 @@ func (r *ListFrontendsResponse) UnsafeGetTotalCount() int {
 func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListFrontendsResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Frontends = append(r.Frontends, results.Frontends...)
@@ -2270,7 +2271,7 @@ func (r *ListACLResponse) UnsafeGetTotalCount() int {
 func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, error) {
 	results, ok := res.(*ListACLResponse)
 	if !ok {
-		return 0, fmt.Errorf("%T type cannot be appended to type %T", res, r)
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Acls = append(r.Acls, results.Acls...)
