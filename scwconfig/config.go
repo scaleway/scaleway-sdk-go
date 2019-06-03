@@ -14,15 +14,15 @@ import (
 // Environment variables
 const (
 	// Up-to-date
-	scwConfigPathEnv            = "SCW_CONFIG_PATH"
-	scwAccessKeyEnv             = "SCW_ACCESS_KEY"
-	scwSecretKeyEnv             = "SCW_SECRET_KEY"
-	scwActiveProfileEnv         = "SCW_PROFILE"
-	scwAPIURLEnv                = "SCW_API_URL"
-	scwInsecureEnv              = "SCW_INSECURE"
-	scwDefaultOrganizationIDEnv = "SCW_DEFAULT_ORGANIZATION_ID"
-	scwDefaultRegionEnv         = "SCW_DEFAULT_REGION"
-	scwDefaultZoneEnv           = "SCW_DEFAULT_ZONE"
+	scwConfigPathEnv       = "SCW_CONFIG_PATH"
+	scwAccessKeyEnv        = "SCW_ACCESS_KEY"
+	scwSecretKeyEnv        = "SCW_SECRET_KEY"
+	scwActiveProfileEnv    = "SCW_PROFILE"
+	scwAPIURLEnv           = "SCW_API_URL"
+	scwInsecureEnv         = "SCW_INSECURE"
+	scwDefaultProjectIDEnv = "SCW_DEFAULT_PROJECT_ID"
+	scwDefaultRegionEnv    = "SCW_DEFAULT_REGION"
+	scwDefaultZoneEnv      = "SCW_DEFAULT_ZONE"
 
 	// All deprecated (cli&terraform)
 	terraformAccessKeyEnv    = "SCALEWAY_ACCESS_KEY" // used both as access key and secret key
@@ -58,7 +58,7 @@ type Config interface {
 	GetSecretKey() (secretKey string, exist bool)
 	GetAPIURL() (apiURL string, exist bool)
 	GetInsecure() (insecure bool, exist bool)
-	GetDefaultOrganizationID() (defaultOrganizationID string, exist bool)
+	GetDefaultProjectID() (defaultProjectID string, exist bool)
 	GetDefaultRegion() (defaultRegion utils.Region, exist bool)
 	GetDefaultZone() (defaultZone utils.Zone, exist bool)
 }
@@ -74,13 +74,13 @@ type configV2 struct {
 }
 
 type profile struct {
-	AccessKey             *string `yaml:"access_key,omitempty"`
-	SecretKey             *string `yaml:"secret_key,omitempty"`
-	APIURL                *string `yaml:"api_url,omitempty"`
-	Insecure              *bool   `yaml:"insecure,omitempty"`
-	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
-	DefaultRegion         *string `yaml:"default_region,omitempty"`
-	DefaultZone           *string `yaml:"default_zone,omitempty"`
+	AccessKey        *string `yaml:"access_key,omitempty"`
+	SecretKey        *string `yaml:"secret_key,omitempty"`
+	APIURL           *string `yaml:"api_url,omitempty"`
+	Insecure         *bool   `yaml:"insecure,omitempty"`
+	DefaultProjectID *string `yaml:"default_project_id,omitempty"`
+	DefaultRegion    *string `yaml:"default_region,omitempty"`
+	DefaultZone      *string `yaml:"default_zone,omitempty"`
 }
 
 func unmarshalConfV2(content []byte) (*configV2, error) {
@@ -256,36 +256,38 @@ func (c *configV2) GetInsecure() (bool, bool) {
 	return insecure, true
 }
 
-// GetDefaultOrganizationID retrieve the default organization ID
-// from the config. It will check the following order:
+// GetDefaultProjectID retrieve the default project ID
+// from the config. Legacy configs used the name
+// "organization ID" or "organization" for
+// this field. It will check the following order:
 // env, legacy env, active profile, default profile
 //
 // If the config is present in one of the above environment the
 // value (which may be empty) is returned and the boolean is true.
 // Otherwise the returned value will be empty and the boolean will
 // be false.
-func (c *configV2) GetDefaultOrganizationID() (string, bool) {
-	envValue, _, envExist := getenv(scwDefaultOrganizationIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
+func (c *configV2) GetDefaultProjectID() (string, bool) {
+	envValue, _, envExist := getenv(scwDefaultProjectIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
 	activeProfile, _ := c.getActiveProfile()
 
-	var defaultOrg string
+	var defaultProj string
 	switch {
 	case envExist:
-		defaultOrg = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].DefaultOrganizationID != nil:
-		defaultOrg = *c.Profiles[activeProfile].DefaultOrganizationID
-	case c.DefaultOrganizationID != nil:
-		defaultOrg = *c.DefaultOrganizationID
+		defaultProj = envValue
+	case activeProfile != "" && c.Profiles[activeProfile].DefaultProjectID != nil:
+		defaultProj = *c.Profiles[activeProfile].DefaultProjectID
+	case c.DefaultProjectID != nil:
+		defaultProj = *c.DefaultProjectID
 	default:
 		return "", false
 	}
 
 	// todo: validate format
-	if defaultOrg == "" {
-		logger.Warningf("default organization ID is empty")
+	if defaultProj == "" {
+		logger.Warningf("default project ID is empty")
 	}
 
-	return defaultOrg, true
+	return defaultProj, true
 }
 
 // GetDefaultRegion retrieve the default region
@@ -400,8 +402,8 @@ func unmarshalConfV1(content []byte) (*configV1, error) {
 func (v1 *configV1) toV2() *configV2 {
 	return &configV2{
 		profile: profile{
-			DefaultOrganizationID: &v1.Organization,
-			SecretKey:             &v1.Token,
+			DefaultProjectID: &v1.Organization,
+			SecretKey:        &v1.Token,
 			// ignore v1 version
 		},
 	}

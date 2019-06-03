@@ -9,15 +9,15 @@ import (
 )
 
 type settings struct {
-	apiURL                string
-	token                 auth.Auth
-	userAgent             string
-	httpClient            httpClient
-	insecure              bool
-	defaultOrganizationID *string
-	defaultRegion         *utils.Region
-	defaultZone           *utils.Zone
-	defaultPageSize       *int32
+	apiURL           string
+	token            auth.Auth
+	userAgent        string
+	httpClient       httpClient
+	insecure         bool
+	defaultProjectID *string
+	defaultRegion    *utils.Region
+	defaultZone      *utils.Zone
+	defaultPageSize  *int32
 }
 
 func newSettings() *settings {
@@ -41,9 +41,9 @@ func (s *settings) validate() error {
 		return fmt.Errorf("invalid url %s: %s", s.apiURL, err)
 	}
 
-	// TODO: Check OrganizationID format
-	if s.defaultOrganizationID != nil && *s.defaultOrganizationID == "" {
-		return fmt.Errorf("default organization id cannot be empty")
+	// TODO: Check ProjectID format
+	if s.defaultProjectID != nil && *s.defaultProjectID == "" {
+		return fmt.Errorf("default project id cannot be empty")
 	}
 
 	// TODO: Check Region format

@@ -158,13 +158,13 @@ func TestConfig(t *testing.T) {
 		{
 			name: "No config with env variables",
 			env: map[string]string{
-				scwAccessKeyEnv:             v2ValidAccessKey,
-				scwSecretKeyEnv:             v2ValidSecretKey,
-				scwAPIURLEnv:                v2ValidAPIURL,
-				scwInsecureEnv:              "false",
-				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				scwDefaultRegionEnv:         v2ValidDefaultRegion,
-				scwDefaultZoneEnv:           v2ValidDefaultZone,
+				scwAccessKeyEnv:        v2ValidAccessKey,
+				scwSecretKeyEnv:        v2ValidSecretKey,
+				scwAPIURLEnv:           v2ValidAPIURL,
+				scwInsecureEnv:         "false",
+				scwDefaultProjectIDEnv: v2ValidDefaultOrganizationID,
+				scwDefaultRegionEnv:    v2ValidDefaultRegion,
+				scwDefaultZoneEnv:      v2ValidDefaultZone,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
@@ -177,14 +177,14 @@ func TestConfig(t *testing.T) {
 		{
 			name: "Complete config file with env variables",
 			env: map[string]string{
-				"HOME":                      "{HOME}",
-				scwAccessKeyEnv:             v2ValidAccessKey2,
-				scwSecretKeyEnv:             v2ValidSecretKey2,
-				scwAPIURLEnv:                v2ValidAPIURL2,
-				scwInsecureEnv:              v2ValidInsecure2,
-				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID2,
-				scwDefaultRegionEnv:         v2ValidDefaultRegion2,
-				scwDefaultZoneEnv:           v2ValidDefaultZone2,
+				"HOME":                 "{HOME}",
+				scwAccessKeyEnv:        v2ValidAccessKey2,
+				scwSecretKeyEnv:        v2ValidSecretKey2,
+				scwAPIURLEnv:           v2ValidAPIURL2,
+				scwInsecureEnv:         v2ValidInsecure2,
+				scwDefaultProjectIDEnv: v2ValidDefaultOrganizationID2,
+				scwDefaultRegionEnv:    v2ValidDefaultRegion2,
+				scwDefaultZoneEnv:      v2ValidDefaultZone2,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -217,15 +217,15 @@ func TestConfig(t *testing.T) {
 		{
 			name: "Complete config with active profile env variable and all env variables",
 			env: map[string]string{
-				"HOME":                      "{HOME}",
-				scwActiveProfileEnv:         v2ValidProfile,
-				scwAccessKeyEnv:             v2ValidAccessKey,
-				scwSecretKeyEnv:             v2ValidSecretKey,
-				scwAPIURLEnv:                v2ValidAPIURL,
-				scwInsecureEnv:              "false",
-				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				scwDefaultRegionEnv:         v2ValidDefaultRegion,
-				scwDefaultZoneEnv:           v2ValidDefaultZone,
+				"HOME":                 "{HOME}",
+				scwActiveProfileEnv:    v2ValidProfile,
+				scwAccessKeyEnv:        v2ValidAccessKey,
+				scwSecretKeyEnv:        v2ValidSecretKey,
+				scwAPIURLEnv:           v2ValidAPIURL,
+				scwInsecureEnv:         "false",
+				scwDefaultProjectIDEnv: v2ValidDefaultOrganizationID,
+				scwDefaultRegionEnv:    v2ValidDefaultRegion,
+				scwDefaultZoneEnv:      v2ValidDefaultZone,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -305,7 +305,7 @@ func TestConfig(t *testing.T) {
 			} else {
 				testhelpers.Assert(t, test.expectedAPIURL == nil, "expected apiURL must be nil")
 			}
-			defaultOrganizationID, exist := config.GetDefaultOrganizationID()
+			defaultOrganizationID, exist := config.GetDefaultProjectID()
 			if exist {
 				testhelpers.Equals(t, test.expectedDefaultOrganizationID, &defaultOrganizationID)
 			} else {
@@ -356,10 +356,10 @@ var (
 
 	v2SimpleValidConfig = &configV2{
 		profile: profile{
-			AccessKey:             &v2ValidAccessKey,
-			SecretKey:             &v2ValidSecretKey,
-			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
-			DefaultRegion:         &v2ValidDefaultRegion,
+			AccessKey:        &v2ValidAccessKey,
+			SecretKey:        &v2ValidSecretKey,
+			DefaultProjectID: &v2ValidDefaultOrganizationID,
+			DefaultRegion:    &v2ValidDefaultRegion,
 		},
 	}
 
@@ -425,8 +425,8 @@ var (
 
 	v1ValidConfig = &configV2{
 		profile: profile{
-			SecretKey:             &v1ValidToken,
-			DefaultOrganizationID: &v1ValidOrganizationID,
+			SecretKey:        &v1ValidToken,
+			DefaultProjectID: &v1ValidOrganizationID,
 		},
 	}
 

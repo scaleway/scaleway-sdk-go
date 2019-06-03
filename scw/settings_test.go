@@ -13,9 +13,9 @@ const (
 )
 
 var (
-	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultRegion         = utils.RegionNlAms
-	defaultZone           = utils.ZoneNlAms1
+	defaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	defaultRegion    = utils.RegionNlAms
+	defaultZone      = utils.ZoneNlAms1
 )
 
 func TestSettings(t *testing.T) {
@@ -30,7 +30,7 @@ func TestSettings(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.apiURL = apiURL
-				s.defaultOrganizationID = &defaultOrganizationID
+				s.defaultProjectID = &defaultProjectID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
 			},
@@ -51,13 +51,13 @@ func TestSettings(t *testing.T) {
 			errStr: "invalid url :test: parse :test: missing protocol scheme",
 		},
 		{
-			name: "Should throw an organization id error",
+			name: "Should throw a project id error",
 			clientOption: func(s *settings) {
 				v := ""
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
-				s.defaultOrganizationID = &v
+				s.defaultProjectID = &v
 			},
-			errStr: "default organization id cannot be empty",
+			errStr: "default project id cannot be empty",
 		},
 		{
 			name: "Should throw a region error",
