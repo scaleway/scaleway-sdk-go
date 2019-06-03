@@ -36,6 +36,10 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 				return err
 			}
 
+			if pageSize == 0 {
+				return nil
+			}
+
 			// set total count on first request
 			if pageCount == math.MaxUint32 {
 				totalCount := nextPage.(lister).UnsafeGetTotalCount()
