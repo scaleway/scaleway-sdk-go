@@ -15,7 +15,11 @@ func (e *Error) Unwrap() error {
 
 // Error implement standard error interface
 func (e *Error) Error() string {
-	return e.str + ":" + e.err.Error()
+	str := "scaleway-sdk: " + e.str
+	if e.err != nil {
+		str += ": " + e.err.Error()
+	}
+	return str
 }
 
 // isScwSdkError implement SdkError interface
