@@ -921,7 +921,7 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -969,7 +969,7 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1026,7 +1026,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1053,7 +1053,7 @@ func (r *ListServersResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListServersResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListServersResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListServersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1105,7 +1105,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1146,11 +1146,11 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return fmt.Errorf("field ServerID cannot be empty in request")
+		return errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1184,11 +1184,11 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetS
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1284,11 +1284,11 @@ func (s *API) SetServer(req *SetServerRequest, opts ...scw.RequestOption) (*SetS
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1349,11 +1349,11 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1394,11 +1394,11 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1438,11 +1438,11 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1483,11 +1483,11 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1525,15 +1525,15 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return fmt.Errorf("field ServerID cannot be empty in request")
+		return errors.New("field ServerID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.Key) == "" {
-		return fmt.Errorf("field Key cannot be empty in request")
+		return errors.New("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1571,15 +1571,15 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return fmt.Errorf("field ServerID cannot be empty in request")
+		return errors.New("field ServerID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.Key) == "" {
-		return fmt.Errorf("field Key cannot be empty in request")
+		return errors.New("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1620,15 +1620,15 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ServerID) == "" {
-		return nil, fmt.Errorf("field ServerID cannot be empty in request")
+		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.Key) == "" {
-		return nil, fmt.Errorf("field Key cannot be empty in request")
+		return nil, errors.New("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1692,7 +1692,7 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "arch", req.Arch)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1719,7 +1719,7 @@ func (r *ListImagesResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListImagesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1748,11 +1748,11 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ImageID) == "" {
-		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+		return nil, errors.New("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1803,7 +1803,7 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1875,11 +1875,11 @@ func (s *API) SetImage(req *SetImageRequest, opts ...scw.RequestOption) (*SetIma
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1920,11 +1920,11 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ImageID) == "" {
-		return fmt.Errorf("field ImageID cannot be empty in request")
+		return errors.New("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1978,7 +1978,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2005,7 +2005,7 @@ func (r *ListSnapshotsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListSnapshotsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2041,7 +2041,7 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2082,11 +2082,11 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SnapshotID) == "" {
-		return nil, fmt.Errorf("field SnapshotID cannot be empty in request")
+		return nil, errors.New("field SnapshotID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2147,11 +2147,11 @@ func (s *API) SetSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2192,11 +2192,11 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SnapshotID) == "" {
-		return fmt.Errorf("field SnapshotID cannot be empty in request")
+		return errors.New("field SnapshotID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2250,7 +2250,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2277,7 +2277,7 @@ func (r *ListVolumesResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListVolumesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2336,7 +2336,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2377,11 +2377,11 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.VolumeID) == "" {
-		return nil, fmt.Errorf("field VolumeID cannot be empty in request")
+		return nil, errors.New("field VolumeID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2444,11 +2444,11 @@ func (s *API) SetVolume(req *SetVolumeRequest, opts ...scw.RequestOption) (*SetV
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2489,11 +2489,11 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.VolumeID) == "" {
-		return fmt.Errorf("field VolumeID cannot be empty in request")
+		return errors.New("field VolumeID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2549,7 +2549,7 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2576,7 +2576,7 @@ func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListSecurityGroupsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2617,7 +2617,7 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2658,11 +2658,11 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2696,11 +2696,11 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2765,11 +2765,11 @@ func (s *API) SetSecurityGroup(req *SetSecurityGroupRequest, opts ...scw.Request
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2821,11 +2821,11 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2852,7 +2852,7 @@ func (r *ListSecurityGroupRulesResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListSecurityGroupRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2901,11 +2901,11 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2948,15 +2948,15 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityRuleID) == "" {
-		return fmt.Errorf("field SecurityRuleID cannot be empty in request")
+		return errors.New("field SecurityRuleID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2992,15 +2992,15 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityGroupID) == "" {
-		return nil, fmt.Errorf("field SecurityGroupID cannot be empty in request")
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.SecurityRuleID) == "" {
-		return nil, fmt.Errorf("field SecurityRuleID cannot be empty in request")
+		return nil, errors.New("field SecurityRuleID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3056,7 +3056,7 @@ func (s *API) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsR
 	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3083,7 +3083,7 @@ func (r *ListIpsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListIpsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3117,7 +3117,7 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3158,11 +3158,11 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return nil, fmt.Errorf("field IPID cannot be empty in request")
+		return nil, errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3208,11 +3208,11 @@ func (s *API) SetIP(req *SetIPRequest, opts ...scw.RequestOption) (*SetIPRespons
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ID) == "" {
-		return nil, fmt.Errorf("field ID cannot be empty in request")
+		return nil, errors.New("field ID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3255,11 +3255,11 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return nil, fmt.Errorf("field IPID cannot be empty in request")
+		return nil, errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3300,11 +3300,11 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return fmt.Errorf("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.IPID) == "" {
-		return fmt.Errorf("field IPID cannot be empty in request")
+		return errors.New("field IPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3359,7 +3359,7 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3386,7 +3386,7 @@ func (r *ListBootscriptsResponse) UnsafeGetTotalCount() int {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (int, error) {
+func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListBootscriptsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3415,11 +3415,11 @@ func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.BootscriptID) == "" {
-		return nil, fmt.Errorf("field BootscriptID cannot be empty in request")
+		return nil, errors.New("field BootscriptID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3450,7 +3450,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3491,7 +3491,7 @@ func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "organization", req.Organization)
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, fmt.Errorf("field Zone cannot be empty in request")
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{

@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -187,7 +188,7 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 	var err error
 
 	if fmt.Sprint(req.ImageID) == "" {
-		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+		return nil, errors.New("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -213,7 +214,7 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if fmt.Sprint(req.ImageID) == "" {
-		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+		return nil, errors.New("field ImageID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -241,11 +242,11 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ge
 	var err error
 
 	if fmt.Sprint(req.ImageID) == "" {
-		return nil, fmt.Errorf("field ImageID cannot be empty in request")
+		return nil, errors.New("field ImageID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.VersionID) == "" {
-		return nil, fmt.Errorf("field VersionID cannot be empty in request")
+		return nil, errors.New("field VersionID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
