@@ -9,9 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
@@ -141,7 +140,7 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 		return c.doListAll(req, res)
 	}
 
-	return c.do(req, res).(error)
+	return c.do(req, res)
 }
 
 // do performs a single HTTP request based on the ScalewayRequest object.
@@ -225,7 +224,7 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr SdkError) {
 		if legacyLister, isLegacyLister := res.(legacyLister); isLegacyLister && xTotalCountStr != "" {
 			xTotalCount, err := strconv.Atoi(xTotalCountStr)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "could not parse X-Total-Count header")
 			}
 			legacyLister.UnsafeSetTotalCount(xTotalCount)
 		}

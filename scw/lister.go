@@ -17,7 +17,7 @@ type legacyLister interface {
 }
 
 // doListAll collects all pages of a List request and aggregate all results on a single response.
-func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
+func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err SdkError) {
 
 	// check for lister interface
 	if response, isLister := res.(lister); isLister {
@@ -29,7 +29,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 			// request the next page
 			nextPage := newPage(response)
-			err := c.Do(req, nextPage)
+			err := c.do(req, nextPage)
 			if err != nil {
 				return err
 			}
