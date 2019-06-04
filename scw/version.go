@@ -1,11 +1,11 @@
 package scw
 
 import (
+	"fmt"
 	"runtime"
-	"runtime/internal/sys"
 )
 
 // TODO: versionning process
 const version = "0.0.0"
 
-const userAgent = "scaleway-sdk-go/" + version + " (" + sys.TheVersion + "; " + runtime.GOOS + "; " + runtime.GOARCH + ")"
+var userAgent = fmt.Sprintf("scaleway-sdk-go/%s (%s; %s; %s)", version, runtime.Version(), runtime.GOOS, runtime.GOARCH)
