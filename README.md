@@ -1,4 +1,4 @@
-<p align="center"><img height="150" src="docs/static_files/scaleway-logo.png" /></p>
+<p align="center"><img height="125" src="docs/static_files/scaleway-logo.png" /></p>
 
 <p align="center">
   <a href="https://godoc.org/github.com/scaleway/scaleway-sdk-go"><img src="https://godoc.org/github.com/scaleway/scaleway-sdk-go?status.svg" alt="GoDoc"/></a>
