@@ -51,8 +51,18 @@ func WithInsecure() ClientOption {
 	}
 }
 
-// WithUserAgent client option overrides the default user agent of the SDK.
-func WithUserAgent(ua string) ClientOption {
+// WithAppendUserAgent client option append a user agent to the default user agent of the SDK.
+func WithAppendUserAgent(ua string) ClientOption {
+	return func(s *settings) {
+		if s.userAgent != "" && ua != "" {
+			s.userAgent += " "
+		}
+		s.userAgent += ua
+	}
+}
+
+// withUserAgent client option overrides the default user agent of the SDK.
+func withUserAgent(ua string) ClientOption {
 	return func(s *settings) {
 		s.userAgent = ua
 	}
