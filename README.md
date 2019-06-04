@@ -2,8 +2,8 @@
 
 <p align="center">
   <a href="https://godoc.org/github.com/scaleway/scaleway-sdk-go"><img src="https://godoc.org/github.com/scaleway/scaleway-sdk-go?status.svg" alt="GoDoc"/></a>
-  <a href="https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go"><img src="https://goreportcard.com/badge/scaleway/scaleway-sdk-go" alt="GoReportCard" /></a>
   <a href="https://circleci.com/gh/scaleway/scaleway-sdk-go"><img src="https://circleci.com/gh/scaleway/scaleway-sdk-go.svg?style=shield" alt="CircleCI" /></a>
+  <a href="https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go"><img src="https://goreportcard.com/badge/scaleway/scaleway-sdk-go" alt="GoReportCard" /></a>
 </p>
 
 # Scaleway GO SDK
