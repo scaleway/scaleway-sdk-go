@@ -46,7 +46,7 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "With default timeout and interval",
 			config: &WaitSyncConfig{
-				get: getMock(2, 0),
+				Get: getMock(2, 0),
 			},
 			expValue: &value{
 				doneIterations: 2,
@@ -56,8 +56,8 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "With useless timeout",
 			config: &WaitSyncConfig{
-				get:     getMock(2, time.Second),
-				timeout: 4 * time.Second,
+				Get:     getMock(2, time.Second),
+				Timeout: 4 * time.Second,
 			},
 			expValue: &value{
 				doneIterations: 2,
@@ -67,8 +67,8 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "Should timeout",
 			config: &WaitSyncConfig{
-				get:     getMock(2, 2*time.Second),
-				timeout: time.Second,
+				Get:     getMock(2, 2*time.Second),
+				Timeout: time.Second,
 			},
 			expValue: nil,
 			expErr:   fmt.Errorf("timeout after 1s"),
@@ -76,8 +76,8 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "With interval",
 			config: &WaitSyncConfig{
-				get:      getMock(2, 0),
-				interval: LinearIntervalStrategy(2 * time.Second),
+				Get:              getMock(2, 0),
+				IntervalStrategy: LinearIntervalStrategy(2 * time.Second),
 			},
 			expValue: &value{
 				doneIterations: 2,
@@ -87,8 +87,8 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "With fibonacci interval",
 			config: &WaitSyncConfig{
-				get:      getMock(5, 0),
-				interval: FibonacciIntervalStrategy(time.Second, 1),
+				Get:              getMock(5, 0),
+				IntervalStrategy: FibonacciIntervalStrategy(time.Second, 1),
 			},
 			expValue: &value{
 				doneIterations: 5,
@@ -98,9 +98,9 @@ func TestWaitSync(t *testing.T) {
 		{
 			name: "Should timeout with interval",
 			config: &WaitSyncConfig{
-				get:      getMock(2, time.Second),
-				timeout:  2 * time.Second,
-				interval: LinearIntervalStrategy(2 * time.Second),
+				Get:              getMock(2, time.Second),
+				Timeout:          2 * time.Second,
+				IntervalStrategy: LinearIntervalStrategy(2 * time.Second),
 			},
 			expValue: nil,
 			expErr:   fmt.Errorf("timeout after 2s"),
