@@ -1,21 +1,24 @@
-# Scaleway GO SDK
-
-[![GoDoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go?status.svg)](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
-[![GoReportCard](https://goreportcard.com/badge/scaleway/scaleway-sdk-go)](https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go)
-[![CircleCI](https://circleci.com/gh/scaleway/scaleway-sdk-go.svg?style=svg)](https://circleci.com/gh/scaleway/scaleway-sdk-go)
-
-**Warning: This is an early release, keep in mind that the API can break**
+<p align="center"><img height="100" src="docs/static_files/scaleway-logo.png" /></p>
 
 <p align="center">
-  <img height="200" src="docs/static_files/scaleway-logo.png">
+  <a href="https://godoc.org/github.com/scaleway/scaleway-sdk-go"><img src="https://godoc.org/github.com/scaleway/scaleway-sdk-go?status.svg" alt="GoDoc"/></a>
+  <a href="https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go"><img src="https://goreportcard.com/badge/scaleway/scaleway-sdk-go" alt="GoReportCard" /></a>
+  <a href="https://circleci.com/gh/scaleway/scaleway-sdk-go"><img src="https://circleci.com/gh/scaleway/scaleway-sdk-go.svg?style=shield" alt="CircleCI" /></a>
 </p>
 
-Scaleway is an Iliad Group brand supplying a range of pioneering cloud infrastructure covering a full range of services for professionals: public cloud services with Scaleway, private infrastructure with Scaleway Datacenter and bare-metal cloud services with Online by Scaleway.
+# Scaleway GO SDK
+
+
+**:warning: This is an early release, keep in mind that the API can break**
+
+
+Scaleway is a simple way to build, deploy and scale your infrastructure in the cloud.
+We help thousands of developers and businesses to run their infrastructures without any issue.
 
 ## Documentation
 
 - [Godoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
-- [Developer website](https://developers.scaleway.com) (API documentation)
+- [Developers website](https://developers.scaleway.com) (API documentation)
 
 ## Installation
 
