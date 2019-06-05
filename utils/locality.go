@@ -78,22 +78,22 @@ func (region Region) GetZones() []Zone {
 }
 
 // ParseZone parse a string value into a Zone object
-func ParseZone(zone string) (Zone, error) {
+func ParseZone(zone string) Zone {
 	switch zone {
 	case "par1":
 		// would be triggered by API market place
 		// logger.Warningf("par1 is a deprecated name for zone, use fr-par-1 instead")
-		return ZoneFrPar1, nil
+		return ZoneFrPar1
 	case "ams1":
 		// would be triggered by API market place
 		// logger.Warningf("ams1 is a deprecated name for zone, use nl-ams-1 instead")
-		return ZoneNlAms1, nil
+		return ZoneNlAms1
 	default:
 		newZone := Zone(zone)
 		if !newZone.Exists() {
 			logger.Warningf("%s is an unknown zone", newZone)
 		}
-		return newZone, nil
+		return newZone
 	}
 }
 
@@ -109,30 +109,27 @@ func (zone *Zone) UnmarshalJSON(input []byte) error {
 	}
 
 	// parse string as Zone
-	*zone, err = ParseZone(stringValue)
-	if err != nil {
-		return err
-	}
+	*zone = ParseZone(stringValue)
 	return nil
 }
 
 // ParseRegion parse a string value into a Zone object
-func ParseRegion(region string) (Region, error) {
+func ParseRegion(region string) Region {
 	switch region {
 	case "par1":
 		// would be triggered by API market place
 		// logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
-		return RegionFrPar, nil
+		return RegionFrPar
 	case "ams1":
 		// would be triggered by API market place
 		// logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
-		return RegionNlAms, nil
+		return RegionNlAms
 	default:
 		newRegion := Region(region)
 		if !newRegion.Exists() {
 			logger.Warningf("%s is an unknown region", newRegion)
 		}
-		return newRegion, nil
+		return newRegion
 	}
 }
 
@@ -147,9 +144,6 @@ func (region *Region) UnmarshalJSON(input []byte) error {
 	}
 
 	// parse string as Region
-	*region, err = ParseRegion(stringValue)
-	if err != nil {
-		return err
-	}
+	*region = ParseRegion(stringValue)
 	return nil
 }
