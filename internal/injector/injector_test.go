@@ -81,3 +81,48 @@ func TestInject(t *testing.T) {
 		})
 	}
 }
+
+func TestInjectIfEmpty(t *testing.T) {
+
+	type S struct {
+		LastName string `scw:"lastName" json:"lastName,omitempty"`
+	}
+
+	testCases := []struct {
+		name     string
+		target   *S
+		data     map[string]interface{}
+		expected *S
+	}{
+		{
+			name:   "when empty",
+			target: &S{},
+			data: map[string]interface{}{
+				"lastName": "sponge",
+			},
+			expected: &S{
+				LastName: "sponge",
+			},
+		},
+		{
+			name: "when not empty",
+			target: &S{
+				LastName: "patrick",
+			},
+			data: map[string]interface{}{
+				"lastName": "sponge",
+			},
+			expected: &S{
+				LastName: "patrick",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := InjectIfEmpty(tc.target, "scw", tc.data)
+			testhelpers.Ok(t, err)
+			testhelpers.Equals(t, tc.expected, tc.target)
+		})
+	}
+}
