@@ -28,8 +28,7 @@ func TestParseZone(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		z, err := ParseZone(test.input)
-		testhelpers.Ok(t, err)
+		z := ParseZone(test.input)
 		testhelpers.Equals(t, test.expected, z)
 	}
 
@@ -84,8 +83,7 @@ func TestParseRegion(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		r, err := ParseRegion(test.input)
-		testhelpers.Ok(t, err)
+		r := ParseRegion(test.input)
 		testhelpers.Equals(t, test.expected, r)
 	}
 
