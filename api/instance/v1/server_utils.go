@@ -24,11 +24,11 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 		req.Timeout = 5 * time.Minute
 	}
 
-	terminalStatus := map[ServerState]bool{
-		ServerStateStopped:        true,
-		ServerStateStoppedInPlace: true,
-		ServerStateLocked:         true,
-		ServerStateRunning:        true,
+	terminalStatus := map[ServerState]struct{}{
+		ServerStateStopped:        {},
+		ServerStateStoppedInPlace: {},
+		ServerStateLocked:         {},
+		ServerStateRunning:        {},
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
