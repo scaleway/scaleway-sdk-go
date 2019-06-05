@@ -15,9 +15,9 @@ type IntervalStrategy func() <-chan time.Time
 // WaitSyncConfig defines the waiting options.
 type WaitSyncConfig struct {
 	// This method will be called from another goroutine.
-	get      func() (value interface{}, err error, isTerminal bool)
-	interval IntervalStrategy
-	timeout  time.Duration
+	Get              func() (value interface{}, err error, isTerminal bool)
+	IntervalStrategy IntervalStrategy
+	Timeout          time.Duration
 }
 
 // LinearIntervalStrategy defines a linear interval duration.
@@ -40,11 +40,11 @@ func FibonacciIntervalStrategy(base time.Duration, factor float32) IntervalStrat
 // WaitSync waits and returns when a given stop condition is true or if an error occurs.
 func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	// initialize configuration
-	if config.interval == nil {
-		config.interval = LinearIntervalStrategy(defaultInterval)
+	if config.IntervalStrategy == nil {
+		config.IntervalStrategy = LinearIntervalStrategy(defaultInterval)
 	}
-	if config.timeout == 0 {
-		config.timeout = defaultTimeout
+	if config.Timeout == 0 {
+		config.Timeout = defaultTimeout
 	}
 
 	resultValue := make(chan interface{})
@@ -54,7 +54,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	go func() {
 		for {
 			// get the payload
-			value, err, stopCondition := config.get()
+			value, err, stopCondition := config.Get()
 
 			// send the payload
 			if err != nil {
@@ -70,7 +70,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 			select {
 			case <-timeout:
 				return
-			case <-config.interval():
+			case <-config.IntervalStrategy():
 				// sleep
 			}
 		}
@@ -82,8 +82,8 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 		return val, nil
 	case err := <-resultErr:
 		return nil, err
-	case <-time.After(config.timeout):
+	case <-time.After(config.Timeout):
 		timeout <- true
-		return nil, fmt.Errorf("timeout after %v", config.timeout)
+		return nil, fmt.Errorf("timeout after %v", config.Timeout)
 	}
 }
