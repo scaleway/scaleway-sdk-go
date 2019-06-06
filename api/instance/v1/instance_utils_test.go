@@ -78,7 +78,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Reverse: &reverse,
 		})
 		testhelpers.Ok(t, err)
-		testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
+		testhelpers.Equals(t, reverse, *ipSetReverseResponse.IP.Reverse)
 
 		// Omitempty reverse
 		ipSetReverseResponse, err = instanceAPI.UpdateIP(&UpdateIPRequest{
@@ -87,7 +87,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Reverse: nil,
 		})
 		testhelpers.Ok(t, err)
-		testhelpers.Equals(t, reverse, ipSetReverseResponse.IP.Reverse)
+		testhelpers.Equals(t, reverse, *ipSetReverseResponse.IP.Reverse)
 
 		// Unset reverse
 		emptyReverse := ""
@@ -97,7 +97,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Reverse: &emptyReverse,
 		})
 		testhelpers.Ok(t, err)
-		testhelpers.Equals(t, "", ipDeleteReverseResponse.IP.Reverse)
+		testhelpers.Equals(t, (*string)(nil), ipDeleteReverseResponse.IP.Reverse)
 
 		// Delete IP
 		err = instanceAPI.DeleteIP(&DeleteIPRequest{
