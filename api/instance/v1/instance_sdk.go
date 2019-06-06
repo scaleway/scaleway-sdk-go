@@ -449,7 +449,7 @@ type IP struct {
 
 	Address net.IP `json:"address,omitempty"`
 
-	Reverse string `json:"reverse,omitempty"`
+	Reverse *string `json:"reverse,omitempty"`
 
 	Server *ServerSummary `json:"server,omitempty"`
 
@@ -3187,7 +3187,7 @@ type SetIPRequest struct {
 
 	Address net.IP `json:"address,omitempty"`
 
-	Reverse string `json:"reverse,omitempty"`
+	Reverse *string `json:"reverse,omitempty"`
 
 	Server *ServerSummary `json:"server,omitempty"`
 
