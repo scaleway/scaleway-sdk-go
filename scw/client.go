@@ -189,9 +189,9 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr SdkError) {
 			logger.Warningf("cannot dump outgoing request: %s", err)
 		} else {
 			var logString string
-			logString += "\n---------------- Scaleway SDK REQUEST %d : ---------------\n"
+			logString += "\n--------------- Scaleway SDK REQUEST %d : ---------------\n"
 			logString += "%s\n"
-			logString += "---------------------------------------------"
+			logString += "---------------------------------------------------------"
 
 			logger.Debugf(logString, currentRequestNumber, dump)
 		}
@@ -218,9 +218,9 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr SdkError) {
 			logger.Warningf("cannot dump ingoing response: %s", err)
 		} else {
 			var logString string
-			logString += "\n---------------- Scaleway SDK RESPONSE %d : ---------------\n"
+			logString += "\n--------------- Scaleway SDK RESPONSE %d : ---------------\n"
 			logString += "%s\n"
-			logString += "---------------------------------------------"
+			logString += "----------------------------------------------------------"
 
 			logger.Debugf(logString, currentRequestNumber, dump)
 		}
