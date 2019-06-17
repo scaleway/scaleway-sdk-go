@@ -195,7 +195,7 @@ func (*MetadataAPI) GetUserdata(key string) ([]byte, error) {
 	return make([]byte, 0), errors.New("too may bind port retries for GetUserdata")
 }
 
-// SetUserdata sets the userdata key with the value value
+// SetUserdata sets the userdata key with the given value
 func (*MetadataAPI) SetUserdata(key string, value []byte) error {
 	if key == "" {
 		return errors.New("key must not be empty in SetUserdata")
