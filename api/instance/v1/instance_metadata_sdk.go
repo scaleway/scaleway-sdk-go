@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 var (
@@ -28,8 +27,8 @@ func NewMetadataAPI() *MetadataAPI {
 	return &MetadataAPI{}
 }
 
-// GetMetadata returns the metadata avialable from the server
-func (*MetadataAPI) GetMetadata() (*Metadata, scw.SdkError) {
+// GetMetadata returns the metadata available from the server
+func (*MetadataAPI) GetMetadata() (m *Metadata, err error) {
 	resp, err := http.Get(metadataURL + "/conf?format=json")
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting metadataURL")
@@ -118,8 +117,8 @@ type Metadata struct {
 	}
 }
 
-// ListUserdata returns the metadata avialable from the server
-func (*MetadataAPI) ListUserdata() (*Userdata, scw.SdkError) {
+// ListUserdata returns the metadata available from the server
+func (*MetadataAPI) ListUserdata() (res *Userdata, err error) {
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
@@ -156,7 +155,7 @@ func (*MetadataAPI) ListUserdata() (*Userdata, scw.SdkError) {
 }
 
 // GetUserdata returns the value for the given metadata key
-func (*MetadataAPI) GetUserdata(key string) ([]byte, scw.SdkError) {
+func (*MetadataAPI) GetUserdata(key string) ([]byte, error) {
 	if key == "" {
 		return make([]byte, 0), errors.New("key must not be empty in GetUserdata")
 	}
@@ -196,8 +195,8 @@ func (*MetadataAPI) GetUserdata(key string) ([]byte, scw.SdkError) {
 	return make([]byte, 0), errors.New("too may bind port retries for GetUserdata")
 }
 
-// SetUserdata sets the userdata key with the value value
-func (*MetadataAPI) SetUserdata(key string, value []byte) scw.SdkError {
+// SetUserdata sets the userdata key with the given value
+func (*MetadataAPI) SetUserdata(key string, value []byte) error {
 	if key == "" {
 		return errors.New("key must not be empty in SetUserdata")
 	}
@@ -236,7 +235,7 @@ func (*MetadataAPI) SetUserdata(key string, value []byte) scw.SdkError {
 }
 
 // DeleteUserdata deletes the userdata key and the associated value
-func (*MetadataAPI) DeleteUserdata(key string) scw.SdkError {
+func (*MetadataAPI) DeleteUserdata(key string) error {
 	if key == "" {
 		return errors.New("key must not be empty in DeleteUserdata")
 	}
