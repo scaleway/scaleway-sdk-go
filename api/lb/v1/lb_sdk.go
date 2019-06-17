@@ -129,6 +129,40 @@ func (enum BackendServerStatsServerState) String() string {
 	return string(enum)
 }
 
+type CertificateStatus string
+
+const (
+	// CertificateStatusPending is [insert doc].
+	CertificateStatusPending = CertificateStatus("pending")
+	// CertificateStatusReady is [insert doc].
+	CertificateStatusReady = CertificateStatus("ready")
+	// CertificateStatusError is [insert doc].
+	CertificateStatusError = CertificateStatus("error")
+)
+
+func (enum CertificateStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "pending"
+	}
+	return string(enum)
+}
+
+type CertificateType string
+
+const (
+	// CertificateTypeLetsencryt is [insert doc].
+	CertificateTypeLetsencryt = CertificateType("letsencryt")
+)
+
+func (enum CertificateType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "letsencryt"
+	}
+	return string(enum)
+}
+
 type ForwardPortAlgorithm string
 
 const (
@@ -231,6 +265,27 @@ const (
 )
 
 func (enum ListBackendsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+type ListCertificatesRequestOrderBy string
+
+const (
+	// ListCertificatesRequestOrderByCreatedAtAsc is [insert doc].
+	ListCertificatesRequestOrderByCreatedAtAsc = ListCertificatesRequestOrderBy("created_at_asc")
+	// ListCertificatesRequestOrderByCreatedAtDesc is [insert doc].
+	ListCertificatesRequestOrderByCreatedAtDesc = ListCertificatesRequestOrderBy("created_at_desc")
+	// ListCertificatesRequestOrderByNameAsc is [insert doc].
+	ListCertificatesRequestOrderByNameAsc = ListCertificatesRequestOrderBy("name_asc")
+	// ListCertificatesRequestOrderByNameDesc is [insert doc].
+	ListCertificatesRequestOrderByNameDesc = ListCertificatesRequestOrderBy("name_desc")
+)
+
+func (enum ListCertificatesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "created_at_asc"
@@ -471,6 +526,36 @@ type BackendServerStats struct {
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
 }
 
+type Certificate struct {
+	ID string `json:"id,omitempty"`
+	// Type
+	//
+	// Default value: letsencryt
+	Type CertificateType `json:"type,omitempty"`
+	// Status
+	//
+	// Default value: pending
+	Status CertificateStatus `json:"status,omitempty"`
+
+	CommonName string `json:"common_name,omitempty"`
+
+	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
+
+	Fingerprint string `json:"fingerprint,omitempty"`
+
+	NotValidBefore time.Time `json:"not_valid_before,omitempty"`
+
+	NotValidAfter time.Time `json:"not_valid_after,omitempty"`
+
+	Lb *Lb `json:"lb,omitempty"`
+}
+
+type CreateCertificateRequestLetsencryptConfig struct {
+	CommonName string `json:"common_name,omitempty"`
+
+	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
+}
+
 type Frontend struct {
 	ID string `json:"id,omitempty"`
 
@@ -483,6 +568,8 @@ type Frontend struct {
 	Lb *Lb `json:"lb,omitempty"`
 
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+
+	Certificate *Certificate `json:"certificate,omitempty"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -705,6 +792,12 @@ type ListBackendsResponse struct {
 	// Backends list Backend objects of a Load Balancer
 	Backends []*Backend `json:"backends,omitempty"`
 	// TotalCount total count, wihtout pagination
+	TotalCount uint32 `json:"total_count,omitempty"`
+}
+
+type ListCertificatesResponse struct {
+	Certificates []*Certificate `json:"certificates,omitempty"`
+
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
@@ -1940,6 +2033,8 @@ type CreateFrontendRequest struct {
 	BackendID string `json:"backend_id,omitempty"`
 	// TimeoutClient set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+	// CertificateID certificate ID
+	CertificateID *string `json:"certificate_id,omitempty"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2059,6 +2154,8 @@ type UpdateFrontendRequest struct {
 	BackendID string `json:"backend_id,omitempty"`
 	// TimeoutClient client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+	// CertificateID certificate ID
+	CertificateID *string `json:"certificate_id,omitempty"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2451,6 +2548,255 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
+type CreateCertificateRequest struct {
+	Region utils.Region `json:"-"`
+
+	LbID string `json:"-"`
+
+	Name string `json:"name,omitempty"`
+
+	// Precisely one of Letsencrypt must be set.
+	Letsencrypt *CreateCertificateRequestLetsencryptConfig `json:"letsencrypt,omitempty"`
+}
+
+func (m *CreateCertificateRequest) GetType() Type {
+	switch {
+	case m.Letsencrypt != nil:
+		return TypeLetsencrypt{*m.Letsencrypt}
+	}
+	return nil
+}
+
+func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, errors.New("field LbID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Certificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListCertificatesRequest struct {
+	Region utils.Region `json:"-"`
+
+	LbID string `json:"-"`
+	// OrderBy
+	//
+	// Default value: created_at_asc
+	OrderBy ListCertificatesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *int32 `json:"-"`
+
+	Name *string `json:"-"`
+}
+
+func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, errors.New("field LbID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListCertificatesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListCertificatesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+	results, ok := res.(*ListCertificatesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Certificates = append(r.Certificates, results.Certificates...)
+	r.TotalCount += uint32(len(results.Certificates))
+	return len(results.Certificates), nil
+}
+
+type GetCertificateRequest struct {
+	Region utils.Region `json:"-"`
+
+	CertificateID string `json:"-"`
+}
+
+func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return nil, errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/certificates/" + fmt.Sprint(req.CertificateID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Certificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateCertificateRequest struct {
+	Region utils.Region `json:"-"`
+
+	CertificateID string `json:"-"`
+
+	Name string `json:"name,omitempty"`
+}
+
+func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return nil, errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/certificates/" + fmt.Sprint(req.CertificateID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Certificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteCertificateRequest struct {
+	Region utils.Region `json:"-"`
+
+	CertificateID string `json:"-"`
+}
+
+func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/certificates/" + fmt.Sprint(req.CertificateID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type Config interface {
 	isConfig()
 }
@@ -2502,4 +2848,15 @@ type ConfigHTTPSConfig struct {
 }
 
 func (ConfigHTTPSConfig) isConfig() {
+}
+
+type Type interface {
+	isType()
+}
+
+type TypeLetsencrypt struct {
+	Value CreateCertificateRequestLetsencryptConfig
+}
+
+func (TypeLetsencrypt) isType() {
 }
