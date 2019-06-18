@@ -722,9 +722,9 @@ type ServerType struct {
 
 	HourlyPrice float32 `json:"hourly_price,omitempty"`
 
-	AltNames map[uint32]string `json:"alt_names,omitempty"`
+	AltNames []string `json:"alt_names,omitempty"`
 
-	PerVolumeConstraint map[string]*ServerTypeVolumeConstraintSizes `json:"per_volume_constraint,omitempty"`
+	PerVolumeConstraint *ServerTypeVolumeConstraintsByType `json:"per_volume_constraint,omitempty"`
 
 	VolumesConstraint *ServerTypeVolumeConstraintSizes `json:"volumes_constraint,omitempty"`
 
@@ -763,6 +763,10 @@ type ServerTypeVolumeConstraintSizes struct {
 	MinSize uint64 `json:"min_size,omitempty"`
 
 	MaxSize uint64 `json:"max_size,omitempty"`
+}
+
+type ServerTypeVolumeConstraintsByType struct {
+	LSsd *ServerTypeVolumeConstraintSizes `json:"l_ssd,omitempty"`
 }
 
 type SetIPResponse struct {
