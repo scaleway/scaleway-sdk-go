@@ -1,14 +1,15 @@
 package instance
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
-// WaitForServerRequest is used by WaitForServer method
-type WaitForServerRequest struct {
+// waitForServerRequest is used by waitForServer method
+type waitForServerRequest struct {
 	ServerID string
 	Zone     utils.Zone
 
@@ -16,9 +17,9 @@ type WaitForServerRequest struct {
 	Timeout time.Duration
 }
 
-// WaitForServer wait for the server to be in a "terminal state" before returning.
+// waitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
-func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
+func (s *API) waitForServer(req *waitForServerRequest) (*Server, error) {
 
 	if req.Timeout == 0 {
 		req.Timeout = 5 * time.Minute
@@ -50,4 +51,52 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 	})
 
 	return server.(*Server), err
+}
+
+// DoActionAndWaitRequest is used by DoActionAndWait method
+type DoActionAndWaitRequest struct {
+	ServerID string
+	Zone     utils.Zone
+	Action   ServerAction
+	Timeout  time.Duration
+}
+
+// DoActionAndWait start an action and wait for the server to be in the correct "terminal state"
+// expected by this action.
+func (s *API) DoActionAndWait(req *DoActionAndWaitRequest) error {
+	_, err := s.ServerAction(&ServerActionRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+		Action:   req.Action,
+	})
+	if err != nil {
+		return err
+	}
+
+	finalServer, err := s.waitForServer(&waitForServerRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+		Timeout:  req.Timeout,
+	})
+	if err != nil {
+		return err
+	}
+
+	// check the action was properly executed
+	expectedState := ServerState("")
+	switch req.Action {
+	case ServerActionPoweron, ServerActionReboot:
+		expectedState = ServerStateRunning
+	case ServerActionPoweroff:
+		expectedState = ServerStateStopped
+	case ServerActionStopInPlace:
+		expectedState = ServerStateStoppedInPlace
+	}
+
+	// backup can be performed from any state
+	if req.Action != ServerActionBackup && finalServer.State != expectedState {
+		return fmt.Errorf("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
+	}
+
+	return nil
 }
