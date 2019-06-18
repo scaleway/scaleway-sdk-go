@@ -531,7 +531,7 @@ type ListServersResponse struct {
 }
 
 type ListServersTypesResponse struct {
-	Servers map[string]*ServerTypeDefinition `json:"servers,omitempty"`
+	Servers map[string]*ServerType `json:"servers,omitempty"`
 
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
@@ -717,16 +717,16 @@ type ServerSummary struct {
 	Name string `json:"name,omitempty"`
 }
 
-type ServerTypeDefinition struct {
+type ServerType struct {
 	MonthlyPrice float32 `json:"monthly_price,omitempty"`
 
 	HourlyPrice float32 `json:"hourly_price,omitempty"`
 
 	AltNames map[uint32]string `json:"alt_names,omitempty"`
 
-	PerVolumeConstraint map[string]*ServerTypeDefinitionVolumeConstraintSizes `json:"per_volume_constraint,omitempty"`
+	PerVolumeConstraint map[string]*ServerTypeVolumeConstraintSizes `json:"per_volume_constraint,omitempty"`
 
-	VolumesConstraint *ServerTypeDefinitionVolumeConstraintSizes `json:"volumes_constraint,omitempty"`
+	VolumesConstraint *ServerTypeVolumeConstraintSizes `json:"volumes_constraint,omitempty"`
 
 	Ncpus uint32 `json:"ncpus,omitempty"`
 
@@ -740,11 +740,11 @@ type ServerTypeDefinition struct {
 
 	Baremetal bool `json:"baremetal,omitempty"`
 
-	Network *ServerTypeDefinitionNetwork `json:"network,omitempty"`
+	Network *ServerTypeNetwork `json:"network,omitempty"`
 }
 
-type ServerTypeDefinitionNetwork struct {
-	Interfaces []*ServerTypeDefinitionNetworkInterface `json:"interfaces,omitempty"`
+type ServerTypeNetwork struct {
+	Interfaces []*ServerTypeNetworkInterface `json:"interfaces,omitempty"`
 
 	SumInternalBandwidth *uint64 `json:"sum_internal_bandwidth,omitempty"`
 
@@ -753,13 +753,13 @@ type ServerTypeDefinitionNetwork struct {
 	IPv6Support bool `json:"ipv6_support,omitempty"`
 }
 
-type ServerTypeDefinitionNetworkInterface struct {
+type ServerTypeNetworkInterface struct {
 	InternalBandwidth *uint64 `json:"internal_bandwidth,omitempty"`
 
 	InternetBandwidth *uint64 `json:"internet_bandwidth,omitempty"`
 }
 
-type ServerTypeDefinitionVolumeConstraintSizes struct {
+type ServerTypeVolumeConstraintSizes struct {
 	MinSize uint64 `json:"min_size,omitempty"`
 
 	MaxSize uint64 `json:"max_size,omitempty"`
