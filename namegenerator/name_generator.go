@@ -3,8 +3,8 @@
 package namesgenerator
 
 import (
-	"fmt"
 	"math/rand"
+	"strings"
 )
 
 var (
@@ -843,10 +843,11 @@ var (
 
 // GetRandomName generates a random name from the list of adjectives and surnames in this package
 // formatted as "scw-adjective-surname". For example 'scw-focused-turing'.
-func GetRandomName() string {
+func GetRandomName(prefixes ...string) string {
 begin:
-	name := fmt.Sprintf("scw-%s-%s", left[rand.Intn(len(left))], right[rand.Intn(len(right))])
-	if name == "scw-boring-wozniak" /* Steve Wozniak is not boring */ {
+	parts := append(prefixes, left[rand.Intn(len(left))], right[rand.Intn(len(right))])
+	name := strings.Join(parts, "-")
+	if strings.Contains(name, "boring-wozniak") /* Steve Wozniak is not boring */ {
 		goto begin
 	}
 
