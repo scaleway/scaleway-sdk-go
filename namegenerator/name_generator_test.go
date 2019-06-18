@@ -1,6 +1,6 @@
 // Source: github.com/docker/docker/pkg/namesgenerator
 
-package namesgenerator
+package namegenerator
 
 import (
 	"strings"
