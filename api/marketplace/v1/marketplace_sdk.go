@@ -89,10 +89,14 @@ type Image struct {
 
 type ListImagesResponse struct {
 	Images []*Image `json:"images,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type ListVersionsResponse struct {
 	Versions []*Version `json:"versions,omitempty"`
+
+	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
 type LocalImage struct {
@@ -178,6 +182,25 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+	results, ok := res.(*ListImagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Images = append(r.Images, results.Images...)
+	r.TotalCount += uint32(len(results.Images))
+	return len(results.Images), nil
 }
 
 type GetImageRequest struct {
