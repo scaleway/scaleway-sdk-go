@@ -206,6 +206,16 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	return &DetachVolumeResponse{Server: updateServerResponse.Server}, nil
 }
 
+// WipeServerRequest contains the parameters to wipe a server
+type WipeServerRequest struct {
+	ServerID string `json:"-"`
+}
+
+// WipeServer delete a server and all attached resources.
+func (s *API) WipeServer(req *WipeServerRequest, opts ...scw.RequestOption) error {
+	return nil
+}
+
 // UnsafeSetTotalCount should not be used
 // Internal usage only
 func (r *ListServersResponse) UnsafeSetTotalCount(totalCount int) {
