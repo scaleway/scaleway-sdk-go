@@ -12,18 +12,12 @@ import (
 type waitForServerRequest struct {
 	ServerID string
 	Zone     utils.Zone
-
-	// Timeout: maximum time to wait before (default: 5 minutes)
-	Timeout time.Duration
+	Timeout  time.Duration
 }
 
 // waitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
 func (s *API) waitForServer(req *waitForServerRequest) (*Server, error) {
-
-	if req.Timeout == 0 {
-		req.Timeout = 5 * time.Minute
-	}
 
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
@@ -53,17 +47,23 @@ func (s *API) waitForServer(req *waitForServerRequest) (*Server, error) {
 	return server.(*Server), err
 }
 
-// DoActionAndWaitRequest is used by DoActionAndWait method
-type DoActionAndWaitRequest struct {
+// ServerActionAndWaitRequest is used by ServerActionAndWait method
+type ServerActionAndWaitRequest struct {
 	ServerID string
 	Zone     utils.Zone
 	Action   ServerAction
-	Timeout  time.Duration
+
+	// Timeout: maximum time to wait before (default: 5 minutes)
+	Timeout time.Duration
 }
 
-// DoActionAndWait start an action and wait for the server to be in the correct "terminal state"
+// ServerActionAndWait start an action and wait for the server to be in the correct "terminal state"
 // expected by this action.
-func (s *API) DoActionAndWait(req *DoActionAndWaitRequest) error {
+func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
+	if req.Timeout == 0 {
+		req.Timeout = 5 * time.Minute
+	}
+
 	_, err := s.ServerAction(&ServerActionRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
@@ -83,7 +83,7 @@ func (s *API) DoActionAndWait(req *DoActionAndWaitRequest) error {
 	}
 
 	// check the action was properly executed
-	expectedState := ServerState("")
+	expectedState := ServerState("unknown")
 	switch req.Action {
 	case ServerActionPoweron, ServerActionReboot:
 		expectedState = ServerStateRunning
@@ -94,7 +94,7 @@ func (s *API) DoActionAndWait(req *DoActionAndWaitRequest) error {
 	}
 
 	// backup can be performed from any state
-	if req.Action != ServerActionBackup && finalServer.State != expectedState {
+	if expectedState != ServerState("unknown") && finalServer.State != expectedState {
 		return fmt.Errorf("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
 	}
 
