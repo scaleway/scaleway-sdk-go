@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -50,4 +52,28 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 	})
 
 	return server.(*Server), err
+}
+
+// GetServerTypeRequest is used by GetServerType
+type GetServerTypeRequest struct {
+	Zone utils.Zone
+	Name string
+}
+
+// GetServerType get server type info by it's name.
+func (s *API) GetServerType(req *GetServerTypeRequest) (*ServerType, error) {
+
+	res, err := s.ListServersTypes(&ListServersTypesRequest{
+		Zone: req.Zone,
+	}, scw.WithAllPages())
+
+	if err != nil {
+		return nil, err
+	}
+
+	if serverType, exist := res.Servers[req.Name]; exist {
+		return serverType, nil
+	}
+
+	return nil, errors.New("could not find server type %q", req.Name)
 }
