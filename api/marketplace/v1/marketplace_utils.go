@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/scaleway/scaleway-sdk-go/scw"
-
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
