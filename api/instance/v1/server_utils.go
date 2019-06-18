@@ -1,10 +1,10 @@
 package instance
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -95,7 +95,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 
 	// backup can be performed from any state
 	if expectedState != ServerState("unknown") && finalServer.State != expectedState {
-		return fmt.Errorf("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
+		return errors.New("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
 	}
 
 	return nil
