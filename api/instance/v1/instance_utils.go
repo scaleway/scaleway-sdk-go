@@ -212,12 +212,10 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 // UpdateVolumeRequest contains the parameters to update on a volume
 type UpdateVolumeRequest struct {
 	Zone utils.Zone `json:"-"`
-	// ID display the volumes unique ID
-	ID string `json:"-"`
+	// VolumeID is the volumes unique ID
+	VolumeID string `json:"-"`
 	// Name display the volumes names
 	Name *string `json:"name,omitempty"`
-	// ExportURI show the volumes NBD export URI
-	Server *ServerSummary `json:"server,omitempty"`
 }
 
 // UpdateVolumeResponse contains the updated volume.
@@ -263,13 +261,13 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.VolumeID) == "" {
+		return nil, errors.New("field VolumeID cannot be empty in request")
 	}
 
 	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
 		req.Zone,
-		req.ID,
+		req.VolumeID,
 	})
 	if err != nil {
 		return nil, err
@@ -292,13 +290,10 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 	if req.Name != nil {
 		setVolumeRequest.Name = *req.Name
 	}
-	if req.Server != nil {
-		setVolumeRequest.Server = req.Server
-	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.ID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 		Headers: http.Header{},
 	}
 

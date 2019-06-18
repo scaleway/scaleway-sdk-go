@@ -137,9 +137,9 @@ func TestInstanceHelpers(t *testing.T) {
 	t.Run("Test update volume", func(t *testing.T) {
 
 		updateVolumeResponse, err := instanceAPI.UpdateVolume(&UpdateVolumeRequest{
-			Zone: zone,
-			Name: &newVolumeName,
-			ID:   volumeID,
+			Zone:     zone,
+			Name:     &newVolumeName,
+			VolumeID: volumeID,
 		})
 
 		testhelpers.Ok(t, err)
