@@ -301,12 +301,12 @@ func (enum VolumeState) String() string {
 type VolumeType string
 
 const (
-	// VolumeTypeLSsd is [insert doc].
-	VolumeTypeLSsd = VolumeType("l_ssd")
+	// VolumeTypeLSSD is [insert doc].
+	VolumeTypeLSSD = VolumeType("l_ssd")
 	// VolumeTypeLHdd is [insert doc].
 	VolumeTypeLHdd = VolumeType("l_hdd")
-	// VolumeTypeRSsd is [insert doc].
-	VolumeTypeRSsd = VolumeType("r_ssd")
+	// VolumeTypeRSSD is [insert doc].
+	VolumeTypeRSSD = VolumeType("r_ssd")
 )
 
 func (enum VolumeType) String() string {
@@ -766,7 +766,7 @@ type ServerTypeVolumeConstraintSizes struct {
 }
 
 type ServerTypeVolumeConstraintsByType struct {
-	LSsd *ServerTypeVolumeConstraintSizes `json:"l_ssd,omitempty"`
+	LSSD *ServerTypeVolumeConstraintSizes `json:"l_ssd,omitempty"`
 }
 
 type SetIPResponse struct {
