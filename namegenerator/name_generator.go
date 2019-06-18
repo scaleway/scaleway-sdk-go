@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
+var r *rand.Rand
+
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	source := rand.NewSource(time.Now().UnixNano())
+	r = rand.New(source)
 }
 
 var (
@@ -850,7 +853,7 @@ var (
 // formatted as "scw-adjective-surname". For example 'scw-focused-turing'.
 func GetRandomName(prefixes ...string) string {
 begin:
-	parts := append(prefixes, left[rand.Intn(len(left))], right[rand.Intn(len(right))])
+	parts := append(prefixes, left[r.Intn(len(left))], right[r.Intn(len(right))])
 	name := strings.Join(parts, "-")
 	if strings.Contains(name, "boring-wozniak") /* Steve Wozniak is not boring */ {
 		goto begin
