@@ -5,6 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
@@ -17,7 +18,7 @@ type waitForServerRequest struct {
 
 // waitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
-func (s *API) waitForServer(req *waitForServerRequest) (*Server, error) {
+func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
 
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
@@ -43,8 +44,10 @@ func (s *API) waitForServer(req *waitForServerRequest) (*Server, error) {
 		Timeout:          req.Timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
 	})
-
-	return server.(*Server), err
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for server failed")
+	}
+	return server.(*Server), nil
 }
 
 // ServerActionAndWaitRequest is used by ServerActionAndWait method
