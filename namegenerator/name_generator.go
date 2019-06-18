@@ -1,11 +1,16 @@
 // Source: github.com/docker/docker/pkg/namesgenerator
 
-package namesgenerator
+package namegenerator
 
 import (
 	"math/rand"
 	"strings"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 var (
 	left = [...]string{
