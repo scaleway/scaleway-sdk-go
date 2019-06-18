@@ -653,3 +653,78 @@ interactions:
     status: 204 No Content
     code: 204
     duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/074ca412-16b8-4488-8dcd-803ee1a64621
+    method: GET
+  response:
+    body: '{"volume": {"size": 50000000000, "state": "available", "name": "snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13",
+      "modification_date": "2019-06-18T08:15:34.276350+00:00", "organization": "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3",
+      "export_uri": null, "creation_date": "2019-06-18T08:15:15.402787+00:00", "id":
+      "074ca412-16b8-4488-8dcd-803ee1a64621", "volume_type": "l_ssd", "server": {"id":
+      "3ae0a3b4-e8e4-4cdd-943a-1050afbb3438", "name": "instance_utils_test"}}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "474"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 18 Jun 2019 08:15:34 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: '{"id":"074ca412-16b8-4488-8dcd-803ee1a64621","name":"some new volume name","export_uri":"","size":50000000000,"volume_type":"l_ssd","creation_date":"2019-06-18T08:15:15.402787Z","modification_date":"2019-06-18T08:15:34.27635Z","organization":"d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3","server":{"id":"3ae0a3b4-e8e4-4cdd-943a-1050afbb3438","name":"instance_utils_test"}}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/074ca412-16b8-4488-8dcd-803ee1a64621
+    method: PUT
+  response:
+    body: '{"volume": {"size": 50000000000, "state": "available", "name": "some new
+      volume name", "modification_date": "2019-06-18T08:15:34.276350+00:00", "organization":
+      "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3", "export_uri": null, "creation_date":
+      "2019-06-18T08:15:15.402787+00:00", "id": "074ca412-16b8-4488-8dcd-803ee1a64621",
+      "volume_type": "l_ssd", "server": {"id": "3ae0a3b4-e8e4-4cdd-943a-1050afbb3438",
+      "name": "instance_utils_test"}}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "432"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 18 Jun 2019 08:15:34 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""

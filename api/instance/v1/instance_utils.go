@@ -2,6 +2,8 @@ package instance
 
 import (
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -205,6 +207,117 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	return &DetachVolumeResponse{Server: updateServerResponse.Server}, nil
+}
+
+// UpdateVolumeRequest contains the parameters to update on a volume
+type UpdateVolumeRequest struct {
+	Zone utils.Zone `json:"-"`
+	// ID display the volumes unique ID
+	ID string `json:"-"`
+	// Name display the volumes names
+	Name *string `json:"name,omitempty"`
+	// ExportURI show the volumes NBD export URI
+	Server *ServerSummary `json:"server,omitempty"`
+}
+
+// UpdateVolumeResponse contains the updated volume.
+type UpdateVolumeResponse struct {
+	Volume *Volume `json:"volume,omitempty"`
+}
+
+// setVolumeRequestForUpdate is a private SetVolumeRequestForUpdate in which no empty values are omitted
+type setVolumeRequestForUpdate struct {
+	Zone utils.Zone `json:"-"`
+	// ID display the volumes unique ID
+	ID string `json:"id"`
+	// Name display the volumes names
+	Name string `json:"name"`
+	// ExportURI show the volumes NBD export URI
+	ExportURI string `json:"export_uri"`
+	// Size display the volumes disk size
+	Size uint64 `json:"size"`
+	// VolumeType display the volumes type
+	//
+	// Default value: l_ssd
+	VolumeType VolumeType `json:"volume_type"`
+	// CreationDate display the volumes creation date
+	CreationDate time.Time `json:"creation_date"`
+	// ModificationDate display the volumes modification date
+	ModificationDate time.Time `json:"modification_date"`
+	// Organization display the volumes organization
+	Organization string `json:"organization"`
+	// Server display information about the server attached to the volume
+	Server *ServerSummary `json:"server"`
+}
+
+// UpdateVolume updates the set fields on the volume.
+func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ID) == "" {
+		return nil, errors.New("field ID cannot be empty in request")
+	}
+
+	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
+		req.Zone,
+		req.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	setVolumeRequest := &setVolumeRequestForUpdate{
+		Zone:             req.Zone,
+		ID:               getVolumeResponse.Volume.ID,
+		Name:             getVolumeResponse.Volume.Name,
+		ExportURI:        getVolumeResponse.Volume.ExportURI,
+		Size:             getVolumeResponse.Volume.Size,
+		VolumeType:       getVolumeResponse.Volume.VolumeType,
+		CreationDate:     getVolumeResponse.Volume.CreationDate,
+		ModificationDate: getVolumeResponse.Volume.ModificationDate,
+		Organization:     getVolumeResponse.Volume.Organization,
+		Server:           getVolumeResponse.Volume.Server,
+	}
+
+	// Override the values that need to be updated
+	if req.Name != nil {
+		setVolumeRequest.Name = *req.Name
+	}
+	if req.Server != nil {
+		setVolumeRequest.Server = req.Server
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.ID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(setVolumeRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	var setVolumeResponse SetVolumeResponse
+
+	err = s.client.Do(scwReq, &setVolumeResponse, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &UpdateVolumeResponse{
+		Volume: setVolumeResponse.Volume,
+	}
+	return res, nil
 }
 
 // UnsafeSetTotalCount should not be used
