@@ -21,7 +21,11 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		imageID, err := marketplaceAPI.FindLocalImageIDByName("Docker", utils.ZoneFrPar1, "C1")
+		imageID, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+			Zone:           utils.ZoneFrPar1,
+			CommercialType: "C1",
+			ImageName:      "Docker",
+		})
 		testhelpers.Ok(t, err)
 
 		// Docker C1 at par1: 45a7e942-1fb0-48c0-bbf6-0acb9af24604
@@ -34,7 +38,11 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		_, err := marketplaceAPI.FindLocalImageIDByName("foo-bar-image", "", "")
+		_, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+			Zone:           utils.ZoneFrPar1,
+			CommercialType: "",
+			ImageName:      "foo-bar-image",
+		})
 		testhelpers.Assert(t, err != nil, "Should have error")
 
 	})
