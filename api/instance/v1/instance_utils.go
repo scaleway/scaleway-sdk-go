@@ -208,7 +208,12 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 
 // WipeServerRequest contains the parameters to wipe a server
 type WipeServerRequest struct {
+	// The server ID to delete.
 	ServerID string `json:"-"`
+	// Delete the flexible IP attached to the server.
+	WipeIP bool `json:"-"`
+	// Delete all volumes attached to the server.
+	WipeVolumes bool `json:"-"`
 }
 
 // WipeServer delete a server and all attached resources.
