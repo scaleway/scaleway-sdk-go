@@ -2,8 +2,6 @@ package instance
 
 import (
 	"fmt"
-	"net/http"
-	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -223,31 +221,6 @@ type UpdateVolumeResponse struct {
 	Volume *Volume `json:"volume,omitempty"`
 }
 
-// setVolumeRequestForUpdate is a private SetVolumeRequestForUpdate in which no empty values are omitted
-type setVolumeRequestForUpdate struct {
-	Zone utils.Zone `json:"-"`
-	// ID display the volumes unique ID
-	ID string `json:"id"`
-	// Name display the volumes names
-	Name string `json:"name"`
-	// ExportURI show the volumes NBD export URI
-	ExportURI string `json:"export_uri"`
-	// Size display the volumes disk size
-	Size uint64 `json:"size"`
-	// VolumeType display the volumes type
-	//
-	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
-	// CreationDate display the volumes creation date
-	CreationDate time.Time `json:"creation_date"`
-	// ModificationDate display the volumes modification date
-	ModificationDate time.Time `json:"modification_date"`
-	// Organization display the volumes organization
-	Organization string `json:"organization"`
-	// Server display information about the server attached to the volume
-	Server *ServerSummary `json:"server"`
-}
-
 // UpdateVolume updates the set fields on the volume.
 func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
 	var err error
@@ -273,7 +246,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 
-	setVolumeRequest := &setVolumeRequestForUpdate{
+	setVolumeRequest := &setVolumeRequest{
 		Zone:             req.Zone,
 		ID:               getVolumeResponse.Volume.ID,
 		Name:             getVolumeResponse.Volume.Name,
@@ -291,20 +264,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 		setVolumeRequest.Name = *req.Name
 	}
 
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(setVolumeRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	var setVolumeResponse SetVolumeResponse
-
-	err = s.client.Do(scwReq, &setVolumeResponse, opts...)
+	setVolumeResponse, err := s.setVolume(setVolumeRequest)
 	if err != nil {
 		return nil, err
 	}
