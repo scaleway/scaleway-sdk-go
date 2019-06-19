@@ -19,14 +19,13 @@ func TestInstanceHelpers(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		serverID      string
-		ipID          string
-		volumeID      string
-		zone          = utils.ZoneFrPar1
-		organization  = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
-		image         = "f974feac-abae-4365-b988-8ec7d1cec10d"
-		reverse       = "1.1.1.1"
-		newVolumeName = "some new volume name"
+		serverID     string
+		ipID         string
+		volumeID     string
+		zone         = utils.ZoneFrPar1
+		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
+		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
+		reverse      = "1.1.1.1"
 	)
 
 	t.Run("create server", func(t *testing.T) {
@@ -132,21 +131,6 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.Assert(t, attachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
 		testhelpers.Assert(t, len(attachVolumeResponse.Server.Volumes) == 1, "Server should have one volumes after attaching")
 		testhelpers.Equals(t, volumeID, attachVolumeResponse.Server.Volumes["0"].ID)
-	})
-
-	t.Run("Test update volume", func(t *testing.T) {
-
-		updateVolumeResponse, err := instanceAPI.UpdateVolume(&UpdateVolumeRequest{
-			Zone:     zone,
-			Name:     &newVolumeName,
-			VolumeID: volumeID,
-		})
-
-		testhelpers.Ok(t, err)
-		testhelpers.Assert(t, updateVolumeResponse.Volume != nil, "Should have volume in response")
-		testhelpers.Equals(t, newVolumeName, updateVolumeResponse.Volume.Name)
-		testhelpers.Equals(t, serverID, updateVolumeResponse.Volume.Server.ID) // check that server is not changed
-
 	})
 
 	t.Run("teardown: delete server and volume", func(t *testing.T) {
