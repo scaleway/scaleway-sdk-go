@@ -1027,11 +1027,11 @@ type UpdateLbRequest struct {
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Description resource description
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	// Tags list of keywords
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 }
 
 func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
@@ -1542,35 +1542,35 @@ type UpdateBackendRequest struct {
 	// BackendID backend ID to update
 	BackendID string `json:"-"`
 	// Name resource name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ForwardProtocol backend protocol. TCP or HTTP
 	//
 	// Default value: tcp
-	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
+	ForwardProtocol Protocol `json:"forward_protocol"`
 	// ForwardPort user sessions will be forwarded to this port of backend servers
-	ForwardPort int32 `json:"forward_port,omitempty"`
+	ForwardPort int32 `json:"forward_port"`
 	// ForwardPortAlgorithm load balancing algorithm
 	//
 	// Default value: roundrobin
-	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
+	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
 	// StickySessions enable cookie-based session persistence
 	//
 	// Default value: none
-	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
+	StickySessions StickySessionsType `json:"sticky_sessions"`
 	// StickySessionsCookieName cookie name for for sticky sessions
-	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
+	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// SendProxyV2 enables PROXY protocol version 2 (must be supported by backend servers)
-	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 	// TimeoutServer maximum server connection inactivity time
-	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
+	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect maximum initial server connection establishment time
-	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
+	TimeoutConnect *time.Duration `json:"timeout_connect"`
 	// TimeoutTunnel maximum tunnel inactivity time
-	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
+	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction modify what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
-	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
+	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -1578,9 +1578,9 @@ func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -1600,9 +1600,9 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{
 		tmpType: tmpType(m),
 
@@ -1777,7 +1777,7 @@ type SetBackendServersRequest struct {
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to add of your backend and remove all other
-	ServerIP []string `json:"server_ip,omitempty"`
+	ServerIP []string `json:"server_ip"`
 }
 
 func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
@@ -1821,13 +1821,13 @@ type UpdateHealthCheckRequest struct {
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// Port specify the port used to health check
-	Port int32 `json:"port,omitempty"`
+	Port int32 `json:"port"`
 	// CheckDelay time between two consecutive health checks
-	CheckDelay *time.Duration `json:"check_delay,omitempty"`
+	CheckDelay *time.Duration `json:"check_delay"`
 	// CheckTimeout additional check timeout, after the connection has been already established
-	CheckTimeout *time.Duration `json:"check_timeout,omitempty"`
+	CheckTimeout *time.Duration `json:"check_timeout"`
 	// CheckMaxRetries number of consecutive unsuccessful health checks, after wich the server will be considered dead
-	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
+	CheckMaxRetries int32 `json:"check_max_retries"`
 	// MysqlConfig the check requires MySQL >=3.22, for older version, please use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
@@ -1876,8 +1876,8 @@ func (m *UpdateHealthCheckRequest) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay,omitempty"`
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout,omitempty"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -1896,8 +1896,8 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay,omitempty"`
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout,omitempty"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{
 		tmpType: tmpType(m),
 
@@ -2147,15 +2147,15 @@ type UpdateFrontendRequest struct {
 	// FrontendID frontend ID
 	FrontendID string `json:"-"`
 	// Name resource name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// InboundPort tCP port to listen on the front side
-	InboundPort int32 `json:"inbound_port,omitempty"`
+	InboundPort int32 `json:"inbound_port"`
 	// BackendID backend ID
-	BackendID string `json:"backend_id,omitempty"`
+	BackendID string `json:"backend_id"`
 	// TimeoutClient client session maximum inactivity time
-	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+	TimeoutClient *time.Duration `json:"timeout_client"`
 	// CertificateID certificate ID
-	CertificateID *string `json:"certificate_id,omitempty"`
+	CertificateID *string `json:"certificate_id"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2163,7 +2163,7 @@ func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -2181,7 +2181,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{
 		tmpType: tmpType(m),
 
@@ -2468,13 +2468,13 @@ type UpdateACLRequest struct {
 	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 	// Name name of your ACL ressource
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Action see the AclAction object description
-	Action *ACLAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action"`
 	// Match see the AclMatch object description
-	Match *ACLMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match"`
 	// Index order between your Acls (ascending order, 0 is first acl executed)
-	Index int32 `json:"index,omitempty"`
+	Index int32 `json:"index"`
 }
 
 func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
@@ -2723,7 +2723,7 @@ type UpdateCertificateRequest struct {
 
 	CertificateID string `json:"-"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 }
 
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
