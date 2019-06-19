@@ -67,8 +67,8 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
-		req.Zone,
-		req.VolumeID,
+		Zone:     req.Zone,
+		VolumeID: req.VolumeID,
 	})
 	if err != nil {
 		return nil, err
