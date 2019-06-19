@@ -882,10 +882,6 @@ type setSnapshotResponse struct {
 	Snapshot *Snapshot `json:"snapshot,omitempty"`
 }
 
-type setVolumeResponse struct {
-	Volume *Volume `json:"volume,omitempty"`
-}
-
 // Service API
 
 type GetServerTypesAvailabilityRequest struct {
@@ -2391,78 +2387,6 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 	}
 
 	var resp GetVolumeResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type setVolumeRequest struct {
-	Zone utils.Zone `json:"-"`
-	// ID display the volumes unique ID
-	ID string `json:"-"`
-	// Name display the volumes names
-	Name string `json:"name"`
-	// ExportURI show the volumes NBD export URI
-	ExportURI string `json:"export_uri"`
-	// Size display the volumes disk size
-	Size uint64 `json:"size"`
-	// VolumeType display the volumes type
-	//
-	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
-	// CreationDate display the volumes creation date
-	CreationDate time.Time `json:"creation_date"`
-	// ModificationDate display the volumes modification date
-	ModificationDate time.Time `json:"modification_date"`
-	// Organization display the volumes organization
-	Organization string `json:"organization"`
-	// Server display information about the server attached to the volume
-	Server *ServerSummary `json:"server"`
-	// State display the volumes state
-	//
-	// Default value: available
-	State VolumeState `json:"state"`
-}
-
-// setVolume update volume
-//
-// Replace all volume properties with a volume message
-func (s *API) setVolume(req *setVolumeRequest, opts ...scw.RequestOption) (*setVolumeResponse, error) {
-	var err error
-
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultProjectID()
-		req.Organization = defaultOrganization
-	}
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.ID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp setVolumeResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
