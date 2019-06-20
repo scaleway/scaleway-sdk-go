@@ -10,6 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"golang.org/x/xerrors"
 )
 
 type UpdateServerRequest updateServerRequest
@@ -63,6 +64,36 @@ func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
 	return server.(*Server), nil
 }
 
+// waitForDeletedServer wait for the server to be in a "deleted state" before returning.
+// This function can be used to wait for a server to be terminated for example.
+func (s *API) waitForDeletedServer(req *waitForServerRequest) scw.SdkError {
+	_, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, error, bool) {
+			_, err := s.GetServer(&GetServerRequest{
+				ServerID: req.ServerID,
+				Zone:     req.Zone,
+			})
+
+			if err == nil {
+				return nil, nil, false
+			}
+
+			responseError := &scw.ResponseError{}
+			if xerrors.As(err, &responseError) && responseError.StatusCode == http.StatusNotFound {
+				return nil, nil, true
+			}
+
+			return nil, err, false
+		},
+		Timeout:          req.Timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+	})
+	if err != nil {
+		return errors.Wrap(err, "waiting for deleted server failed")
+	}
+	return nil
+}
+
 // ServerActionAndWaitRequest is used by ServerActionAndWait method
 type ServerActionAndWaitRequest struct {
 	ServerID string
@@ -89,32 +120,37 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 		return err
 	}
 
-	finalServer, err := s.waitForServer(&waitForServerRequest{
+	waitForServerRequest := &waitForServerRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
 		Timeout:  req.Timeout,
-	})
-	if err != nil {
-		return err
 	}
 
-	// check the action was properly executed
-	expectedState := ServerState("unknown")
-	switch req.Action {
-	case ServerActionPoweron, ServerActionReboot:
-		expectedState = ServerStateRunning
-	case ServerActionPoweroff:
-		expectedState = ServerStateStopped
-	case ServerActionStopInPlace:
-		expectedState = ServerStateStoppedInPlace
-	}
+	if req.Action == ServerActionTerminate {
+		err = s.waitForDeletedServer(waitForServerRequest)
+	} else {
+		finalServer, err := s.waitForServer(waitForServerRequest)
+		if err != nil {
+			return err
+		}
 
-	// backup can be performed from any state
-	if expectedState != ServerState("unknown") && finalServer.State != expectedState {
-		return errors.New("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
-	}
+		// check the action was properly executed
+		expectedState := ServerState("unknown")
+		switch req.Action {
+		case ServerActionPoweron, ServerActionReboot:
+			expectedState = ServerStateRunning
+		case ServerActionPoweroff:
+			expectedState = ServerStateStopped
+		case ServerActionStopInPlace:
+			expectedState = ServerStateStoppedInPlace
+		}
 
-	return nil
+		// backup can be performed from any state
+		if expectedState != ServerState("unknown") && finalServer.State != expectedState {
+			err = errors.New("expected state %s but found %s: %s", expectedState, finalServer.State, finalServer.StateDetail)
+		}
+	}
+	return err
 }
 
 // GetServerTypeRequest is used by GetServerType.
