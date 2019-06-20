@@ -24,8 +24,8 @@ type UpdateVolumeResponse struct {
 	Volume *Volume `json:"volume,omitempty"`
 }
 
-// setVolumeRequestForUpdate is a private SetVolumeRequestForUpdate in which no empty values are omitted
-type setVolumeRequestForUpdate struct {
+// setVolumeRequest contains all the params to PUT volumes
+type setVolumeRequest struct {
 	Zone utils.Zone `json:"-"`
 	// ID display the volumes unique ID
 	ID string `json:"id"`
@@ -74,7 +74,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 
-	setVolumeRequest := &setVolumeRequestForUpdate{
+	setVolumeRequest := &setVolumeRequest{
 		Zone:             req.Zone,
 		ID:               getVolumeResponse.Volume.ID,
 		Name:             getVolumeResponse.Volume.Name,
@@ -103,15 +103,12 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 
-	var setVolumeResponse setVolumeResponse
+	var res UpdateVolumeResponse
 
-	err = s.client.Do(scwReq, &setVolumeResponse, opts...)
+	err = s.client.Do(scwReq, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &UpdateVolumeResponse{
-		Volume: setVolumeResponse.Volume,
-	}
-	return res, nil
+	return &res, nil
 }
