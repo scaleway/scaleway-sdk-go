@@ -29,46 +29,36 @@ func TestUpdateVolmue(t *testing.T) {
 		volumeID string
 	)
 
-	t.Run("Setup: create volume", func(t *testing.T) {
-
-		createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
-			Zone:         zone,
-			Name:         volumeName,
-			Organization: organization,
-			Size:         &volumeSize,
-			VolumeType:   volumeType,
-		})
-
-		testhelpers.Ok(t, err)
-
-		volumeID = createVolumeResponse.Volume.ID
-
+	// Create volume
+	createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
+		Zone:         zone,
+		Name:         volumeName,
+		Organization: organization,
+		Size:         &volumeSize,
+		VolumeType:   volumeType,
 	})
 
-	t.Run("Test update volume", func(t *testing.T) {
+	testhelpers.Ok(t, err)
 
-		updateVolumeResponse, err := instanceAPI.UpdateVolume(&UpdateVolumeRequest{
-			Zone:     zone,
-			Name:     &newVolumeName,
-			VolumeID: volumeID,
-		})
+	volumeID = createVolumeResponse.Volume.ID
 
-		testhelpers.Ok(t, err)
-		testhelpers.Assert(t, updateVolumeResponse.Volume != nil, "Should have volume in response")
-		testhelpers.Equals(t, newVolumeName, updateVolumeResponse.Volume.Name)
-		testhelpers.Equals(t, volumeSize, updateVolumeResponse.Volume.Size) // check that server is not changed
-
+	// Update volume and test whether successfully updated
+	updateVolumeResponse, err := instanceAPI.UpdateVolume(&UpdateVolumeRequest{
+		Zone:     zone,
+		Name:     &newVolumeName,
+		VolumeID: volumeID,
 	})
 
-	t.Run("Teardown: detele volume", func(t *testing.T) {
+	testhelpers.Ok(t, err)
+	testhelpers.Assert(t, updateVolumeResponse.Volume != nil, "Should have volume in response")
+	testhelpers.Equals(t, newVolumeName, updateVolumeResponse.Volume.Name)
+	testhelpers.Equals(t, volumeSize, updateVolumeResponse.Volume.Size) // check that server is not changed
 
-		// Delete Volume
-		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
-			Zone:     zone,
-			VolumeID: volumeID,
-		})
-		testhelpers.Ok(t, err)
-
+	// Delete Volume
+	err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
+		Zone:     zone,
+		VolumeID: volumeID,
 	})
+	testhelpers.Ok(t, err)
 
 }
