@@ -242,14 +242,14 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr SdkError) {
 				return errors.Wrap(err, "could not parse %s response body", contentType)
 			}
 		default:
-			buffer, ok := res.(io.Writer)
-			if ok {
-				_, err := io.Copy(buffer, httpResponse.Body)
-				if err != nil {
-					return errors.Wrap(err, "could not copy %s response body", contentType)
-				}
-			} else {
-				return errors.Wrap(err, "could not handle %s response body", contentType)
+			buffer, isBuffer := res.(io.Writer)
+			if !isBuffer {
+				return errors.Wrap(err, "could not handle %s response body with %T result type", contentType, buffer)
+			}
+
+			_, err := io.Copy(buffer, httpResponse.Body)
+			if err != nil {
+				return errors.Wrap(err, "could not copy %s response body", contentType)
 			}
 		}
 
