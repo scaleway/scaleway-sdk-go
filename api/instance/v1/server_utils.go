@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -145,7 +144,7 @@ type GetServerUserDataRequest struct {
 // GetServerUserData get user data
 //
 // Get the content of a user data with the given key on a server
-func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (io.ReadCloser, error) {
+func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (io.Reader, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -171,14 +170,13 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 		Headers: http.Header{},
 	}
 
-	buffer := &bytes.Buffer{}
+	res := &bytes.Buffer{}
 
-	err = s.client.Do(scwReq, buffer, opts...)
+	err = s.client.Do(scwReq, res, opts...)
 	if err != nil {
 		return nil, err
 	}
 
-	res := ioutil.NopCloser(buffer)
 	return res, nil
 }
 
@@ -193,9 +191,9 @@ type SetServerUserDataRequest struct {
 	Content io.Reader
 }
 
-// SetServerUserData add/Set user data
+// SetServerUserData set user data
 //
-// Add or update a user data with the given key on a server
+// Overwrites a user data with the given key on a server
 func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
