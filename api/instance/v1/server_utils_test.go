@@ -67,6 +67,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		ServerID: serverRes.Server.ID,
 		Key:      key,
 	})
+	testhelpers.Ok(t, err)
 
 	resUserData, err := ioutil.ReadAll(data)
 	testhelpers.Ok(t, err)
