@@ -34,11 +34,12 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string, ano
 
 	allHeaders.Set("User-Agent", userAgent)
 	if req.Body != nil {
-		allHeaders.Set("content-type", "application/json")
+		allHeaders.Set("Content-Type", "application/json")
 	}
 	for key, value := range req.Headers {
+		allHeaders.Del(key)
 		for _, v := range value {
-			allHeaders.Set(key, v)
+			allHeaders.Add(key, v)
 		}
 	}
 
