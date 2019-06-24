@@ -119,7 +119,7 @@ func TestAPI_GetAllServerUserData(t *testing.T) {
 
 	for expectedKey, expectedValue := range data {
 		readerValue, exists := allData.UserData[expectedKey]
-		testhelpers.Assert(t, exists, "%k key not found in result", expectedKey)
+		testhelpers.Assert(t, exists, "%s key not found in result", expectedKey)
 
 		currentValue, err := ioutil.ReadAll(readerValue)
 		testhelpers.Ok(t, err)
