@@ -97,14 +97,17 @@ func TestAPI_AllServerUserData(t *testing.T) {
 
 	steps := []map[string]string{
 		{
-			"hello":  "world",
-			"scale":  "way",
-			"xavier": "niel",
+			"hello":      "world",
+			"scale":      "way",
+			"xavier":     "niel",
+			"tic":        "tac",
+			"cloud-init": "on",
 		},
 		{
-			"xavier": "niel",
-			"scale":  "way",
-			"steve":  "wozniak",
+			"xavier":     "niel",
+			"scale":      "way",
+			"steve":      "wozniak",
+			"cloud-init": "off",
 		},
 		{},
 	}

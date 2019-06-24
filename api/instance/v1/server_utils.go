@@ -340,10 +340,6 @@ func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw
 		}
 	}
 
-	if req.UserData == nil {
-		return nil
-	}
-
 	// set all new user data
 	for key, value := range req.UserData {
 		err := s.SetServerUserData(&SetServerUserDataRequest{
