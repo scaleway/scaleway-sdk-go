@@ -108,7 +108,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 	return nil
 }
 
-// GetServerTypeRequest is used by GetServerType
+// GetServerTypeRequest is used by GetServerType.
 type GetServerTypeRequest struct {
 	Zone utils.Zone
 	Name string
@@ -132,18 +132,16 @@ func (s *API) GetServerType(req *GetServerTypeRequest) (*ServerType, error) {
 	return nil, errors.New("could not find server type %q", req.Name)
 }
 
-// GetServerUserDataRequest is used by GetServerType method.
+// GetServerUserDataRequest is used by GetServerUserData method.
 type GetServerUserDataRequest struct {
 	Zone     utils.Zone `json:"-"`
 	ServerID string     `json:"-"`
 
-	// Key define the user data key to get
+	// Key defines the user data key to get.
 	Key string `json:"-"`
 }
 
-// GetServerUserData get user data
-//
-// Get the content of a user data with the given key on a server
+// GetServerUserData gets the content of a user data on a server for the given key.
 func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (io.Reader, error) {
 	var err error
 
@@ -180,20 +178,19 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 	return res, nil
 }
 
+// SetServerUserDataRequest is used by SetServerUserData method.
 type SetServerUserDataRequest struct {
 	Zone     utils.Zone `json:"-"`
 	ServerID string     `json:"-"`
 
-	// Key define the user data key to set
+	// Key defines the user data key to set.
 	Key string `json:"-"`
 
-	// Content define the data to set
+	// Content defines the data to set.
 	Content io.Reader
 }
 
-// SetServerUserData set user data
-//
-// Overwrites a user data with the given key on a server
+// SetServerUserData sets the content of a user data on a server for the given key.
 func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -235,4 +232,60 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 	}
 
 	return nil
+}
+
+// GetAllServerUserDataRequest is used by GetAllServerUserData method.
+type GetAllServerUserDataRequest struct {
+	Zone     utils.Zone `json:"-"`
+	ServerID string     `json:"-"`
+}
+
+// GetAllServerUserDataResponse is used by GetAllServerUserData method.
+type GetAllServerUserDataResponse struct {
+	UserData map[string]io.Reader `json:"-"`
+}
+
+// GetAllServerUserData gets all user data on a server.
+func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw.RequestOption) (*GetAllServerUserDataResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	userDataKeys, err := s.ListServerUserData(&ListServerUserDataRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	res := &GetAllServerUserDataResponse{
+		UserData: make(map[string]io.Reader, len(userDataKeys.UserData)),
+	}
+
+	for _, key := range userDataKeys.UserData {
+		value, err := s.GetServerUserData(&GetServerUserDataRequest{
+			Zone:     req.Zone,
+			ServerID: req.ServerID,
+			Key:      key,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		res.UserData[key] = value
+	}
+
+	return res, nil
 }
