@@ -141,7 +141,7 @@ type GetServerUserDataRequest struct {
 	Key string `json:"-"`
 }
 
-// GetServerUserData gets the content of a user data on a server with the given key.
+// GetServerUserData gets the content of a user data on a server for the given key.
 func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (io.Reader, error) {
 	var err error
 
@@ -190,7 +190,7 @@ type SetServerUserDataRequest struct {
 	Content io.Reader
 }
 
-// SetServerUserData sets the content of a user data on a server with the given key.
+// SetServerUserData sets the content of a user data on a server for the given key.
 func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
