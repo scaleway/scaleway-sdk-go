@@ -137,13 +137,11 @@ type GetServerUserDataRequest struct {
 	Zone     utils.Zone `json:"-"`
 	ServerID string     `json:"-"`
 
-	// Key define the user data key to get.
+	// Key defines the user data key to get.
 	Key string `json:"-"`
 }
 
-// GetServerUserData get server a user data.
-//
-// Get the content of a user data with the given key on a server.
+// GetServerUserData gets the content of a user data on a server with the given key.
 func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.RequestOption) (io.Reader, error) {
 	var err error
 
@@ -185,16 +183,14 @@ type SetServerUserDataRequest struct {
 	Zone     utils.Zone `json:"-"`
 	ServerID string     `json:"-"`
 
-	// Key define the user data key to set.
+	// Key defines the user data key to set.
 	Key string `json:"-"`
 
-	// Content define the data to set.
+	// Content defines the data to set.
 	Content io.Reader
 }
 
-// SetServerUserData set a server user data.
-//
-// Overwrites a user data with the given key on a server.
+// SetServerUserData sets the content of a user data on a server with the given key.
 func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -249,9 +245,7 @@ type GetAllServerUserDataResponse struct {
 	UserData map[string]io.Reader `json:"-"`
 }
 
-// GetAllServerUserData get all server user data.
-//
-// Get the content of all user data on a server.
+// GetAllServerUserData gets all user data on a server.
 func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw.RequestOption) (*GetAllServerUserDataResponse, error) {
 	var err error
 
