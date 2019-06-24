@@ -1,0 +1,825 @@
+---
+version: 1
+interactions:
+- request:
+    body: '{"name":"srv-vigorous-allen","commercial_type":"DEV1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","boot_type":"local","organization":"14d2f7ae-9775-414c-9bed-6810e060d500"}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers
+    method: POST
+  response:
+    body: '{"server": {"allowed_actions": ["poweron", "backup"], "maintenances": [],
+      "state_detail": "", "image": {"creation_date": "2019-03-05T10:13:15.974944+00:00",
+      "default_bootscript": {"kernel": "http://169.254.42.24/kernel/x86_64-mainline-lts-4.9-4.9.93-rev1/vmlinuz-4.9.93",
+      "initrd": "http://169.254.42.24/initrd/initrd-Linux-x86_64-v3.14.6.gz", "default":
+      false, "bootcmdargs": "LINUX_COMMON scaleway boot=local nbd.max_part=16", "architecture":
+      "x86_64", "title": "x86_64 mainline 4.9.93 rev1", "dtb": "", "organization":
+      "11111111-1111-4111-8111-111111111111", "id": "15fbd2f7-a0f9-412b-8502-6a44da8d98b8",
+      "public": false}, "from_server": null, "arch": "x86_64", "id": "f974feac-abae-4365-b988-8ec7d1cec10d",
+      "root_volume": {"size": 10000000000, "id": "dd5f5c10-23b1-4c9c-8445-eb6740957c84",
+      "volume_type": "l_ssd", "name": "snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13"},
+      "name": "Ubuntu Bionic Beaver", "modification_date": "2019-03-05T13:32:29.274319+00:00",
+      "state": "available", "organization": "51b656e3-4865-41e8-adbc-0c45bdd780db",
+      "extra_volumes": {}, "public": true}, "creation_date": "2019-06-24T15:32:10.278936+00:00",
+      "public_ip": null, "private_ip": null, "id": "88c260ba-1073-4430-a5a9-229807a61307",
+      "dynamic_ip_required": true, "modification_date": "2019-06-24T15:32:11.085719+00:00",
+      "enable_ipv6": false, "hostname": "srv-vigorous-allen", "state": "stopped",
+      "bootscript": {"kernel": "http://169.254.42.24/kernel/x86_64-mainline-lts-4.9-4.9.93-rev1/vmlinuz-4.9.93",
+      "initrd": "http://169.254.42.24/initrd/initrd-Linux-x86_64-v3.14.6.gz", "default":
+      false, "bootcmdargs": "LINUX_COMMON scaleway boot=local nbd.max_part=16", "architecture":
+      "x86_64", "title": "x86_64 mainline 4.9.93 rev1", "dtb": "", "organization":
+      "11111111-1111-4111-8111-111111111111", "id": "15fbd2f7-a0f9-412b-8502-6a44da8d98b8",
+      "public": false}, "location": null, "boot_type": "local", "ipv6": null, "commercial_type":
+      "DEV1-S", "tags": [], "arch": "x86_64", "extra_networks": [], "compute_cluster":
+      null, "name": "srv-vigorous-allen", "protected": false, "volumes": {"0": {"size":
+      20000000000, "state": "available", "name": "snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13",
+      "modification_date": "2019-06-24T15:32:10.953560+00:00", "organization": "14d2f7ae-9775-414c-9bed-6810e060d500",
+      "export_uri": null, "creation_date": "2019-06-24T15:32:10.278936+00:00", "id":
+      "3e7a3f46-f0eb-4fb9-a204-5ad95f2a0265", "volume_type": "l_ssd", "server": {"id":
+      "88c260ba-1073-4430-a5a9-229807a61307", "name": "srv-vigorous-allen"}}}, "security_group":
+      {"id": "e5bf4522-94b4-4933-bebb-9b21f786b4af", "name": "Default security group"},
+      "organization": "14d2f7ae-9775-414c-9bed-6810e060d500"}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "2706"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:10 GMT
+      Location:
+      - https://cp-par1.scaleway.com/servers/88c260ba-1073-4430-a5a9-229807a61307
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": []}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "17"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: way
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: niel
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: world
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/hello
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": ["hello", "scale", "xavier"]}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "43"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/hello
+    method: GET
+  response:
+    body: world
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "5"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: GET
+  response:
+    body: way
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "3"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: GET
+  response:
+    body: niel
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "4"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": ["hello", "scale", "xavier"]}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "43"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/hello
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:11 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: niel
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: way
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: wozniak
+    form: {}
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/steve
+    method: PATCH
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": ["scale", "steve", "xavier"]}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "43"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: GET
+  response:
+    body: way
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "3"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/steve
+    method: GET
+  response:
+    body: wozniak
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "7"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:12 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: GET
+  response:
+    body: niel
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "4"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - text/plain
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": ["scale", "steve", "xavier"]}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "43"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/scale
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/steve
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data/xavier
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.5; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/88c260ba-1073-4430-a5a9-229807a61307/user_data
+    method: GET
+  response:
+    body: '{"user_data": []}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "17"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 24 Jun 2019 15:32:13 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
