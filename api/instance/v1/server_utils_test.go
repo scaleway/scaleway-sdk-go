@@ -1,6 +1,8 @@
 package instance
 
 import (
+	"bytes"
+	"io"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -74,8 +76,8 @@ func TestAPI_ServerUserData(t *testing.T) {
 	testhelpers.Equals(t, contentStr, string(resUserData))
 }
 
-func TestAPI_GetAllServerUserData(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("get-all-server-user-data")
+func TestAPI_AllServerUserData(t *testing.T) {
+	client, r, err := httprecorder.CreateRecordedScwClient("all-server-user-data")
 	testhelpers.Ok(t, err)
 	defer func() {
 		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -93,37 +95,52 @@ func TestAPI_GetAllServerUserData(t *testing.T) {
 	})
 	testhelpers.Ok(t, err)
 
-	data := map[string]string{
-		"hello":  "world",
-		"scale":  "way",
-		"xavier": "niel",
+	steps := []map[string]string{
+		{
+			"hello":  "world",
+			"scale":  "way",
+			"xavier": "niel",
+		},
+		{
+			"xavier": "niel",
+			"scale":  "way",
+			"steve":  "wozniak",
+		},
+		{},
 	}
 
-	for k, v := range data {
-		err = instanceAPI.SetServerUserData(&SetServerUserDataRequest{
+	for _, data := range steps {
+		// create user data
+		userData := make(map[string]io.Reader, len(data))
+		for k, v := range data {
+			userData[k] = bytes.NewBufferString(v)
+		}
+
+		// set all user data
+		err := instanceAPI.SetAllServerUserData(&SetAllServerUserDataRequest{
 			Zone:     utils.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
-			Key:      k,
-			Content:  strings.NewReader(v),
+			UserData: userData,
 		})
 		testhelpers.Ok(t, err)
-	}
 
-	allData, err := instanceAPI.GetAllServerUserData(&GetAllServerUserDataRequest{
-		Zone:     utils.ZoneFrPar1,
-		ServerID: serverRes.Server.ID,
-	})
-	testhelpers.Ok(t, err)
-
-	testhelpers.Equals(t, len(data), len(allData.UserData))
-
-	for expectedKey, expectedValue := range data {
-		readerValue, exists := allData.UserData[expectedKey]
-		testhelpers.Assert(t, exists, "%s key not found in result", expectedKey)
-
-		currentValue, err := ioutil.ReadAll(readerValue)
+		// get all user data
+		allData, err := instanceAPI.GetAllServerUserData(&GetAllServerUserDataRequest{
+			Zone:     utils.ZoneFrPar1,
+			ServerID: serverRes.Server.ID,
+		})
 		testhelpers.Ok(t, err)
 
-		testhelpers.Equals(t, expectedValue, string(currentValue))
+		testhelpers.Equals(t, len(data), len(allData.UserData))
+
+		for expectedKey, expectedValue := range data {
+			currentReader, exists := allData.UserData[expectedKey]
+			testhelpers.Assert(t, exists, "%s key not found in result", expectedKey)
+
+			currentValue, err := ioutil.ReadAll(currentReader)
+			testhelpers.Ok(t, err)
+
+			testhelpers.Equals(t, expectedValue, string(currentValue))
+		}
 	}
 }

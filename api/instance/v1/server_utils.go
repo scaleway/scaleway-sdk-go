@@ -262,7 +262,8 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
-	userDataKeys, err := s.ListServerUserData(&ListServerUserDataRequest{
+	// get all user data keys
+	allUserDataRes, err := s.ListServerUserData(&ListServerUserDataRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
 	})
@@ -271,10 +272,11 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 	}
 
 	res := &GetAllServerUserDataResponse{
-		UserData: make(map[string]io.Reader, len(userDataKeys.UserData)),
+		UserData: make(map[string]io.Reader, len(allUserDataRes.UserData)),
 	}
 
-	for _, key := range userDataKeys.UserData {
+	// build a map with all user data
+	for _, key := range allUserDataRes.UserData {
 		value, err := s.GetServerUserData(&GetServerUserDataRequest{
 			Zone:     req.Zone,
 			ServerID: req.ServerID,
@@ -283,9 +285,77 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 		if err != nil {
 			return nil, err
 		}
-
 		res.UserData[key] = value
 	}
 
 	return res, nil
+}
+
+// SetAllServerUserDataRequest is used by SetAllServerUserData method.
+type SetAllServerUserDataRequest struct {
+	Zone     utils.Zone `json:"-"`
+	ServerID string     `json:"-"`
+
+	// UserData defines all user data that will be set to the server.
+	// This map is idempotent, it means that all the current data will be overwritten and
+	// all keys not present in this map will be deleted.. All data will be removed if this map is nil.
+	UserData map[string]io.Reader `json:"-"`
+}
+
+// SetAllServerUserData sets all user data on a server.
+func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return errors.New("field ServerID cannot be empty in request")
+	}
+
+	// get all current user data keys
+	allUserDataRes, err := s.ListServerUserData(&ListServerUserDataRequest{
+		Zone:     req.Zone,
+		ServerID: req.ServerID,
+	})
+	if err != nil {
+		return err
+	}
+
+	// delete all current user data
+	for _, key := range allUserDataRes.UserData {
+		err := s.DeleteServerUserData(&DeleteServerUserDataRequest{
+			Zone:     req.Zone,
+			ServerID: req.ServerID,
+			Key:      key,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if req.UserData == nil {
+		return nil
+	}
+
+	// set all new user data
+	for key, value := range req.UserData {
+		err := s.SetServerUserData(&SetServerUserDataRequest{
+			Zone:     req.Zone,
+			ServerID: req.ServerID,
+			Key:      key,
+			Content:  value,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
