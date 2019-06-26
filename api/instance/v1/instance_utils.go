@@ -169,10 +169,10 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	if getVolumeResponse.Volume == nil {
-		return nil, fmt.Errorf("expected volume to have value in response")
+		return nil, errors.New("expected volume to have value in response")
 	}
 	if getVolumeResponse.Volume.Server == nil {
-		return nil, fmt.Errorf("server should be attached to a server")
+		return nil, errors.New("server should be attached to a server")
 	}
 	serverID := getVolumeResponse.Volume.Server.ID
 
