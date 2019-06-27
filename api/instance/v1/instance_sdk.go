@@ -305,8 +305,8 @@ const (
 	VolumeTypeLSSD = VolumeType("l_ssd")
 	// VolumeTypeLHdd is [insert doc].
 	VolumeTypeLHdd = VolumeType("l_hdd")
-	// VolumeTypeRSSD is [insert doc].
-	VolumeTypeRSSD = VolumeType("r_ssd")
+	// VolumeTypeBSSD is [insert doc].
+	VolumeTypeBSSD = VolumeType("b_ssd")
 )
 
 func (enum VolumeType) String() string {
