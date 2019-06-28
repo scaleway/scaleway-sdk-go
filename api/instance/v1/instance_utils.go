@@ -152,7 +152,7 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	// update server
-	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
+	updateServerResponse, err := s.updateServer(&updateServerRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
 		Volumes:  &newVolumes,
@@ -214,7 +214,7 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	newVolumes := volumesToVolumeTemplates(volumes)
 
 	// update server
-	updateServerResponse, err := s.UpdateServer(&UpdateServerRequest{
+	updateServerResponse, err := s.updateServer(&updateServerRequest{
 		Zone:     req.Zone,
 		ServerID: serverID,
 		Volumes:  &newVolumes,

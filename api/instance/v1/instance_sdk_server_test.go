@@ -71,12 +71,12 @@ func TestServerUpdate(t *testing.T) {
 		)
 
 		// Update server
-		updateServerResponse, err := instanceAPI.UpdateServer(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer((*updateServerRequest)(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Name:     &newName,
 			Tags:     &updatedTags,
-		})
+		}))
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 		testhelpers.Ok(t, err)
 
@@ -95,11 +95,11 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("remove server volumes", func(t *testing.T) {
 		// Remove/detach volumes
-		updateServerResponse, err := instanceAPI.UpdateServer(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer((*updateServerRequest)(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Volumes:  &map[string]*VolumeTemplate{},
-		})
+		}))
 		testhelpers.Ok(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, 0 == len(updateServerResponse.Server.Volumes), "volume should be detached from server.")
