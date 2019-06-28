@@ -1305,7 +1305,7 @@ func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setS
 	return &resp, nil
 }
 
-type UpdateServerRequest struct {
+type updateServerRequest struct {
 	Zone utils.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -1333,8 +1333,8 @@ type UpdateServerRequest struct {
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
 }
 
-// UpdateServer update server
-func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
+// updateServer update server
+func (s *API) updateServer(req *updateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	var err error
 
 	if req.Zone == "" {
