@@ -630,8 +630,6 @@ type Server struct {
 	Volumes map[string]*Volume `json:"volumes,omitempty"`
 	// Bootscript display the server bootscript
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
-	// DynamicPublicIP display the server dynamic public IP
-	DynamicPublicIP bool `json:"dynamic_public_ip,omitempty"`
 	// CommercialType display the server commercial type (e.g. GP1-M)
 	CommercialType string `json:"commercial_type,omitempty"`
 	// CreationDate display the server creation date
@@ -1061,7 +1059,7 @@ type CreateServerRequest struct {
 	// Name display the server name
 	Name string `json:"name,omitempty"`
 	// DynamicIPRequired define if a dynamic IP is required for the instance
-	DynamicIPRequired bool `json:"dynamic_ip_required,omitempty"`
+	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 	// CommercialType define the server commercial type (i.e. GP1-S)
 	CommercialType string `json:"commercial_type,omitempty"`
 	// Image define the server image id
@@ -1218,8 +1216,6 @@ type setServerRequest struct {
 	CreationDate time.Time `json:"creation_date"`
 	// DynamicIPRequired display if a dynamic IP is required
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
-	// DynamicPublicIP display the server dynamic public IP
-	DynamicPublicIP bool `json:"dynamic_public_ip"`
 	// EnableIPv6 display if IPv6 is enabled
 	EnableIPv6 bool `json:"enable_ipv6"`
 	// ExtraNetworks display information about additional network interfaces
