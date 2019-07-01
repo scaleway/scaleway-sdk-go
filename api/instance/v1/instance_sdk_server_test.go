@@ -23,7 +23,7 @@ func TestServerUpdate(t *testing.T) {
 		volumeID          string
 		zone              = utils.ZoneFrPar1
 		name              = "instance_sdk_server_test"
-		dynamicIPRequired = true
+		dynamicIPRequired = utils.Bool(true)
 		commercialType    = "START1-S"
 		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
 		enableIPv6        = true
@@ -61,7 +61,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Equals(t, bootType, createServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, createServerResponse.Server.CommercialType)
 		testhelpers.Equals(t, tags, createServerResponse.Server.Tags)
-		testhelpers.Equals(t, dynamicIPRequired, createServerResponse.Server.DynamicIPRequired)
+		testhelpers.Equals(t, *dynamicIPRequired, createServerResponse.Server.DynamicIPRequired)
 	})
 
 	t.Run("update server", func(t *testing.T) {
@@ -86,7 +86,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Equals(t, enableIPv6, updateServerResponse.Server.EnableIPv6)
 		testhelpers.Equals(t, bootType, updateServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, updateServerResponse.Server.CommercialType)
-		testhelpers.Equals(t, dynamicIPRequired, updateServerResponse.Server.DynamicIPRequired)
+		testhelpers.Equals(t, *dynamicIPRequired, updateServerResponse.Server.DynamicIPRequired)
 		testhelpers.Assert(t, 1 == len(updateServerResponse.Server.Volumes), "should have exactly one volume because we didn't pass volumes map in the requests.")
 
 		testhelpers.Equals(t, newName, updateServerResponse.Server.Name)
