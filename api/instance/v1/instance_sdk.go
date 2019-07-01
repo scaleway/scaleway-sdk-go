@@ -64,6 +64,40 @@ func (enum Arch) String() string {
 	return string(enum)
 }
 
+type ComputeClusterPolicyMode string
+
+const (
+	// ComputeClusterPolicyModeOptional is [insert doc].
+	ComputeClusterPolicyModeOptional = ComputeClusterPolicyMode("optional")
+	// ComputeClusterPolicyModeEnforced is [insert doc].
+	ComputeClusterPolicyModeEnforced = ComputeClusterPolicyMode("enforced")
+)
+
+func (enum ComputeClusterPolicyMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "optional"
+	}
+	return string(enum)
+}
+
+type ComputeClusterPolicyType string
+
+const (
+	// ComputeClusterPolicyTypeLowLatency is [insert doc].
+	ComputeClusterPolicyTypeLowLatency = ComputeClusterPolicyType("low_latency")
+	// ComputeClusterPolicyTypeMaxAvailability is [insert doc].
+	ComputeClusterPolicyTypeMaxAvailability = ComputeClusterPolicyType("max_availability")
+)
+
+func (enum ComputeClusterPolicyType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "low_latency"
+	}
+	return string(enum)
+}
+
 type GetServerTypesAvailabilityResponseAvailability string
 
 const (
@@ -342,6 +376,37 @@ type Bootscript struct {
 	Title string `json:"title,omitempty"`
 }
 
+type ComputeCluster struct {
+	// ID display compute-cluster unique ID
+	ID string `json:"id,omitempty"`
+	// Name display compute-cluster name
+	Name string `json:"name,omitempty"`
+	// Organization display compute-cluster organization
+	Organization string `json:"organization,omitempty"`
+	// PolicyMode select the failling mode when the placement cannot be  respected, either optional or enforced
+	//
+	// Default value: optional
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode,omitempty"`
+	// PolicyType select the behavior of the compute-cluster, either low_latency (group) or max_availability (spread)
+	//
+	// Default value: low_latency
+	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
+	// PolicyRespected indicate if the selected policy is respected. Returns true if the policy is respected, false otherwise
+	PolicyRespected bool `json:"policy_respected,omitempty"`
+}
+
+type ComputeClusterServer struct {
+	ID string `json:"id,omitempty"`
+
+	Name string `json:"name,omitempty"`
+
+	PolicyRespected bool `json:"policy_respected,omitempty"`
+}
+
+type CreateComputeClusterResponse struct {
+	ComputeCluster *ComputeCluster `json:"compute_cluster,omitempty"`
+}
+
 type CreateIPResponse struct {
 	IP *IP `json:"ip,omitempty"`
 
@@ -398,6 +463,14 @@ type Dashboard struct {
 
 type GetBootscriptResponse struct {
 	Bootscript *Bootscript `json:"bootscript,omitempty"`
+}
+
+type GetComputeClusterResponse struct {
+	ComputeCluster *ComputeCluster `json:"compute_cluster,omitempty"`
+}
+
+type GetComputeClusterServersResponse struct {
+	Servers []*ComputeClusterServer `json:"servers,omitempty"`
 }
 
 type GetDashboardResponse struct {
@@ -482,6 +555,10 @@ type ListBootscriptsResponse struct {
 	Bootscripts []*Bootscript `json:"bootscripts,omitempty"`
 
 	TotalCount uint32 `json:"total_count,omitempty"`
+}
+
+type ListComputeClustersResponse struct {
+	ComputeCluster []*ComputeCluster `json:"compute_cluster,omitempty"`
 }
 
 type ListImagesResponse struct {
@@ -662,6 +739,8 @@ type Server struct {
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
 	// StateDetail display the server state_detail
 	StateDetail string `json:"state_detail,omitempty"`
+	// ComputeCluster display the server ComputeCluster
+	ComputeCluster *ComputeCluster `json:"compute_cluster,omitempty"`
 }
 
 type ServerActionResponse struct {
@@ -759,6 +838,14 @@ type ServerTypeVolumeConstraintsByType struct {
 	LSSD *ServerTypeVolumeConstraintSizes `json:"l_ssd,omitempty"`
 }
 
+type SetComputeClusterResponse struct {
+	ComputeClusterID string `json:"compute_cluster_id,omitempty"`
+}
+
+type SetComputeClusterServersResponse struct {
+	Servers []*ComputeClusterServer `json:"servers,omitempty"`
+}
+
 type Snapshot struct {
 	ID string `json:"id,omitempty"`
 
@@ -808,6 +895,14 @@ type Task struct {
 	Status TaskStatus `json:"status,omitempty"`
 	// TerminatedAt display the task end date
 	TerminatedAt time.Time `json:"terminated_at,omitempty"`
+}
+
+type UpdateComputeClusterResponse struct {
+	ComputeClusterID string `json:"compute_cluster_id,omitempty"`
+}
+
+type UpdateComputeClusterServersResponse struct {
+	Servers []*ComputeClusterServer `json:"servers,omitempty"`
 }
 
 type UpdateIPResponse struct {
@@ -1080,6 +1175,8 @@ type CreateServerRequest struct {
 	Tags []string `json:"tags,omitempty"`
 	// SecurityGroup define the security group id
 	SecurityGroup string `json:"security_group,omitempty"`
+	// ComputeClusterID computeCluster key if server must be part of a ComputeCluster
+	ComputeClusterID string `json:"compute_cluster_id,omitempty"`
 }
 
 // CreateServer create server
@@ -1258,6 +1355,8 @@ type setServerRequest struct {
 	//
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
+	// ComputeCluster display the server ComputeCluster
+	ComputeCluster *ComputeCluster `json:"compute_cluster"`
 }
 
 func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setServerResponse, error) {
@@ -2846,6 +2945,448 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 		return nil, err
 	}
 	return &resp, nil
+}
+
+type ListComputeClustersRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	Organization *string `json:"-"`
+
+	PerPage *int32 `json:"-"`
+
+	Page *int32 `json:"-"`
+}
+
+func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.RequestOption) (*ListComputeClustersResponse, error) {
+	var err error
+
+	defaultOrganization, exist := s.client.GetDefaultProjectID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListComputeClustersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateComputeClusterRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	Name string `json:"name,omitempty"`
+
+	Organization string `json:"organization,omitempty"`
+	// PolicyMode
+	//
+	// Default value: optional
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode,omitempty"`
+	// PolicyType
+	//
+	// Default value: low_latency
+	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
+}
+
+func (s *API) CreateComputeCluster(req *CreateComputeClusterRequest, opts ...scw.RequestOption) (*CreateComputeClusterResponse, error) {
+	var err error
+
+	if req.Organization == "" {
+		defaultOrganization, _ := s.client.GetDefaultProjectID()
+		req.Organization = defaultOrganization
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CreateComputeClusterResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetComputeClusterRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) GetComputeCluster(req *GetComputeClusterRequest, opts ...scw.RequestOption) (*GetComputeClusterResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp GetComputeClusterResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetComputeClusterRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+
+	Name string `json:"name"`
+
+	Organization string `json:"organization"`
+	// PolicyMode
+	//
+	// Default value: optional
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode"`
+	// PolicyType
+	//
+	// Default value: low_latency
+	PolicyType ComputeClusterPolicyType `json:"policy_type"`
+}
+
+func (s *API) SetComputeCluster(req *SetComputeClusterRequest, opts ...scw.RequestOption) (*SetComputeClusterResponse, error) {
+	var err error
+
+	if req.Organization == "" {
+		defaultOrganization, _ := s.client.GetDefaultProjectID()
+		req.Organization = defaultOrganization
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetComputeClusterResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateComputeClusterRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+
+	Name *string `json:"name,omitempty"`
+
+	Organization *string `json:"organization,omitempty"`
+	// PolicyMode
+	//
+	// Default value: optional
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode,omitempty"`
+	// PolicyType
+	//
+	// Default value: low_latency
+	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
+}
+
+func (s *API) UpdateComputeCluster(req *UpdateComputeClusterRequest, opts ...scw.RequestOption) (*UpdateComputeClusterResponse, error) {
+	var err error
+
+	defaultOrganization, exist := s.client.GetDefaultProjectID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateComputeClusterResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteComputeClusterRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) DeleteComputeCluster(req *DeleteComputeClusterRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetComputeClusterServersRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) GetComputeClusterServers(req *GetComputeClusterServersRequest, opts ...scw.RequestOption) (*GetComputeClusterServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "/servers",
+		Headers: http.Header{},
+	}
+
+	var resp GetComputeClusterServersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetComputeClusterServersRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) SetComputeClusterServers(req *SetComputeClusterServersRequest, opts ...scw.RequestOption) (*SetComputeClusterServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "/servers",
+		Headers: http.Header{},
+	}
+
+	var resp SetComputeClusterServersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateComputeClusterServersRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) UpdateComputeClusterServers(req *UpdateComputeClusterServersRequest, opts ...scw.RequestOption) (*UpdateComputeClusterServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return nil, errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "/servers",
+		Headers: http.Header{},
+	}
+
+	var resp UpdateComputeClusterServersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteComputeClusterServersRequest struct {
+	Zone utils.Zone `json:"-"`
+
+	ComputeClusterID string `json:"-"`
+}
+
+func (s *API) DeleteComputeClusterServers(req *DeleteComputeClusterServersRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ComputeClusterID) == "" {
+		return errors.New("field ComputeClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/compute_clusters/" + fmt.Sprint(req.ComputeClusterID) + "/servers",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type ListIpsRequest struct {
