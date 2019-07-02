@@ -13,6 +13,7 @@ var (
 	resourceLock sync.Map
 )
 
+// lockResource locks a resource from a specific resourceID
 func lockResource(resourceID string) *sync.Mutex {
 	v, _ := resourceLock.LoadOrStore(resourceID, &sync.Mutex{})
 	mutex := v.(*sync.Mutex)
@@ -20,6 +21,7 @@ func lockResource(resourceID string) *sync.Mutex {
 	return mutex
 }
 
+// lockServer locks a server from its zone and its ID
 func lockServer(zone utils.Zone, serverID string) *sync.Mutex {
 	return lockResource(fmt.Sprint("server", zone, serverID))
 }
@@ -129,6 +131,8 @@ func volumesToVolumeTemplates(volumes map[string]*Volume) map[string]*VolumeTemp
 }
 
 // AttachVolume attaches a volume to a server
+//
+// Note: Implementation is thread-safe.
 func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) (*AttachVolumeResponse, error) {
 	defer lockServer(req.Zone, req.ServerID).Unlock()
 	// get server with volumes
@@ -176,8 +180,9 @@ type DetachVolumeResponse struct {
 }
 
 // DetachVolume detaches a volume from a server
+//
+// Note: Implementation is thread-safe.
 func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) (*DetachVolumeResponse, error) {
-
 	// get volume
 	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
 		Zone:     req.Zone,
@@ -274,10 +279,14 @@ func (r *ListVolumesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
+// UnsafeGetTotalCount should not be used
+// Internal usage only
 func (r *ListServersTypesResponse) UnsafeGetTotalCount() int {
 	return int(r.TotalCount)
 }
 
+// UnsafeAppend should not be used
+// Internal usage only
 func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 	results, ok := res.(*ListServersTypesResponse)
 	if !ok {
