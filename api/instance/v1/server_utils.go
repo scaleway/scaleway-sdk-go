@@ -15,7 +15,9 @@ import (
 
 type UpdateServerRequest updateServerRequest
 
-// updateServer update server
+// UpdateServer update server
+//
+// Node: Implementation is thread-safe.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	defer lockServer(req.Zone, req.ServerID).Unlock()
 	return s.updateServer((*updateServerRequest)(req), opts...)
