@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestGetImageByName(t *testing.T) {
@@ -22,7 +22,7 @@ func TestGetImageByName(t *testing.T) {
 		marketplaceAPI := NewAPI(client)
 
 		imageID, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
-			Zone:           utils.ZoneFrPar1,
+			Zone:           scw.ZoneFrPar1,
 			CommercialType: "C1",
 			ImageName:      "Docker",
 		})
@@ -39,7 +39,7 @@ func TestGetImageByName(t *testing.T) {
 		marketplaceAPI := NewAPI(client)
 
 		_, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
-			Zone:           utils.ZoneFrPar1,
+			Zone:           scw.ZoneFrPar1,
 			CommercialType: "",
 			ImageName:      "foo-bar-image",
 		})

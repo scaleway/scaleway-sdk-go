@@ -10,7 +10,6 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
@@ -89,19 +88,19 @@ func TestGetHeadersWithBody(t *testing.T) {
 func TestSetBody(t *testing.T) {
 
 	body := struct {
-		Region  utils.Region   `json:"-"`
+		Region  Region         `json:"-"`
 		Id      string         `json:"-"`
 		Name    string         `json:"name,omitempty"`
 		Slice   []string       `json:"slice,omitempty"`
 		Flag    bool           `json:"flag,omitempty"`
 		Timeout *time.Duration `json:"timeout,omitempty"`
 	}{
-		Region:  utils.RegionNlAms,
+		Region:  RegionNlAms,
 		Id:      "plop",
 		Name:    "plop",
 		Slice:   []string{"plop", "plop"},
 		Flag:    true,
-		Timeout: utils.Duration(time.Second),
+		Timeout: Duration(time.Second),
 	}
 
 	req := ScalewayRequest{
@@ -125,7 +124,7 @@ func TestSetBody(t *testing.T) {
 
 func TestSetFileBody(t *testing.T) {
 
-	body := &utils.File{
+	body := &File{
 		Content:     bytes.NewReader([]byte(testBody)),
 		ContentType: "plain/text",
 	}

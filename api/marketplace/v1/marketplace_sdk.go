@@ -16,7 +16,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // always import dependencies
@@ -31,7 +30,7 @@ var (
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
-	_ utils.File
+	_ scw.File
 	_ = parameter.AddToQuery
 )
 
@@ -104,7 +103,7 @@ type LocalImage struct {
 
 	Arch string `json:"arch,omitempty"`
 
-	Zone utils.Zone `json:"zone,omitempty"`
+	Zone scw.Zone `json:"zone,omitempty"`
 
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types,omitempty"`
 }

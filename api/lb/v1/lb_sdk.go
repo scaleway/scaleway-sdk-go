@@ -16,7 +16,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // always import dependencies
@@ -31,7 +30,7 @@ var (
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
-	_ utils.File
+	_ scw.File
 	_ = parameter.AddToQuery
 )
 
@@ -735,7 +734,7 @@ type IP struct {
 
 	Reverse string `json:"reverse,omitempty"`
 
-	Region utils.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 }
 
 type Instance struct {
@@ -747,7 +746,7 @@ type Instance struct {
 
 	IPAddress string `json:"ip_address,omitempty"`
 
-	Region utils.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 }
 
 type Lb struct {
@@ -773,7 +772,7 @@ type Lb struct {
 
 	BackendCount int32 `json:"backend_count,omitempty"`
 
-	Region utils.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 }
 
 type LbStats struct {
@@ -824,10 +823,10 @@ type ListLbsResponse struct {
 // Service API
 
 type GetServiceInfoRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 }
 
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*utils.ServiceInfo, error) {
+func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
 	var err error
 
 	if req.Region == "" {
@@ -845,7 +844,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 		Headers: http.Header{},
 	}
 
-	var resp utils.ServiceInfo
+	var resp scw.ServiceInfo
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -855,7 +854,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 }
 
 type ListLbsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// Name use this to search by name
 	Name *string `json:"-"`
 	// OrderBy
@@ -935,7 +934,7 @@ func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 }
 
 type CreateLbRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// OrganizationID owner of resources
 	OrganizationID string `json:"organization_id,omitempty"`
 	// Name resource names
@@ -986,7 +985,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 }
 
 type GetLbRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	LbID string `json:"-"`
 }
@@ -1023,7 +1022,7 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 }
 
 type UpdateLbRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
@@ -1071,7 +1070,7 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 }
 
 type DeleteLbRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// ReleaseIP set true if you don't want to keep this IP address
@@ -1112,7 +1111,7 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 }
 
 type ListIPsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
@@ -1188,7 +1187,7 @@ func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 }
 
 type GetIPRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// IPID
 	//
 	// IP address ID
@@ -1228,7 +1227,7 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 }
 
 type ReleaseIPRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// IPID iP address ID
 	IPID string `json:"-"`
 }
@@ -1264,7 +1263,7 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 }
 
 type UpdateIPRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// IPID iP address ID
 	IPID string `json:"-"`
 	// Reverse reverse DNS
@@ -1307,7 +1306,7 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 }
 
 type ListBackendsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name use this to search by name
@@ -1385,7 +1384,7 @@ func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError)
 }
 
 type CreateBackendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
@@ -1501,7 +1500,7 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 }
 
 type GetBackendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID
 	BackendID string `json:"-"`
 }
@@ -1538,7 +1537,7 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 }
 
 type UpdateBackendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID to update
 	BackendID string `json:"-"`
 	// Name resource name
@@ -1650,7 +1649,7 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 }
 
 type DeleteBackendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID iD of the backend to delete
 	BackendID string `json:"-"`
 }
@@ -1685,7 +1684,7 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 }
 
 type AddBackendServersRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to remove of your backend
@@ -1729,7 +1728,7 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 }
 
 type RemoveBackendServersRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to remove of your backend
@@ -1773,7 +1772,7 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 }
 
 type SetBackendServersRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to add of your backend and remove all other
@@ -1817,7 +1816,7 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 }
 
 type UpdateHealthCheckRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// Port specify the port used to health check
@@ -1944,7 +1943,7 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 }
 
 type ListFrontendsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name use this to search by name
@@ -2022,7 +2021,7 @@ func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError
 }
 
 type CreateFrontendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
@@ -2106,7 +2105,7 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 }
 
 type GetFrontendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// FrontendID frontend ID
 	FrontendID string `json:"-"`
 }
@@ -2143,7 +2142,7 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 }
 
 type UpdateFrontendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// FrontendID frontend ID
 	FrontendID string `json:"-"`
 	// Name resource name
@@ -2227,7 +2226,7 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 }
 
 type DeleteFrontendRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// FrontendID frontend ID to delete
 	FrontendID string `json:"-"`
 }
@@ -2262,7 +2261,7 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 }
 
 type GetLbStatsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 }
@@ -2299,7 +2298,7 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 }
 
 type ListAclsRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
 	// OrderBy you can order the response by created_at asc/desc or name asc/desc
@@ -2377,7 +2376,7 @@ func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 }
 
 type CreateACLRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
 	// Name name of your ACL ressource
@@ -2427,7 +2426,7 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 }
 
 type GetACLRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 }
@@ -2464,7 +2463,7 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 }
 
 type UpdateACLRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 	// Name name of your ACL ressource
@@ -2514,7 +2513,7 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 }
 
 type DeleteACLRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 	// ACLID iD of your ACL ressource
 	ACLID string `json:"-"`
 }
@@ -2549,7 +2548,7 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 }
 
 type CreateCertificateRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	LbID string `json:"-"`
 
@@ -2604,7 +2603,7 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 }
 
 type ListCertificatesRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	LbID string `json:"-"`
 	// OrderBy
@@ -2682,7 +2681,7 @@ func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (int, scw.SdkEr
 }
 
 type GetCertificateRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	CertificateID string `json:"-"`
 }
@@ -2719,7 +2718,7 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 }
 
 type UpdateCertificateRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	CertificateID string `json:"-"`
 
@@ -2763,7 +2762,7 @@ func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.Reque
 }
 
 type DeleteCertificateRequest struct {
-	Region utils.Region `json:"-"`
+	Region scw.Region `json:"-"`
 
 	CertificateID string `json:"-"`
 }

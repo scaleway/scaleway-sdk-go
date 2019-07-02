@@ -10,7 +10,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/logger"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
@@ -19,8 +18,8 @@ const (
 	testAccessKey        = "ACCESS_KEY"
 	testSecretKey        = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	testDefaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	testDefaultRegion    = utils.RegionFrPar
-	testDefaultZone      = utils.ZoneFrPar1
+	testDefaultRegion    = RegionFrPar
+	testDefaultZone      = ZoneFrPar1
 	testDefaultPageSize  = int32(5)
 	testInsecure         = true
 )
@@ -40,27 +39,27 @@ func TestNewClientWithDefaults(t *testing.T) {
 
 }
 
-type TestConfig struct{}
+type mockConfig struct{}
 
-func (c *TestConfig) GetAccessKey() (string, bool) {
+func (c *mockConfig) GetAccessKey() (string, bool) {
 	return testAccessKey, true
 }
-func (c *TestConfig) GetSecretKey() (string, bool) {
+func (c *mockConfig) GetSecretKey() (string, bool) {
 	return testSecretKey, true
 }
-func (c *TestConfig) GetAPIURL() (string, bool) {
+func (c *mockConfig) GetAPIURL() (string, bool) {
 	return testAPIURL, true
 }
-func (c *TestConfig) GetInsecure() (bool, bool) {
+func (c *mockConfig) GetInsecure() (bool, bool) {
 	return testInsecure, true
 }
-func (c *TestConfig) GetDefaultProjectID() (string, bool) {
+func (c *mockConfig) GetDefaultProjectID() (string, bool) {
 	return testDefaultProjectID, true
 }
-func (c *TestConfig) GetDefaultRegion() (utils.Region, bool) {
+func (c *mockConfig) GetDefaultRegion() (Region, bool) {
 	return testDefaultRegion, true
 }
-func (c *TestConfig) GetDefaultZone() (utils.Zone, bool) {
+func (c *mockConfig) GetDefaultZone() (Zone, bool) {
 	return testDefaultZone, true
 }
 
@@ -105,7 +104,7 @@ func TestNewClientWithOptions(t *testing.T) {
 	})
 
 	t.Run("With scwconfig", func(t *testing.T) {
-		config := &TestConfig{}
+		config := &mockConfig{}
 
 		client, err := NewClient(WithConfig(config))
 		testhelpers.Ok(t, err)
@@ -168,4 +167,12 @@ func TestSetInsecureMode(t *testing.T) {
 	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
+}
+
+func TestNewPage(t *testing.T) {
+	type fakeType struct {
+		plop int
+	}
+
+	testhelpers.Equals(t, &fakeType{}, newPage(&fakeType{3}))
 }

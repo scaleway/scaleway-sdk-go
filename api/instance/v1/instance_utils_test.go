@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestInstanceHelpers(t *testing.T) {
@@ -22,7 +22,7 @@ func TestInstanceHelpers(t *testing.T) {
 		serverID     string
 		ipID         string
 		volumeID     string
-		zone         = utils.ZoneFrPar1
+		zone         = scw.ZoneFrPar1
 		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
 		reverse      = "1.1.1.1"
