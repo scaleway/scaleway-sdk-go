@@ -13,7 +13,7 @@ var (
 	resourceLock sync.Map
 )
 
-// lockResource lock a resource from a specific resourceID.
+// lockResource locks a resource from a specific resourceID.
 func lockResource(resourceID string) *sync.Mutex {
 	v, _ := resourceLock.LoadOrStore(resourceID, &sync.Mutex{})
 	mutex := v.(*sync.Mutex)
@@ -21,7 +21,7 @@ func lockResource(resourceID string) *sync.Mutex {
 	return mutex
 }
 
-// lockServer lock a server from its zone and its ID.
+// lockServer locks a server from its zone and its ID.
 func lockServer(zone utils.Zone, serverID string) *sync.Mutex {
 	return lockResource(fmt.Sprint("server", zone, serverID))
 }

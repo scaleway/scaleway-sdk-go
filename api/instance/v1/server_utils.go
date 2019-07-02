@@ -15,7 +15,7 @@ import (
 
 type UpdateServerRequest updateServerRequest
 
-// UpdateServer update server
+// UpdateServer updates a server
 //
 // Node: Implementation is thread-safe.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
