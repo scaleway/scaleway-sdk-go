@@ -132,7 +132,7 @@ func volumesToVolumeTemplates(volumes map[string]*Volume) map[string]*VolumeTemp
 
 // AttachVolume attaches a volume to a server
 //
-// Node: Implementation is thread-safe.
+// Note: Implementation is thread-safe.
 func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) (*AttachVolumeResponse, error) {
 	defer lockServer(req.Zone, req.ServerID).Unlock()
 	// get server with volumes
@@ -181,7 +181,7 @@ type DetachVolumeResponse struct {
 
 // DetachVolume detaches a volume from a server
 //
-// Node: Implementation is thread-safe.
+// Note: Implementation is thread-safe.
 func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) (*DetachVolumeResponse, error) {
 	// get volume
 	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
