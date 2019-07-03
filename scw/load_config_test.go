@@ -1,4 +1,4 @@
-package scwconfig
+package scw
 
 import (
 	"io/ioutil"
@@ -195,7 +195,7 @@ func TestLoad(t *testing.T) {
 			defer cleanEnv(t, test.files, dir)
 
 			// load config
-			config, err := Load()
+			config, err := LoadConfig()
 
 			// test expected outputs
 			if test.expectedErr != "" {

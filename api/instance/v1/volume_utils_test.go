@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestUpdateVolmue(t *testing.T) {
@@ -19,7 +19,7 @@ func TestUpdateVolmue(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone                 = utils.ZoneFrPar1
+		zone                 = scw.ZoneFrPar1
 		organization         = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 		volumeName           = "test volume"
 		volumeSize    uint64 = 20000000000

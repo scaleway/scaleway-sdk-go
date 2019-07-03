@@ -10,7 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestAPI_GetServerType(t *testing.T) {
@@ -23,7 +23,7 @@ func TestAPI_GetServerType(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	serverType, err := instanceAPI.GetServerType(&GetServerTypeRequest{
-		Zone: utils.ZoneFrPar1,
+		Zone: scw.ZoneFrPar1,
 		Name: "GP1-XS",
 	})
 
@@ -46,7 +46,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 	contentStr := "world"
 
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
-		Zone:           utils.ZoneFrPar1,
+		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		BootType:       ServerBootTypeLocal,
@@ -57,7 +57,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 
 	content := strings.NewReader(contentStr)
 	err = instanceAPI.SetServerUserData(&SetServerUserDataRequest{
-		Zone:     utils.ZoneFrPar1,
+		Zone:     scw.ZoneFrPar1,
 		ServerID: serverRes.Server.ID,
 		Key:      key,
 		Content:  content,
@@ -65,7 +65,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 	testhelpers.Ok(t, err)
 
 	data, err := instanceAPI.GetServerUserData(&GetServerUserDataRequest{
-		Zone:     utils.ZoneFrPar1,
+		Zone:     scw.ZoneFrPar1,
 		ServerID: serverRes.Server.ID,
 		Key:      key,
 	})
@@ -86,7 +86,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
-		Zone:           utils.ZoneFrPar1,
+		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		BootType:       ServerBootTypeLocal,
@@ -121,7 +121,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 
 		// set all user data
 		err := instanceAPI.SetAllServerUserData(&SetAllServerUserDataRequest{
-			Zone:     utils.ZoneFrPar1,
+			Zone:     scw.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
 			UserData: userData,
 		})
@@ -129,7 +129,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 
 		// get all user data
 		allData, err := instanceAPI.GetAllServerUserData(&GetAllServerUserDataRequest{
-			Zone:     utils.ZoneFrPar1,
+			Zone:     scw.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
 		})
 		testhelpers.Ok(t, err)

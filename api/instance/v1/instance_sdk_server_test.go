@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestServerUpdate(t *testing.T) {
@@ -21,9 +21,9 @@ func TestServerUpdate(t *testing.T) {
 	var (
 		serverID          string
 		volumeID          string
-		zone              = utils.ZoneFrPar1
+		zone              = scw.ZoneFrPar1
 		name              = "instance_sdk_server_test"
-		dynamicIPRequired = utils.Bool(true)
+		dynamicIPRequired = scw.Bool(true)
 		commercialType    = "START1-S"
 		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
 		enableIPv6        = true
@@ -134,7 +134,7 @@ func TestCreateServerWithIncorrectBody(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone = utils.ZoneFrPar1
+		zone = scw.ZoneFrPar1
 	)
 
 	// Create server

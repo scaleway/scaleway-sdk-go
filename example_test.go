@@ -6,8 +6,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/api/lb/v1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/scwconfig"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 func Example_apiClient() {
@@ -32,7 +30,7 @@ func Example_apiClient() {
 func Example_apiClientWithConfig() {
 
 	// Get Scaleway Config
-	config, err := scwconfig.Load()
+	config, err := scw.LoadConfig()
 	if err != nil {
 		// handle error
 	}
@@ -69,7 +67,7 @@ func Example_listServers() {
 
 	// Call the ListServers method on the Instance SDK
 	response, err := instanceAPI.ListServers(&instance.ListServersRequest{
-		Zone: utils.ZoneFrPar1,
+		Zone: scw.ZoneFrPar1,
 	})
 	if err != nil {
 		// handle error
@@ -89,7 +87,7 @@ func Example_createLoadBalancer() {
 		// handle error
 	}
 
-	// Create SDK objects for Scaleway Load Balancer product
+	// Create SDK objects for Scaleway LoadConfig Balancer product
 	lbAPI := lb.NewAPI(client)
 
 	// Call the CreateLb method on the LB SDK to create a new load balancer.
@@ -97,7 +95,7 @@ func Example_createLoadBalancer() {
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
 		OrganizationID: "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-		Region:         utils.RegionFrPar,
+		Region:         scw.RegionFrPar,
 	})
 
 	if err != nil {

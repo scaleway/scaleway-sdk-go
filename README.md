@@ -56,7 +56,7 @@ func main() {
 
 	// Call the ListServers method on the Instance SDK
 	response, err := instanceApi.ListServers(&instance.ListServersRequest{
-		Zone: utils.ZoneFrPar1,
+		Zone: scw.ZoneFrPar1,
 	})
 	if err != nil {
 		panic(err)

@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // getLocalImage returns the correct local version of an image matching
 // the current zone and the compatible commercial type
-func (version *Version) getLocalImage(zone utils.Zone, commercialType string) (*LocalImage, error) {
+func (version *Version) getLocalImage(zone scw.Zone, commercialType string) (*LocalImage, error) {
 
 	for _, localImage := range version.LocalImages {
 
@@ -46,7 +45,7 @@ func (image *Image) getLatestVersion() (*Version, error) {
 // GetLocalImageIDByNameRequest is used by FindLocalImageIDByName
 type GetLocalImageIDByNameRequest struct {
 	ImageName      string
-	Zone           utils.Zone
+	Zone           scw.Zone
 	CommercialType string
 }
 

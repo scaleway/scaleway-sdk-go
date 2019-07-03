@@ -5,7 +5,6 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 const (
@@ -14,11 +13,11 @@ const (
 
 var (
 	defaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultRegion    = utils.RegionNlAms
-	defaultZone      = utils.ZoneNlAms1
+	defaultRegion    = RegionNlAms
+	defaultZone      = ZoneNlAms1
 )
 
-func TestSettings(t *testing.T) {
+func TestClientOptions(t *testing.T) {
 
 	testCases := []struct {
 		name         string
@@ -62,7 +61,7 @@ func TestSettings(t *testing.T) {
 		{
 			name: "Should throw a region error",
 			clientOption: func(s *settings) {
-				v := utils.Region("")
+				v := Region("")
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultRegion = &v
 			},
@@ -71,7 +70,7 @@ func TestSettings(t *testing.T) {
 		{
 			name: "Should throw a zone error",
 			clientOption: func(s *settings) {
-				v := utils.Zone("")
+				v := Zone("")
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultZone = &v
 			},

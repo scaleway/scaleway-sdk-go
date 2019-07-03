@@ -16,7 +16,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/utils"
 )
 
 // always import dependencies
@@ -31,7 +30,7 @@ var (
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
-	_ utils.File
+	_ scw.File
 	_ = parameter.AddToQuery
 )
 
@@ -978,7 +977,7 @@ type setSnapshotResponse struct {
 // Service API
 
 type GetServerTypesAvailabilityRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	PerPage *int32 `json:"-"`
 
@@ -1026,7 +1025,7 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 }
 
 type ListServersTypesRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	PerPage *int32 `json:"-"`
 
@@ -1074,7 +1073,7 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 }
 
 type ListServersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -1150,7 +1149,7 @@ func (r *ListServersResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) 
 }
 
 type CreateServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 	// Name display the server name
 	Name string `json:"name,omitempty"`
 	// DynamicIPRequired define if a dynamic IP is required for the instance
@@ -1218,7 +1217,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 }
@@ -1256,7 +1255,7 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 }
 
 type GetServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 }
@@ -1296,7 +1295,7 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetS
 }
 
 type setServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 	// ID display the server unique ID
 	ID string `json:"-"`
 	// Name display the server name
@@ -1401,7 +1400,7 @@ func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setS
 }
 
 type updateServerRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 
@@ -1466,7 +1465,7 @@ func (s *API) updateServer(req *updateServerRequest, opts ...scw.RequestOption) 
 }
 
 type ListServerActionsRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 }
@@ -1506,7 +1505,7 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 }
 
 type ServerActionRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 	// Action
@@ -1555,7 +1554,7 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 }
 
 type ListServerUserDataRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 }
@@ -1595,7 +1594,7 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 }
 
 type DeleteServerUserDataRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
 
@@ -1639,7 +1638,7 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 }
 
 type ListImagesRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -1723,7 +1722,7 @@ func (r *ListImagesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 }
 
 type GetImageRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ImageID string `json:"-"`
 }
@@ -1763,7 +1762,7 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 }
 
 type CreateImageRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -1821,7 +1820,7 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 }
 
 type setImageRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
 
@@ -1897,7 +1896,7 @@ func (s *API) setImage(req *setImageRequest, opts ...scw.RequestOption) (*setIma
 }
 
 type DeleteImageRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ImageID string `json:"-"`
 }
@@ -1935,7 +1934,7 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 }
 
 type ListSnapshotsRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -2011,7 +2010,7 @@ func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError
 }
 
 type CreateSnapshotRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	VolumeID string `json:"volume_id,omitempty"`
 
@@ -2059,7 +2058,7 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type GetSnapshotRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SnapshotID string `json:"-"`
 }
@@ -2099,7 +2098,7 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 }
 
 type setSnapshotRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
 
@@ -2169,7 +2168,7 @@ func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteSnapshotRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SnapshotID string `json:"-"`
 }
@@ -2207,7 +2206,7 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type ListVolumesRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -2283,7 +2282,7 @@ func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) 
 }
 
 type CreateVolumeRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -2354,7 +2353,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 }
 
 type GetVolumeRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	VolumeID string `json:"-"`
 }
@@ -2394,7 +2393,7 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 }
 
 type DeleteVolumeRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	VolumeID string `json:"-"`
 }
@@ -2432,7 +2431,7 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 }
 
 type ListSecurityGroupsRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -2510,7 +2509,7 @@ func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (int, scw.Sdk
 }
 
 type CreateSecurityGroupRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -2570,7 +2569,7 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 }
 
 type GetSecurityGroupRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 }
@@ -2610,7 +2609,7 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 }
 
 type DeleteSecurityGroupRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 }
@@ -2646,7 +2645,7 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 }
 
 type setSecurityGroupRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 	// ID display the security groups' unique ID
 	ID string `json:"-"`
 	// Name display the security groups name
@@ -2722,7 +2721,7 @@ func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.Request
 }
 
 type ListSecurityGroupRulesRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 
@@ -2793,7 +2792,7 @@ func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (int, scw
 }
 
 type CreateSecurityGroupRuleRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 	// Protocol
@@ -2858,7 +2857,7 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 }
 
 type DeleteSecurityGroupRuleRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 
@@ -2902,7 +2901,7 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 }
 
 type GetSecurityGroupRuleRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
 
@@ -2948,7 +2947,7 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 }
 
 type ListComputeClustersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 
@@ -3001,7 +3000,7 @@ func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.R
 }
 
 type CreateComputeClusterRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Name string `json:"name,omitempty"`
 
@@ -3054,7 +3053,7 @@ func (s *API) CreateComputeCluster(req *CreateComputeClusterRequest, opts ...scw
 }
 
 type GetComputeClusterRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3091,7 +3090,7 @@ func (s *API) GetComputeCluster(req *GetComputeClusterRequest, opts ...scw.Reque
 }
 
 type SetComputeClusterRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 
@@ -3150,7 +3149,7 @@ func (s *API) SetComputeCluster(req *SetComputeClusterRequest, opts ...scw.Reque
 }
 
 type UpdateComputeClusterRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 
@@ -3209,7 +3208,7 @@ func (s *API) UpdateComputeCluster(req *UpdateComputeClusterRequest, opts ...scw
 }
 
 type DeleteComputeClusterRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3244,7 +3243,7 @@ func (s *API) DeleteComputeCluster(req *DeleteComputeClusterRequest, opts ...scw
 }
 
 type GetComputeClusterServersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3281,7 +3280,7 @@ func (s *API) GetComputeClusterServers(req *GetComputeClusterServersRequest, opt
 }
 
 type SetComputeClusterServersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3318,7 +3317,7 @@ func (s *API) SetComputeClusterServers(req *SetComputeClusterServersRequest, opt
 }
 
 type UpdateComputeClusterServersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3355,7 +3354,7 @@ func (s *API) UpdateComputeClusterServers(req *UpdateComputeClusterServersReques
 }
 
 type DeleteComputeClusterServersRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ComputeClusterID string `json:"-"`
 }
@@ -3390,7 +3389,7 @@ func (s *API) DeleteComputeClusterServers(req *DeleteComputeClusterServersReques
 }
 
 type ListIpsRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization string `json:"-"`
 
@@ -3466,7 +3465,7 @@ func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 }
 
 type CreateIPRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization string `json:"organization,omitempty"`
 
@@ -3512,7 +3511,7 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 }
 
 type GetIPRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	IPID string `json:"-"`
 }
@@ -3552,7 +3551,7 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 }
 
 type setIPRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
 
@@ -3607,7 +3606,7 @@ func (s *API) setIP(req *setIPRequest, opts ...scw.RequestOption) (*setIPRespons
 }
 
 type updateIPRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	IPID string `json:"-"`
 
@@ -3654,7 +3653,7 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 }
 
 type DeleteIPRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	IPID string `json:"-"`
 }
@@ -3692,7 +3691,7 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 }
 
 type ListBootscriptsRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Arch *string `json:"-"`
 
@@ -3769,7 +3768,7 @@ func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (int, scw.SdkErr
 }
 
 type GetBootscriptRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	BootscriptID string `json:"-"`
 }
@@ -3809,7 +3808,7 @@ func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption
 }
 
 type GetDashboardRequest struct {
-	Zone utils.Zone `json:"-"`
+	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
 }

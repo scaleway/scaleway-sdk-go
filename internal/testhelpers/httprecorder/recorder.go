@@ -9,7 +9,6 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/scwconfig"
 )
 
 // UpdateCassette is true when we are updating the cassette
@@ -28,11 +27,11 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	_, UpdateCassette := os.LookupEnv("UPDATE")
 
-	var config scwconfig.Config
+	var config scw.Config
 	var err error
 
 	if UpdateCassette {
-		config, err = scwconfig.Load()
+		config, err = scw.LoadConfig()
 		if err != nil {
 			return nil, nil, err
 		}

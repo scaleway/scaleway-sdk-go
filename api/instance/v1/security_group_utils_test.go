@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestAPI_UpdateSecurityGroup(t *testing.T) {
@@ -19,7 +19,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone         = utils.ZoneFrPar1
+		zone         = scw.ZoneFrPar1
 		organization = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
 	)
 
@@ -42,8 +42,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	updateResponse, err := instanceAPI.UpdateSecurityGroup(&UpdateSecurityGroupRequest{
 		Zone:                  zone,
 		SecurityGroupID:       createResponse.SecurityGroup.ID,
-		Name:                  utils.String("new_name"),
-		Description:           utils.String("new_description"),
+		Name:                  scw.String("new_name"),
+		Description:           scw.String("new_description"),
 		Stateful:              &f,
 		InboundDefaultPolicy:  &drop,
 		OutboundDefaultPolicy: &accept,
