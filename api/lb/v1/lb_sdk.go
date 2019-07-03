@@ -525,33 +525,37 @@ type BackendServerStats struct {
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
 }
 
+// Certificate sSL certificate is currently in BETA stage!
 type Certificate struct {
+	// ID certificate ID
 	ID string `json:"id,omitempty"`
-	// Type
+	// Type type of certificate (custom coming soon)
 	//
 	// Default value: letsencryt
 	Type CertificateType `json:"type,omitempty"`
-	// Status
+	// Status status of certificate
 	//
 	// Default value: pending
 	Status CertificateStatus `json:"status,omitempty"`
-
+	// CommonName main domain name of certificate
 	CommonName string `json:"common_name,omitempty"`
-
+	// SubjectAlternativeName alternative domain names
 	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
-
+	// Fingerprint identifier (SHA-1) of the certificate
 	Fingerprint string `json:"fingerprint,omitempty"`
-
+	// NotValidBefore validity bounds
 	NotValidBefore time.Time `json:"not_valid_before,omitempty"`
-
+	// NotValidAfter validity bounds
 	NotValidAfter time.Time `json:"not_valid_after,omitempty"`
-
+	// Lb load Balancer object
 	Lb *Lb `json:"lb,omitempty"`
 }
 
+// CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt. Currently in BETA stage!
 type CreateCertificateRequestLetsencryptConfig struct {
+	// CommonName main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
 	CommonName string `json:"common_name,omitempty"`
-
+	// SubjectAlternativeName alternative domain names (make sure all domain names exists and resolves to your Load Balancer HA IP)
 	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
 }
 
@@ -2549,11 +2553,11 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 
 type CreateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-
+	// Name certificate name
 	Name string `json:"name,omitempty"`
-
+	// Letsencrypt let's Encrypt type
 	// Precisely one of Letsencrypt must be set.
 	Letsencrypt *CreateCertificateRequestLetsencryptConfig `json:"letsencrypt,omitempty"`
 }
@@ -2566,6 +2570,9 @@ func (m *CreateCertificateRequest) GetType() Type {
 	return nil
 }
 
+// CreateCertificate create Certificate (beta)
+//
+// Generate a new SSL certificate using Let's Encrypt (Custom certificates can be imported soon)
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -2604,20 +2611,21 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 
 type ListCertificatesRequest struct {
 	Region scw.Region `json:"-"`
-
+	// LbID load Balancer ID
 	LbID string `json:"-"`
-	// OrderBy
+	// OrderBy you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListCertificatesRequestOrderBy `json:"-"`
-
+	// Page page number
 	Page *int32 `json:"-"`
-
+	// PageSize set the maximum list size
 	PageSize *int32 `json:"-"`
-
+	// Name use this to search by name
 	Name *string `json:"-"`
 }
 
+// ListCertificates list Certificates (beta)
 func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -2682,10 +2690,11 @@ func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (int, scw.SdkEr
 
 type GetCertificateRequest struct {
 	Region scw.Region `json:"-"`
-
+	// CertificateID certificate ID
 	CertificateID string `json:"-"`
 }
 
+// GetCertificate get Certificate (beta)
 func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -2719,12 +2728,13 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 
 type UpdateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-
+	// CertificateID certificate ID
 	CertificateID string `json:"-"`
-
+	// Name certificate name
 	Name string `json:"name"`
 }
 
+// UpdateCertificate update Certificate (beta)
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -2763,10 +2773,11 @@ func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.Reque
 
 type DeleteCertificateRequest struct {
 	Region scw.Region `json:"-"`
-
+	// CertificateID certificate ID
 	CertificateID string `json:"-"`
 }
 
+// DeleteCertificate delete Certificate (beta)
 func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
