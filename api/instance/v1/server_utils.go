@@ -23,16 +23,16 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	return s.updateServer((*updateServerRequest)(req), opts...)
 }
 
-// waitForServerRequest is used by waitForServer method
+// waitForServerRequest is used by waitForServerState method
 type waitForServerRequest struct {
 	ServerID string
 	Zone     scw.Zone
 	Timeout  time.Duration
 }
 
-// waitForServer wait for the server to be in a "terminal state" before returning.
+// waitForServerState wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
-func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
+func (s *API) waitForServerState(req *waitForServerRequest) (*Server, scw.SdkError) {
 
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
@@ -64,9 +64,9 @@ func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
 	return server.(*Server), nil
 }
 
-// waitForDeletedServer wait for the server to be in a "deleted state" before returning.
+// waitForServerDeleted wait for the server to be in a "deleted state" before returning.
 // This function can be used to wait for a server to be terminated for example.
-func (s *API) waitForDeletedServer(req *waitForServerRequest) scw.SdkError {
+func (s *API) waitForServerDeleted(req *waitForServerRequest) scw.SdkError {
 	_, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, error, bool) {
 			_, err := s.GetServer(&GetServerRequest{
@@ -127,9 +127,9 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 	}
 
 	if req.Action == ServerActionTerminate {
-		err = s.waitForDeletedServer(waitForServerRequest)
+		err = s.waitForServerDeleted(waitForServerRequest)
 	} else {
-		finalServer, err := s.waitForServer(waitForServerRequest)
+		finalServer, err := s.waitForServerState(waitForServerRequest)
 		if err != nil {
 			return err
 		}
