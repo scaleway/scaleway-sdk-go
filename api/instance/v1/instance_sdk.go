@@ -423,7 +423,7 @@ type CreateSecurityGroupResponse struct {
 }
 
 type CreateSecurityGroupRuleResponse struct {
-	SecurityRule *SecurityGroupRule `json:"security_rule,omitempty"`
+	Rule *SecurityGroupRule `json:"rule,omitempty"`
 }
 
 type CreateServerResponse struct {
@@ -489,7 +489,7 @@ type GetSecurityGroupResponse struct {
 }
 
 type GetSecurityGroupRuleResponse struct {
-	SecurityRule *SecurityGroupRule `json:"security_rule,omitempty"`
+	Rule *SecurityGroupRule `json:"rule,omitempty"`
 }
 
 type GetServerResponse struct {
@@ -966,6 +966,10 @@ type setSecurityGroupResponse struct {
 	SecurityGroup *SecurityGroup `json:"security_group,omitempty"`
 }
 
+type setSecurityGroupRuleResponse struct {
+	Rule *SecurityGroupRule `json:"rule,omitempty"`
+}
+
 type setServerResponse struct {
 	Server *Server `json:"server,omitempty"`
 }
@@ -1174,8 +1178,8 @@ type CreateServerRequest struct {
 	Tags []string `json:"tags,omitempty"`
 	// SecurityGroup define the security group id
 	SecurityGroup string `json:"security_group,omitempty"`
-	// ComputeClusterID computeCluster key if server must be part of a ComputeCluster
-	ComputeClusterID string `json:"compute_cluster_id,omitempty"`
+	// ComputeCluster computeCluster key if server must be part of a ComputeCluster
+	ComputeCluster string `json:"compute_cluster,omitempty"`
 }
 
 // CreateServer create server
@@ -1425,6 +1429,8 @@ type updateServerRequest struct {
 	Protected *bool `json:"protected,omitempty"`
 
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
+
+	ComputeCluster **string `json:"compute_cluster,omitempty"`
 }
 
 // updateServer update server
@@ -2861,7 +2867,7 @@ type DeleteSecurityGroupRuleRequest struct {
 
 	SecurityGroupID string `json:"-"`
 
-	SecurityRuleID string `json:"-"`
+	SecurityGroupRuleID string `json:"-"`
 }
 
 // DeleteSecurityGroupRule delete rule
@@ -2883,13 +2889,13 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 		return errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.SecurityRuleID) == "" {
-		return errors.New("field SecurityRuleID cannot be empty in request")
+	if fmt.Sprint(req.SecurityGroupRuleID) == "" {
+		return errors.New("field SecurityGroupRuleID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityRuleID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityGroupRuleID) + "",
 		Headers: http.Header{},
 	}
 
@@ -2905,7 +2911,7 @@ type GetSecurityGroupRuleRequest struct {
 
 	SecurityGroupID string `json:"-"`
 
-	SecurityRuleID string `json:"-"`
+	SecurityGroupRuleID string `json:"-"`
 }
 
 // GetSecurityGroupRule get rule
@@ -2927,17 +2933,90 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 		return nil, errors.New("field SecurityGroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.SecurityRuleID) == "" {
-		return nil, errors.New("field SecurityRuleID cannot be empty in request")
+	if fmt.Sprint(req.SecurityGroupRuleID) == "" {
+		return nil, errors.New("field SecurityGroupRuleID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityRuleID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityGroupRuleID) + "",
 		Headers: http.Header{},
 	}
 
 	var resp GetSecurityGroupRuleResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type setSecurityGroupRuleRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	SecurityGroupID string `json:"-"`
+
+	SecurityGroupRuleID string `json:"-"`
+
+	ID string `json:"id"`
+	// Protocol
+	//
+	// Default value: TCP
+	Protocol SecurityGroupRuleProtocol `json:"protocol"`
+	// Direction
+	//
+	// Default value: inbound
+	Direction SecurityGroupRuleDirection `json:"direction"`
+	// Action
+	//
+	// Default value: accept
+	Action SecurityGroupRuleAction `json:"action"`
+
+	IPRange string `json:"ip_range"`
+
+	DestPortFrom uint32 `json:"dest_port_from"`
+
+	DestPortTo uint32 `json:"dest_port_to"`
+
+	Position uint32 `json:"position"`
+
+	Editable bool `json:"editable"`
+}
+
+// setSecurityGroupRule update security group rule
+func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw.RequestOption) (*setSecurityGroupRuleResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupRuleID) == "" {
+		return nil, errors.New("field SecurityGroupRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityGroupRuleID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp setSecurityGroupRuleResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
