@@ -56,6 +56,7 @@ func (e *ResponseError) Error() string {
 // IsScwSdkError implement SdkError interface
 func (e *ResponseError) IsScwSdkError() {}
 
+// hasResponseError throws an error when the HTTP status is not OK
 func hasResponseError(res *http.Response) SdkError {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
