@@ -664,9 +664,9 @@ type SecurityGroupRule struct {
 
 	IPRange string `json:"ip_range,omitempty"`
 
-	DestPortFrom uint32 `json:"dest_port_from,omitempty"`
+	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
 
-	DestPortTo uint32 `json:"dest_port_to,omitempty"`
+	DestPortTo *uint32 `json:"dest_port_to,omitempty"`
 
 	Position uint32 `json:"position,omitempty"`
 
@@ -2975,9 +2975,9 @@ type setSecurityGroupRuleRequest struct {
 
 	IPRange string `json:"ip_range"`
 
-	DestPortFrom uint32 `json:"dest_port_from"`
+	DestPortFrom *uint32 `json:"dest_port_from"`
 
-	DestPortTo uint32 `json:"dest_port_to"`
+	DestPortTo *uint32 `json:"dest_port_to"`
 
 	Position uint32 `json:"position"`
 
@@ -3035,7 +3035,9 @@ type ListComputeClustersRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListComputeClusters list all compute-clusters
+// ListComputeClusters list compute-clusters
+//
+// List all compute-clusters
 func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.RequestOption) (*ListComputeClustersResponse, error) {
 	var err error
 
@@ -3095,7 +3097,9 @@ type CreateComputeClusterRequest struct {
 	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
 }
 
-// CreateComputeCluster create a new compute-cluster
+// CreateComputeCluster create compute-cluster
+//
+// Create a new compute-cluster
 func (s *API) CreateComputeCluster(req *CreateComputeClusterRequest, opts ...scw.RequestOption) (*CreateComputeClusterResponse, error) {
 	var err error
 
@@ -3139,7 +3143,9 @@ type GetComputeClusterRequest struct {
 	ComputeClusterID string `json:"-"`
 }
 
-// GetComputeCluster get the given compute-cluster
+// GetComputeCluster get compute-cluster
+//
+// Get the given compute-cluster
 func (s *API) GetComputeCluster(req *GetComputeClusterRequest, opts ...scw.RequestOption) (*GetComputeClusterResponse, error) {
 	var err error
 
@@ -3189,7 +3195,9 @@ type SetComputeClusterRequest struct {
 	PolicyType ComputeClusterPolicyType `json:"policy_type"`
 }
 
-// SetComputeCluster set all parameters of the given compute-cluster
+// SetComputeCluster set compute-cluster
+//
+// Set all parameters of the given compute-cluster
 func (s *API) SetComputeCluster(req *SetComputeClusterRequest, opts ...scw.RequestOption) (*SetComputeClusterResponse, error) {
 	var err error
 
@@ -3249,7 +3257,9 @@ type UpdateComputeClusterRequest struct {
 	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
 }
 
-// UpdateComputeCluster update one or more parameter of the given compute-cluster
+// UpdateComputeCluster update compute-cluster
+//
+// Update one or more parameter of the given compute-cluster
 func (s *API) UpdateComputeCluster(req *UpdateComputeClusterRequest, opts ...scw.RequestOption) (*UpdateComputeClusterResponse, error) {
 	var err error
 
@@ -3298,6 +3308,8 @@ type DeleteComputeClusterRequest struct {
 }
 
 // DeleteComputeCluster delete the given compute-cluster
+//
+// Delete the given compute-cluster
 func (s *API) DeleteComputeCluster(req *DeleteComputeClusterRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3333,7 +3345,9 @@ type GetComputeClusterServersRequest struct {
 	ComputeClusterID string `json:"-"`
 }
 
-// GetComputeClusterServers get all servers belonging to the given compute-cluster
+// GetComputeClusterServers get compute-cluster servers
+//
+// Get all servers belonging to the given compute-cluster
 func (s *API) GetComputeClusterServers(req *GetComputeClusterServersRequest, opts ...scw.RequestOption) (*GetComputeClusterServersResponse, error) {
 	var err error
 
@@ -3371,7 +3385,9 @@ type SetComputeClusterServersRequest struct {
 	ComputeClusterID string `json:"-"`
 }
 
-// SetComputeClusterServers set all servers belonging to the given compute-cluster
+// SetComputeClusterServers set compute-cluster servers
+//
+// Set all servers belonging to the given compute-cluster
 func (s *API) SetComputeClusterServers(req *SetComputeClusterServersRequest, opts ...scw.RequestOption) (*SetComputeClusterServersResponse, error) {
 	var err error
 
@@ -3409,7 +3425,9 @@ type UpdateComputeClusterServersRequest struct {
 	ComputeClusterID string `json:"-"`
 }
 
-// UpdateComputeClusterServers update all servers belonging to the given compute-cluster
+// UpdateComputeClusterServers update compute-cluster servers
+//
+// Update all servers belonging to the given compute-cluster
 func (s *API) UpdateComputeClusterServers(req *UpdateComputeClusterServersRequest, opts ...scw.RequestOption) (*UpdateComputeClusterServersResponse, error) {
 	var err error
 
@@ -3447,7 +3465,9 @@ type DeleteComputeClusterServersRequest struct {
 	ComputeClusterID string `json:"-"`
 }
 
-// DeleteComputeClusterServers delete all servers from the given compute-cluster
+// DeleteComputeClusterServers delete compute-cluster servers
+//
+// Delete all servers from the given compute-cluster
 func (s *API) DeleteComputeClusterServers(req *DeleteComputeClusterServersRequest, opts ...scw.RequestOption) error {
 	var err error
 
