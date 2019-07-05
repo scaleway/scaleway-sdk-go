@@ -19,13 +19,13 @@ type ResponseError struct {
 	// Message is a human-friendly error message
 	Message string `json:"message"`
 
-	// Type is a string code that defines the kind of error
+	// Type is a string code that defines the kind of error. This field is only used by instance API
 	Type string `json:"type,omitempty"`
 
-	// Resource is a string code that defines the resource concerned by the error
+	// Resource is a string code that defines the resource concerned by the error. This field is only used by instance API
 	Resource string `json:"resource,omitempty"`
 
-	// Fields contains detail about validation error
+	// Fields contains detail about validation error. This field is only used by instance API
 	Fields map[string][]string `json:"fields,omitempty"`
 
 	// StatusCode is the HTTP status code received
