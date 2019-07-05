@@ -616,6 +616,12 @@ type ListVolumesResponse struct {
 	TotalCount uint32 `json:"total_count,omitempty"`
 }
 
+type NullableStringValue struct {
+	Null bool `json:"null,omitempty"`
+
+	Value string `json:"value,omitempty"`
+}
+
 type SecurityGroup struct {
 	// ID display the security groups' unique ID
 	ID string `json:"id,omitempty"`
@@ -1430,7 +1436,7 @@ type updateServerRequest struct {
 
 	SecurityGroup *SecurityGroupSummary `json:"security_group,omitempty"`
 
-	ComputeCluster **string `json:"compute_cluster,omitempty"`
+	ComputeCluster *NullableStringValue `json:"compute_cluster,omitempty"`
 }
 
 // updateServer update server
@@ -3719,9 +3725,9 @@ type updateIPRequest struct {
 
 	IPID string `json:"-"`
 
-	Reverse **string `json:"reverse,omitempty"`
+	Reverse *NullableStringValue `json:"reverse,omitempty"`
 
-	Server **string `json:"server,omitempty"`
+	Server *NullableStringValue `json:"server,omitempty"`
 }
 
 // updateIP update IP

@@ -25,7 +25,8 @@ func TestInstanceHelpers(t *testing.T) {
 		zone         = scw.ZoneFrPar1
 		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
-		reverse      = "1.1.1.1"
+		reverse      = &NullableStringValue{Value: "1.1.1.1"}
+		nullReverse  = &NullableStringValue{Null: true}
 	)
 
 	t.Run("create server", func(t *testing.T) {
@@ -75,10 +76,10 @@ func TestInstanceHelpers(t *testing.T) {
 		ipSetReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
 			IPID:    ipID,
 			Zone:    zone,
-			Reverse: &reverse,
+			Reverse: reverse,
 		})
 		testhelpers.Ok(t, err)
-		testhelpers.Equals(t, reverse, *ipSetReverseResponse.IP.Reverse)
+		testhelpers.Equals(t, reverse.Value, *ipSetReverseResponse.IP.Reverse)
 
 		// Omitempty reverse
 		ipSetReverseResponse, err = instanceAPI.UpdateIP(&UpdateIPRequest{
@@ -87,14 +88,13 @@ func TestInstanceHelpers(t *testing.T) {
 			Reverse: nil,
 		})
 		testhelpers.Ok(t, err)
-		testhelpers.Equals(t, reverse, *ipSetReverseResponse.IP.Reverse)
+		testhelpers.Equals(t, reverse.Value, *ipSetReverseResponse.IP.Reverse)
 
 		// Unset reverse
-		emptyReverse := ""
 		ipDeleteReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
 			IPID:    ipID,
 			Zone:    zone,
-			Reverse: &emptyReverse,
+			Reverse: nullReverse,
 		})
 		testhelpers.Ok(t, err)
 		testhelpers.Equals(t, (*string)(nil), ipDeleteReverseResponse.IP.Reverse)
