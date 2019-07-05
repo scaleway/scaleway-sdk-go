@@ -306,6 +306,7 @@ func (v *NullableStringValue) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &tmp); err != nil {
 		return err
 	}
+	v.Null = false
 	v.Value = tmp
 	return nil
 }
