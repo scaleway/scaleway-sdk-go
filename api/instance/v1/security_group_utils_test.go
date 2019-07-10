@@ -144,7 +144,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 	})
 
 	t.Run("From a port range to a single port", func(t *testing.T) {
-		//t.Skip("Wait for instance team to fix this scenario in the API")
 		group, rule, cleanUp := bootstrap(t)
 		defer cleanUp()
 
@@ -171,6 +170,28 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
 		testhelpers.Equals(t, SecurityGroupRuleDirectionOutbound, updateResponse.Rule.Direction)
+	})
+
+	t.Run("Switching to ICMP", func(t *testing.T) {
+		group, rule, cleanUp := bootstrap(t)
+		defer cleanUp()
+
+		protocol := SecurityGroupRuleProtocolICMP
+
+		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
+			Zone:                zone,
+			SecurityGroupID:     group.ID,
+			SecurityGroupRuleID: rule.ID,
+			Protocol:            &protocol,
+		})
+
+		testhelpers.Ok(t, err)
+		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
+		testhelpers.Equals(t, "8.8.8.8", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
+		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
+		testhelpers.Equals(t, SecurityGroupRuleProtocolICMP, updateResponse.Rule.Protocol)
+		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
 	})
 
 }

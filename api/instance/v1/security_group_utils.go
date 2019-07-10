@@ -173,6 +173,12 @@ func (s *API) UpdateSecurityGroupRule(req *UpdateSecurityGroupRuleRequest, opts 
 		setRequest.Position = *req.Position
 	}
 
+	// When we use ICMP protocol portFrom and portTo should be set to nil
+	if req.Protocol != nil && *req.Protocol == SecurityGroupRuleProtocolICMP {
+		setRequest.DestPortFrom = nil
+		setRequest.DestPortTo = nil
+	}
+
 	resp, err := s.setSecurityGroupRule(setRequest)
 	if err != nil {
 		return nil, err

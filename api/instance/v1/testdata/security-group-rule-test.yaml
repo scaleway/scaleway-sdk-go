@@ -13,9 +13,9 @@ interactions:
     method: POST
   response:
     body: '{"security_group": {"outbound_default_policy": "drop", "description": "description",
-      "servers": [], "stateful": true, "creation_date": "2019-07-09T16:18:44.883921+00:00",
-      "id": "8adfaa02-ee6c-4573-a659-720a556ead4c", "name": "name", "modification_date":
-      "2019-07-09T16:18:44.883921+00:00", "inbound_default_policy": "accept", "organization":
+      "servers": [], "stateful": true, "creation_date": "2019-07-10T09:04:00.748358+00:00",
+      "id": "25faa4a7-503f-46f8-a548-08c9020ba78e", "name": "name", "modification_date":
+      "2019-07-10T09:04:00.748358+00:00", "inbound_default_policy": "accept", "organization":
       "b3ba839a-dcf2-4b0a-ac81-fc32370052a0", "organization_default": false, "enable_default_security":
       true}}'
     headers:
@@ -28,9 +28,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:45 GMT
+      - Wed, 10 Jul 2019 09:04:00 GMT
       Location:
-      - https://cp-par1.scaleway.com/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c
+      - https://cp-par1.scaleway.com/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -50,12 +50,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c/rules
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e/rules
     method: POST
   response:
     body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
       "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
-      "editable": null, "id": "39367308-cfbf-4db2-af3d-bfd7fed870be"}}'
+      "editable": null, "id": "a465781b-2f84-4a86-87ce-9b3f49c68d90"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -66,9 +66,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:45 GMT
+      - Wed, 10 Jul 2019 09:04:01 GMT
       Location:
-      - https://cp-par1.scaleway.com/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c/rules/39367308-cfbf-4db2-af3d-bfd7fed870be
+      - https://cp-par1.scaleway.com/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e/rules/a465781b-2f84-4a86-87ce-9b3f49c68d90
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -86,12 +86,12 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c/rules/39367308-cfbf-4db2-af3d-bfd7fed870be
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e/rules/a465781b-2f84-4a86-87ce-9b3f49c68d90
     method: GET
   response:
     body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
       "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
-      "editable": null, "id": "39367308-cfbf-4db2-af3d-bfd7fed870be"}}'
+      "editable": null, "id": "a465781b-2f84-4a86-87ce-9b3f49c68d90"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -102,7 +102,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:45 GMT
+      - Wed, 10 Jul 2019 09:04:01 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -115,19 +115,19 @@ interactions:
     code: 200
     duration: ""
 - request:
-    body: '{"id":"39367308-cfbf-4db2-af3d-bfd7fed870be","protocol":"UDP","direction":"outbound","action":"drop","ip_range":"1.1.1.1/32","dest_port_from":1,"dest_port_to":2048,"position":1,"editable":false}'
+    body: '{"id":"a465781b-2f84-4a86-87ce-9b3f49c68d90","protocol":"UDP","direction":"outbound","action":"drop","ip_range":"1.1.1.1/32","dest_port_from":1,"dest_port_to":2048,"position":1,"editable":false}'
     form: {}
     headers:
       Content-Type:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c/rules/39367308-cfbf-4db2-af3d-bfd7fed870be
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e/rules/a465781b-2f84-4a86-87ce-9b3f49c68d90
     method: PUT
   response:
     body: '{"rule": {"direction": "outbound", "protocol": "UDP", "ip_range": "1.1.1.1",
       "dest_port_from": 1, "action": "drop", "position": 1, "dest_port_to": 2048,
-      "editable": null, "id": "39367308-cfbf-4db2-af3d-bfd7fed870be"}}'
+      "editable": null, "id": "a465781b-2f84-4a86-87ce-9b3f49c68d90"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -138,7 +138,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:45 GMT
+      - Wed, 10 Jul 2019 09:04:01 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -156,7 +156,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/8adfaa02-ee6c-4573-a659-720a556ead4c
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/25faa4a7-503f-46f8-a548-08c9020ba78e
     method: DELETE
   response:
     body: ""
@@ -168,7 +168,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:45 GMT
+      - Wed, 10 Jul 2019 09:04:01 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -192,9 +192,9 @@ interactions:
     method: POST
   response:
     body: '{"security_group": {"outbound_default_policy": "drop", "description": "description",
-      "servers": [], "stateful": true, "creation_date": "2019-07-09T16:18:46.294606+00:00",
-      "id": "1ba59c23-0a71-4027-809a-30433b6876af", "name": "name", "modification_date":
-      "2019-07-09T16:18:46.294606+00:00", "inbound_default_policy": "accept", "organization":
+      "servers": [], "stateful": true, "creation_date": "2019-07-10T09:04:02.063268+00:00",
+      "id": "7c95fecc-844c-4c2b-bf71-1e4e034327d3", "name": "name", "modification_date":
+      "2019-07-10T09:04:02.063268+00:00", "inbound_default_policy": "accept", "organization":
       "b3ba839a-dcf2-4b0a-ac81-fc32370052a0", "organization_default": false, "enable_default_security":
       true}}'
     headers:
@@ -207,9 +207,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:46 GMT
+      - Wed, 10 Jul 2019 09:04:02 GMT
       Location:
-      - https://cp-par1.scaleway.com/security_groups/1ba59c23-0a71-4027-809a-30433b6876af
+      - https://cp-par1.scaleway.com/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -229,12 +229,12 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/1ba59c23-0a71-4027-809a-30433b6876af/rules
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3/rules
     method: POST
   response:
     body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
       "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
-      "editable": null, "id": "03dad513-71ae-4755-93d7-ab683c702aaf"}}'
+      "editable": null, "id": "18701298-31ed-445d-9ad7-7ff2d31f8ec5"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -245,9 +245,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:46 GMT
+      - Wed, 10 Jul 2019 09:04:02 GMT
       Location:
-      - https://cp-par1.scaleway.com/security_groups/1ba59c23-0a71-4027-809a-30433b6876af/rules/03dad513-71ae-4755-93d7-ab683c702aaf
+      - https://cp-par1.scaleway.com/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3/rules/18701298-31ed-445d-9ad7-7ff2d31f8ec5
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -265,12 +265,12 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/1ba59c23-0a71-4027-809a-30433b6876af/rules/03dad513-71ae-4755-93d7-ab683c702aaf
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3/rules/18701298-31ed-445d-9ad7-7ff2d31f8ec5
     method: GET
   response:
     body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
       "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
-      "editable": null, "id": "03dad513-71ae-4755-93d7-ab683c702aaf"}}'
+      "editable": null, "id": "18701298-31ed-445d-9ad7-7ff2d31f8ec5"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -281,7 +281,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:47 GMT
+      - Wed, 10 Jul 2019 09:04:02 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -294,19 +294,19 @@ interactions:
     code: 200
     duration: ""
 - request:
-    body: '{"id":"03dad513-71ae-4755-93d7-ab683c702aaf","protocol":"UDP","direction":"outbound","action":"drop","ip_range":"1.1.1.1/32","dest_port_from":22,"dest_port_to":null,"position":1,"editable":false}'
+    body: '{"id":"18701298-31ed-445d-9ad7-7ff2d31f8ec5","protocol":"UDP","direction":"outbound","action":"drop","ip_range":"1.1.1.1/32","dest_port_from":22,"dest_port_to":null,"position":1,"editable":false}'
     form: {}
     headers:
       Content-Type:
       - application/json
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/1ba59c23-0a71-4027-809a-30433b6876af/rules/03dad513-71ae-4755-93d7-ab683c702aaf
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3/rules/18701298-31ed-445d-9ad7-7ff2d31f8ec5
     method: PUT
   response:
     body: '{"rule": {"direction": "outbound", "protocol": "UDP", "ip_range": "1.1.1.1",
       "dest_port_from": 22, "action": "drop", "position": 1, "dest_port_to": null,
-      "editable": null, "id": "03dad513-71ae-4755-93d7-ab683c702aaf"}}'
+      "editable": null, "id": "18701298-31ed-445d-9ad7-7ff2d31f8ec5"}}'
     headers:
       Cache-Control:
       - no-cache
@@ -317,7 +317,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:47 GMT
+      - Wed, 10 Jul 2019 09:04:03 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
@@ -335,7 +335,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/1ba59c23-0a71-4027-809a-30433b6876af
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/7c95fecc-844c-4c2b-bf71-1e4e034327d3
     method: DELETE
   response:
     body: ""
@@ -347,7 +347,186 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 09 Jul 2019 16:18:47 GMT
+      - Wed, 10 Jul 2019 09:04:03 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: '{"name":"name","description":"description","organization":"b3ba839a-dcf2-4b0a-ac81-fc32370052a0","stateful":true,"inbound_default_policy":"accept","outbound_default_policy":"drop"}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups
+    method: POST
+  response:
+    body: '{"security_group": {"outbound_default_policy": "drop", "description": "description",
+      "servers": [], "stateful": true, "creation_date": "2019-07-10T09:04:03.631004+00:00",
+      "id": "c8f6324d-141a-4c94-be9f-659797a4091d", "name": "name", "modification_date":
+      "2019-07-10T09:04:03.631004+00:00", "inbound_default_policy": "accept", "organization":
+      "b3ba839a-dcf2-4b0a-ac81-fc32370052a0", "organization_default": false, "enable_default_security":
+      true}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "446"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 10 Jul 2019 09:04:03 GMT
+      Location:
+      - https://cp-par1.scaleway.com/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: '{"protocol":"TCP","direction":"inbound","action":"accept","ip_range":"8.8.8.8/32","dest_port_from":1,"dest_port_to":1024,"position":1}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d/rules
+    method: POST
+  response:
+    body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
+      "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
+      "editable": null, "id": "a44f03b9-1935-4752-82ae-11621130e055"}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "218"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 10 Jul 2019 09:04:04 GMT
+      Location:
+      - https://cp-par1.scaleway.com/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d/rules/a44f03b9-1935-4752-82ae-11621130e055
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d/rules/a44f03b9-1935-4752-82ae-11621130e055
+    method: GET
+  response:
+    body: '{"rule": {"direction": "inbound", "protocol": "TCP", "ip_range": "8.8.8.8",
+      "dest_port_from": 1, "action": "accept", "position": 1, "dest_port_to": 1024,
+      "editable": null, "id": "a44f03b9-1935-4752-82ae-11621130e055"}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "218"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 10 Jul 2019 09:04:04 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: '{"id":"a44f03b9-1935-4752-82ae-11621130e055","protocol":"ICMP","direction":"inbound","action":"accept","ip_range":"8.8.8.8","dest_port_from":null,"dest_port_to":null,"position":1,"editable":false}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d/rules/a44f03b9-1935-4752-82ae-11621130e055
+    method: PUT
+  response:
+    body: '{"rule": {"direction": "inbound", "protocol": "ICMP", "ip_range": "8.8.8.8",
+      "dest_port_from": null, "action": "accept", "position": 1, "dest_port_to": null,
+      "editable": null, "id": "a44f03b9-1935-4752-82ae-11621130e055"}}'
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - "222"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 10 Jul 2019 09:04:04 GMT
+      Server:
+      - scaleway_api
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/0.0.0 (go1.12.6; darwin; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/security_groups/c8f6324d-141a-4c94-be9f-659797a4091d
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 10 Jul 2019 09:04:04 GMT
       Server:
       - scaleway_api
       Strict-Transport-Security:
