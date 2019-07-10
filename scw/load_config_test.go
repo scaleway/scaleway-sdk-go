@@ -202,7 +202,7 @@ func TestLoad(t *testing.T) {
 				testhelpers.Assert(t, err != nil, "error should not be nil")
 				testhelpers.Equals(t, strings.Replace(test.expectedErr, "{HOME}", dir, -1), err.Error())
 			} else {
-				testhelpers.Ok(t, err)
+				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, test.expected, config)
 			}
 
@@ -210,9 +210,9 @@ func TestLoad(t *testing.T) {
 			for path, expectedContent := range test.expectedFiles {
 				targetPath := filepath.Join(dir, path)
 				content, err := ioutil.ReadFile(targetPath)
-				testhelpers.Ok(t, err)
+				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, expectedContent, string(content))
-				testhelpers.Ok(t, os.RemoveAll(targetPath)) // delete at the end
+				testhelpers.AssertNoError(t, os.RemoveAll(targetPath)) // delete at the end
 			}
 		})
 	}
@@ -228,7 +228,7 @@ func initEnv(t *testing.T) string {
 
 func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 	for path := range files {
-		testhelpers.Ok(t, os.RemoveAll(filepath.Join(homeDir, path)))
+		testhelpers.AssertNoError(t, os.RemoveAll(filepath.Join(homeDir, path)))
 	}
 }
 
@@ -236,19 +236,19 @@ func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	os.Clearenv()
 	for key, value := range env {
 		value = strings.Replace(value, "{HOME}", homeDir, -1)
-		testhelpers.Ok(t, os.Setenv(key, value))
+		testhelpers.AssertNoError(t, os.Setenv(key, value))
 	}
 
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
-		testhelpers.Ok(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
-		testhelpers.Ok(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
+		testhelpers.AssertNoError(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
 	}
 }
 
 // function taken from https://golang.org/src/os/env_test.go
 func resetEnv(t *testing.T, origEnv []string, homeDir string) {
-	testhelpers.Ok(t, os.RemoveAll(homeDir))
+	testhelpers.AssertNoError(t, os.RemoveAll(homeDir))
 	for _, pair := range origEnv {
 		// Environment variables on Windows can begin with =
 		// https://blogs.msdn.com/b/oldnewthing/archive/2010/05/06/10008132.aspx

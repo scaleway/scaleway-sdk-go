@@ -11,9 +11,9 @@ import (
 func TestAPI_UpdateSecurityGroup(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("security-group-test")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -33,7 +33,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		Organization:          organization,
 	})
 
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	accept := SecurityGroupPolicyAccept
 	drop := SecurityGroupPolicyDrop
@@ -49,7 +49,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		OutboundDefaultPolicy: &accept,
 	})
 
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, "new_name", updateResponse.SecurityGroup.Name)
 	testhelpers.Equals(t, "new_description", updateResponse.SecurityGroup.Description)
 	testhelpers.Equals(t, SecurityGroupPolicyDrop, updateResponse.SecurityGroup.InboundDefaultPolicy)
@@ -60,15 +60,15 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		Zone:            zone,
 		SecurityGroupID: createResponse.SecurityGroup.ID,
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 }
 
 func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("security-group-rule-test")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -90,7 +90,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Organization:          organization,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		createRuleResponse, err := instanceAPI.CreateSecurityGroupRule(&CreateSecurityGroupRuleRequest{
 			Zone:            zone,
@@ -103,14 +103,14 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Action:          SecurityGroupRuleActionAccept,
 			Position:        1,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		return createSecurityGroupResponse.SecurityGroup, createRuleResponse.Rule, func() {
 			err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 				Zone:            zone,
 				SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
 			})
-			testhelpers.Ok(t, err)
+			testhelpers.AssertNoError(t, err)
 		}
 	}
 
@@ -134,7 +134,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Direction:           &direction,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
 		testhelpers.Equals(t, "1.1.1.1", updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, scw.Uint32(1), updateResponse.Rule.DestPortFrom)
@@ -163,7 +163,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Direction:           &direction,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
 		testhelpers.Equals(t, "1.1.1.1", updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, uint32(22), *updateResponse.Rule.DestPortFrom)
@@ -185,7 +185,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Protocol:            &protocol,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
 		testhelpers.Equals(t, "8.8.8.8", updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)

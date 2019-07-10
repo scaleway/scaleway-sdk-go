@@ -93,7 +93,7 @@ func TestClientOptions(t *testing.T) {
 				testhelpers.Assert(t, err != nil, "Should have error")
 				testhelpers.Equals(t, c.errStr, err.Error())
 			} else {
-				testhelpers.Ok(t, err)
+				testhelpers.AssertNoError(t, err)
 			}
 		})
 	}

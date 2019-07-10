@@ -15,9 +15,9 @@ import (
 
 func TestAPI_GetServerType(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("get-server-type")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -27,7 +27,7 @@ func TestAPI_GetServerType(t *testing.T) {
 		Name: "GP1-XS",
 	})
 
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, uint64(1000000000), serverType.PerVolumeConstraint.LSSD.MinSize)
 	testhelpers.Equals(t, uint64(800000000000), serverType.PerVolumeConstraint.LSSD.MaxSize)
 
@@ -35,9 +35,9 @@ func TestAPI_GetServerType(t *testing.T) {
 
 func TestAPI_ServerUserData(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("server-user-data")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -53,7 +53,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
 		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	content := strings.NewReader(contentStr)
 	err = instanceAPI.SetServerUserData(&SetServerUserDataRequest{
@@ -62,25 +62,25 @@ func TestAPI_ServerUserData(t *testing.T) {
 		Key:      key,
 		Content:  content,
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	data, err := instanceAPI.GetServerUserData(&GetServerUserDataRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: serverRes.Server.ID,
 		Key:      key,
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	resUserData, err := ioutil.ReadAll(data)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, contentStr, string(resUserData))
 }
 
 func TestAPI_AllServerUserData(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("all-server-user-data")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -93,7 +93,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
 		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	steps := []map[string]string{
 		{
@@ -125,14 +125,14 @@ func TestAPI_AllServerUserData(t *testing.T) {
 			ServerID: serverRes.Server.ID,
 			UserData: userData,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		// get all user data
 		allData, err := instanceAPI.GetAllServerUserData(&GetAllServerUserDataRequest{
 			Zone:     scw.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, len(data), len(allData.UserData))
 
@@ -141,7 +141,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 			testhelpers.Assert(t, exists, "%s key not found in result", expectedKey)
 
 			currentValue, err := ioutil.ReadAll(currentReader)
-			testhelpers.Ok(t, err)
+			testhelpers.AssertNoError(t, err)
 
 			testhelpers.Equals(t, expectedValue, string(currentValue))
 		}

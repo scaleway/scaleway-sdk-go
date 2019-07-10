@@ -32,7 +32,7 @@ func TestNewClientWithDefaults(t *testing.T) {
 	}
 
 	client, err := NewClient(options...)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	testhelpers.Equals(t, defaultAPIURL, client.apiURL)
 	testhelpers.Equals(t, auth.NewNoAuth(), client.auth)
@@ -79,7 +79,7 @@ func TestNewClientWithOptions(t *testing.T) {
 		}
 
 		client, err := NewClient(options...)
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
@@ -107,7 +107,7 @@ func TestNewClientWithOptions(t *testing.T) {
 		config := &mockConfig{}
 
 		client, err := NewClient(WithConfig(config))
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 		testhelpers.Equals(t, testAPIURL, client.apiURL)

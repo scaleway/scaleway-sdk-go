@@ -35,7 +35,7 @@ func TestGetURL(t *testing.T) {
 	}
 
 	newURL, err := req.getURL(testBaseURL)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	expectedURL := fmt.Sprintf("%s%s?%s=%s", testBaseURL, testPath, testKey, testValue)
 
@@ -107,7 +107,7 @@ func TestSetBody(t *testing.T) {
 		Headers: http.Header{},
 	}
 
-	testhelpers.Ok(t, req.SetBody(body))
+	testhelpers.AssertNoError(t, req.SetBody(body))
 
 	r, isBytesReader := req.Body.(*bytes.Reader)
 
@@ -115,7 +115,7 @@ func TestSetBody(t *testing.T) {
 
 	b := make([]byte, r.Len())
 	_, err := r.Read(b)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	testhelpers.Equals(t, []string{"application/json"}, req.Headers["Content-Type"])
 	testhelpers.Equals(t, `{"name":"plop","slice":["plop","plop"],"flag":true,"timeout":1000000000}`, string(b))
@@ -133,7 +133,7 @@ func TestSetFileBody(t *testing.T) {
 		Headers: http.Header{},
 	}
 
-	testhelpers.Ok(t, req.SetBody(body))
+	testhelpers.AssertNoError(t, req.SetBody(body))
 
 	r, isBytesReader := req.Body.(*bytes.Reader)
 
@@ -141,7 +141,7 @@ func TestSetFileBody(t *testing.T) {
 
 	b := make([]byte, r.Len())
 	_, err := r.Read(b)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	testhelpers.Equals(t, []string{"plain/text"}, req.Headers["Content-Type"])
 	testhelpers.Equals(t, `some body`, string(b))
