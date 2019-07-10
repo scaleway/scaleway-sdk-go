@@ -11,9 +11,9 @@ import (
 func TestUpdateVolmue(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("volume-utils-test")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -38,7 +38,7 @@ func TestUpdateVolmue(t *testing.T) {
 		VolumeType:   volumeType,
 	})
 
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 	volumeID = createVolumeResponse.Volume.ID
 
@@ -49,7 +49,7 @@ func TestUpdateVolmue(t *testing.T) {
 		VolumeID: volumeID,
 	})
 
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	testhelpers.Assert(t, updateVolumeResponse.Volume != nil, "Should have volume in response")
 	testhelpers.Equals(t, newVolumeName, updateVolumeResponse.Volume.Name)
 	testhelpers.Equals(t, volumeSize, updateVolumeResponse.Volume.Size) // check that server is not changed
@@ -59,6 +59,6 @@ func TestUpdateVolmue(t *testing.T) {
 		Zone:     zone,
 		VolumeID: volumeID,
 	})
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 
 }

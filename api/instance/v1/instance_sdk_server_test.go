@@ -11,9 +11,9 @@ import (
 func TestServerUpdate(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("server-test")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -45,7 +45,7 @@ func TestServerUpdate(t *testing.T) {
 			Tags:              tags,
 			DynamicIPRequired: dynamicIPRequired,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		serverID = createServerResponse.Server.ID
 
 		testhelpers.Assert(t, createServerResponse.Server != nil, "Should have server in response")
@@ -78,7 +78,7 @@ func TestServerUpdate(t *testing.T) {
 			Tags:     &updatedTags,
 		}))
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		// Initial values that are not altered in the above request should remaing the same
 		testhelpers.Equals(t, organization, updateServerResponse.Server.Organization)
@@ -100,7 +100,7 @@ func TestServerUpdate(t *testing.T) {
 			Zone:     zone,
 			Volumes:  &map[string]*VolumeTemplate{},
 		}))
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, 0 == len(updateServerResponse.Server.Volumes), "volume should be detached from server.")
 	})
@@ -111,14 +111,14 @@ func TestServerUpdate(t *testing.T) {
 			Zone:     zone,
 			ServerID: serverID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		// Delete Volume
 		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 	})
 
 }
@@ -126,9 +126,9 @@ func TestServerUpdate(t *testing.T) {
 func TestCreateServerWithIncorrectBody(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("server-incorrect-body")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)

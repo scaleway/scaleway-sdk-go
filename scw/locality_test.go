@@ -29,7 +29,7 @@ func TestParseZone(t *testing.T) {
 
 	for _, test := range tests {
 		z, err := ParseZone(test.input)
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, test.expected, z)
 	}
 
@@ -43,7 +43,7 @@ func TestZoneJSONUnmarshall(t *testing.T) {
 		value := struct{ Test Zone }{}
 
 		err := json.Unmarshal([]byte(input), &value)
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, ZoneFrPar1, value.Test)
 
@@ -55,7 +55,7 @@ func TestZoneJSONUnmarshall(t *testing.T) {
 		value := struct{ Test Region }{}
 
 		err := json.Unmarshal([]byte(input), &value)
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, RegionFrPar, value.Test)
 
@@ -85,7 +85,7 @@ func TestParseRegion(t *testing.T) {
 
 	for _, test := range tests {
 		r, err := ParseRegion(test.input)
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, test.expected, r)
 	}
 

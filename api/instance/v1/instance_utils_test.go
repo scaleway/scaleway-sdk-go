@@ -11,9 +11,9 @@ import (
 func TestInstanceHelpers(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("utils-test")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	instanceAPI := NewAPI(client)
@@ -36,7 +36,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Organization: organization,
 			Image:        image,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		serverID = createServerResponse.Server.ID
 		for _, volume := range createServerResponse.Server.Volumes {
 			volumeID = volume.ID
@@ -50,7 +50,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:         zone,
 			Organization: organization,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		ipID = createIPResponse.IP.ID
 
 		// Attach IP
@@ -60,7 +60,7 @@ func TestInstanceHelpers(t *testing.T) {
 			ServerID: serverID,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, serverID, ipAttachResponse.IP.Server.ID)
 
 		// Detach IP
@@ -69,7 +69,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone: zone,
 		})
 
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, nil == ipDetachResponse.IP.Server, "Server object should be nil for detached IP.")
 
 		// Set reverse
@@ -78,7 +78,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:    zone,
 			Reverse: reverse,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, reverse.Value, *ipSetReverseResponse.IP.Reverse)
 
 		// Omitempty reverse
@@ -87,7 +87,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:    zone,
 			Reverse: nil,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, reverse.Value, *ipSetReverseResponse.IP.Reverse)
 
 		// Unset reverse
@@ -96,7 +96,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:    zone,
 			Reverse: nullReverse,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, (*string)(nil), ipDeleteReverseResponse.IP.Reverse)
 
 		// Delete IP
@@ -104,7 +104,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone: zone,
 			IPID: ipID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 	})
 
@@ -114,7 +114,7 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Assert(t, detachVolumeResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, detachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
@@ -125,7 +125,7 @@ func TestInstanceHelpers(t *testing.T) {
 			ServerID: serverID,
 			VolumeID: volumeID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Assert(t, attachVolumeResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, attachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
@@ -139,14 +139,14 @@ func TestInstanceHelpers(t *testing.T) {
 			Zone:     zone,
 			ServerID: serverID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		// Delete Volume
 		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 	})
 

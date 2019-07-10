@@ -11,9 +11,9 @@ import (
 func TestGetImageByName(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	defer func() {
-		testhelpers.Ok(t, r.Stop()) // Make sure recorder is stopped once done with it
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	t.Run("matching input for GetImageByName", func(t *testing.T) {
@@ -26,7 +26,7 @@ func TestGetImageByName(t *testing.T) {
 			CommercialType: "C1",
 			ImageName:      "Docker",
 		})
-		testhelpers.Ok(t, err)
+		testhelpers.AssertNoError(t, err)
 
 		// Docker C1 at par1: 45a7e942-1fb0-48c0-bbf6-0acb9af24604
 		testhelpers.Equals(t, "45a7e942-1fb0-48c0-bbf6-0acb9af24604", imageID)

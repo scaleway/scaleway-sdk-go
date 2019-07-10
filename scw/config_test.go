@@ -283,7 +283,7 @@ func TestConfig(t *testing.T) {
 
 			// load config
 			config, err := LoadConfig()
-			testhelpers.Ok(t, err)
+			testhelpers.AssertNoError(t, err)
 
 			// assert getters
 			accessKey, exist := config.GetAccessKey()

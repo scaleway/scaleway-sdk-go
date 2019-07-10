@@ -15,7 +15,7 @@ func TestHasResponseErrorWithStatus200(t *testing.T) {
 	res := &http.Response{StatusCode: 200}
 
 	newErr := hasResponseError(res)
-	testhelpers.Ok(t, newErr)
+	testhelpers.AssertNoError(t, newErr)
 
 }
 
@@ -49,7 +49,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 
 	// Create response body with marshalled error response
 	bodyBytes, err := json.Marshal(testErrorReponse)
-	testhelpers.Ok(t, err)
+	testhelpers.AssertNoError(t, err)
 	res := &http.Response{Status: errorStatus, StatusCode: errorStatusCode, Body: ioutil.NopCloser(bytes.NewReader(bodyBytes))}
 
 	// Test hasResponseError()
