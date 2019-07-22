@@ -63,6 +63,21 @@ func (enum ACLActionType) String() string {
 	return string(enum)
 }
 
+func (enum ACLActionType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ACLActionType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ACLActionType(ACLActionType(tmp).String())
+	return nil
+}
+
 type ACLHTTPFilter string
 
 const (
@@ -82,6 +97,21 @@ func (enum ACLHTTPFilter) String() string {
 		return "acl_http_filter_none"
 	}
 	return string(enum)
+}
+
+func (enum ACLHTTPFilter) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ACLHTTPFilter) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ACLHTTPFilter(ACLHTTPFilter(tmp).String())
+	return nil
 }
 
 type BackendServerStatsHealthCheckStatus string
@@ -107,6 +137,21 @@ func (enum BackendServerStatsHealthCheckStatus) String() string {
 	return string(enum)
 }
 
+func (enum BackendServerStatsHealthCheckStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackendServerStatsHealthCheckStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackendServerStatsHealthCheckStatus(BackendServerStatsHealthCheckStatus(tmp).String())
+	return nil
+}
+
 type BackendServerStatsServerState string
 
 const (
@@ -128,6 +173,21 @@ func (enum BackendServerStatsServerState) String() string {
 	return string(enum)
 }
 
+func (enum BackendServerStatsServerState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackendServerStatsServerState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackendServerStatsServerState(BackendServerStatsServerState(tmp).String())
+	return nil
+}
+
 type CertificateStatus string
 
 const (
@@ -147,6 +207,21 @@ func (enum CertificateStatus) String() string {
 	return string(enum)
 }
 
+func (enum CertificateStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CertificateStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CertificateStatus(CertificateStatus(tmp).String())
+	return nil
+}
+
 type CertificateType string
 
 const (
@@ -160,6 +235,21 @@ func (enum CertificateType) String() string {
 		return "letsencryt"
 	}
 	return string(enum)
+}
+
+func (enum CertificateType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CertificateType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CertificateType(CertificateType(tmp).String())
+	return nil
 }
 
 type ForwardPortAlgorithm string
@@ -177,6 +267,21 @@ func (enum ForwardPortAlgorithm) String() string {
 		return "roundrobin"
 	}
 	return string(enum)
+}
+
+func (enum ForwardPortAlgorithm) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ForwardPortAlgorithm) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ForwardPortAlgorithm(ForwardPortAlgorithm(tmp).String())
+	return nil
 }
 
 type InstanceStatus string
@@ -204,6 +309,21 @@ func (enum InstanceStatus) String() string {
 	return string(enum)
 }
 
+func (enum InstanceStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InstanceStatus(InstanceStatus(tmp).String())
+	return nil
+}
+
 type LbStatus string
 
 const (
@@ -229,6 +349,21 @@ func (enum LbStatus) String() string {
 	return string(enum)
 }
 
+func (enum LbStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LbStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LbStatus(LbStatus(tmp).String())
+	return nil
+}
+
 type ListACLRequestOrderBy string
 
 const (
@@ -248,6 +383,21 @@ func (enum ListACLRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListACLRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListACLRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListACLRequestOrderBy(ListACLRequestOrderBy(tmp).String())
+	return nil
 }
 
 type ListBackendsRequestOrderBy string
@@ -271,6 +421,21 @@ func (enum ListBackendsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListBackendsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListBackendsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListBackendsRequestOrderBy(ListBackendsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListCertificatesRequestOrderBy string
 
 const (
@@ -290,6 +455,21 @@ func (enum ListCertificatesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListCertificatesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListCertificatesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListCertificatesRequestOrderBy(ListCertificatesRequestOrderBy(tmp).String())
+	return nil
 }
 
 type ListFrontendsRequestOrderBy string
@@ -313,6 +493,21 @@ func (enum ListFrontendsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListFrontendsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListFrontendsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListFrontendsRequestOrderBy(ListFrontendsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListLbsRequestOrderBy string
 
 const (
@@ -334,6 +529,21 @@ func (enum ListLbsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListLbsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListLbsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListLbsRequestOrderBy(ListLbsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type OnMarkedDownAction string
 
 const (
@@ -351,6 +561,21 @@ func (enum OnMarkedDownAction) String() string {
 	return string(enum)
 }
 
+func (enum OnMarkedDownAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OnMarkedDownAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OnMarkedDownAction(OnMarkedDownAction(tmp).String())
+	return nil
+}
+
 type Protocol string
 
 const (
@@ -366,6 +591,21 @@ func (enum Protocol) String() string {
 		return "tcp"
 	}
 	return string(enum)
+}
+
+func (enum Protocol) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *Protocol) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = Protocol(Protocol(tmp).String())
+	return nil
 }
 
 type StickySessionsType string
@@ -387,20 +627,35 @@ func (enum StickySessionsType) String() string {
 	return string(enum)
 }
 
+func (enum StickySessionsType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *StickySessionsType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = StickySessionsType(StickySessionsType(tmp).String())
+	return nil
+}
+
 // ACL the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
 type ACL struct {
 	// ID iD of your ACL ressource
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Name name of you ACL ressource
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Match see the AclMatch object description
-	Match *ACLMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match"`
 	// Action see the AclAction object description
-	Action *ACLAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action"`
 	// Frontend see the Frontend object description
-	Frontend *Frontend `json:"frontend,omitempty"`
+	Frontend *Frontend `json:"frontend"`
 	// Index order between your Acls (ascending order, 0 is first acl executed)
-	Index int32 `json:"index,omitempty"`
+	Index int32 `json:"index"`
 }
 
 // ACLAction action if your ACL filter match
@@ -408,61 +663,61 @@ type ACLAction struct {
 	// Type <allow> or <deny> request
 	//
 	// Default value: allow
-	Type ACLActionType `json:"type,omitempty"`
+	Type ACLActionType `json:"type"`
 }
 
 // ACLMatch settings of your ACL filter
 type ACLMatch struct {
 	// IPSubnet this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
-	IPSubnet []*string `json:"ip_subnet,omitempty"`
+	IPSubnet []*string `json:"ip_subnet"`
 	// HTTPFilter you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
 	//
 	// Default value: acl_http_filter_none
-	HTTPFilter ACLHTTPFilter `json:"http_filter,omitempty"`
+	HTTPFilter ACLHTTPFilter `json:"http_filter"`
 
-	HTTPFilterValue []*string `json:"http_filter_value,omitempty"`
+	HTTPFilterValue []*string `json:"http_filter_value"`
 	// Invert by default match filter is a IF condition. You can set invert to true to have a unless condition
-	Invert bool `json:"invert,omitempty"`
+	Invert bool `json:"invert"`
 }
 
 type Backend struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ForwardProtocol
 	//
 	// Default value: tcp
-	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
+	ForwardProtocol Protocol `json:"forward_protocol"`
 
-	ForwardPort int32 `json:"forward_port,omitempty"`
+	ForwardPort int32 `json:"forward_port"`
 	// ForwardPortAlgorithm
 	//
 	// Default value: roundrobin
-	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
+	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
 	// StickySessions
 	//
 	// Default value: none
-	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
+	StickySessions StickySessionsType `json:"sticky_sessions"`
 
-	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
+	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 
-	HealthCheck *HealthCheck `json:"health_check,omitempty"`
+	HealthCheck *HealthCheck `json:"health_check"`
 
-	Pool []string `json:"pool,omitempty"`
+	Pool []string `json:"pool"`
 
-	Lb *Lb `json:"lb,omitempty"`
+	Lb *Lb `json:"lb"`
 
-	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 
-	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
+	TimeoutServer *time.Duration `json:"timeout_server"`
 
-	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
+	TimeoutConnect *time.Duration `json:"timeout_connect"`
 
-	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
+	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction
 	//
 	// Default value: on_marked_down_action_none
-	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
+	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -470,9 +725,9 @@ func (m *Backend) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -492,9 +747,9 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{
 		tmpType: tmpType(m),
 
@@ -508,71 +763,71 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 // BackendServerStats state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
 type BackendServerStats struct {
 	// InstanceID iD of your loadbalancer cluster server
-	InstanceID string `json:"instance_id,omitempty"`
+	InstanceID string `json:"instance_id"`
 	// BackendID iD of your Backend
-	BackendID string `json:"backend_id,omitempty"`
+	BackendID string `json:"backend_id"`
 	// IP iPv4 or IPv6 address of the server backend
-	IP string `json:"ip,omitempty"`
+	IP string `json:"ip"`
 	// ServerState server operational state (stopped/starting/running/stopping)
 	//
 	// Default value: stopped
-	ServerState BackendServerStatsServerState `json:"server_state,omitempty"`
+	ServerState BackendServerStatsServerState `json:"server_state"`
 	// ServerStateChangedAt time since last operational change
-	ServerStateChangedAt time.Time `json:"server_state_changed_at,omitempty"`
+	ServerStateChangedAt time.Time `json:"server_state_changed_at"`
 	// LastHealthCheckStatus last health check status (unknown/neutral/failed/passed/condpass)
 	//
 	// Default value: unknown
-	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status,omitempty"`
+	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status"`
 }
 
 // Certificate sSL certificate is currently in BETA stage!
 type Certificate struct {
 	// ID certificate ID
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Type type of certificate (custom coming soon)
 	//
 	// Default value: letsencryt
-	Type CertificateType `json:"type,omitempty"`
+	Type CertificateType `json:"type"`
 	// Status status of certificate
 	//
 	// Default value: pending
-	Status CertificateStatus `json:"status,omitempty"`
+	Status CertificateStatus `json:"status"`
 	// CommonName main domain name of certificate
-	CommonName string `json:"common_name,omitempty"`
+	CommonName string `json:"common_name"`
 	// SubjectAlternativeName alternative domain names
-	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
+	SubjectAlternativeName []string `json:"subject_alternative_name"`
 	// Fingerprint identifier (SHA-1) of the certificate
-	Fingerprint string `json:"fingerprint,omitempty"`
+	Fingerprint string `json:"fingerprint"`
 	// NotValidBefore validity bounds
-	NotValidBefore time.Time `json:"not_valid_before,omitempty"`
+	NotValidBefore time.Time `json:"not_valid_before"`
 	// NotValidAfter validity bounds
-	NotValidAfter time.Time `json:"not_valid_after,omitempty"`
+	NotValidAfter time.Time `json:"not_valid_after"`
 	// Lb load Balancer object
-	Lb *Lb `json:"lb,omitempty"`
+	Lb *Lb `json:"lb"`
 }
 
 // CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt. Currently in BETA stage!
 type CreateCertificateRequestLetsencryptConfig struct {
 	// CommonName main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
-	CommonName string `json:"common_name,omitempty"`
+	CommonName string `json:"common_name"`
 	// SubjectAlternativeName alternative domain names (make sure all domain names exists and resolves to your Load Balancer HA IP)
-	SubjectAlternativeName []string `json:"subject_alternative_name,omitempty"`
+	SubjectAlternativeName []string `json:"subject_alternative_name"`
 }
 
 type Frontend struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	InboundPort int32 `json:"inbound_port,omitempty"`
+	InboundPort int32 `json:"inbound_port"`
 
-	Backend *Backend `json:"backend,omitempty"`
+	Backend *Backend `json:"backend"`
 
-	Lb *Lb `json:"lb,omitempty"`
+	Lb *Lb `json:"lb"`
 
-	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+	TimeoutClient *time.Duration `json:"timeout_client"`
 
-	Certificate *Certificate `json:"certificate,omitempty"`
+	Certificate *Certificate `json:"certificate"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -580,7 +835,7 @@ func (m *Frontend) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -598,7 +853,7 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{
 		tmpType: tmpType(m),
 
@@ -608,13 +863,13 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 }
 
 type HealthCheck struct {
-	Port int32 `json:"port,omitempty"`
+	Port int32 `json:"port"`
 
-	CheckDelay *time.Duration `json:"check_delay,omitempty"`
+	CheckDelay *time.Duration `json:"check_delay"`
 
-	CheckTimeout *time.Duration `json:"check_timeout,omitempty"`
+	CheckTimeout *time.Duration `json:"check_timeout"`
 
-	CheckMaxRetries int32 `json:"check_max_retries,omitempty"`
+	CheckMaxRetries int32 `json:"check_max_retries"`
 
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
@@ -663,8 +918,8 @@ func (m *HealthCheck) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay,omitempty"`
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout,omitempty"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -683,8 +938,8 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay,omitempty"`
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout,omitempty"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{
 		tmpType: tmpType(m),
 
@@ -695,30 +950,30 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 }
 
 type HealthCheckHTTPConfig struct {
-	URI string `json:"uri,omitempty"`
+	URI string `json:"uri"`
 
-	Method string `json:"method,omitempty"`
+	Method string `json:"method"`
 
-	Code *int32 `json:"code,omitempty"`
+	Code *int32 `json:"code"`
 }
 
 type HealthCheckHTTPSConfig struct {
-	URI string `json:"uri,omitempty"`
+	URI string `json:"uri"`
 
-	Method string `json:"method,omitempty"`
+	Method string `json:"method"`
 
-	Code *int32 `json:"code,omitempty"`
+	Code *int32 `json:"code"`
 }
 
 type HealthCheckLdapConfig struct {
 }
 
 type HealthCheckMysqlConfig struct {
-	User string `json:"user,omitempty"`
+	User string `json:"user"`
 }
 
 type HealthCheckPgsqlConfig struct {
-	User string `json:"user,omitempty"`
+	User string `json:"user"`
 }
 
 type HealthCheckRedisConfig struct {
@@ -728,100 +983,100 @@ type HealthCheckTCPConfig struct {
 }
 
 type IP struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	IPAddress string `json:"ip_address,omitempty"`
+	IPAddress string `json:"ip_address"`
 
-	OrganizationID string `json:"organization_id,omitempty"`
+	OrganizationID string `json:"organization_id"`
 
-	LbID *string `json:"lb_id,omitempty"`
+	LbID *string `json:"lb_id"`
 
-	Reverse string `json:"reverse,omitempty"`
+	Reverse string `json:"reverse"`
 
-	Region scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region"`
 }
 
 type Instance struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Status
 	//
 	// Default value: unknown
-	Status InstanceStatus `json:"status,omitempty"`
+	Status InstanceStatus `json:"status"`
 
-	IPAddress string `json:"ip_address,omitempty"`
+	IPAddress string `json:"ip_address"`
 
-	Region scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region"`
 }
 
 type Lb struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	// Status
 	//
 	// Default value: unknown
-	Status LbStatus `json:"status,omitempty"`
+	Status LbStatus `json:"status"`
 
-	Instances []*Instance `json:"instances,omitempty"`
+	Instances []*Instance `json:"instances"`
 
-	OrganizationID string `json:"organization_id,omitempty"`
+	OrganizationID string `json:"organization_id"`
 
-	IP []*IP `json:"ip,omitempty"`
+	IP []*IP `json:"ip"`
 
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 
-	FrontendCount int32 `json:"frontend_count,omitempty"`
+	FrontendCount int32 `json:"frontend_count"`
 
-	BackendCount int32 `json:"backend_count,omitempty"`
+	BackendCount int32 `json:"backend_count"`
 
-	Region scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region"`
 }
 
 type LbStats struct {
 	// BackendServersStats list stats object of your loadbalancer (See the BackendServerStats object description)
-	BackendServersStats []*BackendServerStats `json:"backend_servers_stats,omitempty"`
+	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 }
 
 type ListACLResponse struct {
 	// Acls list of Acl object (see Acl object description)
-	Acls []*ACL `json:"acls,omitempty"`
+	Acls []*ACL `json:"acls"`
 	// TotalCount result count
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListBackendsResponse struct {
 	// Backends list Backend objects of a Load Balancer
-	Backends []*Backend `json:"backends,omitempty"`
+	Backends []*Backend `json:"backends"`
 	// TotalCount total count, wihtout pagination
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListCertificatesResponse struct {
-	Certificates []*Certificate `json:"certificates,omitempty"`
+	Certificates []*Certificate `json:"certificates"`
 
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListFrontendsResponse struct {
 	// Frontends list frontends object of your loadbalancer
-	Frontends []*Frontend `json:"frontends,omitempty"`
+	Frontends []*Frontend `json:"frontends"`
 	// TotalCount total count, wihtout pagination
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListIpsResponse struct {
 	// Ips list IP address object
-	Ips []*IP `json:"ips,omitempty"`
+	Ips []*IP `json:"ips"`
 	// TotalCount total count, wihtout pagination
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListLbsResponse struct {
-	Lbs []*Lb `json:"lbs,omitempty"`
+	Lbs []*Lb `json:"lbs"`
 
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 // Service API
@@ -940,15 +1195,15 @@ func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 type CreateLbRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID owner of resources
-	OrganizationID string `json:"organization_id,omitempty"`
+	OrganizationID string `json:"organization_id"`
 	// Name resource names
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Description resource description
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	// IPID just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later.
-	IPID *string `json:"ip_id,omitempty"`
+	IPID *string `json:"ip_id"`
 	// Tags list of keyword
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 }
 
 func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
@@ -1392,39 +1647,39 @@ type CreateBackendRequest struct {
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ForwardProtocol backend protocol. TCP or HTTP
 	//
 	// Default value: tcp
-	ForwardProtocol Protocol `json:"forward_protocol,omitempty"`
+	ForwardProtocol Protocol `json:"forward_protocol"`
 	// ForwardPort user sessions will be forwarded to this port of backend servers
-	ForwardPort int32 `json:"forward_port,omitempty"`
+	ForwardPort int32 `json:"forward_port"`
 	// ForwardPortAlgorithm load balancing algorithm
 	//
 	// Default value: roundrobin
-	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm,omitempty"`
+	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
 	// StickySessions enables cookie-based session persistence
 	//
 	// Default value: none
-	StickySessions StickySessionsType `json:"sticky_sessions,omitempty"`
+	StickySessions StickySessionsType `json:"sticky_sessions"`
 	// StickySessionsCookieName cookie name for for sticky sessions
-	StickySessionsCookieName string `json:"sticky_sessions_cookie_name,omitempty"`
+	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// HealthCheck see the Healthcheck object description
-	HealthCheck *HealthCheck `json:"health_check,omitempty"`
+	HealthCheck *HealthCheck `json:"health_check"`
 	// ServerIP backend server IP addresses list (IPv4 or IPv6)
-	ServerIP []string `json:"server_ip,omitempty"`
+	ServerIP []string `json:"server_ip"`
 	// SendProxyV2 enables PROXY protocol version 2 (must be supported by backend servers)
-	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 	// TimeoutServer maximum server connection inactivity time
-	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
+	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect maximum initical server connection establishment time
-	TimeoutConnect *time.Duration `json:"timeout_connect,omitempty"`
+	TimeoutConnect *time.Duration `json:"timeout_connect"`
 	// TimeoutTunnel maximum tunnel inactivity time
-	TimeoutTunnel *time.Duration `json:"timeout_tunnel,omitempty"`
+	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction modify what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
-	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action,omitempty"`
+	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -1432,9 +1687,9 @@ func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -1454,9 +1709,9 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server,omitempty"`
-		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect,omitempty"`
-		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel,omitempty"`
+		TmpTimeoutServer  *marshaler.Duration `json:"timeout_server"`
+		TmpTimeoutConnect *marshaler.Duration `json:"timeout_connect"`
+		TmpTimeoutTunnel  *marshaler.Duration `json:"timeout_tunnel"`
 	}{
 		tmpType: tmpType(m),
 
@@ -1692,7 +1947,7 @@ type AddBackendServersRequest struct {
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to remove of your backend
-	ServerIP []string `json:"server_ip,omitempty"`
+	ServerIP []string `json:"server_ip"`
 }
 
 func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
@@ -1736,7 +1991,7 @@ type RemoveBackendServersRequest struct {
 	// BackendID backend ID
 	BackendID string `json:"-"`
 	// ServerIP set all IPs to remove of your backend
-	ServerIP []string `json:"server_ip,omitempty"`
+	ServerIP []string `json:"server_ip"`
 }
 
 func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
@@ -2029,15 +2284,15 @@ type CreateFrontendRequest struct {
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name resource name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// InboundPort tCP port to listen on the front side
-	InboundPort int32 `json:"inbound_port,omitempty"`
+	InboundPort int32 `json:"inbound_port"`
 	// BackendID backend ID
-	BackendID string `json:"backend_id,omitempty"`
+	BackendID string `json:"backend_id"`
 	// TimeoutClient set the maximum inactivity time on the client side
-	TimeoutClient *time.Duration `json:"timeout_client,omitempty"`
+	TimeoutClient *time.Duration `json:"timeout_client"`
 	// CertificateID certificate ID
-	CertificateID *string `json:"certificate_id,omitempty"`
+	CertificateID *string `json:"certificate_id"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2045,7 +2300,7 @@ func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -2063,7 +2318,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpTimeoutClient *marshaler.Duration `json:"timeout_client,omitempty"`
+		TmpTimeoutClient *marshaler.Duration `json:"timeout_client"`
 	}{
 		tmpType: tmpType(m),
 
@@ -2384,13 +2639,13 @@ type CreateACLRequest struct {
 	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
 	// Name name of your ACL ressource
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Action see the AclAction object description
-	Action *ACLAction `json:"action,omitempty"`
+	Action *ACLAction `json:"action"`
 	// Match see the AclMatch object description
-	Match *ACLMatch `json:"match,omitempty"`
+	Match *ACLMatch `json:"match"`
 	// Index order between your Acls (ascending order, 0 is first acl executed)
-	Index int32 `json:"index,omitempty"`
+	Index int32 `json:"index"`
 }
 
 func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
@@ -2556,7 +2811,7 @@ type CreateCertificateRequest struct {
 	// LbID load Balancer ID
 	LbID string `json:"-"`
 	// Name certificate name
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Letsencrypt let's Encrypt type
 	// Precisely one of Letsencrypt must be set.
 	Letsencrypt *CreateCertificateRequestLetsencryptConfig `json:"letsencrypt,omitempty"`
