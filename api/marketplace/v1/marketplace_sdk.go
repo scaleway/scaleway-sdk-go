@@ -47,83 +47,83 @@ func NewAPI(client *scw.Client) *API {
 }
 
 type GetImageResponse struct {
-	Image *Image `json:"image,omitempty"`
+	Image *Image `json:"image"`
 }
 
 type GetServiceInfoResponse struct {
-	API string `json:"api,omitempty"`
+	API string `json:"api"`
 
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 
-	Version string `json:"version,omitempty"`
+	Version string `json:"version"`
 }
 
 type GetVersionResponse struct {
-	Version *Version `json:"version,omitempty"`
+	Version *Version `json:"version"`
 }
 
 type Image struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 
-	Logo string `json:"logo,omitempty"`
+	Logo string `json:"logo"`
 
-	Categories []string `json:"categories,omitempty"`
+	Categories []string `json:"categories"`
 
-	Organization *Organization `json:"organization,omitempty"`
+	Organization *Organization `json:"organization"`
 
-	ValidUntil time.Time `json:"valid_until,omitempty"`
+	ValidUntil time.Time `json:"valid_until"`
 
-	CreationDate time.Time `json:"creation_date,omitempty"`
+	CreationDate time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date,omitempty"`
+	ModificationDate time.Time `json:"modification_date"`
 
-	Versions []*Version `json:"versions,omitempty"`
+	Versions []*Version `json:"versions"`
 
-	CurrentPublicVersion string `json:"current_public_version,omitempty"`
+	CurrentPublicVersion string `json:"current_public_version"`
 }
 
 type ListImagesResponse struct {
-	Images []*Image `json:"images,omitempty"`
+	Images []*Image `json:"images"`
 
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListVersionsResponse struct {
-	Versions []*Version `json:"versions,omitempty"`
+	Versions []*Version `json:"versions"`
 
-	TotalCount uint32 `json:"total_count,omitempty"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 type LocalImage struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Arch string `json:"arch,omitempty"`
+	Arch string `json:"arch"`
 
-	Zone scw.Zone `json:"zone,omitempty"`
+	Zone scw.Zone `json:"zone"`
 
-	CompatibleCommercialTypes []string `json:"compatible_commercial_types,omitempty"`
+	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
 }
 
 type Organization struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 }
 
 type Version struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	CreationDate time.Time `json:"creation_date,omitempty"`
+	CreationDate time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date,omitempty"`
+	ModificationDate time.Time `json:"modification_date"`
 
-	LocalImages []*LocalImage `json:"local_images,omitempty"`
+	LocalImages []*LocalImage `json:"local_images"`
 }
 
 // Service API
