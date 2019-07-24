@@ -2481,7 +2481,7 @@ type ListVolumesRequest struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"-"`
-	// PerPage a positive integer lower or equal to 100 to select the number of items to display
+	// PerPage a positive integer lower or equal to 100 to select the number of items to display. The default value is 20.
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
@@ -3296,12 +3296,14 @@ func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw
 
 type ListComputeClustersRequest struct {
 	Zone scw.Zone `json:"-"`
-
-	Organization *string `json:"-"`
-
+	// PerPage a positive integer lower or equal to 100 to select the number of items to display. The default value is 20.
 	PerPage *int32 `json:"-"`
-
+	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
+	// Organization display compute-clusters of this organization
+	Organization *string `json:"-"`
+	// Name filter compute-clusters by name (for eg "cluster1" will return "cluster100" and "cluster1" but not "foo")
+	Name *string `json:"-"`
 }
 
 // ListComputeClusters list compute-clusters
@@ -3326,9 +3328,10 @@ func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.R
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
