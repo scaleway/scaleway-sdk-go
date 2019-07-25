@@ -798,6 +798,8 @@ type ListBootscriptsResponse struct {
 
 type ListComputeClustersResponse struct {
 	ComputeClusters []*ComputeCluster `json:"compute_clusters"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 type ListImagesResponse struct {
@@ -3351,6 +3353,25 @@ func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.R
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListComputeClustersResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListComputeClustersResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+	results, ok := res.(*ListComputeClustersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ComputeClusters = append(r.ComputeClusters, results.ComputeClusters...)
+	r.TotalCount += uint32(len(results.ComputeClusters))
+	return len(results.ComputeClusters), nil
 }
 
 type CreateComputeClusterRequest struct {
