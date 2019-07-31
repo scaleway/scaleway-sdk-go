@@ -11,9 +11,12 @@ func TestParseSize(t *testing.T) {
 		str  string
 		want Size
 	}{
-		{str: "42 MB", want: Size(42000000)},
-		{str: "42 mib", want: Size(44040192)},
-		{str: "42", want: Size(42)},
+		{str: "42", want: Size(42 * B)},
+		{str: "42 KB", want: 42 * KB},
+		{str: "42 MB", want: 42 * MB},
+		{str: "42 GB", want: 42 * GB},
+		{str: "42 TB", want: 42 * TB},
+		{str: "42 PB", want: 42 * PB},
 	}
 
 	for _, c := range cases {
@@ -29,8 +32,8 @@ func TestSize_String(t *testing.T) {
 		size Size
 		want string
 	}{
-		{size: Size(42000000), want: "42000000"},
-		{size: Size(42), want: "42"},
+		{size: 42 * MB, want: "42000000"},
+		{size: 42 * B, want: "42"},
 	}
 
 	for _, c := range cases {
