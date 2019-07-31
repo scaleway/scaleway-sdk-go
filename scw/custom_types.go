@@ -1,6 +1,9 @@
 package scw
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // ServiceInfo contains API metadata
 // These metadata are only here for debugging. Do not rely on these values
@@ -60,4 +63,21 @@ func NewMoneyFromFloat(value float64, currency string) *Money {
 // ToFloat converts a Money object to a float.
 func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1000000000
+}
+
+// Money represents a size in bytes.
+type Size uint64
+
+const (
+	B  Size = 1
+	KB      = 1000 * B
+	MB      = 1000 * KB
+	GB      = 1000 * MB
+	TB      = 1000 * GB
+	PB      = 1000 * TB
+)
+
+// String returns the string representation of a Size.
+func (s Size) String() string {
+	return fmt.Sprintf("%d", s)
 }
