@@ -18,6 +18,7 @@ var (
 	testFloat32  float32       = 46
 	testFloat64  float64       = 47
 	testDuration time.Duration = 48
+	testSize     Size          = 3 * GB
 )
 
 func TestStringPtr(t *testing.T) {
@@ -185,5 +186,15 @@ func TestDurationPtr(t *testing.T) {
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
 	testhelpers.Equals(t, testDuration, *pointer)
+
+}
+
+func TestSizePtr(t *testing.T) {
+
+	pointer := SizePtr(testSize)
+
+	// value to pointer value
+	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
+	testhelpers.Equals(t, testSize, *pointer)
 
 }

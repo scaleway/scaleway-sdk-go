@@ -156,3 +156,8 @@ func Float64SlicePtr(src []float64) []*float64 {
 func DurationPtr(v time.Duration) *time.Duration {
 	return &v
 }
+
+// SizePtr returns a pointer to the Size value passed in.
+func SizePtr(v Size) *Size {
+	return &v
+}
