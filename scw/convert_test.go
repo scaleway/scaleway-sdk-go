@@ -20,12 +20,12 @@ var (
 	testDuration time.Duration = 48
 )
 
-func TestStringConvert(t *testing.T) {
+func TestStringPtr(t *testing.T) {
 
-	pointer := String(testString)
+	pointer := StringPtr(testString)
 	slice := []string{testString}
-	sliceOfPointers := StringSlice(slice)
-	pointerToSlice := Strings(slice)
+	sliceOfPointers := StringSlicePtr(slice)
+	pointerToSlice := StringsPtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -42,11 +42,11 @@ func TestStringConvert(t *testing.T) {
 
 }
 
-func TestByteConvert(t *testing.T) {
+func TestBytesPtr(t *testing.T) {
 
-	pointer := Bytes(testBytes)
+	pointer := BytesPtr(testBytes)
 	slice := [][]byte{testBytes}
-	sliceOfPointers := BytesSlice(slice)
+	sliceOfPointers := BytesSlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -59,11 +59,11 @@ func TestByteConvert(t *testing.T) {
 
 }
 
-func TestBoolConvert(t *testing.T) {
+func TestBoolPtr(t *testing.T) {
 
-	pointer := Bool(testBool)
+	pointer := BoolPtr(testBool)
 	slice := []bool{testBool}
-	sliceOfPointers := BoolSlice(slice)
+	sliceOfPointers := BoolSlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -76,11 +76,11 @@ func TestBoolConvert(t *testing.T) {
 
 }
 
-func TestInt32Convert(t *testing.T) {
+func TestInt32Ptr(t *testing.T) {
 
-	pointer := Int32(testInt32)
+	pointer := Int32Ptr(testInt32)
 	slice := []int32{testInt32}
-	sliceOfPointers := Int32Slice(slice)
+	sliceOfPointers := Int32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -93,11 +93,11 @@ func TestInt32Convert(t *testing.T) {
 
 }
 
-func TestInt64Convert(t *testing.T) {
+func TestInt64Ptr(t *testing.T) {
 
-	pointer := Int64(testInt64)
+	pointer := Int64Ptr(testInt64)
 	slice := []int64{testInt64}
-	sliceOfPointers := Int64Slice(slice)
+	sliceOfPointers := Int64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -110,11 +110,11 @@ func TestInt64Convert(t *testing.T) {
 
 }
 
-func TestUInt32Convert(t *testing.T) {
+func TestUint32Ptr(t *testing.T) {
 
-	pointer := Uint32(testUInt32)
+	pointer := Uint32Ptr(testUInt32)
 	slice := []uint32{testUInt32}
-	sliceOfPointers := Uint32Slice(slice)
+	sliceOfPointers := Uint32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -127,11 +127,11 @@ func TestUInt32Convert(t *testing.T) {
 
 }
 
-func TestUInt64Convert(t *testing.T) {
+func TestUint64Ptr(t *testing.T) {
 
-	pointer := Uint64(testUInt64)
+	pointer := Uint64Ptr(testUInt64)
 	slice := []uint64{testUInt64}
-	sliceOfPointers := Uint64Slice(slice)
+	sliceOfPointers := Uint64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -144,11 +144,11 @@ func TestUInt64Convert(t *testing.T) {
 
 }
 
-func TestFloat32Convert(t *testing.T) {
+func TestFloat32Ptr(t *testing.T) {
 
-	pointer := Float32(testFloat32)
+	pointer := Float32Ptr(testFloat32)
 	slice := []float32{testFloat32}
-	sliceOfPointers := Float32Slice(slice)
+	sliceOfPointers := Float32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -161,11 +161,11 @@ func TestFloat32Convert(t *testing.T) {
 
 }
 
-func TestFloat64Convert(t *testing.T) {
+func TestFloat64Ptr(t *testing.T) {
 
-	pointer := Float64(testFloat64)
+	pointer := Float64Ptr(testFloat64)
 	slice := []float64{testFloat64}
-	sliceOfPointers := Float64Slice(slice)
+	sliceOfPointers := Float64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -178,9 +178,9 @@ func TestFloat64Convert(t *testing.T) {
 
 }
 
-func TestDurationConvert(t *testing.T) {
+func TestDurationPtr(t *testing.T) {
 
-	pointer := Duration(testDuration)
+	pointer := DurationPtr(testDuration)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")

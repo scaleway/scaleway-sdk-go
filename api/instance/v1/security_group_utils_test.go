@@ -42,8 +42,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	updateResponse, err := instanceAPI.UpdateSecurityGroup(&UpdateSecurityGroupRequest{
 		Zone:                  zone,
 		SecurityGroupID:       createResponse.SecurityGroup.ID,
-		Name:                  scw.String("new_name"),
-		Description:           scw.String("new_description"),
+		Name:                  scw.StringPtr("new_name"),
+		Description:           scw.StringPtr("new_description"),
 		Stateful:              &f,
 		InboundDefaultPolicy:  &drop,
 		OutboundDefaultPolicy: &accept,
@@ -97,8 +97,8 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
 			Direction:       SecurityGroupRuleDirectionInbound,
 			Protocol:        SecurityGroupRuleProtocolTCP,
-			DestPortFrom:    scw.Uint32(1),
-			DestPortTo:      scw.Uint32(1024),
+			DestPortFrom:    scw.Uint32Ptr(1),
+			DestPortTo:      scw.Uint32Ptr(1024),
 			IPRange:         "8.8.8.8/32",
 			Action:          SecurityGroupRuleActionAccept,
 			Position:        1,
@@ -127,9 +127,9 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
-			IPRange:             scw.String("1.1.1.1/32"),
-			DestPortFrom:        scw.Uint32(1),
-			DestPortTo:          scw.Uint32(2048),
+			IPRange:             scw.StringPtr("1.1.1.1/32"),
+			DestPortFrom:        scw.Uint32Ptr(1),
+			DestPortTo:          scw.Uint32Ptr(2048),
 			Protocol:            &protocol,
 			Direction:           &direction,
 		})
@@ -137,8 +137,8 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
 		testhelpers.Equals(t, "1.1.1.1", updateResponse.Rule.IPRange)
-		testhelpers.Equals(t, scw.Uint32(1), updateResponse.Rule.DestPortFrom)
-		testhelpers.Equals(t, scw.Uint32(2048), updateResponse.Rule.DestPortTo)
+		testhelpers.Equals(t, scw.Uint32Ptr(1), updateResponse.Rule.DestPortFrom)
+		testhelpers.Equals(t, scw.Uint32Ptr(2048), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
 		testhelpers.Equals(t, SecurityGroupRuleDirectionOutbound, updateResponse.Rule.Direction)
 	})
@@ -156,9 +156,9 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
-			IPRange:             scw.String("1.1.1.1/32"),
-			DestPortFrom:        scw.Uint32(22),
-			DestPortTo:          scw.Uint32(22),
+			IPRange:             scw.StringPtr("1.1.1.1/32"),
+			DestPortFrom:        scw.Uint32Ptr(22),
+			DestPortTo:          scw.Uint32Ptr(22),
 			Protocol:            &protocol,
 			Direction:           &direction,
 		})

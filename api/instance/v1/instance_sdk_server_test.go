@@ -23,7 +23,7 @@ func TestServerUpdate(t *testing.T) {
 		volumeID          string
 		zone              = scw.ZoneFrPar1
 		name              = "instance_sdk_server_test"
-		dynamicIPRequired = scw.Bool(true)
+		dynamicIPRequired = scw.BoolPtr(true)
 		commercialType    = "START1-S"
 		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
 		enableIPv6        = true
