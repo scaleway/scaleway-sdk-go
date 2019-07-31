@@ -1082,9 +1082,9 @@ type ServerTypeNetworkInterface struct {
 }
 
 type ServerTypeVolumeConstraintSizes struct {
-	MinSize uint64 `json:"min_size"`
+	MinSize *scw.Size `json:"min_size"`
 
-	MaxSize uint64 `json:"max_size"`
+	MaxSize *scw.Size `json:"max_size"`
 }
 
 type ServerTypeVolumeConstraintsByType struct {
@@ -1110,7 +1110,7 @@ type Snapshot struct {
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type"`
 
-	Size uint64 `json:"size"`
+	Size *scw.Size `json:"size"`
 	// State
 	//
 	// Default value: available
@@ -1178,7 +1178,7 @@ type Volume struct {
 	// Server display information about the server attached to the volume
 	Server *ServerSummary `json:"server"`
 	// Size display the volumes disk size
-	Size uint64 `json:"size"`
+	Size *scw.Size `json:"size"`
 	// VolumeType display the volumes type
 	//
 	// Default value: l_ssd
@@ -1198,7 +1198,7 @@ type VolumeSummary struct {
 
 	Name string `json:"name"`
 
-	Size uint64 `json:"size"`
+	Size *scw.Size `json:"size"`
 	// VolumeType
 	//
 	// Default value: l_ssd
@@ -1211,7 +1211,7 @@ type VolumeTemplate struct {
 	// Name display the volumes name
 	Name string `json:"name,omitempty"`
 	// Size display the volumes disk size
-	Size uint64 `json:"size,omitempty"`
+	Size *scw.Size `json:"size,omitempty"`
 	// VolumeType display the volumes type
 	//
 	// Default value: l_ssd
@@ -2382,7 +2382,7 @@ type setSnapshotRequest struct {
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type"`
 
-	Size uint64 `json:"size"`
+	Size *scw.Size `json:"size"`
 	// State
 	//
 	// Default value: available
@@ -2570,7 +2570,7 @@ type CreateVolumeRequest struct {
 	VolumeType VolumeType `json:"volume_type,omitempty"`
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
-	Size *uint64 `json:"size,omitempty"`
+	Size *scw.Size `json:"size,omitempty"`
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	BaseVolume *string `json:"base_volume,omitempty"`
@@ -4256,7 +4256,7 @@ type From interface {
 }
 
 type FromSize struct {
-	Value uint64
+	Value scw.Size
 }
 
 func (FromSize) isFrom() {

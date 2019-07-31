@@ -804,6 +804,8 @@ type Certificate struct {
 	NotValidAfter time.Time `json:"not_valid_after"`
 	// Lb load Balancer object
 	Lb *Lb `json:"lb"`
+	// Name certificate name
+	Name string `json:"name"`
 }
 
 // CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt. Currently in BETA stage!
