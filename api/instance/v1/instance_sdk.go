@@ -1082,9 +1082,9 @@ type ServerTypeNetworkInterface struct {
 }
 
 type ServerTypeVolumeConstraintSizes struct {
-	MinSize *scw.Size `json:"min_size"`
+	MinSize scw.Size `json:"min_size"`
 
-	MaxSize *scw.Size `json:"max_size"`
+	MaxSize scw.Size `json:"max_size"`
 }
 
 type ServerTypeVolumeConstraintsByType struct {
@@ -1110,7 +1110,7 @@ type Snapshot struct {
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type"`
 
-	Size *scw.Size `json:"size"`
+	Size scw.Size `json:"size"`
 	// State
 	//
 	// Default value: available
@@ -1178,7 +1178,7 @@ type Volume struct {
 	// Server display information about the server attached to the volume
 	Server *ServerSummary `json:"server"`
 	// Size display the volumes disk size
-	Size *scw.Size `json:"size"`
+	Size scw.Size `json:"size"`
 	// VolumeType display the volumes type
 	//
 	// Default value: l_ssd
@@ -1198,7 +1198,7 @@ type VolumeSummary struct {
 
 	Name string `json:"name"`
 
-	Size *scw.Size `json:"size"`
+	Size scw.Size `json:"size"`
 	// VolumeType
 	//
 	// Default value: l_ssd
@@ -1211,7 +1211,7 @@ type VolumeTemplate struct {
 	// Name display the volumes name
 	Name string `json:"name,omitempty"`
 	// Size display the volumes disk size
-	Size *scw.Size `json:"size,omitempty"`
+	Size scw.Size `json:"size,omitempty"`
 	// VolumeType display the volumes type
 	//
 	// Default value: l_ssd
@@ -2382,7 +2382,7 @@ type setSnapshotRequest struct {
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"volume_type"`
 
-	Size *scw.Size `json:"size"`
+	Size scw.Size `json:"size"`
 	// State
 	//
 	// Default value: available

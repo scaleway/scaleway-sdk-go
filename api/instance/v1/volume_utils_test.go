@@ -52,7 +52,7 @@ func TestUpdateVolume(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Assert(t, updateVolumeResponse.Volume != nil, "Should have volume in response")
 	testhelpers.Equals(t, newVolumeName, updateVolumeResponse.Volume.Name)
-	testhelpers.Equals(t, volumeSize, *updateVolumeResponse.Volume.Size) // check that server is not changed
+	testhelpers.Equals(t, volumeSize, updateVolumeResponse.Volume.Size) // check that server is not changed
 
 	// Delete Volume
 	err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
