@@ -1437,7 +1437,7 @@ type CreateServerRequest struct {
 	// BootType define the boot type you want to use
 	//
 	// Default value: local
-	BootType ServerBootType `json:"boot_type,omitempty"`
+	BootType ServerBootType `json:"boot_type"`
 	// Organization define the server organization
 	Organization string `json:"organization,omitempty"`
 	// Tags define the server tags
@@ -1678,7 +1678,7 @@ type updateServerRequest struct {
 	// BootType
 	//
 	// Default value: local
-	BootType ServerBootType `json:"boot_type,omitempty"`
+	BootType ServerBootType `json:"boot_type"`
 
 	Tags *[]string `json:"tags,omitempty"`
 
@@ -1783,7 +1783,7 @@ type ServerActionRequest struct {
 	// Action
 	//
 	// Default value: poweron
-	Action ServerAction `json:"action,omitempty"`
+	Action ServerAction `json:"action"`
 }
 
 // ServerAction perform action
@@ -2042,7 +2042,7 @@ type CreateImageRequest struct {
 	// Arch
 	//
 	// Default value: x86_64
-	Arch Arch `json:"arch,omitempty"`
+	Arch Arch `json:"arch"`
 
 	DefaultBootscript string `json:"default_bootscript,omitempty"`
 
@@ -2567,7 +2567,7 @@ type CreateVolumeRequest struct {
 	// VolumeType
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type,omitempty"`
+	VolumeType VolumeType `json:"volume_type"`
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	Size *scw.Size `json:"size,omitempty"`
@@ -2800,11 +2800,11 @@ type CreateSecurityGroupRequest struct {
 	// InboundDefaultPolicy
 	//
 	// Default value: accept
-	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
+	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
 	// OutboundDefaultPolicy
 	//
 	// Default value: accept
-	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
+	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 }
 
 // CreateSecurityGroup create security group
@@ -3075,15 +3075,15 @@ type CreateSecurityGroupRuleRequest struct {
 	// Protocol
 	//
 	// Default value: TCP
-	Protocol SecurityGroupRuleProtocol `json:"protocol,omitempty"`
+	Protocol SecurityGroupRuleProtocol `json:"protocol"`
 	// Direction
 	//
 	// Default value: inbound
-	Direction SecurityGroupRuleDirection `json:"direction,omitempty"`
+	Direction SecurityGroupRuleDirection `json:"direction"`
 	// Action
 	//
 	// Default value: accept
-	Action SecurityGroupRuleAction `json:"action,omitempty"`
+	Action SecurityGroupRuleAction `json:"action"`
 
 	IPRange string `json:"ip_range,omitempty"`
 
@@ -3383,11 +3383,11 @@ type CreateComputeClusterRequest struct {
 	// PolicyMode
 	//
 	// Default value: optional
-	PolicyMode ComputeClusterPolicyMode `json:"policy_mode,omitempty"`
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode"`
 	// PolicyType
 	//
 	// Default value: max_availability
-	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
+	PolicyType ComputeClusterPolicyType `json:"policy_type"`
 }
 
 // CreateComputeCluster create compute-cluster
@@ -3543,11 +3543,11 @@ type UpdateComputeClusterRequest struct {
 	// PolicyMode
 	//
 	// Default value: optional
-	PolicyMode ComputeClusterPolicyMode `json:"policy_mode,omitempty"`
+	PolicyMode ComputeClusterPolicyMode `json:"policy_mode"`
 	// PolicyType
 	//
 	// Default value: max_availability
-	PolicyType ComputeClusterPolicyType `json:"policy_type,omitempty"`
+	PolicyType ComputeClusterPolicyType `json:"policy_type"`
 }
 
 // UpdateComputeCluster update compute-cluster
