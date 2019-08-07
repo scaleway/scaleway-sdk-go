@@ -2479,7 +2479,7 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 
 type ListVolumesRequest struct {
 	Zone scw.Zone `json:"-"`
-	// VolumeType filter by volume type ("l_ssd", "b_ssd")
+	// VolumeType filter by volume type
 	//
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"-"`
@@ -3793,7 +3793,7 @@ func (s *API) DeleteComputeClusterServers(req *DeleteComputeClusterServersReques
 type ListIpsRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	Organization string `json:"-"`
+	Organization *string `json:"-"`
 
 	Name *string `json:"-"`
 
@@ -3806,9 +3806,9 @@ type ListIpsRequest struct {
 func (s *API) ListIps(req *ListIpsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultProjectID()
-		req.Organization = defaultOrganization
+	defaultOrganization, exist := s.client.GetDefaultProjectID()
+	if (req.Organization == nil || *req.Organization == "") && exist {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
