@@ -1,7 +1,9 @@
 package scw
 
 import (
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -23,8 +25,8 @@ func b(value bool) *bool {
 	return &value
 }
 
-// TestConfig tests config getters return correct values
-func TestConfig(t *testing.T) {
+// TestLoadConfig tests config getters return correct values
+func TestLoadConfig(t *testing.T) {
 
 	tests := []struct {
 		name  string
@@ -361,51 +363,52 @@ var (
 			DefaultRegion:    &v2ValidDefaultRegion,
 		},
 	}
-
-	v2CompleteValidConfigFile = `
-access_key: "` + v2ValidAccessKey + `"
-secret_key: "` + v2ValidSecretKey + `"
-api_url: "` + v2ValidAPIURL + `"
+	v2PartialValidConfigFile = `
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-default_project_id: "` + v2ValidDefaultProjectID + `"
-default_region: "` + v2ValidDefaultRegion + `"
-default_zone: "` + v2ValidDefaultZone + `"
+default_project_id: ` + v2ValidDefaultProjectID + `
+default_region: ` + v2ValidDefaultRegion + `
+default_zone: ` + v2ValidDefaultZone
+
+	v2CompleteValidConfigFile = v2PartialValidConfigFile + `
 profiles:
   ` + v2ValidProfile + `:
-    access_key: "` + v2ValidAccessKey2 + `"
-    secret_key: "` + v2ValidSecretKey2 + `"
-    api_url: "` + v2ValidAPIURL2 + `"
+    access_key: ` + v2ValidAccessKey2 + `
+    secret_key: ` + v2ValidSecretKey2 + `
+    api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
-    default_project_id: "` + v2ValidDefaultProjectID2 + `"
-    default_region: "` + v2ValidDefaultRegion2 + `"
-    default_zone: "` + v2ValidDefaultZone2 + `"
+    default_project_id: ` + v2ValidDefaultProjectID2 + `
+    default_region: ` + v2ValidDefaultRegion2 + `
+    default_zone: ` + v2ValidDefaultZone2 + `
 `
 
 	v2CompleteValidConfigWithActiveProfileFile = `
-access_key: "` + v2ValidAccessKey + `"
-secret_key: "` + v2ValidSecretKey + `"
-api_url: "` + v2ValidAPIURL + `"
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-default_project_id: "` + v2ValidDefaultProjectID + `"
-default_region: "` + v2ValidDefaultRegion + `"
-default_zone: "` + v2ValidDefaultZone + `"
+default_project_id: ` + v2ValidDefaultProjectID + `
+default_region: ` + v2ValidDefaultRegion + `
+default_zone: ` + v2ValidDefaultZone + `
 active_profile: ` + v2ValidProfile + `
 profiles:
   ` + v2ValidProfile + `:
-    access_key: "` + v2ValidAccessKey2 + `"
-    secret_key: "` + v2ValidSecretKey2 + `"
-    api_url: "` + v2ValidAPIURL2 + `"
+    access_key: ` + v2ValidAccessKey2 + `
+    secret_key: ` + v2ValidSecretKey2 + `
+    api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
-    default_project_id: "` + v2ValidDefaultProjectID2 + `"
-    default_region: "` + v2ValidDefaultRegion2 + `"
-    default_zone: "` + v2ValidDefaultZone2 + `"
+    default_project_id: ` + v2ValidDefaultProjectID2 + `
+    default_region: ` + v2ValidDefaultRegion2 + `
+    default_zone: ` + v2ValidDefaultZone2 + `
 `
 
 	v2SimpleValidConfigFile = `
-access_key: "` + v2ValidAccessKey + `"
-secret_key: "` + v2ValidSecretKey + `"
-default_project_id: "` + v2ValidDefaultProjectID + `"
-default_region: "` + v2ValidDefaultRegion + `"
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+default_project_id: ` + v2ValidDefaultProjectID + `
+default_region: ` + v2ValidDefaultRegion + `
 `
 
 	v2SimpleInvalidConfigFile            = `insecure: "bool""`
@@ -441,3 +444,126 @@ var (
 "version":"` + v1Version + `"
 `
 )
+
+// TestSaveConfig tests config write the correct values in the config file
+func TestSaveConfig(t *testing.T) {
+	tests := []struct {
+		name        string
+		env         map[string]string
+		files       map[string]string
+		newConfig   *configV2
+		profileName []string
+
+		expectedFiles map[string]string
+	}{
+		{
+			name: "Custom-path config",
+			env: map[string]string{
+				scwConfigPathEnv: "{HOME}/valid1/test.conf",
+			},
+			files: map[string]string{
+				"valid1/test.conf": emptyFile,
+			},
+			newConfig: &configV2{
+				profile: profile{
+					AccessKey:        s(v2ValidAccessKey),
+					SecretKey:        s(v2ValidSecretKey),
+					DefaultProjectID: s(v2ValidDefaultProjectID),
+					DefaultRegion:    s(v2ValidDefaultRegion),
+				},
+			},
+
+			expectedFiles: map[string]string{
+				"valid1/test.conf": v2SimpleValidConfigFile,
+			},
+		},
+		{
+			name: "Default config path",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			newConfig: &configV2{
+				profile: profile{
+					AccessKey:        s(v2ValidAccessKey),
+					SecretKey:        s(v2ValidSecretKey),
+					DefaultProjectID: s(v2ValidDefaultProjectID),
+					DefaultRegion:    s(v2ValidDefaultRegion),
+				},
+			},
+
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+		},
+		{
+			name: "Add region only",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile,
+			},
+			newConfig: &configV2{
+				profile: profile{
+					DefaultZone: s(v2ValidDefaultZone),
+				},
+			},
+
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2SimpleValidConfigFile + "default_zone: " + v2ValidDefaultZone + "\n",
+			},
+		},
+		{
+			name: "Add new profile",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2PartialValidConfigFile,
+			},
+			profileName: []string{v2ValidProfile},
+			newConfig: &configV2{
+				Profiles: map[string]*profile{v2ValidProfile: {
+					AccessKey:        s(v2ValidAccessKey2),
+					SecretKey:        s(v2ValidSecretKey2),
+					APIURL:           s(v2ValidAPIURL2),
+					Insecure:         b(true),
+					DefaultProjectID: s(v2ValidDefaultProjectID2),
+					DefaultRegion:    s(v2ValidDefaultRegion2),
+					DefaultZone:      s(v2ValidDefaultZone2),
+				}},
+				withProfile: v2ValidProfile,
+			},
+
+			expectedFiles: map[string]string{
+				".config/scw/config.yaml": v2CompleteValidConfigFile,
+			},
+		},
+	}
+	// create home dir
+	dir := initEnv(t)
+
+	// delete home dir and reset env variables
+	defer resetEnv(t, os.Environ(), dir)
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// set up env and config file(s)
+			setEnv(t, test.env, test.files, dir)
+
+			// remove config file(s)
+			defer cleanEnv(t, test.files, dir)
+			defer cleanEnv(t, test.expectedFiles, dir)
+
+			testhelpers.AssertNoError(t, SaveConfig(test.newConfig, test.profileName...))
+
+			// test expected files
+			for fileName, expectedContent := range test.expectedFiles {
+				content, err := ioutil.ReadFile(filepath.Join(dir, fileName))
+				testhelpers.AssertNoError(t, err)
+				testhelpers.Equals(t, expectedContent, "\n"+string(content))
+			}
+
+		})
+	}
+}
