@@ -428,7 +428,6 @@ const (
 )
 
 // migrateV1toV2 converts the V1 config to V2 config and save it in the target path
-// use config.Save() when the method is public
 func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	// STEP 0: get absolute target path
 
@@ -456,6 +455,93 @@ func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	}
 
 	// STEP 4: log success
-	logger.Infof("config successfully migrated to %s", targetPath)
+	logger.Warningf("migrated existing config to %s", targetPath)
 	return nil
+}
+
+// SaveConfig will merge the given newConfig in the current config.
+// Optional: pass the profile name to merge the config in a profile.
+func SaveConfig(newConfig Config, profileName ...string) error {
+	var currentConfig *configV2
+
+	// STEP 1: load current config
+	config, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+	currentConfig = config.(*configV2)
+
+	// STEP 2: merge new config with current config
+	if len(profileName) > 1 {
+		return fmt.Errorf("too many profiles")
+	} else if len(profileName) == 1 {
+		if currentConfig.Profiles == nil {
+			currentConfig.Profiles = make(map[string]*profile)
+		}
+		p := currentConfig.Profiles[profileName[0]]
+		currentConfig.Profiles[profileName[0]] = mergeConfigWithProfile(newConfig, p)
+	} else {
+		p := &currentConfig.profile
+		currentConfig.profile = *mergeConfigWithProfile(newConfig, p)
+	}
+
+	// STEP 3: marshal config
+	file, err := yaml.Marshal(currentConfig)
+	if err != nil {
+		return err
+	}
+
+	// STEP 4: get config path
+	v2Path := os.Getenv(scwConfigPathEnv)
+	if v2PathExist := v2Path != ""; !v2PathExist {
+		v2Path, v2PathExist = GetConfigV2FilePath()
+		if !v2PathExist {
+			return fmt.Errorf("invalid path to config")
+		}
+	}
+	v2Path = filepath.Clean(v2Path)
+
+	// STEP 5: create config path dir in cases it didn't exist before
+	err = os.MkdirAll(filepath.Dir(v2Path), 0700)
+	if err != nil {
+		return err
+	}
+
+	// STEP 6: write new config file
+	err = ioutil.WriteFile(v2Path, file, defaultConfigPermission)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func mergeConfigWithProfile(newConfig Config, p *profile) *profile {
+	if p == nil {
+		p = &profile{}
+	}
+	if value, exist := newConfig.GetAccessKey(); exist {
+		p.AccessKey = &value
+	}
+	if value, exist := newConfig.GetSecretKey(); exist {
+		p.SecretKey = &value
+	}
+	if value, exist := newConfig.GetAPIURL(); exist {
+		p.APIURL = &value
+	}
+	if value, exist := newConfig.GetInsecure(); exist {
+		p.Insecure = &value
+	}
+	if value, exist := newConfig.GetDefaultProjectID(); exist {
+		p.DefaultProjectID = &value
+	}
+	if value, exist := newConfig.GetDefaultRegion(); exist {
+		region := string(value)
+		p.DefaultRegion = &region
+	}
+	if value, exist := newConfig.GetDefaultZone(); exist {
+		zone := string(value)
+		p.DefaultZone = &zone
+	}
+	return p
 }
