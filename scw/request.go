@@ -19,7 +19,11 @@ type ScalewayRequest struct {
 	Headers http.Header
 	Query   url.Values
 	Body    io.Reader
-	Ctx     context.Context
+
+	// request options
+	ctx      context.Context
+	auth     auth.Auth
+	allPages bool
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
