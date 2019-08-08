@@ -591,10 +591,6 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 }
 
 type Bootscript struct {
-	// Arch display the bootscripts arch
-	//
-	// Default value: x86_64
-	Arch Arch `json:"arch"`
 	// Bootcmdargs display the bootscript parameters
 	Bootcmdargs string `json:"bootcmdargs"`
 	// Default dispmay if the bootscript is the default bootscript if no other boot option is configured
@@ -613,6 +609,10 @@ type Bootscript struct {
 	Public bool `json:"public"`
 	// Title display the bootscripts title
 	Title string `json:"title"`
+	// Arch display the bootscripts arch
+	//
+	// Default value: x86_64
+	Arch Arch `json:"arch"`
 }
 
 type ComputeCluster struct {
@@ -869,10 +869,6 @@ type SecurityGroup struct {
 	ID string `json:"id"`
 	// Name display the security groups name
 	Name string `json:"name"`
-	// CreationDate display the security group creation date
-	CreationDate time.Time `json:"creation_date"`
-	// ModificationDate display the security group modification date
-	ModificationDate time.Time `json:"modification_date"`
 	// Description display the security groups description
 	Description string `json:"description"`
 	// EnableDefaultSecurity display if the security group is set as default
@@ -881,14 +877,18 @@ type SecurityGroup struct {
 	//
 	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
-	// Organization display the security groups organization ID
-	Organization string `json:"organization"`
-	// OrganizationDefault display if the security group is set as organization default
-	OrganizationDefault bool `json:"organization_default"`
 	// OutboundDefaultPolicy display the default outbound policy
 	//
 	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
+	// Organization display the security groups organization ID
+	Organization string `json:"organization"`
+	// OrganizationDefault display if the security group is set as organization default
+	OrganizationDefault bool `json:"organization_default"`
+	// CreationDate display the security group creation date
+	CreationDate time.Time `json:"creation_date"`
+	// ModificationDate display the security group modification date
+	ModificationDate time.Time `json:"modification_date"`
 	// Servers list of servers attached to this security group
 	Servers []*ServerSummary `json:"servers"`
 	// Stateful true if the security group is stateful
@@ -936,30 +936,14 @@ type SecurityGroupTemplate struct {
 type Server struct {
 	// ID display the server unique ID
 	ID string `json:"id"`
-	// Image provide information on the server image
-	Image *Image `json:"image"`
 	// Name display the server name
 	Name string `json:"name"`
 	// Organization display the server organization
 	Organization string `json:"organization"`
-	// PrivateIP display the server private IP address
-	PrivateIP *string `json:"private_ip"`
-	// PublicIP display the server public IP address
-	PublicIP *ServerIP `json:"public_ip"`
-	// State display the server state
-	//
-	// Default value: running
-	State ServerState `json:"state"`
-	// BootType display the server boot type
-	//
-	// Default value: local
-	BootType ServerBootType `json:"boot_type"`
+	// AllowedActions provide as list of allowed actions on the server
+	AllowedActions []ServerAction `json:"allowed_actions"`
 	// Tags display the server associated tags
 	Tags []string `json:"tags"`
-	// Volumes display the server volumes
-	Volumes map[string]*Volume `json:"volumes"`
-	// Bootscript display the server bootscript
-	Bootscript *Bootscript `json:"bootscript"`
 	// CommercialType display the server commercial type (e.g. GP1-M)
 	CommercialType string `json:"commercial_type"`
 	// CreationDate display the server creation date
@@ -972,26 +956,42 @@ type Server struct {
 	ExtraNetworks []string `json:"extra_networks"`
 	// Hostname display the server host name
 	Hostname string `json:"hostname"`
-	// AllowedActions provide as list of allowed actions on the server
-	AllowedActions []ServerAction `json:"allowed_actions"`
+	// Image provide information on the server image
+	Image *Image `json:"image"`
+	// Protected display the server protection option is activated
+	Protected bool `json:"protected"`
+	// PrivateIP display the server private IP address
+	PrivateIP *string `json:"private_ip"`
+	// PublicIP display the server public IP address
+	PublicIP *ServerIP `json:"public_ip"`
+	// ModificationDate display the server modification date
+	ModificationDate time.Time `json:"modification_date"`
+	// State display the server state
+	//
+	// Default value: running
+	State ServerState `json:"state"`
+	// Location display the server location
+	Location *ServerLocation `json:"location"`
+	// IPv6 display the server IPv6 address
+	IPv6 *ServerIPv6 `json:"ipv6"`
+	// Bootscript display the server bootscript
+	Bootscript *Bootscript `json:"bootscript"`
+	// BootType display the server boot type
+	//
+	// Default value: local
+	BootType ServerBootType `json:"boot_type"`
+	// Volumes display the server volumes
+	Volumes map[string]*Volume `json:"volumes"`
+	// SecurityGroup display the server security group
+	SecurityGroup *SecurityGroupSummary `json:"security_group"`
+	// Maintenances display the server planned maintenances
+	Maintenances []*ServerMaintenance `json:"maintenances"`
+	// StateDetail display the server state_detail
+	StateDetail string `json:"state_detail"`
 	// Arch display the server arch
 	//
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
-	// IPv6 display the server IPv6 address
-	IPv6 *ServerIPv6 `json:"ipv6"`
-	// Location display the server location
-	Location *ServerLocation `json:"location"`
-	// Maintenances display the server planned maintenances
-	Maintenances []*ServerMaintenance `json:"maintenances"`
-	// ModificationDate display the server modification date
-	ModificationDate time.Time `json:"modification_date"`
-	// Protected display the server protection option is activated
-	Protected bool `json:"protected"`
-	// SecurityGroup display the server security group
-	SecurityGroup *SecurityGroupSummary `json:"security_group"`
-	// StateDetail display the server state_detail
-	StateDetail string `json:"state_detail"`
 	// ComputeCluster display the server ComputeCluster
 	ComputeCluster *ComputeCluster `json:"compute_cluster"`
 }
@@ -1134,20 +1134,20 @@ type Task struct {
 	ID string `json:"id"`
 	// Description the description of the task
 	Description string `json:"description"`
-
-	HrefFrom string `json:"href_from"`
-
-	HrefResult string `json:"href_result"`
 	// Progress show the progress of the task in percent
 	Progress int32 `json:"progress"`
 	// StartedAt display the task start date
 	StartedAt time.Time `json:"started_at"`
+	// TerminatedAt display the task end date
+	TerminatedAt time.Time `json:"terminated_at"`
 	// Status display the task status
 	//
 	// Default value: pending
 	Status TaskStatus `json:"status"`
-	// TerminatedAt display the task end date
-	TerminatedAt time.Time `json:"terminated_at"`
+
+	HrefFrom string `json:"href_from"`
+
+	HrefResult string `json:"href_result"`
 }
 
 type UpdateComputeClusterResponse struct {
@@ -1173,10 +1173,6 @@ type Volume struct {
 	Name string `json:"name"`
 	// ExportURI show the volumes NBD export URI
 	ExportURI string `json:"export_uri"`
-	// Organization display the volumes organization
-	Organization string `json:"organization"`
-	// Server display information about the server attached to the volume
-	Server *ServerSummary `json:"server"`
 	// Size display the volumes disk size
 	Size scw.Size `json:"size"`
 	// VolumeType display the volumes type
@@ -1187,6 +1183,10 @@ type Volume struct {
 	CreationDate time.Time `json:"creation_date"`
 	// ModificationDate display the volumes modification date
 	ModificationDate time.Time `json:"modification_date"`
+	// Organization display the volumes organization
+	Organization string `json:"organization"`
+	// Server display information about the server attached to the volume
+	Server *ServerSummary `json:"server"`
 	// State display the volumes state
 	//
 	// Default value: available

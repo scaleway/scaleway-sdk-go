@@ -782,16 +782,12 @@ type BackendServerStats struct {
 
 // Certificate sSL certificate is currently in BETA stage!
 type Certificate struct {
-	// ID certificate ID
-	ID string `json:"id"`
 	// Type type of certificate (custom coming soon)
 	//
 	// Default value: letsencryt
 	Type CertificateType `json:"type"`
-	// Status status of certificate
-	//
-	// Default value: pending
-	Status CertificateStatus `json:"status"`
+	// ID certificate ID
+	ID string `json:"id"`
 	// CommonName main domain name of certificate
 	CommonName string `json:"common_name"`
 	// SubjectAlternativeName alternative domain names
@@ -802,6 +798,10 @@ type Certificate struct {
 	NotValidBefore time.Time `json:"not_valid_before"`
 	// NotValidAfter validity bounds
 	NotValidAfter time.Time `json:"not_valid_after"`
+	// Status status of certificate
+	//
+	// Default value: pending
+	Status CertificateStatus `json:"status"`
 	// Lb load Balancer object
 	Lb *Lb `json:"lb"`
 	// Name certificate name
@@ -865,22 +865,9 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 }
 
 type HealthCheck struct {
-	Port int32 `json:"port"`
-
-	CheckDelay *time.Duration `json:"check_delay"`
-
-	CheckTimeout *time.Duration `json:"check_timeout"`
-
-	CheckMaxRetries int32 `json:"check_max_retries"`
-
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 	// MysqlConfig the check requires MySQL >=3.22, for older versions, use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 	// LdapConfig the response is analyzed to find an LDAPv3 response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
@@ -888,25 +875,39 @@ type HealthCheck struct {
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
+	CheckMaxRetries int32 `json:"check_max_retries"`
+
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
+
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
+
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
 
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
+
+	Port int32 `json:"port"`
+
+	CheckTimeout *time.Duration `json:"check_timeout"`
+
+	CheckDelay *time.Duration `json:"check_delay"`
 }
 
 func (m *HealthCheck) GetConfig() Config {
 	switch {
-	case m.TCPConfig != nil:
-		return ConfigTCPConfig{*m.TCPConfig}
 	case m.MysqlConfig != nil:
 		return ConfigMysqlConfig{*m.MysqlConfig}
-	case m.PgsqlConfig != nil:
-		return ConfigPgsqlConfig{*m.PgsqlConfig}
 	case m.LdapConfig != nil:
 		return ConfigLdapConfig{*m.LdapConfig}
 	case m.RedisConfig != nil:
 		return ConfigRedisConfig{*m.RedisConfig}
+	case m.TCPConfig != nil:
+		return ConfigTCPConfig{*m.TCPConfig}
+	case m.PgsqlConfig != nil:
+		return ConfigPgsqlConfig{*m.PgsqlConfig}
 	case m.HTTPConfig != nil:
 		return ConfigHTTPConfig{*m.HTTPConfig}
 	case m.HTTPSConfig != nil:
@@ -920,8 +921,8 @@ func (m *HealthCheck) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
 		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -930,8 +931,8 @@ func (m *HealthCheck) UnmarshalJSON(b []byte) error {
 
 	*m = HealthCheck(tmp.tmpType)
 
-	m.CheckDelay = tmp.TmpCheckDelay.Standard()
 	m.CheckTimeout = tmp.TmpCheckTimeout.Standard()
+	m.CheckDelay = tmp.TmpCheckDelay.Standard()
 	return nil
 }
 
@@ -940,13 +941,13 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
 		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
+		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
 	}{
 		tmpType: tmpType(m),
 
-		TmpCheckDelay:   marshaler.NewDuration(m.CheckDelay),
 		TmpCheckTimeout: marshaler.NewDuration(m.CheckTimeout),
+		TmpCheckDelay:   marshaler.NewDuration(m.CheckDelay),
 	}
 	return json.Marshal(tmp)
 }
