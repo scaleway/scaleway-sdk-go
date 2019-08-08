@@ -428,7 +428,6 @@ const (
 )
 
 // migrateV1toV2 converts the V1 config to V2 config and save it in the target path
-// use config.Save() when the method is public
 func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	// STEP 0: get absolute target path
 
@@ -460,7 +459,8 @@ func migrateV1toV2(configV1 *configV1, targetPath string) error {
 	return nil
 }
 
-// SaveConfig
+// SaveConfig will merge the given newConfig in the current config.
+// Optional: pass the profile name to merge the config in a profile.
 func SaveConfig(newConfig Config, profileName ...string) error {
 	var currentConfig *configV2
 
