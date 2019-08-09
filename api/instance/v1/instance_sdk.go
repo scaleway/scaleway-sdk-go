@@ -630,7 +630,7 @@ type ComputeCluster struct {
 	//
 	// Default value: max_availability
 	PolicyType ComputeClusterPolicyType `json:"policy_type"`
-	// PolicyRespected indicate if the selected policy is respected. Returns true if the policy is respected, false otherwise
+	// PolicyRespected returns true if the policy is respected, false otherwise
 	PolicyRespected bool `json:"policy_respected"`
 }
 
@@ -944,7 +944,7 @@ type Server struct {
 	AllowedActions []ServerAction `json:"allowed_actions"`
 	// Tags display the server associated tags
 	Tags []string `json:"tags"`
-	// CommercialType display the server commercial type (e.g. GP1-M)
+	// CommercialType display the server commercial type (eg. GP1-M)
 	CommercialType string `json:"commercial_type"`
 	// CreationDate display the server creation date
 	CreationDate time.Time `json:"creation_date"`
@@ -1344,14 +1344,20 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 
 type ListServersRequest struct {
 	Zone scw.Zone `json:"-"`
-
-	Organization *string `json:"-"`
-
+	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	PerPage *int32 `json:"-"`
-
+	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
-
+	// Organization list only servers of this organization
+	Organization *string `json:"-"`
+	// Name filter servers by name (for eg. "server1" will return "server100" and "server1" but not "foo")
 	Name *string `json:"-"`
+	// PrivateIP list servers by private_ip
+	PrivateIP *string `json:"-"`
+	// WithoutIP list servers that are not attached to a public IP
+	WithoutIP *string `json:"-"`
+	// CommercialType list servers of this commercial type
+	CommercialType *string `json:"-"`
 }
 
 // ListServers list servers
@@ -1374,10 +1380,13 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "private_ip", req.PrivateIP)
+	parameter.AddToQuery(query, "without_ip", req.WithoutIP)
+	parameter.AddToQuery(query, "commercial_type", req.CommercialType)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -1576,7 +1585,7 @@ type setServerRequest struct {
 	AllowedActions []ServerAction `json:"allowed_actions"`
 	// Tags display the server associated tags
 	Tags []string `json:"tags"`
-	// CommercialType display the server commercial type (e.g. GP1-M)
+	// CommercialType display the server commercial type (eg. GP1-M)
 	CommercialType string `json:"commercial_type"`
 	// CreationDate display the server creation date
 	CreationDate time.Time `json:"creation_date"`
@@ -2483,13 +2492,13 @@ type ListVolumesRequest struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"-"`
-	// PerPage a positive integer lower or equal to 100 to select the number of items to display. The default value is 20.
+	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization display volumes of this organization
 	Organization *string `json:"-"`
-	// Name filter volume by name (for eg "vol" will return "myvolume" but not "data")
+	// Name filter volume by name (for eg. "vol" will return "myvolume" but not "data")
 	Name *string `json:"-"`
 }
 
@@ -3298,13 +3307,13 @@ func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw
 
 type ListComputeClustersRequest struct {
 	Zone scw.Zone `json:"-"`
-	// PerPage a positive integer lower or equal to 100 to select the number of items to display. The default value is 20.
+	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
-	// Organization display compute-clusters of this organization
+	// Organization list only compute-clusters of this organization
 	Organization *string `json:"-"`
-	// Name filter compute-clusters by name (for eg "cluster1" will return "cluster100" and "cluster1" but not "foo")
+	// Name filter compute-clusters by name (for eg. "cluster1" will return "cluster100" and "cluster1" but not "foo")
 	Name *string `json:"-"`
 }
 
