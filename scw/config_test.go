@@ -496,12 +496,6 @@ var (
 		},
 	}
 
-	v1ValidConfigFile = `{
-"organization":"` + v1ValidProjectID + `",
-"token":"` + v1ValidToken + `",
-"version":"` + v1Version + `"
-}`
-
 	v1InvalidConfigFile = `
 "organization":"` + v1ValidProjectID + `",
 "token":"` + v1ValidToken + `",
