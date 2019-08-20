@@ -68,7 +68,16 @@ func withDefaultUserAgent(ua string) ClientOption {
 	}
 }
 
+func WithProfile(p profile) {
+
+}
+
+func WithEnv() {
+
+}
+
 // WithConfig client option configure a client with Scaleway configuration.
+// Deprecated
 func WithConfig(config Config) ClientOption {
 	return func(s *settings) {
 		// The access key is not used for API authentications.

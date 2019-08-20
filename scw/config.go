@@ -436,38 +436,6 @@ const (
 	defaultConfigPermission = 0600
 )
 
-// migrateV1toV2 converts the V1 config to V2 config and save it in the target path
-func migrateV1toV2(configV1 *configV1, targetPath string) error {
-	// STEP 0: get absolute target path
-
-	targetPath = filepath.Clean(targetPath)
-
-	// STEP 1: create dir
-	err := os.MkdirAll(filepath.Dir(targetPath), 0700)
-	if err != nil {
-		logger.Debugf("mkdir did not work on %s: %s", filepath.Dir(targetPath), err)
-		return nil
-	}
-
-	// STEP 2: marshal yaml config
-	newConfig := configV1.toV2()
-	file, err := yaml.Marshal(newConfig)
-	if err != nil {
-		return err
-	}
-
-	// STEP 3: save config
-	err = ioutil.WriteFile(targetPath, file, defaultConfigPermission)
-	if err != nil {
-		logger.Debugf("cannot write file %s: %s", targetPath, err)
-		return nil
-	}
-
-	// STEP 4: log success
-	logger.Warningf("migrated existing config to %s", targetPath)
-	return nil
-}
-
 // SaveConfig will merge the given newConfig in the current config.
 // Optional: pass the profile name to merge the config in a profile.
 func SaveConfig(newConfig Config, profileName ...string) error {

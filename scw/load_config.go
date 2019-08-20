@@ -89,7 +89,7 @@ func LoadConfig() (Config, error) {
 
 	// STEP 4: migrate V1 config to V2 config file
 	if v2PathOk {
-		err = migrateV1toV2(confV1, v2Path)
+		//err = migrateV1toV2(confV1, v2Path)
 		if err != nil {
 			return nil, err
 		}
