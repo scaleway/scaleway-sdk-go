@@ -77,3 +77,8 @@ func GetHomeDir() (string, error) {
 		return "", ErrNoHomeDir
 	}
 }
+
+func fileExist(name string) bool {
+	_, err := os.Stat(name)
+	return err == nil
+}

@@ -2,12 +2,100 @@ package scw
 
 import (
 	"os"
+	"strconv"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
+// Environment variables
+const (
+	// Up-to-date
+	scwConfigPathEnv       = "SCW_CONFIG_PATH"
+	scwAccessKeyEnv        = "SCW_ACCESS_KEY"
+	scwSecretKeyEnv        = "SCW_SECRET_KEY"
+	scwActiveProfileEnv    = "SCW_PROFILE"
+	scwAPIURLEnv           = "SCW_API_URL"
+	scwInsecureEnv         = "SCW_INSECURE"
+	scwDefaultProjectIDEnv = "SCW_DEFAULT_PROJECT_ID"
+	scwDefaultRegionEnv    = "SCW_DEFAULT_REGION"
+	scwDefaultZoneEnv      = "SCW_DEFAULT_ZONE"
+
+	// All deprecated (cli&terraform)
+	terraformAccessKeyEnv    = "SCALEWAY_ACCESS_KEY" // used both as access key and secret key
+	terraformSecretKeyEnv    = "SCALEWAY_TOKEN"
+	terraformOrganizationEnv = "SCALEWAY_ORGANIZATION"
+	terraformRegionEnv       = "SCALEWAY_REGION"
+	cliTLSVerifyEnv          = "SCW_TLSVERIFY"
+	cliOrganizationEnv       = "SCW_ORGANIZATION"
+	cliRegionEnv             = "SCW_REGION"
+	cliSecretKeyEnv          = "SCW_TOKEN"
+
+	// TBD
+	//cliVerboseEnv         = "SCW_VERBOSE_API"
+	//cliDebugEnv           = "DEBUG"
+	//cliNoCheckVersionEnv  = "SCW_NOCHECKVERSION"
+	//cliTestWithRealAPIEnv = "TEST_WITH_REAL_API"
+	//cliSecureExecEnv      = "SCW_SECURE_EXEC"
+	//cliGatewayEnv         = "SCW_GATEWAY"
+	//cliSensitiveEnv       = "SCW_SENSITIVE"
+	//cliAccountAPIEnv      = "SCW_ACCOUNT_API"
+	//cliMetadataAPIEnv     = "SCW_METADATA_API"
+	//cliMarketPlaceAPIEnv  = "SCW_MARKETPLACE_API"
+	//cliComputePar1APIEnv  = "SCW_COMPUTE_PAR1_API"
+	//cliComputeAms1APIEnv  = "SCW_COMPUTE_AMS1_API"
+	//cliCommercialTypeEnv  = "SCW_COMMERCIAL_TYPE"
+	//cliTargetArchEnv      = "SCW_TARGET_ARCH"
+)
+
 func LoadEnvProfile() (*profile, error) {
-	return &profile{}, nil
+	p := &profile{}
+
+	accessKey, _, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
+	if envExist {
+		p.AccessKey = &accessKey
+	}
+
+	secretKey, _, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
+	if envExist {
+		p.SecretKey = &secretKey
+	}
+
+	apiURL, _, envExist := getenv(scwAPIURLEnv)
+	if envExist {
+		p.APIURL = &apiURL
+	}
+
+	insecureValue, envKey, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
+	if envExist {
+		insecure, err := strconv.ParseBool(insecureValue)
+		if err != nil {
+			return nil, errors.New("env variable %s cannot be parsed: %s is invalid boolean ", envKey, insecureValue)
+		}
+
+		if envKey == cliTLSVerifyEnv {
+			insecure = !insecure // TLSVerify is the inverse of Insecure
+		}
+
+		p.Insecure = &insecure
+	}
+
+	projectID, _, envExist := getenv(scwDefaultProjectIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
+	if envExist {
+		p.DefaultProjectID = &projectID
+	}
+
+	region, _, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
+	if envExist {
+		p.DefaultRegion = &region
+	}
+
+	zone, _, envExist := getenv(scwDefaultZoneEnv)
+	if envExist {
+		p.DefaultZone = &zone
+	}
+
+	return p, nil
 }
 
 func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {

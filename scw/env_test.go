@@ -153,16 +153,5 @@ func TestLoadEnvProfile(t *testing.T) {
 //},
 
 
-//{ // THIS IS NO LONGER SUPPORTED
-//	name: "Custom-path config with valid V1",
-//	env: map[string]string{
-//		scwConfigPathEnv: "{HOME}/valid2/test.conf",
-//	},
-//	files: map[string]string{
-//		"valid2/test.conf": v1ValidConfigFile,
-//	},
-//	expectedSecretKey:        s(v1ValidToken),
-//	expectedDefaultProjectID: s(v1ValidProjectID),
-//},
 
 */

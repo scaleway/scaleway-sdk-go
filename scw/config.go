@@ -1,416 +1,249 @@
 package scw
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"gopkg.in/yaml.v2"
 )
 
-// Environment variables
 const (
-	// Up-to-date
-	scwConfigPathEnv       = "SCW_CONFIG_PATH"
-	scwAccessKeyEnv        = "SCW_ACCESS_KEY"
-	scwSecretKeyEnv        = "SCW_SECRET_KEY"
-	scwActiveProfileEnv    = "SCW_PROFILE"
-	scwAPIURLEnv           = "SCW_API_URL"
-	scwInsecureEnv         = "SCW_INSECURE"
-	scwDefaultProjectIDEnv = "SCW_DEFAULT_PROJECT_ID"
-	scwDefaultRegionEnv    = "SCW_DEFAULT_REGION"
-	scwDefaultZoneEnv      = "SCW_DEFAULT_ZONE"
-
-	// All deprecated (cli&terraform)
-	terraformAccessKeyEnv    = "SCALEWAY_ACCESS_KEY" // used both as access key and secret key
-	terraformSecretKeyEnv    = "SCALEWAY_TOKEN"
-	terraformOrganizationEnv = "SCALEWAY_ORGANIZATION"
-	terraformRegionEnv       = "SCALEWAY_REGION"
-	cliTLSVerifyEnv          = "SCW_TLSVERIFY"
-	cliOrganizationEnv       = "SCW_ORGANIZATION"
-	cliRegionEnv             = "SCW_REGION"
-	cliSecretKeyEnv          = "SCW_TOKEN"
-
-	// TBD
-	//cliVerboseEnv         = "SCW_VERBOSE_API"
-	//cliDebugEnv           = "DEBUG"
-	//cliNoCheckVersionEnv  = "SCW_NOCHECKVERSION"
-	//cliTestWithRealAPIEnv = "TEST_WITH_REAL_API"
-	//cliSecureExecEnv      = "SCW_SECURE_EXEC"
-	//cliGatewayEnv         = "SCW_GATEWAY"
-	//cliSensitiveEnv       = "SCW_SENSITIVE"
-	//cliAccountAPIEnv      = "SCW_ACCOUNT_API"
-	//cliMetadataAPIEnv     = "SCW_METADATA_API"
-	//cliMarketPlaceAPIEnv  = "SCW_MARKETPLACE_API"
-	//cliComputePar1APIEnv  = "SCW_COMPUTE_PAR1_API"
-	//cliComputeAms1APIEnv  = "SCW_COMPUTE_AMS1_API"
-	//cliCommercialTypeEnv  = "SCW_COMMERCIAL_TYPE"
-	//cliTargetArchEnv      = "SCW_TARGET_ARCH"
-)
-
-// Config interface is made of getters to retrieve
-// the config field by field.
-type Config interface {
-	GetAccessKey() (accessKey string, exist bool)
-	GetSecretKey() (secretKey string, exist bool)
-	GetAPIURL() (apiURL string, exist bool)
-	GetInsecure() (insecure bool, exist bool)
-	GetDefaultProjectID() (defaultProjectID string, exist bool)
-	GetDefaultRegion() (defaultRegion Region, exist bool)
-	GetDefaultZone() (defaultZone Zone, exist bool)
-}
-
-func (c *configV2) catchInvalidProfile() (*configV2, error) {
-	activeProfile, err := c.getActiveProfile()
-	if err != nil {
-		return nil, err
-	}
-	if activeProfile == "" {
-		return c, nil
-	}
-
-	_, exist := c.Profiles[activeProfile]
-	if !exist {
-		return nil, fmt.Errorf("profile %s does not exist %s", activeProfile, inConfigFile())
-	}
-	return c, nil
-}
-
-func (c *configV2) getActiveProfile() (string, error) {
-	switch {
-	case c.withProfile != "":
-		return c.withProfile, nil
-	case os.Getenv(scwActiveProfileEnv) != "":
-		return os.Getenv(scwActiveProfileEnv), nil
-	case c.ActiveProfile != nil:
-		if *c.ActiveProfile == "" {
-			return "", fmt.Errorf("active_profile key cannot be empty %s", inConfigFile())
-		}
-		return *c.ActiveProfile, nil
-	default:
-		return "", nil
-	}
-}
-
-// GetAccessKey retrieve the access key from the config.
-// It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetAccessKey() (string, bool) {
-	envValue, _, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var accessKey string
-	switch {
-	case envExist:
-		accessKey = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].AccessKey != nil:
-		accessKey = *c.Profiles[activeProfile].AccessKey
-	case c.AccessKey != nil:
-		accessKey = *c.AccessKey
-	default:
-		logger.Warningf("no access key found")
-		return "", false
-	}
-
-	if accessKey == "" {
-		logger.Warningf("access key is empty")
-	}
-
-	return accessKey, true
-}
-
-// GetSecretKey retrieve the secret key from the config.
-// It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetSecretKey() (string, bool) {
-	envValue, _, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var secretKey string
-	switch {
-	case envExist:
-		secretKey = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].SecretKey != nil:
-		secretKey = *c.Profiles[activeProfile].SecretKey
-	case c.SecretKey != nil:
-		secretKey = *c.SecretKey
-	default:
-		logger.Warningf("no secret key found")
-		return "", false
-	}
-
-	if secretKey == "" {
-		logger.Warningf("secret key is empty")
-	}
-
-	return secretKey, true
-}
-
-// GetAPIURL retrieve the api url from the config.
-// It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetAPIURL() (string, bool) {
-	envValue, _, envExist := getenv(scwAPIURLEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var apiURL string
-	switch {
-	case envExist:
-		apiURL = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].APIURL != nil:
-		apiURL = *c.Profiles[activeProfile].APIURL
-	case c.APIURL != nil:
-		apiURL = *c.APIURL
-	default:
-		return "", false
-	}
-
-	if apiURL == "" {
-		logger.Warningf("api URL is empty")
-	}
-
-	return apiURL, true
-}
-
-// GetInsecure retrieve the insecure flag from the config.
-// It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetInsecure() (bool, bool) {
-	envValue, envKey, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var insecure bool
-	var err error
-	switch {
-	case envExist:
-		insecure, err = strconv.ParseBool(envValue)
-		if err != nil {
-			logger.Warningf("env variable %s cannot be parsed: %s is invalid boolean ", envKey, envValue)
-			return false, false
-		}
-
-		if envKey == cliTLSVerifyEnv {
-			insecure = !insecure // TLSVerify is the inverse of Insecure
-		}
-	case activeProfile != "" && c.Profiles[activeProfile].Insecure != nil:
-		insecure = *c.Profiles[activeProfile].Insecure
-	case c.Insecure != nil:
-		insecure = *c.Insecure
-	default:
-		return false, false
-	}
-
-	return insecure, true
-}
-
-// GetDefaultProjectID retrieve the default project ID
-// from the config. Legacy configs used the name
-// "organization ID" or "organization" for
-// this field. It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetDefaultProjectID() (string, bool) {
-	envValue, _, envExist := getenv(scwDefaultProjectIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var defaultProj string
-	switch {
-	case envExist:
-		defaultProj = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].DefaultProjectID != nil:
-		defaultProj = *c.Profiles[activeProfile].DefaultProjectID
-	case c.DefaultProjectID != nil:
-		defaultProj = *c.DefaultProjectID
-	default:
-		return "", false
-	}
-
-	// todo: validate format
-	if defaultProj == "" {
-		logger.Warningf("default project ID is empty")
-	}
-
-	return defaultProj, true
-}
-
-// GetDefaultRegion retrieve the default region
-// from the config. It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetDefaultRegion() (Region, bool) {
-	envValue, _, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var defaultRegion string
-	switch {
-	case envExist:
-		defaultRegion = v1RegionToV2(envValue)
-	case activeProfile != "" && c.Profiles[activeProfile].DefaultRegion != nil:
-		defaultRegion = *c.Profiles[activeProfile].DefaultRegion
-	case c.DefaultRegion != nil:
-		defaultRegion = *c.DefaultRegion
-	default:
-		return "", false
-	}
-
-	// todo: validate format
-	if defaultRegion == "" {
-		logger.Warningf("default region is empty")
-	}
-
-	return Region(defaultRegion), true
-}
-
-// GetDefaultZone retrieve the default zone
-// from the config. It will check the following order:
-// env, legacy env, active profile, default profile
-//
-// If the config is present in one of the above environment the
-// value (which may be empty) is returned and the boolean is true.
-// Otherwise the returned value will be empty and the boolean will
-// be false.
-func (c *configV2) GetDefaultZone() (Zone, bool) {
-	envValue, _, envExist := getenv(scwDefaultZoneEnv)
-	activeProfile, _ := c.getActiveProfile()
-
-	var defaultZone string
-	switch {
-	case envExist:
-		defaultZone = envValue
-	case activeProfile != "" && c.Profiles[activeProfile].DefaultZone != nil:
-		defaultZone = *c.Profiles[activeProfile].DefaultZone
-	case c.DefaultZone != nil:
-		defaultZone = *c.DefaultZone
-	default:
-		return "", false
-	}
-
-	// todo: validate format
-	if defaultZone == "" {
-		logger.Warningf("default zone is empty")
-	}
-
-	return Zone(defaultZone), true
-}
-
-const (
+	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
 	defaultConfigPermission = 0600
 )
 
-// SaveConfig will merge the given config in the current config.
-// Optional: pass the profile name to merge the config in a profile.
-func SaveConfig(newConfig Config, profileName ...string) error {
-	var currentConfig *configV2
+type configV2 struct {
+	profile       `yaml:",inline"`
+	ActiveProfile *string             `yaml:"active_profile,omitempty"`
+	Profiles      map[string]*profile `yaml:"profiles,omitempty"`
 
-	// STEP 1: load current config
-	config, err := LoadConfig()
+	// withProfile is used by LoadConfigWithProfile to handle the following priority order:
+	// c.withProfile > os.Getenv("SCW_PROFILE") > c.ActiveProfile
+	withProfile string
+}
+
+type profile struct {
+	AccessKey        *string `yaml:"access_key,omitempty"`
+	SecretKey        *string `yaml:"secret_key,omitempty"`
+	APIURL           *string `yaml:"api_url,omitempty"`
+	Insecure         *bool   `yaml:"insecure,omitempty"`
+	DefaultProjectID *string `yaml:"default_project_id,omitempty"`
+	DefaultRegion    *string `yaml:"default_region,omitempty"`
+	DefaultZone      *string `yaml:"default_zone,omitempty"`
+}
+
+func (c *configV2) String() string {
+	configRaw, err := yaml.Marshal(c)
 	if err != nil {
-		return err
-	}
-	currentConfig = config.(*configV2)
-
-	// STEP 2: merge new config with current config
-	if len(profileName) > 1 {
-		return fmt.Errorf("too many profiles")
-	} else if len(profileName) == 1 {
-		if currentConfig.Profiles == nil {
-			currentConfig.Profiles = make(map[string]*profile)
-		}
-		p := currentConfig.Profiles[profileName[0]]
-		currentConfig.Profiles[profileName[0]] = mergeConfigWithProfile(newConfig, p)
-	} else {
-		p := &currentConfig.profile
-		currentConfig.profile = *mergeConfigWithProfile(newConfig, p)
+		return "cannot print config:" + err.Error()
 	}
 
-	// STEP 3: marshal config
-	file, err := yaml.Marshal(currentConfig)
+	return string(configRaw)
+}
+
+func unmarshalConfV2(content []byte) (*configV2, error) {
+	var config configV2
+
+	err := yaml.Unmarshal(content, &config)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	return &config, nil
+}
+
+const (
+	v1RegionFrPar = "par1"
+	v1RegionNlAms = "ams1"
+)
+
+// configV1 is a Scaleway CLI configuration file
+type configV1 struct {
+	// Organization is the identifier of the Scaleway organization
+	Organization string `json:"organization"`
+
+	// Token is the authentication token for the Scaleway organization
+	Token string `json:"token"`
+
+	// Version is the actual version of scw CLI
+	Version string `json:"version"`
+}
+
+func unmarshalConfV1(content []byte) (*configV1, error) {
+	var config configV1
+	err := json.Unmarshal(content, &config)
+	if err != nil {
+		return nil, err
+	}
+	return &config, err
+}
+
+func (v1 *configV1) toV2() *configV2 {
+	return &configV2{
+		profile: profile{
+			DefaultProjectID: &v1.Organization,
+			SecretKey:        &v1.Token,
+			// ignore v1 version
+		},
+	}
+}
+
+func v1RegionToV2(region string) string {
+	switch region {
+	case v1RegionFrPar:
+		logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
+		return "fr-par"
+	case v1RegionNlAms:
+		logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
+		return "nl-ams"
+	default:
+		return region
+	}
+}
+
+// MigrateLegacyConfig will migrate the legacy config to the V2 when none exist yet.
+// Returns a boolean set to true when the migration happened.
+// TODO: get accesskey from account?
+func MigrateLegacyConfig() (bool, error) {
+	// STEP 1: try to load config file V2
+	v2Path, v2PathOk := GetConfigV2FilePath()
+	if !v2PathOk || fileExist(v2Path) {
+		return false, nil
 	}
 
-	// STEP 4: get config path
-	v2Path := os.Getenv(scwConfigPathEnv)
-	if v2PathExist := v2Path != ""; !v2PathExist {
-		v2Path, v2PathExist = GetConfigV2FilePath()
-		if !v2PathExist {
-			return fmt.Errorf("invalid path to config")
-		}
+	// STEP 2: try to load config file V1
+	v1Path, v1PathOk := GetConfigV1FilePath()
+	if !v1PathOk {
+		return false, nil
 	}
-	v2Path = filepath.Clean(v2Path)
+	file, err := ioutil.ReadFile(v1Path)
+	if err != nil {
+		return false, nil
+	}
+	confV1, err := unmarshalConfV1(file)
+	if err != nil {
+		return false, errors.Wrap(err, "content of config file %s is invalid json", v1Path)
+	}
 
-	// STEP 5: create config path dir in cases it didn't exist before
+	// STEP 3: create dir
 	err = os.MkdirAll(filepath.Dir(v2Path), 0700)
 	if err != nil {
+		return false, errors.Wrap(err, "mkdir did not work on %s", filepath.Dir(v2Path))
+	}
+
+	// STEP 4: marshal yaml config
+	newConfig := confV1.toV2()
+	file, err = yaml.Marshal(newConfig)
+	if err != nil {
+		return false, err
+	}
+
+	// STEP 5: save config
+	err = ioutil.WriteFile(v2Path, file, defaultConfigPermission)
+	if err != nil {
+		return false, fmt.Errorf("cannot write file %s: %s", v2Path, err)
+	}
+
+	// STEP 6: log success
+	logger.Warningf("migrated existing config to %s", v2Path)
+	return true, nil
+}
+
+func MustLoadConfig() *configV2 {
+	c, err := LoadConfigFromPath(GetConfigPath())
+	if err != nil {
+		panic(err)
+	}
+	return c
+}
+func LoadConfig2() (*configV2, error) {
+	return LoadConfigFromPath(GetConfigPath())
+}
+
+func LoadConfigFromPath(path string) (*configV2, error) {
+
+	file, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read config file: %s", err)
+	}
+
+	_, err = unmarshalConfV1(file)
+	if err == nil {
+		// reject V1 config
+		return nil, errors.New("found legacy config in %s: legacy config is not allowed, please switch to the new config file format: %s", path, documentationLink)
+	}
+
+	confV2, err := unmarshalConfV2(file)
+	if err != nil {
+		return nil, fmt.Errorf("content of config file %s is invalid: %s", path, err)
+	}
+
+	return confV2, nil
+}
+
+// GetProfile returns the profile corresponding to the given profile name.
+func (c *configV2) GetProfile(profileName string) (*profile, error) {
+	if profileName == "" {
+		return nil, errors.New("active profile cannot be empty")
+	}
+
+	p, exist := c.Profiles[profileName]
+	if !exist {
+		return nil, errors.New("given profile %s does not exist", profileName)
+	}
+
+	return p, nil
+}
+
+// GetActiveProfile returns the active profile of the config based on the following order:
+// env SCW_PROFILE > config active_profile > config root profile
+func (c *configV2) GetActiveProfile() (*profile, error) {
+	switch {
+	case os.Getenv(scwActiveProfileEnv) != "":
+		logger.Debugf("using active profile from env: %s=%s", scwActiveProfileEnv, os.Getenv(scwActiveProfileEnv))
+		return c.GetProfile(os.Getenv(scwActiveProfileEnv))
+	case c.ActiveProfile != nil:
+		logger.Debugf("using active profile from config: active_profile=%s", scwActiveProfileEnv, *c.ActiveProfile)
+		return c.GetProfile(*c.ActiveProfile)
+	default:
+		return &c.profile, nil
+	}
+
+}
+
+// SaveTo will save the config to the default config path. This
+// action will overwrite the previous file when it exists.
+func (c *configV2) Save() error {
+	return c.SaveTo(GetConfigPath())
+}
+
+// SaveTo will save the config to the given path. This action will
+// overwrite the previous file when it exists.
+func (c *configV2) SaveTo(path string) error {
+	path = filepath.Clean(path)
+
+	// STEP 1: marshal config
+	file, err := yaml.Marshal(c)
+	if err != nil {
 		return err
 	}
 
-	// STEP 6: write new config file
-	err = ioutil.WriteFile(v2Path, file, defaultConfigPermission)
+	// STEP 2: create config path dir in cases it didn't exist before
+	err = os.MkdirAll(filepath.Dir(path), 0700)
+	if err != nil {
+		return err
+	}
+
+	// STEP 3: write new config file
+	err = ioutil.WriteFile(path, file, defaultConfigPermission)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
 
-func mergeConfigWithProfile(newConfig Config, p *profile) *profile {
-	if p == nil {
-		p = &profile{}
-	}
-	if value, exist := newConfig.GetAccessKey(); exist {
-		p.AccessKey = &value
-	}
-	if value, exist := newConfig.GetSecretKey(); exist {
-		p.SecretKey = &value
-	}
-	if value, exist := newConfig.GetAPIURL(); exist {
-		p.APIURL = &value
-	}
-	if value, exist := newConfig.GetInsecure(); exist {
-		p.Insecure = &value
-	}
-	if value, exist := newConfig.GetDefaultProjectID(); exist {
-		p.DefaultProjectID = &value
-	}
-	if value, exist := newConfig.GetDefaultRegion(); exist {
-		region := string(value)
-		p.DefaultRegion = &region
-	}
-	if value, exist := newConfig.GetDefaultZone(); exist {
-		zone := string(value)
-		p.DefaultZone = &zone
-	}
-	return p
 }
