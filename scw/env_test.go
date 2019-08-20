@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 // TestLoadConfig tests config getters return correct values
@@ -76,7 +75,6 @@ func TestLoadEnvProfile(t *testing.T) {
 
 	// delete home dir and reset env variables
 	defer resetEnv(t, os.Environ(), dir)
-	logger.EnableDebugMode()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
@@ -86,8 +84,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			defer cleanEnv(t, nil, dir)
 
 			// load config
-			p, err := LoadEnvProfile()
-			testhelpers.AssertNoError(t, err)
+			p := LoadEnvProfile()
 
 			// assert getters
 			testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
@@ -101,57 +98,3 @@ func TestLoadEnvProfile(t *testing.T) {
 		})
 	}
 }
-
-/* removed tests
-
-//{
-//	name: "Complete config file with env variables",
-//	env: map[string]string{
-//		"HOME":                 "{HOME}",
-//		scwAccessKeyEnv:        v2ValidAccessKey2,
-//		scwSecretKeyEnv:        v2ValidSecretKey2,
-//		scwAPIURLEnv:           v2ValidAPIURL2,
-//		scwInsecureEnv:         v2ValidInsecure2,
-//		scwDefaultProjectIDEnv: v2ValidDefaultProjectID2,
-//		scwDefaultRegionEnv:    v2ValidDefaultRegion2,
-//		scwDefaultZoneEnv:      v2ValidDefaultZone2,
-//	},
-//	files: map[string]string{
-//		".config/scw/config.yaml": v2CompleteValidConfigFile,
-//	},
-//	expectedAccessKey:        s(v2ValidAccessKey2),
-//	expectedSecretKey:        s(v2ValidSecretKey2),
-//	expectedAPIURL:           s(v2ValidAPIURL2),
-//	expectedInsecure:         b(true),
-//	expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
-//	expectedDefaultRegion:    s(v2ValidDefaultRegion2),
-//	expectedDefaultZone:      s(v2ValidDefaultZone2),
-//},
-//{
-//	name: "Complete config with active profile env variable and all env variables",
-//	env: map[string]string{
-//		"HOME":                 "{HOME}",
-//		scwActiveProfileEnv:    v2ValidProfile,
-//		scwAccessKeyEnv:        v2ValidAccessKey,
-//		scwSecretKeyEnv:        v2ValidSecretKey,
-//		scwAPIURLEnv:           v2ValidAPIURL,
-//		scwInsecureEnv:         "false",
-//		scwDefaultProjectIDEnv: v2ValidDefaultProjectID,
-//		scwDefaultRegionEnv:    v2ValidDefaultRegion,
-//		scwDefaultZoneEnv:      v2ValidDefaultZone,
-//	},
-//	files: map[string]string{
-//		".config/scw/config.yaml": v2CompleteValidConfigFile,
-//	},
-//	expectedAccessKey:        s(v2ValidAccessKey),
-//	expectedSecretKey:        s(v2ValidSecretKey),
-//	expectedAPIURL:           s(v2ValidAPIURL),
-//	expectedInsecure:         b(false),
-//	expectedDefaultProjectID: s(v2ValidDefaultProjectID),
-//	expectedDefaultRegion:    s(v2ValidDefaultRegion),
-//	expectedDefaultZone:      s(v2ValidDefaultZone),
-//},
-
-
-
-*/

@@ -4,7 +4,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
@@ -53,7 +52,7 @@ const (
 	v1RegionNlAms = "ams1"
 )
 
-func LoadEnvProfile() (*Profile, error) {
+func LoadEnvProfile() *Profile {
 	p := &Profile{}
 
 	accessKey, _, envExist := getEnv(scwAccessKeyEnv, terraformAccessKeyEnv)
@@ -75,7 +74,7 @@ func LoadEnvProfile() (*Profile, error) {
 	if envExist {
 		insecure, err := strconv.ParseBool(insecureValue)
 		if err != nil {
-			return nil, errors.New("env variable %s cannot be parsed: %s is invalid boolean ", envKey, insecureValue)
+			logger.Warningf("env variable %s cannot be parsed: %s is invalid boolean", envKey, insecureValue)
 		}
 
 		if envKey == cliTLSVerifyEnv {
@@ -101,7 +100,7 @@ func LoadEnvProfile() (*Profile, error) {
 		p.DefaultZone = &zone
 	}
 
-	return p, nil
+	return p
 }
 
 func getEnv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {

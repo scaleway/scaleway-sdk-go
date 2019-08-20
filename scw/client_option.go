@@ -68,51 +68,47 @@ func withDefaultUserAgent(ua string) ClientOption {
 	}
 }
 
-func WithProfile(p Profile) {
+// WithProfile client option configures a client from the given profile.
+func WithProfile(p *Profile) ClientOption {
+	return func(s *settings) {
+		accessKey := ""
+		if p.AccessKey != nil {
+			accessKey = *p.AccessKey
+		}
 
+		if p.SecretKey != nil {
+			s.token = auth.NewToken(accessKey, *p.SecretKey)
+		}
+
+		if p.APIURL != nil {
+			s.apiURL = *p.APIURL
+		}
+
+		if p.Insecure != nil {
+			s.insecure = *p.Insecure
+		}
+
+		if p.DefaultProjectID != nil {
+			projectID := *p.DefaultProjectID
+			s.defaultProjectID = &projectID
+		}
+
+		if p.DefaultRegion != nil {
+			defaultRegion := Region(*p.DefaultRegion)
+			s.defaultRegion = &defaultRegion
+		}
+
+		if p.DefaultZone != nil {
+			defaultZone := Zone(*p.DefaultZone)
+			s.defaultZone = &defaultZone
+		}
+	}
 }
 
-func WithEnv() {
-
+// WithProfile client option configures a client from the environment variables.
+func WithEnv() ClientOption {
+	return WithProfile(LoadEnvProfile())
 }
-
-// WithConfig client option configure a client with Scaleway configuration.
-// Deprecated
-//func WithConfig(config Config) ClientOption {
-//	return func(s *settings) {
-//		// The access key is not used for API authentications.
-//		accessKey, _ := config.GetAccessKey()
-//		secretKey, secretKeyExist := config.GetSecretKey()
-//		if secretKeyExist {
-//			s.token = auth.NewToken(accessKey, secretKey)
-//		}
-//
-//		apiURL, exist := config.GetAPIURL()
-//		if exist {
-//			s.apiURL = apiURL
-//		}
-//
-//		insecure, exist := config.GetInsecure()
-//		if exist {
-//			s.insecure = insecure
-//		}
-//
-//		defaultProjectID, exist := config.GetDefaultProjectID()
-//		if exist {
-//			s.defaultProjectID = &defaultProjectID
-//		}
-//
-//		defaultRegion, exist := config.GetDefaultRegion()
-//		if exist {
-//			s.defaultRegion = &defaultRegion
-//		}
-//
-//		defaultZone, exist := config.GetDefaultZone()
-//		if exist {
-//			s.defaultZone = &defaultZone
-//		}
-//	}
-//}
 
 // WithDefaultProjectID client option sets the client default project ID.
 //
