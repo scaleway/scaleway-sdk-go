@@ -27,13 +27,21 @@ func inConfigFile() string {
 	return ""
 }
 
+func GetConfigPath() string {
+	configPath := os.Getenv(scwConfigPathEnv)
+	if configPath == "" {
+		configPath, _ = GetConfigV2FilePath()
+	}
+	return filepath.Clean(configPath)
+}
+
 // GetConfigV2FilePath returns the path to the Scaleway CLI config file
 func GetConfigV2FilePath() (string, bool) {
 	configDir, err := GetScwConfigDir()
 	if err != nil {
 		return "", false
 	}
-	return filepath.Join(configDir, defaultConfigFileName), true
+	return filepath.Clean(filepath.Join(configDir, defaultConfigFileName)), true
 }
 
 // GetConfigV1FilePath returns the path to the Scaleway CLI config file
@@ -42,7 +50,7 @@ func GetConfigV1FilePath() (string, bool) {
 	if err != nil {
 		return "", false
 	}
-	return filepath.Join(path, ".scwrc"), true
+	return filepath.Clean(filepath.Join(path, ".scwrc")), true
 }
 
 // GetScwConfigDir returns the path to scw config folder

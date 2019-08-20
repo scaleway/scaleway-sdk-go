@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -62,45 +61,6 @@ type Config interface {
 	GetDefaultProjectID() (defaultProjectID string, exist bool)
 	GetDefaultRegion() (defaultRegion Region, exist bool)
 	GetDefaultZone() (defaultZone Zone, exist bool)
-}
-
-type configV2 struct {
-	profile       `yaml:",inline"`
-	ActiveProfile *string             `yaml:"active_profile,omitempty"`
-	Profiles      map[string]*profile `yaml:"profiles,omitempty"`
-
-	// withProfile is used by LoadConfigWithProfile to handle the following priority order:
-	// c.withProfile > os.Getenv("SCW_PROFILE") > c.ActiveProfile
-	withProfile string
-}
-
-type profile struct {
-	AccessKey        *string `yaml:"access_key,omitempty"`
-	SecretKey        *string `yaml:"secret_key,omitempty"`
-	APIURL           *string `yaml:"api_url,omitempty"`
-	Insecure         *bool   `yaml:"insecure,omitempty"`
-	DefaultProjectID *string `yaml:"default_project_id,omitempty"`
-	DefaultRegion    *string `yaml:"default_region,omitempty"`
-	DefaultZone      *string `yaml:"default_zone,omitempty"`
-}
-
-func (c *configV2) String() string {
-	configRaw, err := yaml.Marshal(c)
-	if err != nil {
-		return "cannot print config:" + err.Error()
-	}
-
-	return string(configRaw)
-}
-
-func unmarshalConfV2(content []byte) (*configV2, error) {
-	var config configV2
-
-	err := yaml.Unmarshal(content, &config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, nil
 }
 
 func (c *configV2) catchInvalidProfile() (*configV2, error) {
@@ -364,79 +324,11 @@ func (c *configV2) GetDefaultZone() (Zone, bool) {
 	return Zone(defaultZone), true
 }
 
-func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
-	value, exist := os.LookupEnv(upToDateKey)
-	if exist {
-		logger.Infof("reading value from %s", upToDateKey)
-		return value, upToDateKey, true
-	}
-
-	for _, key := range deprecatedKeys {
-		value, exist := os.LookupEnv(key)
-		if exist {
-			logger.Infof("reading value from %s", key)
-			logger.Warningf("%s is deprecated, please use %s instead", key, upToDateKey)
-			return value, key, true
-		}
-	}
-
-	return "", "", false
-}
-
-const (
-	v1RegionFrPar = "par1"
-	v1RegionNlAms = "ams1"
-)
-
-// configV1 is a Scaleway CLI configuration file
-type configV1 struct {
-	// Organization is the identifier of the Scaleway organization
-	Organization string `json:"organization"`
-
-	// Token is the authentication token for the Scaleway organization
-	Token string `json:"token"`
-
-	// Version is the actual version of scw CLI
-	Version string `json:"version"`
-}
-
-func unmarshalConfV1(content []byte) (*configV1, error) {
-	var config configV1
-	err := json.Unmarshal(content, &config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, err
-}
-
-func (v1 *configV1) toV2() *configV2 {
-	return &configV2{
-		profile: profile{
-			DefaultProjectID: &v1.Organization,
-			SecretKey:        &v1.Token,
-			// ignore v1 version
-		},
-	}
-}
-
-func v1RegionToV2(region string) string {
-	switch region {
-	case v1RegionFrPar:
-		logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
-		return "fr-par"
-	case v1RegionNlAms:
-		logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
-		return "nl-ams"
-	default:
-		return region
-	}
-}
-
 const (
 	defaultConfigPermission = 0600
 )
 
-// SaveConfig will merge the given newConfig in the current config.
+// SaveConfig will merge the given config in the current config.
 // Optional: pass the profile name to merge the config in a profile.
 func SaveConfig(newConfig Config, profileName ...string) error {
 	var currentConfig *configV2
