@@ -78,41 +78,41 @@ func WithEnv() {
 
 // WithConfig client option configure a client with Scaleway configuration.
 // Deprecated
-func WithConfig(config Config) ClientOption {
-	return func(s *settings) {
-		// The access key is not used for API authentications.
-		accessKey, _ := config.GetAccessKey()
-		secretKey, secretKeyExist := config.GetSecretKey()
-		if secretKeyExist {
-			s.token = auth.NewToken(accessKey, secretKey)
-		}
-
-		apiURL, exist := config.GetAPIURL()
-		if exist {
-			s.apiURL = apiURL
-		}
-
-		insecure, exist := config.GetInsecure()
-		if exist {
-			s.insecure = insecure
-		}
-
-		defaultProjectID, exist := config.GetDefaultProjectID()
-		if exist {
-			s.defaultProjectID = &defaultProjectID
-		}
-
-		defaultRegion, exist := config.GetDefaultRegion()
-		if exist {
-			s.defaultRegion = &defaultRegion
-		}
-
-		defaultZone, exist := config.GetDefaultZone()
-		if exist {
-			s.defaultZone = &defaultZone
-		}
-	}
-}
+//func WithConfig(config Config) ClientOption {
+//	return func(s *settings) {
+//		// The access key is not used for API authentications.
+//		accessKey, _ := config.GetAccessKey()
+//		secretKey, secretKeyExist := config.GetSecretKey()
+//		if secretKeyExist {
+//			s.token = auth.NewToken(accessKey, secretKey)
+//		}
+//
+//		apiURL, exist := config.GetAPIURL()
+//		if exist {
+//			s.apiURL = apiURL
+//		}
+//
+//		insecure, exist := config.GetInsecure()
+//		if exist {
+//			s.insecure = insecure
+//		}
+//
+//		defaultProjectID, exist := config.GetDefaultProjectID()
+//		if exist {
+//			s.defaultProjectID = &defaultProjectID
+//		}
+//
+//		defaultRegion, exist := config.GetDefaultRegion()
+//		if exist {
+//			s.defaultRegion = &defaultRegion
+//		}
+//
+//		defaultZone, exist := config.GetDefaultZone()
+//		if exist {
+//			s.defaultZone = &defaultZone
+//		}
+//	}
+//}
 
 // WithDefaultProjectID client option sets the client default project ID.
 //

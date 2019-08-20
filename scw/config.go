@@ -160,7 +160,7 @@ func MustLoadConfig() *configV2 {
 	}
 	return c
 }
-func LoadConfig2() (*configV2, error) {
+func LoadConfig() (*configV2, error) {
 	return LoadConfigFromPath(GetConfigPath())
 }
 

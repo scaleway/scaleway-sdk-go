@@ -23,21 +23,10 @@ func TestLoad(t *testing.T) {
 		env           map[string]string
 		files         map[string]string
 		expected      *configV2
-		expectedErr   string
+		expectedError string
 		expectedFiles map[string]string
 	}{
 		// valid config
-		{
-			name:     "No config file",
-			expected: &configV2{},
-		},
-		{
-			name: "No config file",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			expected: &configV2{},
-		},
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
@@ -47,16 +36,6 @@ func TestLoad(t *testing.T) {
 				"valid1/test.conf": emptyFile,
 			},
 			expected: &configV2{},
-		},
-		{
-			name: "Custom-path config with valid V1",
-			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/valid2/test.conf",
-			},
-			files: map[string]string{
-				"valid2/test.conf": v1ValidConfigFile,
-			},
-			expected: v1ValidConfig,
 		},
 		{
 			name: "Custom-path config with valid V2",
@@ -79,19 +58,6 @@ func TestLoad(t *testing.T) {
 			expected: v2SimpleValidConfig,
 			expectedFiles: map[string]string{
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
-			},
-		},
-		{
-			name: "Default config with valid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".scwrc": v1ValidConfigFile,
-			},
-			expected: v1ValidConfig,
-			expectedFiles: map[string]string{
-				".config/scw/config.yaml": v2FromV1ConfigFile,
 			},
 		},
 		{
@@ -136,7 +102,7 @@ func TestLoad(t *testing.T) {
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
-			expectedErr: "cannot read config file SCW_CONFIG_PATH: open {HOME}/fake/test.conf: no such file or directory",
+			expectedError: "cannot read config file: open {HOME}/fake/test.conf: no such file or directory",
 		},
 		{
 			name: "Err: custom-path config with invalid V2",
@@ -146,7 +112,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				"invalid1/test.conf": v2SimpleInvalidConfigFile,
 			},
-			expectedErr: "content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
+			expectedError: "content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
 		},
 		{
 			name: "Err: default config with invalid V2",
@@ -156,17 +122,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleInvalidConfigFile,
 			},
-			expectedErr: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
-		},
-		{
-			name: "Err: default config with invalid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".scwrc": v1InvalidConfigFile,
-			},
-			expectedErr: "content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
+			expectedError: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
 		},
 		{
 			name: "Err: default config with invalid profile",
@@ -176,7 +132,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleConfigFileWithInvalidProfile,
 			},
-			expectedErr: "profile flantier does not exist in config file {HOME}/.config/scw/config.yaml",
+			expectedError: "scaleway-sdk-go: given profile flantier does not exist",
 		},
 	}
 
@@ -190,6 +146,7 @@ func TestLoad(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
 			setEnv(t, test.env, test.files, dir)
+			test.expectedError = strings.Replace(test.expectedError, "{HOME}", dir, -1)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
@@ -198,12 +155,22 @@ func TestLoad(t *testing.T) {
 			config, err := LoadConfig()
 
 			// test expected outputs
-			if test.expectedErr != "" {
+			if test.expectedError != "" {
+				if err == nil {
+					_, tmpErr := config.GetActiveProfile()
+					if tmpErr != nil {
+						testhelpers.Equals(t, test.expectedError, tmpErr.Error())
+						return
+					}
+				}
 				testhelpers.Assert(t, err != nil, "error should not be nil")
-				testhelpers.Equals(t, strings.Replace(test.expectedErr, "{HOME}", dir, -1), err.Error())
+				testhelpers.Equals(t, test.expectedError, err.Error())
 			} else {
 				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, test.expected, config)
+
+				_, err = config.GetActiveProfile()
+				testhelpers.AssertNoError(t, err)
 			}
 
 			// test expected files

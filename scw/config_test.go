@@ -407,7 +407,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 
 		// Valid V1 is not allowed
 		{
-			name: "Custom-path config with valid V1",
+			name: "Err: custom-path config with valid V1",
 			env: map[string]string{
 				scwConfigPathEnv: "{HOME}/valid2/test.conf",
 			},
@@ -415,6 +415,16 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				"valid2/test.conf": v1ValidConfigFile,
 			},
 			expectedError: "scaleway-sdk-go: found legacy config in {HOME}/valid2/test.conf: legacy config is not allowed, please switch to the new config file format: " + documentationLink,
+		},
+		{
+			name: "Err: default config with invalid V1",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".scwrc": v1InvalidConfigFile,
+			},
+			expectedError: "scaleway-sdk-go: content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
 		},
 	}
 
@@ -428,15 +438,22 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
 			setEnv(t, test.env, test.files, dir)
+			test.expectedError = strings.Replace(test.expectedError, "{HOME}", dir, -1)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
 			// load config
 			isMigrated, err := MigrateLegacyConfig()
-			testhelpers.AssertNoError(t, err)
+
+			if test.expectedError != "" && err != nil {
+				testhelpers.Equals(t, test.expectedError, err.Error())
+				return
+			} else {
+				testhelpers.AssertNoError(t, err)
+			}
 			testhelpers.Equals(t, test.isMigrated, isMigrated)
-			config, err := LoadConfig2()
+			config, err := LoadConfig()
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)
 				p, err := config.GetActiveProfile()
@@ -451,7 +468,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 				testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
 			} else {
-				testhelpers.Equals(t, strings.ReplaceAll(test.expectedError, "{HOME}", dir), err.Error())
+				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
 
 		})

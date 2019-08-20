@@ -104,9 +104,9 @@ func TestNewClientWithOptions(t *testing.T) {
 	})
 
 	t.Run("With scwconfig", func(t *testing.T) {
-		config := &mockConfig{}
+		//config := &mockConfig{}
 
-		client, err := NewClient(WithConfig(config))
+		client, err := NewClient() //WithProfile(config)
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
