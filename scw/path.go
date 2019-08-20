@@ -27,6 +27,12 @@ func inConfigFile() string {
 	return ""
 }
 
+// GetConfigPath returns the default path.
+// Default path is base on the following priority order:
+// - $SCW_CONFIG_PATH
+// - $XDG_CONFIG_HOME/scw/config.yaml
+// - $HOME/.config/scw/config.yaml
+// - $USERPROFILE/.config/scw/config.yaml
 func GetConfigPath() string {
 	configPath := os.Getenv(scwConfigPathEnv)
 	if configPath == "" {

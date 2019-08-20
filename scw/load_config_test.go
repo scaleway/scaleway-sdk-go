@@ -22,7 +22,7 @@ func TestLoad(t *testing.T) {
 		name          string
 		env           map[string]string
 		files         map[string]string
-		expected      *configV2
+		expected      *Config
 		expectedError string
 		expectedFiles map[string]string
 	}{
@@ -35,7 +35,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
 			},
-			expected: &configV2{},
+			expected: &Config{},
 		},
 		{
 			name: "Custom-path config with valid V2",

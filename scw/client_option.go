@@ -68,7 +68,7 @@ func withDefaultUserAgent(ua string) ClientOption {
 	}
 }
 
-func WithProfile(p profile) {
+func WithProfile(p Profile) {
 
 }
 

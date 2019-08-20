@@ -48,25 +48,30 @@ const (
 	//cliTargetArchEnv      = "SCW_TARGET_ARCH"
 )
 
-func LoadEnvProfile() (*profile, error) {
-	p := &profile{}
+const (
+	v1RegionFrPar = "par1"
+	v1RegionNlAms = "ams1"
+)
 
-	accessKey, _, envExist := getenv(scwAccessKeyEnv, terraformAccessKeyEnv)
+func LoadEnvProfile() (*Profile, error) {
+	p := &Profile{}
+
+	accessKey, _, envExist := getEnv(scwAccessKeyEnv, terraformAccessKeyEnv)
 	if envExist {
 		p.AccessKey = &accessKey
 	}
 
-	secretKey, _, envExist := getenv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
+	secretKey, _, envExist := getEnv(scwSecretKeyEnv, cliSecretKeyEnv, terraformSecretKeyEnv, terraformAccessKeyEnv)
 	if envExist {
 		p.SecretKey = &secretKey
 	}
 
-	apiURL, _, envExist := getenv(scwAPIURLEnv)
+	apiURL, _, envExist := getEnv(scwAPIURLEnv)
 	if envExist {
 		p.APIURL = &apiURL
 	}
 
-	insecureValue, envKey, envExist := getenv(scwInsecureEnv, cliTLSVerifyEnv)
+	insecureValue, envKey, envExist := getEnv(scwInsecureEnv, cliTLSVerifyEnv)
 	if envExist {
 		insecure, err := strconv.ParseBool(insecureValue)
 		if err != nil {
@@ -80,17 +85,18 @@ func LoadEnvProfile() (*profile, error) {
 		p.Insecure = &insecure
 	}
 
-	projectID, _, envExist := getenv(scwDefaultProjectIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
+	projectID, _, envExist := getEnv(scwDefaultProjectIDEnv, cliOrganizationEnv, terraformOrganizationEnv)
 	if envExist {
 		p.DefaultProjectID = &projectID
 	}
 
-	region, _, envExist := getenv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
+	region, _, envExist := getEnv(scwDefaultRegionEnv, cliRegionEnv, terraformRegionEnv)
 	if envExist {
+		region = v1RegionToV2(region)
 		p.DefaultRegion = &region
 	}
 
-	zone, _, envExist := getenv(scwDefaultZoneEnv)
+	zone, _, envExist := getEnv(scwDefaultZoneEnv)
 	if envExist {
 		p.DefaultZone = &zone
 	}
@@ -98,7 +104,7 @@ func LoadEnvProfile() (*profile, error) {
 	return p, nil
 }
 
-func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
+func getEnv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
 	value, exist := os.LookupEnv(upToDateKey)
 	if exist {
 		logger.Infof("reading value from %s", upToDateKey)
@@ -115,4 +121,17 @@ func getenv(upToDateKey string, deprecatedKeys ...string) (string, string, bool)
 	}
 
 	return "", "", false
+}
+
+func v1RegionToV2(region string) string {
+	switch region {
+	case v1RegionFrPar:
+		logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
+		return "fr-par"
+	case v1RegionNlAms:
+		logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
+		return "nl-ams"
+	default:
+		return region
+	}
 }

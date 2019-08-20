@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -17,17 +16,13 @@ const (
 	defaultConfigPermission = 0600
 )
 
-type configV2 struct {
-	profile       `yaml:",inline"`
+type Config struct {
+	Profile       `yaml:",inline"`
 	ActiveProfile *string             `yaml:"active_profile,omitempty"`
-	Profiles      map[string]*profile `yaml:"profiles,omitempty"`
-
-	// withProfile is used by LoadConfigWithProfile to handle the following priority order:
-	// c.withProfile > os.Getenv("SCW_PROFILE") > c.ActiveProfile
-	withProfile string
+	Profiles      map[string]*Profile `yaml:"profiles,omitempty"`
 }
 
-type profile struct {
+type Profile struct {
 	AccessKey        *string `yaml:"access_key,omitempty"`
 	SecretKey        *string `yaml:"secret_key,omitempty"`
 	APIURL           *string `yaml:"api_url,omitempty"`
@@ -37,7 +32,7 @@ type profile struct {
 	DefaultZone      *string `yaml:"default_zone,omitempty"`
 }
 
-func (c *configV2) String() string {
+func (c *Config) String() string {
 	configRaw, err := yaml.Marshal(c)
 	if err != nil {
 		return "cannot print config:" + err.Error()
@@ -46,8 +41,8 @@ func (c *configV2) String() string {
 	return string(configRaw)
 }
 
-func unmarshalConfV2(content []byte) (*configV2, error) {
-	var config configV2
+func unmarshalConfV2(content []byte) (*Config, error) {
+	var config Config
 
 	err := yaml.Unmarshal(content, &config)
 	if err != nil {
@@ -56,115 +51,22 @@ func unmarshalConfV2(content []byte) (*configV2, error) {
 	return &config, nil
 }
 
-const (
-	v1RegionFrPar = "par1"
-	v1RegionNlAms = "ams1"
-)
-
-// configV1 is a Scaleway CLI configuration file
-type configV1 struct {
-	// Organization is the identifier of the Scaleway organization
-	Organization string `json:"organization"`
-
-	// Token is the authentication token for the Scaleway organization
-	Token string `json:"token"`
-
-	// Version is the actual version of scw CLI
-	Version string `json:"version"`
-}
-
-func unmarshalConfV1(content []byte) (*configV1, error) {
-	var config configV1
-	err := json.Unmarshal(content, &config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, err
-}
-
-func (v1 *configV1) toV2() *configV2 {
-	return &configV2{
-		profile: profile{
-			DefaultProjectID: &v1.Organization,
-			SecretKey:        &v1.Token,
-			// ignore v1 version
-		},
-	}
-}
-
-func v1RegionToV2(region string) string {
-	switch region {
-	case v1RegionFrPar:
-		logger.Warningf("par1 is a deprecated name for region, use fr-par instead")
-		return "fr-par"
-	case v1RegionNlAms:
-		logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
-		return "nl-ams"
-	default:
-		return region
-	}
-}
-
-// MigrateLegacyConfig will migrate the legacy config to the V2 when none exist yet.
-// Returns a boolean set to true when the migration happened.
-// TODO: get accesskey from account?
-func MigrateLegacyConfig() (bool, error) {
-	// STEP 1: try to load config file V2
-	v2Path, v2PathOk := GetConfigV2FilePath()
-	if !v2PathOk || fileExist(v2Path) {
-		return false, nil
-	}
-
-	// STEP 2: try to load config file V1
-	v1Path, v1PathOk := GetConfigV1FilePath()
-	if !v1PathOk {
-		return false, nil
-	}
-	file, err := ioutil.ReadFile(v1Path)
-	if err != nil {
-		return false, nil
-	}
-	confV1, err := unmarshalConfV1(file)
-	if err != nil {
-		return false, errors.Wrap(err, "content of config file %s is invalid json", v1Path)
-	}
-
-	// STEP 3: create dir
-	err = os.MkdirAll(filepath.Dir(v2Path), 0700)
-	if err != nil {
-		return false, errors.Wrap(err, "mkdir did not work on %s", filepath.Dir(v2Path))
-	}
-
-	// STEP 4: marshal yaml config
-	newConfig := confV1.toV2()
-	file, err = yaml.Marshal(newConfig)
-	if err != nil {
-		return false, err
-	}
-
-	// STEP 5: save config
-	err = ioutil.WriteFile(v2Path, file, defaultConfigPermission)
-	if err != nil {
-		return false, fmt.Errorf("cannot write file %s: %s", v2Path, err)
-	}
-
-	// STEP 6: log success
-	logger.Warningf("migrated existing config to %s", v2Path)
-	return true, nil
-}
-
-func MustLoadConfig() *configV2 {
+// MustLoadConfig is like LoadConfig but panic instead of returning an error.
+func MustLoadConfig() *Config {
 	c, err := LoadConfigFromPath(GetConfigPath())
 	if err != nil {
 		panic(err)
 	}
 	return c
 }
-func LoadConfig() (*configV2, error) {
+
+// LoadConfig read the config from the default path.
+func LoadConfig() (*Config, error) {
 	return LoadConfigFromPath(GetConfigPath())
 }
 
-func LoadConfigFromPath(path string) (*configV2, error) {
+// LoadConfigFromPath read the config from the given path.
+func LoadConfigFromPath(path string) (*Config, error) {
 
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -186,7 +88,7 @@ func LoadConfigFromPath(path string) (*configV2, error) {
 }
 
 // GetProfile returns the profile corresponding to the given profile name.
-func (c *configV2) GetProfile(profileName string) (*profile, error) {
+func (c *Config) GetProfile(profileName string) (*Profile, error) {
 	if profileName == "" {
 		return nil, errors.New("active profile cannot be empty")
 	}
@@ -201,7 +103,7 @@ func (c *configV2) GetProfile(profileName string) (*profile, error) {
 
 // GetActiveProfile returns the active profile of the config based on the following order:
 // env SCW_PROFILE > config active_profile > config root profile
-func (c *configV2) GetActiveProfile() (*profile, error) {
+func (c *Config) GetActiveProfile() (*Profile, error) {
 	switch {
 	case os.Getenv(scwActiveProfileEnv) != "":
 		logger.Debugf("using active profile from env: %s=%s", scwActiveProfileEnv, os.Getenv(scwActiveProfileEnv))
@@ -210,20 +112,20 @@ func (c *configV2) GetActiveProfile() (*profile, error) {
 		logger.Debugf("using active profile from config: active_profile=%s", scwActiveProfileEnv, *c.ActiveProfile)
 		return c.GetProfile(*c.ActiveProfile)
 	default:
-		return &c.profile, nil
+		return &c.Profile, nil
 	}
 
 }
 
 // SaveTo will save the config to the default config path. This
 // action will overwrite the previous file when it exists.
-func (c *configV2) Save() error {
+func (c *Config) Save() error {
 	return c.SaveTo(GetConfigPath())
 }
 
 // SaveTo will save the config to the given path. This action will
 // overwrite the previous file when it exists.
-func (c *configV2) SaveTo(path string) error {
+func (c *Config) SaveTo(path string) error {
 	path = filepath.Clean(path)
 
 	// STEP 1: marshal config
