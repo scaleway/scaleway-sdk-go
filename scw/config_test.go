@@ -484,29 +484,3 @@ default_region: ` + v2ValidDefaultRegion + `
 default_project_id: ` + v1ValidProjectID + `
 `
 )
-
-// v1 config
-var (
-	v1ValidProjectID = "29aa5db6-1d6d-404e-890d-f896913f9ec1"
-	v1ValidToken     = "a057b0c1-eb47-4bf8-a589-72c1f2029515"
-	v1Version        = "1.19"
-
-	v1ValidConfig = &Config{
-		Profile: Profile{
-			SecretKey:        &v1ValidToken,
-			DefaultProjectID: &v1ValidProjectID,
-		},
-	}
-
-	v1ValidConfigFile = `{
-"organization":"` + v1ValidProjectID + `",
-"token":"` + v1ValidToken + `",
-"version":"` + v1Version + `"
-}`
-
-	v1InvalidConfigFile = `
-"organization":"` + v1ValidProjectID + `",
-"token":"` + v1ValidToken + `",
-"version":"` + v1Version + `"
-`
-)
