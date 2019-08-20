@@ -103,10 +103,18 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, exist, "defaultPageSize must exist")
 	})
 
-	t.Run("With scwconfig", func(t *testing.T) {
-		//config := &mockConfig{}
+	t.Run("With custom profile", func(t *testing.T) {
+		profile := &Profile{
+			s(testAccessKey),
+			s(testSecretKey),
+			s(testAPIURL),
+			b(testInsecure),
+			s(testDefaultProjectID),
+			s(string(testDefaultRegion)),
+			s(string(testDefaultZone)),
+		}
 
-		client, err := NewClient() //WithProfile(config)
+		client, err := NewClient(WithProfile(profile))
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)

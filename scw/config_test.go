@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 func s(value string) *string {
@@ -357,6 +358,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 
 	// delete home dir and reset env variables
 	defer resetEnv(t, os.Environ(), dir)
+	logger.EnableDebugMode()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
@@ -495,6 +497,12 @@ var (
 			DefaultProjectID: &v1ValidProjectID,
 		},
 	}
+
+	v1ValidConfigFile = `{
+"organization":"` + v1ValidProjectID + `",
+"token":"` + v1ValidToken + `",
+"version":"` + v1Version + `"
+}`
 
 	v1InvalidConfigFile = `
 "organization":"` + v1ValidProjectID + `",

@@ -35,9 +35,16 @@ func Example_apiClientWithConfig() {
 		// handle error
 	}
 
+	// Use active profile
+	profile, err := config.GetActiveProfile()
+	if err != nil {
+		// handle error
+	}
+
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithConfig(config),
+		scw.WithProfile(profile),
+		scw.WithEnv(), // env variable may overwrite profile values
 	)
 	if err != nil {
 		// handle error
