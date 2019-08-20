@@ -84,6 +84,15 @@ type profile struct {
 	DefaultZone      *string `yaml:"default_zone,omitempty"`
 }
 
+func (c *configV2) String() string {
+	configRaw, err := yaml.Marshal(c)
+	if err != nil {
+		return "cannot print config:" + err.Error()
+	}
+
+	return string(configRaw)
+}
+
 func unmarshalConfV2(content []byte) (*configV2, error) {
 	var config configV2
 
