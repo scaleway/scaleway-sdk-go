@@ -90,13 +90,6 @@ var (
 	v1ValidToken     = "a057b0c1-eb47-4bf8-a589-72c1f2029515"
 	v1Version        = "1.19"
 
-	v1ValidConfig = &Config{
-		Profile: Profile{
-			SecretKey:        &v1ValidToken,
-			DefaultProjectID: &v1ValidProjectID,
-		},
-	}
-
 	v1ValidConfigFile = `{
 "organization":"` + v1ValidProjectID + `",
 "token":"` + v1ValidToken + `",
