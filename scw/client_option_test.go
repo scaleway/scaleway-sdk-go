@@ -1,6 +1,8 @@
 package scw
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -98,3 +100,111 @@ func TestClientOptions(t *testing.T) {
 		})
 	}
 }
+
+func TestCombinedClientOptions(t *testing.T) {
+	tests := []struct {
+		name  string
+		env   map[string]string
+		files map[string]string
+
+		expectedError            string
+		expectedAccessKey        string
+		expectedSecretKey        string
+		expectedAPIURL           string
+		expectedDefaultProjectID *string
+		expectedDefaultRegion    *Region
+		expectedDefaultZone      *Zone
+	}{
+		{
+			name: "Complete config file with env variables",
+			env: map[string]string{
+				"HOME":                 "{HOME}",
+				scwAccessKeyEnv:        v2ValidAccessKey2,
+				scwSecretKeyEnv:        v2ValidSecretKey2,
+				scwAPIURLEnv:           v2ValidAPIURL2,
+				scwDefaultProjectIDEnv: v2ValidDefaultProjectID2,
+				scwDefaultRegionEnv:    v2ValidDefaultRegion2,
+				scwDefaultZoneEnv:      v2ValidDefaultZone2,
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2CompleteValidConfigFile,
+			},
+			expectedAccessKey:        v2ValidAccessKey2,
+			expectedSecretKey:        v2ValidSecretKey2,
+			expectedAPIURL:           v2ValidAPIURL2,
+			expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
+			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:      z(Zone(v2ValidDefaultZone2)),
+		},
+		{
+			name: "Complete config with active profile env variable and all env variables",
+			env: map[string]string{
+				"HOME":                 "{HOME}",
+				scwActiveProfileEnv:    v2ValidProfile,
+				scwAccessKeyEnv:        v2ValidAccessKey,
+				scwSecretKeyEnv:        v2ValidSecretKey,
+				scwAPIURLEnv:           v2ValidAPIURL,
+				scwDefaultProjectIDEnv: v2ValidDefaultProjectID,
+				scwDefaultRegionEnv:    v2ValidDefaultRegion,
+				scwDefaultZoneEnv:      v2ValidDefaultZone,
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2CompleteValidConfigFile,
+			},
+			expectedAccessKey:        v2ValidAccessKey,
+			expectedSecretKey:        v2ValidSecretKey,
+			expectedAPIURL:           v2ValidAPIURL,
+			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:      z(Zone(v2ValidDefaultZone)),
+		},
+	}
+
+	// create home dir
+	dir := initEnv(t)
+
+	// delete home dir and reset env variables
+	defer resetEnv(t, os.Environ(), dir)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// set up env and config file(s)
+			setEnv(t, test.env, test.files, dir)
+			test.expectedError = strings.Replace(test.expectedError, "{HOME}", dir, -1)
+
+			// remove config file(s)
+			defer cleanEnv(t, test.files, dir)
+
+			config, err := LoadConfig()
+			testhelpers.AssertNoError(t, err)
+
+			p, err := config.GetActiveProfile()
+			testhelpers.AssertNoError(t, err)
+
+			client, err := NewClient(WithProfile(p), WithEnv())
+			if test.expectedError == "" {
+				testhelpers.AssertNoError(t, err)
+
+				// assert getters
+				testhelpers.Equals(t, test.expectedAccessKey, client.auth.(*auth.Token).AccessKey)
+				testhelpers.Equals(t, test.expectedSecretKey, client.auth.(*auth.Token).SecretKey)
+				testhelpers.Equals(t, test.expectedAPIURL, client.apiURL)
+				testhelpers.Equals(t, test.expectedDefaultProjectID, client.defaultProjectID)
+				testhelpers.Equals(t, test.expectedDefaultRegion, client.defaultRegion)
+				testhelpers.Equals(t, test.expectedDefaultZone, client.defaultZone)
+				// skip insecure tests
+			} else {
+				testhelpers.Equals(t, test.expectedError, err.Error())
+			}
+
+		})
+	}
+}
+
+/* removed tests
+
+
+
+
+
+
+ */

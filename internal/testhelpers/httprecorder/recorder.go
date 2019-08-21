@@ -27,11 +27,14 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	_, UpdateCassette := os.LookupEnv("UPDATE")
 
-	var config scw.Config
-	var err error
+	var activeProfile *scw.Profile
 
 	if UpdateCassette {
-		config, err = scw.LoadConfig()
+		config, err := scw.LoadConfig()
+		if err != nil {
+			return nil, nil, err
+		}
+		activeProfile, err = config.GetActiveProfile()
 		if err != nil {
 			return nil, nil, err
 		}
@@ -54,7 +57,7 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		delete(i.Request.Headers, "X-Auth-Token")
 
 		if UpdateCassette {
-			secretKey, _ := config.GetSecretKey()
+			secretKey := *activeProfile.SecretKey
 			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
 				panic(fmt.Errorf("found secret key in cassette"))
 			}
@@ -71,14 +74,15 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	if UpdateCassette {
 		// When updating the recoreded test requests, we need the access key and secret key.
 		client, err = scw.NewClient(
-			scw.WithConfig(config),
 			scw.WithHTTPClient(httpClient),
+			scw.WithProfile(activeProfile),
+			scw.WithEnv(),
 		)
 		if err != nil {
 			return nil, nil, err
 		}
 	} else {
-		// No need for auth when using casette
+		// No need for auth when using cassette
 		client, err = scw.NewClient(
 			scw.WithoutAuth(),
 			scw.WithHTTPClient(httpClient),
