@@ -3,12 +3,12 @@ package e2e
 import (
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/api/fakeapi/v1"
+	"github.com/scaleway/scaleway-sdk-go/api/test/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func newE2EClient(withAuthInClient bool) (*fakeapi.API, string, error) {
+func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
 	client, err := scw.NewClient(
 		scw.WithoutAuth(),
 		scw.WithDefaultRegion(scw.RegionFrPar),
@@ -16,9 +16,9 @@ func newE2EClient(withAuthInClient bool) (*fakeapi.API, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
-	fakeAPI := fakeapi.NewAPI(client)
+	testClient := test.NewAPI(client)
 
-	registerResponse, err := fakeAPI.Register(&fakeapi.RegisterRequest{
+	registerResponse, err := testClient.Register(&test.RegisterRequest{
 		Username: "sidi",
 	})
 	if err != nil {
@@ -29,10 +29,10 @@ func newE2EClient(withAuthInClient bool) (*fakeapi.API, string, error) {
 			scw.WithDefaultRegion(scw.RegionFrPar),
 			scw.WithAuth("", registerResponse.SecretKey),
 		)
-		fakeAPI = fakeapi.NewAPI(client)
+		testClient = test.NewAPI(client)
 	}
 
-	return fakeAPI, registerResponse.SecretKey, err
+	return testClient, registerResponse.SecretKey, err
 }
 
 func TestAuthInRequest(t *testing.T) {
@@ -40,7 +40,7 @@ func TestAuthInRequest(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 
 	requestWithAuth := scw.WithAuthRequest("", secretKey)
-	_, err = client.CreateHuman(&fakeapi.CreateHumanRequest{}, requestWithAuth)
+	_, err = client.CreateHuman(&test.CreateHumanRequest{}, requestWithAuth)
 	testhelpers.AssertNoError(t, err)
 }
 
@@ -49,7 +49,7 @@ func TestHuman(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 
 	// create
-	human, err := client.CreateHuman(&fakeapi.CreateHumanRequest{
+	human, err := client.CreateHuman(&test.CreateHumanRequest{
 		Height:               170.5,
 		ShoeSize:             35.1,
 		AltitudeInMeter:      -12,
@@ -57,7 +57,7 @@ func TestHuman(t *testing.T) {
 		FingersCount:         21,
 		HairCount:            9223372036854775808,
 		IsHappy:              true,
-		EyesColor:            fakeapi.EyeColorsAmber,
+		EyesColor:            test.EyeColorsAmber,
 		ProjectID:            "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
 	})
 
@@ -69,11 +69,11 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.FingersCount, uint32(21))
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775808))
 	testhelpers.Equals(t, human.IsHappy, true)
-	testhelpers.Equals(t, human.EyesColor, fakeapi.EyeColorsAmber)
+	testhelpers.Equals(t, human.EyesColor, test.EyeColorsAmber)
 	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// single parameter update
-	human, err = client.UpdateHuman(&fakeapi.UpdateHumanRequest{
+	human, err = client.UpdateHuman(&test.UpdateHumanRequest{
 		HumanID: human.ID,
 		IsHappy: scw.BoolPtr(false),
 	})
@@ -86,11 +86,11 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.FingersCount, uint32(21))
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775808))
 	testhelpers.Equals(t, human.IsHappy, false)
-	testhelpers.Equals(t, human.EyesColor, fakeapi.EyeColorsAmber)
+	testhelpers.Equals(t, human.EyesColor, test.EyeColorsAmber)
 	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// update
-	human, err = client.UpdateHuman(&fakeapi.UpdateHumanRequest{
+	human, err = client.UpdateHuman(&test.UpdateHumanRequest{
 		HumanID:              human.ID,
 		Height:               scw.Float64Ptr(155.666),
 		ShoeSize:             scw.Float32Ptr(36.0),
@@ -99,7 +99,7 @@ func TestHuman(t *testing.T) {
 		FingersCount:         scw.Uint32Ptr(20),
 		HairCount:            scw.Uint64Ptr(9223372036854775809),
 		IsHappy:              scw.BoolPtr(true),
-		EyesColor:            fakeapi.EyeColorsBlue,
+		EyesColor:            test.EyeColorsBlue,
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -110,11 +110,11 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.FingersCount, uint32(20))
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775809))
 	testhelpers.Equals(t, human.IsHappy, true)
-	testhelpers.Equals(t, human.EyesColor, fakeapi.EyeColorsBlue)
+	testhelpers.Equals(t, human.EyesColor, test.EyeColorsBlue)
 	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// get
-	human, err = client.GetHuman(&fakeapi.GetHumanRequest{
+	human, err = client.GetHuman(&test.GetHumanRequest{
 		HumanID: human.ID,
 	})
 
@@ -126,17 +126,17 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.FingersCount, uint32(20))
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775809))
 	testhelpers.Equals(t, human.IsHappy, true)
-	testhelpers.Equals(t, human.EyesColor, fakeapi.EyeColorsBlue)
+	testhelpers.Equals(t, human.EyesColor, test.EyeColorsBlue)
 	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// delete
-	_, err = client.DeleteHuman(&fakeapi.DeleteHumanRequest{
+	_, err = client.DeleteHuman(&test.DeleteHumanRequest{
 		HumanID: human.ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
 	// get
-	_, err = client.GetHuman(&fakeapi.GetHumanRequest{
+	_, err = client.GetHuman(&test.GetHumanRequest{
 		HumanID: human.ID,
 	})
 	testhelpers.Equals(t, "scaleway-sdk-go: http error 404 Not Found: human not found", err.Error())
