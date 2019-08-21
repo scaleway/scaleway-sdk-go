@@ -81,7 +81,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 
 	confV2, err := unmarshalConfV2(file)
 	if err != nil {
-		return nil, fmt.Errorf("content of config file %s is invalid: %s", path, err)
+		return nil, errors.Wrap(err, "content of config file %s is invalid", path)
 	}
 
 	return confV2, nil

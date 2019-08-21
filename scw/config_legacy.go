@@ -48,13 +48,13 @@ func (v1 *configV1) toV2() *Config {
 // TODO: get accesskey from account?
 func MigrateLegacyConfig() (bool, error) {
 	// STEP 1: try to load config file V2
-	v2Path, v2PathOk := GetConfigV2FilePath()
+	v2Path, v2PathOk := getConfigV2FilePath()
 	if !v2PathOk || fileExist(v2Path) {
 		return false, nil
 	}
 
 	// STEP 2: try to load config file V1
-	v1Path, v1PathOk := GetConfigV1FilePath()
+	v1Path, v1PathOk := getConfigV1FilePath()
 	if !v1PathOk {
 		return false, nil
 	}

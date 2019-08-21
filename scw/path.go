@@ -20,7 +20,7 @@ var (
 )
 
 func inConfigFile() string {
-	v2path, exist := GetConfigV2FilePath()
+	v2path, exist := getConfigV2FilePath()
 	if exist {
 		return "in config file " + v2path
 	}
@@ -36,44 +36,44 @@ func inConfigFile() string {
 func GetConfigPath() string {
 	configPath := os.Getenv(scwConfigPathEnv)
 	if configPath == "" {
-		configPath, _ = GetConfigV2FilePath()
+		configPath, _ = getConfigV2FilePath()
 	}
 	return filepath.Clean(configPath)
 }
 
-// GetConfigV2FilePath returns the path to the Scaleway CLI config file
-func GetConfigV2FilePath() (string, bool) {
-	configDir, err := GetScwConfigDir()
+// getConfigV2FilePath returns the path to the Scaleway CLI config file
+func getConfigV2FilePath() (string, bool) {
+	configDir, err := getScwConfigDir()
 	if err != nil {
 		return "", false
 	}
 	return filepath.Clean(filepath.Join(configDir, defaultConfigFileName)), true
 }
 
-// GetConfigV1FilePath returns the path to the Scaleway CLI config file
-func GetConfigV1FilePath() (string, bool) {
-	path, err := GetHomeDir()
+// getConfigV1FilePath returns the path to the Scaleway CLI config file
+func getConfigV1FilePath() (string, bool) {
+	path, err := getHomeDir()
 	if err != nil {
 		return "", false
 	}
 	return filepath.Clean(filepath.Join(path, ".scwrc")), true
 }
 
-// GetScwConfigDir returns the path to scw config folder
-func GetScwConfigDir() (string, error) {
+// getScwConfigDir returns the path to scw config folder
+func getScwConfigDir() (string, error) {
 	if xdgPath := os.Getenv(xdgConfigDirEnv); xdgPath != "" {
 		return filepath.Join(xdgPath, "scw"), nil
 	}
 
-	homeDir, err := GetHomeDir()
+	homeDir, err := getHomeDir()
 	if err != nil {
 		return "", err
 	}
 	return filepath.Join(homeDir, ".config", "scw"), nil
 }
 
-// GetHomeDir returns the path to your home directory
-func GetHomeDir() (string, error) {
+// getHomeDir returns the path to your home directory
+func getHomeDir() (string, error) {
 	switch {
 	case os.Getenv(unixHomeDirEnv) != "":
 		return os.Getenv(unixHomeDirEnv), nil

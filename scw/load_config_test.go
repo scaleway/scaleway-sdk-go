@@ -112,7 +112,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				"invalid1/test.conf": v2SimpleInvalidConfigFile,
 			},
-			expectedError: "content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
+			expectedError: "scaleway-sdk-go: content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
 		},
 		{
 			name: "Err: default config with invalid V2",
@@ -122,7 +122,7 @@ func TestLoad(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleInvalidConfigFile,
 			},
-			expectedError: "content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
+			expectedError: "scaleway-sdk-go: content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
 		},
 		{
 			name: "Err: default config with invalid profile",
