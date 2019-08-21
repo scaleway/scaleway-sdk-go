@@ -1345,6 +1345,8 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 type ListServersRequest struct {
 	Zone scw.Zone `json:"-"`
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
+	//
+	// Default value: 20
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
@@ -2493,6 +2495,8 @@ type ListVolumesRequest struct {
 	// Default value: l_ssd
 	VolumeType VolumeType `json:"-"`
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
+	//
+	// Default value: 20
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
@@ -3308,6 +3312,8 @@ func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw
 type ListComputeClustersRequest struct {
 	Zone scw.Zone `json:"-"`
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
+	//
+	// Default value: 20
 	PerPage *int32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`

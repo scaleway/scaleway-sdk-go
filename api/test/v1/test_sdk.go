@@ -1,7 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
-package fakeapi
+package test
 
 import (
 	"bytes"
@@ -194,7 +194,7 @@ func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*Regist
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/register",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/register",
 		Headers: http.Header{},
 	}
 
@@ -252,7 +252,7 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -312,7 +312,7 @@ func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human,
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 
@@ -364,7 +364,7 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
 		Headers: http.Header{},
 	}
 
@@ -427,7 +427,7 @@ func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 
@@ -472,7 +472,7 @@ func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/fakeapi/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 

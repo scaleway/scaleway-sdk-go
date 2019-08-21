@@ -364,6 +364,42 @@ func (enum *LbStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LbTypeStock string
+
+const (
+	// LbTypeStockUnknown is [insert doc].
+	LbTypeStockUnknown = LbTypeStock("unknown")
+	// LbTypeStockLowStock is [insert doc].
+	LbTypeStockLowStock = LbTypeStock("low_stock")
+	// LbTypeStockOutOfStock is [insert doc].
+	LbTypeStockOutOfStock = LbTypeStock("out_of_stock")
+	// LbTypeStockAvailable is [insert doc].
+	LbTypeStockAvailable = LbTypeStock("available")
+)
+
+func (enum LbTypeStock) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum LbTypeStock) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LbTypeStock) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LbTypeStock(LbTypeStock(tmp).String())
+	return nil
+}
+
 type ListACLRequestOrderBy string
 
 const (
@@ -780,7 +816,7 @@ type BackendServerStats struct {
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status"`
 }
 
-// Certificate sSL certificate is currently in BETA stage!
+// Certificate sSL certificate
 type Certificate struct {
 	// Type type of certificate (custom coming soon)
 	//
@@ -808,7 +844,7 @@ type Certificate struct {
 	Name string `json:"name"`
 }
 
-// CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt. Currently in BETA stage!
+// CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt.
 type CreateCertificateRequestLetsencryptConfig struct {
 	// CommonName main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
 	CommonName string `json:"common_name"`
@@ -1034,12 +1070,28 @@ type Lb struct {
 
 	BackendCount int32 `json:"backend_count"`
 
+	Type string `json:"type"`
+
 	Region scw.Region `json:"region"`
 }
 
 type LbStats struct {
 	// BackendServersStats list stats object of your loadbalancer (See the BackendServerStats object description)
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
+}
+
+type LbType struct {
+	Name string `json:"name"`
+	// StockStatus
+	//
+	// Default value: unknown
+	StockStatus LbTypeStock `json:"stock_status"`
+
+	Description string `json:"description"`
+
+	PricingURL string `json:"pricing_url"`
+
+	Region scw.Region `json:"region"`
 }
 
 type ListACLResponse struct {
@@ -1073,6 +1125,12 @@ type ListIpsResponse struct {
 	// Ips list IP address object
 	Ips []*IP `json:"ips"`
 	// TotalCount total count, wihtout pagination
+	TotalCount uint32 `json:"total_count"`
+}
+
+type ListLbTypesResponse struct {
+	LbTypes []*LbType `json:"lb_types"`
+
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1207,6 +1265,8 @@ type CreateLbRequest struct {
 	IPID *string `json:"ip_id"`
 	// Tags list of keyword
 	Tags []string `json:"tags"`
+	// Type load Balancer offer type
+	Type string `json:"type"`
 }
 
 func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
@@ -2828,7 +2888,7 @@ func (m *CreateCertificateRequest) GetType() Type {
 	return nil
 }
 
-// CreateCertificate create Certificate (beta)
+// CreateCertificate create Certificate
 //
 // Generate a new SSL certificate using Let's Encrypt (Custom certificates can be imported soon)
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
@@ -2883,7 +2943,7 @@ type ListCertificatesRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListCertificates list Certificates (beta)
+// ListCertificates list Certificates
 func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -2952,7 +3012,7 @@ type GetCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// GetCertificate get Certificate (beta)
+// GetCertificate get Certificate
 func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -2992,7 +3052,7 @@ type UpdateCertificateRequest struct {
 	Name string `json:"name"`
 }
 
-// UpdateCertificate update Certificate (beta)
+// UpdateCertificate update Certificate
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3035,7 +3095,7 @@ type DeleteCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// DeleteCertificate delete Certificate (beta)
+// DeleteCertificate delete Certificate
 func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3063,6 +3123,71 @@ func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.Reque
 		return err
 	}
 	return nil
+}
+
+type ListLbTypesRequest struct {
+	Region scw.Region `json:"-"`
+	// Page page number
+	Page *int32 `json:"-"`
+	// PageSize set the maximum list size
+	PageSize *int32 `json:"-"`
+}
+
+// ListLbTypes list all Load Balancer offer type
+func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*ListLbTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb-types",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListLbTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListLbTypesResponse) UnsafeGetTotalCount() int {
+	return int(r.TotalCount)
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+	results, ok := res.(*ListLbTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.LbTypes = append(r.LbTypes, results.LbTypes...)
+	r.TotalCount += uint32(len(results.LbTypes))
+	return len(results.LbTypes), nil
 }
 
 type Config interface {
