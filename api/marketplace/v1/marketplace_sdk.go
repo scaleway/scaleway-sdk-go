@@ -15,6 +15,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -32,6 +33,7 @@ var (
 	_ marshaler.Duration
 	_ scw.File
 	_ = parameter.AddToQuery
+	_ = namegenerator.GetRandomName
 )
 
 // API marketplace API
