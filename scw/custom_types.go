@@ -134,6 +134,7 @@ func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 	}
 	tsp.Timestamp = timestamp
 
+	// By default, JSON unmarshal a float in float64 but the TimeSeriesPoint is a float32 value.
 	value, isValue := point[1].(float64)
 	if !isValue {
 		return fmt.Errorf("%s is not a valid float32 value", point[1])
