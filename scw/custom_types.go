@@ -84,7 +84,7 @@ func (s Size) String() string {
 	return fmt.Sprintf("%d", s)
 }
 
-// TimeSeries represents a time series that could be used for statistical purposes.
+// TimeSeries represents a time series that could be used for graph purposes.
 type TimeSeries struct {
 	// Name of the metric.
 	Name string `json:"name"`
