@@ -92,8 +92,8 @@ type TimeSeries struct {
 	// Points contains all the points that composed the series.
 	Points []*TimeSeriesPoint `json:"points"`
 
-	// Labels contains some string labels related to a metric.
-	Labels map[string]string `json:"labels"`
+	// Metadata contains some string metadata related to a metric.
+	Metadata map[string]string `json:"metadata"`
 }
 
 // TimeSeriesPoint represents a point of a time series.
@@ -102,7 +102,15 @@ type TimeSeriesPoint struct {
 	Value     float32
 }
 
-//func (tsp *TimeSeriesPoint) MarshalJSON((m *jsonpb.Marshaler) ([]byte, error) {
+func (tsp *TimeSeriesPoint) MarshalJSON() ([]byte, error) {
+	timestamp := tsp.Timestamp.Format(time.RFC3339)
+	value, err := json.Marshal(tsp.Value)
+	if err != nil {
+		return nil, err
+	}
+
+	return []byte(`["` + timestamp + `",` + string(value) + "]"), nil
+}
 
 func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 	point := [2]interface{}{}
