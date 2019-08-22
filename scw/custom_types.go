@@ -1,8 +1,10 @@
 package scw
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 )
 
 // ServiceInfo contains API metadata
@@ -80,4 +82,64 @@ const (
 // String returns the string representation of a Size.
 func (s Size) String() string {
 	return fmt.Sprintf("%d", s)
+}
+
+// TimeSeries represents a time series that could be used for graph purposes.
+type TimeSeries struct {
+	// Name of the metric.
+	Name string `json:"name"`
+
+	// Points contains all the points that composed the series.
+	Points []*TimeSeriesPoint `json:"points"`
+
+	// Metadata contains some string metadata related to a metric.
+	Metadata map[string]string `json:"metadata"`
+}
+
+// TimeSeriesPoint represents a point of a time series.
+type TimeSeriesPoint struct {
+	Timestamp time.Time
+	Value     float32
+}
+
+func (tsp *TimeSeriesPoint) MarshalJSON() ([]byte, error) {
+	timestamp := tsp.Timestamp.Format(time.RFC3339)
+	value, err := json.Marshal(tsp.Value)
+	if err != nil {
+		return nil, err
+	}
+
+	return []byte(`["` + timestamp + `",` + string(value) + "]"), nil
+}
+
+func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
+	point := [2]interface{}{}
+
+	err := json.Unmarshal(b, &point)
+	if err != nil {
+		return err
+	}
+
+	if len(point) != 2 {
+		return fmt.Errorf("invalid point array")
+	}
+
+	strTimestamp, isStrTimestamp := point[0].(string)
+	if !isStrTimestamp {
+		return fmt.Errorf("%s timestamp is not a string in RFC 3339 format", point[0])
+	}
+	timestamp, err := time.Parse(time.RFC3339, strTimestamp)
+	if err != nil {
+		return fmt.Errorf("%s timestamp is not in RFC 3339 format", point[0])
+	}
+	tsp.Timestamp = timestamp
+
+	// By default, JSON unmarshal a float in float64 but the TimeSeriesPoint is a float32 value.
+	value, isValue := point[1].(float64)
+	if !isValue {
+		return fmt.Errorf("%s is not a valid float32 value", point[1])
+	}
+	tsp.Value = float32(value)
+
+	return nil
 }
