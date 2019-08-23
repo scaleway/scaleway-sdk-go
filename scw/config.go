@@ -81,7 +81,7 @@ func hideSecretKey(key *string) *string {
 		return nil
 	}
 	if len(*key) > 27 {
-		*key = (*key)[0:9] + "xxxx-xxxx-xxxx-xxxxxxxx" + (*key)[28:]
+		*key = (*key)[0:9] + "xxxx-xxxx-xxxx-xxxx" + (*key)[28:]
 	}
 
 	return key

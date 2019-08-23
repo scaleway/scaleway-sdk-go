@@ -501,19 +501,19 @@ func TestConfigString(t *testing.T) {
 	}
 
 	testhelpers.Equals(t, `access_key: ACCESS_KEY
-secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxx79616161
+secret_key: 7363616c-xxxx-xxxx-xxxx-xxxx79616161
 active_profile: flantier
 profiles:
   flantier:
     access_key: ACCESS_KEY2
-    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxx6d616c6c
+    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxx6d616c6c
 `, c.String())
 	testhelpers.Equals(t, v2ValidSecretKey, *c.SecretKey)
 
 	p, err := c.GetActiveProfile()
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, `access_key: ACCESS_KEY2
-secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxx6d616c6c
+secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxx6d616c6c
 `, p.String())
 	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
 
