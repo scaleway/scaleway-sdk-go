@@ -35,7 +35,7 @@ type Profile struct {
 func (p *Profile) String() string {
 
 	// deep copy profile object
-	copy, err := copyYamlConfig(p)
+	copy, err := deepCopyFromYAML(p)
 	if err != nil {
 		return "cannot print config profile:" + err.Error()
 	}
@@ -49,7 +49,7 @@ func (p *Profile) String() string {
 func (c *Config) String() string {
 
 	// deep copy config object
-	copy, err := copyYamlConfig(c)
+	copy, err := deepCopyFromYAML(c)
 	if err != nil {
 		return "cannot print config:" + err.Error()
 	}
@@ -63,7 +63,7 @@ func (c *Config) String() string {
 	return string(configRaw)
 }
 
-func copyYamlConfig(v interface{}) (interface{}, error) {
+func deepCopyFromYAML(v interface{}) (interface{}, error) {
 	configRaw, err := yaml.Marshal(v)
 	if err != nil {
 		return nil, err
