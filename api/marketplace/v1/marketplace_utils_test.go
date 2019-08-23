@@ -23,13 +23,13 @@ func TestGetImageByName(t *testing.T) {
 
 		imageID, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
 			Zone:           scw.ZoneFrPar1,
-			CommercialType: "C1",
-			ImageName:      "Docker",
+			CommercialType: "DEV1-S",
+			ImageName:      "ubuntu-bionic",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// Docker C1 at par1: 45a7e942-1fb0-48c0-bbf6-0acb9af24604
-		testhelpers.Equals(t, "45a7e942-1fb0-48c0-bbf6-0acb9af24604", imageID)
+		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
+		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
 
 	})
 
