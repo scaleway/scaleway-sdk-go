@@ -1,6 +1,8 @@
 package marketplace
 
 import (
+	"fmt"
+
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
@@ -24,7 +26,7 @@ func (version *Version) getLocalImage(zone scw.Zone, commercialType string) (*Lo
 		}
 	}
 
-	return nil, errors.New("couldn't find compatible local image for this image version (%s)", version.ID)
+	return nil, fmt.Errorf("couldn't find compatible local image for this image version (%s)", version.ID)
 
 }
 
