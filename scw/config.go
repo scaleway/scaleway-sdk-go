@@ -44,7 +44,7 @@ func (p *Profile) String() string {
 func (c *Config) clone() *Config {
 	c2 := &Config{}
 	configRaw, _ := yaml.Marshal(c)
-	yaml.Unmarshal(configRaw, c2)
+	_ = yaml.Unmarshal(configRaw, c2)
 	return c2
 }
 
