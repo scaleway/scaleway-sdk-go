@@ -3,6 +3,7 @@ package marketplace
 import (
 	"fmt"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -39,7 +40,7 @@ func (image *Image) getLatestVersion() (*Version, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("latest version could not be found for image %s", image.Name)
+	return nil, errors.New("latest version could not be found for image %s", image.Name)
 }
 
 // GetLocalImageIDByNameRequest is used by FindLocalImageIDByName
@@ -69,12 +70,12 @@ func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, 
 
 			latestVersion, err := image.getLatestVersion()
 			if err != nil {
-				return "", fmt.Errorf("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s): %s", req.ImageName, req.Zone, req.CommercialType, err)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
 			}
 
 			localImage, err := latestVersion.getLocalImage(req.Zone, req.CommercialType)
 			if err != nil {
-				return "", fmt.Errorf("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s): %s", req.ImageName, req.Zone, req.CommercialType, err)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
 			}
 
 			return localImage.ID, nil
@@ -82,7 +83,7 @@ func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, 
 
 	}
 
-	return "", fmt.Errorf("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
+	return "", errors.New("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
 }
 
 // UnsafeSetTotalCount should not be used

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
 
 // ServiceInfo contains API metadata
@@ -121,23 +123,23 @@ func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(point) != 2 {
-		return fmt.Errorf("invalid point array")
+		return errors.New("invalid point array")
 	}
 
 	strTimestamp, isStrTimestamp := point[0].(string)
 	if !isStrTimestamp {
-		return fmt.Errorf("%s timestamp is not a string in RFC 3339 format", point[0])
+		return errors.New("%s timestamp is not a string in RFC 3339 format", point[0])
 	}
 	timestamp, err := time.Parse(time.RFC3339, strTimestamp)
 	if err != nil {
-		return fmt.Errorf("%s timestamp is not in RFC 3339 format", point[0])
+		return errors.New("%s timestamp is not in RFC 3339 format", point[0])
 	}
 	tsp.Timestamp = timestamp
 
 	// By default, JSON unmarshal a float in float64 but the TimeSeriesPoint is a float32 value.
 	value, isValue := point[1].(float64)
 	if !isValue {
-		return fmt.Errorf("%s is not a valid float32 value", point[1])
+		return errors.New("%s is not a valid float32 value", point[1])
 	}
 	tsp.Value = float32(value)
 

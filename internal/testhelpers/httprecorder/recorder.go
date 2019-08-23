@@ -8,6 +8,7 @@ import (
 
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -59,7 +60,7 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		if UpdateCassette {
 			secretKey := *activeProfile.SecretKey
 			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
-				panic(fmt.Errorf("found secret key in cassette"))
+				panic(errors.New("found secret key in cassette"))
 			}
 		}
 
