@@ -86,6 +86,8 @@ type Image struct {
 	Versions []*Version `json:"versions"`
 
 	CurrentPublicVersion string `json:"current_public_version"`
+
+	Label string `json:"label"`
 }
 
 type ListImagesResponse struct {
