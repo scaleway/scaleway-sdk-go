@@ -2,7 +2,6 @@ package scw
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -83,7 +82,7 @@ func MigrateLegacyConfig() (bool, error) {
 	// STEP 5: save config
 	err = ioutil.WriteFile(v2Path, file, defaultConfigPermission)
 	if err != nil {
-		return false, fmt.Errorf("cannot write file %s: %s", v2Path, err)
+		return false, errors.Wrap(err, "cannot write file %s", v2Path)
 	}
 
 	// STEP 6: log success

@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -70,7 +69,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("cannot read config file: %s", err)
+		return nil, errors.Wrap(err, "cannot read config file")
 	}
 
 	_, err = unmarshalConfV1(file)

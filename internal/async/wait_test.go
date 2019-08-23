@@ -1,10 +1,10 @@
 package async
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -71,7 +71,7 @@ func TestWaitSync(t *testing.T) {
 				Timeout: time.Second,
 			},
 			expValue: nil,
-			expErr:   fmt.Errorf("timeout after 1s"),
+			expErr:   errors.New("timeout after 1s"),
 		},
 		{
 			name: "With interval",
@@ -103,7 +103,7 @@ func TestWaitSync(t *testing.T) {
 				IntervalStrategy: LinearIntervalStrategy(2 * time.Second),
 			},
 			expValue: nil,
-			expErr:   fmt.Errorf("timeout after 2s"),
+			expErr:   errors.New("timeout after 2s"),
 		},
 	}
 	for _, c := range testsCases {

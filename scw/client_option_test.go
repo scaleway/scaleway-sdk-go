@@ -41,7 +41,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.apiURL = apiURL
 			},
-			errStr: "no credential option provided",
+			errStr: "scaleway-sdk-go: no credential option provided",
 		},
 		{
 			name: "Should throw an url error",
@@ -49,7 +49,7 @@ func TestClientOptions(t *testing.T) {
 				s.apiURL = ":test"
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 			},
-			errStr: "invalid url :test: parse :test: missing protocol scheme",
+			errStr: "scaleway-sdk-go: invalid url :test: parse :test: missing protocol scheme",
 		},
 		{
 			name: "Should throw a project id error",
@@ -58,7 +58,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultProjectID = &v
 			},
-			errStr: "default project id cannot be empty",
+			errStr: "scaleway-sdk-go: default project id cannot be empty",
 		},
 		{
 			name: "Should throw a region error",
@@ -67,7 +67,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultRegion = &v
 			},
-			errStr: "default region cannot be empty",
+			errStr: "scaleway-sdk-go: default region cannot be empty",
 		},
 		{
 			name: "Should throw a zone error",
@@ -76,7 +76,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultZone = &v
 			},
-			errStr: "default zone cannot be empty",
+			errStr: "scaleway-sdk-go: default zone cannot be empty",
 		},
 	}
 
@@ -199,12 +199,3 @@ func TestCombinedClientOptions(t *testing.T) {
 		})
 	}
 }
-
-/* removed tests
-
-
-
-
-
-
- */

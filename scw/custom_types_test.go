@@ -2,10 +2,10 @@ package scw
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -107,7 +107,7 @@ func TestTimeSeries_UnmarshallJSON(t *testing.T) {
 		{
 			name: "with timestamp error",
 			json: `{"name":"cpu_usage","points":[["2019/08/08T15-00-00Z",0.2]]}`,
-			err:  fmt.Errorf("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
+			err:  errors.New("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
 		},
 	}
 

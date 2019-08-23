@@ -210,11 +210,11 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		// no env variables
 		{
 			name:          "No config without home dir",
-			expectedError: "cannot read config file: read .: is a directory",
+			expectedError: "scaleway-sdk-go: cannot read config file: read .: is a directory",
 		},
 		{
 			name:          "No config",
-			expectedError: "cannot read config file: open {HOME}/.config/scw/config.yaml: no such file or directory",
+			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yaml: no such file or directory",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
