@@ -2,6 +2,7 @@ package marketplace
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -65,8 +66,10 @@ func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, 
 
 	for _, image := range images {
 
+		dashLabel := strings.Replace(image.Label, "_", "-", -1)
+
 		// Match name of the image
-		if image.Name == req.ImageName {
+		if req.ImageName == dashLabel || req.ImageName == image.Label {
 
 			latestVersion, err := image.getLatestVersion()
 			if err != nil {
