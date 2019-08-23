@@ -1,9 +1,8 @@
 package async
 
 import (
+	"fmt"
 	"time"
-
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
 
 var (
@@ -85,6 +84,6 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 		return nil, err
 	case <-time.After(config.Timeout):
 		timeout <- true
-		return nil, errors.New("timeout after %v", config.Timeout)
+		return nil, fmt.Errorf("timeout after %v", config.Timeout)
 	}
 }
