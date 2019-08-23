@@ -177,10 +177,10 @@ func TestSetInsecureMode(t *testing.T) {
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
 }
 
-func TestNewPage(t *testing.T) {
+func TestNewVariableFromType(t *testing.T) {
 	type fakeType struct {
 		plop int
 	}
 
-	testhelpers.Equals(t, &fakeType{}, newPage(&fakeType{3}))
+	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
 }

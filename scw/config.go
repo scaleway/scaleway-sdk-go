@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"gopkg.in/yaml.v2"
@@ -31,13 +32,39 @@ type Profile struct {
 	DefaultZone      *string `yaml:"default_zone,omitempty"`
 }
 
+func (p *Profile) String() string {
+	p2 := *p
+	p2.SecretKey = hideSecretKey(p2.SecretKey)
+	configRaw, _ := yaml.Marshal(p2)
+	return string(configRaw)
+}
+
+// clone deep copy config object
+func (c *Config) clone() *Config {
+	c2 := &Config{}
+	configRaw, _ := yaml.Marshal(c)
+	_ = yaml.Unmarshal(configRaw, c2)
+	return c2
+}
+
 func (c *Config) String() string {
-	configRaw, err := yaml.Marshal(c)
-	if err != nil {
-		return "cannot print config:" + err.Error()
+	c2 := c.clone()
+	c2.SecretKey = hideSecretKey(c2.SecretKey)
+	for _, p := range c2.Profiles {
+		p.SecretKey = hideSecretKey(p.SecretKey)
 	}
 
+	configRaw, _ := yaml.Marshal(c2)
 	return string(configRaw)
+}
+
+func hideSecretKey(key *string) *string {
+	if key == nil {
+		return nil
+	}
+
+	newKey := auth.HideSecretKey(*key)
+	return &newKey
 }
 
 func unmarshalConfV2(content []byte) (*Config, error) {

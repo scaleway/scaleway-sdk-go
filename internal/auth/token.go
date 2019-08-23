@@ -29,16 +29,17 @@ func (t *Token) Headers() http.Header {
 // This method could be use for logging purpose.
 func (t *Token) AnonymizedHeaders() http.Header {
 	headers := http.Header{}
-	var secret string
-
-	switch {
-	case len(t.SecretKey) == 0:
-		secret = ""
-	case len(t.SecretKey) > 8:
-		secret = t.SecretKey[0:8] + "-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-	default:
-		secret = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-	}
-	headers.Set(XAuthTokenHeader, secret)
+	headers.Set(XAuthTokenHeader, HideSecretKey(t.SecretKey))
 	return headers
+}
+
+func HideSecretKey(k string) string {
+	switch {
+	case len(k) == 0:
+		return ""
+	case len(k) > 8:
+		return k[0:8] + "-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+	default:
+		return "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+	}
 }

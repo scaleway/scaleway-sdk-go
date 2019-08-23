@@ -484,3 +484,37 @@ default_region: ` + v2ValidDefaultRegion + `
 default_project_id: ` + v1ValidProjectID + `
 `
 )
+
+func TestConfigString(t *testing.T) {
+	var c = &Config{
+		Profile: Profile{
+			AccessKey: s(v2ValidAccessKey),
+			SecretKey: s(v2ValidSecretKey),
+		},
+		ActiveProfile: s(v2ValidProfile),
+		Profiles: map[string]*Profile{
+			v2ValidProfile: {
+				AccessKey: s(v2ValidAccessKey2),
+				SecretKey: s(v2ValidSecretKey2),
+			},
+		},
+	}
+
+	testhelpers.Equals(t, `access_key: ACCESS_KEY
+secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+active_profile: flantier
+profiles:
+  flantier:
+    access_key: ACCESS_KEY2
+    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+`, c.String())
+	testhelpers.Equals(t, v2ValidSecretKey, *c.SecretKey)
+
+	p, err := c.GetActiveProfile()
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, `access_key: ACCESS_KEY2
+secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+`, p.String())
+	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
+
+}

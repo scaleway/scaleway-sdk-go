@@ -288,7 +288,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err SdkError)
 			req.Query.Set("page", strconv.Itoa(page))
 
 			// request the next page
-			nextPage := newPage(response)
+			nextPage := newVariableFromType(response)
 			err := c.do(req, nextPage)
 			if err != nil {
 				return err
@@ -316,10 +316,10 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err SdkError)
 	return errors.New("%T does not support pagination", res)
 }
 
-// newPage returns a variable set to the zero value of the given type
-func newPage(v interface{}) interface{} {
+// newVariableFromType returns a variable set to the zero value of the given type
+func newVariableFromType(t interface{}) interface{} {
 	// reflect.New always create a pointer, that's why we use reflect.Indirect before
-	return reflect.New(reflect.Indirect(reflect.ValueOf(v)).Type()).Interface()
+	return reflect.New(reflect.Indirect(reflect.ValueOf(t)).Type()).Interface()
 }
 
 func newHTTPClient() *http.Client {
