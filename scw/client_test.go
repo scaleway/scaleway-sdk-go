@@ -182,5 +182,5 @@ func TestNewPage(t *testing.T) {
 		plop int
 	}
 
-	testhelpers.Equals(t, &fakeType{}, newPage(&fakeType{3}))
+	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
 }

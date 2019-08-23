@@ -32,13 +32,59 @@ type Profile struct {
 	DefaultZone      *string `yaml:"default_zone,omitempty"`
 }
 
+func (p *Profile) String() string {
+
+	// deep copy profile object
+	copy, err := copyYamlConfig(p)
+	if err != nil {
+		return "cannot print config profile:" + err.Error()
+	}
+	c2 := copy.(*Profile)
+	c2.SecretKey = hideSecretKey(c2.SecretKey)
+
+	configRaw, _ := yaml.Marshal(c2)
+	return string(configRaw)
+}
+
 func (c *Config) String() string {
-	configRaw, err := yaml.Marshal(c)
+
+	// deep copy config object
+	copy, err := copyYamlConfig(c)
 	if err != nil {
 		return "cannot print config:" + err.Error()
 	}
+	c2 := copy.(*Config)
+	c2.SecretKey = hideSecretKey(c2.SecretKey)
+	for _, p := range c2.Profiles {
+		p.SecretKey = hideSecretKey(p.SecretKey)
+	}
 
+	configRaw, _ := yaml.Marshal(c2)
 	return string(configRaw)
+}
+
+func copyYamlConfig(v interface{}) (interface{}, error) {
+	configRaw, err := yaml.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	c2 := newVariableFromType(v)
+	err = yaml.Unmarshal(configRaw, c2)
+	if err != nil {
+		return nil, err
+	}
+	return c2, nil
+}
+
+func hideSecretKey(key *string) *string {
+	if key == nil {
+		return nil
+	}
+	if len(*key) > 27 {
+		*key = (*key)[0:9] + "xxxx-xxxx-xxxx-xxxxxxxx" + (*key)[28:]
+	}
+
+	return key
 }
 
 func unmarshalConfV2(content []byte) (*Config, error) {
