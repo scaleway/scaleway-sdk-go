@@ -1091,8 +1091,6 @@ type LbType struct {
 
 	Description string `json:"description"`
 
-	PricingURL string `json:"pricing_url"`
-
 	Region scw.Region `json:"region"`
 }
 
