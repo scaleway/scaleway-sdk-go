@@ -8,7 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func TestGetImageByName(t *testing.T) {
+func TestGetImageByLabel(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
 	testhelpers.AssertNoError(t, err)
@@ -21,10 +21,10 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		imageID, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByNameRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
-			ImageName:      "ubuntu-bionic",
+			ImageLabel:     "ubuntu-bionic",
 		})
 		testhelpers.AssertNoError(t, err)
 
@@ -38,10 +38,10 @@ func TestGetImageByName(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		_, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+		_, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByNameRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "",
-			ImageName:      "foo-bar-image",
+			ImageLabel:     "foo-bar-image",
 		})
 		testhelpers.Assert(t, err != nil, "Should have error")
 

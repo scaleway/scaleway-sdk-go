@@ -46,14 +46,14 @@ func (image *Image) getLatestVersion() (*Version, error) {
 
 // GetLocalImageIDByNameRequest is used by FindLocalImageIDByName
 type GetLocalImageIDByNameRequest struct {
-	ImageName      string
+	ImageLabel     string
 	Zone           scw.Zone
 	CommercialType string
 }
 
-// GetLocalImageIDByName search for an image with the given name (exact match) in the given region
+// GetLocalImageIDByLabel search for an image with the given name (exact match) in the given region
 // it returns the latest version of this specific image.
-func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, error) {
+func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByNameRequest) (string, error) {
 
 	listImageRequest := &ListImagesRequest{}
 	listImageResponse, err := s.ListImages(listImageRequest, scw.WithAllPages())
@@ -62,23 +62,21 @@ func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, 
 	}
 
 	images := listImageResponse.Images
-	_ = images
+	label := strings.Replace(req.ImageLabel, "-", "_", -1)
 
 	for _, image := range images {
 
-		dashLabel := strings.Replace(image.Label, "_", "-", -1)
-
 		// Match name of the image
-		if req.ImageName == dashLabel || req.ImageName == image.Label {
+		if label == image.Label {
 
 			latestVersion, err := image.getLatestVersion()
 			if err != nil {
-				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 			}
 
 			localImage, err := latestVersion.getLocalImage(req.Zone, req.CommercialType)
 			if err != nil {
-				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 			}
 
 			return localImage.ID, nil
@@ -86,7 +84,7 @@ func (s *API) GetLocalImageIDByName(req *GetLocalImageIDByNameRequest) (string, 
 
 	}
 
-	return "", errors.New("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageName, req.Zone, req.CommercialType)
+	return "", errors.New("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 }
 
 // UnsafeSetTotalCount should not be used
