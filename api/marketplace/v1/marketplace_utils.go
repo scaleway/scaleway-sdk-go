@@ -41,19 +41,19 @@ func (image *Image) getLatestVersion() (*Version, error) {
 		}
 	}
 
-	return nil, errors.New("latest version could not be found for image %s", image.Name)
+	return nil, errors.New("latest version could not be found for image %s", image.Label)
 }
 
-// GetLocalImageIDByNameRequest is used by FindLocalImageIDByName
-type GetLocalImageIDByNameRequest struct {
+// GetLocalImageIDByLabelRequest is used by GetLocalImageIDByLabel
+type GetLocalImageIDByLabelRequest struct {
 	ImageLabel     string
 	Zone           scw.Zone
 	CommercialType string
 }
 
-// GetLocalImageIDByLabel search for an image with the given name (exact match) in the given region
+// GetLocalImageIDByLabel search for an image with the given label (exact match) in the given region
 // it returns the latest version of this specific image.
-func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByNameRequest) (string, error) {
+func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByLabelRequest) (string, error) {
 
 	listImageRequest := &ListImagesRequest{}
 	listImageResponse, err := s.ListImages(listImageRequest, scw.WithAllPages())
@@ -66,17 +66,17 @@ func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByNameRequest) (string,
 
 	for _, image := range images {
 
-		// Match name of the image
+		// Match label of the image
 		if label == image.Label {
 
 			latestVersion, err := image.getLatestVersion()
 			if err != nil {
-				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given label (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 			}
 
 			localImage, err := latestVersion.getLocalImage(req.Zone, req.CommercialType)
 			if err != nil {
-				return "", errors.Wrap(err, "couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
+				return "", errors.Wrap(err, "couldn't find a matching image for the given label (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 			}
 
 			return localImage.ID, nil
@@ -84,7 +84,7 @@ func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByNameRequest) (string,
 
 	}
 
-	return "", errors.New("couldn't find a matching image for the given name (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
+	return "", errors.New("couldn't find a matching image for the given label (%s), zone (%s) and commercial type (%s)", req.ImageLabel, req.Zone, req.CommercialType)
 }
 
 // UnsafeSetTotalCount should not be used

@@ -16,12 +16,12 @@ func TestGetImageByLabel(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	t.Run("matching input for GetImageByName", func(t *testing.T) {
+	t.Run("matching input for GetLocalImageIDByLabel", func(t *testing.T) {
 
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByNameRequest{
+		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
 			ImageLabel:     "ubuntu-bionic",
@@ -33,17 +33,18 @@ func TestGetImageByLabel(t *testing.T) {
 
 	})
 
-	t.Run("non-matching name for GetImageByName", func(t *testing.T) {
+	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
 
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		_, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByNameRequest{
+		_, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
-			CommercialType: "",
+			CommercialType: "DEV1-S",
 			ImageLabel:     "foo-bar-image",
 		})
 		testhelpers.Assert(t, err != nil, "Should have error")
+		testhelpers.Equals(t, "scaleway-sdk-go: couldn't find a matching image for the given label (foo-bar-image), zone (fr-par-1) and commercial type (DEV1-S)", err.Error())
 
 	})
 
