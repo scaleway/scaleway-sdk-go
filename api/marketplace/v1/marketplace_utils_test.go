@@ -8,7 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func TestGetImageByName(t *testing.T) {
+func TestGetImageByLabel(t *testing.T) {
 
 	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
 	testhelpers.AssertNoError(t, err)
@@ -16,34 +16,35 @@ func TestGetImageByName(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	t.Run("matching input for GetImageByName", func(t *testing.T) {
+	t.Run("matching input for GetLocalImageIDByLabel", func(t *testing.T) {
 
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		imageID, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
-			CommercialType: "C1",
-			ImageName:      "Docker",
+			CommercialType: "DEV1-S",
+			ImageLabel:     "ubuntu-bionic",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// Docker C1 at par1: 45a7e942-1fb0-48c0-bbf6-0acb9af24604
-		testhelpers.Equals(t, "45a7e942-1fb0-48c0-bbf6-0acb9af24604", imageID)
+		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
+		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
 
 	})
 
-	t.Run("non-matching name for GetImageByName", func(t *testing.T) {
+	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
 
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		_, err := marketplaceAPI.GetLocalImageIDByName(&GetLocalImageIDByNameRequest{
+		_, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
-			CommercialType: "",
-			ImageName:      "foo-bar-image",
+			CommercialType: "DEV1-S",
+			ImageLabel:     "foo-bar-image",
 		})
 		testhelpers.Assert(t, err != nil, "Should have error")
+		testhelpers.Equals(t, "scaleway-sdk-go: couldn't find a matching image for the given label (foo-bar-image), zone (fr-par-1) and commercial type (DEV1-S)", err.Error())
 
 	})
 
