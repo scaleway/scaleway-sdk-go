@@ -567,7 +567,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	var err error
 
 	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultProjectID()
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
 		req.OrganizationID = defaultOrganizationID
 	}
 

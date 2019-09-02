@@ -18,7 +18,7 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedSecretKey        *string
 		expectedAPIURL           *string
 		expectedInsecure         *bool
-		expectedDefaultProjectID *string
+		expectedDefaultOrganizationID *string
 		expectedDefaultRegion    *string
 		expectedDefaultZone      *string
 	}{
@@ -30,7 +30,7 @@ func TestLoadEnvProfile(t *testing.T) {
 				scwSecretKeyEnv:        v2ValidSecretKey,
 				scwAPIURLEnv:           v2ValidAPIURL,
 				scwInsecureEnv:         "false",
-				scwDefaultProjectIDEnv: v2ValidDefaultProjectID,
+				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
 				scwDefaultRegionEnv:    v2ValidDefaultRegion,
 				scwDefaultZoneEnv:      v2ValidDefaultZone,
 			},
@@ -38,7 +38,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedSecretKey:        s(v2ValidSecretKey),
 			expectedAPIURL:           s(v2ValidAPIURL),
 			expectedInsecure:         b(false),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 			expectedDefaultZone:      s(v2ValidDefaultZone),
 		},
@@ -47,25 +47,25 @@ func TestLoadEnvProfile(t *testing.T) {
 			env: map[string]string{
 				terraformAccessKeyEnv:    v2ValidAccessKey,
 				terraformSecretKeyEnv:    v2ValidSecretKey,
-				terraformOrganizationEnv: v2ValidDefaultProjectID,
+				terraformOrganizationEnv: v2ValidDefaultOrganizationID,
 				terraformRegionEnv:       v2ValidDefaultRegion,
 			},
 			expectedAccessKey:        s(v2ValidAccessKey),
 			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 		},
 		{
 			name: "No config with CLI legacy env variables",
 			env: map[string]string{
 				cliSecretKeyEnv:    v2ValidSecretKey2,
-				cliOrganizationEnv: v2ValidDefaultProjectID2,
+				cliOrganizationEnv: v2ValidDefaultOrganizationID2,
 				cliRegionEnv:       v2ValidDefaultRegion2,
 				cliTLSVerifyEnv:    "false",
 			},
 			expectedSecretKey:        s(v2ValidSecretKey2),
 			expectedInsecure:         b(true),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
 		},
 	}
@@ -90,7 +90,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 			testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 			testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
-			testhelpers.Equals(t, test.expectedDefaultProjectID, p.DefaultProjectID)
+			testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 			testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 			testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 			testhelpers.Equals(t, test.expectedInsecure, p.Insecure)

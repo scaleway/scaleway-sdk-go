@@ -91,7 +91,7 @@ func TestSaveConfig(t *testing.T) {
 				Profile: Profile{
 					AccessKey:        s(v2ValidAccessKey),
 					SecretKey:        s(v2ValidSecretKey),
-					DefaultProjectID: s(v2ValidDefaultProjectID),
+					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 					DefaultRegion:    s(v2ValidDefaultRegion),
 				},
 			},
@@ -108,7 +108,7 @@ func TestSaveConfig(t *testing.T) {
 				Profile: Profile{
 					AccessKey:        s(v2ValidAccessKey),
 					SecretKey:        s(v2ValidSecretKey),
-					DefaultProjectID: s(v2ValidDefaultProjectID),
+					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 					DefaultRegion:    s(v2ValidDefaultRegion),
 				},
 			},
@@ -149,7 +149,7 @@ func TestSaveConfig(t *testing.T) {
 					SecretKey:        s(v2ValidSecretKey2),
 					APIURL:           s(v2ValidAPIURL2),
 					Insecure:         b(true),
-					DefaultProjectID: s(v2ValidDefaultProjectID2),
+					DefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 					DefaultRegion:    s(v2ValidDefaultRegion2),
 					DefaultZone:      s(v2ValidDefaultZone2),
 				}}
@@ -203,7 +203,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedSecretKey        *string
 		expectedAPIURL           *string
 		expectedInsecure         *bool
-		expectedDefaultProjectID *string
+		expectedDefaultOrganizationID *string
 		expectedDefaultRegion    *string
 		expectedDefaultZone      *string
 	}{
@@ -238,7 +238,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			expectedAccessKey:        s(v2ValidAccessKey),
 			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 		},
 		{
@@ -251,7 +251,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			expectedAccessKey:        s(v2ValidAccessKey),
 			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 		},
 		{
@@ -264,7 +264,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			isMigrated:               true,
 			expectedSecretKey:        s(v1ValidToken),
-			expectedDefaultProjectID: s(v1ValidProjectID),
+			expectedDefaultOrganizationID: s(v1ValidOrganizationID),
 		},
 		{
 			name: "Simple config with valid V2 and valid V1",
@@ -277,7 +277,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			expectedAccessKey:        s(v2ValidAccessKey),
 			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 		},
 		{
@@ -292,7 +292,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedSecretKey:        s(v2ValidSecretKey),
 			expectedAPIURL:           s(v2ValidAPIURL),
 			expectedInsecure:         b(false),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion),
 			expectedDefaultZone:      s(v2ValidDefaultZone),
 		},
@@ -308,7 +308,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedSecretKey:        s(v2ValidSecretKey2),
 			expectedAPIURL:           s(v2ValidAPIURL2),
 			expectedInsecure:         b(true),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
 			expectedDefaultZone:      s(v2ValidDefaultZone2),
 		},
@@ -325,7 +325,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedSecretKey:        s(v2ValidSecretKey2),
 			expectedAPIURL:           s(v2ValidAPIURL2),
 			expectedInsecure:         b(true),
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
 			expectedDefaultZone:      s(v2ValidDefaultZone2),
 		},
@@ -388,7 +388,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 				testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 				testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
-				testhelpers.Equals(t, test.expectedDefaultProjectID, p.DefaultProjectID)
+				testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 				testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 				testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 				testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
@@ -408,7 +408,7 @@ var (
 	v2ValidSecretKey2        = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2           = "api-fr-par.scaleway.com"
 	v2ValidInsecure2         = "true"
-	v2ValidDefaultProjectID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
+	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultRegion2    = string(RegionFrPar)
 	v2ValidDefaultZone2      = string(ZoneFrPar2)
 
@@ -416,7 +416,7 @@ var (
 	v2ValidSecretKey        = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL           = "api.scaleway.com"
 	v2ValidInsecure         = "false"
-	v2ValidDefaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	v2ValidDefaultRegion    = string(RegionNlAms)
 	v2ValidDefaultZone      = string(ZoneNlAms1)
 	v2ValidProfile          = "flantier"
@@ -425,7 +425,7 @@ var (
 		Profile: Profile{
 			AccessKey:        &v2ValidAccessKey,
 			SecretKey:        &v2ValidSecretKey,
-			DefaultProjectID: &v2ValidDefaultProjectID,
+			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
 			DefaultRegion:    &v2ValidDefaultRegion,
 		},
 	}
@@ -434,7 +434,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-default_project_id: ` + v2ValidDefaultProjectID + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone
 
@@ -445,7 +445,7 @@ profiles:
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
-    default_project_id: ` + v2ValidDefaultProjectID2 + `
+    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
 `
@@ -455,7 +455,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-default_project_id: ` + v2ValidDefaultProjectID + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
 active_profile: ` + v2ValidProfile + `
@@ -465,7 +465,7 @@ profiles:
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
-    default_project_id: ` + v2ValidDefaultProjectID2 + `
+    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
 `
@@ -473,7 +473,7 @@ profiles:
 	v2SimpleValidConfigFile = `
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
-default_project_id: ` + v2ValidDefaultProjectID + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_region: ` + v2ValidDefaultRegion + `
 `
 
@@ -481,7 +481,7 @@ default_region: ` + v2ValidDefaultRegion + `
 	v2SimpleConfigFileWithInvalidProfile = `active_profile: flantier`
 
 	v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
-default_project_id: ` + v1ValidProjectID + `
+default_organization_id: ` + v1ValidOrganizationID + `
 `
 )
 

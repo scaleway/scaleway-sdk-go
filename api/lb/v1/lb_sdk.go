@@ -1192,7 +1192,7 @@ type ListLbsRequest struct {
 func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultProjectID()
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
 	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
 		req.OrganizationID = &defaultOrganizationID
 	}
@@ -1273,7 +1273,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	var err error
 
 	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultProjectID()
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
 		req.OrganizationID = defaultOrganizationID
 	}
 
@@ -1448,7 +1448,7 @@ type ListIPsRequest struct {
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultProjectID()
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
 	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
 		req.OrganizationID = &defaultOrganizationID
 	}

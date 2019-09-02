@@ -17,7 +17,7 @@ const (
 	defaultAPIURL        = "https://api.scaleway.com"
 	testAccessKey        = "ACCESS_KEY"
 	testSecretKey        = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
-	testDefaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	testDefaultRegion    = RegionFrPar
 	testDefaultZone      = ZoneFrPar1
 	testDefaultPageSize  = int32(5)
@@ -53,8 +53,8 @@ func (c *mockConfig) GetAPIURL() (string, bool) {
 func (c *mockConfig) GetInsecure() (bool, bool) {
 	return testInsecure, true
 }
-func (c *mockConfig) GetDefaultProjectID() (string, bool) {
-	return testDefaultProjectID, true
+func (c *mockConfig) GetDefaultOrganizationID() (string, bool) {
+	return testDefaultOrganizationID, true
 }
 func (c *mockConfig) GetDefaultRegion() (Region, bool) {
 	return testDefaultRegion, true
@@ -72,7 +72,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			WithAPIURL(testAPIURL),
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
-			WithDefaultProjectID(testDefaultProjectID),
+			WithDefaultOrganizationID(testDefaultOrganizationID),
 			WithDefaultRegion(testDefaultRegion),
 			WithDefaultZone(testDefaultZone),
 			WithDefaultPageSize(testDefaultPageSize),
@@ -86,9 +86,9 @@ func TestNewClientWithOptions(t *testing.T) {
 
 		testhelpers.Equals(t, someHTTPClient, client.httpClient)
 
-		defaultProjectID, exist := client.GetDefaultProjectID()
-		testhelpers.Equals(t, testDefaultProjectID, defaultProjectID)
-		testhelpers.Assert(t, exist, "defaultProjectID must exist")
+		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
+		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
+		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
 
 		defaultRegion, exist := client.GetDefaultRegion()
 		testhelpers.Equals(t, testDefaultRegion, defaultRegion)
@@ -109,7 +109,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testSecretKey),
 			s(testAPIURL),
 			b(testInsecure),
-			s(testDefaultProjectID),
+			s(testDefaultOrganizationID),
 			s(string(testDefaultRegion)),
 			s(string(testDefaultZone)),
 		}
@@ -125,9 +125,9 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
 
-		defaultProjectID, exist := client.GetDefaultProjectID()
-		testhelpers.Equals(t, testDefaultProjectID, defaultProjectID)
-		testhelpers.Assert(t, exist, "defaultProjectID must exist")
+		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
+		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
+		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
 
 		defaultRegion, exist := client.GetDefaultRegion()
 		testhelpers.Equals(t, testDefaultRegion, defaultRegion)

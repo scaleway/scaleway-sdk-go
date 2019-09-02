@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	defaultProjectID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	defaultRegion    = RegionNlAms
 	defaultZone      = ZoneNlAms1
 )
@@ -31,7 +31,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.apiURL = apiURL
-				s.defaultProjectID = &defaultProjectID
+				s.defaultOrganizationID = &defaultOrganizationID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
 			},
@@ -52,13 +52,13 @@ func TestClientOptions(t *testing.T) {
 			errStr: "scaleway-sdk-go: invalid url :test: parse :test: missing protocol scheme",
 		},
 		{
-			name: "Should throw a project id error",
+			name: "Should throw a organization id error",
 			clientOption: func(s *settings) {
 				v := ""
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
-				s.defaultProjectID = &v
+				s.defaultOrganizationID = &v
 			},
-			errStr: "scaleway-sdk-go: default project id cannot be empty",
+			errStr: "scaleway-sdk-go: default organization id cannot be empty",
 		},
 		{
 			name: "Should throw a region error",
@@ -111,7 +111,7 @@ func TestCombinedClientOptions(t *testing.T) {
 		expectedAccessKey        string
 		expectedSecretKey        string
 		expectedAPIURL           string
-		expectedDefaultProjectID *string
+		expectedDefaultOrganizationID *string
 		expectedDefaultRegion    *Region
 		expectedDefaultZone      *Zone
 	}{
@@ -122,7 +122,7 @@ func TestCombinedClientOptions(t *testing.T) {
 				scwAccessKeyEnv:        v2ValidAccessKey2,
 				scwSecretKeyEnv:        v2ValidSecretKey2,
 				scwAPIURLEnv:           v2ValidAPIURL2,
-				scwDefaultProjectIDEnv: v2ValidDefaultProjectID2,
+				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID2,
 				scwDefaultRegionEnv:    v2ValidDefaultRegion2,
 				scwDefaultZoneEnv:      v2ValidDefaultZone2,
 			},
@@ -132,7 +132,7 @@ func TestCombinedClientOptions(t *testing.T) {
 			expectedAccessKey:        v2ValidAccessKey2,
 			expectedSecretKey:        v2ValidSecretKey2,
 			expectedAPIURL:           v2ValidAPIURL2,
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID2),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion2)),
 			expectedDefaultZone:      z(Zone(v2ValidDefaultZone2)),
 		},
@@ -144,7 +144,7 @@ func TestCombinedClientOptions(t *testing.T) {
 				scwAccessKeyEnv:        v2ValidAccessKey,
 				scwSecretKeyEnv:        v2ValidSecretKey,
 				scwAPIURLEnv:           v2ValidAPIURL,
-				scwDefaultProjectIDEnv: v2ValidDefaultProjectID,
+				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
 				scwDefaultRegionEnv:    v2ValidDefaultRegion,
 				scwDefaultZoneEnv:      v2ValidDefaultZone,
 			},
@@ -154,7 +154,7 @@ func TestCombinedClientOptions(t *testing.T) {
 			expectedAccessKey:        v2ValidAccessKey,
 			expectedSecretKey:        v2ValidSecretKey,
 			expectedAPIURL:           v2ValidAPIURL,
-			expectedDefaultProjectID: s(v2ValidDefaultProjectID),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion)),
 			expectedDefaultZone:      z(Zone(v2ValidDefaultZone)),
 		},
@@ -188,7 +188,7 @@ func TestCombinedClientOptions(t *testing.T) {
 				testhelpers.Equals(t, test.expectedAccessKey, client.auth.(*auth.Token).AccessKey)
 				testhelpers.Equals(t, test.expectedSecretKey, client.auth.(*auth.Token).SecretKey)
 				testhelpers.Equals(t, test.expectedAPIURL, client.apiURL)
-				testhelpers.Equals(t, test.expectedDefaultProjectID, client.defaultProjectID)
+				testhelpers.Equals(t, test.expectedDefaultOrganizationID, client.defaultOrganizationID)
 				testhelpers.Equals(t, test.expectedDefaultRegion, client.defaultRegion)
 				testhelpers.Equals(t, test.expectedDefaultZone, client.defaultZone)
 				// skip insecure tests
