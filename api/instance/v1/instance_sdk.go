@@ -563,8 +563,6 @@ type VolumeType string
 const (
 	// VolumeTypeLSSD is [insert doc].
 	VolumeTypeLSSD = VolumeType("l_ssd")
-	// VolumeTypeLHdd is [insert doc].
-	VolumeTypeLHdd = VolumeType("l_hdd")
 	// VolumeTypeBSSD is [insert doc].
 	VolumeTypeBSSD = VolumeType("b_ssd")
 )
