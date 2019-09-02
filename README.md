@@ -44,7 +44,7 @@ func main() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		// Get your credentials at https://console.scaleway.com/account/credentials
-		scw.WithDefaultProjectID("ORGANISATION_ID"),
+		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
 	)
 	if err != nil {
