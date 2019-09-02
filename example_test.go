@@ -2,6 +2,7 @@ package scalewaysdkgo
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/api/lb/v1"
@@ -82,6 +83,44 @@ func Example_listServers() {
 
 	// Do something with the response...
 	fmt.Println(response)
+}
+
+func Example_rebootAllServers() {
+
+	// Create a Scaleway client
+	client, err := scw.NewClient(
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithDefaultZone(scw.ZoneFrPar1),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Create SDK objects for Scaleway Instance product
+	instanceAPI := instance.NewAPI(client)
+
+	// Call the ListServers method on the Instance SDK
+	response, err := instanceAPI.ListServers(&instance.ListServersRequest{})
+	if err != nil {
+		panic(err)
+	}
+
+	// For each server if they are running we reboot them using ServerActionAndWait
+	for _, server := range response.Servers {
+		if server.State == instance.ServerStateRunning {
+			fmt.Println("Rebooting server with ID", server.ID)
+			err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
+				ServerID: server.ID,
+				Zone:     scw.ZoneFrPar1,
+				Action:   instance.ServerActionReboot,
+				Timeout:  3 * time.Minute,
+			})
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+	fmt.Println("All servers were successfully rebooted")
 }
 
 func Example_createLoadBalancer() {
