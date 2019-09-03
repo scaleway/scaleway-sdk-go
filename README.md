@@ -70,6 +70,10 @@ func main() {
 }
 ```
 
+## Examples
+
+You can find additional examples in the [GoDoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
+
 ## Development
 
 This repository is at its early stage and is still in active development.
