@@ -99,7 +99,7 @@ func Example_rebootAllServers() {
 	// Create SDK objects for Scaleway Instance product
 	instanceAPI := instance.NewAPI(client)
 
-	// Call the ListServers method on the Instance SDK
+	// Call the ListServers method of the Instance SDK
 	response, err := instanceAPI.ListServers(&instance.ListServersRequest{})
 	if err != nil {
 		panic(err)
@@ -111,9 +111,8 @@ func Example_rebootAllServers() {
 			fmt.Println("Rebooting server with ID", server.ID)
 			err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 				ServerID: server.ID,
-				Zone:     scw.ZoneFrPar1,
 				Action:   instance.ServerActionReboot,
-				Timeout:  3 * time.Minute,
+				Timeout:  5 * time.Minute,
 			})
 			if err != nil {
 				panic(err)
