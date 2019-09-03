@@ -72,7 +72,7 @@ func main() {
 
 ## Examples
 
-You can find additional examples in the [GoDoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
+You can find additional examples in the [GoDoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go).
 
 ## Development
 
