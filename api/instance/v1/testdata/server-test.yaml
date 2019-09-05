@@ -2,7 +2,7 @@
 version: 1
 interactions:
 - request:
-    body: '{"name":"instance_sdk_server_test","dynamic_ip_required":true,"commercial_type":"START1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","enable_ipv6":true,"boot_type":"local","organization":"d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3","tags":["foo","bar"]}'
+    body: '{"name":"instance_sdk_server_test","dynamic_ip_required":true,"commercial_type":"START1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","enable_ipv6":true,"organization":"d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3","tags":["foo","bar"]}'
     form: {}
     headers:
       Content-Type:

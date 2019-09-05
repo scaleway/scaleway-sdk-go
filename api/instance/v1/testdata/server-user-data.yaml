@@ -2,7 +2,7 @@
 version: 1
 interactions:
 - request:
-    body: '{"name":"srv-wonderful-goldberg","commercial_type":"DEV1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","boot_type":"local","organization":"14d2f7ae-9775-414c-9bed-6810e060d500"}'
+    body: '{"name":"srv-wonderful-goldberg","commercial_type":"DEV1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","organization":"14d2f7ae-9775-414c-9bed-6810e060d500"}'
     form: {}
     headers:
       Content-Type:

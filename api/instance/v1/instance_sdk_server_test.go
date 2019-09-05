@@ -40,7 +40,6 @@ func TestServerUpdate(t *testing.T) {
 			Organization:      organization,
 			Image:             image,
 			EnableIPv6:        enableIPv6,
-			BootType:          bootType,
 			CommercialType:    commercialType,
 			Tags:              tags,
 			DynamicIPRequired: dynamicIPRequired,

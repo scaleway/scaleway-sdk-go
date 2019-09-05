@@ -49,7 +49,6 @@ func TestAPI_ServerUserData(t *testing.T) {
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
-		BootType:       ServerBootTypeLocal,
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
 		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
 	})
@@ -89,7 +88,6 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
-		BootType:       ServerBootTypeLocal,
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
 		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
 	})
