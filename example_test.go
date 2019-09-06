@@ -85,6 +85,46 @@ func Example_listServers() {
 	fmt.Println(response)
 }
 
+func Example_createServer() {
+
+	// Create a Scaleway client
+	client, err := scw.NewClient(
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithDefaultOrganizationID("ORGANIZATION_ID"),
+		scw.WithDefaultZone(scw.ZoneFrPar1),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Create SDK objects for Scaleway Instance and marketplace
+	instanceAPI := instance.NewAPI(client)
+
+	serverType := "DEV1-S"
+	image := "ubuntu-bionic"
+
+	// Create a new DEV1-S server
+	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
+		Name:              "my-server-01",
+		CommercialType:    serverType,
+		Image:             image,
+		DynamicIPRequired: scw.BoolPtr(true),
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// Start the server and wait until it's ready.
+	err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
+		ServerID: createRes.Server.ID,
+		Action:   instance.ServerActionPoweron,
+		Timeout:  5 * time.Minute,
+	})
+	if err != nil {
+		panic(err)
+	}
+}
+
 func Example_rebootAllServers() {
 
 	// Create a Scaleway client
