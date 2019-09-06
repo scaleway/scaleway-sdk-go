@@ -100,11 +100,14 @@ func Example_createServer() {
 	// Create SDK objects for Scaleway Instance and marketplace
 	instanceAPI := instance.NewAPI(client)
 
+	serverType := "DEV1-S"
+	image := "ubuntu-bionic"
+
 	// Create a new DEV1-S server
 	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Name:              "my-server-01",
-		CommercialType:    "DEV1-S",
-		Image:             "ubuntu-bionic",
+		CommercialType:    serverType,
+		Image:             image,
 		DynamicIPRequired: scw.BoolPtr(true),
 	})
 	if err != nil {
