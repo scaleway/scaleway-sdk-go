@@ -145,3 +145,28 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		}
 	}
 }
+
+func TestAPI_CreateServer(t *testing.T) {
+	client, r, err := httprecorder.CreateRecordedScwClient("create-server")
+	testhelpers.AssertNoError(t, err)
+	defer func() {
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
+
+	instanceAPI := NewAPI(client)
+
+	res, err := instanceAPI.CreateServer(&CreateServerRequest{
+		Zone:           scw.ZoneFrPar1,
+		CommercialType: "GP1-XS",
+		Image:          "ubuntu-bionic",
+	})
+
+	testhelpers.AssertNoError(t, err)
+	// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
+	testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
+	err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		Zone:     scw.ZoneFrPar1,
+		ServerID: res.Server.ID,
+	})
+	testhelpers.AssertNoError(t, err)
+}
