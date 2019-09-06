@@ -162,6 +162,7 @@ func TestAPI_CreateServer(t *testing.T) {
 	})
 
 	testhelpers.AssertNoError(t, err)
+	// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
 	testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
