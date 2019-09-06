@@ -18,10 +18,10 @@ type UpdateServerRequest updateServerRequest
 
 type CreateServerRequest createServerRequest
 
-// createServer create server
+// CreateServer creates a server.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 
-	// If image is not an UUID we try to fetch it from marketplace.
+	// If image is not a UUID we try to fetch it from marketplace.
 	if !uuid.IsUUID(req.Image) {
 		apiMarketplace := marketplace.NewAPI(s.client)
 		imageId, err := apiMarketplace.GetLocalImageIDByLabel(&marketplace.GetLocalImageIDByLabelRequest{
@@ -38,7 +38,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	return s.createServer((*createServerRequest)(req), opts...)
 }
 
-// UpdateServer updates a server
+// UpdateServer updates a server.
 //
 // Note: Implementation is thread-safe.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
@@ -46,7 +46,7 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	return s.updateServer((*updateServerRequest)(req), opts...)
 }
 
-// waitForServerRequest is used by waitForServer method
+// waitForServerRequest is used by waitForServer method.
 type waitForServerRequest struct {
 	ServerID string
 	Zone     scw.Zone
@@ -87,7 +87,7 @@ func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
 	return server.(*Server), nil
 }
 
-// ServerActionAndWaitRequest is used by ServerActionAndWait method
+// ServerActionAndWaitRequest is used by ServerActionAndWait method.
 type ServerActionAndWaitRequest struct {
 	ServerID string
 	Zone     scw.Zone
