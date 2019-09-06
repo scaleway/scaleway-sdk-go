@@ -108,6 +108,8 @@ type SSHKey struct {
 	UpdatedAt time.Time `json:"updated_at"`
 
 	CreationInfo *SSHKeyCreationInfo `json:"creation_info"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 type SSHKeyCreationInfo struct {
