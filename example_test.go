@@ -115,7 +115,7 @@ func Example_createServer() {
 	err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 		ServerID: createRes.Server.ID,
 		Action:   instance.ServerActionPoweron,
-		Timeout:  3 * time.Minute,
+		Timeout:  5 * time.Minute,
 	})
 	if err != nil {
 		panic(err)
