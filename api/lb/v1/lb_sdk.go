@@ -1095,8 +1095,8 @@ type LbType struct {
 }
 
 type ListACLResponse struct {
-	// Acls list of Acl object (see Acl object description)
-	Acls []*ACL `json:"acls"`
+	// ACLs list of Acl object (see Acl object description)
+	ACLs []*ACL `json:"acls"`
 	// TotalCount result count
 	TotalCount uint32 `json:"total_count"`
 }
@@ -1121,9 +1121,9 @@ type ListFrontendsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
-type ListIpsResponse struct {
-	// Ips list IP address object
-	Ips []*IP `json:"ips"`
+type ListIPsResponse struct {
+	// IPs list IP address object
+	IPs []*IP `json:"ips"`
 	// TotalCount total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
 }
@@ -1445,7 +1445,7 @@ type ListIPsRequest struct {
 }
 
 // ListIPs list IPs
-func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsResponse, error) {
+func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
 	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
@@ -1480,7 +1480,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 		Headers: http.Header{},
 	}
 
-	var resp ListIpsResponse
+	var resp ListIPsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1491,21 +1491,21 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIpsR
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListIpsResponse) UnsafeGetTotalCount() int {
+func (r *ListIPsResponse) UnsafeGetTotalCount() int {
 	return int(r.TotalCount)
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIpsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
-	results, ok := res.(*ListIpsResponse)
+func (r *ListIPsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+	results, ok := res.(*ListIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.Ips = append(r.Ips, results.Ips...)
-	r.TotalCount += uint32(len(results.Ips))
-	return len(results.Ips), nil
+	r.IPs = append(r.IPs, results.IPs...)
+	r.TotalCount += uint32(len(results.IPs))
+	return len(results.IPs), nil
 }
 
 type GetIPRequest struct {
@@ -2619,7 +2619,7 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 	return &resp, nil
 }
 
-type ListAclsRequest struct {
+type ListACLsRequest struct {
 	Region scw.Region `json:"-"`
 	// FrontendID iD of your frontend
 	FrontendID string `json:"-"`
@@ -2635,7 +2635,7 @@ type ListAclsRequest struct {
 	Name *string `json:"-"`
 }
 
-func (s *API) ListAcls(req *ListAclsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
+func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2692,9 +2692,9 @@ func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.Acls = append(r.Acls, results.Acls...)
-	r.TotalCount += uint32(len(results.Acls))
-	return len(results.Acls), nil
+	r.ACLs = append(r.ACLs, results.ACLs...)
+	r.TotalCount += uint32(len(results.ACLs))
+	return len(results.ACLs), nil
 }
 
 type CreateACLRequest struct {
