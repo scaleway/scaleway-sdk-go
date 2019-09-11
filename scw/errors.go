@@ -83,7 +83,7 @@ func hasResponseError(res *http.Response) SdkError {
 	if err != nil {
 		return errors.Wrap(err, "could not parse error response body")
 	}
-	stdErr := decodeStandardError(newErr.Type, body)
+	stdErr := unmarshalStandardError(newErr.Type, body)
 	if stdErr != nil {
 		return stdErr
 	}
@@ -95,7 +95,7 @@ var standardErrorTypes = map[string]reflect.Type{
 	"invalid_arguments": reflect.TypeOf(InvalidArgumentsError{}),
 }
 
-func decodeStandardError(errorType string, body []byte) SdkError {
+func unmarshalStandardError(errorType string, body []byte) SdkError {
 	reflectType, exist := standardErrorTypes[errorType]
 	if !exist {
 		return nil
