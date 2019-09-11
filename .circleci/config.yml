@@ -3,9 +3,27 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
+  test-go-1-13:
+    docker:
+      - image: circleci/golang:1.13
+    steps:
+      - checkout
+      - run: go mod download
+      - run:
+          name: Run unit tests
+          command: go test -v ./...
   test-go-1-12:
     docker:
       - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run: go mod download
+      - run:
+          name: Run unit tests
+          command: go test -v ./...
+  test-go-1-11:
+    docker:
+      - image: circleci/golang:1.11
     steps:
       - checkout
       - run: go mod download
@@ -26,5 +44,7 @@ workflows:
   version: 2
   test:
     jobs:
+      - test-go-1-13
       - test-go-1-12
+      - test-go-1-11
       - test-go-1-10
