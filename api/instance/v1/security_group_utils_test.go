@@ -194,4 +194,25 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
 	})
 
+	t.Run("Remove ports", func(t *testing.T) {
+		group, rule, cleanUp := bootstrap(t)
+		defer cleanUp()
+
+		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
+			Zone:                zone,
+			SecurityGroupID:     group.ID,
+			SecurityGroupRuleID: rule.ID,
+			DestPortFrom:        scw.Uint32Ptr(0),
+			DestPortTo:          scw.Uint32Ptr(0),
+		})
+
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
+		testhelpers.Equals(t, "8.8.8.8", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
+		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
+		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
+		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
+	})
+
 }
