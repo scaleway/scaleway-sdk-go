@@ -96,6 +96,14 @@ func unmarshalStandardError(errorType string, body []byte) SdkError {
 	switch errorType {
 	case "invalid_arguments":
 		stdErr = &InvalidArgumentsError{}
+	case "quotas_exceeded":
+		stdErr = &QuotasExceededError{}
+	case "transient_state":
+		stdErr = &TransientStateError{}
+	case "not_found":
+		stdErr = &ResourceNotFound{}
+	case "permissions_denied":
+		stdErr = &PermissionsDeniedError{}
 	default:
 		return nil
 	}
@@ -138,4 +146,64 @@ func (e *InvalidArgumentsError) Error() string {
 	}
 
 	return "scaleway-sdk-go: invalid argument(s): " + strings.Join(invalidArgs, "; ")
+}
+
+type QuotasExceededError struct {
+	Details []struct {
+		Resource string `json:"resource"`
+		Quota    uint32 `json:"quota"`
+		Current  uint32 `json:"current"`
+	} `json:"details"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *QuotasExceededError) IsScwSdkError() {}
+func (e *QuotasExceededError) Error() string {
+	invalidArgs := make([]string, len(e.Details))
+	for i, d := range e.Details {
+		invalidArgs[i] = fmt.Sprintf("%s has reached its quota (%d/%d)", d.Resource, d.Current, d.Current)
+	}
+
+	return "scaleway-sdk-go: quota exceeded(s): " + strings.Join(invalidArgs, "; ")
+}
+
+type PermissionsDeniedError struct {
+	Details []struct {
+		Resource string `json:"resource"`
+		Action   string `json:"action"`
+	} `json:"details"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *PermissionsDeniedError) IsScwSdkError() {}
+func (e *PermissionsDeniedError) Error() string {
+	invalidArgs := make([]string, len(e.Details))
+	for i, d := range e.Details {
+		invalidArgs[i] = fmt.Sprintf("%s %s", d.Action, d.Resource)
+	}
+
+	return "scaleway-sdk-go: insufficient permissions: " + strings.Join(invalidArgs, "; ")
+}
+
+type TransientStateError struct {
+	Resource     string `json:"resource"`
+	ResourceID   string `json:"resource_id"`
+	CurrentState string `json:"current_state"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *TransientStateError) IsScwSdkError() {}
+func (e *TransientStateError) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is in a transient state: %s", e.Resource, e.ResourceID, e.CurrentState)
+}
+
+type ResourceNotFound struct {
+	Resource   string `json:"resource"`
+	ResourceID string `json:"resource_id"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *ResourceNotFound) IsScwSdkError() {}
+func (e *ResourceNotFound) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is not found", e.Resource, e.ResourceID)
 }
