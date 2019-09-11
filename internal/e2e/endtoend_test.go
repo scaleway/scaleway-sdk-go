@@ -12,6 +12,7 @@ func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
 	client, err := scw.NewClient(
 		scw.WithoutAuth(),
 		scw.WithDefaultRegion(scw.RegionFrPar),
+		scw.WithUserAgent("sdk-e2e-test"),
 	)
 	if err != nil {
 		return nil, "", err
@@ -28,6 +29,7 @@ func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
 		client, err = scw.NewClient(
 			scw.WithDefaultRegion(scw.RegionFrPar),
 			scw.WithAuth("", registerResponse.SecretKey),
+			scw.WithUserAgent("sdk-e2e-test"),
 		)
 		testClient = test.NewAPI(client)
 	}
