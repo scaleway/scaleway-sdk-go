@@ -3,8 +3,9 @@ package scw
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -73,11 +74,16 @@ func hasResponseError(res *http.Response) SdkError {
 		return newErr
 	}
 
-	err := json.NewDecoder(res.Body).Decode(newErr)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return errors.Wrap(err, "cannot read error response body")
+	}
+
+	err = json.Unmarshal(body, newErr)
 	if err != nil {
 		return errors.Wrap(err, "could not parse error response body")
 	}
-	stdErr := decodeStandardError(newErr.Type, res.Body)
+	stdErr := decodeStandardError(newErr.Type, body)
 	if stdErr != nil {
 		return stdErr
 	}
@@ -85,17 +91,27 @@ func hasResponseError(res *http.Response) SdkError {
 	return newErr
 }
 
-func decodeStandardError(errorType string, body io.ReadCloser) SdkError {
-	switch errorType {
-	case "invalid_arguments":
-		newErr := &InvalidArgumentsError{}
-		err := json.NewDecoder(body).Decode(newErr)
-		if err != nil {
-			return errors.Wrap(err, "could not parse error %s response body", errorType)
-		}
-		return newErr
+var standardErrorTypes = map[string]reflect.Type{
+	"invalid_arguments": reflect.TypeOf(InvalidArgumentsError{}),
+}
+
+func decodeStandardError(errorType string, body []byte) SdkError {
+	reflectType, exist := standardErrorTypes[errorType]
+	if !exist {
+		return nil
 	}
-	return nil
+
+	stdErr, ok := reflect.New(reflectType).Interface().(SdkError)
+	if !ok {
+		return errors.New("%s does not implement SdkError", errorType)
+	}
+
+	err := json.Unmarshal(body, stdErr)
+	if err != nil {
+		return errors.Wrap(err, "could not parse error %s response body", errorType)
+	}
+
+	return stdErr
 }
 
 type InvalidArgumentsError struct {
