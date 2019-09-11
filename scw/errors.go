@@ -3,7 +3,9 @@ package scw
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
@@ -75,6 +77,55 @@ func hasResponseError(res *http.Response) SdkError {
 	if err != nil {
 		return errors.Wrap(err, "could not parse error response body")
 	}
+	stdErr := decodeStandardError(newErr.Type, res.Body)
+	if stdErr != nil {
+		return stdErr
+	}
 
 	return newErr
+}
+
+func decodeStandardError(errorType string, body io.ReadCloser) SdkError {
+	switch errorType {
+	case "invalid_arguments":
+		newErr := &InvalidArgumentsError{}
+		err := json.NewDecoder(body).Decode(newErr)
+		if err != nil {
+			return errors.Wrap(err, "could not parse error %s response body", errorType)
+		}
+		return newErr
+	}
+	return nil
+}
+
+type InvalidArgumentsError struct {
+	Details []struct {
+		ArgumentName string `json:"argument_name"`
+		Reason       string `json:"reason"`
+		HelpMessage  string `json:"help_message"`
+	} `json:"details"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *InvalidArgumentsError) IsScwSdkError() {}
+func (e *InvalidArgumentsError) Error() string {
+	invalidArgs := make([]string, len(e.Details))
+	for i, d := range e.Details {
+		invalidArgs[i] = d.ArgumentName
+		switch d.Reason {
+		case "unknown":
+			invalidArgs[i] += " is invalid for unexpected reason"
+		case "required":
+			invalidArgs[i] += " is required"
+		case "format":
+			invalidArgs[i] += " is wrongly formatted"
+		case "constraint":
+			invalidArgs[i] += " does not respect constraint"
+		}
+		if d.HelpMessage != "" {
+			invalidArgs[i] += ", " + d.HelpMessage
+		}
+	}
+
+	return "scaleway-sdk-go: invalid argument(s): " + strings.Join(invalidArgs, "; ")
 }
