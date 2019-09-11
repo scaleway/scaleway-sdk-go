@@ -97,13 +97,16 @@ type UpdateSecurityGroupRuleRequest struct {
 	SecurityGroupID     string   `json:"-"`
 	SecurityGroupRuleID string   `json:"-"`
 
-	Protocol     *SecurityGroupRuleProtocol  `json:"protocol,omitempty"`
-	Direction    *SecurityGroupRuleDirection `json:"direction,omitempty"`
-	Action       *SecurityGroupRuleAction    `json:"action,omitempty"`
-	IPRange      *string                     `json:"ip_range,omitempty"`
-	DestPortFrom *uint32                     `json:"dest_port_from,omitempty"`
-	DestPortTo   *uint32                     `json:"dest_port_to,omitempty"`
-	Position     *uint32                     `json:"position,omitempty"`
+	Protocol  *SecurityGroupRuleProtocol  `json:"protocol"`
+	Direction *SecurityGroupRuleDirection `json:"direction"`
+	Action    *SecurityGroupRuleAction    `json:"action"`
+	IPRange   *string                     `json:"ip_range"`
+	Position  *uint32                     `json:"position,omitempty"`
+
+	// If set to 0 DestPortFrom will be remove
+	DestPortFrom *uint32 `json:"dest_port_from"`
+	// If set to 0 DestPortTo will be remove
+	DestPortTo *uint32 `json:"dest_port_to"`
 }
 
 type UpdateSecurityGroupRuleResponse struct {
@@ -155,10 +158,18 @@ func (s *API) UpdateSecurityGroupRule(req *UpdateSecurityGroupRuleRequest, opts 
 		setRequest.IPRange = *req.IPRange
 	}
 	if req.DestPortTo != nil {
-		setRequest.DestPortTo = req.DestPortTo
+		if *req.DestPortTo > 0 {
+			setRequest.DestPortTo = req.DestPortTo
+		} else {
+			setRequest.DestPortTo = nil
+		}
 	}
 	if req.DestPortFrom != nil {
-		setRequest.DestPortFrom = req.DestPortFrom
+		if *req.DestPortFrom > 0 {
+			setRequest.DestPortFrom = req.DestPortFrom
+		} else {
+			setRequest.DestPortFrom = nil
+		}
 	}
 	if req.DestPortFrom != nil && req.DestPortTo != nil && *req.DestPortFrom == *req.DestPortTo {
 		setRequest.DestPortTo = nil
