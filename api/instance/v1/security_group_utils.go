@@ -101,7 +101,7 @@ type UpdateSecurityGroupRuleRequest struct {
 	Direction *SecurityGroupRuleDirection `json:"direction"`
 	Action    *SecurityGroupRuleAction    `json:"action"`
 	IPRange   *string                     `json:"ip_range"`
-	Position  *uint32                     `json:"position,omitempty"`
+	Position  *uint32                     `json:"position"`
 
 	// If set to 0, DestPortFrom will be removed.
 	// See SecurityGroupRule.DestPortFrom for more information
