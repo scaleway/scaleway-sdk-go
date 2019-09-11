@@ -104,11 +104,11 @@ type UpdateSecurityGroupRuleRequest struct {
 	Position  *uint32                     `json:"position,omitempty"`
 
 	// If set to 0, DestPortFrom will be removed.
-	// see SecurityGroupRule.DestPortFrom for more information
+	// See SecurityGroupRule.DestPortFrom for more information
 	DestPortFrom *uint32 `json:"dest_port_from"`
 
 	// If set to 0, DestPortTo will be removed.
-	// see SecurityGroupRule.DestPortTo for more information
+	// See SecurityGroupRule.DestPortTo for more information
 	DestPortTo *uint32 `json:"dest_port_to"`
 }
 
