@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"reflect"
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -91,19 +90,14 @@ func hasResponseError(res *http.Response) SdkError {
 	return newErr
 }
 
-var standardErrorTypes = map[string]reflect.Type{
-	"invalid_arguments": reflect.TypeOf(InvalidArgumentsError{}),
-}
-
 func unmarshalStandardError(errorType string, body []byte) SdkError {
-	reflectType, exist := standardErrorTypes[errorType]
-	if !exist {
-		return nil
-	}
+	var stdErr SdkError
 
-	stdErr, ok := reflect.New(reflectType).Interface().(SdkError)
-	if !ok {
-		return errors.New("%s does not implement SdkError", errorType)
+	switch errorType {
+	case "invalid_arguments":
+		stdErr = &InvalidArgumentsError{}
+	default:
+		return nil
 	}
 
 	err := json.Unmarshal(body, stdErr)
