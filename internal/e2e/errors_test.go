@@ -15,7 +15,6 @@ func TestStandardErrors(t *testing.T) {
 	_, err = client.GetHuman(&test.GetHumanRequest{
 		HumanID: "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
 	})
-
 	testhelpers.Equals(t, &scw.ResourceNotFound{
 		Resource:   "human",
 		ResourceID: "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
