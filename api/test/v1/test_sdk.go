@@ -94,6 +94,40 @@ func (enum *EyeColors) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type HumanStatus string
+
+const (
+	// HumanStatusUnknown is [insert doc].
+	HumanStatusUnknown = HumanStatus("unknown")
+	// HumanStatusStopped is [insert doc].
+	HumanStatusStopped = HumanStatus("stopped")
+	// HumanStatusRunning is [insert doc].
+	HumanStatusRunning = HumanStatus("running")
+)
+
+func (enum HumanStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum HumanStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *HumanStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = HumanStatus(HumanStatus(tmp).String())
+	return nil
+}
+
 type ListHumansRequestOrderBy string
 
 const (
@@ -160,6 +194,10 @@ type Human struct {
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
+	// Status
+	//
+	// Default value: unknown
+	Status HumanStatus `json:"status"`
 
 	Region scw.Region `json:"region"`
 }
@@ -475,6 +513,43 @@ func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Human
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RunHumanRequest struct {
+	Region scw.Region `json:"-"`
+
+	HumanID string `json:"-"`
+}
+
+func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HumanID) == "" {
+		return nil, errors.New("field HumanID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "/run",
 		Headers: http.Header{},
 	}
 
