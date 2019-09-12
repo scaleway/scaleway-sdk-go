@@ -137,9 +137,4 @@ func TestHuman(t *testing.T) {
 	})
 	testhelpers.AssertNoError(t, err)
 
-	// get
-	_, err = client.GetHuman(&test.GetHumanRequest{
-		HumanID: human.ID,
-	})
-	testhelpers.Equals(t, "scaleway-sdk-go: http error 404 Not Found: human not found", err.Error())
 }
