@@ -139,7 +139,7 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 	newVolumes := volumesToVolumeTemplates(volumes)
 
 	// add volume to volumes list
-	// we loop through all the possible volume keys (0 to len(volumes))
+	// We loop through all the possible volume keys (0 to len(volumes))
 	// to find a non existing key and assign it to the requested volume.
 	// A key should always be found. However we return an error if no keys were found.
 	found := false
