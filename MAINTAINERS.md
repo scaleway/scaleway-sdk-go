@@ -8,6 +8,5 @@ routing PRs, questions, etc. to the right place.
 | Name           | Tag             |
 | :------------- | :-------------- |
 | Jérôme Quéré   | @jerome-quere   |
-| Mathias Beke   | @DenBeke        |
 | Quentin Brosse | @QuentinBrosse  |
 | Olivier Cano   | @kindermoumoute |
