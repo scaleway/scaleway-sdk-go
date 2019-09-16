@@ -139,11 +139,25 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 	newVolumes := volumesToVolumeTemplates(volumes)
 
 	// add volume to volumes list
-	key := fmt.Sprintf("%d", len(volumes))
-	newVolumes[key] = &VolumeTemplate{
-		ID: req.VolumeID,
-		// name is ignored on this PATCH
-		Name: req.VolumeID,
+	// We loop through all the possible volume keys (0 to len(volumes))
+	// to find a non existing key and assign it to the requested volume.
+	// A key should always be found. However we return an error if no keys were found.
+	found := false
+	for i := 0; i <= len(volumes); i++ {
+		key := fmt.Sprintf("%d", i)
+		if _, ok := newVolumes[key]; !ok {
+			newVolumes[key] = &VolumeTemplate{
+				ID: req.VolumeID,
+				// name is ignored on this PATCH
+				Name: req.VolumeID,
+			}
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return nil, fmt.Errorf("could not find key to attach volume %s", req.VolumeID)
 	}
 
 	// update server
