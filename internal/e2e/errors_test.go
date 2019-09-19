@@ -77,7 +77,9 @@ func TestStandardErrors(t *testing.T) {
 	t.Run("transient state", func(t *testing.T) {
 		human, err := client.CreateHuman(&test.CreateHumanRequest{})
 		testhelpers.AssertNoError(t, err)
-		defer client.DeleteHuman(&test.DeleteHumanRequest{HumanID: human.ID})
+		defer func() {
+			_, _ = client.DeleteHuman(&test.DeleteHumanRequest{HumanID: human.ID})
+		}()
 
 		_, err = client.RunHuman(&test.RunHumanRequest{HumanID: human.ID})
 		testhelpers.AssertNoError(t, err)
