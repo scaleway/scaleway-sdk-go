@@ -105,9 +105,11 @@ func unmarshalStandardError(errorType string, body []byte) SdkError {
 	case "transient_state":
 		stdErr = &TransientStateError{RawBody: body}
 	case "not_found":
-		stdErr = &ResourceNotFound{RawBody: body}
+		stdErr = &ResourceNotFoundError{RawBody: body}
 	case "permissions_denied":
 		stdErr = &PermissionsDeniedError{RawBody: body}
+	case "out_of_stock":
+		stdErr = &OutOfStockError{RawBody: body}
 	default:
 		return nil
 	}
@@ -209,7 +211,7 @@ func (e *TransientStateError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is in a transient state: %s", e.Resource, e.ResourceID, e.CurrentState)
 }
 
-type ResourceNotFound struct {
+type ResourceNotFoundError struct {
 	Resource   string `json:"resource"`
 	ResourceID string `json:"resource_id"`
 
@@ -217,7 +219,19 @@ type ResourceNotFound struct {
 }
 
 // IsScwSdkError implements the SdkError interface
-func (e *ResourceNotFound) IsScwSdkError() {}
-func (e *ResourceNotFound) Error() string {
+func (e *ResourceNotFoundError) IsScwSdkError() {}
+func (e *ResourceNotFoundError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is not found", e.Resource, e.ResourceID)
+}
+
+type OutOfStockError struct {
+	Resource string `json:"resource"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+// IsScwSdkError implements the SdkError interface
+func (e *OutOfStockError) IsScwSdkError() {}
+func (e *OutOfStockError) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: resource %s is out of stock", e.Resource)
 }
