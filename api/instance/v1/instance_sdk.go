@@ -952,8 +952,6 @@ type Server struct {
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 	// EnableIPv6 display if IPv6 is enabled
 	EnableIPv6 bool `json:"enable_ipv6"`
-	// ExtraNetworks display information about additional network interfaces
-	ExtraNetworks []string `json:"extra_networks"`
 	// Hostname display the server host name
 	Hostname string `json:"hostname"`
 	// Image provide information on the server image
@@ -1595,8 +1593,6 @@ type setServerRequest struct {
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 	// EnableIPv6 display if IPv6 is enabled
 	EnableIPv6 bool `json:"enable_ipv6"`
-	// ExtraNetworks display information about additional network interfaces
-	ExtraNetworks []string `json:"extra_networks"`
 	// Hostname display the server host name
 	Hostname string `json:"hostname"`
 	// Image provide information on the server image
@@ -1696,8 +1692,6 @@ type updateServerRequest struct {
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
 	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
-
-	ExtraNetworks *[]string `json:"extra_networks,omitempty"`
 
 	Protected *bool `json:"protected,omitempty"`
 
