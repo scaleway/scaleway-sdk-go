@@ -36,7 +36,7 @@ type ResponseError struct {
 	// Status is the HTTP status received
 	Status string `json:"-"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 func (e *ResponseError) Error() string {
@@ -127,7 +127,7 @@ type InvalidArgumentsError struct {
 		HelpMessage  string `json:"help_message"`
 	} `json:"details"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -161,7 +161,7 @@ type QuotasExceededError struct {
 		Current  uint32 `json:"current"`
 	} `json:"details"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -181,7 +181,7 @@ type PermissionsDeniedError struct {
 		Action   string `json:"action"`
 	} `json:"details"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -200,7 +200,7 @@ type TransientStateError struct {
 	ResourceID   string `json:"resource_id"`
 	CurrentState string `json:"current_state"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -213,7 +213,7 @@ type ResourceNotFound struct {
 	Resource   string `json:"resource"`
 	ResourceID string `json:"resource_id"`
 
-	RawBody []byte
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
