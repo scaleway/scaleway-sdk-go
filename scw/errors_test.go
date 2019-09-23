@@ -29,7 +29,6 @@ func TestHasResponseErrorWithoutBody(t *testing.T) {
 }
 
 func TestHasResponseErrorWithValidError(t *testing.T) {
-
 	var (
 		errorMessage    = "some message"
 		errorType       = "some type"
@@ -45,6 +44,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 		Fields:     errorFields,
 		StatusCode: errorStatusCode,
 		Status:     errorStatus,
+		RawBody:    []byte(`{"message":"some message","type":"some type","fields":{"some_field":["some_value"]}}`),
 	}
 
 	// Create response body with marshalled error response

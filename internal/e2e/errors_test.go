@@ -18,6 +18,7 @@ func TestStandardErrors(t *testing.T) {
 	testhelpers.Equals(t, &scw.ResourceNotFound{
 		Resource:   "human",
 		ResourceID: "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
+		RawBody:    []byte(`{"message":"resource is not found","resource":"human","resource_id":"b3ba839a-dcf2-4b0a-ac81-fc32370052a0","type":"not_found"}`),
 	}, err)
 
 	_, err = client.CreateHuman(&test.CreateHumanRequest{
@@ -35,6 +36,7 @@ func TestStandardErrors(t *testing.T) {
 				HelpMessage:  "lowest altitude on earth is -6371km",
 			},
 		},
+		RawBody: []byte(`{"details":[{"argument_name":"altitude_in_meter","help_message":"lowest altitude on earth is -6371km","reason":"constraint"}],"message":"invalid argument(s)","type":"invalid_arguments"}`),
 	}, err)
 
 	var human *test.Human
@@ -56,16 +58,19 @@ func TestStandardErrors(t *testing.T) {
 				Current:  10,
 			},
 		},
+		RawBody: []byte(`{"details":[{"current":10,"quota":10,"resource":"human"}],"message":"quota(s) exceeded for this resource","type":"quotas_exceeded"}`),
 	}, err)
 
 	_, err = client.RunHuman(&test.RunHumanRequest{HumanID: human.ID})
 	testhelpers.AssertNoError(t, err)
 
 	_, err = client.UpdateHuman(&test.UpdateHumanRequest{HumanID: human.ID})
+
 	testhelpers.Equals(t, &scw.TransientStateError{
 		Resource:     "human",
 		ResourceID:   human.ID,
 		CurrentState: "running",
+		RawBody:      []byte(`{"current_state":"running","message":"resource is in a transient state","resource":"human","resource_id":"` + human.ID + `","type":"transient_state"}`),
 	}, err)
 
 }

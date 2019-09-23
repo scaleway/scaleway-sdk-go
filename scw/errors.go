@@ -35,6 +35,8 @@ type ResponseError struct {
 
 	// Status is the HTTP status received
 	Status string `json:"-"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 func (e *ResponseError) Error() string {
@@ -77,11 +79,13 @@ func hasResponseError(res *http.Response) SdkError {
 	if err != nil {
 		return errors.Wrap(err, "cannot read error response body")
 	}
+	newErr.RawBody = body
 
 	err = json.Unmarshal(body, newErr)
 	if err != nil {
 		return errors.Wrap(err, "could not parse error response body")
 	}
+
 	stdErr := unmarshalStandardError(newErr.Type, body)
 	if stdErr != nil {
 		return stdErr
@@ -95,15 +99,15 @@ func unmarshalStandardError(errorType string, body []byte) SdkError {
 
 	switch errorType {
 	case "invalid_arguments":
-		stdErr = &InvalidArgumentsError{}
+		stdErr = &InvalidArgumentsError{RawBody: body}
 	case "quotas_exceeded":
-		stdErr = &QuotasExceededError{}
+		stdErr = &QuotasExceededError{RawBody: body}
 	case "transient_state":
-		stdErr = &TransientStateError{}
+		stdErr = &TransientStateError{RawBody: body}
 	case "not_found":
-		stdErr = &ResourceNotFound{}
+		stdErr = &ResourceNotFound{RawBody: body}
 	case "permissions_denied":
-		stdErr = &PermissionsDeniedError{}
+		stdErr = &PermissionsDeniedError{RawBody: body}
 	default:
 		return nil
 	}
@@ -122,6 +126,8 @@ type InvalidArgumentsError struct {
 		Reason       string `json:"reason"`
 		HelpMessage  string `json:"help_message"`
 	} `json:"details"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -154,6 +160,8 @@ type QuotasExceededError struct {
 		Quota    uint32 `json:"quota"`
 		Current  uint32 `json:"current"`
 	} `json:"details"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -172,6 +180,8 @@ type PermissionsDeniedError struct {
 		Resource string `json:"resource"`
 		Action   string `json:"action"`
 	} `json:"details"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -189,6 +199,8 @@ type TransientStateError struct {
 	Resource     string `json:"resource"`
 	ResourceID   string `json:"resource_id"`
 	CurrentState string `json:"current_state"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
@@ -200,6 +212,8 @@ func (e *TransientStateError) Error() string {
 type ResourceNotFound struct {
 	Resource   string `json:"resource"`
 	ResourceID string `json:"resource_id"`
+
+	RawBody json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
