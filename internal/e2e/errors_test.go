@@ -100,7 +100,7 @@ func TestStandardErrors(t *testing.T) {
 		})
 		testhelpers.Equals(t, &scw.OutOfStockError{
 			Resource: "ShoeSize60",
-			RawBody:  []byte(`{"message":"resource is is out of stock","resource":"human"}`),
+			RawBody:  []byte(`{"message":"resource is out of stock","resource":"ShoeSize60","type":"out_of_stock"}`),
 		}, err)
 	})
 }
