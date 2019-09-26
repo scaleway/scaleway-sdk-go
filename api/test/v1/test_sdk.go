@@ -171,7 +171,7 @@ func (enum *ListHumansRequestOrderBy) UnmarshalJSON(data []byte) error {
 type Human struct {
 	ID string `json:"id"`
 
-	ProjectID string `json:"project_id"`
+	OrganizationID string `json:"organization_id"`
 
 	CreatedAt time.Time `json:"created_at"`
 
@@ -263,12 +263,17 @@ type ListHumansRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListHumansRequestOrderBy `json:"-"`
 
-	ProjectID *string `json:"-"`
+	OrganizationID *string `json:"-"`
 }
 
 // ListHumans list all your humans
 func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*ListHumansResponse, error) {
 	var err error
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
+		req.OrganizationID = &defaultOrganizationID
+	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
@@ -284,7 +289,7 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -386,12 +391,17 @@ type CreateHumanRequest struct {
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
 
-	ProjectID string `json:"project_id"`
+	OrganizationID string `json:"organization_id"`
 }
 
 // CreateHuman create a new human
 func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
