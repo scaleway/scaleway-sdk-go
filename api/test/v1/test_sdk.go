@@ -308,13 +308,13 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListHumansResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListHumansResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListHumansResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListHumansResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -322,7 +322,7 @@ func (r *ListHumansResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 
 	r.Humans = append(r.Humans, results.Humans...)
 	r.TotalCount += uint32(len(results.Humans))
-	return len(results.Humans), nil
+	return uint32(len(results.Humans)), nil
 }
 
 type GetHumanRequest struct {

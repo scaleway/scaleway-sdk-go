@@ -1236,13 +1236,13 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListLbsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListLbsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListLbsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1250,7 +1250,7 @@ func (r *ListLbsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 
 	r.Lbs = append(r.Lbs, results.Lbs...)
 	r.TotalCount += uint32(len(results.Lbs))
-	return len(results.Lbs), nil
+	return uint32(len(results.Lbs)), nil
 }
 
 type CreateLbRequest struct {
@@ -1491,13 +1491,13 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListIPsResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListIPsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIPsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1505,7 +1505,7 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 
 	r.IPs = append(r.IPs, results.IPs...)
 	r.TotalCount += uint32(len(results.IPs))
-	return len(results.IPs), nil
+	return uint32(len(results.IPs)), nil
 }
 
 type GetIPRequest struct {
@@ -1688,13 +1688,13 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListBackendsResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListBackendsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListBackendsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1702,7 +1702,7 @@ func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError)
 
 	r.Backends = append(r.Backends, results.Backends...)
 	r.TotalCount += uint32(len(results.Backends))
-	return len(results.Backends), nil
+	return uint32(len(results.Backends)), nil
 }
 
 type CreateBackendRequest struct {
@@ -2325,13 +2325,13 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListFrontendsResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListFrontendsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListFrontendsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2339,7 +2339,7 @@ func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (int, scw.SdkError
 
 	r.Frontends = append(r.Frontends, results.Frontends...)
 	r.TotalCount += uint32(len(results.Frontends))
-	return len(results.Frontends), nil
+	return uint32(len(results.Frontends)), nil
 }
 
 type CreateFrontendRequest struct {
@@ -2680,13 +2680,13 @@ func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListAC
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListACLResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListACLResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListACLResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListACLResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2694,7 +2694,7 @@ func (r *ListACLResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
 
 	r.ACLs = append(r.ACLs, results.ACLs...)
 	r.TotalCount += uint32(len(results.ACLs))
-	return len(results.ACLs), nil
+	return uint32(len(results.ACLs)), nil
 }
 
 type CreateACLRequest struct {
@@ -2989,13 +2989,13 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListCertificatesResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListCertificatesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListCertificatesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3003,7 +3003,7 @@ func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (int, scw.SdkEr
 
 	r.Certificates = append(r.Certificates, results.Certificates...)
 	r.TotalCount += uint32(len(results.Certificates))
-	return len(results.Certificates), nil
+	return uint32(len(results.Certificates)), nil
 }
 
 type GetCertificateRequest struct {
@@ -3173,13 +3173,13 @@ func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListLbTypesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListLbTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3187,7 +3187,7 @@ func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) 
 
 	r.LbTypes = append(r.LbTypes, results.LbTypes...)
 	r.TotalCount += uint32(len(results.LbTypes))
-	return len(results.LbTypes), nil
+	return uint32(len(results.LbTypes)), nil
 }
 
 type Config interface {
