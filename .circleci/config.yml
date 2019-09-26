@@ -3,33 +3,27 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
+  test-go-tip: &base-test
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - run: go mod download
+      - run:
+          name: Run unit tests
+          command: go test -v ./...
   test-go-1-13:
+    <<: *base-test
     docker:
       - image: circleci/golang:1.13
-    steps:
-      - checkout
-      - run: go mod download
-      - run:
-          name: Run unit tests
-          command: go test -v ./...
   test-go-1-12:
+    <<: *base-test
     docker:
       - image: circleci/golang:1.12
-    steps:
-      - checkout
-      - run: go mod download
-      - run:
-          name: Run unit tests
-          command: go test -v ./...
   test-go-1-11:
+    <<: *base-test
     docker:
       - image: circleci/golang:1.11
-    steps:
-      - checkout
-      - run: go mod download
-      - run:
-          name: Run unit tests
-          command: go test -v ./...
   test-go-1-10:
     docker:
       - image: circleci/golang:1.10
@@ -40,11 +34,47 @@ jobs:
       - run:
           name: Run unit tests
           command: go test -v ./...
+
+  test-build-1-13-amd64: &base-build
+    docker:
+      - image: circleci/golang:1.13
+        environment:
+          GOARCH: amd64
+    steps:
+      - checkout
+      - run: go mod download
+      - run:
+          name: Test build
+          command: go build ./...
+  test-build-1-13-arm:
+    <<: *base-build
+    docker:
+      - image: circleci/golang:1.13
+        environment:
+          GOARCH: arm
+  test-build-1-13-arm64:
+    <<: *base-build
+    docker:
+      - image: circleci/golang:1.13
+        environment:
+          GOARCH: arm64
+  test-build-1-13-386:
+    <<: *base-build
+    docker:
+      - image: circleci/golang:1.13
+        environment:
+          GOARCH: 386
+
 workflows:
   version: 2
   test:
     jobs:
+      - test-go-tip
       - test-go-1-13
       - test-go-1-12
       - test-go-1-11
       - test-go-1-10
+      - test-build-1-13-amd64
+      - test-build-1-13-arm
+      - test-build-1-13-arm64
+      - test-build-1-13-386

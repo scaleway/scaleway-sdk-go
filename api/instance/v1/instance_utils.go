@@ -286,13 +286,13 @@ func (r *ListVolumesResponse) UnsafeSetTotalCount(totalCount int) {
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListServersTypesResponse) UnsafeGetTotalCount() int {
-	return int(r.TotalCount)
+func (r *ListServersTypesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkError) {
+func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
 	results, ok := res.(*ListServersTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -307,7 +307,7 @@ func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (int, scw.SdkEr
 	}
 
 	r.TotalCount += uint32(len(results.Servers))
-	return len(results.Servers), nil
+	return uint32(len(results.Servers)), nil
 }
 
 func (v *NullableStringValue) UnmarshalJSON(b []byte) error {
