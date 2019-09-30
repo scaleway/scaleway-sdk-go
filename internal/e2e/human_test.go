@@ -60,7 +60,7 @@ func TestHuman(t *testing.T) {
 		HairCount:            9223372036854775808,
 		IsHappy:              true,
 		EyesColor:            test.EyeColorsAmber,
-		ProjectID:            "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
+		OrganizationID:       "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -72,7 +72,7 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775808))
 	testhelpers.Equals(t, human.IsHappy, true)
 	testhelpers.Equals(t, human.EyesColor, test.EyeColorsAmber)
-	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
+	testhelpers.Equals(t, human.OrganizationID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// single parameter update
 	human, err = client.UpdateHuman(&test.UpdateHumanRequest{
@@ -89,7 +89,7 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775808))
 	testhelpers.Equals(t, human.IsHappy, false)
 	testhelpers.Equals(t, human.EyesColor, test.EyeColorsAmber)
-	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
+	testhelpers.Equals(t, human.OrganizationID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// update
 	human, err = client.UpdateHuman(&test.UpdateHumanRequest{
@@ -113,7 +113,7 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775809))
 	testhelpers.Equals(t, human.IsHappy, true)
 	testhelpers.Equals(t, human.EyesColor, test.EyeColorsBlue)
-	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
+	testhelpers.Equals(t, human.OrganizationID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// get
 	human, err = client.GetHuman(&test.GetHumanRequest{
@@ -129,7 +129,7 @@ func TestHuman(t *testing.T) {
 	testhelpers.Equals(t, human.HairCount, uint64(9223372036854775809))
 	testhelpers.Equals(t, human.IsHappy, true)
 	testhelpers.Equals(t, human.EyesColor, test.EyeColorsBlue)
-	testhelpers.Equals(t, human.ProjectID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
+	testhelpers.Equals(t, human.OrganizationID, "b3ba839a-dcf2-4b0a-ac81-fc32370052a0")
 
 	// delete
 	_, err = client.DeleteHuman(&test.DeleteHumanRequest{
