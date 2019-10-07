@@ -1,11 +1,11 @@
 package scw
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -41,9 +41,8 @@ type File struct {
 
 func (f *File) UnmarshalJSON(b []byte) error {
 	var tmpFile struct {
-		Name        string `json:"name"`
-		ContentType string `json:"content_type"`
-		Content     []byte `json:"content"`
+		File
+		Content []byte `json:"content"`
 	}
 
 	err := json.Unmarshal(b, &tmpFile)
@@ -51,15 +50,13 @@ func (f *File) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	f.Name = tmpFile.Name
-	f.ContentType = tmpFile.ContentType
-
 	content, err := base64.StdEncoding.DecodeString(string(tmpFile.Content))
 	if err != nil {
 		return err
 	}
-	f.Content = strings.NewReader(string(content))
+	tmpFile.File.Content = bytes.NewReader(content)
 
+	*f = tmpFile.File
 	return nil
 }
 
