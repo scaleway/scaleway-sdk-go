@@ -42,7 +42,7 @@ type File struct {
 func (f *File) UnmarshalJSON(b []byte) error {
 	var tmpFile struct {
 		File
-		Content []byte `json:"content"`
+		Content string `json:"content"`
 	}
 
 	err := json.Unmarshal(b, &tmpFile)
@@ -50,7 +50,7 @@ func (f *File) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	content, err := base64.StdEncoding.DecodeString(string(tmpFile.Content))
+	content, err := base64.StdEncoding.DecodeString(tmpFile.Content)
 	if err != nil {
 		return err
 	}
