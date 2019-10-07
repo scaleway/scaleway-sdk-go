@@ -2,7 +2,6 @@ package scw
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -40,9 +39,10 @@ type File struct {
 }
 
 func (f *File) UnmarshalJSON(b []byte) error {
+	type file File
 	var tmpFile struct {
-		File
-		Content string `json:"content"`
+		file
+		Content []byte `json:"content"`
 	}
 
 	err := json.Unmarshal(b, &tmpFile)
@@ -50,13 +50,9 @@ func (f *File) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	content, err := base64.StdEncoding.DecodeString(tmpFile.Content)
-	if err != nil {
-		return err
-	}
-	tmpFile.File.Content = bytes.NewReader(content)
+	tmpFile.file.Content = bytes.NewReader(tmpFile.Content)
 
-	*f = tmpFile.File
+	*f = File(tmpFile.file)
 	return nil
 }
 

@@ -2,6 +2,7 @@ package scw
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -122,4 +123,46 @@ func TestTimeSeries_UnmarshallJSON(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFile_UnmarshalJSON(t *testing.T) {
+
+	type testCase struct {
+		json        string
+		name        string
+		contentType string
+		content     []byte
+	}
+
+	run := func(c *testCase) func(t *testing.T) {
+		return func(t *testing.T) {
+			f := File{}
+			err := json.Unmarshal([]byte(c.json), &f)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Equals(t, c.name, f.Name)
+			testhelpers.Equals(t, c.contentType, f.ContentType)
+			s, err := ioutil.ReadAll(f.Content)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Equals(t, c.content, s)
+		}
+	}
+
+	t.Run("empty", run(&testCase{
+		json:    `{}`,
+		content: []byte{},
+	}))
+
+	t.Run("strint_content", run(&testCase{
+		json:        `{"name": "test", "content_type":"text/plain", "content": "dGVzdDQyCg=="}`,
+		name:        "test",
+		contentType: "text/plain",
+		content:     []byte("test42\n"),
+	}))
+
+	t.Run("binary_content", run(&testCase{
+		json:        `{"name": "test", "content_type":"text/plain", "content": "AAAACg=="}`,
+		name:        "test",
+		contentType: "text/plain",
+		content:     []byte("\x00\x00\x00\n"),
+	}))
 }
