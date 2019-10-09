@@ -563,6 +563,11 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 		Headers: http.Header{},
 	}
 
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
 	var resp Human
 
 	err = s.client.Do(scwReq, &resp, opts...)
