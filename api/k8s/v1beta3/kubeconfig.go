@@ -67,7 +67,7 @@ func (k *Kubeconfig) GetRaw() []byte {
 // GetServer returns the server URL of the cluster in the kubeconfig
 func (k *Kubeconfig) GetServer() (string, error) {
 	if len(k.Clusters) != 1 {
-		return "", errors.New("wrong number of clusters in kubeconfig")
+		return "", errors.New("kubeconfig should have only one cluster")
 	}
 
 	return k.Clusters[0].Cluster.Server, nil
@@ -76,7 +76,7 @@ func (k *Kubeconfig) GetServer() (string, error) {
 // GetCertificateAuthorityData returns the server certificate authority data of the cluster in the kubeconfig
 func (k *Kubeconfig) GetCertificateAuthorityData() (string, error) {
 	if len(k.Clusters) != 1 {
-		return "", errors.New("wrong number of clusters in kubeconfig")
+		return "", errors.New("kubeconfig should have only one cluster")
 	}
 
 	return k.Clusters[0].Cluster.CertificateAuthorityData, nil
@@ -85,7 +85,7 @@ func (k *Kubeconfig) GetCertificateAuthorityData() (string, error) {
 // GetToken returns the token for the cluster in the kubeconfig
 func (k *Kubeconfig) GetToken() (string, error) {
 	if len(k.Users) != 1 {
-		return "", errors.New("wrong number of users in kubeconfig")
+		return "", errors.New("kubeconfig should have only one user")
 	}
 
 	return k.Users[0].User.Token, nil
