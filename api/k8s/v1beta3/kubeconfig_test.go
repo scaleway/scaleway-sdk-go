@@ -1,0 +1,58 @@
+package k8s
+
+import (
+	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
+	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+func TestAPI_GetClusterKubeConfig(t *testing.T) {
+	client, r, err := httprecorder.CreateRecordedScwClient("cluster-test")
+	testhelpers.AssertNoError(t, err)
+	defer func() {
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
+
+	k8sAPI := NewAPI(client)
+
+	kubeconfig, err := k8sAPI.GetClusterKubeConfig(&GetClusterKubeConfigRequest{
+		Region:    scw.RegionFrPar,
+		ClusterID: "1267e3fd-a51c-49ed-ad12-857092ee3a3c",
+	})
+
+	testhelpers.AssertNoError(t, err)
+
+	ca, err := kubeconfig.GetCertificateAuthorityData()
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1UQXdOakUyTlRBME9Gb1hEVEk1TVRBd05qRTJOVEEwT0Zvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTEprCnNOazJ6UVE0L3lXZ0ovb3BlZHlVenFzRWxnRS9IdGx1dk5WVE1Ic0tmcU4rUm01N1kwQm81SjVqZ3NhOGlKU3YKMDFrTU5VMHhVQnI2Q2tMQXVPRTByTGhVb1EvTGlqWHB2QkdSNHVYU0w2RG5uSjFQd1pUQmEwZFdWRFd6ZlBsZwpGUEJ5TmdIcFpaV1p4T0tZVHBEM0Q0T3hoMGZpS1U1ZFBWblJBUDB0bmRhNmlrOHV2OHplSUwyOVRCeDVNT3ZECjdDUjdXWlViWGh6RGVrVEN0R3drSnhjNkhWVktoZUNnbXhwZUtpOEowSXh3YlRHdDlMOFpzUENlWWtoUWtLUXAKM1IxN1JGa2FoSXlVYUs3NWRzYy9jdFZEcC92WXByS0JaVW85UEREK1cyS2pMTVFyK213ZktxL0NZOC9pbnpzMwpsR2VnUzA0R2lIdlc3Nm5YdW04Q0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFEZm9uMTlyL25Ta2NuMkFZM3hQcW1GditUUkUKZEF0ajNRcUZ6ZVBWY1QwOHhvOEpnT1NZMzc4emV6VVpBNHVjRWhLU0o5TEhZRWsvYm9CQWd0cDlpUVl5QnJyegozOFplU2owbzFXR1VraHNqbFVGeHd1Q09DSWRuRmFVRk5PK1krU08zTHNlL2xaZ3crL3pzRXh2bTJTV2xxdDFLCnlMRGNtNU1jdGhyQ3liYWFhejhYTXgvZFY0OWN5enIyR1VUTFI0YkQ2T1ppWHZ4S1dLQ2NzY3RqMWQzRGpRYkQKNmRIVnRwTVdPdng3dEJlTFdCajhndUhWdGorSnNEc3RSV29hUmZEN2hhREdTUlVkUjJ6Wk1uYVNZYXBhQ0VuOApCMndLeDVjWWVYNC9SRDRHc05CdUVjRk9EQ2FGNUNyNWgxdDNnTm9UVExOMDlWSHBxUUZrdHdMdTNWdz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=", ca)
+
+	token, err := kubeconfig.GetToken()
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "eaeRgKfatmPsU19P1d9U0VepykX3Ik0mMtRC1eGJFi8oqMCQWdxZyXr9", token)
+
+	server, err := kubeconfig.GetServer()
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "https://1267e3fd-a51c-49ed-ad12-857092ee3a3c.api.k8s.fr-par.scw.cloud:6443", server)
+
+	raw := kubeconfig.GetRaw()
+	testhelpers.Equals(t, []byte(`apiVersion: v1
+clusters:
+- name: tfclusterthirstysatoshi
+  cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1UQXdOakUyTlRBME9Gb1hEVEk1TVRBd05qRTJOVEEwT0Zvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTEprCnNOazJ6UVE0L3lXZ0ovb3BlZHlVenFzRWxnRS9IdGx1dk5WVE1Ic0tmcU4rUm01N1kwQm81SjVqZ3NhOGlKU3YKMDFrTU5VMHhVQnI2Q2tMQXVPRTByTGhVb1EvTGlqWHB2QkdSNHVYU0w2RG5uSjFQd1pUQmEwZFdWRFd6ZlBsZwpGUEJ5TmdIcFpaV1p4T0tZVHBEM0Q0T3hoMGZpS1U1ZFBWblJBUDB0bmRhNmlrOHV2OHplSUwyOVRCeDVNT3ZECjdDUjdXWlViWGh6RGVrVEN0R3drSnhjNkhWVktoZUNnbXhwZUtpOEowSXh3YlRHdDlMOFpzUENlWWtoUWtLUXAKM1IxN1JGa2FoSXlVYUs3NWRzYy9jdFZEcC92WXByS0JaVW85UEREK1cyS2pMTVFyK213ZktxL0NZOC9pbnpzMwpsR2VnUzA0R2lIdlc3Nm5YdW04Q0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFEZm9uMTlyL25Ta2NuMkFZM3hQcW1GditUUkUKZEF0ajNRcUZ6ZVBWY1QwOHhvOEpnT1NZMzc4emV6VVpBNHVjRWhLU0o5TEhZRWsvYm9CQWd0cDlpUVl5QnJyegozOFplU2owbzFXR1VraHNqbFVGeHd1Q09DSWRuRmFVRk5PK1krU08zTHNlL2xaZ3crL3pzRXh2bTJTV2xxdDFLCnlMRGNtNU1jdGhyQ3liYWFhejhYTXgvZFY0OWN5enIyR1VUTFI0YkQ2T1ppWHZ4S1dLQ2NzY3RqMWQzRGpRYkQKNmRIVnRwTVdPdng3dEJlTFdCajhndUhWdGorSnNEc3RSV29hUmZEN2hhREdTUlVkUjJ6Wk1uYVNZYXBhQ0VuOApCMndLeDVjWWVYNC9SRDRHc05CdUVjRk9EQ2FGNUNyNWgxdDNnTm9UVExOMDlWSHBxUUZrdHdMdTNWdz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server: https://1267e3fd-a51c-49ed-ad12-857092ee3a3c.api.k8s.fr-par.scw.cloud:6443
+contexts:
+- name: admin@tfclusterthirstysatoshi
+  context:
+    cluster: tfclusterthirstysatoshi
+    user: tfclusterthirstysatoshi-admin
+current-context: admin@tfclusterthirstysatoshi
+kind: Config
+preferences: {}
+users:
+- name: tfclusterthirstysatoshi-admin
+  user:
+    token: eaeRgKfatmPsU19P1d9U0VepykX3Ik0mMtRC1eGJFi8oqMCQWdxZyXr9`), raw)
+}
