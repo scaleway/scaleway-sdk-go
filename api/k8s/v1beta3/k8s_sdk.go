@@ -451,6 +451,8 @@ type CreateClusterRequestDefaultPoolConfig struct {
 	MaxSize *uint32 `json:"max_size"`
 
 	ContainerRuntime *string `json:"container_runtime"`
+
+	Autohealing bool `json:"autohealing"`
 }
 
 type ListClusterAvailableVersionsResponse struct {
@@ -525,6 +527,8 @@ type Pool struct {
 	NodeType string `json:"node_type"`
 	// Autoscaling enable or disable autoscaling
 	Autoscaling bool `json:"autoscaling"`
+	// Autohealing enable or disable autohealing
+	Autohealing bool `json:"autohealing"`
 	// Size target number of nodes
 	Size uint32 `json:"size"`
 	// MinSize display lower limit for this pool
@@ -949,14 +953,14 @@ func (s *API) ListClusterAvailableVersions(req *ListClusterAvailableVersionsRequ
 	return &resp, nil
 }
 
-type GetClusterKubeConfigRequest struct {
+type getClusterKubeConfigRequest struct {
 	Region scw.Region `json:"-"`
 
 	ClusterID string `json:"-"`
 }
 
-// GetClusterKubeConfig download kubeconfig
-func (s *API) GetClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
+// getClusterKubeConfig download kubeconfig
+func (s *API) getClusterKubeConfig(req *getClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1016,6 +1020,11 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 		Method:  "POST",
 		Path:    "/k8s/v1beta3/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/reset-admin-token",
 		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp ResetClusterAdminTokenResponse
@@ -1126,6 +1135,8 @@ type CreatePoolRequest struct {
 	MaxSize *uint32 `json:"max_size"`
 
 	ContainerRuntime *string `json:"container_runtime"`
+
+	Autohealing bool `json:"autohealing"`
 }
 
 // CreatePool create a new pool
@@ -1266,6 +1277,8 @@ type UpdatePoolRequest struct {
 	MinSize *uint32 `json:"min_size"`
 
 	MaxSize *uint32 `json:"max_size"`
+
+	Autohealing *bool `json:"autohealing"`
 }
 
 // UpdatePool update an existing cluster pool
@@ -1505,6 +1518,11 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 		Headers: http.Header{},
 	}
 
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
 	var resp Node
 
 	err = s.client.Do(scwReq, &resp, opts...)
@@ -1543,6 +1561,11 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 		Method:  "POST",
 		Path:    "/k8s/v1beta3/regions/" + fmt.Sprint(req.Region) + "/nodes/" + fmt.Sprint(req.NodeID) + "/reboot",
 		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Node
