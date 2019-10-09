@@ -10,34 +10,58 @@ import (
 
 // Kubeconfig represents a kubernetes kubeconfig file
 type Kubeconfig struct {
-	APIVersion string `yaml:"apiVersion"`
-	Kind       string `yaml:"kind"`
-	Clusters   []struct {
-		Name    string `yaml:"name"`
-		Cluster struct {
-			CertificateAuthorityData string `yaml:"certificate-authority-data"`
-			Server                   string `yaml:"server"`
-		} `yaml:"cluster"`
-	} `yaml:"clusters"`
-	Contexts []struct {
-		Name    string `yaml:"name"`
-		Context struct {
-			Cluster   string `yaml:"cluster"`
-			Namespace string `yaml:"namespace,omitempty"`
-			User      string `yaml:"user"`
-		} `yaml:"context"`
-	} `yaml:"contexts"`
-	Users []struct {
-		Name string `yaml:"name"`
-		User struct {
-			Token string `yaml:"token"`
-		} `yaml:"user"`
-	} `yaml:"users"`
+	raw            []byte
+	APIVersion     string                       `yaml:"apiVersion"`
+	Kind           string                       `yaml:"kind"`
+	CurrentContext string                       `yaml:"current-context"`
+	Clusters       []*KubeconfigClusterWithName `yaml:"clusters"`
+	Contexts       []*KubeconfigContextWithName `yaml:"contexts"`
+	Users          []*KubeconfigUserWithName    `yaml:"users"`
+}
+
+// KubeconfigUserWithName represents a named cluster in the kubeconfig file
+type KubeconfigClusterWithName struct {
+	Name    string            `yaml:"name"`
+	Cluster KubeconfigCluster `yaml:"cluster"`
+}
+
+// KubeconfigCluster represents a cluster in the kubeconfig file
+type KubeconfigCluster struct {
+	Server                   string `yaml:"server,omitempty"`
+	CertificateAuthorityData string `yaml:"certificate-authority-data,omitempty"`
+}
+
+// KubeconfigContextWithName represents a named context in the kubeconfig file
+type KubeconfigContextWithName struct {
+	Name    string            `yaml:"name"`
+	Context KubeconfigContext `yaml:"context"`
+}
+
+// KubeconfigContext represents a context in the kubeconfig file
+type KubeconfigContext struct {
+	Cluster   string `yaml:"cluster"`
+	Namespace string `yaml:"namespace,omitempty"`
+	User      string `yaml:"user"`
+}
+
+// KubeconfigUserWithName represents a named user in the kubeconfig file
+type KubeconfigUserWithName struct {
+	Name string         `yaml:"name"`
+	User KubeconfigUser `yaml:"user"`
+}
+
+// KubeconfigUser represents a user in the kubeconfig file
+type KubeconfigUser struct {
+	ClientCertificateData []byte `yaml:"client-certificate-data,omitempty"`
+	ClientKeyData         []byte `yaml:"client-key-data,omitempty"`
+	Password              string `yaml:"password,omitempty"`
+	Username              string `yaml:"username,omitempty"`
+	Token                 string `yaml:"token,omitempty"`
 }
 
 // GetRaw returns the raw bytes of the kubeconfig
-func (k *Kubeconfig) GetRaw() ([]byte, error) {
-	return yaml.Marshal(k)
+func (k *Kubeconfig) GetRaw() []byte {
+	return k.raw
 }
 
 // GetServer returns the server URL of the cluster in the kubeconfig
@@ -81,19 +105,21 @@ func (s *API) GetClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 		ClusterID: req.ClusterID,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error getting cluster kubeconfig")
 	}
 
 	kubeconfigContent, err := ioutil.ReadAll(kubeconfigFile.Content)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error reading kubeconfig content")
 	}
 
 	var kubeconfig Kubeconfig
 	err = yaml.Unmarshal(kubeconfigContent, &kubeconfig)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error unmarshaling kubeconfig")
 	}
+
+	kubeconfig.raw = kubeconfigContent
 
 	return &kubeconfig, nil
 }
