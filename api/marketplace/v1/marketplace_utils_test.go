@@ -33,6 +33,23 @@ func TestGetImageByLabel(t *testing.T) {
 
 	})
 
+	t.Run("matching input for GetLocalImageIDByLabel with lowercase image label", func(t *testing.T) {
+
+		// Create SDK objects for Scaleway Instance product
+		marketplaceAPI := NewAPI(client)
+
+		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
+			Zone:           scw.ZoneFrPar1,
+			CommercialType: "dev1-s",
+			ImageLabel:     "ubuntu-bionic",
+		})
+		testhelpers.AssertNoError(t, err)
+
+		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
+		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
+
+	})
+
 	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
 
 		// Create SDK objects for Scaleway Instance product
