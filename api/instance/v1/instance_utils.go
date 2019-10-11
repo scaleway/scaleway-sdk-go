@@ -284,6 +284,12 @@ func (r *ListVolumesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
+// UnsafeSetTotalCount should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeSetTotalCount(totalCount int) {
+	r.TotalCount = uint32(totalCount)
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListServersTypesResponse) UnsafeGetTotalCount() uint32 {
