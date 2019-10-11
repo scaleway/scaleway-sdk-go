@@ -1247,7 +1247,7 @@ type setSnapshotResponse struct {
 type GetServerTypesAvailabilityRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -1295,7 +1295,7 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 type ListServersTypesRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -1345,7 +1345,7 @@ type ListServersRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization list only servers of this organization
@@ -1915,7 +1915,7 @@ type ListImagesRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -2211,7 +2211,7 @@ type ListSnapshotsRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -2487,7 +2487,7 @@ type ListVolumesRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization display volumes of this organization
@@ -2715,7 +2715,7 @@ type ListSecurityGroupsRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -3005,7 +3005,7 @@ type ListSecurityGroupRulesRequest struct {
 
 	SecurityGroupID string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -3304,7 +3304,7 @@ type ListComputeClustersRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization list only compute-clusters of this organization
@@ -3812,7 +3812,7 @@ type ListIPsRequest struct {
 
 	Name *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -4118,7 +4118,7 @@ type ListBootscriptsRequest struct {
 
 	Public *bool `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }

@@ -130,7 +130,7 @@ type ListSSHKeysRequest struct {
 
 	Page *int32 `json:"-"`
 
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 
 	Name *string `json:"-"`
 
