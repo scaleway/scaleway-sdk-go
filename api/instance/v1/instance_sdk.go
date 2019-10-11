@@ -777,7 +777,7 @@ type Image struct {
 
 	ExtraVolumes map[string]*Volume `json:"extra_volumes"`
 
-	FromServer *ServerSummary `json:"from_server"`
+	FromServer string `json:"from_server"`
 
 	Organization string `json:"organization"`
 
@@ -1921,7 +1921,7 @@ type ListImagesRequest struct {
 
 	Name *string `json:"-"`
 
-	Public bool `json:"-"`
+	Public *bool `json:"-"`
 
 	Arch *string `json:"-"`
 }
@@ -2111,7 +2111,7 @@ type setImageRequest struct {
 
 	ExtraVolumes map[string]*Volume `json:"extra_volumes"`
 
-	FromServer *ServerSummary `json:"from_server"`
+	FromServer string `json:"from_server"`
 
 	Organization string `json:"organization"`
 
