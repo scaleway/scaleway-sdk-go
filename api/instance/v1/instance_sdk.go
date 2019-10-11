@@ -1263,6 +1263,11 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -1304,6 +1309,11 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -1362,6 +1372,11 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -1927,6 +1942,11 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -2212,6 +2232,11 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -2485,6 +2510,11 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "volume_type", req.VolumeType)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
@@ -2706,6 +2736,11 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -2982,6 +3017,11 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -3287,6 +3327,11 @@ func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.R
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -3786,6 +3831,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
@@ -4080,6 +4130,11 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
