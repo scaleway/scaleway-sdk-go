@@ -13,15 +13,15 @@ import (
 )
 
 const (
-	testAPIURL           = "https://api.example.com/"
-	defaultAPIURL        = "https://api.scaleway.com"
-	testAccessKey        = "ACCESS_KEY"
-	testSecretKey        = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
+	testAPIURL                = "https://api.example.com/"
+	defaultAPIURL             = "https://api.scaleway.com"
+	testAccessKey             = "ACCESS_KEY"
+	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	testDefaultRegion    = RegionFrPar
-	testDefaultZone      = ZoneFrPar1
-	testDefaultPageSize  = int32(5)
-	testInsecure         = true
+	testDefaultRegion         = RegionFrPar
+	testDefaultZone           = ZoneFrPar1
+	testDefaultPageSize       = uint32(5)
+	testInsecure              = true
 )
 
 func TestNewClientWithDefaults(t *testing.T) {
