@@ -1247,7 +1247,7 @@ type setSnapshotResponse struct {
 type GetServerTypesAvailabilityRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -1261,11 +1261,6 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -1295,7 +1290,7 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 type ListServersTypesRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -1309,11 +1304,6 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -1345,7 +1335,7 @@ type ListServersRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization list only servers of this organization
@@ -1372,11 +1362,6 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -1915,7 +1900,7 @@ type ListImagesRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1940,11 +1925,6 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -2211,7 +2191,7 @@ type ListSnapshotsRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -2230,11 +2210,6 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -2487,7 +2462,7 @@ type ListVolumesRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization display volumes of this organization
@@ -2508,11 +2483,6 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -2715,7 +2685,7 @@ type ListSecurityGroupsRequest struct {
 
 	Organization *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -2736,11 +2706,6 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -3005,7 +2970,7 @@ type ListSecurityGroupRulesRequest struct {
 
 	SecurityGroupID string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -3017,11 +2982,6 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -3304,7 +3264,7 @@ type ListComputeClustersRequest struct {
 	// PerPage a positive integer lower or equal to 100 to select the number of items to display
 	//
 	// Default value: 20
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 	// Page a positive integer to choose the page to display
 	Page *int32 `json:"-"`
 	// Organization list only compute-clusters of this organization
@@ -3327,11 +3287,6 @@ func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.R
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -3812,7 +3767,7 @@ type ListIPsRequest struct {
 
 	Name *string `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -3829,11 +3784,6 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}
@@ -4118,7 +4068,7 @@ type ListBootscriptsRequest struct {
 
 	Public *bool `json:"-"`
 
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
@@ -4130,11 +4080,6 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
 	}
 
 	query := url.Values{}

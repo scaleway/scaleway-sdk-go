@@ -154,18 +154,13 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 }
 
 type ListImagesRequest struct {
-	PerPage *int32 `json:"-"`
+	PerPage *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 }
 
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
-
-	defaultPerPage, exist := s.client.GetDefaultPageSize()
-	if (req.PerPage == nil || *req.PerPage == 0) && exist {
-		req.PerPage = &defaultPerPage
-	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "per_page", req.PerPage)

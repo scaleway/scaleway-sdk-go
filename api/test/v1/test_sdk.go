@@ -257,7 +257,7 @@ type ListHumansRequest struct {
 
 	Page *int32 `json:"-"`
 
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// OrderBy
 	//
 	// Default value: created_at_asc

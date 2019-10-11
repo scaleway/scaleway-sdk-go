@@ -595,7 +595,7 @@ type ListClustersRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// Name filter clusters per name
 	Name *string `json:"-"`
 	// OrganizationID filter cluster by organization
@@ -1047,7 +1047,7 @@ type ListPoolsRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// Name filter pools per name
 	Name *string `json:"-"`
 }
@@ -1373,7 +1373,7 @@ type ListNodesRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// Name filter nodes by name
 	Name *string `json:"-"`
 	// Status filter nodes by status

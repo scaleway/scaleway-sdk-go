@@ -1182,7 +1182,7 @@ type ListLbsRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListLbsRequestOrderBy `json:"-"`
 
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1437,7 +1437,7 @@ type ListIPsRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// IPAddress use this to search by IP address
 	IPAddress *string `json:"-"`
 
@@ -1640,7 +1640,7 @@ type ListBackendsRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list sizes
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 }
 
 func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
@@ -2277,7 +2277,7 @@ type ListFrontendsRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list sizes
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 }
 
 func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
@@ -2630,7 +2630,7 @@ type ListACLsRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// Name filter acl per name
 	Name *string `json:"-"`
 }
@@ -2938,7 +2938,7 @@ type ListCertificatesRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 	// Name use this to search by name
 	Name *string `json:"-"`
 }
@@ -3130,7 +3130,7 @@ type ListLbTypesRequest struct {
 	// Page page number
 	Page *int32 `json:"-"`
 	// PageSize set the maximum list size
-	PageSize *int32 `json:"-"`
+	PageSize *uint32 `json:"-"`
 }
 
 // ListLbTypes list all Load Balancer offer type
