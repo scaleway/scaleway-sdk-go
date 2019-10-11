@@ -343,7 +343,7 @@ type IP struct {
 	//
 	// Default value: unknown
 	ReverseStatus IPReverseStatus `json:"reverse_status"`
-	// ReverseStatusMessage message is an error occured with reverse
+	// ReverseStatusMessage a message related to the reverse status, in case of an error for example
 	ReverseStatusMessage *string `json:"reverse_status_message"`
 }
 
