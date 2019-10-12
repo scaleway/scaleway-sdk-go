@@ -71,7 +71,7 @@ async function main() {
   console.log(`    Last found release tag was ${lastSemverTag}`.green);
 
   console.log("Listing commit since last release".blue);
-  const commits = (await getStream.array(gitRawCommits({ from:  "v1.0.0-beta.2", to: "v1.0.0-beta.3", format: "%s" }))).map(c => c.toString().trim());
+  const commits = (await getStream.array(gitRawCommits({ from: lastSemverTag, format: "%s" }))).map(c => c.toString().trim());
   commits.forEach(c => console.log(`    ${c}`.grey));
   console.log(`    We found ${commits.length} commits since last release`.green);
 
