@@ -1,10 +1,10 @@
 # Scaleway GO SDK - Scripts
 
-This directory contain useful scripts to work on scaleway-go-sdk.
+This directory contains useful scripts to work on scaleway-go-sdk.
 
 ### check_for_tokens.sh \*\*
 
-Check that no token are present in cassette file
+Checks that no token are present in cassette file
 
 ```
 Usage: ./script/check_for_tokens.sh

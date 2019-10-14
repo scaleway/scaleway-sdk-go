@@ -16,6 +16,7 @@
  *   - Create a post release commit
  *     - Update scw/version.go to add +dev at the end
  *     - Ask to merge this changes to master via PR
+ *   - Delete temporary remote `scaleway-release` that was created earlier
  ******************************************************************************/
 
 const { spawnSync } = require("child_process"),
