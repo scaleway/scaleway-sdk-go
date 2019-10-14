@@ -38,7 +38,7 @@ func (s *API) WaitForLb(req *WaitForLbRequest) (*Lb, error) {
 			}
 			_, isTerminal := terminalStatus[res.Status]
 
-			return res, err, isTerminal
+			return res, nil, isTerminal
 		},
 		Timeout:          req.Timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
