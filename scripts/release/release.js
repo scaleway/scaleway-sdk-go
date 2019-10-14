@@ -1,3 +1,23 @@
+/******************************************************************************
+ * Scaleway GO SDK release script.
+ *
+ * This script will trigger a release process for the scaleway Go SDK.
+ *
+ * The script will proceed as follow:
+ *   - Create a new remote `scaleway-release` that point to main repo
+ *   - Prompt the new version number
+ *   - Create release commit
+ *     - Generate a changelog
+ *     - Update version in scw/version.go
+ *     - Ask to review changes
+ *     - Ask to merge this changes to master via PR
+ *   - Create a github release
+ *     - Ask to create a github release
+ *   - Create a post release commit
+ *     - Update scw/version.go to add +dev at the end
+ *     - Ask to merge this changes to master via PR
+ ******************************************************************************/
+
 const { spawnSync } = require("child_process"),
   readline = require("readline"),
   fs = require("fs")
