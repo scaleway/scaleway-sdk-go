@@ -15,7 +15,7 @@ type WaitForLbRequest struct {
 	Timeout time.Duration
 }
 
-// WaitForLb wait for the lb to be in a "terminal state" before returning.
+// WaitForLb waits for the lb to be in a "terminal state" before returning.
 // This function can be used to wait for a lb to be ready for example.
 func (s *API) WaitForLb(req *WaitForLbRequest) (*Lb, error) {
 
