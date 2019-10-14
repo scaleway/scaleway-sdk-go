@@ -8,5 +8,8 @@
     "get-stream": "^5.1.0",
     "git-raw-commits": "^2.0.2",
     "semver": "^6.3.0"
+  },
+  "scripts": {
+    "release": "node release.js"
   }
 }
