@@ -1192,11 +1192,6 @@ type ListLbsRequest struct {
 func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
@@ -1447,11 +1442,6 @@ type ListIPsRequest struct {
 // ListIPs list IPs
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
-
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
