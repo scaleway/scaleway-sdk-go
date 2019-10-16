@@ -20,11 +20,11 @@ func Example_apiClient() {
 	}
 
 	// Create SDK objects for specific Scaleway Products
-	instance := instance.NewAPI(client)
-	lb := lb.NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
+	lbAPI := lb.NewAPI(client)
 
 	// Start using the SDKs
-	_, _ = instance, lb
+	_, _ = instanceAPI, lbAPI
 
 }
 
@@ -52,11 +52,11 @@ func Example_apiClientWithConfig() {
 	}
 
 	// Create SDK objects for specific Scaleway Products
-	instance := instance.NewAPI(client)
-	lb := lb.NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
+	lbAPI := lb.NewAPI(client)
 
 	// Start using the SDKs
-	_, _ = instance, lb
+	_, _ = instanceAPI, lbAPI
 
 }
 
