@@ -70,7 +70,7 @@ func TestServerUpdate(t *testing.T) {
 		)
 
 		// Update server
-		updateServerResponse, err := instanceAPI.updateServer((*updateServerRequest)(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer((*UpdateServerRequest)(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Name:     &newName,
@@ -94,7 +94,7 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("remove server volumes", func(t *testing.T) {
 		// Remove/detach volumes
-		updateServerResponse, err := instanceAPI.updateServer((*updateServerRequest)(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer((*UpdateServerRequest)(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Volumes:  &map[string]*VolumeTemplate{},
