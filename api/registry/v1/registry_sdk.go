@@ -430,11 +430,6 @@ type ListNamespacesRequest struct {
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
@@ -691,11 +686,6 @@ type ListImagesRequest struct {
 // ListImages list all your images
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
-
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()

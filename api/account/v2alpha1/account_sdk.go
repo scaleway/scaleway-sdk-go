@@ -141,11 +141,6 @@ type ListSSHKeysRequest struct {
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
 		req.PageSize = &defaultPageSize

@@ -610,11 +610,6 @@ type ListClustersRequest struct {
 func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) (*ListClustersResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
@@ -953,14 +948,14 @@ func (s *API) ListClusterAvailableVersions(req *ListClusterAvailableVersionsRequ
 	return &resp, nil
 }
 
-type getClusterKubeConfigRequest struct {
+type GetClusterKubeConfigRequest struct {
 	Region scw.Region `json:"-"`
 
 	ClusterID string `json:"-"`
 }
 
 // getClusterKubeConfig download kubeconfig
-func (s *API) getClusterKubeConfig(req *getClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
+func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
 	if req.Region == "" {

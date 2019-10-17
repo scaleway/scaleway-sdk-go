@@ -1364,11 +1364,6 @@ type ListServersRequest struct {
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
-
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
@@ -1427,7 +1422,7 @@ func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkErro
 	return uint32(len(results.Servers)), nil
 }
 
-type createServerRequest struct {
+type CreateServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name display the server name
 	Name string `json:"name,omitempty"`
@@ -1454,7 +1449,7 @@ type createServerRequest struct {
 }
 
 // createServer create server
-func (s *API) createServer(req *createServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
+func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -1676,7 +1671,7 @@ func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setS
 	return &resp, nil
 }
 
-type updateServerRequest struct {
+type UpdateServerRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -1701,7 +1696,7 @@ type updateServerRequest struct {
 }
 
 // updateServer update server
-func (s *API) updateServer(req *updateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
+func (s *API) updateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1932,11 +1927,6 @@ type ListImagesRequest struct {
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
-
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
@@ -2092,7 +2082,7 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type setImageRequest struct {
+type SetImageRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
@@ -2127,7 +2117,7 @@ type setImageRequest struct {
 // setImage update image
 //
 // Replace all image properties with an image message
-func (s *API) setImage(req *setImageRequest, opts ...scw.RequestOption) (*setImageResponse, error) {
+func (s *API) setImage(req *SetImageRequest, opts ...scw.RequestOption) (*setImageResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2221,11 +2211,6 @@ type ListSnapshotsRequest struct {
 // ListSnapshots list snapshots
 func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
-
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
@@ -2370,7 +2355,7 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type setSnapshotRequest struct {
+type SetSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
@@ -2399,7 +2384,7 @@ type setSnapshotRequest struct {
 // setSnapshot update snapshot
 //
 // Replace all snapshot properties with a snapshot message
-func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
+func (s *API) setSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -2499,11 +2484,6 @@ type ListVolumesRequest struct {
 // ListVolumes list volumes
 func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
-
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
@@ -2728,11 +2708,6 @@ type ListSecurityGroupsRequest struct {
 func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.RequestOption) (*ListSecurityGroupsResponse, error) {
 	var err error
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
-
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
@@ -2796,9 +2771,13 @@ type CreateSecurityGroupRequest struct {
 	Description string `json:"description,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
-
+	// OrganizationDefault
+	//
+	// Default value: false
 	OrganizationDefault bool `json:"organization_default,omitempty"`
-
+	// Stateful
+	//
+	// Default value: false
 	Stateful bool `json:"stateful,omitempty"`
 	// InboundDefaultPolicy
 	//
@@ -2822,6 +2801,10 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("sg")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -3319,11 +3302,6 @@ type ListComputeClustersRequest struct {
 func (s *API) ListComputeClusters(req *ListComputeClustersRequest, opts ...scw.RequestOption) (*ListComputeClustersResponse, error) {
 	var err error
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
-
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
@@ -3560,11 +3538,6 @@ type UpdateComputeClusterRequest struct {
 // Update one or more parameter of the given compute-cluster
 func (s *API) UpdateComputeCluster(req *UpdateComputeClusterRequest, opts ...scw.RequestOption) (*UpdateComputeClusterResponse, error) {
 	var err error
-
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
@@ -3821,11 +3794,6 @@ type ListIPsRequest struct {
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
-
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
@@ -3967,7 +3935,7 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 	return &resp, nil
 }
 
-type setIPRequest struct {
+type SetIPRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
@@ -3981,7 +3949,7 @@ type setIPRequest struct {
 	Organization string `json:"organization"`
 }
 
-func (s *API) setIP(req *setIPRequest, opts ...scw.RequestOption) (*setIPResponse, error) {
+func (s *API) setIP(req *SetIPRequest, opts ...scw.RequestOption) (*setIPResponse, error) {
 	var err error
 
 	if req.Organization == "" {
@@ -4232,11 +4200,6 @@ type GetDashboardRequest struct {
 
 func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) (*GetDashboardResponse, error) {
 	var err error
-
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if (req.Organization == nil || *req.Organization == "") && exist {
-		req.Organization = &defaultOrganization
-	}
 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()

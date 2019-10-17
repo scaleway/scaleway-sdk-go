@@ -270,11 +270,6 @@ type ListHumansRequest struct {
 func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*ListHumansResponse, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if (req.OrganizationID == nil || *req.OrganizationID == "") && exist {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
