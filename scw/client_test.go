@@ -39,30 +39,6 @@ func TestNewClientWithDefaults(t *testing.T) {
 
 }
 
-type mockConfig struct{}
-
-func (c *mockConfig) GetAccessKey() (string, bool) {
-	return testAccessKey, true
-}
-func (c *mockConfig) GetSecretKey() (string, bool) {
-	return testSecretKey, true
-}
-func (c *mockConfig) GetAPIURL() (string, bool) {
-	return testAPIURL, true
-}
-func (c *mockConfig) GetInsecure() (bool, bool) {
-	return testInsecure, true
-}
-func (c *mockConfig) GetDefaultOrganizationID() (string, bool) {
-	return testDefaultOrganizationID, true
-}
-func (c *mockConfig) GetDefaultRegion() (Region, bool) {
-	return testDefaultRegion, true
-}
-func (c *mockConfig) GetDefaultZone() (Zone, bool) {
-	return testDefaultZone, true
-}
-
 func TestNewClientWithOptions(t *testing.T) {
 
 	t.Run("Basic", func(t *testing.T) {
