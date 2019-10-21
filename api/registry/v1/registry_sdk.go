@@ -310,6 +310,7 @@ func (enum *TagStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Image image
 type Image struct {
 	// ID the unique ID of the Image
 	ID string `json:"id"`
@@ -337,6 +338,7 @@ type Image struct {
 	Tags []string `json:"tags"`
 }
 
+// ListImagesResponse list images response
 type ListImagesResponse struct {
 	// Images paginated list of images matching filters
 	Images []*Image `json:"images"`
@@ -344,6 +346,7 @@ type ListImagesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListNamespacesResponse list namespaces response
 type ListNamespacesResponse struct {
 	// Namespaces paginated list of namespaces matching filters
 	Namespaces []*Namespace `json:"namespaces"`
@@ -351,6 +354,7 @@ type ListNamespacesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListTagsResponse list tags response
 type ListTagsResponse struct {
 	// Tags paginated list of tags matching filters
 	Tags []*Tag `json:"tags"`
@@ -358,6 +362,7 @@ type ListTagsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// Namespace namespace
 type Namespace struct {
 	// ID the unique ID of the namespace
 	ID string `json:"id"`
@@ -389,6 +394,7 @@ type Namespace struct {
 	Region scw.Region `json:"region"`
 }
 
+// Tag tag
 type Tag struct {
 	// ID the unique ID of the tag
 	ID string `json:"id"`
