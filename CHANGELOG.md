@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.0.0-beta.4 (2019-10-25)
+
+### Breaking Changes
+
+* use uint32 for page_size ([#210](https://github.com/scaleway/scaleway-sdk-go/pull/210))
+
+### Features
+
+* update generated apis ([#218](https://github.com/scaleway/scaleway-sdk-go/pull/218))
+* update generated apis ([#216](https://github.com/scaleway/scaleway-sdk-go/pull/216))
+* **lb**: add WaitForLb method ([#212](https://github.com/scaleway/scaleway-sdk-go/pull/212))
+* update generated apis ([#213](https://github.com/scaleway/scaleway-sdk-go/pull/213))
+* update generated apis ([#208](https://github.com/scaleway/scaleway-sdk-go/pull/208))
+* **marketplace**: uppercase commercial type in GetLocalImageIDByLabel ([#205](https://github.com/scaleway/scaleway-sdk-go/pull/205))
+* add kubeconfig helpers for k8s ([#204](https://github.com/scaleway/scaleway-sdk-go/pull/204))
+* update generated apis ([#203](https://github.com/scaleway/scaleway-sdk-go/pull/203))
+* add k8s WaitForCluster method ([#202](https://github.com/scaleway/scaleway-sdk-go/pull/202))
+* add scw.IPPtr ([#200](https://github.com/scaleway/scaleway-sdk-go/pull/200))
+* add k8s v1beta3 ([#198](https://github.com/scaleway/scaleway-sdk-go/pull/198))
+
+### Fixes
+
+* **instance**: update generated apis ([#219](https://github.com/scaleway/scaleway-sdk-go/pull/219))
+* **instance**: ListImage total count ([#209](https://github.com/scaleway/scaleway-sdk-go/pull/209))
+* cleanup unused code ([#217](https://github.com/scaleway/scaleway-sdk-go/pull/217))
+* **scw.File**: add unmarshal ([#201](https://github.com/scaleway/scaleway-sdk-go/pull/201))
+
+### Documentation
+
+* fix examples ([#215](https://github.com/scaleway/scaleway-sdk-go/pull/215))
+
 ## v1.0.0-beta.3 (2019-10-01)
 
 ### Features
