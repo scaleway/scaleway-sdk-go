@@ -1,6 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
+// Package k8s provides methods and message types of the k8s v1beta3 API.
 package k8s
 
 import (
@@ -408,6 +409,8 @@ type CreateClusterRequestDefaultPoolConfig struct {
 	ContainerRuntime *string `json:"container_runtime"`
 
 	Autohealing bool `json:"autohealing"`
+
+	Tags []string `json:"tags"`
 }
 
 // ListClusterAvailableVersionsResponse list cluster available versions response
@@ -479,6 +482,8 @@ type Pool struct {
 	Region scw.Region `json:"region"`
 	// Name display pool name
 	Name string `json:"name"`
+	// Tags displat pool tags
+	Tags []string `json:"tags"`
 	// Status
 	//
 	// Default value: unknown
@@ -1096,6 +1101,8 @@ type CreatePoolRequest struct {
 	ContainerRuntime *string `json:"container_runtime"`
 
 	Autohealing bool `json:"autohealing"`
+
+	Tags []string `json:"tags"`
 }
 
 // CreatePool create a new pool
@@ -1238,6 +1245,8 @@ type UpdatePoolRequest struct {
 	MaxSize *uint32 `json:"max_size"`
 
 	Autohealing *bool `json:"autohealing"`
+
+	Tags *[]string `json:"tags"`
 }
 
 // UpdatePool update an existing cluster pool

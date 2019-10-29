@@ -1,6 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
+// Package instance provides methods and message types of the instance v1 API.
 package instance
 
 import (
@@ -77,6 +78,40 @@ func (enum *Arch) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = Arch(Arch(tmp).String())
+	return nil
+}
+
+type BootType string
+
+const (
+	// BootTypeLocal is [insert doc].
+	BootTypeLocal = BootType("local")
+	// BootTypeBootscript is [insert doc].
+	BootTypeBootscript = BootType("bootscript")
+	// BootTypeRescue is [insert doc].
+	BootTypeRescue = BootType("rescue")
+)
+
+func (enum BootType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "local"
+	}
+	return string(enum)
+}
+
+func (enum BootType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BootType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BootType(BootType(tmp).String())
 	return nil
 }
 
@@ -347,36 +382,6 @@ func (enum *ServerAction) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ServerAction(ServerAction(tmp).String())
-	return nil
-}
-
-type ServerBootType string
-
-const (
-	// ServerBootTypeLocal is [insert doc].
-	ServerBootTypeLocal = ServerBootType("local")
-)
-
-func (enum ServerBootType) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "local"
-	}
-	return string(enum)
-}
-
-func (enum ServerBootType) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ServerBootType) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ServerBootType(ServerBootType(tmp).String())
 	return nil
 }
 
@@ -983,7 +988,7 @@ type Server struct {
 	// BootType display the server boot type
 	//
 	// Default value: local
-	BootType ServerBootType `json:"boot_type"`
+	BootType BootType `json:"boot_type"`
 	// Volumes display the server volumes
 	Volumes map[string]*Volume `json:"volumes"`
 	// SecurityGroup display the server security group
@@ -1454,15 +1459,21 @@ type CreateServerRequest struct {
 	// EnableIPv6 true if IPv6 is enabled on the server
 	EnableIPv6 bool `json:"enable_ipv6,omitempty"`
 	// PublicIP the public IPv4 attached to the server
-	PublicIP string `json:"public_ip,omitempty"`
+	PublicIP *string `json:"public_ip,omitempty"`
+	// BootType the boot type to use
+	//
+	// Default value: local
+	BootType BootType `json:"boot_type"`
+	// Bootscript the bootscript ID to use when `boot_type` is set to `bootscript`.
+	Bootscript *string `json:"bootscript,omitempty"`
 	// Organization the server organization ID
 	Organization string `json:"organization,omitempty"`
 	// Tags the server tags
 	Tags []string `json:"tags,omitempty"`
 	// SecurityGroup the security group ID
-	SecurityGroup string `json:"security_group,omitempty"`
+	SecurityGroup *string `json:"security_group,omitempty"`
 	// PlacementGroup placement group ID if server must be part of a placement group
-	PlacementGroup string `json:"placement_group,omitempty"`
+	PlacementGroup *string `json:"placement_group,omitempty"`
 }
 
 // createServer create server
@@ -1630,7 +1641,7 @@ type setServerRequest struct {
 	// BootType display the server boot type
 	//
 	// Default value: local
-	BootType ServerBootType `json:"boot_type"`
+	BootType BootType `json:"boot_type"`
 	// Volumes display the server volumes
 	Volumes map[string]*Volume `json:"volumes"`
 	// SecurityGroup display the server security group
@@ -1694,12 +1705,16 @@ type UpdateServerRequest struct {
 	ServerID string `json:"-"`
 
 	Name *string `json:"name,omitempty"`
+	// BootType
+	//
+	// Default value: local
+	BootType BootType `json:"boot_type"`
 
 	Tags *[]string `json:"tags,omitempty"`
 
 	Volumes *map[string]*VolumeTemplate `json:"volumes,omitempty"`
 
-	Bootscript string `json:"bootscript,omitempty"`
+	Bootscript *string `json:"bootscript,omitempty"`
 
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
@@ -3914,13 +3929,13 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 
 type GetIPRequest struct {
 	Zone scw.Zone `json:"-"`
-
-	IPID string `json:"-"`
+	// IP the IP ID or address to get
+	IP string `json:"-"`
 }
 
 // GetIP get IP
 //
-// Get details of an IP with the given id
+// Get details of an IP with the given ID or address
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPResponse, error) {
 	var err error
 
@@ -3933,13 +3948,13 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.IPID) == "" {
-		return nil, errors.New("field IPID cannot be empty in request")
+	if fmt.Sprint(req.IP) == "" {
+		return nil, errors.New("field IP cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IP) + "",
 		Headers: http.Header{},
 	}
 

@@ -27,7 +27,7 @@ func TestServerUpdate(t *testing.T) {
 		commercialType    = "START1-S"
 		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
 		enableIPv6        = true
-		bootType          = ServerBootTypeLocal
+		bootType          = BootTypeLocal
 		tags              = []string{"foo", "bar"}
 		organization      = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
 	)
