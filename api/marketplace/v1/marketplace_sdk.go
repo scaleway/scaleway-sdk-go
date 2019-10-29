@@ -1,6 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
+// Package marketplace provides methods and message types of the marketplace v1 API.
 package marketplace
 
 import (
