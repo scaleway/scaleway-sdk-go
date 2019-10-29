@@ -1103,7 +1103,7 @@ type ServerTypeVolumeConstraintsByType struct {
 }
 
 type SetPlacementGroupResponse struct {
-	PlacementGroupID string `json:"placement_group_id"`
+	PlacementGroup *PlacementGroup `json:"placement_group"`
 }
 
 type SetPlacementGroupServersResponse struct {
@@ -1167,7 +1167,7 @@ type UpdateIPResponse struct {
 }
 
 type UpdatePlacementGroupResponse struct {
-	PlacementGroupID string `json:"placement_group_id"`
+	PlacementGroup *PlacementGroup `json:"placement_group"`
 }
 
 type UpdatePlacementGroupServersResponse struct {
@@ -3421,6 +3421,10 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 		req.Zone = defaultZone
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("pg")
+	}
+
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
@@ -3686,6 +3690,8 @@ type SetPlacementGroupServersRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	PlacementGroupID string `json:"-"`
+
+	Servers []string `json:"servers"`
 }
 
 // SetPlacementGroupServers set placement group servers
@@ -3731,6 +3737,8 @@ type UpdatePlacementGroupServersRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	PlacementGroupID string `json:"-"`
+
+	Servers []string `json:"servers,omitempty"`
 }
 
 // UpdatePlacementGroupServers update placement group servers
@@ -3770,44 +3778,6 @@ func (s *API) UpdatePlacementGroupServers(req *UpdatePlacementGroupServersReques
 		return nil, err
 	}
 	return &resp, nil
-}
-
-type DeletePlacementGroupServersRequest struct {
-	Zone scw.Zone `json:"-"`
-
-	PlacementGroupID string `json:"-"`
-}
-
-// DeletePlacementGroupServers delete placement group servers
-//
-// Delete all servers from the given placement group
-func (s *API) DeletePlacementGroupServers(req *DeletePlacementGroupServersRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PlacementGroupID) == "" {
-		return errors.New("field PlacementGroupID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/placement_groups/" + fmt.Sprint(req.PlacementGroupID) + "/servers",
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 type ListIPsRequest struct {
