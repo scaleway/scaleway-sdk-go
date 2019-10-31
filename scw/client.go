@@ -81,19 +81,18 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}, nil
 }
 
-// GetAuthToken return the auth of the client.
+// GetAuthToken returns the auth of the client.
 // This value can be set in the client option WithAuth().
 // Be aware this value can be empty.
 func (c *Client) GetAuthToken() (token *auth.Token, exists bool) {
-	if c.auth != nil {
-		if authToken, isAuthToken := c.auth.(*auth.Token); isAuthToken {
-			return authToken, true
-		}
+	switch v := c.auth.(type) {
+	case *auth.Token:
+		return v, true
 	}
 	return nil, false
 }
 
-// GetDefaultOrganizationID return the default organization ID
+// GetDefaultOrganizationID returns the default organization ID
 // of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
 func (c *Client) GetDefaultOrganizationID() (organizationID string, exists bool) {
@@ -103,7 +102,7 @@ func (c *Client) GetDefaultOrganizationID() (organizationID string, exists bool)
 	return "", false
 }
 
-// GetDefaultRegion return the default region of the client.
+// GetDefaultRegion returns the default region of the client.
 // This value can be set in the client option
 // WithDefaultRegion(). Be aware this value can be empty.
 func (c *Client) GetDefaultRegion() (region Region, exists bool) {
@@ -113,7 +112,7 @@ func (c *Client) GetDefaultRegion() (region Region, exists bool) {
 	return Region(""), false
 }
 
-// GetDefaultZone return the default zone of the client.
+// GetDefaultZone returns the default zone of the client.
 // This value can be set in the client option
 // WithDefaultZone(). Be aware this value can be empty.
 func (c *Client) GetDefaultZone() (zone Zone, exists bool) {
@@ -123,7 +122,7 @@ func (c *Client) GetDefaultZone() (zone Zone, exists bool) {
 	return Zone(""), false
 }
 
-// GetDefaultPageSize return the default page size of the client.
+// GetDefaultPageSize returns the default page size of the client.
 // This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
 func (c *Client) GetDefaultPageSize() (pageSize uint32, exists bool) {
