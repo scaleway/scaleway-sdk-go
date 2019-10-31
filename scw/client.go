@@ -81,10 +81,22 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}, nil
 }
 
+// GetAuthToken return the auth of the client.
+// This value can be set in the client option WithAuth().
+// Be aware this value can be empty.
+func (c *Client) GetAuthToken() (token *auth.Token, exists bool) {
+	if c.auth != nil {
+		if authToken, isAuthToken := c.auth.(*auth.Token); isAuthToken {
+			return authToken, true
+		}
+	}
+	return nil, false
+}
+
 // GetDefaultOrganizationID return the default organization ID
 // of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
-func (c *Client) GetDefaultOrganizationID() (string, bool) {
+func (c *Client) GetDefaultOrganizationID() (organizationID string, exists bool) {
 	if c.defaultOrganizationID != nil {
 		return *c.defaultOrganizationID, true
 	}
@@ -94,7 +106,7 @@ func (c *Client) GetDefaultOrganizationID() (string, bool) {
 // GetDefaultRegion return the default region of the client.
 // This value can be set in the client option
 // WithDefaultRegion(). Be aware this value can be empty.
-func (c *Client) GetDefaultRegion() (Region, bool) {
+func (c *Client) GetDefaultRegion() (region Region, exists bool) {
 	if c.defaultRegion != nil {
 		return *c.defaultRegion, true
 	}
@@ -104,7 +116,7 @@ func (c *Client) GetDefaultRegion() (Region, bool) {
 // GetDefaultZone return the default zone of the client.
 // This value can be set in the client option
 // WithDefaultZone(). Be aware this value can be empty.
-func (c *Client) GetDefaultZone() (Zone, bool) {
+func (c *Client) GetDefaultZone() (zone Zone, exists bool) {
 	if c.defaultZone != nil {
 		return *c.defaultZone, true
 	}
@@ -114,7 +126,7 @@ func (c *Client) GetDefaultZone() (Zone, bool) {
 // GetDefaultPageSize return the default page size of the client.
 // This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
-func (c *Client) GetDefaultPageSize() (uint32, bool) {
+func (c *Client) GetDefaultPageSize() (pageSize uint32, exists bool) {
 	if c.defaultPageSize != nil {
 		return *c.defaultPageSize, true
 	}
