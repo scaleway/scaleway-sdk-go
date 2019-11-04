@@ -81,17 +81,6 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}, nil
 }
 
-// GetAuthToken returns the auth of the client.
-// This value can be set in the client option WithAuth().
-// Be aware this value can be empty.
-func (c *Client) GetAuthToken() (token *auth.Token, exists bool) {
-	switch v := c.auth.(type) {
-	case *auth.Token:
-		return v, true
-	}
-	return nil, false
-}
-
 // GetDefaultOrganizationID returns the default organization ID
 // of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
