@@ -211,6 +211,8 @@ type ListHumansResponse struct {
 
 type RegisterResponse struct {
 	SecretKey string `json:"secret_key"`
+
+	AccessKey string `json:"access_key"`
 }
 
 // Service API

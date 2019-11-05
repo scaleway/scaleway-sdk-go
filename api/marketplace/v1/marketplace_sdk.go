@@ -160,6 +160,7 @@ type ListImagesRequest struct {
 	Page *int32 `json:"-"`
 }
 
+// ListImages list marketplace images
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
@@ -211,6 +212,7 @@ type GetImageRequest struct {
 	ImageID string `json:"-"`
 }
 
+// GetImage get a specific marketplace image
 func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
