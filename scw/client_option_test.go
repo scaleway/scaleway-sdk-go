@@ -15,8 +15,8 @@ const (
 
 var (
 	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultRegion    = RegionNlAms
-	defaultZone      = ZoneNlAms1
+	defaultRegion         = RegionNlAms
+	defaultZone           = ZoneNlAms1
 )
 
 func TestClientOptions(t *testing.T) {
@@ -37,11 +37,27 @@ func TestClientOptions(t *testing.T) {
 			},
 		},
 		{
-			name: "Should throw an credential error",
+			name: "Should throw a no credential option provided",
 			clientOption: func(s *settings) {
 				s.apiURL = apiURL
 			},
 			errStr: "scaleway-sdk-go: no credential option provided",
+		},
+		{
+			name: "Should throw a access key error",
+			clientOption: func(s *settings) {
+				s.apiURL = apiURL
+				s.token = auth.NewToken("", testSecretKey)
+			},
+			errStr: "scaleway-sdk-go: access key cannot be empty",
+		},
+		{
+			name: "Should throw a secret key error",
+			clientOption: func(s *settings) {
+				s.apiURL = apiURL
+				s.token = auth.NewToken(testSecretKey, "")
+			},
+			errStr: "scaleway-sdk-go: secret key cannot be empty",
 		},
 		{
 			name: "Should throw an url error",
@@ -107,56 +123,56 @@ func TestCombinedClientOptions(t *testing.T) {
 		env   map[string]string
 		files map[string]string
 
-		expectedError            string
-		expectedAccessKey        string
-		expectedSecretKey        string
-		expectedAPIURL           string
+		expectedError                 string
+		expectedAccessKey             string
+		expectedSecretKey             string
+		expectedAPIURL                string
 		expectedDefaultOrganizationID *string
-		expectedDefaultRegion    *Region
-		expectedDefaultZone      *Zone
+		expectedDefaultRegion         *Region
+		expectedDefaultZone           *Zone
 	}{
 		{
 			name: "Complete config file with env variables",
 			env: map[string]string{
-				"HOME":                 "{HOME}",
-				scwAccessKeyEnv:        v2ValidAccessKey2,
-				scwSecretKeyEnv:        v2ValidSecretKey2,
-				scwAPIURLEnv:           v2ValidAPIURL2,
+				"HOME":                      "{HOME}",
+				scwAccessKeyEnv:             v2ValidAccessKey2,
+				scwSecretKeyEnv:             v2ValidSecretKey2,
+				scwAPIURLEnv:                v2ValidAPIURL2,
 				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID2,
-				scwDefaultRegionEnv:    v2ValidDefaultRegion2,
-				scwDefaultZoneEnv:      v2ValidDefaultZone2,
+				scwDefaultRegionEnv:         v2ValidDefaultRegion2,
+				scwDefaultZoneEnv:           v2ValidDefaultZone2,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
 			},
-			expectedAccessKey:        v2ValidAccessKey2,
-			expectedSecretKey:        v2ValidSecretKey2,
-			expectedAPIURL:           v2ValidAPIURL2,
+			expectedAccessKey:             v2ValidAccessKey2,
+			expectedSecretKey:             v2ValidSecretKey2,
+			expectedAPIURL:                v2ValidAPIURL2,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion2)),
-			expectedDefaultZone:      z(Zone(v2ValidDefaultZone2)),
+			expectedDefaultRegion:         r(Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:           z(Zone(v2ValidDefaultZone2)),
 		},
 		{
 			name: "Complete config with active profile env variable and all env variables",
 			env: map[string]string{
-				"HOME":                 "{HOME}",
-				scwActiveProfileEnv:    v2ValidProfile,
-				scwAccessKeyEnv:        v2ValidAccessKey,
-				scwSecretKeyEnv:        v2ValidSecretKey,
-				scwAPIURLEnv:           v2ValidAPIURL,
+				"HOME":                      "{HOME}",
+				scwActiveProfileEnv:         v2ValidProfile,
+				scwAccessKeyEnv:             v2ValidAccessKey,
+				scwSecretKeyEnv:             v2ValidSecretKey,
+				scwAPIURLEnv:                v2ValidAPIURL,
 				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				scwDefaultRegionEnv:    v2ValidDefaultRegion,
-				scwDefaultZoneEnv:      v2ValidDefaultZone,
+				scwDefaultRegionEnv:         v2ValidDefaultRegion,
+				scwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
 			},
-			expectedAccessKey:        v2ValidAccessKey,
-			expectedSecretKey:        v2ValidSecretKey,
-			expectedAPIURL:           v2ValidAPIURL,
+			expectedAccessKey:             v2ValidAccessKey,
+			expectedSecretKey:             v2ValidSecretKey,
+			expectedAPIURL:                v2ValidAPIURL,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    r(Region(v2ValidDefaultRegion)),
-			expectedDefaultZone:      z(Zone(v2ValidDefaultZone)),
+			expectedDefaultRegion:         r(Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:           z(Zone(v2ValidDefaultZone)),
 		},
 	}
 

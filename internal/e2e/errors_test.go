@@ -9,7 +9,7 @@ import (
 )
 
 func TestStandardErrors(t *testing.T) {
-	client, _, err := newE2EClient(true)
+	client, _, _, err := newE2EClient(true)
 	testhelpers.AssertNoError(t, err)
 
 	t.Run("not found", func(t *testing.T) {
