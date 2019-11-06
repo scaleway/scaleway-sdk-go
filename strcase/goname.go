@@ -17,8 +17,8 @@ func ToPrivateGoName(s string) string {
 
 // toGoName returns a different name if it should be different.
 func toGoName(name string) (should string) {
-	name = strings.ReplaceAll(name, " ", "_")
-	name = strings.ReplaceAll(name, "-", "_")
+	name = strings.Replace(name, " ", "_", -1)
+	name = strings.Replace(name, "-", "_", -1)
 
 	// Fast path for simple cases: "_" and all lowercase.
 	if name == "_" {
