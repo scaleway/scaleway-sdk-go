@@ -5,12 +5,12 @@ import (
 	"unicode"
 )
 
-// ToPrivateGoName returns the Go public name of the given string
+// ToPrivateGoName returns the Go public name of the given string.
 func ToPublicGoName(s string) string {
 	return toGoName(TitleFirstWord(s))
 }
 
-// ToPrivateGoName returns the Go private name of the given string
+// ToPrivateGoName returns the Go private name of the given string.
 func ToPrivateGoName(s string) string {
 	return toGoName(lowerCaseFirstLetterOrAcronyms(s))
 }

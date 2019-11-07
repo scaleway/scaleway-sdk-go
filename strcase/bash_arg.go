@@ -2,7 +2,7 @@ package strcase
 
 import "strings"
 
-// ToBashArg returns the Bash public name of the given string
+// ToBashArg returns the Bash public name of the given string.
 func ToBashArg(s string) string {
 	s = ToPublicGoName(s)
 	for _, initialism := range customInitialisms {
