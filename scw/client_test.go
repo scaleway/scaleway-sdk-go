@@ -27,7 +27,6 @@ const (
 func TestNewClientWithDefaults(t *testing.T) {
 
 	options := []ClientOption{
-		WithoutAuth(),
 		WithInsecure(),
 	}
 
