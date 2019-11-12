@@ -1526,7 +1526,7 @@ type DeleteServerRequest struct {
 
 // DeleteServer delete server
 //
-// Delete a server with the given id
+// Delete a server with the given ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1708,7 +1708,7 @@ type UpdateServerRequest struct {
 	// BootType
 	//
 	// Default value: local
-	BootType BootType `json:"boot_type"`
+	BootType *BootType `json:"boot_type"`
 
 	Tags *[]string `json:"tags,omitempty"`
 
@@ -2024,7 +2024,7 @@ type GetImageRequest struct {
 
 // GetImage get image
 //
-// Get details of an image with the given id
+// Get details of an image with the given ID.
 func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
 	var err error
 
@@ -2088,6 +2088,10 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("img")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -2198,7 +2202,7 @@ type DeleteImageRequest struct {
 
 // DeleteImage delete image
 //
-// Delete the image with the given id
+// Delete the image with the given ID.
 func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2302,11 +2306,11 @@ func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkEr
 type CreateSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
 
+	Name string `json:"name,omitempty"`
+
 	VolumeID string `json:"volume_id,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
-
-	Name string `json:"name,omitempty"`
 }
 
 // CreateSnapshot create snapshot
@@ -2321,6 +2325,10 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("snp")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -2355,7 +2363,7 @@ type GetSnapshotRequest struct {
 
 // GetSnapshot get snapshot
 //
-// Get details of a snapshot with the given id
+// Get details of a snapshot with the given ID.
 func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*GetSnapshotResponse, error) {
 	var err error
 
@@ -2465,7 +2473,7 @@ type DeleteSnapshotRequest struct {
 
 // DeleteSnapshot delete snapshot
 //
-// Delete the snapshot with the given id
+// Delete the snapshot with the given ID.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2652,7 +2660,7 @@ type GetVolumeRequest struct {
 
 // GetVolume get volume
 //
-// Get details of a volume with the given id
+// Get details of a volume with the given ID.
 func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetVolumeResponse, error) {
 	var err error
 
@@ -2692,7 +2700,7 @@ type DeleteVolumeRequest struct {
 
 // DeleteVolume delete volume
 //
-// Delete the volume with the given id
+// Delete the volume with the given ID.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2871,7 +2879,7 @@ type GetSecurityGroupRequest struct {
 
 // GetSecurityGroup get security group
 //
-// Get the details of a Security Group with the given id
+// Get the details of a Security Group with the given ID.
 func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.RequestOption) (*GetSecurityGroupResponse, error) {
 	var err error
 
@@ -3161,7 +3169,7 @@ type DeleteSecurityGroupRuleRequest struct {
 
 // DeleteSecurityGroupRule delete rule
 //
-// Delete a security group rule with the given id
+// Delete a security group rule with the given ID.
 func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3205,7 +3213,7 @@ type GetSecurityGroupRuleRequest struct {
 
 // GetSecurityGroupRule get rule
 //
-// Get details of a security group rule with the given id
+// Get details of a security group rule with the given ID.
 func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw.RequestOption) (*GetSecurityGroupRuleResponse, error) {
 	var err error
 
@@ -4047,7 +4055,7 @@ type DeleteIPRequest struct {
 
 // DeleteIP delete IP
 //
-// Delete the IP with the given id
+// Delete the IP with the given ID.
 func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4162,7 +4170,7 @@ type GetBootscriptRequest struct {
 
 // GetBootscript get bootscripts
 //
-// Get details of a bootscript with the given id
+// Get details of a bootscript with the given ID.
 func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption) (*GetBootscriptResponse, error) {
 	var err error
 
