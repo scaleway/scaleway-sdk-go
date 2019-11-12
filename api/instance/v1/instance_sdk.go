@@ -1708,7 +1708,7 @@ type UpdateServerRequest struct {
 	// BootType
 	//
 	// Default value: local
-	BootType *BootType `json:"boot_type"`
+	BootType *BootType `json:"boot_type,omitempty"`
 
 	Tags *[]string `json:"tags,omitempty"`
 
