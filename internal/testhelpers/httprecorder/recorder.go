@@ -85,7 +85,6 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	} else {
 		// No need for auth when using cassette
 		client, err = scw.NewClient(
-			scw.WithoutAuth(),
 			scw.WithHTTPClient(httpClient),
 		)
 		if err != nil {

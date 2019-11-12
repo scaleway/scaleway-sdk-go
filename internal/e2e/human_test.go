@@ -10,7 +10,6 @@ import (
 
 func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
 	client, err := scw.NewClient(
-		scw.WithoutAuth(),
 		scw.WithDefaultRegion(scw.RegionFrPar),
 		scw.WithUserAgent("sdk-e2e-test"),
 	)
