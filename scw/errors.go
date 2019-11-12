@@ -259,7 +259,6 @@ func (e *OutOfStockError) GetRawBody() json.RawMessage {
 type clientCredentialErrorType string
 
 const (
-	clientCredentialError_NoOption       = clientCredentialErrorType("no credential option provided")
 	clientCredentialError_EmptyAccessKey = clientCredentialErrorType("access key cannot be empty")
 	clientCredentialError_EmptySecreyKey = clientCredentialErrorType("secret key cannot be empty")
 )
