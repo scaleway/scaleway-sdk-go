@@ -359,6 +359,10 @@ type Cluster struct {
 	CurrentMemCount uint64 `json:"current_mem_count"`
 
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
+	// DashboardEnabled display if the Kubernetes dashboard is enabled
+	DashboardEnabled bool `json:"dashboard_enabled"`
+	// Ingress display which ingress is deployed
+	Ingress string `json:"ingress"`
 }
 
 type ClusterAutoscalerConfig struct {
@@ -750,6 +754,10 @@ type UpdateClusterRequest struct {
 	Tags *[]string `json:"tags"`
 
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
+	// EnableDashboard enable Kubernetes dashboard
+	EnableDashboard *bool `json:"enable_dashboard"`
+	// Ingress select a Kubernetes Ingress Controller
+	Ingress *string `json:"ingress"`
 }
 
 // UpdateCluster update an existing cluster
