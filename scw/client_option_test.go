@@ -37,13 +37,6 @@ func TestClientOptions(t *testing.T) {
 			},
 		},
 		{
-			name: "Should throw a no credential option provided",
-			clientOption: func(s *settings) {
-				s.apiURL = apiURL
-			},
-			errStr: "scaleway-sdk-go: no credential option provided",
-		},
-		{
 			name: "Should throw a access key error",
 			clientOption: func(s *settings) {
 				s.apiURL = apiURL
