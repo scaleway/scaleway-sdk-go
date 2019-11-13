@@ -89,10 +89,10 @@ func TestSaveConfig(t *testing.T) {
 			},
 			config: &Config{
 				Profile: Profile{
-					AccessKey:        s(v2ValidAccessKey),
-					SecretKey:        s(v2ValidSecretKey),
+					AccessKey:             s(v2ValidAccessKey),
+					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-					DefaultRegion:    s(v2ValidDefaultRegion),
+					DefaultRegion:         s(v2ValidDefaultRegion),
 				},
 			},
 			expectedFiles: map[string]string{
@@ -106,10 +106,10 @@ func TestSaveConfig(t *testing.T) {
 			},
 			config: &Config{
 				Profile: Profile{
-					AccessKey:        s(v2ValidAccessKey),
-					SecretKey:        s(v2ValidSecretKey),
+					AccessKey:             s(v2ValidAccessKey),
+					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-					DefaultRegion:    s(v2ValidDefaultRegion),
+					DefaultRegion:         s(v2ValidDefaultRegion),
 				},
 			},
 			expectedFiles: map[string]string{
@@ -145,13 +145,13 @@ func TestSaveConfig(t *testing.T) {
 			funcUpdateConfig: func(c *Config) {
 				*c = *MustLoadConfig()
 				c.Profiles = map[string]*Profile{v2ValidProfile: {
-					AccessKey:        s(v2ValidAccessKey2),
-					SecretKey:        s(v2ValidSecretKey2),
-					APIURL:           s(v2ValidAPIURL2),
-					Insecure:         b(true),
+					AccessKey:             s(v2ValidAccessKey2),
+					SecretKey:             s(v2ValidSecretKey2),
+					APIURL:                s(v2ValidAPIURL2),
+					Insecure:              b(true),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-					DefaultRegion:    s(v2ValidDefaultRegion2),
-					DefaultZone:      s(v2ValidDefaultZone2),
+					DefaultRegion:         s(v2ValidDefaultRegion2),
+					DefaultZone:           s(v2ValidDefaultZone2),
 				}}
 			},
 			expectedFiles: map[string]string{
@@ -198,14 +198,14 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		files      map[string]string
 		isMigrated bool
 
-		expectedError            string
-		expectedAccessKey        *string
-		expectedSecretKey        *string
-		expectedAPIURL           *string
-		expectedInsecure         *bool
+		expectedError                 string
+		expectedAccessKey             *string
+		expectedSecretKey             *string
+		expectedAPIURL                *string
+		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
-		expectedDefaultRegion    *string
-		expectedDefaultZone      *string
+		expectedDefaultRegion         *string
+		expectedDefaultZone           *string
 	}{
 		// no env variables
 		{
@@ -236,10 +236,10 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				"valid3/test.conf": v2SimpleValidConfigFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
 			name: "Simple config with valid V2", // default config path
@@ -249,10 +249,10 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
 			name: "Simple config with valid V1",
@@ -262,8 +262,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				".scwrc": v1ValidConfigFile,
 			},
-			isMigrated:               true,
-			expectedSecretKey:        s(v1ValidToken),
+			isMigrated:                    true,
+			expectedSecretKey:             s(v1ValidToken),
 			expectedDefaultOrganizationID: s(v1ValidOrganizationID),
 		},
 		{
@@ -275,10 +275,10 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 				".scwrc":                  v1ValidConfigFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
 			name: "Complete config",
@@ -288,13 +288,13 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedAPIURL:           s(v2ValidAPIURL),
-			expectedInsecure:         b(false),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
-			expectedDefaultZone:      s(v2ValidDefaultZone),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
 		{
 			name: "Complete config with active profile",
@@ -304,13 +304,13 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigWithActiveProfileFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey2),
-			expectedSecretKey:        s(v2ValidSecretKey2),
-			expectedAPIURL:           s(v2ValidAPIURL2),
-			expectedInsecure:         b(true),
+			expectedAccessKey:             s(v2ValidAccessKey2),
+			expectedSecretKey:             s(v2ValidSecretKey2),
+			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
-			expectedDefaultZone:      s(v2ValidDefaultZone2),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
+			expectedDefaultZone:           s(v2ValidDefaultZone2),
 		},
 		{
 			name: "Complete config with active profile env variable",
@@ -321,13 +321,13 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey2),
-			expectedSecretKey:        s(v2ValidSecretKey2),
-			expectedAPIURL:           s(v2ValidAPIURL2),
-			expectedInsecure:         b(true),
+			expectedAccessKey:             s(v2ValidAccessKey2),
+			expectedSecretKey:             s(v2ValidSecretKey2),
+			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
-			expectedDefaultZone:      s(v2ValidDefaultZone2),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
+			expectedDefaultZone:           s(v2ValidDefaultZone2),
 		},
 
 		// Valid V1 is not allowed
@@ -404,29 +404,29 @@ const emptyFile = ""
 
 // v2 config
 var (
-	v2ValidAccessKey2        = "ACCESS_KEY2"
-	v2ValidSecretKey2        = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
-	v2ValidAPIURL2           = "api-fr-par.scaleway.com"
-	v2ValidInsecure2         = "true"
+	v2ValidAccessKey2             = "ACCESS_KEY2"
+	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
+	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
+	v2ValidInsecure2              = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
-	v2ValidDefaultRegion2    = string(RegionFrPar)
-	v2ValidDefaultZone2      = string(ZoneFrPar2)
+	v2ValidDefaultRegion2         = string(RegionFrPar)
+	v2ValidDefaultZone2           = string(ZoneFrPar2)
 
-	v2ValidAccessKey        = "ACCESS_KEY"
-	v2ValidSecretKey        = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
-	v2ValidAPIURL           = "api.scaleway.com"
-	v2ValidInsecure         = "false"
+	v2ValidAccessKey             = "ACCESS_KEY"
+	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
+	v2ValidAPIURL                = "api.scaleway.com"
+	v2ValidInsecure              = "false"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	v2ValidDefaultRegion    = string(RegionNlAms)
-	v2ValidDefaultZone      = string(ZoneNlAms1)
-	v2ValidProfile          = "flantier"
+	v2ValidDefaultRegion         = string(RegionNlAms)
+	v2ValidDefaultZone           = string(ZoneNlAms1)
+	v2ValidProfile               = "flantier"
 
 	v2SimpleValidConfig = &Config{
 		Profile: Profile{
-			AccessKey:        &v2ValidAccessKey,
-			SecretKey:        &v2ValidSecretKey,
+			AccessKey:             &v2ValidAccessKey,
+			SecretKey:             &v2ValidSecretKey,
 			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
-			DefaultRegion:    &v2ValidDefaultRegion,
+			DefaultRegion:         &v2ValidDefaultRegion,
 		},
 	}
 	v2PartialValidConfigFile = `
@@ -517,4 +517,29 @@ secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 `, p.String())
 	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
 
+}
+
+func TestMergeProfiles(t *testing.T) {
+	p1 := &Profile{
+		AccessKey: StringPtr("1"),
+		SecretKey: StringPtr("1"),
+	}
+	p2 := &Profile{
+		AccessKey: StringPtr("2"),
+		Insecure:  BoolPtr(true),
+	}
+	p3 := &Profile{
+		Insecure:    BoolPtr(false),
+		DefaultZone: StringPtr(string(ZoneFrPar1)),
+	}
+
+	act := MergeProfiles(p1, p2, p3)
+	exp := &Profile{
+		AccessKey:   StringPtr("2"),
+		SecretKey:   StringPtr("1"),
+		Insecure:    BoolPtr(false),
+		DefaultZone: StringPtr(string(ZoneFrPar1)),
+	}
+
+	testhelpers.Equals(t, exp, act)
 }
