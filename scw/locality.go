@@ -85,7 +85,7 @@ func (region Region) GetZones() []Zone {
 	}
 }
 
-// ParseZone parse a string value into a Zone object
+// ParseZone parses a string value into a Zone and returns an error if it has a bad format.
 func ParseZone(zone string) (Zone, error) {
 	switch zone {
 	case "par1":
@@ -132,7 +132,7 @@ func (zone *Zone) UnmarshalJSON(input []byte) error {
 	return nil
 }
 
-// ParseRegion parse a string value into a Zone object
+// ParseRegion parses a string value into a Region and returns an error if it has a bad format.
 func ParseRegion(region string) (Region, error) {
 	switch region {
 	case "par1":
