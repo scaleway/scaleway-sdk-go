@@ -7,8 +7,6 @@ import (
 	"io"
 	"net"
 	"time"
-
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
 
 // ServiceInfo contains API metadata
@@ -143,23 +141,23 @@ func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(point) != 2 {
-		return errors.New("invalid point array")
+		return fmt.Errorf("invalid point array")
 	}
 
 	strTimestamp, isStrTimestamp := point[0].(string)
 	if !isStrTimestamp {
-		return errors.New("%s timestamp is not a string in RFC 3339 format", point[0])
+		return fmt.Errorf("%s timestamp is not a string in RFC 3339 format", point[0])
 	}
 	timestamp, err := time.Parse(time.RFC3339, strTimestamp)
 	if err != nil {
-		return errors.New("%s timestamp is not in RFC 3339 format", point[0])
+		return fmt.Errorf("%s timestamp is not in RFC 3339 format", point[0])
 	}
 	tsp.Timestamp = timestamp
 
 	// By default, JSON unmarshal a float in float64 but the TimeSeriesPoint is a float32 value.
 	value, isValue := point[1].(float64)
 	if !isValue {
-		return errors.New("%s is not a valid float32 value", point[1])
+		return fmt.Errorf("%s is not a valid float32 value", point[1])
 	}
 	tsp.Value = float32(value)
 
@@ -172,30 +170,35 @@ type IPNet struct {
 }
 
 func (n IPNet) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + n.String() + `"`), nil
+	value := n.String()
+	if value == "<nil>" {
+		value = ""
+	}
+	return []byte(`"` + value + `"`), nil
 }
 
 func (n *IPNet) UnmarshalJSON(b []byte) error {
-	var str *string
+	var str string
 
 	err := json.Unmarshal(b, &str)
 	if err != nil {
 		return err
 	}
-	if str == nil {
+	if str == "" {
+		*n = IPNet{}
 		return nil
 	}
 
-	switch ip := net.ParseIP(*str); {
+	switch ip := net.ParseIP(str); {
 	case ip.To4() != nil:
-		*str += "/32"
+		str += "/32"
 	case ip.To16() != nil:
-		*str += "/128"
+		str += "/128"
 	}
 
-	_, value, err := net.ParseCIDR(*str)
+	_, value, err := net.ParseCIDR(str)
 	if err != nil {
-		return errors.Wrap(err, "cannot decode JSON")
+		return err
 	}
 	n.IPNet = *value
 

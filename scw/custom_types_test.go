@@ -2,12 +2,12 @@ package scw
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"testing"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -109,7 +109,7 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 		{
 			name: "with timestamp error",
 			json: `{"name":"cpu_usage","points":[["2019/08/08T15-00-00Z",0.2]]}`,
-			err:  errors.New("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
+			err:  fmt.Errorf("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
 		},
 	}
 
@@ -234,7 +234,7 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 		{
 			name: "invalid CIDR error",
 			json: `"invalidvalue"`,
-			err:  "scaleway-sdk-go: cannot decode JSON: invalid CIDR address: invalidvalue",
+			err:  "invalid CIDR address: invalidvalue",
 		},
 	}
 
