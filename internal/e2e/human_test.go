@@ -8,13 +8,13 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
+func newE2EClient(withAuthInClient bool) (*test.API, string, string, error) {
 	client, err := scw.NewClient(
 		scw.WithDefaultRegion(scw.RegionFrPar),
 		scw.WithUserAgent("sdk-e2e-test"),
 	)
 	if err != nil {
-		return nil, "", err
+		return nil, "", "", err
 	}
 	testClient := test.NewAPI(client)
 
@@ -22,31 +22,31 @@ func newE2EClient(withAuthInClient bool) (*test.API, string, error) {
 		Username: "sidi",
 	})
 	if err != nil {
-		return nil, "", err
+		return nil, "", "", err
 	}
 	if withAuthInClient {
 		client, err = scw.NewClient(
 			scw.WithDefaultRegion(scw.RegionFrPar),
-			scw.WithAuth("", registerResponse.SecretKey),
+			scw.WithAuth(registerResponse.AccessKey, registerResponse.SecretKey),
 			scw.WithUserAgent("sdk-e2e-test"),
 		)
 		testClient = test.NewAPI(client)
 	}
 
-	return testClient, registerResponse.SecretKey, err
+	return testClient, registerResponse.AccessKey, registerResponse.SecretKey, err
 }
 
 func TestAuthInRequest(t *testing.T) {
-	client, secretKey, err := newE2EClient(false)
+	client, accessKey, secretKey, err := newE2EClient(false)
 	testhelpers.AssertNoError(t, err)
 
-	requestWithAuth := scw.WithAuthRequest("", secretKey)
+	requestWithAuth := scw.WithAuthRequest(accessKey, secretKey)
 	_, err = client.CreateHuman(&test.CreateHumanRequest{}, requestWithAuth)
 	testhelpers.AssertNoError(t, err)
 }
 
 func TestHuman(t *testing.T) {
-	client, _, err := newE2EClient(true)
+	client, _, _, err := newE2EClient(true)
 	testhelpers.AssertNoError(t, err)
 
 	// create
