@@ -124,7 +124,7 @@ type TimeSeriesPoint struct {
 	Value     float32
 }
 
-func (tsp *TimeSeriesPoint) MarshalJSON() ([]byte, error) {
+func (tsp TimeSeriesPoint) MarshalJSON() ([]byte, error) {
 	timestamp := tsp.Timestamp.Format(time.RFC3339)
 	value, err := json.Marshal(tsp.Value)
 	if err != nil {
@@ -171,7 +171,7 @@ type IPNet struct {
 	net.IPNet
 }
 
-func (n *IPNet) MarshalJSON() ([]byte, error) {
+func (n IPNet) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + n.String() + `"`), nil
 }
 
