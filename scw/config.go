@@ -23,13 +23,13 @@ type Config struct {
 }
 
 type Profile struct {
-	AccessKey        *string `yaml:"access_key,omitempty"`
-	SecretKey        *string `yaml:"secret_key,omitempty"`
-	APIURL           *string `yaml:"api_url,omitempty"`
-	Insecure         *bool   `yaml:"insecure,omitempty"`
+	AccessKey             *string `yaml:"access_key,omitempty"`
+	SecretKey             *string `yaml:"secret_key,omitempty"`
+	APIURL                *string `yaml:"api_url,omitempty"`
+	Insecure              *bool   `yaml:"insecure,omitempty"`
 	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
-	DefaultRegion    *string `yaml:"default_region,omitempty"`
-	DefaultZone      *string `yaml:"default_zone,omitempty"`
+	DefaultRegion         *string `yaml:"default_region,omitempty"`
+	DefaultZone           *string `yaml:"default_zone,omitempty"`
 }
 
 func (p *Profile) String() string {
@@ -174,4 +174,43 @@ func (c *Config) SaveTo(path string) error {
 
 	return nil
 
+}
+
+// MergeProfiles merges profiles in a new one. The last profile has priority.
+func MergeProfiles(original *Profile, others ...*Profile) *Profile {
+	np := &Profile{
+		AccessKey:             original.AccessKey,
+		SecretKey:             original.SecretKey,
+		APIURL:                original.APIURL,
+		Insecure:              original.Insecure,
+		DefaultOrganizationID: original.DefaultOrganizationID,
+		DefaultRegion:         original.DefaultRegion,
+		DefaultZone:           original.DefaultZone,
+	}
+
+	for _, other := range others {
+		if other.AccessKey != nil && *other.AccessKey != "" {
+			np.AccessKey = other.AccessKey
+		}
+		if other.SecretKey != nil && *other.SecretKey != "" {
+			np.SecretKey = other.SecretKey
+		}
+		if other.APIURL != nil && *other.APIURL != "" {
+			np.APIURL = other.APIURL
+		}
+		if other.Insecure != nil && *other.Insecure != false {
+			np.Insecure = other.Insecure
+		}
+		if other.DefaultOrganizationID != nil && *other.DefaultOrganizationID != "" {
+			np.DefaultOrganizationID = other.DefaultOrganizationID
+		}
+		if other.DefaultRegion != nil && *other.DefaultRegion != "" {
+			np.DefaultRegion = other.DefaultRegion
+		}
+		if other.DefaultZone != nil && *other.DefaultZone != "" {
+			np.DefaultZone = other.DefaultZone
+		}
+	}
+
+	return np
 }
