@@ -2,8 +2,16 @@ package scw
 
 import (
 	"encoding/json"
+	"regexp"
+	"strings"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
+)
+
+var (
+	regionRegex = regexp.MustCompile("^[a-z]{2}-[a-z]{3}$")
+	zoneRegex   = regexp.MustCompile("^[a-z]{2}-[a-z]{3}-[1-9]$")
 )
 
 // Zone is an availability zone
@@ -89,6 +97,14 @@ func ParseZone(zone string) (Zone, error) {
 		// logger.Warningf("ams1 is a deprecated name for zone, use nl-ams-1 instead")
 		return ZoneNlAms1, nil
 	default:
+		if !zoneRegex.Match([]byte(zone)) {
+			zones := []string(nil)
+			for _, z := range AllZones {
+				zones = append(zones, string(z))
+			}
+			return "", errors.New("wrong zone format, available zones are: %s", strings.Join(zones, ", "))
+		}
+
 		newZone := Zone(zone)
 		if !newZone.Exists() {
 			logger.Warningf("%s is an unknown zone", newZone)
@@ -128,6 +144,14 @@ func ParseRegion(region string) (Region, error) {
 		// logger.Warningf("ams1 is a deprecated name for region, use nl-ams instead")
 		return RegionNlAms, nil
 	default:
+		if !regionRegex.Match([]byte(region)) {
+			regions := []string(nil)
+			for _, r := range AllRegions {
+				regions = append(regions, string(r))
+			}
+			return "", errors.New("wrong region format, available regions are: %s", strings.Join(regions, ", "))
+		}
+
 		newRegion := Region(region)
 		if !newRegion.Exists() {
 			logger.Warningf("%s is an unknown region", newRegion)

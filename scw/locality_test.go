@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -11,6 +12,7 @@ func TestParseZone(t *testing.T) {
 
 	tests := []struct {
 		input    string
+		err      error
 		expected Zone
 	}{
 		{
@@ -25,11 +27,30 @@ func TestParseZone(t *testing.T) {
 			input:    "ams1",
 			expected: ZoneNlAms1,
 		},
+		{
+			input:    "xx-xxx-1",
+			expected: "xx-xxx-1",
+		},
+		{
+			input:    "fr-par",
+			expected: "",
+			err:      errors.New("wrong zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+		},
+		{
+			input:    "fr-par-n",
+			expected: "",
+			err:      errors.New("wrong zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+		},
+		{
+			input:    "fr-par-0",
+			expected: "",
+			err:      errors.New("wrong zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+		},
 	}
 
 	for _, test := range tests {
 		z, err := ParseZone(test.input)
-		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, test.err, err)
 		testhelpers.Equals(t, test.expected, z)
 	}
 
@@ -67,6 +88,7 @@ func TestParseRegion(t *testing.T) {
 
 	tests := []struct {
 		input    string
+		err      error
 		expected Region
 	}{
 		{
@@ -81,11 +103,25 @@ func TestParseRegion(t *testing.T) {
 			input:    "ams1",
 			expected: RegionNlAms,
 		},
+		{
+			input:    "xx-xxx",
+			expected: "xx-xxx",
+		},
+		{
+			input:    "fr-par-1",
+			expected: "",
+			err:      errors.New("wrong region format, available regions are: fr-par, nl-ams"),
+		},
+		{
+			input:    "fr-pa1",
+			expected: "",
+			err:      errors.New("wrong region format, available regions are: fr-par, nl-ams"),
+		},
 	}
 
 	for _, test := range tests {
 		r, err := ParseRegion(test.input)
-		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, test.err, err)
 		testhelpers.Equals(t, test.expected, r)
 	}
 
