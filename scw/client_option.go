@@ -178,10 +178,10 @@ func (s *settings) validate() error {
 
 	if token, isToken := s.token.(*auth.Token); isToken {
 		if token.AccessKey == "" {
-			return &ClientCredentialError{Type: clientCredentialError_EmptyAccessKey}
+			return &ClientCredentialError{errorType: clientCredentialError_EmptyAccessKey}
 		}
 		if token.SecretKey == "" {
-			return &ClientCredentialError{Type: clientCredentialError_EmptySecreyKey}
+			return &ClientCredentialError{errorType: clientCredentialError_EmptySecreyKey}
 		}
 	}
 

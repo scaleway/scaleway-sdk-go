@@ -265,11 +265,11 @@ const (
 
 // clientCredentialError indicates that credentials have been badly provided for the client creation.
 type ClientCredentialError struct {
-	Type clientCredentialErrorType
+	errorType clientCredentialErrorType
 }
 
 // IsScwSdkError implements the SdkError interface
 func (e ClientCredentialError) IsScwSdkError() {}
 func (e ClientCredentialError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: %s", e.Type)
+	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
 }
