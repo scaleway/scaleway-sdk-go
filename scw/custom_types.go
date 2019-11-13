@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -125,7 +124,7 @@ type TimeSeriesPoint struct {
 	Value     float32
 }
 
-func (tsp TimeSeriesPoint) MarshalJSON() ([]byte, error) {
+func (tsp *TimeSeriesPoint) MarshalJSON() ([]byte, error) {
 	timestamp := tsp.Timestamp.Format(time.RFC3339)
 	value, err := json.Marshal(tsp.Value)
 	if err != nil {
@@ -172,7 +171,7 @@ type IPNet struct {
 	net.IPNet
 }
 
-func (n IPNet) MarshalJSON() ([]byte, error) {
+func (n *IPNet) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + n.String() + `"`), nil
 }
 
@@ -187,8 +186,11 @@ func (n *IPNet) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	if !strings.Contains(*str, "/") && net.ParseIP(*str) != nil {
+	switch ip := net.ParseIP(*str); {
+	case ip.To4() != nil:
 		*str += "/32"
+	case ip.To16() != nil:
+		*str += "/128"
 	}
 
 	_, value, err := net.ParseCIDR(*str)

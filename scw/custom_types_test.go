@@ -207,24 +207,34 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 		err  string
 	}{
 		{
-			name: "IP with CIDR",
+			name: "IPv4 with CIDR",
 			json: `"42.42.42.42/32"`,
 			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
 		},
 		{
-			name: "IP with network",
+			name: "IPv4 with network",
 			json: `"192.0.2.1/24"`,
 			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 0), Mask: net.CIDRMask(24, 32)}},
 		},
 		{
-			name: "IP alone",
+			name: "IPv6 with network",
+			json: `"2001:db8:abcd:8000::/50"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(50, 128)}},
+		},
+		{
+			name: "IPv4 alone",
 			json: `"42.42.42.42"`,
 			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
 		},
 		{
-			name: "with timestamp error",
-			json: `"name"`,
-			err:  "scaleway-sdk-go: cannot decode JSON: invalid CIDR address: name",
+			name: "IPv6 alone",
+			json: `"2001:db8:abcd:8000::"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(128, 128)}},
+		},
+		{
+			name: "invalid CIDR error",
+			json: `"invalidvalue"`,
+			err:  "scaleway-sdk-go: cannot decode JSON: invalid CIDR address: invalidvalue",
 		},
 	}
 
