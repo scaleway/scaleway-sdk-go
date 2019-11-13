@@ -37,7 +37,7 @@ func TestClientOptions(t *testing.T) {
 			},
 		},
 		{
-			name: "Should throw a access key error",
+			name: "Should throw an access key error",
 			clientOption: func(s *settings) {
 				s.apiURL = apiURL
 				s.token = auth.NewToken("", testSecretKey)
