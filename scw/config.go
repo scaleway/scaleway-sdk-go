@@ -189,25 +189,25 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 	}
 
 	for _, other := range others {
-		if other.AccessKey != nil && *other.AccessKey != "" {
+		if other.AccessKey != nil {
 			np.AccessKey = other.AccessKey
 		}
-		if other.SecretKey != nil && *other.SecretKey != "" {
+		if other.SecretKey != nil {
 			np.SecretKey = other.SecretKey
 		}
-		if other.APIURL != nil && *other.APIURL != "" {
+		if other.APIURL != nil {
 			np.APIURL = other.APIURL
 		}
-		if other.Insecure != nil && *other.Insecure {
+		if other.Insecure != nil {
 			np.Insecure = other.Insecure
 		}
-		if other.DefaultOrganizationID != nil && *other.DefaultOrganizationID != "" {
+		if other.DefaultOrganizationID != nil {
 			np.DefaultOrganizationID = other.DefaultOrganizationID
 		}
-		if other.DefaultRegion != nil && *other.DefaultRegion != "" {
+		if other.DefaultRegion != nil {
 			np.DefaultRegion = other.DefaultRegion
 		}
-		if other.DefaultZone != nil && *other.DefaultZone != "" {
+		if other.DefaultZone != nil {
 			np.DefaultZone = other.DefaultZone
 		}
 	}
