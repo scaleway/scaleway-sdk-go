@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -123,7 +125,7 @@ type TimeSeriesPoint struct {
 	Value     float32
 }
 
-func (tsp *TimeSeriesPoint) MarshalJSON() ([]byte, error) {
+func (tsp TimeSeriesPoint) MarshalJSON() ([]byte, error) {
 	timestamp := tsp.Timestamp.Format(time.RFC3339)
 	value, err := json.Marshal(tsp.Value)
 	if err != nil {
@@ -161,6 +163,39 @@ func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 		return errors.New("%s is not a valid float32 value", point[1])
 	}
 	tsp.Value = float32(value)
+
+	return nil
+}
+
+// IPNet inherits net.IPNet and represents an IP network.
+type IPNet struct {
+	net.IPNet
+}
+
+func (n IPNet) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + n.String() + `"`), nil
+}
+
+func (n *IPNet) UnmarshalJSON(b []byte) error {
+	var str *string
+
+	err := json.Unmarshal(b, &str)
+	if err != nil {
+		return err
+	}
+	if str == nil {
+		return nil
+	}
+
+	if !strings.Contains(*str, "/") && net.ParseIP(*str) != nil {
+		*str += "/32"
+	}
+
+	_, value, err := net.ParseCIDR(*str)
+	if err != nil {
+		return errors.Wrap(err, "cannot decode JSON")
+	}
+	n.IPNet = *value
 
 	return nil
 }

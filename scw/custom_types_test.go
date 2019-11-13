@@ -3,6 +3,7 @@ package scw
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net"
 	"testing"
 	"time"
 
@@ -67,7 +68,7 @@ func TestTimeSeries_MarshallJSON(t *testing.T) {
 	}
 }
 
-func TestTimeSeries_UnmarshallJSON(t *testing.T) {
+func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
@@ -165,4 +166,77 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 		contentType: "text/plain",
 		content:     []byte("\x00\x00\x00\n"),
 	}))
+}
+
+func TestIPNet_MarshallJSON(t *testing.T) {
+	cases := []struct {
+		name    string
+		ipRange IPNet
+		want    string
+		err     error
+	}{
+		{
+			name:    "ip",
+			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+			want:    `"42.42.42.42/32"`,
+		},
+		{
+			name:    "network",
+			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(16, 32)}},
+			want:    `"42.42.42.42/16"`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := json.Marshal(c.ipRange)
+
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, c.want, string(got))
+			}
+		})
+	}
+}
+
+func TestIPNet_UnmarshalJSON(t *testing.T) {
+	cases := []struct {
+		name string
+		json string
+		want IPNet
+		err  string
+	}{
+		{
+			name: "IP with CIDR",
+			json: `"42.42.42.42/32"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+		},
+		{
+			name: "IP with network",
+			json: `"192.0.2.1/24"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 0), Mask: net.CIDRMask(24, 32)}},
+		},
+		{
+			name: "IP alone",
+			json: `"42.42.42.42"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+		},
+		{
+			name: "with timestamp error",
+			json: `"name"`,
+			err:  "scaleway-sdk-go: cannot decode JSON: invalid CIDR address: name",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			ipNet := &IPNet{}
+			err := json.Unmarshal([]byte(c.json), ipNet)
+			if err != nil {
+				testhelpers.Equals(t, c.err, err.Error())
+			}
+
+			testhelpers.Equals(t, c.want.String(), ipNet.String())
+		})
+	}
 }
