@@ -198,7 +198,7 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		if other.APIURL != nil && *other.APIURL != "" {
 			np.APIURL = other.APIURL
 		}
-		if other.Insecure != nil && *other.Insecure != false {
+		if other.Insecure != nil && *other.Insecure {
 			np.Insecure = other.Insecure
 		}
 		if other.DefaultOrganizationID != nil && *other.DefaultOrganizationID != "" {
