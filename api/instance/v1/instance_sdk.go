@@ -920,7 +920,7 @@ type SecurityGroupRule struct {
 	// Default value: accept
 	Action SecurityGroupRuleAction `json:"action"`
 
-	IPRange string `json:"ip_range"`
+	IPRange scw.IPNet `json:"ip_range"`
 
 	DestPortFrom *uint32 `json:"dest_port_from"`
 
@@ -3111,7 +3111,7 @@ type CreateSecurityGroupRuleRequest struct {
 	// Default value: accept
 	Action SecurityGroupRuleAction `json:"action"`
 
-	IPRange string `json:"ip_range,omitempty"`
+	IPRange scw.IPNet `json:"ip_range,omitempty"`
 
 	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
 
@@ -3270,7 +3270,7 @@ type setSecurityGroupRuleRequest struct {
 	// Default value: accept
 	Action SecurityGroupRuleAction `json:"action"`
 
-	IPRange string `json:"ip_range"`
+	IPRange scw.IPNet `json:"ip_range"`
 
 	DestPortFrom *uint32 `json:"dest_port_from"`
 

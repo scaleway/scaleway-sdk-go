@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"net"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -91,7 +92,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		})
 
 		testhelpers.AssertNoError(t, err)
-
+		_, ipNet, _ := net.ParseCIDR("8.8.8.8/32")
 		createRuleResponse, err := instanceAPI.CreateSecurityGroupRule(&CreateSecurityGroupRuleRequest{
 			Zone:            zone,
 			SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
@@ -99,7 +100,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Protocol:        SecurityGroupRuleProtocolTCP,
 			DestPortFrom:    scw.Uint32Ptr(1),
 			DestPortTo:      scw.Uint32Ptr(1024),
-			IPRange:         "8.8.8.8/32",
+			IPRange:         scw.IPNet{IPNet: *ipNet},
 			Action:          SecurityGroupRuleActionAccept,
 			Position:        1,
 		})
@@ -121,13 +122,13 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		action := SecurityGroupRuleActionDrop
 		protocol := SecurityGroupRuleProtocolUDP
 		direction := SecurityGroupRuleDirectionOutbound
-
+		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
 			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
-			IPRange:             scw.StringPtr("1.1.1.1/32"),
+			IPRange:             &scw.IPNet{IPNet: *ipNet},
 			DestPortFrom:        scw.Uint32Ptr(1),
 			DestPortTo:          scw.Uint32Ptr(2048),
 			Protocol:            &protocol,
@@ -136,7 +137,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
-		testhelpers.Equals(t, "1.1.1.1", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, scw.Uint32Ptr(1), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, scw.Uint32Ptr(2048), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
@@ -151,12 +152,13 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		protocol := SecurityGroupRuleProtocolUDP
 		direction := SecurityGroupRuleDirectionOutbound
 
+		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
 			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
-			IPRange:             scw.StringPtr("1.1.1.1/32"),
+			IPRange:             &scw.IPNet{IPNet: *ipNet},
 			DestPortFrom:        scw.Uint32Ptr(22),
 			DestPortTo:          scw.Uint32Ptr(22),
 			Protocol:            &protocol,
@@ -165,7 +167,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
-		testhelpers.Equals(t, "1.1.1.1", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, uint32(22), *updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
@@ -187,7 +189,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
-		testhelpers.Equals(t, "8.8.8.8", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolICMP, updateResponse.Rule.Protocol)
@@ -208,7 +210,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
-		testhelpers.Equals(t, "8.8.8.8", updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
