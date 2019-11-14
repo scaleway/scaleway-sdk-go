@@ -181,13 +181,13 @@ func (s *settings) validate() error {
 			return NewClientValidationError("access key cannot be empty")
 		}
 		if !validation.IsAccessKey(token.AccessKey) {
-			return NewClientValidationError("bad access key format")
+			return NewClientValidationError("invalid access key format '%s', must be: SCWXXXXXXXXXXXXXXXXX", token.AccessKey)
 		}
 		if token.SecretKey == "" {
 			return NewClientValidationError("secret key cannot be empty")
 		}
 		if !validation.IsSecretKey(token.SecretKey) {
-			return NewClientValidationError("bad secret key format")
+			return NewClientValidationError("invalid access key format '%s', must be: SCWXXXXXXXXXXXXXXXXX", token.AccessKey)
 		}
 	}
 
@@ -197,7 +197,7 @@ func (s *settings) validate() error {
 			return NewClientValidationError("default organization ID cannot be empty")
 		}
 		if !validation.IsOrganizationID(*s.defaultOrganizationID) {
-			return NewClientValidationError("default organization ID must be a valid UUID")
+			return NewClientValidationError("invalid organization ID format '%s', must be an UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", *s.defaultOrganizationID)
 		}
 	}
 
@@ -211,7 +211,7 @@ func (s *settings) validate() error {
 			for _, r := range AllRegions {
 				regions = append(regions, string(r))
 			}
-			return NewClientValidationError("bad default region format, available regions are: %s", strings.Join(regions, ", "))
+			return NewClientValidationError("invalid default region format '%s', available regions are: %s", *s.defaultRegion, strings.Join(regions, ", "))
 		}
 	}
 
@@ -225,7 +225,7 @@ func (s *settings) validate() error {
 			for _, z := range AllZones {
 				zones = append(zones, string(z))
 			}
-			return NewClientValidationError("bad default zone format, available zones are: %s", strings.Join(zones, ", "))
+			return NewClientValidationError("invalid default zone format '%s', available zones are: %s", *s.defaultZone, strings.Join(zones, ", "))
 		}
 	}
 

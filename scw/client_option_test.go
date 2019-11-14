@@ -48,7 +48,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(v2InvalidAccessKey, v2ValidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: bad access key format",
+			errStr: "scaleway-sdk-go: invalid access key format 'invalid', must be: SCWXXXXXXXXXXXXXXXXX",
 		},
 		{
 			name: "Should throw an empty secret key error",
@@ -62,7 +62,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(v2ValidAccessKey, v2InvalidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: bad secret key format",
+			errStr: "scaleway-sdk-go: invalid access key format 'SCW1234567890ABCDEFG', must be: SCWXXXXXXXXXXXXXXXXX",
 		},
 		{
 			name: "Should throw an url error",
@@ -86,7 +86,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
 				s.defaultOrganizationID = StringPtr(v2InvalidDefaultOrganizationID)
 			},
-			errStr: "scaleway-sdk-go: default organization ID must be a valid UUID",
+			errStr: "scaleway-sdk-go: invalid organization ID format 'invalid', must be an UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
 		{
 			name: "Should throw a region error",
@@ -104,7 +104,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultRegion = &v
 			},
-			errStr: "scaleway-sdk-go: bad default region format, available regions are: fr-par, nl-ams",
+			errStr: "scaleway-sdk-go: invalid default region format 'invalid', available regions are: fr-par, nl-ams",
 		},
 		{
 			name: "Should throw a zone error",
@@ -122,7 +122,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultZone = &v
 			},
-			errStr: "scaleway-sdk-go: bad default zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1",
+			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, nl-ams-1",
 		},
 	}
 
