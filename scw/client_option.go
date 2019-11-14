@@ -2,10 +2,11 @@ package scw
 
 import (
 	"net/http"
-	"net/url"
+	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/validation"
 )
 
 // ClientOption is a function which applies options to a settings object.
@@ -170,40 +171,70 @@ func (s *settings) apply(opts []ClientOption) {
 }
 
 func (s *settings) validate() error {
-	var err error
+	// Auth.
 	if s.token == nil {
 		// It should not happen, WithoutAuth option is used by default.
 		panic(errors.New("no credential option provided"))
 	}
-
 	if token, isToken := s.token.(*auth.Token); isToken {
 		if token.AccessKey == "" {
-			return &ClientCredentialError{errorType: clientCredentialError_EmptyAccessKey}
+			return NewClientValidationError("access key cannot be empty")
+		}
+		if !validation.IsAccessKey(token.AccessKey) {
+			return NewClientValidationError("bad access key format")
 		}
 		if token.SecretKey == "" {
-			return &ClientCredentialError{errorType: clientCredentialError_EmptySecreyKey}
+			return NewClientValidationError("secret key cannot be empty")
+		}
+		if !validation.IsSecretKey(token.SecretKey) {
+			return NewClientValidationError("bad secret key format")
 		}
 	}
 
-	_, err = url.Parse(s.apiURL)
-	if err != nil {
-		return errors.Wrap(err, "invalid url %s", s.apiURL)
+	// Default Organization ID.
+	if s.defaultOrganizationID != nil {
+		if *s.defaultOrganizationID == "" {
+			return NewClientValidationError("default organization ID cannot be empty")
+		}
+		if !validation.IsOrganizationID(*s.defaultOrganizationID) {
+			return NewClientValidationError("default organization ID must be a valid UUID")
+		}
 	}
 
-	// TODO: Check OrganizationID format
-	if s.defaultOrganizationID != nil && *s.defaultOrganizationID == "" {
-		return errors.New("default organization id cannot be empty")
+	// Default Region.
+	if s.defaultRegion != nil {
+		if *s.defaultRegion == "" {
+			return NewClientValidationError("default region cannot be empty")
+		}
+		if !validation.IsRegion(string(*s.defaultRegion)) {
+			regions := []string(nil)
+			for _, r := range AllRegions {
+				regions = append(regions, string(r))
+			}
+			return NewClientValidationError("bad default region format, available regions are: %s", strings.Join(regions, ", "))
+		}
 	}
 
-	// TODO: Check Region format
-	if s.defaultRegion != nil && *s.defaultRegion == "" {
-		return errors.New("default region cannot be empty")
+	// Default Zone.
+	if s.defaultZone != nil {
+		if *s.defaultZone == "" {
+			return NewClientValidationError("default zone cannot be empty")
+		}
+		if !validation.IsZone(string(*s.defaultZone)) {
+			zones := []string(nil)
+			for _, z := range AllZones {
+				zones = append(zones, string(z))
+			}
+			return NewClientValidationError("bad default zone format, available zones are: %s", strings.Join(zones, ", "))
+		}
 	}
 
-	// TODO: Check Zone format
-	if s.defaultZone != nil && *s.defaultZone == "" {
-		return errors.New("default zone cannot be empty")
+	// API URL.
+	if !validation.IsURL(s.apiURL) {
+		return NewClientValidationError("invalid url %s", s.apiURL)
 	}
+
+	// TODO: check for max s.defaultPageSize
 
 	return nil
 }

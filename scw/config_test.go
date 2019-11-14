@@ -404,7 +404,7 @@ const emptyFile = ""
 
 // v2 config
 var (
-	v2ValidAccessKey2             = "ACCESS_KEY2"
+	v2ValidAccessKey2             = "SCW234567890ABCDEFGH"
 	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
 	v2ValidInsecure2              = "true"
@@ -412,7 +412,7 @@ var (
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
 
-	v2ValidAccessKey             = "ACCESS_KEY"
+	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
 	v2ValidInsecure              = "false"
@@ -420,6 +420,12 @@ var (
 	v2ValidDefaultRegion         = string(RegionNlAms)
 	v2ValidDefaultZone           = string(ZoneNlAms1)
 	v2ValidProfile               = "flantier"
+
+	v2InvalidAccessKey             = "invalid"
+	v2InvalidSecretKey             = "invalid"
+	v2InvalidDefaultOrganizationID = "invalid"
+	v2InvalidDefaultRegion         = "invalid"
+	v2InvalidDefaultZone           = "invalid"
 
 	v2SimpleValidConfig = &Config{
 		Profile: Profile{
@@ -500,19 +506,19 @@ func TestConfigString(t *testing.T) {
 		},
 	}
 
-	testhelpers.Equals(t, `access_key: ACCESS_KEY
+	testhelpers.Equals(t, `access_key: SCW1234567890ABCDEFG
 secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 active_profile: flantier
 profiles:
   flantier:
-    access_key: ACCESS_KEY2
+    access_key: SCW234567890ABCDEFGH
     secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 `, c.String())
 	testhelpers.Equals(t, v2ValidSecretKey, *c.SecretKey)
 
 	p, err := c.GetActiveProfile()
 	testhelpers.AssertNoError(t, err)
-	testhelpers.Equals(t, `access_key: ACCESS_KEY2
+	testhelpers.Equals(t, `access_key: SCW234567890ABCDEFGH
 secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 `, p.String())
 	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
