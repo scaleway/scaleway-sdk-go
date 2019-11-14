@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/validation"
 	"github.com/scaleway/scaleway-sdk-go/logger"
+	"github.com/scaleway/scaleway-sdk-go/validation"
 )
 
 // Zone is an availability zone
