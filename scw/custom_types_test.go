@@ -2,11 +2,12 @@ package scw
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"net"
 	"testing"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -67,7 +68,7 @@ func TestTimeSeries_MarshallJSON(t *testing.T) {
 	}
 }
 
-func TestTimeSeries_UnmarshallJSON(t *testing.T) {
+func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
@@ -108,7 +109,7 @@ func TestTimeSeries_UnmarshallJSON(t *testing.T) {
 		{
 			name: "with timestamp error",
 			json: `{"name":"cpu_usage","points":[["2019/08/08T15-00-00Z",0.2]]}`,
-			err:  errors.New("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
+			err:  fmt.Errorf("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
 		},
 	}
 
@@ -165,4 +166,87 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 		contentType: "text/plain",
 		content:     []byte("\x00\x00\x00\n"),
 	}))
+}
+
+func TestIPNet_MarshallJSON(t *testing.T) {
+	cases := []struct {
+		name    string
+		ipRange IPNet
+		want    string
+		err     error
+	}{
+		{
+			name:    "ip",
+			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+			want:    `"42.42.42.42/32"`,
+		},
+		{
+			name:    "network",
+			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(16, 32)}},
+			want:    `"42.42.42.42/16"`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := json.Marshal(c.ipRange)
+
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, c.want, string(got))
+			}
+		})
+	}
+}
+
+func TestIPNet_UnmarshalJSON(t *testing.T) {
+	cases := []struct {
+		name string
+		json string
+		want IPNet
+		err  string
+	}{
+		{
+			name: "IPv4 with CIDR",
+			json: `"42.42.42.42/32"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+		},
+		{
+			name: "IPv4 with network",
+			json: `"192.0.2.1/24"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 0), Mask: net.CIDRMask(24, 32)}},
+		},
+		{
+			name: "IPv6 with network",
+			json: `"2001:db8:abcd:8000::/50"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(50, 128)}},
+		},
+		{
+			name: "IPv4 alone",
+			json: `"42.42.42.42"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+		},
+		{
+			name: "IPv6 alone",
+			json: `"2001:db8:abcd:8000::"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(128, 128)}},
+		},
+		{
+			name: "invalid CIDR error",
+			json: `"invalidvalue"`,
+			err:  "invalid CIDR address: invalidvalue",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			ipNet := &IPNet{}
+			err := json.Unmarshal([]byte(c.json), ipNet)
+			if err != nil {
+				testhelpers.Equals(t, c.err, err.Error())
+			}
+
+			testhelpers.Equals(t, c.want.String(), ipNet.String())
+		})
+	}
 }
