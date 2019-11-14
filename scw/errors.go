@@ -256,17 +256,17 @@ func (e *OutOfStockError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-// ClientValidationError indicates that at least one of client data have been badly provided for the client creation.
-type ClientValidationError struct {
+// InvalidClientOptionError indicates that at least one of client data has been badly provided for the client creation.
+type InvalidClientOptionError struct {
 	errorType string
 }
 
-func NewClientValidationError(format string, a ...interface{}) *ClientValidationError {
-	return &ClientValidationError{errorType: fmt.Sprintf(format, a...)}
+func NewInvalidClientOptionError(format string, a ...interface{}) *InvalidClientOptionError {
+	return &InvalidClientOptionError{errorType: fmt.Sprintf(format, a...)}
 }
 
 // IsScwSdkError implements the SdkError interface
-func (e ClientValidationError) IsScwSdkError() {}
-func (e ClientValidationError) Error() string {
+func (e InvalidClientOptionError) IsScwSdkError() {}
+func (e InvalidClientOptionError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
 }

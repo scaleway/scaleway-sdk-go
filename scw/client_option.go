@@ -178,60 +178,60 @@ func (s *settings) validate() error {
 	}
 	if token, isToken := s.token.(*auth.Token); isToken {
 		if token.AccessKey == "" {
-			return NewClientValidationError("access key cannot be empty")
+			return NewInvalidClientOptionError("access key cannot be empty")
 		}
 		if !validation.IsAccessKey(token.AccessKey) {
-			return NewClientValidationError("invalid access key format '%s', expected SCWXXXXXXXXXXXXXXXXX format", token.AccessKey)
+			return NewInvalidClientOptionError("invalid access key format '%s', expected SCWXXXXXXXXXXXXXXXXX format", token.AccessKey)
 		}
 		if token.SecretKey == "" {
-			return NewClientValidationError("secret key cannot be empty")
+			return NewInvalidClientOptionError("secret key cannot be empty")
 		}
 		if !validation.IsSecretKey(token.SecretKey) {
-			return NewClientValidationError("invalid secret key format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", token.SecretKey)
+			return NewInvalidClientOptionError("invalid secret key format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", token.SecretKey)
 		}
 	}
 
 	// Default Organization ID.
 	if s.defaultOrganizationID != nil {
 		if *s.defaultOrganizationID == "" {
-			return NewClientValidationError("default organization ID cannot be empty")
+			return NewInvalidClientOptionError("default organization ID cannot be empty")
 		}
 		if !validation.IsOrganizationID(*s.defaultOrganizationID) {
-			return NewClientValidationError("invalid organization ID format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", *s.defaultOrganizationID)
+			return NewInvalidClientOptionError("invalid organization ID format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", *s.defaultOrganizationID)
 		}
 	}
 
 	// Default Region.
 	if s.defaultRegion != nil {
 		if *s.defaultRegion == "" {
-			return NewClientValidationError("default region cannot be empty")
+			return NewInvalidClientOptionError("default region cannot be empty")
 		}
 		if !validation.IsRegion(string(*s.defaultRegion)) {
 			regions := []string(nil)
 			for _, r := range AllRegions {
 				regions = append(regions, string(r))
 			}
-			return NewClientValidationError("invalid default region format '%s', available regions are: %s", *s.defaultRegion, strings.Join(regions, ", "))
+			return NewInvalidClientOptionError("invalid default region format '%s', available regions are: %s", *s.defaultRegion, strings.Join(regions, ", "))
 		}
 	}
 
 	// Default Zone.
 	if s.defaultZone != nil {
 		if *s.defaultZone == "" {
-			return NewClientValidationError("default zone cannot be empty")
+			return NewInvalidClientOptionError("default zone cannot be empty")
 		}
 		if !validation.IsZone(string(*s.defaultZone)) {
 			zones := []string(nil)
 			for _, z := range AllZones {
 				zones = append(zones, string(z))
 			}
-			return NewClientValidationError("invalid default zone format '%s', available zones are: %s", *s.defaultZone, strings.Join(zones, ", "))
+			return NewInvalidClientOptionError("invalid default zone format '%s', available zones are: %s", *s.defaultZone, strings.Join(zones, ", "))
 		}
 	}
 
 	// API URL.
 	if !validation.IsURL(s.apiURL) {
-		return NewClientValidationError("invalid url %s", s.apiURL)
+		return NewInvalidClientOptionError("invalid url %s", s.apiURL)
 	}
 
 	// TODO: check for max s.defaultPageSize
