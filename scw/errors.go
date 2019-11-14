@@ -256,20 +256,17 @@ func (e *OutOfStockError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-type clientCredentialErrorType string
+// InvalidClientOptionError indicates that at least one of client data has been badly provided for the client creation.
+type InvalidClientOptionError struct {
+	errorType string
+}
 
-const (
-	clientCredentialError_EmptyAccessKey = clientCredentialErrorType("access key cannot be empty")
-	clientCredentialError_EmptySecreyKey = clientCredentialErrorType("secret key cannot be empty")
-)
-
-// clientCredentialError indicates that credentials have been badly provided for the client creation.
-type ClientCredentialError struct {
-	errorType clientCredentialErrorType
+func NewInvalidClientOptionError(format string, a ...interface{}) *InvalidClientOptionError {
+	return &InvalidClientOptionError{errorType: fmt.Sprintf(format, a...)}
 }
 
 // IsScwSdkError implements the SdkError interface
-func (e ClientCredentialError) IsScwSdkError() {}
-func (e ClientCredentialError) Error() string {
+func (e InvalidClientOptionError) IsScwSdkError() {}
+func (e InvalidClientOptionError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
 }

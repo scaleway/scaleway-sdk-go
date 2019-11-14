@@ -10,7 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/uuid"
+	"github.com/scaleway/scaleway-sdk-go/internal/validation"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -18,7 +18,7 @@ import (
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 
 	// If image is not a UUID we try to fetch it from marketplace.
-	if req.Image != "" && !uuid.IsUUID(req.Image) {
+	if req.Image != "" && !validation.IsUUID(req.Image) {
 		apiMarketplace := marketplace.NewAPI(s.client)
 		imageId, err := apiMarketplace.GetLocalImageIDByLabel(&marketplace.GetLocalImageIDByLabelRequest{
 			ImageLabel:     req.Image,

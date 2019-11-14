@@ -29,45 +29,64 @@ func TestClientOptions(t *testing.T) {
 		{
 			name: "Create a valid client option",
 			clientOption: func(s *settings) {
-				s.token = auth.NewToken(testAccessKey, testSecretKey)
-				s.apiURL = apiURL
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+				s.apiURL = v2ValidAPIURL
 				s.defaultOrganizationID = &defaultOrganizationID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
 			},
 		},
 		{
-			name: "Should throw an access key error",
+			name: "Should throw an empty access key error",
 			clientOption: func(s *settings) {
-				s.apiURL = apiURL
-				s.token = auth.NewToken("", testSecretKey)
+				s.token = auth.NewToken("", v2ValidSecretKey)
 			},
 			errStr: "scaleway-sdk-go: access key cannot be empty",
 		},
 		{
-			name: "Should throw a secret key error",
+			name: "Should throw a bad access key error",
 			clientOption: func(s *settings) {
-				s.apiURL = apiURL
-				s.token = auth.NewToken(testSecretKey, "")
+				s.token = auth.NewToken(v2InvalidAccessKey, v2ValidSecretKey)
+			},
+			errStr: "scaleway-sdk-go: invalid access key format 'invalid', expected SCWXXXXXXXXXXXXXXXXX format",
+		},
+		{
+			name: "Should throw an empty secret key error",
+			clientOption: func(s *settings) {
+				s.token = auth.NewToken(v2ValidAccessKey, "")
 			},
 			errStr: "scaleway-sdk-go: secret key cannot be empty",
+		},
+		{
+			name: "Should throw a bad secret key error",
+			clientOption: func(s *settings) {
+				s.token = auth.NewToken(v2ValidAccessKey, v2InvalidSecretKey)
+			},
+			errStr: "scaleway-sdk-go: invalid secret key format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
 		{
 			name: "Should throw an url error",
 			clientOption: func(s *settings) {
 				s.apiURL = ":test"
-				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: invalid url :test: parse :test: missing protocol scheme",
+			errStr: "scaleway-sdk-go: invalid url :test",
 		},
 		{
-			name: "Should throw a organization id error",
+			name: "Should throw an empty organization ID error",
 			clientOption: func(s *settings) {
-				v := ""
-				s.token = auth.NewToken(testAccessKey, testSecretKey)
-				s.defaultOrganizationID = &v
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+				s.defaultOrganizationID = StringPtr("")
 			},
-			errStr: "scaleway-sdk-go: default organization id cannot be empty",
+			errStr: "scaleway-sdk-go: default organization ID cannot be empty",
+		},
+		{
+			name: "Should throw a bad organization ID error",
+			clientOption: func(s *settings) {
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+				s.defaultOrganizationID = StringPtr(v2InvalidDefaultOrganizationID)
+			},
+			errStr: "scaleway-sdk-go: invalid organization ID format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
 		{
 			name: "Should throw a region error",
@@ -79,6 +98,15 @@ func TestClientOptions(t *testing.T) {
 			errStr: "scaleway-sdk-go: default region cannot be empty",
 		},
 		{
+			name: "Should throw a bad region error",
+			clientOption: func(s *settings) {
+				v := Region(v2InvalidDefaultRegion)
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.defaultRegion = &v
+			},
+			errStr: "scaleway-sdk-go: invalid default region format 'invalid', available regions are: fr-par, nl-ams",
+		},
+		{
 			name: "Should throw a zone error",
 			clientOption: func(s *settings) {
 				v := Zone("")
@@ -86,6 +114,15 @@ func TestClientOptions(t *testing.T) {
 				s.defaultZone = &v
 			},
 			errStr: "scaleway-sdk-go: default zone cannot be empty",
+		},
+		{
+			name: "Should throw a bad zone error",
+			clientOption: func(s *settings) {
+				v := Zone(v2InvalidDefaultZone)
+				s.token = auth.NewToken(testAccessKey, testSecretKey)
+				s.defaultZone = &v
+			},
+			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, nl-ams-1",
 		},
 	}
 
