@@ -181,13 +181,13 @@ func (s *settings) validate() error {
 			return NewClientValidationError("access key cannot be empty")
 		}
 		if !validation.IsAccessKey(token.AccessKey) {
-			return NewClientValidationError("invalid access key format '%s', must be: SCWXXXXXXXXXXXXXXXXX", token.AccessKey)
+			return NewClientValidationError("invalid access key format '%s', expected SCWXXXXXXXXXXXXXXXXX format", token.AccessKey)
 		}
 		if token.SecretKey == "" {
 			return NewClientValidationError("secret key cannot be empty")
 		}
 		if !validation.IsSecretKey(token.SecretKey) {
-			return NewClientValidationError("invalid access key format '%s', must be: SCWXXXXXXXXXXXXXXXXX", token.AccessKey)
+			return NewClientValidationError("invalid secret key format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", token.SecretKey)
 		}
 	}
 
@@ -197,7 +197,7 @@ func (s *settings) validate() error {
 			return NewClientValidationError("default organization ID cannot be empty")
 		}
 		if !validation.IsOrganizationID(*s.defaultOrganizationID) {
-			return NewClientValidationError("invalid organization ID format '%s', must be an UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", *s.defaultOrganizationID)
+			return NewClientValidationError("invalid organization ID format '%s', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", *s.defaultOrganizationID)
 		}
 	}
 

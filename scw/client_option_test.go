@@ -48,7 +48,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(v2InvalidAccessKey, v2ValidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: invalid access key format 'invalid', must be: SCWXXXXXXXXXXXXXXXXX",
+			errStr: "scaleway-sdk-go: invalid access key format 'invalid', expected SCWXXXXXXXXXXXXXXXXX format",
 		},
 		{
 			name: "Should throw an empty secret key error",
@@ -62,7 +62,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(v2ValidAccessKey, v2InvalidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: invalid access key format 'SCW1234567890ABCDEFG', must be: SCWXXXXXXXXXXXXXXXXX",
+			errStr: "scaleway-sdk-go: invalid secret key format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
 		{
 			name: "Should throw an url error",
@@ -86,7 +86,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
 				s.defaultOrganizationID = StringPtr(v2InvalidDefaultOrganizationID)
 			},
-			errStr: "scaleway-sdk-go: invalid organization ID format 'invalid', must be an UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+			errStr: "scaleway-sdk-go: invalid organization ID format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
 		{
 			name: "Should throw a region error",
