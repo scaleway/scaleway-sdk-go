@@ -11,62 +11,111 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
-func s(value string) *string {
-	return &value
-}
+const emptyFile = ""
 
-func r(value Region) *Region {
-	return &value
-}
+// v2 config
+var (
+	v2ValidAccessKey2             = "SCW234567890ABCDEFGH"
+	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
+	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
+	v2ValidInsecure2              = "true"
+	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
+	v2ValidDefaultRegion2         = string(RegionFrPar)
+	v2ValidDefaultZone2           = string(ZoneFrPar2)
 
-func z(value Zone) *Zone {
-	return &value
-}
+	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
+	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
+	v2ValidAPIURL                = "api.scaleway.com"
+	v2ValidInsecure              = "false"
+	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	v2ValidDefaultRegion         = string(RegionNlAms)
+	v2ValidDefaultZone           = string(ZoneNlAms1)
+	v2ValidProfile               = "flantier"
 
-func b(value bool) *bool {
-	return &value
-}
+	v2InvalidAccessKey             = "invalid"
+	v2InvalidSecretKey             = "invalid"
+	v2InvalidDefaultOrganizationID = "invalid"
+	v2InvalidDefaultRegion         = "invalid"
+	v2InvalidDefaultZone           = "invalid"
 
-func initEnv(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "home")
-	if err != nil {
-		t.Fatal(err)
+	v2SimpleValidConfig = &Config{
+		Profile: Profile{
+			AccessKey:             &v2ValidAccessKey,
+			SecretKey:             &v2ValidSecretKey,
+			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
+			DefaultRegion:         &v2ValidDefaultRegion,
+		},
 	}
-	return dir
-}
+	v2PartialValidConfigFile = `
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+api_url: ` + v2ValidAPIURL + `
+insecure: ` + v2ValidInsecure + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_region: ` + v2ValidDefaultRegion + `
+default_zone: ` + v2ValidDefaultZone
 
-func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
-	for path := range files {
-		testhelpers.AssertNoError(t, os.RemoveAll(filepath.Join(homeDir, path)))
-	}
-}
+	v2CompleteValidConfigFile = v2PartialValidConfigFile + `
+profiles:
+  ` + v2ValidProfile + `:
+    access_key: ` + v2ValidAccessKey2 + `
+    secret_key: ` + v2ValidSecretKey2 + `
+    api_url: ` + v2ValidAPIURL2 + `
+    insecure: ` + v2ValidInsecure2 + `
+    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
+    default_region: ` + v2ValidDefaultRegion2 + `
+    default_zone: ` + v2ValidDefaultZone2 + `
+`
 
-func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
-	os.Clearenv()
-	for key, value := range env {
-		value = strings.Replace(value, "{HOME}", homeDir, -1)
-		testhelpers.AssertNoError(t, os.Setenv(key, value))
-	}
+	v2CompleteValidConfigWithActiveProfileFile = `
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+api_url: ` + v2ValidAPIURL + `
+insecure: ` + v2ValidInsecure + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_region: ` + v2ValidDefaultRegion + `
+default_zone: ` + v2ValidDefaultZone + `
+active_profile: ` + v2ValidProfile + `
+profiles:
+  ` + v2ValidProfile + `:
+    access_key: ` + v2ValidAccessKey2 + `
+    secret_key: ` + v2ValidSecretKey2 + `
+    api_url: ` + v2ValidAPIURL2 + `
+    insecure: ` + v2ValidInsecure2 + `
+    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
+    default_region: ` + v2ValidDefaultRegion2 + `
+    default_zone: ` + v2ValidDefaultZone2 + `
+`
 
-	for path, content := range files {
-		targetPath := filepath.Join(homeDir, path)
-		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
-		testhelpers.AssertNoError(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
-	}
-}
+	v2MixedValidConfigWithActiveProfileFile = `
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+api_url: ` + v2ValidAPIURL + `
+insecure: ` + v2ValidInsecure + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_region: ` + v2ValidDefaultRegion + `
+default_zone: ` + v2ValidDefaultZone + `
+active_profile: ` + v2ValidProfile + `
+profiles:
+  ` + v2ValidProfile + `:
+    access_key: ` + v2ValidAccessKey2 + `
+    secret_key: ` + v2ValidSecretKey2 + `
+`
 
-// function taken from https://golang.org/src/os/env_test.go
-func resetEnv(t *testing.T, origEnv []string, homeDir string) {
-	testhelpers.AssertNoError(t, os.RemoveAll(homeDir))
-	for _, pair := range origEnv {
-		// Environment variables on Windows can begin with =
-		// https://blogs.msdn.com/b/oldnewthing/archive/2010/05/06/10008132.aspx
-		i := strings.Index(pair[1:], "=") + 1
-		if err := os.Setenv(pair[:i], pair[i+1:]); err != nil {
-			t.Errorf("Setenv(%q, %q) failed during reset: %v", pair[:i], pair[i+1:], err)
-		}
-	}
-}
+	v2SimpleValidConfigFile = `
+access_key: ` + v2ValidAccessKey + `
+secret_key: ` + v2ValidSecretKey + `
+default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_region: ` + v2ValidDefaultRegion + `
+`
+
+	v2SimpleInvalidConfigFile            = `insecure: "bool""`
+	v2SimpleConfigFileWithInvalidProfile = `active_profile: flantier`
+
+	v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
+default_organization_id: ` + v1ValidOrganizationID + `
+`
+)
 
 // TestSaveConfig tests config write the correct values in the config file
 func TestSaveConfig(t *testing.T) {
@@ -313,6 +362,22 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 		},
 		{
+			name: "Mixed config with active profile",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yaml": v2MixedValidConfigWithActiveProfileFile,
+			},
+			expectedAccessKey:             s(v2ValidAccessKey2),
+			expectedSecretKey:             s(v2ValidSecretKey2),
+			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedInsecure:              b(false),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultZone:           s(v2ValidDefaultZone),
+		},
+		{
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
 				"HOME":              "{HOME}",
@@ -400,97 +465,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 	}
 }
 
-const emptyFile = ""
-
-// v2 config
-var (
-	v2ValidAccessKey2             = "SCW234567890ABCDEFGH"
-	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
-	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
-	v2ValidInsecure2              = "true"
-	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
-	v2ValidDefaultRegion2         = string(RegionFrPar)
-	v2ValidDefaultZone2           = string(ZoneFrPar2)
-
-	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
-	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
-	v2ValidAPIURL                = "api.scaleway.com"
-	v2ValidInsecure              = "false"
-	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	v2ValidDefaultRegion         = string(RegionNlAms)
-	v2ValidDefaultZone           = string(ZoneNlAms1)
-	v2ValidProfile               = "flantier"
-
-	v2InvalidAccessKey             = "invalid"
-	v2InvalidSecretKey             = "invalid"
-	v2InvalidDefaultOrganizationID = "invalid"
-	v2InvalidDefaultRegion         = "invalid"
-	v2InvalidDefaultZone           = "invalid"
-
-	v2SimpleValidConfig = &Config{
-		Profile: Profile{
-			AccessKey:             &v2ValidAccessKey,
-			SecretKey:             &v2ValidSecretKey,
-			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
-			DefaultRegion:         &v2ValidDefaultRegion,
-		},
-	}
-	v2PartialValidConfigFile = `
-access_key: ` + v2ValidAccessKey + `
-secret_key: ` + v2ValidSecretKey + `
-api_url: ` + v2ValidAPIURL + `
-insecure: ` + v2ValidInsecure + `
-default_organization_id: ` + v2ValidDefaultOrganizationID + `
-default_region: ` + v2ValidDefaultRegion + `
-default_zone: ` + v2ValidDefaultZone
-
-	v2CompleteValidConfigFile = v2PartialValidConfigFile + `
-profiles:
-  ` + v2ValidProfile + `:
-    access_key: ` + v2ValidAccessKey2 + `
-    secret_key: ` + v2ValidSecretKey2 + `
-    api_url: ` + v2ValidAPIURL2 + `
-    insecure: ` + v2ValidInsecure2 + `
-    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
-    default_region: ` + v2ValidDefaultRegion2 + `
-    default_zone: ` + v2ValidDefaultZone2 + `
-`
-
-	v2CompleteValidConfigWithActiveProfileFile = `
-access_key: ` + v2ValidAccessKey + `
-secret_key: ` + v2ValidSecretKey + `
-api_url: ` + v2ValidAPIURL + `
-insecure: ` + v2ValidInsecure + `
-default_organization_id: ` + v2ValidDefaultOrganizationID + `
-default_region: ` + v2ValidDefaultRegion + `
-default_zone: ` + v2ValidDefaultZone + `
-active_profile: ` + v2ValidProfile + `
-profiles:
-  ` + v2ValidProfile + `:
-    access_key: ` + v2ValidAccessKey2 + `
-    secret_key: ` + v2ValidSecretKey2 + `
-    api_url: ` + v2ValidAPIURL2 + `
-    insecure: ` + v2ValidInsecure2 + `
-    default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
-    default_region: ` + v2ValidDefaultRegion2 + `
-    default_zone: ` + v2ValidDefaultZone2 + `
-`
-
-	v2SimpleValidConfigFile = `
-access_key: ` + v2ValidAccessKey + `
-secret_key: ` + v2ValidSecretKey + `
-default_organization_id: ` + v2ValidDefaultOrganizationID + `
-default_region: ` + v2ValidDefaultRegion + `
-`
-
-	v2SimpleInvalidConfigFile            = `insecure: "bool""`
-	v2SimpleConfigFileWithInvalidProfile = `active_profile: flantier`
-
-	v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
-default_organization_id: ` + v1ValidOrganizationID + `
-`
-)
-
 func TestConfigString(t *testing.T) {
 	var c = &Config{
 		Profile: Profile{
@@ -548,4 +522,61 @@ func TestMergeProfiles(t *testing.T) {
 	}
 
 	testhelpers.Equals(t, exp, act)
+}
+
+func initEnv(t *testing.T) string {
+	dir, err := ioutil.TempDir("", "home")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return dir
+}
+
+func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
+	for path := range files {
+		testhelpers.AssertNoError(t, os.RemoveAll(filepath.Join(homeDir, path)))
+	}
+}
+
+func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
+	os.Clearenv()
+	for key, value := range env {
+		value = strings.Replace(value, "{HOME}", homeDir, -1)
+		testhelpers.AssertNoError(t, os.Setenv(key, value))
+	}
+
+	for path, content := range files {
+		targetPath := filepath.Join(homeDir, path)
+		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
+		testhelpers.AssertNoError(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+	}
+}
+
+// function taken from https://golang.org/src/os/env_test.go
+func resetEnv(t *testing.T, origEnv []string, homeDir string) {
+	testhelpers.AssertNoError(t, os.RemoveAll(homeDir))
+	for _, pair := range origEnv {
+		// Environment variables on Windows can begin with =
+		// https://blogs.msdn.com/b/oldnewthing/archive/2010/05/06/10008132.aspx
+		i := strings.Index(pair[1:], "=") + 1
+		if err := os.Setenv(pair[:i], pair[i+1:]); err != nil {
+			t.Errorf("Setenv(%q, %q) failed during reset: %v", pair[:i], pair[i+1:], err)
+		}
+	}
+}
+
+func s(value string) *string {
+	return &value
+}
+
+func r(value Region) *Region {
+	return &value
+}
+
+func z(value Zone) *Zone {
+	return &value
+}
+
+func b(value bool) *bool {
+	return &value
 }

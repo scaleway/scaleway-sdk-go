@@ -124,7 +124,8 @@ func (c *Config) GetProfile(profileName string) (*Profile, error) {
 		return nil, errors.New("given profile %s does not exist", profileName)
 	}
 
-	return p, nil
+	// Merge selected profile on top of default profile
+	return MergeProfiles(&c.Profile, p), nil
 }
 
 // GetActiveProfile returns the active profile of the config based on the following order:
