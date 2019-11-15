@@ -1,3 +1,4 @@
+// Package validation provides format validation functions.
 package validation
 
 import (
