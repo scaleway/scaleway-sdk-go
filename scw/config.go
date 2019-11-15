@@ -124,6 +124,7 @@ func (c *Config) GetProfile(profileName string) (*Profile, error) {
 		return nil, errors.New("given profile %s does not exist", profileName)
 	}
 
+	// Merge selected profile on top of default profile
 	return MergeProfiles(&c.Profile, p), nil
 }
 
