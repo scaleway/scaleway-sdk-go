@@ -42,16 +42,16 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	return s.updateServer((*UpdateServerRequest)(req), opts...)
 }
 
-// waitForServerRequest is used by waitForServer method.
-type waitForServerRequest struct {
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
 	ServerID string
 	Zone     scw.Zone
 	Timeout  time.Duration
 }
 
-// waitForServer wait for the server to be in a "terminal state" before returning.
+// WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
-func (s *API) waitForServer(req *waitForServerRequest) (*Server, scw.SdkError) {
+func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, scw.SdkError) {
 
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
@@ -109,7 +109,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 		return err
 	}
 
-	finalServer, err := s.waitForServer(&waitForServerRequest{
+	finalServer, err := s.WaitForServer(&WaitForServerRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
 		Timeout:  req.Timeout,
