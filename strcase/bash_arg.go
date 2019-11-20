@@ -2,11 +2,15 @@ package strcase
 
 import "strings"
 
+var customBashNames = map[string]string{
+	"IPID": "ip-id",
+}
+
 // ToBashArg returns the Bash public name of the given string.
 func ToBashArg(s string) string {
 	s = ToPublicGoName(s)
-	if s == "IPID" {
-		return "ip-id"
+	if customBashName, exists := customBashNames[s]; exists {
+		return customBashName
 	}
 	for _, initialism := range customInitialisms {
 		// catch this kind of pattern: ExampleIDs ==> ExampleIds ==> example-ids
