@@ -329,7 +329,9 @@ type Image struct {
 	//
 	// Default value: visibility_unknown
 	Visibility ImageVisibility `json:"visibility"`
-	// Size image size in bytes, calculated from the size of image layers. One layer used in two tags of the same image is counted once but one layer used in two images is counted twice.
+	// Size image size in bytes, calculated from the size of image layers
+	//
+	// Image size in bytes, calculated from the size of image layers. One layer used in two tags of the same image is counted once but one layer used in two images is counted twice.
 	Size uint64 `json:"size"`
 	// CreatedAt creation date
 	CreatedAt time.Time `json:"created_at"`

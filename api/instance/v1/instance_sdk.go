@@ -1469,7 +1469,7 @@ type CreateServerRequest struct {
 	//
 	// Default value: local
 	BootType BootType `json:"boot_type"`
-	// Bootscript the bootscript ID to use when `boot_type` is set to `bootscript`.
+	// Bootscript the bootscript ID to use when `boot_type` is set to `bootscript`
 	Bootscript *string `json:"bootscript,omitempty"`
 	// Organization the server organization ID
 	Organization string `json:"organization,omitempty"`
@@ -3872,7 +3872,7 @@ type CreateIPRequest struct {
 	Server *string `json:"server,omitempty"`
 }
 
-// CreateIP reseve an IP
+// CreateIP reserve an IP
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*CreateIPResponse, error) {
 	var err error
 
