@@ -37,7 +37,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API no Auth Service for end-to-end testing.
+// API no Auth Service for end-to-end testing
 type API struct {
 	client *scw.Client
 }

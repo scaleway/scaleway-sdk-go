@@ -37,7 +37,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API this API allows to manage your Bare metal server.
+// API this API allows to manage your Bare metal server
 type API struct {
 	client *scw.Client
 }
