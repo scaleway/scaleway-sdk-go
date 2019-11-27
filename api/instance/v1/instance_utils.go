@@ -55,7 +55,7 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Attach
 // DetachIPRequest contains the parameters to detach an IP from a server
 type DetachIPRequest struct {
 	Zone scw.Zone `json:"-"`
-	IPID string   `json:"-"`
+	IP   string   `json:"-"`
 }
 
 // DetachIPResponse contains the updated IP after detaching
@@ -67,7 +67,7 @@ type DetachIPResponse struct {
 func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
-		IPID:   req.IPID,
+		IP:     req.IP,
 		Server: &NullableStringValue{Null: true},
 	})
 	if err != nil {
@@ -81,7 +81,7 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Detach
 // if Reverse is an empty string, the reverse will be removed
 type UpdateIPRequest struct {
 	Zone    scw.Zone             `json:"-"`
-	IPID    string               `json:"-"`
+	IP      string               `json:"-"`
 	Reverse *NullableStringValue `json:"reverse"`
 }
 
@@ -89,7 +89,7 @@ type UpdateIPRequest struct {
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:    req.Zone,
-		IPID:    req.IPID,
+		IP:      req.IP,
 		Reverse: req.Reverse,
 	})
 	if err != nil {
