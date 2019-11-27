@@ -53,10 +53,10 @@ func (zone *Zone) String() string {
 // Manipulates the string directly to allow unlisted zones formatted as xx-yyy-z.
 func (zone *Zone) Region() (Region, error) {
 	zoneStr := zone.String()
-	zoneParts := strings.Split(zoneStr, LocalityPartsSeparator)
-	if len(zoneParts) != 3 {
+	if !validation.IsZone(zoneStr) {
 		return "", fmt.Errorf("invalid zone '%v'", zoneStr)
 	}
+	zoneParts := strings.Split(zoneStr, LocalityPartsSeparator)
 	return Region(zoneParts[0] + LocalityPartsSeparator + zoneParts[1]), nil
 }
 
