@@ -29,7 +29,7 @@ func lockServer(zone scw.Zone, serverID string) *sync.Mutex {
 // AttachIPRequest contains the parameters to attach an IP to a server
 type AttachIPRequest struct {
 	Zone     scw.Zone `json:"-"`
-	IPID     string   `json:"-"`
+	IP       string   `json:"-"`
 	ServerID string   `json:"server_id"`
 }
 
@@ -42,7 +42,7 @@ type AttachIPResponse struct {
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
-		IPID:   req.IPID,
+		IP:     req.IP,
 		Server: &NullableStringValue{Value: req.ServerID},
 	})
 	if err != nil {
