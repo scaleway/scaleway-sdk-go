@@ -2,12 +2,16 @@ package scw
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/validation"
 )
+
+// LocalityPartsSeparator is the separator used in Zone and Region
+const LocalityPartsSeparator = "-"
 
 // Zone is an availability zone
 type Zone string
@@ -43,6 +47,17 @@ func (zone *Zone) Exists() bool {
 // String returns a Zone as a string
 func (zone *Zone) String() string {
 	return string(*zone)
+}
+
+// Region returns the parent Region for the Zone.
+// Manipulates the string directly to allow unlisted zones formatted as xx-yyy-z.
+func (zone *Zone) Region() (Region, error) {
+	zoneStr := zone.String()
+	zoneParts := strings.Split(zoneStr, LocalityPartsSeparator)
+	if len(zoneParts) != 3 {
+		return "", fmt.Errorf("invalid zone '%v'", zoneStr)
+	}
+	return Region(zoneParts[0] + LocalityPartsSeparator + zoneParts[1]), nil
 }
 
 // Region is a geographical location
