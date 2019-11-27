@@ -10,8 +10,8 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/validation"
 )
 
-// LocalityPartsSeparator is the separator used in Zone and Region
-const LocalityPartsSeparator = "-"
+// localityPartsSeparator is the separator used in Zone and Region
+const localityPartsSeparator = "-"
 
 // Zone is an availability zone
 type Zone string
@@ -56,8 +56,8 @@ func (zone *Zone) Region() (Region, error) {
 	if !validation.IsZone(zoneStr) {
 		return "", fmt.Errorf("invalid zone '%v'", zoneStr)
 	}
-	zoneParts := strings.Split(zoneStr, LocalityPartsSeparator)
-	return Region(zoneParts[0] + LocalityPartsSeparator + zoneParts[1]), nil
+	zoneParts := strings.Split(zoneStr, localityPartsSeparator)
+	return Region(strings.Join(zoneParts[:2], localityPartsSeparator)), nil
 }
 
 // Region is a geographical location
