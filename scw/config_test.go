@@ -597,12 +597,14 @@ func TestConfig_ConfigFile(t *testing.T) {
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.result, config)
 
-			loaded, err := unmarshalConfV2([]byte(config))
+			loaded, err2 := unmarshalConfV2([]byte(config))
 			fmt.Println(c.config)
 			fmt.Println("---")
 			fmt.Println(c.config.HumanConfig())
 			fmt.Println("---")
 			fmt.Println(loaded)
+			fmt.Println("Err2: ")
+			fmt.Println(err2)
 			testhelpers.Equals(t, c.config, loaded)
 		}
 	}
@@ -657,12 +659,13 @@ func TestConfig_ConfigFile(t *testing.T) {
 
 # You can define a profile using the following syntax:
 
-# myProfile:
-#   access_key: 11111111-1111-1111-1111-111111111111
-#   secret_key: 11111111-1111-1111-1111-111111111111
-#   organization_id: 11111111-1111-1111-1111-111111111111
-#   default_zone: fr-par-1
-#   default_region: fr-par
+# profiles:
+#   myProfile:
+#     access_key: 11111111-1111-1111-1111-111111111111
+#     secret_key: 11111111-1111-1111-1111-111111111111
+#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_zone: fr-par-1
+#     default_region: fr-par
 `,
 	}))
 
@@ -719,12 +722,13 @@ access_key: SCW1234567890ABCDEFG
 
 # You can define a profile using the following syntax:
 
-# myProfile:
-#   access_key: 11111111-1111-1111-1111-111111111111
-#   secret_key: 11111111-1111-1111-1111-111111111111
-#   organization_id: 11111111-1111-1111-1111-111111111111
-#   default_zone: fr-par-1
-#   default_region: fr-par
+# profiles:
+#   myProfile:
+#     access_key: 11111111-1111-1111-1111-111111111111
+#     secret_key: 11111111-1111-1111-1111-111111111111
+#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_zone: fr-par-1
+#     default_region: fr-par
 `,
 	}))
 
@@ -794,19 +798,20 @@ active_profile: flantier
 
 # You can define a profile using the following syntax:
 
-profile1:
-  access_key: SCW234567890ABCDEFGH
-  secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
-  # default_organization_id: 11111111-1111-1111-1111-111111111111
-  # default_zone: fr-par-1
-  # default_region: fr-par
+profiles:
+  profile1:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
+    # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_zone: fr-par-1
+    # default_region: fr-par
 
-profile2:
-  access_key: SCW234567890ABCDEFGH
-  secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
-  # default_organization_id: 11111111-1111-1111-1111-111111111111
-  # default_zone: fr-par-1
-  # default_region: fr-par
+  profile2:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
+    # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_zone: fr-par-1
+    # default_region: fr-par
 `,
 	}))
 }

@@ -66,21 +66,23 @@ const configFileTemplate = `# Scaleway configuration file
 
 # You can define a profile using the following syntax:
 {{ if gt (len .Profiles) 0 }}
+profiles:
 {{- range $k,$v := .Profiles }}
-{{ $k }}:
-  {{ if $v.AccessKey }}access_key: {{ $v.AccessKey }}{{ else }}# access_key: SCW11111111111111111{{ end }}
-  {{ if $v.SecretKey }}secret_key: {{ $v.SecretKey }}{{ else }}# secret_key: 11111111-1111-1111-1111-111111111111{{ end }}
-  {{ if $v.DefaultOrganizationID }}default_organization_id: {{ $v.DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
-  {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
-  {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
+  {{ $k }}:
+    {{ if $v.AccessKey }}access_key: {{ $v.AccessKey }}{{ else }}# access_key: SCW11111111111111111{{ end }}
+    {{ if $v.SecretKey }}secret_key: {{ $v.SecretKey }}{{ else }}# secret_key: 11111111-1111-1111-1111-111111111111{{ end }}
+    {{ if $v.DefaultOrganizationID }}default_organization_id: {{ $v.DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
+    {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
+    {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
 {{ end }}
 {{- else }}
-# myProfile:
-#   access_key: 11111111-1111-1111-1111-111111111111
-#   secret_key: 11111111-1111-1111-1111-111111111111
-#   organization_id: 11111111-1111-1111-1111-111111111111
-#   default_zone: fr-par-1
-#   default_region: fr-par
+# profiles:
+#   myProfile:
+#     access_key: 11111111-1111-1111-1111-111111111111
+#     secret_key: 11111111-1111-1111-1111-111111111111
+#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_zone: fr-par-1
+#     default_region: fr-par
 {{ end -}}
 `
 
