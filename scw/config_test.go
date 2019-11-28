@@ -1,6 +1,7 @@
 package scw
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -595,6 +596,14 @@ func TestConfig_ConfigFile(t *testing.T) {
 			config, err := c.config.HumanConfig()
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.result, config)
+
+			loaded, err := unmarshalConfV2([]byte(config))
+			fmt.Println(c.config)
+			fmt.Println("---")
+			fmt.Println(c.config.HumanConfig())
+			fmt.Println("---")
+			fmt.Println(loaded)
+			testhelpers.Equals(t, c.config, loaded)
 		}
 	}
 
@@ -638,7 +647,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-#
+# active_profile: default
+
 # If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
@@ -699,7 +709,8 @@ access_key: SCW1234567890ABCDEFG
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-#
+# active_profile: default
+
 # If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
@@ -773,7 +784,8 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-#
+active_profile: flantier
+
 # If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
