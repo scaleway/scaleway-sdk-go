@@ -20,10 +20,12 @@ type WaitForServerRequest struct {
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, scw.SdkError) {
 
 	terminalStatus := map[ServerStatus]struct{}{
-		ServerStatusReady:   {},
-		ServerStatusStopped: {},
-		ServerStatusError:   {},
-		ServerStatusUnknown: {},
+		ServerStatusReady:       {},
+		ServerStatusStopped:     {},
+		ServerStatusError:       {},
+		ServerStatusUndelivered: {},
+		ServerStatusLocked:      {},
+		ServerStatusUnknown:     {},
 	}
 
 	installTerminalStatus := map[ServerInstallStatus]struct{}{
