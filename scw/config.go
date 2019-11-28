@@ -44,6 +44,14 @@ const configFileTemplate = `# Scaleway configuration file
 # Example of zones: fr-par-1, nl-ams-1
 {{ if .DefaultZone }}default_zone: {{.DefaultZone}}{{ else }}# default_zone: fr-par-1{{ end }}
 
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+{{ if .APIURL }}apiurl: {{ .APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+
+# Insecure enables insecure transport on the client.
+# Default to false
+{{ if .Insecure }}insecure: {{ .Insecure }}{{ else }}# insecure: false{{ end }}
+
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 

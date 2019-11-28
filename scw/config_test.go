@@ -626,6 +626,14 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Example of zones: fr-par-1, nl-ams-1
 # default_zone: fr-par-1
 
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
+
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
@@ -678,6 +686,14 @@ access_key: SCW1234567890ABCDEFG
 # Latency between multiple AZ of the same region are low as they have a common network layer.
 # Example of zones: fr-par-1, nl-ams-1
 # default_zone: fr-par-1
+
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
@@ -744,6 +760,14 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Latency between multiple AZ of the same region are low as they have a common network layer.
 # Example of zones: fr-par-1, nl-ams-1
 # default_zone: fr-par-1
+
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
