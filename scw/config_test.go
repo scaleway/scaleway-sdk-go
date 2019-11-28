@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -598,13 +597,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 			testhelpers.Equals(t, c.result, config)
 
 			loaded, err2 := unmarshalConfV2([]byte(config))
-			fmt.Println(c.config)
-			fmt.Println("---")
-			fmt.Println(c.config.HumanConfig())
-			fmt.Println("---")
-			fmt.Println(loaded)
-			fmt.Println("Err2: ")
-			fmt.Println(err2)
+			testhelpers.AssertNoError(t, err2)
 			testhelpers.Equals(t, c.config, loaded)
 		}
 	}
