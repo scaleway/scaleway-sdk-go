@@ -601,6 +601,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 	t.Run("empty", run(&testCase{
 		config: &Config{},
 		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
@@ -653,6 +654,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 				AccessKey: s(v2ValidAccessKey),
 			}},
 		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
@@ -718,6 +720,7 @@ access_key: SCW1234567890ABCDEFG
 			},
 		},
 		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials

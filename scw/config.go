@@ -19,6 +19,7 @@ const (
 )
 
 const configFileTemplate = `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
