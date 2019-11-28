@@ -55,7 +55,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 		// Attach IP
 		ipAttachResponse, err := instanceAPI.AttachIP(&AttachIPRequest{
-			IPID:     ipID,
+			IP:       ipID,
 			Zone:     zone,
 			ServerID: serverID,
 		})
@@ -65,7 +65,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 		// Detach IP
 		ipDetachResponse, err := instanceAPI.DetachIP(&DetachIPRequest{
-			IPID: ipID,
+			IP:   ipID,
 			Zone: zone,
 		})
 
@@ -74,7 +74,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 		// Set reverse
 		ipSetReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
-			IPID:    ipID,
+			IP:      ipID,
 			Zone:    zone,
 			Reverse: reverse,
 		})
@@ -83,7 +83,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 		// Omitempty reverse
 		ipSetReverseResponse, err = instanceAPI.UpdateIP(&UpdateIPRequest{
-			IPID:    ipID,
+			IP:      ipID,
 			Zone:    zone,
 			Reverse: nil,
 		})
@@ -92,7 +92,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 		// Unset reverse
 		ipDeleteReverseResponse, err := instanceAPI.UpdateIP(&UpdateIPRequest{
-			IPID:    ipID,
+			IP:      ipID,
 			Zone:    zone,
 			Reverse: nullReverse,
 		})
