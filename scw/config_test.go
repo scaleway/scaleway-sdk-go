@@ -228,10 +228,12 @@ func TestSaveConfig(t *testing.T) {
 			testhelpers.AssertNoError(t, test.config.Save())
 
 			// test expected files
-			for fileName, expectedContent := range test.expectedFiles {
+			for fileName := range test.expectedFiles {
+				expectedContent, err := test.config.HumanConfig()
+				testhelpers.AssertNoError(t, err)
 				content, err := ioutil.ReadFile(filepath.Join(dir, fileName))
 				testhelpers.AssertNoError(t, err)
-				testhelpers.Equals(t, expectedContent, "\n"+string(content))
+				testhelpers.Equals(t, expectedContent, string(content))
 			}
 
 		})
@@ -579,4 +581,238 @@ func z(value Zone) *Zone {
 
 func b(value bool) *bool {
 	return &value
+}
+
+func TestConfig_ConfigFile(t *testing.T) {
+
+	type testCase struct {
+		config *Config
+		result string
+	}
+
+	run := func(c *testCase) func(t *testing.T) {
+		return func(t *testing.T) {
+			config, err := c.config.HumanConfig()
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Equals(t, c.result, config)
+
+			loaded, err2 := unmarshalConfV2([]byte(config))
+			testhelpers.AssertNoError(t, err2)
+			testhelpers.Equals(t, c.config, loaded)
+		}
+	}
+
+	t.Run("empty", run(&testCase{
+		config: &Config{},
+		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+
+# You need an access key and a secret key to connect to Scaleway API.
+# Generate your token at the following address: https://console.scaleway.com/account/credentials
+
+# An access key is a secret key identifier.
+# access_key: SCW11111111111111111
+
+# The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
+# The secret key MUST remain secret and not given to anyone or published online.
+# secret_key: 11111111-1111-1111-1111-111111111111
+
+# Your organization ID is the identifier of your account inside Scaleway infrastructure.
+# default_organization_id: 11111111-1111-1111-1111-111111111111
+
+# A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
+# It can contain multiple availability zones.
+# Example of region: fr-par, nl-ams
+# default_region: fr-par
+
+# A region can be split into many availability zones (AZ).
+# Latency between multiple AZ of the same region are low as they have a common network layer.
+# Example of zones: fr-par-1, nl-ams-1
+# default_zone: fr-par-1
+
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
+
+# A configuration is a named set of Scaleway properties.
+# Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
+# You can set properties of the default profile by running either scw init or scw config set. 
+# This single default configuration is suitable for most use cases.
+# active_profile: myProfile
+
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# You can use a profile by either:
+# - Define the profile you want to use as the SCW_PROFILE environment variable
+# - Use the GetActiveProfile() function in the SDK
+# - Use the --profile flag with the CLI
+
+# You can define a profile using the following syntax:
+
+# profiles:
+#   myProfile:
+#     access_key: 11111111-1111-1111-1111-111111111111
+#     secret_key: 11111111-1111-1111-1111-111111111111
+#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_zone: fr-par-1
+#     default_region: fr-par
+#     api_url: https://api.scaleway.com
+#     insecure: false
+`,
+	}))
+
+	t.Run("partial", run(&testCase{
+		config: &Config{
+			Profile: Profile{
+				AccessKey: s(v2ValidAccessKey),
+			}},
+		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+
+# You need an access key and a secret key to connect to Scaleway API.
+# Generate your token at the following address: https://console.scaleway.com/account/credentials
+
+# An access key is a secret key identifier.
+access_key: SCW1234567890ABCDEFG
+
+# The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
+# The secret key MUST remain secret and not given to anyone or published online.
+# secret_key: 11111111-1111-1111-1111-111111111111
+
+# Your organization ID is the identifier of your account inside Scaleway infrastructure.
+# default_organization_id: 11111111-1111-1111-1111-111111111111
+
+# A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
+# It can contain multiple availability zones.
+# Example of region: fr-par, nl-ams
+# default_region: fr-par
+
+# A region can be split into many availability zones (AZ).
+# Latency between multiple AZ of the same region are low as they have a common network layer.
+# Example of zones: fr-par-1, nl-ams-1
+# default_zone: fr-par-1
+
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
+
+# A configuration is a named set of Scaleway properties.
+# Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
+# You can set properties of the default profile by running either scw init or scw config set. 
+# This single default configuration is suitable for most use cases.
+# active_profile: myProfile
+
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# You can use a profile by either:
+# - Define the profile you want to use as the SCW_PROFILE environment variable
+# - Use the GetActiveProfile() function in the SDK
+# - Use the --profile flag with the CLI
+
+# You can define a profile using the following syntax:
+
+# profiles:
+#   myProfile:
+#     access_key: 11111111-1111-1111-1111-111111111111
+#     secret_key: 11111111-1111-1111-1111-111111111111
+#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_zone: fr-par-1
+#     default_region: fr-par
+#     api_url: https://api.scaleway.com
+#     insecure: false
+`,
+	}))
+
+	t.Run("full", run(&testCase{
+		config: &Config{
+			Profile: Profile{
+				AccessKey: s(v2ValidAccessKey),
+				SecretKey: s(v2ValidSecretKey),
+			},
+			ActiveProfile: s(v2ValidProfile),
+			Profiles: map[string]*Profile{
+				"profile1": {
+					AccessKey: s(v2ValidAccessKey2),
+					SecretKey: s(v2ValidSecretKey2),
+				},
+				"profile2": {
+					AccessKey: s(v2ValidAccessKey2),
+					SecretKey: s(v2ValidSecretKey2),
+				},
+			},
+		},
+		result: `# Scaleway configuration file
+# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+
+# You need an access key and a secret key to connect to Scaleway API.
+# Generate your token at the following address: https://console.scaleway.com/account/credentials
+
+# An access key is a secret key identifier.
+access_key: SCW1234567890ABCDEFG
+
+# The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
+# The secret key MUST remain secret and not given to anyone or published online.
+secret_key: 7363616c-6577-6573-6862-6f7579616161
+
+# Your organization ID is the identifier of your account inside Scaleway infrastructure.
+# default_organization_id: 11111111-1111-1111-1111-111111111111
+
+# A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
+# It can contain multiple availability zones.
+# Example of region: fr-par, nl-ams
+# default_region: fr-par
+
+# A region can be split into many availability zones (AZ).
+# Latency between multiple AZ of the same region are low as they have a common network layer.
+# Example of zones: fr-par-1, nl-ams-1
+# default_zone: fr-par-1
+
+# APIURL overrides the API URL of the Scaleway API to the given URL.
+# Change that if you want to direct requests to a different endpoint.
+# api_url: https://api.scaleway.com
+
+# Insecure enables insecure transport on the client.
+# Default to false
+# insecure: false
+
+# A configuration is a named set of Scaleway properties.
+# Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
+# You can set properties of the default profile by running either scw init or scw config set. 
+# This single default configuration is suitable for most use cases.
+active_profile: flantier
+
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# You can use a profile by either:
+# - Define the profile you want to use as the SCW_PROFILE environment variable
+# - Use the GetActiveProfile() function in the SDK
+# - Use the --profile flag with the CLI
+
+# You can define a profile using the following syntax:
+
+profiles:
+  profile1:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
+    # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_zone: fr-par-1
+    # default_region: fr-par
+    # api_url: https://api.scaleway.com
+    # insecure: false
+
+  profile2:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
+    # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_zone: fr-par-1
+    # default_region: fr-par
+    # api_url: https://api.scaleway.com
+    # insecure: false
+`,
+	}))
 }
