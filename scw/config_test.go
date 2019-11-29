@@ -621,7 +621,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
-# It can contain multiple Availability Zones.
+# It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
 # default_region: fr-par
 
@@ -684,7 +684,7 @@ access_key: SCW1234567890ABCDEFG
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
-# It can contain multiple Availability Zones.
+# It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
 # default_region: fr-par
 
@@ -760,7 +760,7 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
-# It can contain multiple Availability Zones.
+# It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
 # default_region: fr-par
 

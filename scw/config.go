@@ -35,7 +35,7 @@ const configFileTemplate = `# Scaleway configuration file
 {{ if .DefaultOrganizationID }}default_organization_id: {{ .DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
-# It can contain multiple Availability Zones.
+# It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
 {{ if .DefaultRegion }}default_region: {{ .DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
 
