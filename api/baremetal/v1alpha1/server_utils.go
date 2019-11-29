@@ -20,17 +20,15 @@ type WaitForServerRequest struct {
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, scw.SdkError) {
 
 	terminalStatus := map[ServerStatus]struct{}{
-		ServerStatusReady:       {},
-		ServerStatusStopped:     {},
-		ServerStatusError:       {},
-		ServerStatusUndelivered: {},
-		ServerStatusLocked:      {},
-		ServerStatusUnknown:     {},
+		ServerStatusReady:   {},
+		ServerStatusStopped: {},
+		ServerStatusError:   {},
+		ServerStatusLocked:  {},
+		ServerStatusUnknown: {},
 	}
 
 	installTerminalStatus := map[ServerInstallStatus]struct{}{
 		ServerInstallStatusCompleted: {},
-		ServerInstallStatusToInstall: {},
 		ServerInstallStatusError:     {},
 		ServerInstallStatusUnknown:   {},
 	}
@@ -53,7 +51,9 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, scw.SdkError) {
 
 			return res, err, isTerminal && isTerminalInstall
 		},
-		Timeout:          req.Timeout,
+		Timeout: req.Timeout,
+		// TODO: Install is a long process, we should increase the
+		// interval when isTerminalInstall == true.
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
 	})
 	if err != nil {
