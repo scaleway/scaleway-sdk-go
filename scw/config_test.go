@@ -642,9 +642,9 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-# active_profile: default
+# active_profile: myProfile
 
-# If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
 # - Use the GetActiveProfile() function in the SDK
@@ -659,6 +659,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     organization_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
+#     api_url: https://api.scaleway.com
+#     insecure: false
 `,
 	}))
 
@@ -705,9 +707,9 @@ access_key: SCW1234567890ABCDEFG
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-# active_profile: default
+# active_profile: myProfile
 
-# If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
 # - Use the GetActiveProfile() function in the SDK
@@ -722,6 +724,8 @@ access_key: SCW1234567890ABCDEFG
 #     organization_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
+#     api_url: https://api.scaleway.com
+#     insecure: false
 `,
 	}))
 
@@ -783,7 +787,7 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # This single default configuration is suitable for most use cases.
 active_profile: flantier
 
-# If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
 # - Use the GetActiveProfile() function in the SDK
@@ -798,6 +802,8 @@ profiles:
     # default_organization_id: 11111111-1111-1111-1111-111111111111
     # default_zone: fr-par-1
     # default_region: fr-par
+    # api_url: https://api.scaleway.com
+    # insecure: false
 
   profile2:
     access_key: SCW234567890ABCDEFGH
@@ -805,6 +811,8 @@ profiles:
     # default_organization_id: 11111111-1111-1111-1111-111111111111
     # default_zone: fr-par-1
     # default_region: fr-par
+    # api_url: https://api.scaleway.com
+    # insecure: false
 `,
 	}))
 }

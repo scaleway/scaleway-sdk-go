@@ -56,9 +56,9 @@ const configFileTemplate = `# Scaleway configuration file
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
 # You can set properties of the default profile by running either scw init or scw config set. 
 # This single default configuration is suitable for most use cases.
-{{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: default{{ end }}
+{{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: myProfile{{ end }}
 
-# If you’d like to work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
+# To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
 # - Use the GetActiveProfile() function in the SDK
@@ -74,6 +74,8 @@ profiles:
     {{ if $v.DefaultOrganizationID }}default_organization_id: {{ $v.DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
     {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
     {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
+    {{ if $v.APIURL }}api_url: {{ $v.APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+    {{ if $v.Insecure }}insecure: {{ $v.Insecure }}{{ else }}# insecure: false{{ end }}
 {{ end }}
 {{- else }}
 # profiles:
@@ -83,6 +85,8 @@ profiles:
 #     organization_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
+#     api_url: https://api.scaleway.com
+#     insecure: false
 {{ end -}}
 `
 
