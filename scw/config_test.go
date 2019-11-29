@@ -614,7 +614,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 # access_key: SCW11111111111111111
 
 # The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
-# The secret key MUST stay secret and not given to anyone or published online.
+# The secret key MUST remain secret and not given to anyone or published online.
 # secret_key: 11111111-1111-1111-1111-111111111111
 
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
@@ -677,7 +677,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 access_key: SCW1234567890ABCDEFG
 
 # The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
-# The secret key MUST stay secret and not given to anyone or published online.
+# The secret key MUST remain secret and not given to anyone or published online.
 # secret_key: 11111111-1111-1111-1111-111111111111
 
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
@@ -753,7 +753,7 @@ access_key: SCW1234567890ABCDEFG
 access_key: SCW1234567890ABCDEFG
 
 # The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
-# The secret key MUST stay secret and not given to anyone or published online.
+# The secret key MUST remain secret and not given to anyone or published online.
 secret_key: 7363616c-6577-6573-6862-6f7579616161
 
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.

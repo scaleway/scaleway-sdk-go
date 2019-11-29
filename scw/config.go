@@ -28,7 +28,7 @@ const configFileTemplate = `# Scaleway configuration file
 {{ if .AccessKey }}access_key: {{.AccessKey}}{{ else }}# access_key: SCW11111111111111111{{ end }}
 
 # The secret key is the value that can be used to authenticate against the API (the value used in X-Auth-Token HTTP-header).
-# The secret key MUST stay secret and not given to anyone or published online.
+# The secret key MUST remain secret and not given to anyone or published online.
 {{ if .SecretKey }}secret_key: {{ .SecretKey }}{{ else }}# secret_key: 11111111-1111-1111-1111-111111111111{{ end }}
 
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
