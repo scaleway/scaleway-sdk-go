@@ -283,5 +283,5 @@ func configFileNotFound(path string) *ConfigFileNotFoundError {
 // ConfigFileNotFoundError implements the SdkError interface
 func (e ConfigFileNotFoundError) IsScwSdkError() {}
 func (e ConfigFileNotFoundError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: config file %s counld not be found", e.path)
+	return fmt.Sprintf("scaleway-sdk-go: config file %s could not be found", e.path)
 }

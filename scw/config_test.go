@@ -265,7 +265,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		},
 		{
 			name:          "No config",
-			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yaml: no such file or directory",
+			expectedError: "scaleway-sdk-go: config file {HOME}/.config/scw/config.yaml could not be found",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
