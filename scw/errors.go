@@ -270,3 +270,18 @@ func (e InvalidClientOptionError) IsScwSdkError() {}
 func (e InvalidClientOptionError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
 }
+
+// ConfigFileNotFound indicates that the config file could not be found
+type ConfigFileNotFoundError struct {
+	path string
+}
+
+func configFileNotFound(path string) *ConfigFileNotFoundError {
+	return &ConfigFileNotFoundError{path: path}
+}
+
+// ConfigFileNotFoundError implements the SdkError interface
+func (e ConfigFileNotFoundError) IsScwSdkError() {}
+func (e ConfigFileNotFoundError) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: config file %s counld not be found", e.path)
+}

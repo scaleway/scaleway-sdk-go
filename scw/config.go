@@ -170,6 +170,9 @@ func LoadConfigFromPath(path string) (*Config, error) {
 
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
+		if pathError, isPathError := err.(*os.PathError); isPathError {
+			return nil, configFileNotFound(pathError.Path)
+		}
 		return nil, errors.Wrap(err, "cannot read config file")
 	}
 
