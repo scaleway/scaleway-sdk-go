@@ -8,9 +8,14 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+var (
+	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+)
+
 func newE2EClient(withAuthInClient bool) (*test.API, string, string, error) {
 	client, err := scw.NewClient(
 		scw.WithDefaultRegion(scw.RegionFrPar),
+		scw.WithDefaultOrganizationID(defaultOrganizationID),
 		scw.WithUserAgent("sdk-e2e-test"),
 	)
 	if err != nil {
@@ -27,6 +32,7 @@ func newE2EClient(withAuthInClient bool) (*test.API, string, string, error) {
 	if withAuthInClient {
 		client, err = scw.NewClient(
 			scw.WithDefaultRegion(scw.RegionFrPar),
+			scw.WithDefaultOrganizationID(defaultOrganizationID),
 			scw.WithAuth(registerResponse.AccessKey, registerResponse.SecretKey),
 			scw.WithUserAgent("sdk-e2e-test"),
 		)
