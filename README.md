@@ -12,8 +12,7 @@
 **:warning: This is an early release, keep in mind that the API can break**
 
 
-Scaleway is a simple way to build, deploy and scale your infrastructure in the cloud.
-We help thousands of developers and businesses to run their infrastructures without any issue.
+Scaleway is a single way to create, deploy and scale your infrastructure in the cloud. We help thousands of businesses to run their infrastructures easily.
 
 ## Documentation
 
