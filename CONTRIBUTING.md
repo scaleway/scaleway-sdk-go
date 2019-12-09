@@ -3,9 +3,7 @@
 `scaleway-sdk-go` is Apache 2.0 licensed and accepts contributions via GitHub.
 This document will cover how to contribute to the project and report issues.
 
-<p align="center">
-  <img height="200" src="docs/static_files/scaleway-logo.png">
-</p>
+<p align="center"><img width="50%" src="docs/static_files/sdk-artwork.png" /></p>
 
 ## Topics
 
