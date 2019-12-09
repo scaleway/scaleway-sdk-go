@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.0.0-beta.5 (2019-12-09)
+
+### Features
+
+* **config**: add a typed error on config file not found ([#264](https://github.com/scaleway/scaleway-sdk-go/pull/264))
+* **core**: get Region from Zone ([#255](https://github.com/scaleway/scaleway-sdk-go/pull/255))
+* **lb**: custom certificate ([#262](https://github.com/scaleway/scaleway-sdk-go/pull/262))
+* **baremetal**: fix WaitForServer and add WaitForServerInstall ([#263](https://github.com/scaleway/scaleway-sdk-go/pull/263))
+* **config**: add a commented configuration file ([#231](https://github.com/scaleway/scaleway-sdk-go/pull/231))
+* **baremetal**: add ListOffers and ListOs methods ([#259](https://github.com/scaleway/scaleway-sdk-go/pull/259))
+* **k8s**: add maintenance and upgrade features ([#258](https://github.com/scaleway/scaleway-sdk-go/pull/258))
+* **registry**: add WaitForNamespace method ([#253](https://github.com/scaleway/scaleway-sdk-go/pull/253))
+* **lb**: add ListBackendStats method ([#252](https://github.com/scaleway/scaleway-sdk-go/pull/252))
+* **rdb**: wait for Instance ([#249](https://github.com/scaleway/scaleway-sdk-go/pull/249))
+* **rdb**: add rdb API ([#247](https://github.com/scaleway/scaleway-sdk-go/pull/247))
+* **k8s**: add Pool.PlacementGroupID field ([#246](https://github.com/scaleway/scaleway-sdk-go/pull/246))
+* **instance**: publish WaitForServer ([#244](https://github.com/scaleway/scaleway-sdk-go/pull/244))
+* **validation**: add IsEmail ([#242](https://github.com/scaleway/scaleway-sdk-go/pull/242))
+* **validation**: make validation package public ([#241](https://github.com/scaleway/scaleway-sdk-go/pull/241))
+* **core**: client validation ([#238](https://github.com/scaleway/scaleway-sdk-go/pull/238))
+* **core**: IPNet type ([#236](https://github.com/scaleway/scaleway-sdk-go/pull/236))
+* **core**: introduce format validation in locality parsing ([#237](https://github.com/scaleway/scaleway-sdk-go/pull/237))
+* **core**: add scw.MergeProfiles command ([#234](https://github.com/scaleway/scaleway-sdk-go/pull/234))
+* **core**: add ClientCredentialError ([#228](https://github.com/scaleway/scaleway-sdk-go/pull/228))
+* **core**: client without auth by default ([#233](https://github.com/scaleway/scaleway-sdk-go/pull/233))
+* **strcase**: add strcase lib ([#229](https://github.com/scaleway/scaleway-sdk-go/pull/229))
+* **instance**: generate name for new snapshot or image ([#230](https://github.com/scaleway/scaleway-sdk-go/pull/230))
+
+### Fixes
+
+* **baremetal**: add Undelivered and Locked to terminalStatus ([#260](https://github.com/scaleway/scaleway-sdk-go/pull/260))
+* **instance**: WaitForServer returns an error interface ([#245](https://github.com/scaleway/scaleway-sdk-go/pull/245))
+* **config**: merge selected profile on top of default profile ([#243](https://github.com/scaleway/scaleway-sdk-go/pull/243))
+* **instance**: use IPNet type for security group rule ip_range ([#240](https://github.com/scaleway/scaleway-sdk-go/pull/240))
+* **instance**: update placement-group now works ([#224](https://github.com/scaleway/scaleway-sdk-go/pull/224))
+
+
 ## v1.0.0-beta.4 (2019-10-25)
 
 ### Breaking Changes
