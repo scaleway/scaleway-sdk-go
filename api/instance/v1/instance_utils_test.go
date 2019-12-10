@@ -102,7 +102,7 @@ func TestInstanceHelpers(t *testing.T) {
 		// Delete IP
 		err = instanceAPI.DeleteIP(&DeleteIPRequest{
 			Zone: zone,
-			IPID: ipID,
+			IP:   ipID,
 		})
 		testhelpers.AssertNoError(t, err)
 
