@@ -4054,8 +4054,8 @@ func (s *API) updateIP(req *updateIPRequest, opts ...scw.RequestOption) (*Update
 
 type DeleteIPRequest struct {
 	Zone scw.Zone `json:"-"`
-
-	IPID string `json:"-"`
+	// IP the ID or the address of the IP to delete
+	IP string `json:"-"`
 }
 
 // DeleteIP delete IP
@@ -4073,13 +4073,13 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.IPID) == "" {
-		return errors.New("field IPID cannot be empty in request")
+	if fmt.Sprint(req.IP) == "" {
+		return errors.New("field IP cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IP) + "",
 		Headers: http.Header{},
 	}
 

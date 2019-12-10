@@ -3,13 +3,13 @@ package strcase
 import "strings"
 
 var customBashNames = map[string]string{
-	"IPID": "ip-id",
+	"ipid": "ip-id",
 }
 
 // ToBashArg returns the Bash public name of the given string.
 func ToBashArg(s string) string {
 	s = ToPublicGoName(s)
-	if customBashName, exists := customBashNames[s]; exists {
+	if customBashName, exists := customBashNames[strings.ToLower(s)]; exists {
 		return customBashName
 	}
 	for _, initialism := range customInitialisms {
