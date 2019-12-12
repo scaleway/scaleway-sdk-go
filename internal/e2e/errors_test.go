@@ -28,11 +28,7 @@ func TestStandardErrors(t *testing.T) {
 			AltitudeInMeter: -7000000,
 		})
 		testhelpers.Equals(t, &scw.InvalidArgumentsError{
-			Details: []struct {
-				ArgumentName string `json:"argument_name"`
-				Reason       string `json:"reason"`
-				HelpMessage  string `json:"help_message"`
-			}{
+			Details: []scw.InvalidArgumentsErrorDetail{
 				{
 					ArgumentName: "altitude_in_meter",
 					Reason:       "constraint",
