@@ -59,9 +59,9 @@ const configFileTemplate = `# Scaleway configuration file
 # This single default configuration is suitable for most use cases.
 {{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: myProfile{{ end }}
 
-# Help us improve your experience by automatically sending diagnostic and usage data.
-# ;-) we solemnly swear that we will only use this data to make the world a better place.
-{{ if .SendUsage }}send_usage: true{{ else }}# send_usage: false{{ end }}
+# To improve this tools we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting this variable to false.
+{{ if .SendUsage }}send_usage: {{ .SendUsage }}{{ else }}# send_usage: false{{ end }}
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
