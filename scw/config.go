@@ -59,6 +59,10 @@ const configFileTemplate = `# Scaleway configuration file
 # This single default configuration is suitable for most use cases.
 {{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: myProfile{{ end }}
 
+# Help us improve your experience by automatically sending diagnostic and usage data.
+# ;-) we solemnly swear that we will only use this data to make the world a better place.
+{{ if .SendUsage }}send_usage: true{{ else }}# send_usage: false{{ end }}
+
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
 # - Define the profile you want to use as the SCW_PROFILE environment variable
@@ -94,6 +98,7 @@ profiles:
 type Config struct {
 	Profile       `yaml:",inline"`
 	ActiveProfile *string             `yaml:"active_profile,omitempty"`
+	SendUsage     bool                `yaml:"send_usage,omitempty"`
 	Profiles      map[string]*Profile `yaml:"profiles,omitempty"`
 }
 
