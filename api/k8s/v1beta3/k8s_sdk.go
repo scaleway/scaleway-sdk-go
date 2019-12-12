@@ -703,7 +703,7 @@ func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
+func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListClustersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1154,7 +1154,7 @@ func (r *ListPoolsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
+func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListPoolsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1490,7 +1490,7 @@ func (r *ListNodesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, scw.SdkError) {
+func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListNodesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
