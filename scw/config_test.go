@@ -807,8 +807,8 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # This single default configuration is suitable for most use cases.
 active_profile: flantier
 
-# Help us improve your experience by automatically sending diagnostic and usage data.
-# ;-) we solemnly swear that we will only use this data to make the world a better place.
+# To improve this tools we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting this variable to false
 send_usage: true
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
