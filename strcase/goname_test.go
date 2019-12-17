@@ -34,6 +34,7 @@ func TestTitleFirstWord(t *testing.T) {
 		{"test Case", "Test Case"},
 		{"TEST CASE", "TEST CASE"},
 		{"tEST CASE", "TEST CASE"},
+		{"test case", "Test case"},
 		{"#EST CASE", "#EST CASE"},
 	}
 	for _, i := range cases {
