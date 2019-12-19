@@ -38,6 +38,15 @@ var (
 )
 
 // API no Auth Service for end-to-end testing
+//
+// Test is a fake service that aim to manage fake humans. It is used for internal and public end-to-end tests.
+//
+// This service don't use the Scaleway authentication service but a fake one. It allows to use this test
+// service publicly without requiring a Scaleway account.
+//
+// First, you need to register a user with `scw test human register` to get an access-key. Then, you can use
+// other test commands by setting the SCW_SECRET_KEY env variable.
+//
 type API struct {
 	client *scw.Client
 }
@@ -223,6 +232,12 @@ type RegisterRequest struct {
 	Username string `json:"username"`
 }
 
+// Register register a user
+//
+// Register a human and return a access-key and a secret-key that must be used in all other commands.
+//
+// Hint: you can use other test commands by setting the SCW_SECRET_KEY env variable.
+//
 func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*RegisterResponse, error) {
 	var err error
 
@@ -539,6 +554,9 @@ type RunHumanRequest struct {
 	HumanID string `json:"-"`
 }
 
+// RunHuman start a 1h running for the given human
+//
+// Start a one hour running for the given human.
 func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
