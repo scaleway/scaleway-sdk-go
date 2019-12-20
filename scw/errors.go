@@ -131,19 +131,29 @@ func unmarshalStandardError(errorType string, body []byte) error {
 }
 
 func unmarshalNonStandardError(errorType string, body []byte) error {
-	var stdErr SdkError
 	switch errorType {
-
+	// Only in instance API.
 	case "invalid_request_error":
 		invalidRequestError := &InvalidRequestError{RawBody: body}
 		err := json.Unmarshal(body, invalidRequestError)
 		if err != nil {
 			return errors.Wrap(err, "could not parse error %s response body", errorType)
 		}
-		stdErr = invalidRequestError.ToInvalidArgumentsError()
-	}
 
-	return stdErr
+		return invalidRequestError.ToSdkError()
+
+	// Only in instance API.
+	case "conflict":
+		conflictError := &ConflictError{RawBody: body}
+		err := json.Unmarshal(body, conflictError)
+		if err != nil {
+			return errors.Wrap(err, "could not parse error %s response body", errorType)
+		}
+
+		return conflictError.ToSdkError()
+	default:
+		return nil
+	}
 }
 
 type InvalidArgumentsErrorDetail struct {
@@ -185,34 +195,62 @@ func (e *InvalidArgumentsError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-// InvalidRequestError are only returned by the compute API
+// InvalidRequestError is only returned by the instance API.
 // Warning: this is not a standard error.
 type InvalidRequestError struct {
+	Message string `json:"message"`
+
 	Fields map[string][]string `json:"fields"`
 
 	RawBody json.RawMessage `json:"-"`
 }
 
-// ToInvalidArgumentsError converts it to the standard error InvalidArgumentsError
-func (e *InvalidRequestError) ToInvalidArgumentsError() *InvalidArgumentsError {
-	invalidArguments := &InvalidArgumentsError{
+// ToSdkError converts it to the standard error InvalidArgumentsError
+func (e *InvalidRequestError) ToSdkError() SdkError {
+	// If error has fields, it is an invalid arguments error.
+	if e.Fields != nil {
+		invalidArguments := &InvalidArgumentsError{
+			RawBody: e.RawBody,
+		}
+		fieldNames := []string(nil)
+		for fieldName := range e.Fields {
+			fieldNames = append(fieldNames, fieldName)
+		}
+		sort.Strings(fieldNames)
+		for _, fieldName := range fieldNames {
+			for _, message := range e.Fields[fieldName] {
+				invalidArguments.Details = append(invalidArguments.Details, InvalidArgumentsErrorDetail{
+					ArgumentName: fieldName,
+					Reason:       "constraint",
+					HelpMessage:  message,
+				})
+			}
+		}
+		return invalidArguments
+	}
+
+	return &ResponseError{
+		Message: strings.ToLower(e.Message),
+		Type:    "invalid_request_error",
 		RawBody: e.RawBody,
 	}
-	fieldNames := []string(nil)
-	for fieldName := range e.Fields {
-		fieldNames = append(fieldNames, fieldName)
+}
+
+// ConflictError is only returned by the instance API.
+// Warning: this is not a standard error.
+type ConflictError struct {
+	Message string `json:"message"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+// ToSdkError converts it to the standard error InvalidArgumentsError
+func (e *ConflictError) ToSdkError() SdkError {
+	return &ResponseError{
+		Message: strings.ToLower(e.Message),
+		Type:    "conflict",
+		RawBody: e.RawBody,
 	}
-	sort.Strings(fieldNames)
-	for _, fieldName := range fieldNames {
-		for _, message := range e.Fields[fieldName] {
-			invalidArguments.Details = append(invalidArguments.Details, InvalidArgumentsErrorDetail{
-				ArgumentName: fieldName,
-				Reason:       "constraint",
-				HelpMessage:  message,
-			})
-		}
-	}
-	return invalidArguments
 }
 
 type QuotasExceededError struct {

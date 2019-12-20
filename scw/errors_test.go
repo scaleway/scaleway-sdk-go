@@ -30,31 +30,71 @@ func TestHasResponseErrorWithoutBody(t *testing.T) {
 }
 
 func TestNonStandardError(t *testing.T) {
-	// Create expected error response
-	testErrorReponse := &InvalidArgumentsError{
-		Details: []InvalidArgumentsErrorDetail{
-			{
-				ArgumentName: "volumes.5.id",
-				Reason:       "constraint",
-				HelpMessage:  "92 is not a valid UUID.",
-			},
-			{
-				ArgumentName: "volumes.5.name",
-				Reason:       "constraint",
-				HelpMessage:  "required key not provided",
-			},
-		},
-		RawBody: []byte(`{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`),
+
+	type testCase struct {
+		resStatus     string
+		resStatusCode int
+		resBody       string
+		expectedError SdkError
 	}
 
-	// Create response body with marshalled error response
-	body := `{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`
-	res := &http.Response{Status: "400 Bad Request", StatusCode: 400, Body: ioutil.NopCloser(strings.NewReader(body))}
+	run := func(c *testCase) func(t *testing.T) {
+		return func(t *testing.T) {
+			res := &http.Response{
+				Status:     c.resStatus,
+				StatusCode: c.resStatusCode,
+				Body:       ioutil.NopCloser(strings.NewReader(c.resBody)),
+			}
 
-	// Test hasResponseError convert the response into a InvalidArgumentsError error
-	newErr := hasResponseError(res)
-	testhelpers.Assert(t, newErr != nil, "Should have error")
-	testhelpers.Equals(t, testErrorReponse, newErr)
+			// Test that hasResponseError converts the response to the expected SdkError.
+			newErr := hasResponseError(res)
+			testhelpers.Assert(t, newErr != nil, "Should have error")
+			testhelpers.Equals(t, c.expectedError, newErr)
+		}
+	}
+
+	t.Run("invalid_request_error type with fields", run(&testCase{
+		resStatus:     "400 Bad Request",
+		resStatusCode: http.StatusBadRequest,
+		resBody:       `{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`,
+		expectedError: &InvalidArgumentsError{
+			Details: []InvalidArgumentsErrorDetail{
+				{
+					ArgumentName: "volumes.5.id",
+					Reason:       "constraint",
+					HelpMessage:  "92 is not a valid UUID.",
+				},
+				{
+					ArgumentName: "volumes.5.name",
+					Reason:       "constraint",
+					HelpMessage:  "required key not provided",
+				},
+			},
+			RawBody: []byte(`{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`),
+		},
+	}))
+
+	t.Run("invalid_request_error type with message", run(&testCase{
+		resStatus:     "400 Bad Request",
+		resStatusCode: http.StatusBadRequest,
+		resBody:       `{"message": "server should be running", "type": "invalid_request_error"}`,
+		expectedError: &ResponseError{
+			Message: "server should be running",
+			Type:    "invalid_request_error",
+			RawBody: []byte(`{"message": "server should be running", "type": "invalid_request_error"}`),
+		},
+	}))
+
+	t.Run("conflict type", run(&testCase{
+		resStatus:     "409 Conflict",
+		resStatusCode: http.StatusConflict,
+		resBody:       `{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`,
+		expectedError: &ResponseError{
+			Message: "group is in use. you cannot delete it.",
+			Type:    "conflict",
+			RawBody: []byte(`{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`),
+		},
+	}))
 }
 
 func TestHasResponseErrorWithValidError(t *testing.T) {
