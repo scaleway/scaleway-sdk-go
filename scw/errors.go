@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
@@ -118,6 +119,8 @@ func unmarshalStandardError(errorType string, body []byte) error {
 		stdErr = &PermissionsDeniedError{RawBody: body}
 	case "out_of_stock":
 		stdErr = &OutOfStockError{RawBody: body}
+	case "resource_expired":
+		stdErr = &ResourceExpiredError{RawBody: body}
 	default:
 		return nil
 	}
@@ -339,3 +342,18 @@ func (e ConfigFileNotFoundError) IsScwSdkError() {}
 func (e ConfigFileNotFoundError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: cannot read config file %s: no such file or directory", e.path)
 }
+
+// ResourceExpiredError implements the SdkError interface
+type ResourceExpiredError struct {
+	Resource     string    `json:"resource"`
+	ResourceID   string    `json:"resource_id"`
+	ExpiredSince time.Time `json:"expired_since"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (r ResourceExpiredError) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s expired since %s", r.Resource, r.ResourceID, r.ExpiredSince.String())
+}
+
+func (r ResourceExpiredError) IsScwSdkError() {}
