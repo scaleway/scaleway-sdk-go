@@ -41,6 +41,21 @@ type ResponseError struct {
 	RawBody json.RawMessage `json:"-"`
 }
 
+func (e *ResponseError) UnmarshalJSON(b []byte) error {
+	type tmpResponseError ResponseError
+	tmp := tmpResponseError(*e)
+
+	err := json.Unmarshal(b, &tmp)
+	if err != nil {
+		return err
+	}
+
+	tmp.Message = strings.ToLower(tmp.Message)
+
+	*e = ResponseError(tmp)
+	return nil
+}
+
 // IsScwSdkError implement SdkError interface
 func (e *ResponseError) IsScwSdkError() {}
 func (e *ResponseError) Error() string {
@@ -64,7 +79,7 @@ func (e *ResponseError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-// hasResponseError throws an error when the HTTP status is not OK
+// hasResponseError returns an SdkError when the HTTP status is not OK.
 func hasResponseError(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
@@ -134,19 +149,27 @@ func unmarshalStandardError(errorType string, body []byte) error {
 }
 
 func unmarshalNonStandardError(errorType string, body []byte) error {
-	var stdErr SdkError
 	switch errorType {
-
+	// Only in instance API.
 	case "invalid_request_error":
 		invalidRequestError := &InvalidRequestError{RawBody: body}
 		err := json.Unmarshal(body, invalidRequestError)
 		if err != nil {
 			return errors.Wrap(err, "could not parse error %s response body", errorType)
 		}
-		stdErr = invalidRequestError.ToInvalidArgumentsError()
-	}
 
-	return stdErr
+		invalidArgumentsError := invalidRequestError.ToInvalidArgumentsError()
+		if invalidRequestError != nil {
+			return invalidArgumentsError
+		}
+
+		// At this point, the invalid_request_error is not an InvalidArgumentsError and
+		// the default marshalling will be used.
+		return nil
+
+	default:
+		return nil
+	}
 }
 
 type InvalidArgumentsErrorDetail struct {
@@ -188,16 +211,23 @@ func (e *InvalidArgumentsError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-// InvalidRequestError are only returned by the compute API
+// InvalidRequestError is only returned by the instance API.
 // Warning: this is not a standard error.
 type InvalidRequestError struct {
+	Message string `json:"message"`
+
 	Fields map[string][]string `json:"fields"`
 
 	RawBody json.RawMessage `json:"-"`
 }
 
-// ToInvalidArgumentsError converts it to the standard error InvalidArgumentsError
-func (e *InvalidRequestError) ToInvalidArgumentsError() *InvalidArgumentsError {
+// ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
+func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
+	// If error has no fields, it is not an InvalidArgumentsError.
+	if e.Fields == nil {
+		return nil
+	}
+
 	invalidArguments := &InvalidArgumentsError{
 		RawBody: e.RawBody,
 	}
