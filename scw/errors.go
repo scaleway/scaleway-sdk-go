@@ -351,7 +351,7 @@ type ResourceExpiredError struct {
 }
 
 func (r ResourceExpiredError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: resource #{r.Resource} with ID #{r.ResourceID} expired since %s.", r.ExpiredSince.String())
+	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s expired since %s.", r.Resource, r.ResourceID, r.ExpiredSince.String())
 }
 
 func (r ResourceExpiredError) IsScwSdkError() {}
