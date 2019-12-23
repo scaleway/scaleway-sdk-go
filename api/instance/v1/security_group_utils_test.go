@@ -57,7 +57,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, SecurityGroupPolicyDrop, updateResponse.SecurityGroup.InboundDefaultPolicy)
 	testhelpers.Equals(t, SecurityGroupPolicyAccept, updateResponse.SecurityGroup.OutboundDefaultPolicy)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.Stateful)
-	testhelpers.Equals(t, false, updateResponse.SecurityGroup)
+	testhelpers.Equals(t, false, updateResponse.SecurityGroup.OrganizationDefault)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 		Zone:            zone,
