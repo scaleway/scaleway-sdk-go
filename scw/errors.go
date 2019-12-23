@@ -160,7 +160,7 @@ func unmarshalNonStandardError(errorType string, body []byte) error {
 			return invalidArgumentsError
 		}
 
-		// At this point, the `invalid_request_error` is not an InvalidArgumentsError and
+		// At this point, the invalid_request_error is not an InvalidArgumentsError and
 		// the default marshalling will be used.
 		return nil
 
@@ -220,29 +220,29 @@ type InvalidRequestError struct {
 
 // ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
 func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
-	// If error has fields, it is an invalid arguments error.
-	if e.Fields != nil {
-		invalidArguments := &InvalidArgumentsError{
-			RawBody: e.RawBody,
-		}
-		fieldNames := []string(nil)
-		for fieldName := range e.Fields {
-			fieldNames = append(fieldNames, fieldName)
-		}
-		sort.Strings(fieldNames)
-		for _, fieldName := range fieldNames {
-			for _, message := range e.Fields[fieldName] {
-				invalidArguments.Details = append(invalidArguments.Details, InvalidArgumentsErrorDetail{
-					ArgumentName: fieldName,
-					Reason:       "constraint",
-					HelpMessage:  message,
-				})
-			}
-		}
-		return invalidArguments
+	// If error has no fields, it is not an InvalidArgumentsError.
+	if e.Fields == nil {
+		return nil
 	}
 
-	return nil
+	invalidArguments := &InvalidArgumentsError{
+		RawBody: e.RawBody,
+	}
+	fieldNames := []string(nil)
+	for fieldName := range e.Fields {
+		fieldNames = append(fieldNames, fieldName)
+	}
+	sort.Strings(fieldNames)
+	for _, fieldName := range fieldNames {
+		for _, message := range e.Fields[fieldName] {
+			invalidArguments.Details = append(invalidArguments.Details, InvalidArgumentsErrorDetail{
+				ArgumentName: fieldName,
+				Reason:       "constraint",
+				HelpMessage:  message,
+			})
+		}
+	}
+	return invalidArguments
 }
 
 type QuotasExceededError struct {
