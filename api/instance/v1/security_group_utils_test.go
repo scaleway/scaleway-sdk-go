@@ -38,16 +38,17 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 
 	accept := SecurityGroupPolicyAccept
 	drop := SecurityGroupPolicyDrop
-	f := false
 
 	updateResponse, err := instanceAPI.UpdateSecurityGroup(&UpdateSecurityGroupRequest{
 		Zone:                  zone,
 		SecurityGroupID:       createResponse.SecurityGroup.ID,
 		Name:                  scw.StringPtr("new_name"),
 		Description:           scw.StringPtr("new_description"),
-		Stateful:              &f,
+		Stateful:              scw.BoolPtr(false),
 		InboundDefaultPolicy:  &drop,
 		OutboundDefaultPolicy: &accept,
+		// Keep false here, switch it to true is too dangerous for the one who update the test cassette.
+		OrganizationDefault: scw.BoolPtr(false),
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -56,6 +57,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, SecurityGroupPolicyDrop, updateResponse.SecurityGroup.InboundDefaultPolicy)
 	testhelpers.Equals(t, SecurityGroupPolicyAccept, updateResponse.SecurityGroup.OutboundDefaultPolicy)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.Stateful)
+	testhelpers.Equals(t, false, updateResponse.SecurityGroup)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 		Zone:            zone,
