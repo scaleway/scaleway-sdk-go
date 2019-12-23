@@ -30,7 +30,6 @@ func TestHasResponseErrorWithoutBody(t *testing.T) {
 }
 
 func TestNonStandardError(t *testing.T) {
-
 	type testCase struct {
 		resStatus     string
 		resStatusCode int
@@ -79,9 +78,11 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusBadRequest,
 		resBody:       `{"message": "server should be running", "type": "invalid_request_error"}`,
 		expectedError: &ResponseError{
-			Message: "server should be running",
-			Type:    "invalid_request_error",
-			RawBody: []byte(`{"message": "server should be running", "type": "invalid_request_error"}`),
+			Status:     "400 Bad Request",
+			StatusCode: http.StatusBadRequest,
+			Message:    "server should be running",
+			Type:       "invalid_request_error",
+			RawBody:    []byte(`{"message": "server should be running", "type": "invalid_request_error"}`),
 		},
 	}))
 
@@ -90,9 +91,11 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusConflict,
 		resBody:       `{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`,
 		expectedError: &ResponseError{
-			Message: "group is in use. you cannot delete it.",
-			Type:    "conflict",
-			RawBody: []byte(`{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`),
+			Status:     "409 Conflict",
+			StatusCode: http.StatusConflict,
+			Message:    "group is in use. you cannot delete it.",
+			Type:       "conflict",
+			RawBody:    []byte(`{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`),
 		},
 	}))
 }

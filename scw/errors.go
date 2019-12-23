@@ -40,6 +40,21 @@ type ResponseError struct {
 	RawBody json.RawMessage `json:"-"`
 }
 
+func (e *ResponseError) UnmarshalJSON(b []byte) error {
+	type tmpResponseError ResponseError
+	tmp := tmpResponseError(*e)
+
+	err := json.Unmarshal(b, &tmp)
+	if err != nil {
+		return err
+	}
+
+	tmp.Message = strings.ToLower(tmp.Message)
+
+	*e = ResponseError(tmp)
+	return nil
+}
+
 // IsScwSdkError implement SdkError interface
 func (e *ResponseError) IsScwSdkError() {}
 func (e *ResponseError) Error() string {
@@ -63,7 +78,7 @@ func (e *ResponseError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
 
-// hasResponseError throws an error when the HTTP status is not OK
+// hasResponseError returns an SdkError when the HTTP status is not OK.
 func hasResponseError(res *http.Response) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
@@ -140,17 +155,15 @@ func unmarshalNonStandardError(errorType string, body []byte) error {
 			return errors.Wrap(err, "could not parse error %s response body", errorType)
 		}
 
-		return invalidRequestError.ToSdkError()
-
-	// Only in instance API.
-	case "conflict":
-		conflictError := &ConflictError{RawBody: body}
-		err := json.Unmarshal(body, conflictError)
-		if err != nil {
-			return errors.Wrap(err, "could not parse error %s response body", errorType)
+		invalidArgumentsError := invalidRequestError.ToInvalidArgumentsError()
+		if invalidRequestError != nil {
+			return invalidArgumentsError
 		}
 
-		return conflictError.ToSdkError()
+		// At this point, the `invalid_request_error` is not an InvalidArgumentsError and
+		// the default marshalling will be used.
+		return nil
+
 	default:
 		return nil
 	}
@@ -205,8 +218,8 @@ type InvalidRequestError struct {
 	RawBody json.RawMessage `json:"-"`
 }
 
-// ToSdkError converts it to the standard error InvalidArgumentsError
-func (e *InvalidRequestError) ToSdkError() SdkError {
+// ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
+func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
 	// If error has fields, it is an invalid arguments error.
 	if e.Fields != nil {
 		invalidArguments := &InvalidArgumentsError{
@@ -229,28 +242,7 @@ func (e *InvalidRequestError) ToSdkError() SdkError {
 		return invalidArguments
 	}
 
-	return &ResponseError{
-		Message: strings.ToLower(e.Message),
-		Type:    "invalid_request_error",
-		RawBody: e.RawBody,
-	}
-}
-
-// ConflictError is only returned by the instance API.
-// Warning: this is not a standard error.
-type ConflictError struct {
-	Message string `json:"message"`
-
-	RawBody json.RawMessage `json:"-"`
-}
-
-// ToSdkError converts it to the standard error InvalidArgumentsError
-func (e *ConflictError) ToSdkError() SdkError {
-	return &ResponseError{
-		Message: strings.ToLower(e.Message),
-		Type:    "conflict",
-		RawBody: e.RawBody,
-	}
+	return nil
 }
 
 type QuotasExceededError struct {
