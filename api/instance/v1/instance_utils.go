@@ -27,6 +27,8 @@ func lockServer(zone scw.Zone, serverID string) *sync.Mutex {
 }
 
 // AttachIPRequest contains the parameters to attach an IP to a server
+//
+// Deprecated: UpdateIPRequested should be used instead
 type AttachIPRequest struct {
 	Zone     scw.Zone `json:"-"`
 	IP       string   `json:"-"`
@@ -34,11 +36,15 @@ type AttachIPRequest struct {
 }
 
 // AttachIPResponse contains the updated IP after attaching
+//
+// Deprecated: UpdateIPResponse should be used instead
 type AttachIPResponse struct {
 	IP *IP
 }
 
 // AttachIP attaches an IP to a server.
+//
+// Deprecated: UpdateIP() should be used instead
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
@@ -53,17 +59,23 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Attach
 }
 
 // DetachIPRequest contains the parameters to detach an IP from a server
+//
+// Deprecated: UpdateIPRequested should be used instead
 type DetachIPRequest struct {
 	Zone scw.Zone `json:"-"`
 	IP   string   `json:"-"`
 }
 
 // DetachIPResponse contains the updated IP after detaching
+//
+// Deprecated: UpdateIPResponse should be used instead
 type DetachIPResponse struct {
 	IP *IP
 }
 
 // DetachIP detaches an IP from a server.
+//
+// Deprecated: UpdateIP() should be used instead
 func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
 	ipResponse, err := s.updateIP(&updateIPRequest{
 		Zone:   req.Zone,
@@ -83,15 +95,35 @@ type UpdateIPRequest struct {
 	Zone    scw.Zone             `json:"-"`
 	IP      string               `json:"-"`
 	Reverse *NullableStringValue `json:"reverse"`
+	Server  *string              `json:"server"`
 }
 
 // UpdateIP updates an IP
+// We need to transform UpdateIPRequest into updateIPRequest because updateIPRequest is not usable
+// as a public interface.
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
-	ipResponse, err := s.updateIP(&updateIPRequest{
+
+	requestPrivate := &updateIPRequest{
 		Zone:    req.Zone,
 		IP:      req.IP,
 		Reverse: req.Reverse,
-	})
+	}
+
+	switch {
+	case req.Server == nil:
+		// Do nothing
+
+	case *req.Server == "":
+		// Setup server field to detach old server
+		requestPrivate.Server = &NullableStringValue{Null: true}
+
+	default:
+		// Setup server field to detach old server and attach new server
+		requestPrivate.Server = &NullableStringValue{Value: *req.Server}
+
+	}
+
+	ipResponse, err := s.updateIP(requestPrivate)
 	if err != nil {
 		return nil, err
 	}
