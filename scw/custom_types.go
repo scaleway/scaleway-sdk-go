@@ -82,6 +82,28 @@ func NewMoneyFromFloat(value float64, currency string) *Money {
 	}
 }
 
+// String returns the string representation of Money.
+func (m *Money) String() string {
+	defaultCurrencySign := "€"
+	currencySignsByCodes := map[string]string{
+		"EUR": defaultCurrencySign,
+		"USD": "$",
+	}
+
+	currencySign, currencySignFound := currencySignsByCodes[m.CurrencyCode]
+	if !currencySignFound {
+		currencySign = defaultCurrencySign
+	}
+
+	str := fmt.Sprintf("%s %d", currencySign, m.Units)
+
+	if m.Nanos != 0 {
+		str += fmt.Sprintf(".%d", m.Nanos)
+	}
+
+	return str
+}
+
 // ToFloat converts a Money object to a float.
 func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1000000000
