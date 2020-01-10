@@ -828,6 +828,8 @@ type UpdateClusterRequest struct {
 	ClusterID string `json:"-"`
 	// Description description
 	Description *string `json:"description"`
+	// Name name
+	Name *string `json:"name"`
 	// Tags list of keyword
 	Tags *[]string `json:"tags"`
 
