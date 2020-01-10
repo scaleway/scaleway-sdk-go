@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"strconv"
 	"strings"
 	"time"
 
@@ -99,17 +98,10 @@ func (m *Money) String() string {
 		currencySign = m.CurrencyCode
 	}
 
-	value := fmt.Sprint(m.Units)
-	if m.Nanos != 0 {
-		value = strconv.FormatFloat(m.ToFloat(), 'f', 9, 64)
-	}
+	cents := fmt.Sprintf("%09d", m.Nanos)
+	cents = cents[:2] + strings.TrimRight(cents[2:], "0")
 
-	// Trim leading zeros.
-	if strings.HasSuffix(value, "00") {
-		value = strings.TrimRight(value, "0")
-	}
-
-	return currencySign + " " + value
+	return fmt.Sprintf("%s %d.%s", currencySign, m.Units, cents)
 }
 
 // ToFloat converts a Money object to a float.
