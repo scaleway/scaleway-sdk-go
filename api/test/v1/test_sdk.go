@@ -41,11 +41,11 @@ var (
 //
 // Test is a fake service that aim to manage fake humans. It is used for internal and public end-to-end tests.
 //
-// This service don't use the Scaleway authentication service but a fake one. It allows to use this test
-// service publicly without requiring a Scaleway account.
+// This service don't use the Scaleway authentication service but a fake one.
+// It allows to use this test service publicly without requiring a Scaleway account.
 //
-// First, you need to register a user with `scw test human register` to get an access-key. Then, you can use
-// other test commands by setting the SCW_SECRET_KEY env variable.
+// First, you need to register a user with `scw test human register` to get an access-key.
+// Then, you can use other test commands by setting the SCW_SECRET_KEY env variable.
 //
 type API struct {
 	client *scw.Client
@@ -576,6 +576,51 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "/run",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Human
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SmokeHumanRequest struct {
+	Region scw.Region `json:"-"`
+
+	HumanID string `json:"-"`
+}
+
+// SmokeHuman make a human smoke
+//
+// Make a human smoke.
+func (s *API) SmokeHuman(req *SmokeHumanRequest, opts ...scw.RequestOption) (*Human, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HumanID) == "" {
+		return nil, errors.New("field HumanID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "/smoke",
 		Headers: http.Header{},
 	}
 
