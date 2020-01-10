@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 // ServiceInfo contains API metadata
@@ -84,24 +88,28 @@ func NewMoneyFromFloat(value float64, currency string) *Money {
 
 // String returns the string representation of Money.
 func (m *Money) String() string {
-	defaultCurrencySign := "€"
 	currencySignsByCodes := map[string]string{
-		"EUR": defaultCurrencySign,
+		"EUR": "€",
 		"USD": "$",
 	}
 
 	currencySign, currencySignFound := currencySignsByCodes[m.CurrencyCode]
 	if !currencySignFound {
-		currencySign = defaultCurrencySign
+		logger.Debugf("%s currency code is not supported", m.CurrencyCode)
+		currencySign = m.CurrencyCode
 	}
 
-	str := fmt.Sprintf("%s %d", currencySign, m.Units)
-
+	value := fmt.Sprint(m.Units)
 	if m.Nanos != 0 {
-		str += fmt.Sprintf(".%d", m.Nanos)
+		value = strconv.FormatFloat(m.ToFloat(), 'f', 9, 64)
 	}
 
-	return str
+	// Trim leading zeros.
+	if strings.HasSuffix(value, "00") {
+		value = strings.TrimRight(value, "0")
+	}
+
+	return currencySign + " " + value
 }
 
 // ToFloat converts a Money object to a float.

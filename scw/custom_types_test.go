@@ -29,20 +29,27 @@ func TestMoney_String(t *testing.T) {
 				Units:        10,
 				Nanos:        1,
 			},
-			want: "$ 10.1",
+			want: "$ 10.000000001",
 		},
 		{
 			money: Money{
 				CurrencyCode: "EUR",
-				Nanos:        1,
+				Nanos:        100000000,
 			},
 			want: "€ 0.1",
 		},
 		{
 			money: Money{
+				CurrencyCode: "EUR",
+				Nanos:        500000,
+			},
+			want: "€ 0.0005",
+		},
+		{
+			money: Money{
 				CurrencyCode: "?",
 			},
-			want: "€ 0",
+			want: "? 0",
 		},
 	}
 
