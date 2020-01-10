@@ -11,6 +11,62 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
+func TestMoney_String(t *testing.T) {
+	cases := []struct {
+		money Money
+		want  string
+	}{
+		{
+			money: Money{
+				CurrencyCode: "EUR",
+				Units:        10,
+			},
+			want: "€ 10.00",
+		},
+		{
+			money: Money{
+				CurrencyCode: "USD",
+				Units:        10,
+				Nanos:        1,
+			},
+			want: "$ 10.000000001",
+		},
+		{
+			money: Money{
+				CurrencyCode: "EUR",
+				Nanos:        100000000,
+			},
+			want: "€ 0.10",
+		},
+		{
+			money: Money{
+				CurrencyCode: "EUR",
+				Nanos:        500000,
+			},
+			want: "€ 0.0005",
+		},
+		{
+			money: Money{
+				CurrencyCode: "EUR",
+				Nanos:        123456789,
+			},
+			want: "€ 0.123456789",
+		},
+		{
+			money: Money{
+				CurrencyCode: "?",
+			},
+			want: "? 0.00",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.want, func(t *testing.T) {
+			testhelpers.Equals(t, c.want, c.money.String())
+		})
+	}
+}
+
 func TestSize_String(t *testing.T) {
 	cases := []struct {
 		size Size
