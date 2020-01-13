@@ -28,7 +28,7 @@ func lockServer(zone scw.Zone, serverID string) *sync.Mutex {
 
 // AttachIPRequest contains the parameters to attach an IP to a server
 //
-// Deprecated: UpdateIPRequested should be used instead
+// Deprecated: UpdateIPRequest should be used instead
 type AttachIPRequest struct {
 	Zone     scw.Zone `json:"-"`
 	IP       string   `json:"-"`
@@ -60,7 +60,7 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Attach
 
 // DetachIPRequest contains the parameters to detach an IP from a server
 //
-// Deprecated: UpdateIPRequested should be used instead
+// Deprecated: UpdateIPRequest should be used instead
 type DetachIPRequest struct {
 	Zone scw.Zone `json:"-"`
 	IP   string   `json:"-"`
