@@ -134,11 +134,6 @@ func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1000000000
 }
 
-// MarshalJSON returns the JSON representation of Money.
-func (m *Money) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprint(m.ToFloat())), nil
-}
-
 // Money represents a size in bytes.
 type Size uint64
 
