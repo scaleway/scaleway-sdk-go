@@ -46,7 +46,7 @@ type AttachIPResponse struct {
 //
 // Deprecated: UpdateIP() should be used instead
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*AttachIPResponse, error) {
-	ipResponse, err := s.updateIP(&updateIPRequest{
+	ipResponse, err := s.UpdateIP(&UpdateIPRequest{
 		Zone:   req.Zone,
 		IP:     req.IP,
 		Server: &NullableStringValue{Value: req.ServerID},
@@ -77,7 +77,7 @@ type DetachIPResponse struct {
 //
 // Deprecated: UpdateIP() should be used instead
 func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*DetachIPResponse, error) {
-	ipResponse, err := s.updateIP(&updateIPRequest{
+	ipResponse, err := s.UpdateIP(&UpdateIPRequest{
 		Zone:   req.Zone,
 		IP:     req.IP,
 		Server: &NullableStringValue{Null: true},
@@ -87,48 +87,6 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Detach
 	}
 
 	return &DetachIPResponse{IP: ipResponse.IP}, nil
-}
-
-// UpdateIPRequest contains the parameters to update an IP
-// if Reverse is an empty string, the reverse will be removed
-type UpdateIPRequest struct {
-	Zone    scw.Zone             `json:"-"`
-	IP      string               `json:"-"`
-	Reverse *NullableStringValue `json:"reverse"`
-	Server  *string              `json:"server"`
-}
-
-// UpdateIP updates an IP
-// We need to transform UpdateIPRequest into updateIPRequest because updateIPRequest is not usable
-// as a public interface.
-func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
-
-	requestPrivate := &updateIPRequest{
-		Zone:    req.Zone,
-		IP:      req.IP,
-		Reverse: req.Reverse,
-	}
-
-	switch {
-	case req.Server == nil:
-		// Do nothing
-
-	case *req.Server == "":
-		// Setup server field to detach old server
-		requestPrivate.Server = &NullableStringValue{Null: true}
-
-	default:
-		// Setup server field to detach old server and attach new server
-		requestPrivate.Server = &NullableStringValue{Value: *req.Server}
-
-	}
-
-	ipResponse, err := s.updateIP(requestPrivate)
-	if err != nil {
-		return nil, err
-	}
-
-	return &UpdateIPResponse{IP: ipResponse.IP}, nil
 }
 
 // AttachVolumeRequest contains the parameters to attach a volume to a server
