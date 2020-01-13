@@ -50,11 +50,7 @@ func TestStandardErrors(t *testing.T) {
 
 		_, err = client.CreateHuman(&test.CreateHumanRequest{})
 		testhelpers.Equals(t, &scw.QuotasExceededError{
-			Details: []struct {
-				Resource string `json:"resource"`
-				Quota    uint32 `json:"quota"`
-				Current  uint32 `json:"current"`
-			}{
+			Details: []scw.QuotasExceededErrorDetail{
 				{
 					Resource: "human",
 					Quota:    10,
