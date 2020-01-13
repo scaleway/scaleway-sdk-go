@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -77,12 +78,36 @@ type Money struct {
 }
 
 // NewMoneyFromFloat conerts a float with currency to a Money object.
-func NewMoneyFromFloat(value float64, currency string) *Money {
-	return &Money{
+//
+// precision: number of digits after the decimal point used to parse the nanos part of the value.
+func NewMoneyFromFloat(value float64, currency string, precision int) *Money {
+	if precision > 9 {
+		panic(fmt.Errorf("max precision is 9"))
+	}
+
+	strValue := strconv.FormatFloat(value, 'f', precision, 64)
+	parts := strings.Split(strValue, ".")
+
+	money := &Money{
 		CurrencyCode: currency,
 		Units:        int64(value),
-		Nanos:        int32((value - float64(int64(value))) * 1000000000),
+		Nanos:        0,
 	}
+
+	// Handle nanos.
+	if len(parts) == 2 {
+		// Add leading zeros.
+		strNanos := parts[1] + "000000000"[len(parts[1]):]
+
+		n, err := strconv.ParseInt(strNanos, 10, 32)
+		if err != nil {
+			panic(fmt.Errorf("invalid nanos %s", strNanos))
+		}
+
+		money.Nanos = int32(n)
+	}
+
+	return money
 }
 
 // String returns the string representation of Money.
@@ -107,6 +132,11 @@ func (m *Money) String() string {
 // ToFloat converts a Money object to a float.
 func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1000000000
+}
+
+// MarshalJSON returns the JSON representation of Money.
+func (m *Money) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprint(m.ToFloat())), nil
 }
 
 // Money represents a size in bytes.
