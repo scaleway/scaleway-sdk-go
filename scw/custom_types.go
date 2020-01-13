@@ -77,10 +77,16 @@ type Money struct {
 	Nanos int32 `json:"nanos,omitempty"`
 }
 
-// NewMoneyFromFloat conerts a float with currency to a Money object.
+// NewMoneyFromFloat converts a float with currency to a Money.
 //
-// precision: number of digits after the decimal point used to parse the nanos part of the value.
-func NewMoneyFromFloat(value float64, currency string, precision int) *Money {
+// value:        The float value.
+// currencyCode: The 3-letter currency code defined in ISO 4217.
+// precision:    The number of digits after the decimal point used to parse the nanos part of the value.
+//
+// Examples:
+// - (value = 1.3333, precision = 2) => Money{Units = 1, Nanos = 330000000}
+// - (value = 1.123456789, precision = 9) => Money{Units = 1, Nanos = 123456789}
+func NewMoneyFromFloat(value float64, currencyCode string, precision int) *Money {
 	if precision > 9 {
 		panic(fmt.Errorf("max precision is 9"))
 	}
@@ -89,7 +95,7 @@ func NewMoneyFromFloat(value float64, currency string, precision int) *Money {
 	parts := strings.Split(strValue, ".")
 
 	money := &Money{
-		CurrencyCode: currency,
+		CurrencyCode: currencyCode,
 		Units:        int64(value),
 		Nanos:        0,
 	}
