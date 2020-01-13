@@ -86,6 +86,22 @@ func TestNonStandardError(t *testing.T) {
 		},
 	}))
 
+	t.Run("invalid_request_error quota exceeded", run(&testCase{
+		resStatus:     "403 Forbidden",
+		resStatusCode: http.StatusForbidden,
+		resBody:       `{"type": "invalid_request_error", "message": "Quota exceeded for this resource.", "resource": "compute_snapshots_type_b_ssd_available"}`,
+		expectedError: &QuotasExceededError{
+			Details: []QuotasExceededErrorDetail{
+				{
+					Resource: "compute_snapshots_type_b_ssd_available",
+					Current:  0,
+					Quota:    0,
+				},
+			},
+			RawBody: []byte(`{"type": "invalid_request_error", "message": "Quota exceeded for this resource.", "resource": "compute_snapshots_type_b_ssd_available"}`),
+		},
+	}))
+
 	t.Run("conflict type", run(&testCase{
 		resStatus:     "409 Conflict",
 		resStatusCode: http.StatusConflict,
