@@ -61,11 +61,11 @@ func (f *File) UnmarshalJSON(b []byte) error {
 // Money represents an amount of money with its currency type.
 type Money struct {
 	// CurrencyCode is the 3-letter currency code defined in ISO 4217.
-	CurrencyCode string `json:"currency_code,omitempty"`
+	CurrencyCode string `json:"currency_code"`
 
 	// Units is the whole units of the amount.
 	// For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
-	Units int64 `json:"units,omitempty"`
+	Units int64 `json:"units"`
 
 	// Nanos is the number of nano (10^-9) units of the amount.
 	// The value must be between -999,999,999 and +999,999,999 inclusive.
@@ -73,7 +73,7 @@ type Money struct {
 	// If `units` is zero, `nanos` can be positive, zero, or negative.
 	// If `units` is negative, `nanos` must be negative or zero.
 	// For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
-	Nanos int32 `json:"nanos,omitempty"`
+	Nanos int32 `json:"nanos"`
 }
 
 // NewMoneyFromFloat conerts a float with currency to a Money object.
