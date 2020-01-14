@@ -247,10 +247,12 @@ func (n *IPNet) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Duration represents a signed, fixed-length span of time represented as a count of seconds and fractions of seconds at
-// nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". It is related to
-// Timestamp in that the difference between two Timestamp values is a Duration and it can be added or subtracted from a
-// Timestamp. Range is approximately +-10,000 years.
+// Duration represents a signed, fixed-length span of time represented as a
+// count of seconds and fractions of seconds at nanosecond resolution. It is
+// independent of any calendar and concepts like "day" or "month". It is related
+// to Timestamp in that the difference between two Timestamp values is a Duration
+// and it can be added or subtracted from a Timestamp.
+// Range is approximately +-10,000 years.
 type Duration struct {
 	Seconds int64
 	Nanos   int32
@@ -265,10 +267,6 @@ func (d *Duration) ToTimeDuration() *time.Duration {
 }
 
 func (d Duration) MarshalJSON() ([]byte, error) {
-	//	cents := fmt.Sprintf("%09d", m.Nanos)
-	//cents = cents[:2] + strings.TrimRight(cents[2:], "0")
-	//
-	//return fmt.Sprintf("%s %d.%s", currencySign, m.Units, cents)
 	nanos := d.Nanos
 	if nanos < 0 {
 		nanos = -nanos
@@ -321,7 +319,7 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 
 	// handle nanos
 	if len(parts) == 2 {
-		//add leading zeros
+		// add leading zeros
 		strNanos := parts[1] + "000000000"[len(parts[1]):]
 
 		// parse nanos as int32
