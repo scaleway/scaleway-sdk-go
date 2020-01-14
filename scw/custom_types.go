@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
@@ -315,7 +316,7 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 	// parse units as int64
 	units, err = strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("invalid units %s: %w", parts[0], err)
+		return 0, 0, errors.Wrap(err, "invalid units %s", parts[0])
 	}
 
 	// handle nanos
@@ -326,7 +327,7 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 		// parse nanos as int32
 		n, err := strconv.ParseInt(strNanos, 10, 32)
 		if err != nil {
-			return 0, 0, fmt.Errorf("invalid nanos %s: %w", strNanos, err)
+			return 0, 0, errors.Wrap(err, "invalid nanos %s", strNanos)
 		}
 
 		nanos = int32(n)
