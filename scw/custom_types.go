@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -76,13 +77,43 @@ type Money struct {
 	Nanos int32 `json:"nanos,omitempty"`
 }
 
-// NewMoneyFromFloat conerts a float with currency to a Money object.
-func NewMoneyFromFloat(value float64, currency string) *Money {
-	return &Money{
-		CurrencyCode: currency,
-		Units:        int64(value),
-		Nanos:        int32((value - float64(int64(value))) * 1000000000),
+// NewMoneyFromFloat converts a float with currency to a Money.
+//
+// value:        The float value.
+// currencyCode: The 3-letter currency code defined in ISO 4217.
+// precision:    The number of digits after the decimal point used to parse the nanos part of the value.
+//
+// Examples:
+// - (value = 1.3333, precision = 2) => Money{Units = 1, Nanos = 330000000}
+// - (value = 1.123456789, precision = 9) => Money{Units = 1, Nanos = 123456789}
+func NewMoneyFromFloat(value float64, currencyCode string, precision int) *Money {
+	if precision > 9 {
+		panic(fmt.Errorf("max precision is 9"))
 	}
+
+	strValue := strconv.FormatFloat(value, 'f', precision, 64)
+	parts := strings.Split(strValue, ".")
+
+	money := &Money{
+		CurrencyCode: currencyCode,
+		Units:        int64(value),
+		Nanos:        0,
+	}
+
+	// Handle nanos.
+	if len(parts) == 2 {
+		// Add leading zeros.
+		strNanos := parts[1] + "000000000"[len(parts[1]):]
+
+		n, err := strconv.ParseInt(strNanos, 10, 32)
+		if err != nil {
+			panic(fmt.Errorf("invalid nanos %s", strNanos))
+		}
+
+		money.Nanos = int32(n)
+	}
+
+	return money
 }
 
 // String returns the string representation of Money.

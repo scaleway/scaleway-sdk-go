@@ -11,20 +11,116 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
+func TestMoney_NewMoneyFromFloat(t *testing.T) {
+	cases := []struct {
+		value     float64
+		currency  string
+		precision int
+		want      *Money
+	}{
+		{
+			value:     0.0,
+			currency:  "EUR",
+			precision: 0,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        0,
+			},
+		},
+		{
+			value:     1.0,
+			currency:  "EUR",
+			precision: 3,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        0,
+			},
+		},
+		{
+			value:     1.3,
+			currency:  "EUR",
+			precision: 3,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        300000000,
+			},
+		},
+		{
+			value:     1.333,
+			currency:  "EUR",
+			precision: 2,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        330000000,
+			},
+		},
+		{
+			value:     1.04,
+			currency:  "EUR",
+			precision: 1,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        0,
+			},
+		},
+		{
+			value:     1.05,
+			currency:  "EUR",
+			precision: 1,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        100000000,
+			},
+		},
+		{
+			value:     1.123456789,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        123456789,
+			},
+		},
+		{
+			value:     1.999999999,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        1,
+				Nanos:        999999999,
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.want.String(), func(t *testing.T) {
+			testhelpers.Equals(t, c.want, NewMoneyFromFloat(c.value, c.currency, c.precision))
+		})
+	}
+}
+
 func TestMoney_String(t *testing.T) {
 	cases := []struct {
-		money Money
+		money *Money
 		want  string
 	}{
 		{
-			money: Money{
+			money: &Money{
 				CurrencyCode: "EUR",
 				Units:        10,
 			},
 			want: "€ 10.00",
 		},
 		{
-			money: Money{
+			money: &Money{
 				CurrencyCode: "USD",
 				Units:        10,
 				Nanos:        1,
@@ -32,28 +128,35 @@ func TestMoney_String(t *testing.T) {
 			want: "$ 10.000000001",
 		},
 		{
-			money: Money{
+			money: &Money{
 				CurrencyCode: "EUR",
 				Nanos:        100000000,
 			},
 			want: "€ 0.10",
 		},
 		{
-			money: Money{
+			money: &Money{
 				CurrencyCode: "EUR",
 				Nanos:        500000,
 			},
 			want: "€ 0.0005",
 		},
 		{
-			money: Money{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Nanos:        333000000,
+			},
+			want: "€ 0.333",
+		},
+		{
+			money: &Money{
 				CurrencyCode: "EUR",
 				Nanos:        123456789,
 			},
 			want: "€ 0.123456789",
 		},
 		{
-			money: Money{
+			money: &Money{
 				CurrencyCode: "?",
 			},
 			want: "? 0.00",
