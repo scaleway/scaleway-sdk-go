@@ -484,6 +484,18 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 		err  string
 	}{
 		{
+			name: "error negative nanos",
+			json: `{"duration":"a.12s"}`,
+			want: nil,
+			err:  "scaleway-sdk-go: invalid units: strconv.ParseInt: parsing \"a\": invalid syntax",
+		},
+		{
+			name: "error negative nanos",
+			json: `{"duration":"3.-12s"}`,
+			want: nil,
+			err:  "scaleway-sdk-go: invalid nanos: strconv.ParseUint: parsing \"-12000000\": invalid syntax",
+		},
+		{
 			name: "null",
 			json: `{"duration":null}`,
 			want: nil,
@@ -538,9 +550,9 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 			err := json.Unmarshal([]byte(c.json), &testType)
 			if err != nil {
 				testhelpers.Equals(t, c.err, err.Error())
+			} else {
+				testhelpers.Equals(t, c.want, testType.Duration)
 			}
-
-			testhelpers.Equals(t, c.want, testType.Duration)
 		})
 	}
 }

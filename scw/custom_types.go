@@ -316,7 +316,7 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 	// parse units as int64
 	units, err = strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "invalid units %s", parts[0])
+		return 0, 0, errors.Wrap(err, "invalid units")
 	}
 
 	// handle nanos
@@ -325,15 +325,15 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 		strNanos := parts[1] + "000000000"[len(parts[1]):]
 
 		// parse nanos as int32
-		n, err := strconv.ParseInt(strNanos, 10, 32)
+		n, err := strconv.ParseUint(strNanos, 10, 32)
 		if err != nil {
-			return 0, 0, errors.Wrap(err, "invalid nanos %s", strNanos)
+			return 0, 0, errors.Wrap(err, "invalid nanos")
 		}
 
 		nanos = int32(n)
 	}
 
-	if units < 0 && nanos > 0 {
+	if units < 0 {
 		nanos = -nanos
 	}
 
