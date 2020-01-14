@@ -409,3 +409,150 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestDuration_MarshallJSON(t *testing.T) {
+	cases := []struct {
+		name     string
+		duration Duration
+		want     string
+		err      error
+	}{
+		{
+			name:     "small seconds",
+			duration: Duration{Seconds: 3, Nanos: 0},
+			want:     `"3.000000000s"`,
+		},
+		{
+			name:     "small seconds, small nanos",
+			duration: Duration{Seconds: 3, Nanos: 12e7},
+			want:     `"3.120000000s"`,
+		},
+		{
+			name:     "small seconds, big nanos",
+			duration: Duration{Seconds: 3, Nanos: 123456789},
+			want:     `"3.123456789s"`,
+		},
+		{
+			name:     "big seconds, big nanos",
+			duration: Duration{Seconds: 345679384, Nanos: 123456789},
+			want:     `"345679384.123456789s"`,
+		},
+		{
+			name:     "negative small seconds",
+			duration: Duration{Seconds: -3, Nanos: 0},
+			want:     `"-3.000000000s"`,
+		},
+		{
+			name:     "negative small seconds, small nanos",
+			duration: Duration{Seconds: -3, Nanos: -12e7},
+			want:     `"-3.120000000s"`,
+		},
+		{
+			name:     "negative small seconds, big nanos",
+			duration: Duration{Seconds: -3, Nanos: -123456789},
+			want:     `"-3.123456789s"`,
+		},
+		{
+			name:     "negative big seconds, big nanos",
+			duration: Duration{Seconds: -345679384, Nanos: -123456789},
+			want:     `"-345679384.123456789s"`,
+		},
+		{
+			name:     "negative big seconds, big nanos",
+			duration: Duration{},
+			want:     `"0.000000000s"`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := json.Marshal(c.duration)
+
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, c.want, string(got))
+			}
+		})
+	}
+}
+
+func TestDuration_UnmarshalJSON(t *testing.T) {
+	cases := []struct {
+		name string
+		json string
+		want *Duration
+		err  string
+	}{
+		{
+			name: "error negative nanos",
+			json: `{"duration":"a.12s"}`,
+			want: nil,
+			err:  "scaleway-sdk-go: invalid units: strconv.ParseInt: parsing \"a\": invalid syntax",
+		},
+		{
+			name: "error negative nanos",
+			json: `{"duration":"3.-12s"}`,
+			want: nil,
+			err:  "scaleway-sdk-go: invalid nanos: strconv.ParseUint: parsing \"-12000000\": invalid syntax",
+		},
+		{
+			name: "null",
+			json: `{"duration":null}`,
+			want: nil,
+		},
+		{
+			name: "small seconds",
+			json: `{"duration":"3.00s"}`,
+			want: &Duration{Seconds: 3, Nanos: 0},
+		},
+		{
+			name: "small seconds, small nanos",
+			json: `{"duration":"3.12s"}`,
+			want: &Duration{Seconds: 3, Nanos: 12e7},
+		},
+		{
+			name: "bug seconds",
+			json: `{"duration":"987654321.00s"}`,
+			want: &Duration{Seconds: 987654321, Nanos: 0},
+		},
+		{
+			name: "big seconds, big nanos",
+			json: `{"duration":"987654321.123456789s"}`,
+			want: &Duration{Seconds: 987654321, Nanos: 123456789},
+		},
+		{
+			name: "negative small seconds",
+			json: `{"duration":"-3.00s"}`,
+			want: &Duration{Seconds: -3, Nanos: 0},
+		},
+		{
+			name: "negative small seconds, small nanos",
+			json: `{"duration":"-3.12s"}`,
+			want: &Duration{Seconds: -3, Nanos: -12e7},
+		},
+		{
+			name: "negative bug seconds",
+			json: `{"duration":"-987654321.00s"}`,
+			want: &Duration{Seconds: -987654321, Nanos: 0},
+		},
+		{
+			name: "negative big seconds, big nanos",
+			json: `{"duration":"-987654321.123456789s"}`,
+			want: &Duration{Seconds: -987654321, Nanos: -123456789},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var testType struct {
+				Duration *Duration
+			}
+			err := json.Unmarshal([]byte(c.json), &testType)
+			if err != nil {
+				testhelpers.Equals(t, c.err, err.Error())
+			} else {
+				testhelpers.Equals(t, c.want, testType.Duration)
+			}
+		})
+	}
+}
