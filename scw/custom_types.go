@@ -129,7 +129,7 @@ func (m *Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1e9
 }
 
-// Money represents a size in bytes.
+// Size represents a size in bytes.
 type Size uint64
 
 const (
