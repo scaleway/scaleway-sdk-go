@@ -26,7 +26,6 @@ const (
 )
 
 func TestGetURL(t *testing.T) {
-
 	req := ScalewayRequest{
 		Path: testPath,
 		Query: url.Values{
@@ -40,11 +39,9 @@ func TestGetURL(t *testing.T) {
 	expectedURL := fmt.Sprintf("%s%s?%s=%s", testBaseURL, testPath, testKey, testValue)
 
 	testhelpers.Equals(t, expectedURL, newURL.String())
-
 }
 
 func TestGetHeadersWithoutBody(t *testing.T) {
-
 	req := ScalewayRequest{
 		Headers: http.Header{
 			testHeaderKey: []string{testHeaderVal},
@@ -61,7 +58,6 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 	allHeaders := req.getAllHeaders(token, testUserAgent, false)
 
 	testhelpers.Equals(t, expectedHeaders, allHeaders)
-
 }
 
 func TestGetHeadersWithBody(t *testing.T) {
@@ -86,17 +82,16 @@ func TestGetHeadersWithBody(t *testing.T) {
 }
 
 func TestSetBody(t *testing.T) {
-
 	body := struct {
 		Region  Region         `json:"-"`
-		Id      string         `json:"-"`
+		ID      string         `json:"-"`
 		Name    string         `json:"name,omitempty"`
 		Slice   []string       `json:"slice,omitempty"`
 		Flag    bool           `json:"flag,omitempty"`
 		Timeout *time.Duration `json:"timeout,omitempty"`
 	}{
 		Region:  RegionNlAms,
-		Id:      "plop",
+		ID:      "plop",
 		Name:    "plop",
 		Slice:   []string{"plop", "plop"},
 		Flag:    true,
@@ -119,11 +114,9 @@ func TestSetBody(t *testing.T) {
 
 	testhelpers.Equals(t, []string{"application/json"}, req.Headers["Content-Type"])
 	testhelpers.Equals(t, `{"name":"plop","slice":["plop","plop"],"flag":true,"timeout":1000000000}`, string(b))
-
 }
 
 func TestSetFileBody(t *testing.T) {
-
 	body := &File{
 		Content:     bytes.NewReader([]byte(testBody)),
 		ContentType: "plain/text",
@@ -145,5 +138,4 @@ func TestSetFileBody(t *testing.T) {
 
 	testhelpers.Equals(t, []string{"plain/text"}, req.Headers["Content-Type"])
 	testhelpers.Equals(t, `some body`, string(b))
-
 }

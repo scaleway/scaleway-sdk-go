@@ -9,10 +9,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
-const (
-	apiURL = "https://example.com/"
-)
-
 var (
 	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	defaultRegion         = RegionNlAms
@@ -20,7 +16,6 @@ var (
 )
 
 func TestClientOptions(t *testing.T) {
-
 	testCases := []struct {
 		name         string
 		clientOption ClientOption
@@ -241,7 +236,6 @@ func TestCombinedClientOptions(t *testing.T) {
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
-
 		})
 	}
 }

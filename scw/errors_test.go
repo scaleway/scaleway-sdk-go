@@ -12,21 +12,17 @@ import (
 )
 
 func TestHasResponseErrorWithStatus200(t *testing.T) {
-
 	res := &http.Response{StatusCode: 200}
 
 	newErr := hasResponseError(res)
 	testhelpers.AssertNoError(t, newErr)
-
 }
 
 func TestHasResponseErrorWithoutBody(t *testing.T) {
-
 	res := &http.Response{StatusCode: 400}
 
 	newErr := hasResponseError(res)
 	testhelpers.Assert(t, newErr != nil, "Should have error")
-
 }
 
 func TestNonStandardError(t *testing.T) {
@@ -144,5 +140,4 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	newErr := hasResponseError(res)
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 	testhelpers.Equals(t, testErrorReponse, newErr)
-
 }

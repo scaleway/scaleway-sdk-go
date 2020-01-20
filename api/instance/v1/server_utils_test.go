@@ -30,7 +30,6 @@ func TestAPI_GetServerType(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, 1*scw.GB, serverType.PerVolumeConstraint.LSSD.MinSize)
 	testhelpers.Equals(t, 800*scw.GB, serverType.PerVolumeConstraint.LSSD.MaxSize)
-
 }
 
 func TestAPI_ServerUserData(t *testing.T) {

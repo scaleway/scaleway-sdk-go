@@ -25,7 +25,6 @@ var UpdateCassette = false
 // To update the cassette files, add  `UPDATE` to the environment variables.
 // When using `UPDATE`, also the `SCW_ACCESS_KEY` and `SCW_SECRET_KEY` must be set.
 func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Recorder, error) {
-
 	_, UpdateCassette := os.LookupEnv("UPDATE")
 
 	var activeProfile *scw.Profile
@@ -93,5 +92,4 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	}
 
 	return client, r, nil
-
 }

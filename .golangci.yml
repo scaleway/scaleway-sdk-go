@@ -1,0 +1,40 @@
+#
+# Golang CI pipeline configuration
+#
+# To execute linters in local this commands can be used:
+# docker run -it --rm -v (pwd):/goapp -e RUN=1 -e REPO=github.com/scaleway/scaleway-sdk-go golangci/build-runner bash
+# root@/goapp# goenvbuild # Setup the environment
+# root@/goapp# golangci-lint linters # List used linters
+# root@/goapp# golangci-lint run # Run linters
+
+linters:
+  disable-all: true
+
+  # Run golangci-lint linters to see
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - goconst
+    - goimports
+    - golint
+    - misspell
+    - stylecheck
+    - unconvert
+    - unparam
+    - whitespace
+    # - gosec Could be interesting but require a lot of ignore for fake test tokens
+    # - wsl Could be interesting but need a lot of changes
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - stylecheck

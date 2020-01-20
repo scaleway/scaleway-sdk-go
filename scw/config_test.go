@@ -240,14 +240,12 @@ func TestSaveConfig(t *testing.T) {
 				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, expectedContent, string(content))
 			}
-
 		})
 	}
 }
 
 // TestLoadConfig tests config getters return correct values
 func TestLoadProfileAndActiveProfile(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		env        map[string]string
@@ -449,9 +447,9 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			if test.expectedError != "" && err != nil {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 				return
-			} else {
-				testhelpers.AssertNoError(t, err)
 			}
+			testhelpers.AssertNoError(t, err)
+
 			testhelpers.Equals(t, test.isMigrated, isMigrated)
 			config, err := LoadConfig()
 			if test.expectedError == "" {
@@ -471,7 +469,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
-
 		})
 	}
 }
@@ -509,7 +506,6 @@ profiles:
 secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 `, p.String())
 	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
-
 }
 
 func TestMergeProfiles(t *testing.T) {
@@ -595,7 +591,6 @@ func b(value bool) *bool {
 }
 
 func TestConfig_ConfigFile(t *testing.T) {
-
 	type testCase struct {
 		config *Config
 		result string

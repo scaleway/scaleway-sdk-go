@@ -9,7 +9,6 @@ import (
 )
 
 func TestInstanceHelpers(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("utils-test")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -44,7 +43,6 @@ func TestInstanceHelpers(t *testing.T) {
 	})
 
 	t.Run("test ip related functions", func(t *testing.T) {
-
 		// Create IP
 		createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
 			Zone:         zone,
@@ -105,11 +103,9 @@ func TestInstanceHelpers(t *testing.T) {
 			IP:   ipID,
 		})
 		testhelpers.AssertNoError(t, err)
-
 	})
 
 	t.Run("Test attach and detach volume", func(t *testing.T) {
-
 		detachVolumeResponse, err := instanceAPI.DetachVolume(&DetachVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
@@ -147,7 +143,5 @@ func TestInstanceHelpers(t *testing.T) {
 			VolumeID: volumeID,
 		})
 		testhelpers.AssertNoError(t, err)
-
 	})
-
 }

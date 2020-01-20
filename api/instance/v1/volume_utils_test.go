@@ -9,7 +9,6 @@ import (
 )
 
 func TestUpdateVolume(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("volume-utils-test")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -60,5 +59,4 @@ func TestUpdateVolume(t *testing.T) {
 		VolumeID: volumeID,
 	})
 	testhelpers.AssertNoError(t, err)
-
 }

@@ -83,7 +83,6 @@ func TestStandardErrors(t *testing.T) {
 			CurrentState: "running",
 			RawBody:      []byte(`{"current_state":"running","message":"resource is in a transient state","resource":"human","resource_id":"` + human.ID + `","type":"transient_state"}`),
 		}, err)
-
 	})
 
 	t.Run("out of stock", func(t *testing.T) {

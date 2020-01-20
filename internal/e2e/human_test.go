@@ -141,5 +141,4 @@ func TestHuman(t *testing.T) {
 		HumanID: human.ID,
 	})
 	testhelpers.AssertNoError(t, err)
-
 }

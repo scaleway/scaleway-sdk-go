@@ -9,38 +9,37 @@ import (
 
 // TestLoadConfig tests config getters return correct values
 func TestLoadEnvProfile(t *testing.T) {
-
 	tests := []struct {
 		name string
 		env  map[string]string
 
-		expectedAccessKey        *string
-		expectedSecretKey        *string
-		expectedAPIURL           *string
-		expectedInsecure         *bool
+		expectedAccessKey             *string
+		expectedSecretKey             *string
+		expectedAPIURL                *string
+		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
-		expectedDefaultRegion    *string
-		expectedDefaultZone      *string
+		expectedDefaultRegion         *string
+		expectedDefaultZone           *string
 	}{
 		// up-to-date env variables
 		{
 			name: "No config with env variables",
 			env: map[string]string{
-				scwAccessKeyEnv:        v2ValidAccessKey,
-				scwSecretKeyEnv:        v2ValidSecretKey,
-				scwAPIURLEnv:           v2ValidAPIURL,
-				scwInsecureEnv:         "false",
+				scwAccessKeyEnv:             v2ValidAccessKey,
+				scwSecretKeyEnv:             v2ValidSecretKey,
+				scwAPIURLEnv:                v2ValidAPIURL,
+				scwInsecureEnv:              "false",
 				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				scwDefaultRegionEnv:    v2ValidDefaultRegion,
-				scwDefaultZoneEnv:      v2ValidDefaultZone,
+				scwDefaultRegionEnv:         v2ValidDefaultRegion,
+				scwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
-			expectedAPIURL:           s(v2ValidAPIURL),
-			expectedInsecure:         b(false),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
-			expectedDefaultZone:      s(v2ValidDefaultZone),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
 		{
 			name: "No config with terraform legacy env variables",
@@ -50,10 +49,10 @@ func TestLoadEnvProfile(t *testing.T) {
 				terraformOrganizationEnv: v2ValidDefaultOrganizationID,
 				terraformRegionEnv:       v2ValidDefaultRegion,
 			},
-			expectedAccessKey:        s(v2ValidAccessKey),
-			expectedSecretKey:        s(v2ValidSecretKey),
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
 			name: "No config with CLI legacy env variables",
@@ -63,10 +62,10 @@ func TestLoadEnvProfile(t *testing.T) {
 				cliRegionEnv:       v2ValidDefaultRegion2,
 				cliTLSVerifyEnv:    "false",
 			},
-			expectedSecretKey:        s(v2ValidSecretKey2),
-			expectedInsecure:         b(true),
+			expectedSecretKey:             s(v2ValidSecretKey2),
+			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
-			expectedDefaultRegion:    s(v2ValidDefaultRegion2),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 		},
 	}
 
@@ -94,7 +93,6 @@ func TestLoadEnvProfile(t *testing.T) {
 			testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 			testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 			testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
-
 		})
 	}
 }
