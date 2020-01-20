@@ -30,7 +30,7 @@ linters:
     - unconvert
     - unparam
     - whitespace
-    # - gosec Could be interesting but require a lot of ignore for fake test tokens
+    - gosec
     # - wsl Could be interesting but need a lot of changes
 
 issues:
@@ -38,3 +38,4 @@ issues:
     - path: _test\.go
       linters:
         - stylecheck
+        - gosec

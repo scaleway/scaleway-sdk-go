@@ -12,7 +12,7 @@ const (
 	// Up-to-date
 	scwConfigPathEnv            = "SCW_CONFIG_PATH"
 	scwAccessKeyEnv             = "SCW_ACCESS_KEY"
-	scwSecretKeyEnv             = "SCW_SECRET_KEY"
+	scwSecretKeyEnv             = "SCW_SECRET_KEY" // #nosec G101
 	scwActiveProfileEnv         = "SCW_PROFILE"
 	scwAPIURLEnv                = "SCW_API_URL"
 	scwInsecureEnv              = "SCW_INSECURE"
