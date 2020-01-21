@@ -1,11 +1,7 @@
 #
 # Golang CI pipeline configuration
 #
-# To execute linters in local this commands can be used:
-# docker run -it --rm -v (pwd):/goapp -e RUN=1 -e REPO=github.com/scaleway/scaleway-sdk-go golangci/build-runner bash
-# root@/goapp# goenvbuild # Setup the environment
-# root@/goapp# golangci-lint linters # List used linters
-# root@/goapp# golangci-lint run # Run linters
+# To execute linters in local the ./scripts/lint.sh script can be used.
 
 linters:
   disable-all: true
