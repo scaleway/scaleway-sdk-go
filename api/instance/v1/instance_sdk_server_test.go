@@ -9,7 +9,6 @@ import (
 )
 
 func TestServerUpdate(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("server-test")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -70,16 +69,16 @@ func TestServerUpdate(t *testing.T) {
 		)
 
 		// Update server
-		updateServerResponse, err := instanceAPI.updateServer((*UpdateServerRequest)(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Name:     &newName,
 			Tags:     &updatedTags,
-		}))
+		})
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 		testhelpers.AssertNoError(t, err)
 
-		// Initial values that are not altered in the above request should remaing the same
+		// Initial values that are not altered in the above request should remaining the same
 		testhelpers.Equals(t, organization, updateServerResponse.Server.Organization)
 		testhelpers.Equals(t, image, updateServerResponse.Server.Image.ID)
 		testhelpers.Equals(t, enableIPv6, updateServerResponse.Server.EnableIPv6)
@@ -94,11 +93,11 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("remove server volumes", func(t *testing.T) {
 		// Remove/detach volumes
-		updateServerResponse, err := instanceAPI.updateServer((*UpdateServerRequest)(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.updateServer(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Volumes:  &map[string]*VolumeTemplate{},
-		}))
+		})
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 		testhelpers.Assert(t, 0 == len(updateServerResponse.Server.Volumes), "volume should be detached from server.")
@@ -119,11 +118,9 @@ func TestServerUpdate(t *testing.T) {
 		})
 		testhelpers.AssertNoError(t, err)
 	})
-
 }
 
 func TestCreateServerWithIncorrectBody(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("server-incorrect-body")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -141,5 +138,4 @@ func TestCreateServerWithIncorrectBody(t *testing.T) {
 		Zone: zone,
 	})
 	testhelpers.Assert(t, err != nil, "This request should error")
-
 }

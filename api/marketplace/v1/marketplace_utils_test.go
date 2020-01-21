@@ -9,7 +9,6 @@ import (
 )
 
 func TestGetImageByLabel(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -17,7 +16,6 @@ func TestGetImageByLabel(t *testing.T) {
 	}()
 
 	t.Run("matching input for GetLocalImageIDByLabel", func(t *testing.T) {
-
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
@@ -30,11 +28,9 @@ func TestGetImageByLabel(t *testing.T) {
 
 		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
 		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
-
 	})
 
 	t.Run("matching input for GetLocalImageIDByLabel with lowercase image label", func(t *testing.T) {
-
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
@@ -47,11 +43,9 @@ func TestGetImageByLabel(t *testing.T) {
 
 		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
 		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
-
 	})
 
 	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
-
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
@@ -62,7 +56,5 @@ func TestGetImageByLabel(t *testing.T) {
 		})
 		testhelpers.Assert(t, err != nil, "Should have error")
 		testhelpers.Equals(t, "scaleway-sdk-go: couldn't find a matching image for the given label (foo-bar-image), zone (fr-par-1) and commercial type (DEV1-S)", err.Error())
-
 	})
-
 }

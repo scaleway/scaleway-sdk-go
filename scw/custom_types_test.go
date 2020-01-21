@@ -286,7 +286,6 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 }
 
 func TestFile_UnmarshalJSON(t *testing.T) {
-
 	type testCase struct {
 		json        string
 		name        string

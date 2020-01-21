@@ -15,7 +15,7 @@ type IntervalStrategy func() <-chan time.Time
 // WaitSyncConfig defines the waiting options.
 type WaitSyncConfig struct {
 	// This method will be called from another goroutine.
-	Get              func() (value interface{}, err error, isTerminal bool)
+	Get              func() (value interface{}, isTerminal bool, err error)
 	IntervalStrategy IntervalStrategy
 	Timeout          time.Duration
 }
@@ -54,7 +54,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	go func() {
 		for {
 			// get the payload
-			value, err, stopCondition := config.Get()
+			value, stopCondition, err := config.Get()
 
 			// send the payload
 			if err != nil {

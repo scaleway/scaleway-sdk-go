@@ -26,8 +26,8 @@ type ServiceInfo struct {
 	// Version is the version of the API
 	Version string `json:"version"`
 
-	// DocumentationUrl is the a web url where the documentation of the API can be found
-	DocumentationUrl *string `json:"documentation_url"`
+	// DocumentationURL is the a web url where the documentation of the API can be found
+	DocumentationURL *string `json:"documentation_url"`
 }
 
 // File is the structure used to receive / send a file from / to the API

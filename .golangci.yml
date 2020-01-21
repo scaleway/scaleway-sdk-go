@@ -1,0 +1,37 @@
+#
+# Golang CI pipeline configuration
+#
+# To execute linters in local the ./scripts/lint.sh script can be used.
+
+linters:
+  disable-all: true
+
+  # Run golangci-lint linters to see
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - goconst
+    - goimports
+    - golint
+    - misspell
+    - stylecheck
+    - unconvert
+    - unparam
+    - whitespace
+    - gosec
+    # - wsl Could be interesting but need a lot of changes
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - stylecheck
+        - gosec

@@ -16,11 +16,10 @@ import (
 
 // CreateServer creates a server.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
-
 	// If image is not a UUID we try to fetch it from marketplace.
 	if req.Image != "" && !validation.IsUUID(req.Image) {
 		apiMarketplace := marketplace.NewAPI(s.client)
-		imageId, err := apiMarketplace.GetLocalImageIDByLabel(&marketplace.GetLocalImageIDByLabelRequest{
+		imageID, err := apiMarketplace.GetLocalImageIDByLabel(&marketplace.GetLocalImageIDByLabelRequest{
 			ImageLabel:     req.Image,
 			Zone:           req.Zone,
 			CommercialType: req.CommercialType,
@@ -28,10 +27,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 		if err != nil {
 			return nil, err
 		}
-		req.Image = imageId
+		req.Image = imageID
 	}
 
-	return s.createServer((*CreateServerRequest)(req), opts...)
+	return s.createServer(req, opts...)
 }
 
 // UpdateServer updates a server.
@@ -39,7 +38,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 // Note: Implementation is thread-safe.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	defer lockServer(req.Zone, req.ServerID).Unlock()
-	return s.updateServer((*UpdateServerRequest)(req), opts...)
+	return s.updateServer(req, opts...)
 }
 
 // WaitForServerRequest is used by WaitForServer method.
@@ -52,7 +51,6 @@ type WaitForServerRequest struct {
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
 		ServerStateStoppedInPlace: {},
@@ -61,18 +59,18 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, error, bool) {
+		Get: func() (interface{}, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
 			})
 
 			if err != nil {
-				return nil, err, false
+				return nil, false, err
 			}
 			_, isTerminal := terminalStatus[res.Server.State]
 
-			return res.Server, err, isTerminal
+			return res.Server, isTerminal, err
 		},
 		Timeout:          req.Timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
@@ -145,7 +143,6 @@ type GetServerTypeRequest struct {
 
 // GetServerType get server type info by it's name.
 func (s *API) GetServerType(req *GetServerTypeRequest) (*ServerType, error) {
-
 	res, err := s.ListServersTypes(&ListServersTypesRequest{
 		Zone: req.Zone,
 	}, scw.WithAllPages())

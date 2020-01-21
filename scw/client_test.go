@@ -25,7 +25,6 @@ const (
 )
 
 func TestNewClientWithDefaults(t *testing.T) {
-
 	options := []ClientOption{
 		WithInsecure(),
 	}
@@ -35,11 +34,9 @@ func TestNewClientWithDefaults(t *testing.T) {
 
 	testhelpers.Equals(t, defaultAPIURL, client.apiURL)
 	testhelpers.Equals(t, auth.NewNoAuth(), client.auth)
-
 }
 
 func TestNewClientWithOptions(t *testing.T) {
-
 	t.Run("Basic", func(t *testing.T) {
 		someHTTPClient := &http.Client{}
 
@@ -115,7 +112,6 @@ func TestNewClientWithOptions(t *testing.T) {
 		_, exist = client.GetDefaultPageSize()
 		testhelpers.Assert(t, !exist, "defaultPageSize must not exist")
 	})
-
 }
 
 type fakeHTTPClient struct{}

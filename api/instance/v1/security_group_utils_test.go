@@ -10,7 +10,6 @@ import (
 )
 
 func TestAPI_UpdateSecurityGroup(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("security-group-test")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -67,7 +66,6 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 }
 
 func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
-
 	client, r, err := httprecorder.CreateRecordedScwClient("security-group-rule-test")
 	testhelpers.AssertNoError(t, err)
 	defer func() {
@@ -82,7 +80,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 	)
 
 	bootstrap := func(t *testing.T) (*SecurityGroup, *SecurityGroupRule, func()) {
-
 		createSecurityGroupResponse, err := instanceAPI.CreateSecurityGroup(&CreateSecurityGroupRequest{
 			Zone:                  zone,
 			Name:                  "name",
@@ -218,5 +215,4 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
 		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
 	})
-
 }

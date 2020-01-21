@@ -10,7 +10,6 @@ import (
 )
 
 func Example_apiClient() {
-
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
@@ -25,11 +24,9 @@ func Example_apiClient() {
 
 	// Start using the SDKs
 	_, _ = instanceAPI, lbAPI
-
 }
 
 func Example_apiClientWithConfig() {
-
 	// Get Scaleway Config
 	config, err := scw.LoadConfig()
 	if err != nil {
@@ -57,11 +54,9 @@ func Example_apiClientWithConfig() {
 
 	// Start using the SDKs
 	_, _ = instanceAPI, lbAPI
-
 }
 
 func Example_listServers() {
-
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
@@ -86,7 +81,6 @@ func Example_listServers() {
 }
 
 func Example_createServer() {
-
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
@@ -126,7 +120,6 @@ func Example_createServer() {
 }
 
 func Example_rebootAllServers() {
-
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
@@ -163,7 +156,6 @@ func Example_rebootAllServers() {
 }
 
 func Example_createLoadBalancer() {
-
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
@@ -189,5 +181,4 @@ func Example_createLoadBalancer() {
 
 	// Do something with the newly created LB...
 	fmt.Println(newLb)
-
 }

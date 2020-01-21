@@ -9,7 +9,6 @@ import (
 )
 
 func TestParseZone(t *testing.T) {
-
 	tests := []struct {
 		input    string
 		err      error
@@ -55,13 +54,10 @@ func TestParseZone(t *testing.T) {
 			testhelpers.Equals(t, test.expected, z)
 		})
 	}
-
 }
 
 func TestZoneJSONUnmarshall(t *testing.T) {
-
 	t.Run("test with zone", func(t *testing.T) {
-
 		input := `{"Test": "par1"}`
 		value := struct{ Test Zone }{}
 
@@ -69,11 +65,9 @@ func TestZoneJSONUnmarshall(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, ZoneFrPar1, value.Test)
-
 	})
 
 	t.Run("test with region", func(t *testing.T) {
-
 		input := `{"Test": "par1"}`
 		value := struct{ Test Region }{}
 
@@ -81,13 +75,10 @@ func TestZoneJSONUnmarshall(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, RegionFrPar, value.Test)
-
 	})
-
 }
 
 func TestParseRegion(t *testing.T) {
-
 	tests := []struct {
 		input    string
 		err      error
@@ -128,5 +119,4 @@ func TestParseRegion(t *testing.T) {
 			testhelpers.Equals(t, test.expected, r)
 		})
 	}
-
 }

@@ -15,15 +15,15 @@ type value struct {
 	totalDuration  time.Duration
 }
 
-func getMock(iterations int, sleepTime time.Duration) func() (interface{}, error, bool) {
+func getMock(iterations int, sleepTime time.Duration) func() (interface{}, bool, error) {
 	cpt := iterations
 	var startTime time.Time
 
-	return func() (interface{}, error, bool) {
+	return func() (interface{}, bool, error) {
 		if cpt == iterations {
 			startTime = time.Now()
 		}
-		cpt -= 1
+		cpt--
 
 		// fake working time
 		time.Sleep(sleepTime)
@@ -32,7 +32,7 @@ func getMock(iterations int, sleepTime time.Duration) func() (interface{}, error
 			doneIterations: iterations - cpt,
 			totalDuration:  time.Since(startTime),
 		}
-		return v, nil, cpt == 0
+		return v, cpt == 0, nil
 	}
 }
 

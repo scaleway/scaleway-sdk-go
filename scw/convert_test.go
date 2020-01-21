@@ -22,7 +22,6 @@ var (
 )
 
 func TestStringPtr(t *testing.T) {
-
 	pointer := StringPtr(testString)
 	slice := []string{testString}
 	sliceOfPointers := StringSlicePtr(slice)
@@ -40,11 +39,9 @@ func TestStringPtr(t *testing.T) {
 	// slice of value to pointer to slice of values
 	testhelpers.Assert(t, pointerToSlice != nil, "Pointer should have value")
 	testhelpers.Equals(t, slice, *pointerToSlice)
-
 }
 
 func TestBytesPtr(t *testing.T) {
-
 	pointer := BytesPtr(testBytes)
 	slice := [][]byte{testBytes}
 	sliceOfPointers := BytesSlicePtr(slice)
@@ -57,11 +54,9 @@ func TestBytesPtr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testBytes, *sliceOfPointers[0])
-
 }
 
 func TestBoolPtr(t *testing.T) {
-
 	pointer := BoolPtr(testBool)
 	slice := []bool{testBool}
 	sliceOfPointers := BoolSlicePtr(slice)
@@ -74,11 +69,9 @@ func TestBoolPtr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testBool, *sliceOfPointers[0])
-
 }
 
 func TestInt32Ptr(t *testing.T) {
-
 	pointer := Int32Ptr(testInt32)
 	slice := []int32{testInt32}
 	sliceOfPointers := Int32SlicePtr(slice)
@@ -91,11 +84,9 @@ func TestInt32Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testInt32, *sliceOfPointers[0])
-
 }
 
 func TestInt64Ptr(t *testing.T) {
-
 	pointer := Int64Ptr(testInt64)
 	slice := []int64{testInt64}
 	sliceOfPointers := Int64SlicePtr(slice)
@@ -108,11 +99,9 @@ func TestInt64Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testInt64, *sliceOfPointers[0])
-
 }
 
 func TestUint32Ptr(t *testing.T) {
-
 	pointer := Uint32Ptr(testUInt32)
 	slice := []uint32{testUInt32}
 	sliceOfPointers := Uint32SlicePtr(slice)
@@ -125,11 +114,9 @@ func TestUint32Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testUInt32, *sliceOfPointers[0])
-
 }
 
 func TestUint64Ptr(t *testing.T) {
-
 	pointer := Uint64Ptr(testUInt64)
 	slice := []uint64{testUInt64}
 	sliceOfPointers := Uint64SlicePtr(slice)
@@ -142,11 +129,9 @@ func TestUint64Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testUInt64, *sliceOfPointers[0])
-
 }
 
 func TestFloat32Ptr(t *testing.T) {
-
 	pointer := Float32Ptr(testFloat32)
 	slice := []float32{testFloat32}
 	sliceOfPointers := Float32SlicePtr(slice)
@@ -159,11 +144,9 @@ func TestFloat32Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testFloat32, *sliceOfPointers[0])
-
 }
 
 func TestFloat64Ptr(t *testing.T) {
-
 	pointer := Float64Ptr(testFloat64)
 	slice := []float64{testFloat64}
 	sliceOfPointers := Float64SlicePtr(slice)
@@ -176,25 +159,20 @@ func TestFloat64Ptr(t *testing.T) {
 	testhelpers.Equals(t, 1, len(sliceOfPointers))
 	testhelpers.Assert(t, sliceOfPointers[0] != nil, "Pointer should have value")
 	testhelpers.Equals(t, testFloat64, *sliceOfPointers[0])
-
 }
 
 func TestDurationPtr(t *testing.T) {
-
 	pointer := DurationPtr(testDuration)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
 	testhelpers.Equals(t, testDuration, *pointer)
-
 }
 
 func TestSizePtr(t *testing.T) {
-
 	pointer := SizePtr(testSize)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
 	testhelpers.Equals(t, testSize, *pointer)
-
 }

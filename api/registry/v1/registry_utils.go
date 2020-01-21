@@ -26,18 +26,18 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error)
 	}
 
 	namespace, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, error, bool) {
+		Get: func() (interface{}, bool, error) {
 			ns, err := s.GetNamespace(&GetNamespaceRequest{
 				Region:      req.Region,
 				NamespaceID: req.NamespaceID,
 			})
 			if err != nil {
-				return nil, err, false
+				return nil, false, err
 			}
 
 			_, isTerminal := terminalStatus[ns.Status]
 
-			return ns, err, isTerminal
+			return ns, isTerminal, err
 		},
 		Timeout:          req.Timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
