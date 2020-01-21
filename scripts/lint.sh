@@ -26,7 +26,7 @@ function usage() {
 
   color yellow "Options:"
 
-  color green "  --fix"
+  color green "  -w, --write"
   echo -e "\tFix found issues (if it's supported by the linter)."
 
   color green "  --list"
@@ -52,7 +52,7 @@ do
 	  -h|--help)
 	    usage 0 ;;
 
-    --fix)
+    -w|--write)
       OPT_CMD="run"
       OPT_FLAGS+=" --fix" ;;
 
@@ -74,7 +74,7 @@ done
 ##
 # Check golangci-lint command existence
 ##
-if [ -x "command -v golangci-lint" ];
+if [ -x "$(command -v golangci-lint)" ];
 then
   echo "golangci-lint is not installed"
   echo "On macOS, you can run: brew install golangci/tap/golangci-lint"
