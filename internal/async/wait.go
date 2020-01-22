@@ -2,6 +2,7 @@ package async
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -18,6 +19,17 @@ type WaitSyncConfig struct {
 	Get              func() (value interface{}, isTerminal bool, err error)
 	IntervalStrategy IntervalStrategy
 	Timeout          time.Duration
+}
+
+// ZeroIntervalStrategy defines a zero interval duration. It is used by default when replaying cassette tests.
+func ZeroIntervalStrategy() IntervalStrategy {
+	return func() <-chan time.Time {
+		c := make(chan time.Time)
+		go func() {
+			c <- time.Now()
+		}()
+		return c
+	}
 }
 
 // LinearIntervalStrategy defines a linear interval duration.
@@ -42,6 +54,9 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	// initialize configuration
 	if config.IntervalStrategy == nil {
 		config.IntervalStrategy = LinearIntervalStrategy(defaultInterval)
+	}
+	if os.Getenv("REPLAY_CASSETTE") == "true" {
+		config.IntervalStrategy = ZeroIntervalStrategy()
 	}
 	if config.Timeout == 0 {
 		config.Timeout = defaultTimeout

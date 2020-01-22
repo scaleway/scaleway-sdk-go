@@ -29,7 +29,9 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	var activeProfile *scw.Profile
 
+	recorderMode := recorder.ModeReplaying
 	if UpdateCassette {
+		recorderMode = recorder.ModeRecording
 		config, err := scw.LoadConfig()
 		if err != nil {
 			return nil, nil, err
@@ -38,11 +40,11 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		if err != nil {
 			return nil, nil, err
 		}
-	}
-
-	recorderMode := recorder.ModeReplaying
-	if UpdateCassette {
-		recorderMode = recorder.ModeRecording
+	} else {
+		err := os.Setenv("REPLAY_CASSETTE", "true")
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	// Setup recorder and scw client
