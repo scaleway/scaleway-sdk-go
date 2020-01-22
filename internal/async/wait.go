@@ -2,7 +2,6 @@ package async
 
 import (
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -44,9 +43,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	if config.IntervalStrategy == nil {
 		config.IntervalStrategy = LinearIntervalStrategy(defaultInterval)
 	}
-	if os.Getenv("REPLAY_CASSETTE") == "true" {
-		config.IntervalStrategy = LinearIntervalStrategy(0)
-	}
+
 	if config.Timeout == 0 {
 		config.Timeout = defaultTimeout
 	}

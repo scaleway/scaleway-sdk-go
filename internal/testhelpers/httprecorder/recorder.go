@@ -12,9 +12,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-// UpdateCassette is true when we are updating the cassette
-var UpdateCassette = false
-
 // CreateRecordedScwClient creates a new scw.Client that records all HTTP requests in a cassette.
 // This cassette is then replayed whenever tests are executed again. This means that once the
 // requests are recorded in the cassette, no more real HTTP request must be made to run the tests.
@@ -37,11 +34,6 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 			return nil, nil, err
 		}
 		activeProfile, err = config.GetActiveProfile()
-		if err != nil {
-			return nil, nil, err
-		}
-	} else {
-		err := os.Setenv("REPLAY_CASSETTE", "true")
 		if err != nil {
 			return nil, nil, err
 		}

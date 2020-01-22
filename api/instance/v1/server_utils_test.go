@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -12,6 +13,14 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
+
+func init() {
+	// set interval strategy to 0 when replaying cassettes
+	_, UpdateCassette := os.LookupEnv("UPDATE")
+	if !UpdateCassette {
+		DefaultIntervalStrategy = 0
+	}
+}
 
 func TestAPI_GetServerType(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("get-server-type")

@@ -14,6 +14,10 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/validation"
 )
 
+var (
+	DefaultIntervalStrategy = 5 * time.Second
+)
+
 // CreateServer creates a server.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	// If image is not a UUID we try to fetch it from marketplace.
@@ -73,7 +77,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			return res.Server, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(DefaultIntervalStrategy),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
@@ -95,7 +99,7 @@ type ServerActionAndWaitRequest struct {
 // expected by this action.
 func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 	if req.Timeout == 0 {
-		req.Timeout = 5 * time.Minute
+		req.Timeout = DefaultIntervalStrategy
 	}
 
 	_, err := s.ServerAction(&ServerActionRequest{
