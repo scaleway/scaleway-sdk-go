@@ -15,12 +15,12 @@ import (
 )
 
 const (
-	defaultTimeout          = 5 * time.Minute
-	defaultIntervalStrategy = 5 * time.Second
+	defaultTimeout       = 5 * time.Minute
+	defaultRetryInterval = 5 * time.Second
 )
 
 var (
-	IntervalStrategy = defaultIntervalStrategy
+	RetryInterval = defaultRetryInterval
 )
 
 // CreateServer creates a server.
@@ -82,7 +82,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			return res.Server, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(IntervalStrategy),
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
