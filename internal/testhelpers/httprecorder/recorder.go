@@ -12,6 +12,12 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+// IsUpdatingCassette returns true if we are updating cassettes.
+func IsUpdatingCassette() bool {
+	_, UpdateCassette := os.LookupEnv("UPDATE")
+	return UpdateCassette
+}
+
 // CreateRecordedScwClient creates a new scw.Client that records all HTTP requests in a cassette.
 // This cassette is then replayed whenever tests are executed again. This means that once the
 // requests are recorded in the cassette, no more real HTTP request must be made to run the tests.
@@ -22,7 +28,7 @@ import (
 // To update the cassette files, add  `UPDATE` to the environment variables.
 // When using `UPDATE`, also the `SCW_ACCESS_KEY` and `SCW_SECRET_KEY` must be set.
 func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Recorder, error) {
-	_, UpdateCassette := os.LookupEnv("UPDATE")
+	UpdateCassette := IsUpdatingCassette()
 
 	var activeProfile *scw.Profile
 

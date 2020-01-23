@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -16,9 +15,8 @@ import (
 
 func init() {
 	// set interval strategy to 0 when replaying cassettes
-	_, UpdateCassette := os.LookupEnv("UPDATE")
-	if !UpdateCassette {
-		DefaultIntervalStrategy = 0
+	if httprecorder.IsUpdatingCassette() {
+		IntervalStrategy = 0
 	}
 }
 
