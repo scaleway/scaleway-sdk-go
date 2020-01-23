@@ -43,6 +43,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue interface{}, err error) {
 	if config.IntervalStrategy == nil {
 		config.IntervalStrategy = LinearIntervalStrategy(defaultInterval)
 	}
+
 	if config.Timeout == 0 {
 		config.Timeout = defaultTimeout
 	}

@@ -13,6 +13,13 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+func init() {
+	// set interval strategy to 0 when replaying cassettes
+	if httprecorder.IsUpdatingCassette() {
+		RetryInterval = 0
+	}
+}
+
 func TestAPI_GetServerType(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("get-server-type")
 	testhelpers.AssertNoError(t, err)
