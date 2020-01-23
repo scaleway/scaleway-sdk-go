@@ -581,6 +581,12 @@ type Disk struct {
 	Type string `json:"type"`
 }
 
+// GetServerMetricsResponse get server metrics response
+type GetServerMetricsResponse struct {
+	// Pings timeseries of ping on the server
+	Pings *scw.TimeSeries `json:"pings"`
+}
+
 // IP ip
 type IP struct {
 	// ID iD of the IP
@@ -1102,6 +1108,46 @@ func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption
 	}
 
 	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetServerMetricsRequest struct {
+	Zone scw.Zone `json:"-"`
+	// ServerID server ID to get the metrics
+	ServerID string `json:"-"`
+}
+
+// GetServerMetrics return server metrics
+//
+// Give the ping status on the server associated with the given ID.
+func (s *API) GetServerMetrics(req *GetServerMetricsRequest, opts ...scw.RequestOption) (*GetServerMetricsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/baremetal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/metrics",
+		Headers: http.Header{},
+	}
+
+	var resp GetServerMetricsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
