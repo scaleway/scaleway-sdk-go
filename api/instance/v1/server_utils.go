@@ -14,8 +14,13 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/validation"
 )
 
+const (
+	defaultTimeout          = 5 * time.Minute
+	defaultIntervalStrategy = 5 * time.Second
+)
+
 var (
-	DefaultIntervalStrategy = 5 * time.Second
+	IntervalStrategy = defaultIntervalStrategy
 )
 
 // CreateServer creates a server.
@@ -77,7 +82,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			return res.Server, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(DefaultIntervalStrategy),
+		IntervalStrategy: async.LinearIntervalStrategy(IntervalStrategy),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
@@ -99,7 +104,7 @@ type ServerActionAndWaitRequest struct {
 // expected by this action.
 func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 	if req.Timeout == 0 {
-		req.Timeout = DefaultIntervalStrategy
+		req.Timeout = defaultTimeout
 	}
 
 	_, err := s.ServerAction(&ServerActionRequest{
