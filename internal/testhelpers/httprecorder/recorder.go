@@ -14,8 +14,7 @@ import (
 
 // IsUpdatingCassette returns true if we are updating cassettes.
 func IsUpdatingCassette() bool {
-	_, UpdateCassette := os.LookupEnv("UPDATE")
-	return UpdateCassette
+	return os.Getenv("SDK_UPDATE_CASSETTES") == "true"
 }
 
 // CreateRecordedScwClient creates a new scw.Client that records all HTTP requests in a cassette.
@@ -25,8 +24,9 @@ func IsUpdatingCassette() bool {
 // It is important to call add a `defer recorder.Stop()` so the given cassette files are correctly
 // closed and saved after the requests.
 //
-// To update the cassette files, add  `UPDATE` to the environment variables.
-// When using `UPDATE`, also the `SCW_ACCESS_KEY` and `SCW_SECRET_KEY` must be set.
+// To update the cassette files, add  `SDK_UPDATE_CASSETTES=true` to the environment variables.
+// When updating cassettes, make sure your Scaleway credentials are set in your config or in the
+// variables `SCW_ACCESS_KEY` and `SCW_SECRET_KEY`.
 func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Recorder, error) {
 	UpdateCassette := IsUpdatingCassette()
 
