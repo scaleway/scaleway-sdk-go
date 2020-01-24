@@ -74,7 +74,7 @@ done
 ##
 # Check golangci-lint command existence
 ##
-if [ -x "$(command -v golangci-lint)" ];
+if [ ! -x "$(command -v golangci-lint)" ];
 then
   echo "golangci-lint is not installed"
   echo "On macOS, you can run: brew install golangci/tap/golangci-lint"
