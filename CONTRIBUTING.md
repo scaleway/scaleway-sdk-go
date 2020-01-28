@@ -86,3 +86,19 @@ Keep in mind only the **Pull Request Title** will be used as commit message as w
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 Thank you for reading through all of this, if you have any question feel free to [reach us](README.md#reach-us)!
+
+## Developer documentation
+
+### Namespaces
+
+Namespaces SHOULD only be written using lowercase letters. No dash are allowed.
+
+Example: `accountprivate` is a valid Go namespace.
+
+### Validation
+
+Some validation is done internally on Scaleway's side: see [scaleway-sdk-go/docs/CONTINUOUS_CODE_DEPLOYMENT.md](https://github.com/scaleway/scaleway-sdk-go/blob/master/docs/CONTINUOUS_CODE_DEPLOYMENT.md)
+This is true for:
+- package namespaces.
+
+The rest is manually checked for now.
