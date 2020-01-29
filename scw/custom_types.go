@@ -106,7 +106,7 @@ func NewMoneyFromFloat(value float64, currencyCode string, precision int) *Money
 }
 
 // String returns the string representation of Money.
-func (m *Money) String() string {
+func (m Money) String() string {
 	currencySignsByCodes := map[string]string{
 		"EUR": "€",
 		"USD": "$",
@@ -125,7 +125,7 @@ func (m *Money) String() string {
 }
 
 // ToFloat converts a Money object to a float.
-func (m *Money) ToFloat() float64 {
+func (m Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1e9
 }
 
