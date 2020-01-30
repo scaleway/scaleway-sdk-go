@@ -10,6 +10,7 @@ import (
 // Environment variables
 const (
 	// Up-to-date
+	scwCacheDirEnv              = "SCW_CACHE_DIR"
 	scwConfigPathEnv            = "SCW_CONFIG_PATH"
 	scwAccessKeyEnv             = "SCW_ACCESS_KEY"
 	scwSecretKeyEnv             = "SCW_SECRET_KEY" // #nosec G101
