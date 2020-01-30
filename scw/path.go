@@ -7,10 +7,12 @@ import (
 )
 
 const (
+	// XDG wiki: https://wiki.archlinux.org/index.php/XDG_Base_Directory
+	xdgConfigDirEnv = "XDG_CONFIG_HOME"
+	xdgCacheDirEnv  = "XDG_CACHE_HOME"
+
 	unixHomeDirEnv    = "HOME"
 	windowsHomeDirEnv = "USERPROFILE"
-	xdgConfigDirEnv   = "XDG_CONFIG_HOME"
-	xdgCacheDirEnv    = "XDG_CACHE_HOME"
 
 	defaultConfigFileName = "config.yaml"
 )
@@ -20,8 +22,8 @@ var (
 	ErrNoHomeDir = errors.New("user home directory not found")
 )
 
-// GetCacheDirectory returns the default path.
-// Default path is base on the following priority order:
+// GetCacheDirectory returns the default cache directory.
+// Cache directory is based on the following priority order:
 // - $SCW_CACHE_DIR
 // - $XDG_CACHE_HOME/scw
 // - $HOME/.cache/scw
@@ -46,7 +48,7 @@ func GetCacheDirectory() string {
 }
 
 // GetConfigPath returns the default path.
-// Default path is base on the following priority order:
+// Default path is based on the following priority order:
 // - $SCW_CONFIG_PATH
 // - $XDG_CONFIG_HOME/scw/config.yaml
 // - $HOME/.config/scw/config.yaml
