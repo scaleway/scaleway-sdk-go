@@ -643,6 +643,8 @@ type IPFailover struct {
 	ReverseStatus IPReverseStatus `json:"reverse_status"`
 	// ReverseStatusMessage a message related to the reverse status, in case of an error for example
 	ReverseStatusMessage *string `json:"reverse_status_message"`
+	// Zone the zone in which is the ip
+	Zone scw.Zone `json:"zone"`
 }
 
 // IPFailoverEvent ip failover event
@@ -806,6 +808,8 @@ type Server struct {
 	//
 	// Default value: normal
 	BootType ServerBootType `json:"boot_type"`
+	// Zone the zone in which is the server
+	Zone scw.Zone `json:"zone"`
 }
 
 // ServerEvent server event
