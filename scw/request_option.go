@@ -24,6 +24,13 @@ func WithAllPages() RequestOption {
 	}
 }
 
+// WithAPIURLRequest overrides the client API URL to the given URL in the request.
+func WithAPIURLRequest(apiURL string) RequestOption {
+	return func(s *ScalewayRequest) {
+		s.apiURL = apiURL
+	}
+}
+
 // WithAuthRequest overwrites the client access key and secret key used in the request.
 func WithAuthRequest(accessKey, secretKey string) RequestOption {
 	return func(s *ScalewayRequest) {

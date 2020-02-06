@@ -14,6 +14,7 @@ import (
 
 const (
 	testBaseURL   = "http://example.com"
+	testOtherURL  = "http://localhost"
 	testPath      = "/some/path/"
 	testKey       = "some_key"
 	testValue     = "some_value"
@@ -37,6 +38,23 @@ func TestGetURL(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 
 	expectedURL := fmt.Sprintf("%s%s?%s=%s", testBaseURL, testPath, testKey, testValue)
+
+	testhelpers.Equals(t, expectedURL, newURL.String())
+}
+
+func TestGetURLOverride(t *testing.T) {
+	req := ScalewayRequest{
+		Path: testPath,
+		Query: url.Values{
+			testKey: []string{testValue},
+		},
+		apiURL: testOtherURL,
+	}
+
+	newURL, err := req.getURL(testBaseURL)
+	testhelpers.AssertNoError(t, err)
+
+	expectedURL := fmt.Sprintf("%s%s?%s=%s", testOtherURL, testPath, testKey, testValue)
 
 	testhelpers.Equals(t, expectedURL, newURL.String())
 }

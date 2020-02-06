@@ -24,6 +24,7 @@ type ScalewayRequest struct {
 	ctx      context.Context
 	auth     auth.Auth
 	allPages bool
+	apiURL   string
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
@@ -51,7 +52,11 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string, ano
 
 // getURL constructs a URL based on the base url and the client.
 func (req *ScalewayRequest) getURL(baseURL string) (*url.URL, error) {
-	url, err := url.Parse(baseURL + req.Path)
+	if req.apiURL == "" {
+		req.apiURL = baseURL
+	}
+
+	url, err := url.Parse(req.apiURL + req.Path)
 	if err != nil {
 		return nil, errors.New("invalid url %s: %s", baseURL+req.Path, err)
 	}
