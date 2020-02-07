@@ -304,6 +304,8 @@ const (
 	InstanceStatusError = InstanceStatus("error")
 	// InstanceStatusLocked is [insert doc].
 	InstanceStatusLocked = InstanceStatus("locked")
+	// InstanceStatusMigrating is [insert doc].
+	InstanceStatusMigrating = InstanceStatus("migrating")
 )
 
 func (enum InstanceStatus) String() string {
@@ -344,6 +346,8 @@ const (
 	LbStatusError = LbStatus("error")
 	// LbStatusLocked is [insert doc].
 	LbStatusLocked = LbStatus("locked")
+	// LbStatusMigrating is [insert doc].
+	LbStatusMigrating = LbStatus("migrating")
 )
 
 func (enum LbStatus) String() string {
@@ -1559,6 +1563,50 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 		return err
 	}
 	return nil
+}
+
+type MigrateLbRequest struct {
+	Region scw.Region `json:"-"`
+	// LbID load Balancer ID
+	LbID string `json:"-"`
+	// Type load Balancer type (check /lb-types to list all type)
+	Type string `json:"-"`
+}
+
+// MigrateLb migrate Load Balancer
+func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "type", req.Type)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, errors.New("field LbID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/migrate",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp Lb
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type ListIPsRequest struct {
