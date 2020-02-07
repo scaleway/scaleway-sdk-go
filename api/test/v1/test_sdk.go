@@ -209,6 +209,8 @@ type Human struct {
 	// Default value: unknown
 	Status HumanStatus `json:"status"`
 
+	Name string `json:"name"`
+
 	Region scw.Region `json:"region"`
 }
 
@@ -405,6 +407,8 @@ type CreateHumanRequest struct {
 	EyesColor EyeColors `json:"eyes_color"`
 
 	OrganizationID string `json:"organization_id"`
+
+	Name string `json:"name"`
 }
 
 // CreateHuman create a new human
@@ -467,6 +471,8 @@ type UpdateHumanRequest struct {
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
+
+	Name *string `json:"name"`
 }
 
 // UpdateHuman update an existing human
