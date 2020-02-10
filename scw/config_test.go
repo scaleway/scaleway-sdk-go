@@ -19,7 +19,7 @@ var (
 	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
 	v2ValidInsecure2              = "true"
-	v2ValidSendUsage2             = "true"
+	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
@@ -28,7 +28,7 @@ var (
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
 	v2ValidInsecure              = "false"
-	v2ValidSendUsage             = "true"
+	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	v2ValidDefaultRegion         = string(RegionNlAms)
 	v2ValidDefaultZone           = string(ZoneNlAms1)
@@ -64,7 +64,7 @@ profiles:
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
-    send_usage: ` + v2ValidSendUsage2 + `
+    send_telemetry: ` + v2ValidSendTelemetry2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
@@ -75,7 +75,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-send_usage: ` + v2ValidSendUsage2 + `
+send_telemetry: ` + v2ValidSendTelemetry2 + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
@@ -96,7 +96,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
-send_usage: ` + v2ValidSendUsage + `
+send_telemetry: ` + v2ValidSendTelemetry + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
@@ -257,7 +257,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedSecretKey             *string
 		expectedAPIURL                *string
 		expectedInsecure              *bool
-		expectedSendUsage             bool
+		expectedSendTelemetry         bool
 		expectedDefaultOrganizationID *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
@@ -366,7 +366,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
-			expectedSendUsage:             true,
+			expectedSendTelemetry:         true,
 		},
 		{
 			name: "Mixed config with active profile",
@@ -383,7 +383,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
-			expectedSendUsage:             true,
+			expectedSendTelemetry:         true,
 		},
 		{
 			name: "Complete config with active profile env variable",
@@ -465,7 +465,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 				testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 				testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
-				testhelpers.Equals(t, test.expectedSendUsage, config.SendUsage)
+				testhelpers.Equals(t, test.expectedSendTelemetry, config.SendTelemetry)
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
@@ -480,7 +480,7 @@ func TestConfigString(t *testing.T) {
 			SecretKey: s(v2ValidSecretKey),
 		},
 		ActiveProfile: s(v2ValidProfile),
-		SendUsage:     true,
+		SendTelemetry: true,
 		Profiles: map[string]*Profile{
 			v2ValidProfile: {
 				AccessKey: s(v2ValidAccessKey2),
@@ -492,7 +492,7 @@ func TestConfigString(t *testing.T) {
 	testhelpers.Equals(t, `access_key: SCW1234567890ABCDEFG
 secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 active_profile: flantier
-send_usage: true
+send_telemetry: true
 profiles:
   flantier:
     access_key: SCW234567890ABCDEFGH
@@ -652,7 +652,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 
 # To improve this tools we rely on diagnostic and usage data.
 # Sending such data is optional and can be disable at any time by setting this variable to false.
-# send_usage: false
+# send_telemetry: false
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
@@ -721,7 +721,7 @@ access_key: SCW1234567890ABCDEFG
 
 # To improve this tools we rely on diagnostic and usage data.
 # Sending such data is optional and can be disable at any time by setting this variable to false.
-# send_usage: false
+# send_telemetry: false
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
@@ -750,7 +750,7 @@ access_key: SCW1234567890ABCDEFG
 				SecretKey: s(v2ValidSecretKey),
 			},
 			ActiveProfile: s(v2ValidProfile),
-			SendUsage:     true,
+			SendTelemetry: true,
 			Profiles: map[string]*Profile{
 				"profile1": {
 					AccessKey: s(v2ValidAccessKey2),
@@ -804,7 +804,7 @@ active_profile: flantier
 
 # To improve this tools we rely on diagnostic and usage data.
 # Sending such data is optional and can be disable at any time by setting this variable to false.
-send_usage: true
+send_telemetry: true
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
 # You can use a profile by either:
