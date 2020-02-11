@@ -614,9 +614,9 @@ func TestConfig_ConfigFile(t *testing.T) {
 # https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - scaleway-sdk-go (https://github.com/scaleway/scaleway-sdk-go)
-# - scaleway-cli v2 (https://github.com/scaleway/scaleway-cli)
-# - scaleway terraform provider (https://www.terraform.io/docs/providers/scaleway/index.html)
+# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway CLI v2 (https://github.com/scaleway/scaleway-cli)
+# - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
@@ -688,9 +688,9 @@ func TestConfig_ConfigFile(t *testing.T) {
 # https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - scaleway-sdk-go (https://github.com/scaleway/scaleway-sdk-go)
-# - scaleway-cli v2 (https://github.com/scaleway/scaleway-cli)
-# - scaleway terraform provider (https://www.terraform.io/docs/providers/scaleway/index.html)
+# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway CLI v2 (https://github.com/scaleway/scaleway-cli)
+# - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
@@ -776,9 +776,9 @@ access_key: SCW1234567890ABCDEFG
 # https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - scaleway-sdk-go (https://github.com/scaleway/scaleway-sdk-go)
-# - scaleway-cli v2 (https://github.com/scaleway/scaleway-cli)
-# - scaleway terraform provider (https://www.terraform.io/docs/providers/scaleway/index.html)
+# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway CLI v2 (https://github.com/scaleway/scaleway-cli)
+# - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
 # Generate your token at the following address: https://console.scaleway.com/account/credentials
