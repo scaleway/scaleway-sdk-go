@@ -59,8 +59,8 @@ const configFileTemplate = `# Scaleway configuration file
 # This single default configuration is suitable for most use cases.
 {{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: myProfile{{ end }}
 
-# To improve this tools we rely on diagnostic and usage data.
-# Sending such data is optional and can be disable at any time by setting this variable to false.
+# To improve the Scaleway CLI we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting send_telemetry variable to false.
 {{ if .SendTelemetry }}send_telemetry: {{ .SendTelemetry }}{{ else }}# send_telemetry: false{{ end }}
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.

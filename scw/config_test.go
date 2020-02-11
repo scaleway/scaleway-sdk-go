@@ -650,8 +650,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 # This single default configuration is suitable for most use cases.
 # active_profile: myProfile
 
-# To improve this tools we rely on diagnostic and usage data.
-# Sending such data is optional and can be disable at any time by setting this variable to false.
+# To improve the Scaleway CLI we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting send_telemetry variable to false.
 # send_telemetry: false
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
@@ -719,8 +719,8 @@ access_key: SCW1234567890ABCDEFG
 # This single default configuration is suitable for most use cases.
 # active_profile: myProfile
 
-# To improve this tools we rely on diagnostic and usage data.
-# Sending such data is optional and can be disable at any time by setting this variable to false.
+# To improve the Scaleway CLI we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting send_telemetry variable to false.
 # send_telemetry: false
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
@@ -802,8 +802,8 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # This single default configuration is suitable for most use cases.
 active_profile: flantier
 
-# To improve this tools we rely on diagnostic and usage data.
-# Sending such data is optional and can be disable at any time by setting this variable to false.
+# To improve the Scaleway CLI we rely on diagnostic and usage data.
+# Sending such data is optional and can be disable at any time by setting send_telemetry variable to false.
 send_telemetry: true
 
 # To work with multiple projects or authorization accounts, you can set up multiple configurations with scw config configurations create and switch among them accordingly.
