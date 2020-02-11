@@ -24,7 +24,7 @@ const configFileTemplate = `# Scaleway configuration file
 
 # This configuration file can be used with:
 # - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
-# - Scaleway CLI v2 (https://github.com/scaleway/scaleway-cli)
+# - Scaleway CLI (>2.0.0) (https://github.com/scaleway/scaleway-cli)
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
