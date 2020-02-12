@@ -27,7 +27,6 @@ func TestHasResponseErrorWithoutBody(t *testing.T) {
 
 func TestNonStandardError(t *testing.T) {
 	type testCase struct {
-		res           *http.Response
 		resStatus     string
 		resStatusCode int
 		resBody       string
