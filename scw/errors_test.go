@@ -30,6 +30,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatus     string
 		resStatusCode int
 		resBody       string
+		contentType   string
 		expectedError SdkError
 	}
 
@@ -39,6 +40,9 @@ func TestNonStandardError(t *testing.T) {
 				Status:     c.resStatus,
 				StatusCode: c.resStatusCode,
 				Body:       ioutil.NopCloser(strings.NewReader(c.resBody)),
+				Header: http.Header{
+					"Content-Type": []string{c.contentType},
+				},
 			}
 
 			// Test that hasResponseError converts the response to the expected SdkError.
@@ -51,6 +55,7 @@ func TestNonStandardError(t *testing.T) {
 	t.Run("invalid_request_error type with fields", run(&testCase{
 		resStatus:     "400 Bad Request",
 		resStatusCode: http.StatusBadRequest,
+		contentType:   "application/json",
 		resBody:       `{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`,
 		expectedError: &InvalidArgumentsError{
 			Details: []InvalidArgumentsErrorDetail{
@@ -72,6 +77,7 @@ func TestNonStandardError(t *testing.T) {
 	t.Run("invalid_request_error type with message", run(&testCase{
 		resStatus:     "400 Bad Request",
 		resStatusCode: http.StatusBadRequest,
+		contentType:   "application/json",
 		resBody:       `{"message": "server should be running", "type": "invalid_request_error"}`,
 		expectedError: &ResponseError{
 			Status:     "400 Bad Request",
@@ -85,6 +91,7 @@ func TestNonStandardError(t *testing.T) {
 	t.Run("invalid_request_error quota exceeded", run(&testCase{
 		resStatus:     "403 Forbidden",
 		resStatusCode: http.StatusForbidden,
+		contentType:   "application/json",
 		resBody:       `{"type": "invalid_request_error", "message": "Quota exceeded for this resource.", "resource": "compute_snapshots_type_b_ssd_available"}`,
 		expectedError: &QuotasExceededError{
 			Details: []QuotasExceededErrorDetail{
@@ -101,6 +108,7 @@ func TestNonStandardError(t *testing.T) {
 	t.Run("conflict type", run(&testCase{
 		resStatus:     "409 Conflict",
 		resStatusCode: http.StatusConflict,
+		contentType:   "application/json",
 		resBody:       `{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`,
 		expectedError: &ResponseError{
 			Status:     "409 Conflict",
@@ -108,6 +116,19 @@ func TestNonStandardError(t *testing.T) {
 			Message:    "group is in use. you cannot delete it.",
 			Type:       "conflict",
 			RawBody:    []byte(`{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`),
+		},
+	}))
+
+	t.Run("text/plain content type", run(&testCase{
+		resStatus:     "404 Not Found",
+		resStatusCode: http.StatusNotFound,
+		contentType:   "text/plain",
+		resBody:       ``,
+		expectedError: &ResponseError{
+			Status:     "404 Not Found",
+			StatusCode: http.StatusNotFound,
+			Message:    "404 Not Found",
+			RawBody:    []byte(""),
 		},
 	}))
 }
@@ -134,7 +155,14 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	// Create response body with marshalled error response
 	bodyBytes, err := json.Marshal(testErrorReponse)
 	testhelpers.AssertNoError(t, err)
-	res := &http.Response{Status: errorStatus, StatusCode: errorStatusCode, Body: ioutil.NopCloser(bytes.NewReader(bodyBytes))}
+	res := &http.Response{
+		Status:     errorStatus,
+		StatusCode: errorStatusCode,
+		Header: map[string][]string{
+			"Content-Type": []string{"application/json"},
+		},
+		Body: ioutil.NopCloser(bytes.NewReader(bodyBytes)),
+	}
 
 	// Test hasResponseError()
 	newErr := hasResponseError(res)
