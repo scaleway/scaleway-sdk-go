@@ -1328,14 +1328,17 @@ type Record struct {
 
 	Comment *string `json:"comment"`
 
-	// Precisely one of GeoIPConfig, ServiceUpConfig, WeightedConfig must be set.
+	// Precisely one of GeoIPConfig, ServiceUpConfig, ViewConfig, WeightedConfig must be set.
 	GeoIPConfig *RecordGeoIPConfig `json:"geo_ip_config,omitempty"`
 
-	// Precisely one of GeoIPConfig, ServiceUpConfig, WeightedConfig must be set.
+	// Precisely one of GeoIPConfig, ServiceUpConfig, ViewConfig, WeightedConfig must be set.
 	ServiceUpConfig *RecordServiceUPConfig `json:"service_up_config,omitempty"`
 
-	// Precisely one of GeoIPConfig, ServiceUpConfig, WeightedConfig must be set.
+	// Precisely one of GeoIPConfig, ServiceUpConfig, ViewConfig, WeightedConfig must be set.
 	WeightedConfig *RecordWeightedConfig `json:"weighted_config,omitempty"`
+
+	// Precisely one of GeoIPConfig, ServiceUpConfig, ViewConfig, WeightedConfig must be set.
+	ViewConfig *RecordViewConfig `json:"view_config,omitempty"`
 }
 
 type RecordChange struct {
@@ -1410,6 +1413,16 @@ type RecordServiceUPConfig struct {
 	//
 	// Default value: random
 	Strategy RecordServiceUPConfigStrategy `json:"strategy"`
+}
+
+type RecordViewConfig struct {
+	Views []*RecordViewConfigView `json:"views"`
+}
+
+type RecordViewConfigView struct {
+	Subnet string `json:"subnet"`
+
+	Data string `json:"data"`
 }
 
 type RecordWeightedConfig struct {
