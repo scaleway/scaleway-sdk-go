@@ -1468,7 +1468,7 @@ type CreateServerRequest struct {
 	// BootType the boot type to use
 	//
 	// Default value: local
-	BootType BootType `json:"boot_type"`
+	BootType *BootType `json:"boot_type,omitempty"`
 	// Bootscript the bootscript ID to use when `boot_type` is set to `bootscript`
 	Bootscript *string `json:"bootscript,omitempty"`
 	// Organization the server organization ID
