@@ -27,6 +27,8 @@ const { spawnSync } = require("child_process"),
 const gitRawCommits = require("git-raw-commits"),
   semver = require("semver"),
   getStream = require("get-stream"),
+  externalEditor = require("external-editor"),
+  open = require("open"),
   _ = require("colors")
 ;
 
@@ -78,35 +80,10 @@ async function main() {
   //
 
   console.log(`Updating ${CHANGELOG_PATH} and ${GO_VERSION_PATH}`.blue);
-  // Generate changelog lines by section
-  const changelogLines = { feat: [], fix: [] };
-  commits.forEach(commit => {
-    const result = COMMIT_REGEX.exec(commit);
-    if (!result || !(result.groups.type in changelogLines)) {
-      console.warn(`WARNING: Ignoring commit ${commit}`.yellow);
-      return;
-    }
-    const stdCommit = result.groups;
+  const changelog = buildChangelog(newVersion, commits);
+  changelog.body = externalEditor.edit(changelog.body);
 
-    let line = [`*`, stdCommit.scope ? `**${stdCommit.scope}**:` : "", stdCommit.message, stdCommit.mr ? `([#${stdCommit.mr}](https://github.com/scaleway/scaleway-sdk-go/pull/${stdCommit.mr}))` : ""]
-      .map(s => s.trim())
-      .filter(v => v)
-      .join(" ");
-    changelogLines[stdCommit.type].push(line);
-  });
-
-  const changelogHeader = `## v${newVersion} (${new Date().toISOString().substring(0, 10)})`;
-  const changelogSections = [];
-  if (changelogLines.feat) {
-    changelogSections.push("### Features\n\n" + changelogLines.feat.join("\n"));
-  }
-  if (changelogLines.fix) {
-    changelogSections.push("### Fixes\n\n" + changelogLines.fix.join("\n"));
-  }
-  const changelogBody = changelogSections.join("\n\n");
-  const changelog = `${changelogHeader}\n\n${changelogBody}`;
-
-  replaceInFile(CHANGELOG_PATH, "# Changelog", "# Changelog\n\n" + changelog + "\n");
+  replaceInFile(CHANGELOG_PATH, "# Changelog", `# Changelog\n\n${changelog.header}\n\n${changelog.body}\n`);
   replaceInFile(GO_VERSION_PATH, /const version[^\n]*\n/, `const version = "v${newVersion}"\n`);
   console.log(`    Update success`.green);
 
@@ -117,13 +94,16 @@ async function main() {
   git("add", CHANGELOG_PATH, GO_VERSION_PATH);
   git("commit", "-m", `chore: release ${newVersion}`);
   git("push", "-f", "--set-upstream", TMP_REMOTE, TMP_BRANCH);
+  openBrowser("https://github.com/scaleway/scaleway-sdk-go/pull/new/new-release");
+  await prompt(`Hit enter when its merged .....`.magenta);
 
-  await prompt(`Please create an PR here: https://github.com/scaleway/scaleway-sdk-go/pull/new/new-release . Hit enter when its merged .....`.magenta);
-
-  console.log("Time to create a github release with the following info\n".blue);
-  console.log(`Title: v${newVersion}\n\n`.gray);
-  console.log(`${changelogBody}\n\n`.gray);
-  await prompt(`You should create a new github release here: https://github.com/scaleway/scaleway-sdk-go/releases/new/ . Hit enter when the new release is created .....`.magenta);
+  console.log("Time to create a github release\n".blue);
+  openBrowser("https://github.com/scaleway/scaleway-sdk-go/releases/new/", {
+    tag: `v${newVersion}`,
+    title: `v${newVersion}`,
+    body: changelog.body,
+  });
+  await prompt(`Hit enter when the new release is created .....`.magenta);
 
   //
   // Creating post release commit
@@ -138,11 +118,12 @@ async function main() {
   git("checkout", "-b", TMP_BRANCH);
   replaceInFile(GO_VERSION_PATH, /const version[^\n]*\n/, `const version = "v${newVersion}+dev"\n`);
   git("add", GO_VERSION_PATH);
-  git("commit", "-m", "chore: post release commit");
+  git("commit", "-m", `chore: cleanup after v${newVersion} release`);
   git("push", "-f", "--set-upstream", TMP_REMOTE, TMP_BRANCH);
   git("checkout", "master");
   git("branch", "-D", TMP_BRANCH);
-  await prompt(`Please create an PR here: https://github.com/scaleway/scaleway-sdk-go/pull/new/new-release . Hit enter when its merged .....`.magenta);
+  openBrowser("https://github.com/scaleway/scaleway-sdk-go/pull/new/new-release");
+  await prompt(`Hit enter when its merged .....`.magenta);
 
   console.log("Make sure we pull the latest commit from master".blue);
   git("pull", TMP_REMOTE, "master");
@@ -181,6 +162,43 @@ function prompt(prompt) {
       rl.close();
     });
   });
+}
+
+function openBrowser(url, query = {}) {
+  const params = new URLSearchParams(query);
+  url = `${url}?${params.toString()}`;
+  console.log(`    Opening ${url}`.grey);
+  open(url);
+}
+
+function buildChangelog(newVersion, commits) {
+  const changelogLines = { feat: [], fix: [] };
+  commits.forEach(commit => {
+    const result = COMMIT_REGEX.exec(commit);
+    if (!result || !(result.groups.type in changelogLines)) {
+      console.warn(`WARNING: Ignoring commit ${commit}`.yellow);
+      return;
+    }
+    const stdCommit = result.groups;
+
+    let line = [`*`, stdCommit.scope ? `**${stdCommit.scope}**:` : "", stdCommit.message, stdCommit.mr ? `([#${stdCommit.mr}](https://github.com/scaleway/scaleway-sdk-go/pull/${stdCommit.mr}))` : ""]
+        .map(s => s.trim())
+        .filter(v => v)
+        .join(" ");
+    changelogLines[stdCommit.type].push(line);
+  });
+
+  const changelogSections = [];
+  if (changelogLines.feat) {
+    changelogSections.push("### Features\n\n" + changelogLines.feat.sort().join("\n"));
+  }
+  if (changelogLines.fix) {
+    changelogSections.push("### Fixes\n\n" + changelogLines.fix.sort().join("\n"));
+  }
+  return {
+    header: `## v${newVersion} (${new Date().toISOString().substring(0, 10)})`,
+    body: changelogSections.join("\n\n"),
+  }
 }
 
 main().catch(console.error);
