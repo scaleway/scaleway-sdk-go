@@ -35,9 +35,9 @@ var (
 )
 
 // Exists checks whether a zone exists
-func (zone *Zone) Exists() bool {
+func (zone Zone) Exists() bool {
 	for _, z := range AllZones {
-		if z == *zone {
+		if z == zone {
 			return true
 		}
 	}
@@ -45,13 +45,13 @@ func (zone *Zone) Exists() bool {
 }
 
 // String returns a Zone as a string
-func (zone *Zone) String() string {
-	return string(*zone)
+func (zone Zone) String() string {
+	return string(zone)
 }
 
 // Region returns the parent Region for the Zone.
 // Manipulates the string directly to allow unlisted zones formatted as xx-yyy-z.
-func (zone *Zone) Region() (Region, error) {
+func (zone Zone) Region() (Region, error) {
 	zoneStr := zone.String()
 	if !validation.IsZone(zoneStr) {
 		return "", fmt.Errorf("invalid zone '%v'", zoneStr)
@@ -79,9 +79,9 @@ var (
 )
 
 // Exists checks whether a region exists
-func (region *Region) Exists() bool {
+func (region Region) Exists() bool {
 	for _, r := range AllRegions {
-		if r == *region {
+		if r == region {
 			return true
 		}
 	}
@@ -193,6 +193,6 @@ func (region *Region) UnmarshalJSON(input []byte) error {
 }
 
 // String returns a Region as a string
-func (region *Region) String() string {
-	return string(*region)
+func (region Region) String() string {
+	return string(region)
 }

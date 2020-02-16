@@ -1416,9 +1416,10 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers",
+		Path:    "/instance/v1/zones/{zone}/servers",
 		Query:   query,
 		Headers: http.Header{},
+		Zone:    req.Zone,
 	}
 
 	var resp ListServersResponse

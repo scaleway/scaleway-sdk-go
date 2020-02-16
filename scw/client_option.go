@@ -230,9 +230,9 @@ func (s *settings) validate() error {
 	}
 
 	// API URL.
-	if !validation.IsURL(s.apiURL) {
-		return NewInvalidClientOptionError("invalid url %s", s.apiURL)
-	}
+	//if !validation.IsURL(s.apiURL) {
+	//	return NewInvalidClientOptionError("invalid url %s", s.apiURL)
+	//}
 
 	// TODO: check for max s.defaultPageSize
 

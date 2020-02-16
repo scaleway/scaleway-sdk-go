@@ -36,7 +36,7 @@ type Client struct {
 func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithoutAuth(),
-		WithAPIURL("https://api.scaleway.com"),
+		WithAPIURL("https://api-{region}.scaleway.com"),
 		withDefaultUserAgent(userAgent),
 	}
 }
@@ -125,6 +125,7 @@ func (c *Client) GetDefaultPageSize() (pageSize uint32, exists bool) {
 // Do performs HTTP request(s) based on the ScalewayRequest object.
 // RequestOptions are applied prior to doing the request.
 func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption) (err error) {
+
 	// apply request options
 	req.apply(opts)
 
@@ -136,6 +137,10 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 
 	if req.auth == nil {
 		req.auth = c.auth
+	}
+
+	if req.multiZones != nil {
+		return c.doListMultiZone(req, res)
 	}
 
 	if req.allPages {
@@ -312,6 +317,33 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	}
 
 	return errors.New("%T does not support pagination", res)
+}
+
+func (c *Client) doListMultiZone(req *ScalewayRequest, res interface{}) (err error) {
+	// check for lister interface
+	response, isLister := res.(lister)
+	if !isLister {
+		return errors.New("%T does not support pagination", res)
+	}
+
+	for _, zone := range req.multiZones {
+		// set current page
+		req.Zone = zone
+
+		// request the next page
+		nextZone := newVariableFromType(response)
+		err := c.doListAll(req, nextZone)
+		if err != nil {
+			return err
+		}
+
+		// append results
+		_, err = response.UnsafeAppend(nextZone)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // newVariableFromType returns a variable set to the zero value of the given type
