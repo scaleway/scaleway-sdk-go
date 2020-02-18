@@ -2944,33 +2944,33 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 
 type setSecurityGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ID the security groups' unique ID
+
 	ID string `json:"-"`
-	// Name the security groups name
+
 	Name string `json:"name"`
-	// Description the security groups description
+
+	CreationDate time.Time `json:"creation_date"`
+
+	ModificationDate time.Time `json:"modification_date"`
+
 	Description string `json:"description"`
-	// EnableDefaultSecurity true if SMTP is blocked on IPv4 and IPv6
+
 	EnableDefaultSecurity bool `json:"enable_default_security"`
-	// InboundDefaultPolicy the default inbound policy
+	// InboundDefaultPolicy
 	//
 	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
-	// OutboundDefaultPolicy the default outbound policy
+
+	Organization string `json:"organization"`
+
+	OrganizationDefault bool `json:"organization_default"`
+	// OutboundDefaultPolicy
 	//
 	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
-	// Organization the security groups organization ID
-	Organization string `json:"organization"`
-	// OrganizationDefault true if it is your default security group for this organization
-	OrganizationDefault bool `json:"organization_default"`
-	// CreationDate the security group creation date
-	CreationDate time.Time `json:"creation_date"`
-	// ModificationDate the security group modification date
-	ModificationDate time.Time `json:"modification_date"`
-	// Servers list of servers attached to this security group
+
 	Servers []*ServerSummary `json:"servers"`
-	// Stateful true if the security group is stateful
+
 	Stateful bool `json:"stateful"`
 }
 
