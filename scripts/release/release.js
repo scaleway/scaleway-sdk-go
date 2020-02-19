@@ -175,10 +175,13 @@ function buildChangelog(newVersion, commits) {
   const changelogLines = { feat: [], fix: [], others: [] };
   commits.forEach(commit => {
     const result = COMMIT_REGEX.exec(commit);
-    if (!result || !(result.groups.type in changelogLines)) {
+    if (!result) {
       console.warn(`WARNING: Malformed commit ${commit}`.yellow);
       changelogLines.others.push(commit);
       return;
+    }
+    if (!(result.groups.type in changelogLines)) {
+      result.groups.type = "others"
     }
     const stdCommit = result.groups;
 
