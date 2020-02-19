@@ -64,35 +64,6 @@ type WaitForClusterPoolsRequest struct {
 	Timeout   *time.Duration
 }
 
-// WaitForClusterPools waits for the pools of a cluster to be ready
-func (s *API) WaitForClusterPools(req *WaitForClusterPoolsRequest) error {
-	timeout := waitForPoolDefaultTimeout
-	if req.Timeout != nil {
-		timeout = *req.Timeout
-	}
-
-	pools, err := s.ListPools(&ListPoolsRequest{
-		ClusterID: req.ClusterID,
-		Region:    req.Region,
-	})
-	if err != nil {
-		return err
-	}
-
-	for _, pool := range pools.Pools {
-		err = s.WaitForPool(&WaitForPoolRequest{
-			PoolID:  pool.ID,
-			Timeout: &timeout,
-		})
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // WaitForPoolRequest is used by WaitForPool method.
 type WaitForPoolRequest struct {
 	PoolID  string
