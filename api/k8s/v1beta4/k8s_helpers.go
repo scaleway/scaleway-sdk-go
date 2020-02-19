@@ -57,13 +57,6 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 	return cluster.(*Cluster), nil
 }
 
-// WaitForClusterPoolsRequest is used by WaitForClusterPools method.
-type WaitForClusterPoolsRequest struct {
-	ClusterID string
-	Region    scw.Region
-	Timeout   *time.Duration
-}
-
 // WaitForPoolRequest is used by WaitForPool method.
 type WaitForPoolRequest struct {
 	PoolID  string
@@ -72,7 +65,7 @@ type WaitForPoolRequest struct {
 }
 
 // WaitForPool waits for a pool to be ready
-func (s *API) WaitForPool(req *WaitForPoolRequest) error {
+func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 	terminalStatus := map[PoolStatus]struct{}{
 		PoolStatusReady:   {},
 		PoolStatusWarning: {},
@@ -83,7 +76,7 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) error {
 		timeout = *req.Timeout
 	}
 
-	_, err := async.WaitSync(&async.WaitSyncConfig{
+	pool, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetPool(&GetPoolRequest{
 				PoolID: req.PoolID,
@@ -95,11 +88,11 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) error {
 			}
 			_, isTerminal := terminalStatus[res.Status]
 
-			return nil, isTerminal, nil
+			return res, isTerminal, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
 	})
 
-	return err
+	return pool.(*Pool), err
 }
