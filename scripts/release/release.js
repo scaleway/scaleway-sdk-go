@@ -186,7 +186,7 @@ function buildChangelog(newVersion, commits) {
 
     // If commit type is not one of [feat, fix] we add it in the other group. This will probably need further human edition.
     if (!(stdCommit.type in changelogLines)) {
-      stdCommit.scope = `${stdCommit.scope} - ${stdCommit.scope}`;
+      stdCommit.scope = [ stdCommit.type, stdCommit.scope ].filter().join(" - ");
       stdCommit.type = "others";
     }
 
