@@ -175,15 +175,20 @@ function buildChangelog(newVersion, commits) {
   const changelogLines = { feat: [], fix: [], others: [] };
   commits.forEach(commit => {
     const result = COMMIT_REGEX.exec(commit);
+
+    // If commit do not match a valid commit regex we add it in others section without formatting
     if (!result) {
       console.warn(`WARNING: Malformed commit ${commit}`.yellow);
       changelogLines.others.push(commit);
       return;
     }
-    if (!(result.groups.type in changelogLines)) {
-      result.groups.type = "others"
-    }
     const stdCommit = result.groups;
+
+    // If commit type is not one of [feat, fix] we add it in the other group. This will probably need further human edition.
+    if (!(stdCommit.type in changelogLines)) {
+      stdCommit.scope = `${stdCommit.scope} - ${stdCommit.scope}`;
+      stdCommit.type = "others";
+    }
 
     const line = [
         `*`,
