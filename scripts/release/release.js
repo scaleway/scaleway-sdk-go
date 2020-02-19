@@ -172,16 +172,22 @@ function openBrowser(url, query = {}) {
 }
 
 function buildChangelog(newVersion, commits) {
-  const changelogLines = { feat: [], fix: [] };
+  const changelogLines = { feat: [], fix: [], others: [] };
   commits.forEach(commit => {
     const result = COMMIT_REGEX.exec(commit);
     if (!result || !(result.groups.type in changelogLines)) {
-      console.warn(`WARNING: Ignoring commit ${commit}`.yellow);
+      console.warn(`WARNING: Malformed commit ${commit}`.yellow);
+      changelogLines.others.push(commit);
       return;
     }
     const stdCommit = result.groups;
 
-    let line = [`*`, stdCommit.scope ? `**${stdCommit.scope}**:` : "", stdCommit.message, stdCommit.mr ? `([#${stdCommit.mr}](https://github.com/scaleway/scaleway-sdk-go/pull/${stdCommit.mr}))` : ""]
+    const line = [
+        `*`,
+        stdCommit.scope ? `**${stdCommit.scope}**:` : "",
+        stdCommit.message,
+        stdCommit.mr ? `([#${stdCommit.mr}](https://github.com/scaleway/scaleway-sdk-go/pull/${stdCommit.mr}))` : ""
+    ]
         .map(s => s.trim())
         .filter(v => v)
         .join(" ");
@@ -194,6 +200,9 @@ function buildChangelog(newVersion, commits) {
   }
   if (changelogLines.fix) {
     changelogSections.push("### Fixes\n\n" + changelogLines.fix.sort().join("\n"));
+  }
+  if (changelogLines.others) {
+    changelogSections.push("### Others\n\n" + changelogLines.others.sort().join("\n"));
   }
   return {
     header: `## v${newVersion} (${new Date().toISOString().substring(0, 10)})`,
