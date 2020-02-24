@@ -158,7 +158,7 @@ var customInitialisms = map[string][2]string{
 
 // TitleFirstWord upper case the first letter of a string.
 func TitleFirstWord(s string) string {
-	if len(s) == 0 {
+	if s == "" {
 		return s
 	}
 
@@ -170,7 +170,7 @@ func TitleFirstWord(s string) string {
 
 // UntitleFirstWord lower case the first letter of a string.
 func UntitleFirstWord(s string) string {
-	if len(s) == 0 {
+	if s == "" {
 		return s
 	}
 
