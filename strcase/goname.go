@@ -168,6 +168,24 @@ func TitleFirstWord(s string) string {
 	return string(r)
 }
 
+// UntitleFirstWord lower case the first letter of a string.
+func UntitleFirstWord(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+
+	r := []rune(s)
+
+	firstWord := strings.Split(s, " ")[0]
+	_, isCommonInitialism := commonInitialisms[firstWord]
+	_, isCustomInitialism := customInitialisms[firstWord]
+	if !isCommonInitialism && !isCustomInitialism {
+		r[0] = unicode.ToLower(r[0])
+	}
+
+	return string(r)
+}
+
 // lowerCaseFirstLetterOrAcronyms lower case the first letter of a string.
 func lowerCaseFirstLetterOrAcronyms(s string) string {
 	r := []rune(s)
