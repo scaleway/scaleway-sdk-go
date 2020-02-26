@@ -158,12 +158,30 @@ var customInitialisms = map[string][2]string{
 
 // TitleFirstWord upper case the first letter of a string.
 func TitleFirstWord(s string) string {
-	if len(s) == 0 {
+	if s == "" {
 		return s
 	}
 
 	r := []rune(s)
 	r[0] = unicode.ToUpper(r[0])
+
+	return string(r)
+}
+
+// UntitleFirstWord lower case the first letter of a string.
+func UntitleFirstWord(s string) string {
+	if s == "" {
+		return s
+	}
+
+	r := []rune(s)
+
+	firstWord := strings.Split(s, " ")[0]
+	_, isCommonInitialism := commonInitialisms[firstWord]
+	_, isCustomInitialism := customInitialisms[firstWord]
+	if !isCommonInitialism && !isCustomInitialism {
+		r[0] = unicode.ToLower(r[0])
+	}
 
 	return string(r)
 }

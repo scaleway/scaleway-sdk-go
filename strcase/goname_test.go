@@ -46,3 +46,21 @@ func TestTitleFirstWord(t *testing.T) {
 		}
 	}
 }
+
+func Test_UntitleFirstWord(t *testing.T) {
+	cases := [][]string{
+		{"", ""},
+		{"T", "t"},
+		{"UUID", "UUID"},
+		{"UUI", "uUI"},
+		{"TEST CASE", "tEST CASE"},
+	}
+	for _, i := range cases {
+		in := i[0]
+		out := i[1]
+		result := UntitleFirstWord(in)
+		if result != out {
+			t.Error("'" + result + "' != '" + out + "'")
+		}
+	}
+}
