@@ -67,13 +67,13 @@ type GetVersionResponse struct {
 
 // Image image
 type Image struct {
-	// ID uUID of this image
+	// ID UUID of this image
 	ID string `json:"id"`
 	// Name name of the image
 	Name string `json:"name"`
 	// Description text description of this image
 	Description string `json:"description"`
-	// Logo uRL of this image's logo
+	// Logo URL of this image's logo
 	Logo string `json:"logo"`
 	// Categories list of categories this image belongs to
 	Categories []string `json:"categories"`
@@ -107,7 +107,7 @@ type ListVersionsResponse struct {
 
 // LocalImage local image
 type LocalImage struct {
-	// ID uUID of this local image
+	// ID UUID of this local image
 	ID string `json:"id"`
 	// CompatibleCommercialTypes list of all commercial types that are compatible with this local image
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
@@ -125,7 +125,7 @@ type Organization struct {
 
 // Version version
 type Version struct {
-	// ID uUID of this version
+	// ID UUID of this version
 	ID string `json:"id"`
 	// Name name of this version
 	Name string `json:"name"`
