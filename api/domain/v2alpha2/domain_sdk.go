@@ -848,7 +848,7 @@ type AvailableDomain struct {
 	Transfer *scw.Money `json:"transfer,omitempty"`
 	// Tld tLD of the domain
 	Tld *Tld `json:"tld"`
-	// DNSOptions dNS options availability
+	// DNSOptions DNS options availability
 	DNSOptions *DNSOptions `json:"dns_options"`
 }
 

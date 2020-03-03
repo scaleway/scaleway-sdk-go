@@ -589,7 +589,7 @@ type GetServerMetricsResponse struct {
 
 // IP ip
 type IP struct {
-	// ID iD of the IP
+	// ID ID of the IP
 	ID string `json:"id"`
 	// Address address of the IP
 	Address net.IP `json:"address"`
@@ -609,7 +609,7 @@ type IP struct {
 
 // IPFailover ip failover
 type IPFailover struct {
-	// ID iD of the IP failover
+	// ID ID of the IP failover
 	ID string `json:"id"`
 	// OrganizationID organization ID the IP failover is attached to
 	OrganizationID string `json:"organization_id"`
@@ -625,7 +625,7 @@ type IPFailover struct {
 	//
 	// Default value: unknown
 	Status IPFailoverStatus `json:"status"`
-	// IPAddress iP of the IP failover
+	// IPAddress IP of the IP failover
 	IPAddress net.IP `json:"ip_address"`
 	// MacAddress mac address of the IP failover
 	MacAddress string `json:"mac_address"`
@@ -649,7 +649,7 @@ type IPFailover struct {
 
 // IPFailoverEvent ip failover event
 type IPFailoverEvent struct {
-	// ID iD of the IP failover for whom the action will be applied
+	// ID ID of the IP failover for whom the action will be applied
 	ID string `json:"id"`
 	// Action the action that will be applied to the IP failover
 	//
@@ -665,7 +665,7 @@ type IPFailoverEvent struct {
 type ListIPFailoverEventsResponse struct {
 	// TotalCount total count of matching IP failover events
 	TotalCount uint32 `json:"total_count"`
-	// Event iP failover events that match filters
+	// Event IP failover events that match filters
 	Event []*IPFailoverEvent `json:"event"`
 }
 
@@ -722,7 +722,7 @@ type Memory struct {
 
 // Offer offer
 type Offer struct {
-	// ID iD of the offer
+	// ID ID of the offer
 	ID string `json:"id"`
 	// Name name of the offer
 	Name string `json:"name"`
@@ -746,7 +746,7 @@ type Offer struct {
 	Disk []*Disk `json:"disk"`
 	// Enable true if the offer is currently available
 	Enable bool `json:"enable"`
-	// CPU cPU specifications of the offer
+	// CPU CPU specifications of the offer
 	CPU []*CPU `json:"cpu"`
 	// Memory memory specifications of the offer
 	Memory []*Memory `json:"memory"`
@@ -756,7 +756,7 @@ type Offer struct {
 
 // Os os
 type Os struct {
-	// ID iD of the OS
+	// ID ID of the OS
 	ID string `json:"id"`
 	// Name name of the OS
 	Name string `json:"name"`
@@ -766,7 +766,7 @@ type Os struct {
 
 // RemoteServerAccess remote server access
 type RemoteServerAccess struct {
-	// URL uRL to access to the server console
+	// URL URL to access to the server console
 	URL string `json:"url"`
 	// Login the login to use for the remote access authentification
 	Login string `json:"login"`
@@ -778,7 +778,7 @@ type RemoteServerAccess struct {
 
 // Server server
 type Server struct {
-	// ID iD of the server
+	// ID ID of the server
 	ID string `json:"id"`
 	// OrganizationID organization ID the server is attached to
 	OrganizationID string `json:"organization_id"`
@@ -814,7 +814,7 @@ type Server struct {
 
 // ServerEvent server event
 type ServerEvent struct {
-	// ID iD of the server for whom the action will be applied
+	// ID ID of the server for whom the action will be applied
 	ID string `json:"id"`
 	// Action the action that will be applied to the server
 	Action string `json:"action"`
@@ -826,11 +826,11 @@ type ServerEvent struct {
 
 // ServerInstall server install
 type ServerInstall struct {
-	// OsID iD of the OS
+	// OsID ID of the OS
 	OsID string `json:"os_id"`
 	// Hostname host defined in the server install
 	Hostname string `json:"hostname"`
-	// SSHKeyIDs sSH public key IDs defined in the server install
+	// SSHKeyIDs SSH public key IDs defined in the server install
 	SSHKeyIDs []string `json:"ssh_key_ids"`
 	// Status status of the server install
 	//
@@ -926,7 +926,7 @@ func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server
+	// ServerID ID of the server
 	ServerID string `json:"-"`
 }
 
@@ -1020,7 +1020,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 
 type UpdateServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server to update
+	// ServerID ID of the server to update
 	ServerID string `json:"-"`
 	// Name name of the server (≠hostname), not updated if null
 	Name *string `json:"name"`
@@ -1073,11 +1073,11 @@ type InstallServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID server ID to install
 	ServerID string `json:"-"`
-	// OsID iD of the OS to install on the server
+	// OsID ID of the OS to install on the server
 	OsID string `json:"os_id"`
 	// Hostname hostname of the server
 	Hostname string `json:"hostname"`
-	// SSHKeyIDs sSH key IDs authorized on the server
+	// SSHKeyIDs SSH key IDs authorized on the server
 	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
@@ -1162,7 +1162,7 @@ func (s *API) GetServerMetrics(req *GetServerMetricsRequest, opts ...scw.Request
 
 type DeleteServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server to delete
+	// ServerID ID of the server to delete
 	ServerID string `json:"-"`
 }
 
@@ -1202,7 +1202,7 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 
 type RebootServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server to reboot
+	// ServerID ID of the server to reboot
 	ServerID string `json:"-"`
 	// BootType the type of boot
 	//
@@ -1251,7 +1251,7 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 
 type StartServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server to start
+	// ServerID ID of the server to start
 	ServerID string `json:"-"`
 }
 
@@ -1296,7 +1296,7 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 
 type StopServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server to stop
+	// ServerID ID of the server to stop
 	ServerID string `json:"-"`
 }
 
@@ -1341,7 +1341,7 @@ func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Se
 
 type ListServerEventsRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server events searched
+	// ServerID ID of the server events searched
 	ServerID string `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
@@ -1419,7 +1419,7 @@ func (r *ListServerEventsResponse) UnsafeAppend(res interface{}) (uint32, error)
 
 type CreateRemoteServerAccessRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server
+	// ServerID ID of the server
 	ServerID string `json:"-"`
 	// IP the IP authorized to connect to the given server
 	IP string `json:"ip"`
@@ -1468,7 +1468,7 @@ func (s *API) CreateRemoteServerAccess(req *CreateRemoteServerAccessRequest, opt
 
 type GetRemoteServerAccessRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server
+	// ServerID ID of the server
 	ServerID string `json:"-"`
 }
 
@@ -1508,7 +1508,7 @@ func (s *API) GetRemoteServerAccess(req *GetRemoteServerAccessRequest, opts ...s
 
 type DeleteRemoteServerAccessRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server
+	// ServerID ID of the server
 	ServerID string `json:"-"`
 }
 
@@ -1546,9 +1546,9 @@ func (s *API) DeleteRemoteServerAccess(req *DeleteRemoteServerAccessRequest, opt
 
 type UpdateIPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID iD of the server
+	// ServerID ID of the server
 	ServerID string `json:"-"`
-	// IPID iD of the IP to update
+	// IPID ID of the IP to update
 	IPID string `json:"-"`
 	// Reverse new reverse IP to update, not updated if null
 	Reverse *string `json:"reverse"`
@@ -1599,7 +1599,7 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type CreateIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OrganizationID iD of the organization to associate to the IP failover
+	// OrganizationID ID of the organization to associate to the IP failover
 	OrganizationID string `json:"organization_id"`
 	// Description description to associate to the IP failover, max 255 characters
 	Description string `json:"description"`
@@ -1609,7 +1609,7 @@ type CreateIPFailoverRequest struct {
 	//
 	// Default value: unknown_mac_type
 	MacType IPFailoverMACType `json:"mac_type"`
-	// DuplicateMacFrom iD of the IP failover which must be duplicate
+	// DuplicateMacFrom ID of the IP failover which must be duplicate
 	DuplicateMacFrom *string `json:"duplicate_mac_from"`
 }
 
@@ -1655,7 +1655,7 @@ func (s *API) CreateIPFailover(req *CreateIPFailoverRequest, opts ...scw.Request
 
 type GetIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverID iD of the IP failover
+	// IPFailoverID ID of the IP failover
 	IPFailoverID string `json:"-"`
 }
 
@@ -1779,7 +1779,7 @@ func (r *ListIPFailoversResponse) UnsafeAppend(res interface{}) (uint32, error) 
 
 type DeleteIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverID iD of the IP failover to delete
+	// IPFailoverID ID of the IP failover to delete
 	IPFailoverID string `json:"-"`
 }
 
@@ -1819,7 +1819,7 @@ func (s *API) DeleteIPFailover(req *DeleteIPFailoverRequest, opts ...scw.Request
 
 type UpdateIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverID iD of the IP failover to update
+	// IPFailoverID ID of the IP failover to update
 	IPFailoverID string `json:"-"`
 	// Description description to associate to the IP failover, max 255 characters, not updated if null
 	Description *string `json:"description"`
@@ -1829,7 +1829,7 @@ type UpdateIPFailoverRequest struct {
 	//
 	// Default value: unknown_mac_type
 	MacType IPFailoverMACType `json:"mac_type"`
-	// DuplicateMacFrom iD of the IP failover which must be duplicate, not updated if null
+	// DuplicateMacFrom ID of the IP failover which must be duplicate, not updated if null
 	DuplicateMacFrom *string `json:"duplicate_mac_from"`
 	// Reverse new reverse IP to update, not updated if null
 	Reverse *string `json:"reverse"`
@@ -1876,9 +1876,9 @@ func (s *API) UpdateIPFailover(req *UpdateIPFailoverRequest, opts ...scw.Request
 
 type AttachIPFailoversRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverIDs iP failover IDs to attach to the server
+	// IPFailoverIDs IP failover IDs to attach to the server
 	IPFailoverIDs []string `json:"ip_failover_ids"`
-	// ServerID iD of the server to attach to the IP failovers
+	// ServerID ID of the server to attach to the IP failovers
 	ServerID string `json:"server_id"`
 }
 
@@ -1919,7 +1919,7 @@ func (s *API) AttachIPFailovers(req *AttachIPFailoversRequest, opts ...scw.Reque
 
 type DetachIPFailoversRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverIDs iP failover IDs to detach to the server
+	// IPFailoverIDs IP failover IDs to detach to the server
 	IPFailoverIDs []string `json:"ip_failover_ids"`
 }
 
@@ -1960,7 +1960,7 @@ func (s *API) DetachIPFailovers(req *DetachIPFailoversRequest, opts ...scw.Reque
 
 type ListIPFailoverEventsRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IPFailoverID iD of the IP failover events searched
+	// IPFailoverID ID of the IP failover events searched
 	IPFailoverID string `json:"-"`
 	// Page page number
 	Page *int32 `json:"-"`
@@ -2105,7 +2105,7 @@ func (r *ListOffersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetOfferRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OfferID iD of the researched Offer
+	// OfferID ID of the researched Offer
 	OfferID string `json:"-"`
 }
 
@@ -2212,7 +2212,7 @@ func (r *ListOsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetOsRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OsID iD of the researched OS
+	// OsID ID of the researched OS
 	OsID string `json:"-"`
 }
 
