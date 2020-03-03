@@ -739,6 +739,42 @@ func (enum *ProxyProtocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SSLCompatibilityLevel string
+
+const (
+	// SSLCompatibilityLevelSslCompatibilityLevelUnknown is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelUnknown = SSLCompatibilityLevel("ssl_compatibility_level_unknown")
+	// SSLCompatibilityLevelSslCompatibilityLevelIntermediate is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelIntermediate = SSLCompatibilityLevel("ssl_compatibility_level_intermediate")
+	// SSLCompatibilityLevelSslCompatibilityLevelModern is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelModern = SSLCompatibilityLevel("ssl_compatibility_level_modern")
+	// SSLCompatibilityLevelSslCompatibilityLevelOld is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelOld = SSLCompatibilityLevel("ssl_compatibility_level_old")
+)
+
+func (enum SSLCompatibilityLevel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "ssl_compatibility_level_unknown"
+	}
+	return string(enum)
+}
+
+func (enum SSLCompatibilityLevel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SSLCompatibilityLevel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SSLCompatibilityLevel(SSLCompatibilityLevel(tmp).String())
+	return nil
+}
+
 type StickySessionsType string
 
 const (
@@ -775,7 +811,7 @@ func (enum *StickySessionsType) UnmarshalJSON(data []byte) error {
 
 // ACL the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
 type ACL struct {
-	// ID iD of your ACL ressource
+	// ID ID of your ACL ressource
 	ID string `json:"id"`
 	// Name name of you ACL ressource
 	Name string `json:"name"`
@@ -898,9 +934,9 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 
 // BackendServerStats state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
 type BackendServerStats struct {
-	// InstanceID iD of your loadbalancer cluster server
+	// InstanceID ID of your loadbalancer cluster server
 	InstanceID string `json:"instance_id"`
-	// BackendID iD of your Backend
+	// BackendID ID of your Backend
 	BackendID string `json:"backend_id"`
 	// IP iPv4 or IPv6 address of the server backend
 	IP string `json:"ip"`
@@ -1163,6 +1199,10 @@ type Lb struct {
 	Type string `json:"type"`
 
 	Subscriber *Subscriber `json:"subscriber"`
+	// SslCompatibilityLevel
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 
 	Region scw.Region `json:"region"`
 }
@@ -1274,7 +1314,7 @@ type SubscriberEmailConfig struct {
 
 // SubscriberWebhookConfig webhook alert of subscriber
 type SubscriberWebhookConfig struct {
-	// URI uRI who receive POST request
+	// URI URI who receive POST request
 	URI string `json:"uri"`
 }
 
@@ -1400,6 +1440,15 @@ type CreateLbRequest struct {
 	Tags []string `json:"tags"`
 	// Type load Balancer offer type
 	Type string `json:"type"`
+	// SslCompatibilityLevel
+	//
+	// Enforces minimal SSL version (in SSL/TLS offloading context).
+	// - `intermediate` General-purpose servers with a variety of clients, recommended for almost all systems (Supports Firefox 27, Android 4.4.2, Chrome 31, Edge, IE 11 on Windows 7, Java 8u31, OpenSSL 1.0.1, Opera 20, and Safari 9).
+	// - `modern` Services with clients that support TLS 1.3 and don't need backward compatibility (Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, and Safari 12.1).
+	// - `old` Compatible with a number of very old clients, and should be used only as a last resort (Firefox 1, Android 2.3, Chrome 1, Edge 12, IE8 on Windows XP, Java 6, OpenSSL 0.9.8, Opera 5, and Safari 1).
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
 func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
@@ -1486,6 +1535,15 @@ type UpdateLbRequest struct {
 	Description string `json:"description"`
 	// Tags list of keywords
 	Tags []string `json:"tags"`
+	// SslCompatibilityLevel
+	//
+	// Enforces minimal SSL version (in SSL/TLS offloading context).
+	// - `intermediate` General-purpose servers with a variety of clients, recommended for almost all systems (Supports Firefox 27, Android 4.4.2, Chrome 31, Edge, IE 11 on Windows 7, Java 8u31, OpenSSL 1.0.1, Opera 20, and Safari 9).
+	// - `modern` Services with clients that support TLS 1.3 and don't need backward compatibility (Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, and Safari 12.1).
+	// - `old` Compatible with a number of very old clients, and should be used only as a last resort (Firefox 1, Android 2.3, Chrome 1, Edge 12, IE8 on Windows XP, Java 6, OpenSSL 0.9.8, Opera 5, and Safari 1).
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
 func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
@@ -1684,7 +1742,7 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type GetIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID IP address ID
 	IPID string `json:"-"`
 }
 
@@ -1722,7 +1780,7 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 
 type ReleaseIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID IP address ID
 	IPID string `json:"-"`
 }
 
@@ -1758,7 +1816,7 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 
 type UpdateIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID IP address ID
 	IPID string `json:"-"`
 	// Reverse reverse DNS
 	Reverse *string `json:"reverse"`
@@ -2162,7 +2220,7 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 
 type DeleteBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID iD of the backend to delete
+	// BackendID ID of the backend to delete
 	BackendID string `json:"-"`
 }
 
@@ -2518,7 +2576,7 @@ type CreateFrontendRequest struct {
 	LbID string `json:"-"`
 	// Name resource name
 	Name string `json:"name"`
-	// InboundPort tCP port to listen on the front side
+	// InboundPort TCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port"`
 	// BackendID backend ID
 	BackendID string `json:"backend_id"`
@@ -2639,7 +2697,7 @@ type UpdateFrontendRequest struct {
 	FrontendID string `json:"-"`
 	// Name resource name
 	Name string `json:"name"`
-	// InboundPort tCP port to listen on the front side
+	// InboundPort TCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port"`
 	// BackendID backend ID
 	BackendID string `json:"backend_id"`
@@ -2861,7 +2919,7 @@ func (r *ListBackendStatsResponse) UnsafeAppend(res interface{}) (uint32, error)
 
 type ListACLsRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID iD of your frontend
+	// FrontendID ID of your frontend
 	FrontendID string `json:"-"`
 	// OrderBy you can order the response by created_at asc/desc or name asc/desc
 	//
@@ -2939,7 +2997,7 @@ func (r *ListACLResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateACLRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID iD of your frontend
+	// FrontendID ID of your frontend
 	FrontendID string `json:"-"`
 	// Name name of your ACL ressource
 	Name string `json:"name"`
@@ -2989,7 +3047,7 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type GetACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID ID of your ACL ressource
 	ACLID string `json:"-"`
 }
 
@@ -3026,7 +3084,7 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 
 type UpdateACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID ID of your ACL ressource
 	ACLID string `json:"-"`
 	// Name name of your ACL ressource
 	Name string `json:"name"`
@@ -3076,7 +3134,7 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type DeleteACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID ID of your ACL ressource
 	ACLID string `json:"-"`
 }
 
