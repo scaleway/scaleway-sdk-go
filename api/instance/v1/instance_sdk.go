@@ -742,6 +742,8 @@ type IP struct {
 
 	Organization string `json:"organization"`
 
+	Tags []string `json:"tags"`
+
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -1240,7 +1242,7 @@ type VolumeSummary struct {
 
 // VolumeTemplate volume template
 type VolumeTemplate struct {
-	// ID uUID of the volume
+	// ID UUID of the volume
 	ID string `json:"id,omitempty"`
 	// Name name of the volume
 	Name string `json:"name,omitempty"`
@@ -1726,7 +1728,7 @@ func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setS
 
 type UpdateServerRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID uUID of the server
+	// ServerID UUID of the server
 	ServerID string `json:"-"`
 	// Name name of the server
 	Name *string `json:"name,omitempty"`
@@ -1880,7 +1882,7 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 
 type ListServerUserDataRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID uUID of the server
+	// ServerID UUID of the server
 	ServerID string `json:"-"`
 }
 
@@ -1920,7 +1922,7 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 
 type DeleteServerUserDataRequest struct {
 	Zone scw.Zone `json:"-"`
-	// ServerID uUID of the server
+	// ServerID UUID of the server
 	ServerID string `json:"-"`
 	// Key key of the user data to delete
 	Key string `json:"-"`
@@ -2085,7 +2087,7 @@ type CreateImageRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name name of the image
 	Name string `json:"name,omitempty"`
-	// RootVolume uUID of the snapshot
+	// RootVolume UUID of the snapshot
 	RootVolume string `json:"root_volume,omitempty"`
 	// Arch architecture of the image
 	//
@@ -2332,7 +2334,7 @@ type CreateSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name name of the snapshot
 	Name string `json:"name,omitempty"`
-	// VolumeID uUID of the volume
+	// VolumeID UUID of the volume
 	VolumeID string `json:"volume_id,omitempty"`
 
 	Organization string `json:"organization,omitempty"`
@@ -3040,7 +3042,7 @@ func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.Request
 
 type ListSecurityGroupRulesRequest struct {
 	Zone scw.Zone `json:"-"`
-	// SecurityGroupID uUID of the security group
+	// SecurityGroupID UUID of the security group
 	SecurityGroupID string `json:"-"`
 	// PerPage a positive integer lower or equal to 100 to select the number of items to return
 	//
@@ -3113,7 +3115,7 @@ func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (uint32, 
 
 type CreateSecurityGroupRuleRequest struct {
 	Zone scw.Zone `json:"-"`
-	// SecurityGroupID uUID of the security group
+	// SecurityGroupID UUID of the security group
 	SecurityGroupID string `json:"-"`
 	// Protocol
 	//
@@ -3578,7 +3580,7 @@ func (s *API) SetPlacementGroup(req *SetPlacementGroupRequest, opts ...scw.Reque
 
 type UpdatePlacementGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-	// PlacementGroupID uUID of the placement group
+	// PlacementGroupID UUID of the placement group
 	PlacementGroupID string `json:"-"`
 	// Name name of the placement group
 	Name *string `json:"name,omitempty"`
@@ -3758,7 +3760,7 @@ func (s *API) SetPlacementGroupServers(req *SetPlacementGroupServersRequest, opt
 
 type UpdatePlacementGroupServersRequest struct {
 	Zone scw.Zone `json:"-"`
-	// PlacementGroupID uUID of the placement group
+	// PlacementGroupID UUID of the placement group
 	PlacementGroupID string `json:"-"`
 
 	Servers []string `json:"servers,omitempty"`
@@ -3880,8 +3882,10 @@ type CreateIPRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Organization the organization ID the IP is reserved in
 	Organization string `json:"organization,omitempty"`
-	// Server uUID of the server you want to attach the IP to
+	// Server UUID of the server you want to attach the IP to
 	Server *string `json:"server,omitempty"`
+	// Tags an array of keywords you want to tag this IP with
+	Tags []string `json:"tags,omitempty"`
 }
 
 // CreateIP reserve an IP
@@ -3974,6 +3978,8 @@ type SetIPRequest struct {
 	Server *ServerSummary `json:"server"`
 
 	Organization string `json:"organization"`
+
+	Tags []string `json:"tags"`
 }
 
 func (s *API) setIP(req *SetIPRequest, opts ...scw.RequestOption) (*setIPResponse, error) {
@@ -4019,10 +4025,12 @@ func (s *API) setIP(req *SetIPRequest, opts ...scw.RequestOption) (*setIPRespons
 
 type UpdateIPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// IP iP ID or IP address
+	// IP IP ID or IP address
 	IP string `json:"-"`
 	// Reverse reverse domain name
 	Reverse *NullableStringValue `json:"reverse,omitempty"`
+	// Tags an array of keywords you want to tag this IP with
+	Tags *[]string `json:"tags,omitempty"`
 
 	Server *NullableStringValue `json:"server,omitempty"`
 }
