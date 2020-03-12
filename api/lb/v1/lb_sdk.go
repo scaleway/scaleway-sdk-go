@@ -815,9 +815,9 @@ type ACL struct {
 	ID string `json:"id"`
 	// Name name of you ACL ressource
 	Name string `json:"name"`
-	// Match see the AclMatch object description
+	// Match the ACL match rule. At least `ip_subnet` or `http_filter` and `http_filter_value` are required
 	Match *ACLMatch `json:"match"`
-	// Action see the AclAction object description
+	// Action action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
 	// Frontend see the Frontend object description
 	Frontend *Frontend `json:"frontend"`
@@ -825,25 +825,28 @@ type ACL struct {
 	Index int32 `json:"index"`
 }
 
-// ACLAction action if your ACL filter match
+// ACLAction acl action
 type ACLAction struct {
-	// Type <allow> or <deny> request
+	// Type the action type
 	//
 	// Default value: allow
 	Type ACLActionType `json:"type"`
 }
 
-// ACLMatch settings of your ACL filter
+// ACLMatch acl match
 type ACLMatch struct {
-	// IPSubnet this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
+	// IPSubnet a list of IPs or CIDR v4/v6 addresses of the client of the session to match
 	IPSubnet []*string `json:"ip_subnet"`
-	// HTTPFilter you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
+	// HTTPFilter the HTTP filter to match
+	//
+	// The HTTP filter to match. This filter is supported only if your backend supports HTTP forwarding.
+	// It extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part).
 	//
 	// Default value: acl_http_filter_none
 	HTTPFilter ACLHTTPFilter `json:"http_filter"`
-
+	// HTTPFilterValue a list of possible values to match for the given HTTP filter
 	HTTPFilterValue []*string `json:"http_filter_value"`
-	// Invert by default match filter is a IF condition. You can set invert to true to have a unless condition
+	// Invert if set to `true`, the ACL matching condition will be of type "UNLESS"
 	Invert bool `json:"invert"`
 }
 
@@ -1621,6 +1624,51 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 		return err
 	}
 	return nil
+}
+
+type MigrateLbRequest struct {
+	Region scw.Region `json:"-"`
+	// LbID load Balancer ID
+	LbID string `json:"-"`
+	// Type load Balancer type (check /lb-types to list all type)
+	Type string `json:"type"`
+}
+
+// MigrateLb migrate Load Balancer
+func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LbID) == "" {
+		return nil, errors.New("field LbID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/migrate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Lb
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type ListIPsRequest struct {
@@ -3001,9 +3049,16 @@ type CreateACLRequest struct {
 	FrontendID string `json:"-"`
 	// Name name of your ACL ressource
 	Name string `json:"name"`
-	// Action see the AclAction object description
+	// Action action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
-	// Match see the AclMatch object description
+	// Match the ACL match rule
+	//
+	// The ACL match rule. You can have one of those three cases:
+	//
+	//   - `ip_subnet` is defined
+	//   - `http_filter` and `http_filter_value` are defined
+	//   - `ip_subnet`, `http_filter` and `http_filter_value` are defined
+	//
 	Match *ACLMatch `json:"match"`
 	// Index order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
@@ -3088,9 +3143,9 @@ type UpdateACLRequest struct {
 	ACLID string `json:"-"`
 	// Name name of your ACL ressource
 	Name string `json:"name"`
-	// Action see the AclAction object description
+	// Action action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
-	// Match see the AclMatch object description
+	// Match the ACL match rule. At least `ip_subnet` or `http_filter` and `http_filter_value` are required
 	Match *ACLMatch `json:"match"`
 	// Index order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
