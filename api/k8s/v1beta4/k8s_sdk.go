@@ -37,7 +37,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API this API allows you to manage your kapsule clusters
+// API this API allows you to manage your Kapsule clusters
 type API struct {
 	client *scw.Client
 }
@@ -555,26 +555,26 @@ func (enum *Runtime) UnmarshalJSON(data []byte) error {
 type Cluster struct {
 	// ID the ID of the cluster
 	ID string `json:"id"`
-	// Region the region in which is the cluster
-	Region scw.Region `json:"region"`
 	// Name the name of the cluster
 	Name string `json:"name"`
-	// Description the description of the cluster
-	Description string `json:"description"`
-	// OrganizationID the ID of the organization owning the cluster
-	OrganizationID string `json:"organization_id"`
-	// Tags the tags associated to the cluster
-	Tags []string `json:"tags"`
 	// Status the status of the cluster
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"status"`
 	// Version the Kubernetes version of the cluster
 	Version string `json:"version"`
+	// Region the region in which the cluster is
+	Region scw.Region `json:"region"`
+	// OrganizationID the ID of the organization owning the cluster
+	OrganizationID string `json:"organization_id"`
+	// Tags the tags associated with the cluster
+	Tags []string `json:"tags"`
 	// Cni the Container Network Interface (CNI) plugin running in the cluster
 	//
 	// Default value: unknown_cni
 	Cni CNI `json:"cni"`
+	// Description the description of the cluster
+	Description string `json:"description"`
 	// ClusterURL the Kubernetes API server URL of the cluster
 	ClusterURL string `json:"cluster_url"`
 	// DNSWildcard the DNS wildcard resovling all the ready nodes of the cluster
@@ -607,77 +607,97 @@ type Cluster struct {
 	AdmissionPlugins []string `json:"admission_plugins"`
 }
 
+// ClusterAutoUpgrade cluster. auto upgrade
 type ClusterAutoUpgrade struct {
+	// Enabled whether or not auto upgrade is enabled for the cluster
 	Enabled bool `json:"enabled"`
-
+	// MaintenanceWindow the maintenance window of the cluster auto upgrades
 	MaintenanceWindow *MaintenanceWindow `json:"maintenance_window"`
 }
 
+// ClusterAutoscalerConfig cluster. autoscaler config
 type ClusterAutoscalerConfig struct {
+	// ScaleDownDisabled disable the cluster autoscaler
 	ScaleDownDisabled bool `json:"scale_down_disabled"`
-
+	// ScaleDownDelayAfterAdd how long after scale up that scale down evaluation resumes
 	ScaleDownDelayAfterAdd string `json:"scale_down_delay_after_add"`
-	// Estimator
+	// Estimator type of resource estimator to be used in scale up
 	//
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
-	// Expander
+	// Expander type of node group expander to be used in scale up
 	//
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
-
+	// IgnoreDaemonsetsUtilization ignore DaemonSet pods when calculating resource utilization for scaling down
 	IgnoreDaemonsetsUtilization bool `json:"ignore_daemonsets_utilization"`
-
+	// BalanceSimilarNodeGroups detect similar node groups and balance the number of nodes between them
 	BalanceSimilarNodeGroups bool `json:"balance_similar_node_groups"`
-
+	// ExpendablePodsPriorityCutoff pods with priority below cutoff will be expendable
+	//
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff int32 `json:"expendable_pods_priority_cutoff"`
 }
 
+// CreateClusterRequestAutoUpgrade create cluster request. auto upgrade
 type CreateClusterRequestAutoUpgrade struct {
+	// Enable whether or not auto upgrade is enabled for the cluster
 	Enable bool `json:"enable"`
-
+	// MaintenanceWindow the maintenance window of the cluster auto upgrades
 	MaintenanceWindow *MaintenanceWindow `json:"maintenance_window"`
 }
 
+// CreateClusterRequestAutoscalerConfig create cluster request. autoscaler config
 type CreateClusterRequestAutoscalerConfig struct {
+	// ScaleDownDisabled disable the cluster autoscaler
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
-
+	// ScaleDownDelayAfterAdd how long after scale up that scale down evaluation resumes
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
-	// Estimator
+	// Estimator type of resource estimator to be used in scale up
 	//
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
-	// Expander
+	// Expander type of node group expander to be used in scale up
 	//
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
-
+	// IgnoreDaemonsetsUtilization ignore DaemonSet pods when calculating resource utilization for scaling down
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
-
+	// BalanceSimilarNodeGroups detect similar node groups and balance the number of nodes between them
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
-
+	// ExpendablePodsPriorityCutoff pods with priority below cutoff will be expendable
+	//
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 }
 
+// CreateClusterRequestDefaultPoolConfig create cluster request. default pool config
 type CreateClusterRequestDefaultPoolConfig struct {
+	// NodeType the node type is the type of Scaleway Instance wanted for the pool
 	NodeType string `json:"node_type"`
-
+	// PlacementGroupID the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
-
+	// Autoscaling the enablement of the autoscaling feature for the pool
 	Autoscaling bool `json:"autoscaling"`
-
+	// Size the size (number of nodes) of the pool
 	Size uint32 `json:"size"`
-
+	// MinSize the minimun size of the pool
+	//
+	// The minimun size of the pool. Note that this fields will be used only when autoscaling is enabled.
 	MinSize *uint32 `json:"min_size"`
-
+	// MaxSize the maximum size of the pool
+	//
+	// The maximum size of the pool. Note that this fields will be used only when autoscaling is enabled.
 	MaxSize *uint32 `json:"max_size"`
-	// ContainerRuntime
+	// ContainerRuntime the container runtime for the nodes of the pool
+	//
+	// The customization of the container runtime is available for each pool. Note that `docker` is the only supporter runtime at the moment. Others are to be considered experimental.
 	//
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
-
+	// Autohealing the enablement of the autohealing feature for the pool
 	Autohealing bool `json:"autohealing"`
-
+	// Tags the tags associated with the pool
 	Tags []string `json:"tags"`
 }
 
@@ -717,9 +737,11 @@ type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
+// MaintenanceWindow maintenance window
 type MaintenanceWindow struct {
+	// StartHour the start hour of the 2-hour maintenance window
 	StartHour uint32 `json:"start_hour"`
-	// Day
+	// Day the day of the week for the maintenance window
 	//
 	// Default value: any
 	Day MaintenanceWindowDayOfTheWeek `json:"day"`
@@ -809,29 +831,35 @@ type Pool struct {
 	Region scw.Region `json:"region"`
 }
 
+// UpdateClusterRequestAutoUpgrade update cluster request. auto upgrade
 type UpdateClusterRequestAutoUpgrade struct {
+	// Enable whether or not auto upgrade is enabled for the cluster
 	Enable *bool `json:"enable"`
-
+	// MaintenanceWindow the maintenance window of the cluster auto upgrades
 	MaintenanceWindow *MaintenanceWindow `json:"maintenance_window"`
 }
 
+// UpdateClusterRequestAutoscalerConfig update cluster request. autoscaler config
 type UpdateClusterRequestAutoscalerConfig struct {
+	// ScaleDownDisabled disable the cluster autoscaler
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
-
+	// ScaleDownDelayAfterAdd how long after scale up that scale down evaluation resumes
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
-	// Estimator
+	// Estimator type of resource estimator to be used in scale up
 	//
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
-	// Expander
+	// Expander type of node group expander to be used in scale up
 	//
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
-
+	// IgnoreDaemonsetsUtilization ignore DaemonSet pods when calculating resource utilization for scaling down
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
-
+	// BalanceSimilarNodeGroups detect similar node groups and balance the number of nodes between them
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
-
+	// ExpendablePodsPriorityCutoff pods with priority below cutoff will be expendable
+	//
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 }
 
