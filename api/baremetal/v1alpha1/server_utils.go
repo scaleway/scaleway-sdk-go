@@ -120,9 +120,9 @@ func (s *API) GetOfferIDFromName(req *GetOfferIDFromOfferNameRequest) (string, e
 		return "", err
 	}
 
-	for _, v := range res.Offers {
-		if req.OfferName == v.Name {
-			return v.ID, nil
+	for _, offer := range res.Offers {
+		if req.OfferName == offer.Name {
+			return offer.ID, nil
 		}
 	}
 
