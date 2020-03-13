@@ -126,5 +126,5 @@ func (s *API) GetOfferIDFromName(req *GetOfferIDFromOfferNameRequest) (string, e
 		}
 	}
 
-	return "", errors.New("could not find the offer id from name %s", req.OfferName)
+	return "", errors.New("could not find the offer ID from name %s", req.OfferName)
 }
