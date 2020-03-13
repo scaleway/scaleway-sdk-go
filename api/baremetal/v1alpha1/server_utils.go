@@ -93,7 +93,7 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 	return server.(*Server), nil
 }
 
-// getServerOfferName returns the offer name of a baremetal server
+// GetServerOfferName returns the offer name of a baremetal server
 func (s *API) GetServerOfferName(server *Server) (string, error) {
 	offer, err := s.GetOffer(&GetOfferRequest{
 		OfferID: server.OfferID,
