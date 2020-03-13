@@ -116,7 +116,6 @@ func (s *API) GetOfferIDFromName(req *GetOfferIDFromOfferNameRequest) (string, e
 	res, err := s.ListOffers(&ListOffersRequest{
 		Zone: req.Zone,
 	}, scw.WithAllPages())
-
 	if err != nil {
 		return "", err
 	}
