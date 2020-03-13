@@ -93,38 +93,38 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 	return server.(*Server), nil
 }
 
-// GetServerOfferName returns the offer name of a baremetal server
-func (s *API) GetServerOfferName(server *Server) (string, error) {
+// GetServerOffer returns the offer of a baremetal server
+func (s *API) GetServerOffer(server *Server) (*Offer, error) {
 	offer, err := s.GetOffer(&GetOfferRequest{
 		OfferID: server.OfferID,
 		Zone:    server.Zone,
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return offer.Name, nil
+	return offer, nil
 }
 
 type GetOfferIDFromOfferNameRequest struct {
 	OfferName string
 	Zone      scw.Zone
-	Timeout   time.Duration
 }
 
-func (s *API) GetOfferIDFromName(req *GetOfferIDFromOfferNameRequest) (string, error) {
+// GetOfferFromName returns an offer from its commercial name
+func (s *API) GetOfferFromName(req *GetOfferIDFromOfferNameRequest) (*Offer, error) {
 	res, err := s.ListOffers(&ListOffersRequest{
 		Zone: req.Zone,
 	}, scw.WithAllPages())
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	for _, offer := range res.Offers {
 		if req.OfferName == offer.Name {
-			return offer.ID, nil
+			return offer, nil
 		}
 	}
 
-	return "", errors.New("could not find the offer ID from name %s", req.OfferName)
+	return nil, errors.New("could not find the offer ID from name %s", req.OfferName)
 }
