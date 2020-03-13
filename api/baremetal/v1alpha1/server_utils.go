@@ -92,3 +92,40 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 
 	return server.(*Server), nil
 }
+
+// getServerOfferName returns the offer name of a baremetal server
+func (s *API) GetServerOfferName(server *Server) (string, error) {
+	offer, err := s.GetOffer(&GetOfferRequest{
+		OfferID: server.OfferID,
+		Zone:    server.Zone,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return offer.Name, nil
+}
+
+type GetOfferIDFromOfferNameRequest struct {
+	OfferName string
+	Zone      scw.Zone
+	Timeout   time.Duration
+}
+
+func (s *API) GetOfferIDFromName(req *GetOfferIDFromOfferNameRequest) (string, error) {
+	res, err := s.ListOffers(&ListOffersRequest{
+		Zone: req.Zone,
+	}, scw.WithAllPages())
+
+	if err != nil {
+		return "", err
+	}
+
+	for _, v := range res.Offers {
+		if req.OfferName == v.Name {
+			return v.ID, nil
+		}
+	}
+
+	return "", errors.New("could not find the offer id from name %s", req.OfferName)
+}
