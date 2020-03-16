@@ -8,9 +8,14 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+var (
+	RetryInterval = defaultRetryInterval
+)
+
 const (
 	waitForClusterDefaultTimeout = time.Minute * 15
 	waitForPoolDefaultTimeout    = time.Minute * 15
+	defaultRetryInterval         = 5 * time.Second
 )
 
 // WaitForClusterRequest is used by WaitForCluster method.
@@ -49,7 +54,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 			return cluster, isTerminal, nil
 		},
 		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for cluster failed")
@@ -91,7 +96,7 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 			return res, isTerminal, nil
 		},
 		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 
 	return pool.(*Pool), err
