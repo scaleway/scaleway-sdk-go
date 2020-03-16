@@ -9,13 +9,15 @@ import (
 )
 
 var (
+	// RetryInterval is needed when running recorded tests (e.g. on scaleway-cli)
+	// it allows to execute the WaitFor funcs immediately
 	RetryInterval = defaultRetryInterval
 )
 
 const (
 	waitForClusterDefaultTimeout = time.Minute * 15
 	waitForPoolDefaultTimeout    = time.Minute * 15
-	defaultRetryInterval         = 5 * time.Second
+	defaultRetryInterval         = time.Second * 5
 )
 
 // WaitForClusterRequest is used by WaitForCluster method.
