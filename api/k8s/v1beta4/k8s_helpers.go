@@ -17,6 +17,7 @@ var (
 const (
 	waitForClusterDefaultTimeout = time.Minute * 15
 	waitForPoolDefaultTimeout    = time.Minute * 15
+	waitForNodeDefaultTimeout    = time.Minute * 15
 	defaultRetryInterval         = time.Second * 5
 )
 
@@ -102,4 +103,44 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 	})
 
 	return pool.(*Pool), err
+}
+
+// WaitForNodeRequest is used by WaitForNode method.
+type WaitForNodeRequest struct {
+	NodeID  string
+	Region  scw.Region
+	Timeout *time.Duration
+}
+
+// WaitForNode waits for a Node to be ready
+func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
+	terminalStatus := map[NodeStatus]struct{}{
+		NodeStatusCreationError: {},
+		NodeStatusReady:         {},
+	}
+
+	timeout := waitForNodeDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	node, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetNode(&GetNodeRequest{
+				NodeID: req.NodeID,
+				Region: req.Region,
+			})
+
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.Status]
+
+			return res, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+	})
+
+	return node.(*Node), err
 }
