@@ -15,7 +15,7 @@ var (
 )
 
 const (
-	defaultRetryInterval = time.Second * 15
+	defaultRetryInterval = 15 * time.Second
 )
 
 // WaitForServerRequest is used by WaitForServer method.
