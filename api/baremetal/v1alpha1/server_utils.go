@@ -8,6 +8,16 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+var (
+	// RetryInterval is needed when running recorded tests (e.g. on scaleway-cli)
+	// it allows to execute the WaitFor funcs immediately
+	RetryInterval = defaultRetryInterval
+)
+
+const (
+	defaultRetryInterval = time.Second * 15
+)
+
 // WaitForServerRequest is used by WaitForServer method.
 type WaitForServerRequest struct {
 	ServerID string
@@ -40,7 +50,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			return res, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
@@ -84,7 +94,7 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 			return res, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(15 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server installation failed")
