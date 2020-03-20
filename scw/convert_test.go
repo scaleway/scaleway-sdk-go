@@ -162,7 +162,7 @@ func TestFloat64Ptr(t *testing.T) {
 }
 
 func TestDurationPtr(t *testing.T) {
-	pointer := DurationPtr(testDuration)
+	pointer := TimeDurationPtr(testDuration)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
