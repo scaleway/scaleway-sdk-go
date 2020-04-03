@@ -16,7 +16,6 @@ import (
 // - custom-path with v2 config
 // - custom-path with v1 config
 // - XDG config path with v2 config
-// - Windows config path with v2 config
 func TestLoad(t *testing.T) {
 	tests := []struct {
 		name          string
@@ -82,16 +81,6 @@ func TestLoad(t *testing.T) {
 			},
 			files: map[string]string{
 				"plop/scw/config.yaml": v2SimpleValidConfigFile,
-			},
-			expected: v2SimpleValidConfig,
-		},
-		{
-			name: "Windows config with valid V2",
-			env: map[string]string{
-				windowsHomeDirEnv: "{HOME}",
-			},
-			files: map[string]string{
-				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
 			expected: v2SimpleValidConfig,
 		},
