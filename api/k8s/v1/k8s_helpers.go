@@ -61,6 +61,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for cluster failed")
 	}
+
 	return cluster.(*Cluster), nil
 }
 
@@ -100,6 +101,9 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for pool failed")
+	}
 
 	return pool.(*Pool), err
 }
@@ -140,6 +144,9 @@ func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for node failed")
+	}
 
 	return node.(*Node), err
 }
