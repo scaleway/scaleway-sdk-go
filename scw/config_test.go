@@ -852,5 +852,5 @@ profiles:
 }
 
 func TestEmptyConfig(t *testing.T) {
-	testhelpers.Assert(t, (&Config{}).Empty(), "Config must be empty")
+	testhelpers.Assert(t, (&Config{}).IsEmpty(), "Config must be empty")
 }

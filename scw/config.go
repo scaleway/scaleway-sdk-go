@@ -143,7 +143,7 @@ func (c *Config) String() string {
 	return string(configRaw)
 }
 
-func (c *Config) Empty() bool {
+func (c *Config) IsEmpty() bool {
 	return c.String() == "{}\n"
 }
 
