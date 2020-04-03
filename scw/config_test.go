@@ -257,7 +257,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedSecretKey             *string
 		expectedAPIURL                *string
 		expectedInsecure              *bool
-		expectedSendTelemetry         bool
+		expectedSendTelemetry         *bool
 		expectedDefaultOrganizationID *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
@@ -366,7 +366,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
-			expectedSendTelemetry:         true,
+			expectedSendTelemetry:         b(true),
 		},
 		{
 			name: "Mixed config with active profile",
@@ -383,7 +383,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
-			expectedSendTelemetry:         true,
+			expectedSendTelemetry:         b(true),
 		},
 		{
 			name: "Complete config with active profile env variable",
@@ -480,7 +480,7 @@ func TestConfigString(t *testing.T) {
 			SecretKey: s(v2ValidSecretKey),
 		},
 		ActiveProfile: s(v2ValidProfile),
-		SendTelemetry: true,
+		SendTelemetry: b(true),
 		Profiles: map[string]*Profile{
 			v2ValidProfile: {
 				AccessKey: s(v2ValidAccessKey2),
@@ -760,7 +760,7 @@ access_key: SCW1234567890ABCDEFG
 				SecretKey: s(v2ValidSecretKey),
 			},
 			ActiveProfile: s(v2ValidProfile),
-			SendTelemetry: true,
+			SendTelemetry: b(true),
 			Profiles: map[string]*Profile{
 				"profile1": {
 					AccessKey: s(v2ValidAccessKey2),
@@ -849,4 +849,8 @@ profiles:
     # insecure: false
 `,
 	}))
+}
+
+func TestEmptyConfig(t *testing.T) {
+	testhelpers.Assert(t, (&Config{}).Empty(), "Config must be empty")
 }
