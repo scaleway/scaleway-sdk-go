@@ -720,7 +720,14 @@ type GetServerResponse struct {
 }
 
 type GetServerTypesAvailabilityResponse struct {
-	Servers map[string]ServerTypesAvailability `json:"servers"`
+	Servers map[string]*GetServerTypesAvailabilityResponseAvailability `json:"servers"`
+}
+
+type GetServerTypesAvailabilityResponseAvailability struct {
+	// Availability:
+	//
+	// Default value: available
+	Availability ServerTypesAvailability `json:"availability"`
 }
 
 type GetSnapshotResponse struct {
