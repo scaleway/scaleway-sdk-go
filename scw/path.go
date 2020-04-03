@@ -72,7 +72,7 @@ func getConfigV2FilePath() (string, bool) {
 
 // getConfigV1FilePath returns the path to the v1 config file
 func getConfigV1FilePath() (string, bool) {
-	path, err := getHomeDir()
+	path, err := GetHomeDir()
 	if err != nil {
 		return "", false
 	}
@@ -85,15 +85,15 @@ func getScwConfigDir() (string, error) {
 		return filepath.Join(xdgPath, "scw"), nil
 	}
 
-	homeDir, err := getHomeDir()
+	homeDir, err := GetHomeDir()
 	if err != nil {
 		return "", err
 	}
 	return filepath.Join(homeDir, ".config", "scw"), nil
 }
 
-// getHomeDir returns the path to your home directory
-func getHomeDir() (string, error) {
+// GetHomeDir returns the path to your home directory
+func GetHomeDir() (string, error) {
 	switch {
 	case os.Getenv(unixHomeDirEnv) != "":
 		return os.Getenv(unixHomeDirEnv), nil
