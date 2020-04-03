@@ -2149,6 +2149,8 @@ type ListOsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize number of OS per page
 	PageSize *uint32 `json:"-"`
+	// OfferID: filter OS by offer ID
+	OfferID *string `json:"-"`
 }
 
 // ListOs list OS
@@ -2170,6 +2172,7 @@ func (s *API) ListOs(req *ListOsRequest, opts ...scw.RequestOption) (*ListOsResp
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "offer_id", req.OfferID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
