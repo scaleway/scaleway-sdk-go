@@ -2542,7 +2542,7 @@ type ListVolumesRequest struct {
 	// VolumeType: filter by volume type
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"-"`
+	VolumeType *VolumeType `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
 	// Default value: 50
