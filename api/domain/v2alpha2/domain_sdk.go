@@ -925,6 +925,8 @@ type Contact struct {
 	ExtensionFr *ExtensionFR `json:"extension_fr"`
 
 	ExtensionEu *ExtensionEU `json:"extension_eu"`
+
+	WhoisOptOut bool `json:"whois_opt_out"`
 }
 
 type ContactRoles struct {
@@ -1307,6 +1309,8 @@ type NewContact struct {
 	ExtensionFr *ExtensionFR `json:"extension_fr"`
 
 	ExtensionEu *ExtensionEU `json:"extension_eu"`
+
+	WhoisOptOut bool `json:"whois_opt_out"`
 }
 
 type PublicKey struct {
@@ -1983,6 +1987,8 @@ type UpdateContactRequest struct {
 	ExtensionFr *ExtensionFR `json:"extension_fr"`
 
 	ExtensionEu *ExtensionEU `json:"extension_eu"`
+
+	WhoisOptOut *bool `json:"whois_opt_out"`
 }
 
 // UpdateContact: update contact
