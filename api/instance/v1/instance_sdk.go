@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -29,6 +30,7 @@ var (
 	_ http.Header
 	_ bytes.Reader
 	_ time.Time
+	_ = strings.Join
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
@@ -1413,6 +1415,8 @@ type ListServersRequest struct {
 	//
 	// Default value: running
 	State *ServerState `json:"-"`
+	// Tags: list servers with these exact tags
+	Tags []string `json:"-"`
 }
 
 // ListServers: list servers
@@ -1438,6 +1442,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "without_ip", req.WithoutIP)
 	parameter.AddToQuery(query, "commercial_type", req.CommercialType)
 	parameter.AddToQuery(query, "state", req.State)
+	if len(req.Tags) != 0 {
+		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
+	}
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
