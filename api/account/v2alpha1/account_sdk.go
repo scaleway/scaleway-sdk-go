@@ -201,7 +201,9 @@ type CreateSSHKeyRequest struct {
 	OrganizationID string `json:"organization_id"`
 }
 
-// CreateSSHKey: create an SSH key
+// CreateSSHKey: add a SSH key to your Scaleway account
+//
+// Add a SSH key to your Scaleway account.
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -295,7 +297,9 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: delete an SSH key
+// DeleteSSHKey: remove a SSH key from your Scaleway account
+//
+// Remove a SSH key from your Scaleway account.
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
