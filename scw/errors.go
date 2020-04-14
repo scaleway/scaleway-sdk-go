@@ -247,8 +247,8 @@ func (e *UnknownResource) ToResourceNotFoundError() SdkError {
 		RawBody: e.RawBody,
 	}
 
-	resourceNotFound.ResourceID = strings.TrimRight(e.Message, "\" not found")
-	resourceNotFound.ResourceID = strings.TrimLeft(resourceNotFound.ResourceID, "\"")
+	resourceNotFound.ResourceID = strings.TrimSuffix(e.Message, `" not found`)
+	resourceNotFound.ResourceID = strings.TrimPrefix(resourceNotFound.ResourceID, `"`)
 	if !validation.IsUUID(resourceNotFound.ResourceID) {
 		return nil
 	}
