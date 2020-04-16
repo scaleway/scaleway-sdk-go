@@ -194,10 +194,11 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 }
 
 type CreateSSHKeyRequest struct {
+	// Name: the name of the SSH key
 	Name string `json:"name"`
-
+	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
 	PublicKey string `json:"public_key"`
-
+	// OrganizationID: organization owning the resource
 	OrganizationID string `json:"organization_id"`
 }
 
@@ -233,6 +234,7 @@ func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) 
 }
 
 type GetSSHKeyRequest struct {
+	// SSHKeyID: the ID of the SSH key
 	SSHKeyID string `json:"-"`
 }
 
