@@ -1853,6 +1853,8 @@ type ServerActionRequest struct {
 	//
 	// Default value: poweron
 	Action ServerAction `json:"action"`
+
+	Name *string `json:"name,omitempty"`
 }
 
 // ServerAction: perform action
