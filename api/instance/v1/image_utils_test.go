@@ -16,7 +16,8 @@ func TestWaitForImage(t *testing.T) {
 	}()
 
 	instanceAPI := NewAPI(client)
-	image, cleanup := createImage(t, instanceAPI)
+	imageName := "backup"
+	image, cleanup := createImage(t, instanceAPI, imageName)
 	defer cleanup()
 
 	res, err := instanceAPI.WaitForImage(&WaitForImageRequest{
@@ -26,11 +27,12 @@ func TestWaitForImage(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, image.ID, res.ID)
 	testhelpers.Equals(t, ImageStateAvailable, res.State)
+	testhelpers.Equals(t, imageName, res.Name)
 }
 
 // createImage cis a helper that create an image.
 // It return the newly created image and a cleanup function
-func createImage(t *testing.T, instanceAPI *API) (*Image, func()) {
+func createImage(t *testing.T, instanceAPI *API, imageName string) (*Image, func()) {
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
 		Image:          "ubuntu-bionic",
@@ -41,7 +43,7 @@ func createImage(t *testing.T, instanceAPI *API) (*Image, func()) {
 	backupRes, err := instanceAPI.ServerAction(&ServerActionRequest{
 		ServerID: serverRes.Server.ID,
 		Action:   ServerActionBackup,
-		Name:     "backup",
+		Name:     &imageName,
 	})
 	testhelpers.AssertNoError(t, err)
 
