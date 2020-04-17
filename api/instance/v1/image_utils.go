@@ -15,8 +15,7 @@ type WaitForImageRequest struct {
 	Timeout time.Duration
 }
 
-// WaitForServer wait for the server to be in a "terminal state" before returning.
-// This function can be used to wait for a server to be started for example.
+// WaitForImage wait for the image to be in a "terminal state" before returning.
 func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
 	if req.Timeout == 0 {
 		req.Timeout = defaultTimeout
