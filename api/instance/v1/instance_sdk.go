@@ -1847,12 +1847,18 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 
 type ServerActionRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: UUID of the server
 	ServerID string `json:"-"`
-	// Action:
+	// Action: the action to perform on the server
 	//
 	// Default value: poweron
 	Action ServerAction `json:"action"`
+	// Name: the name of the backup you want to create
+	//
+	// The name of the backup you want to create.
+	// This field should only be specified when performing a backup action.
+	//
+	Name *string `json:"name,omitempty"`
 }
 
 // ServerAction: perform action
