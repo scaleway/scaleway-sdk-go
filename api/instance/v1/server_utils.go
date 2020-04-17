@@ -27,6 +27,10 @@ var (
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	// If image is not a UUID we try to fetch it from marketplace.
 	if req.Image != "" && !validation.IsUUID(req.Image) {
+		zone := req.Zone
+		if zone == "" {
+			zone, _ = s.client.GetDefaultZone()
+		}
 		apiMarketplace := marketplace.NewAPI(s.client)
 		imageID, err := apiMarketplace.GetLocalImageIDByLabel(&marketplace.GetLocalImageIDByLabelRequest{
 			ImageLabel:     req.Image,

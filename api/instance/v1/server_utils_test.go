@@ -153,26 +153,51 @@ func TestAPI_AllServerUserData(t *testing.T) {
 }
 
 func TestAPI_CreateServer(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("create-server")
-	testhelpers.AssertNoError(t, err)
-	defer func() {
-		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
-	}()
 
-	instanceAPI := NewAPI(client)
+	init := func(t *testing.T, cassetteName string) (*API, func()) {
+		client, r, err := httprecorder.CreateRecordedScwClient(cassetteName)
+		testhelpers.AssertNoError(t, err)
+		return NewAPI(client), func() {
+			testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
+		}
+	}
 
-	res, err := instanceAPI.CreateServer(&CreateServerRequest{
-		Zone:           scw.ZoneFrPar1,
-		CommercialType: "GP1-XS",
-		Image:          "ubuntu-bionic",
+	t.Run("simple", func(t *testing.T) {
+		instanceAPI, cleanup := init(t, "create-server")
+		defer cleanup()
+
+		res, err := instanceAPI.CreateServer(&CreateServerRequest{
+			Zone:           scw.ZoneFrPar1,
+			CommercialType: "GP1-XS",
+			Image:          "ubuntu-bionic",
+		})
+
+		testhelpers.AssertNoError(t, err)
+		// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
+		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
+		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+			Zone:     scw.ZoneFrPar1,
+			ServerID: res.Server.ID,
+		})
+		testhelpers.AssertNoError(t, err)
 	})
 
-	testhelpers.AssertNoError(t, err)
-	// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
-	testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
-	err = instanceAPI.DeleteServer(&DeleteServerRequest{
-		Zone:     scw.ZoneFrPar1,
-		ServerID: res.Server.ID,
+	t.Run("without zone", func(t *testing.T) {
+		instanceAPI, cleanup := init(t, "create-server-without-zone")
+		defer cleanup()
+
+		res, err := instanceAPI.CreateServer(&CreateServerRequest{
+			CommercialType: "GP1-XS",
+			Image:          "ubuntu-bionic",
+		})
+
+		testhelpers.AssertNoError(t, err)
+		// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
+		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
+		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+			ServerID: res.Server.ID,
+		})
+		testhelpers.AssertNoError(t, err)
 	})
-	testhelpers.AssertNoError(t, err)
+
 }
