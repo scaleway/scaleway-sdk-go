@@ -8,7 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-// WaitForServerRequest is used by WaitForServer method.
+// WaitForImageRequest is used by WaitForImage method.
 type WaitForImageRequest struct {
 	ImageID string
 	Zone    scw.Zone
