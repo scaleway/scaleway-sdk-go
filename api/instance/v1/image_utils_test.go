@@ -31,7 +31,6 @@ func TestWaitForImage(t *testing.T) {
 // createImage cis a helper that create an image.
 // It return the newly created image and a cleanup function
 func createImage(t *testing.T, instanceAPI *API) (*Image, func()) {
-
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
 		Image:          "ubuntu-bionic",
