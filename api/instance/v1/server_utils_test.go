@@ -199,5 +199,4 @@ func TestAPI_CreateServer(t *testing.T) {
 		})
 		testhelpers.AssertNoError(t, err)
 	})
-
 }
