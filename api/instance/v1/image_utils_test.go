@@ -41,6 +41,7 @@ func createImage(t *testing.T, instanceAPI *API) (*Image, func()) {
 	backupRes, err := instanceAPI.ServerAction(&ServerActionRequest{
 		ServerID: serverRes.Server.ID,
 		Action:   ServerActionBackup,
+		Name:     "backup",
 	})
 	testhelpers.AssertNoError(t, err)
 
