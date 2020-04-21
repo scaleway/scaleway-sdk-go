@@ -24,6 +24,21 @@ const (
 	testInsecure              = true
 )
 
+func TestNewClientWithNoAuth(t *testing.T) {
+	t.Run("Basic", func(t *testing.T) {
+		client, err := NewClient()
+		testhelpers.AssertNoError(t, err)
+
+		secretKey, exist := client.GetSecretKey()
+		testhelpers.Equals(t, "", secretKey)
+		testhelpers.Assert(t, !exist, "secretKey must not exist")
+
+		accessKey, exist := client.GetAccessKey()
+		testhelpers.Equals(t, "", accessKey)
+		testhelpers.Assert(t, !exist, "accessKey must not exist")
+	})
+}
+
 func TestNewClientWithDefaults(t *testing.T) {
 	options := []ClientOption{
 		WithInsecure(),
