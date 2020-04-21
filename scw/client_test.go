@@ -73,6 +73,14 @@ func TestNewClientWithOptions(t *testing.T) {
 		defaultPageSize, exist := client.GetDefaultPageSize()
 		testhelpers.Equals(t, testDefaultPageSize, defaultPageSize)
 		testhelpers.Assert(t, exist, "defaultPageSize must exist")
+
+		secretKey, exist := client.GetSecretKey()
+		testhelpers.Equals(t, testSecretKey, secretKey)
+		testhelpers.Assert(t, exist, "secretKey must exist")
+
+		accessKey, exist := client.GetAccessKey()
+		testhelpers.Equals(t, testAccessKey, accessKey)
+		testhelpers.Assert(t, exist, "accessKey must exist")
 	})
 
 	t.Run("With custom profile", func(t *testing.T) {
@@ -111,6 +119,14 @@ func TestNewClientWithOptions(t *testing.T) {
 
 		_, exist = client.GetDefaultPageSize()
 		testhelpers.Assert(t, !exist, "defaultPageSize must not exist")
+
+		secretKey, exist := client.GetSecretKey()
+		testhelpers.Equals(t, testSecretKey, secretKey)
+		testhelpers.Assert(t, exist, "secretKey must exist")
+
+		accessKey, exist := client.GetAccessKey()
+		testhelpers.Equals(t, testAccessKey, accessKey)
+		testhelpers.Assert(t, exist, "accessKey must exist")
 	})
 }
 
