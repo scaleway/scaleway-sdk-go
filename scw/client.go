@@ -114,14 +114,14 @@ func (c *Client) GetDefaultZone() (zone Zone, exists bool) {
 
 func (c *Client) GetSecretKey() (secretKey string, exists bool) {
 	if token, isToken := c.auth.(*auth.Token); isToken {
-		return token.SecretKey, true
+		return token.SecretKey, isToken
 	}
 	return "", false
 }
 
 func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 	if token, isToken := c.auth.(*auth.Token); isToken {
-		return token.AccessKey, true
+		return token.AccessKey, isToken
 	}
 	return "", false
 }
