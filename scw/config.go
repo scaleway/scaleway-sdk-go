@@ -185,6 +185,9 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	if os.IsNotExist(err) {
 		return nil, configFileNotFound(path)
 	}
+	if err != nil {
+		return nil, err
+	}
 
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
