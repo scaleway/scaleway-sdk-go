@@ -1,7 +1,6 @@
 package instance
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -40,17 +39,14 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 	testhelpers.AssertNoError(t, err)
 
 	// Backup will create a snapshot for each volume + an image base on all snapshots.
-	backupRes, err := instanceAPI.ServerAction(&ServerActionRequest{
-		ServerID: serverRes.Server.ID,
-		Action:   ServerActionBackup,
-		Name:     &snapshotName,
+	snapshot, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
+		Name:     snapshotName,
+		VolumeID: serverRes.Server.Volumes["0"].ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
-	tmp := strings.Split(backupRes.Task.HrefResult, "/")
-	snapshotID := tmp[2]
 	snapshotRes, err := instanceAPI.GetSnapshot(&GetSnapshotRequest{
-		SnapshotID: snapshotID,
+		SnapshotID: snapshot.Snapshot.ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -59,11 +55,6 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 
 		err := instanceAPI.DeleteServer(&DeleteServerRequest{
 			ServerID: serverRes.Server.ID,
-		})
-		testhelpers.AssertNoError(t, err)
-
-		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
-			VolumeID: serverRes.Server.Volumes["0"].ID,
 		})
 		testhelpers.AssertNoError(t, err)
 
