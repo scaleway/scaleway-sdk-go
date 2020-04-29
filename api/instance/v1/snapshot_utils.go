@@ -44,7 +44,7 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
 		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for image failed")
+		return nil, errors.Wrap(err, "waiting for snapshot failed")
 	}
 	return snapshot.(*Snapshot), nil
 }
