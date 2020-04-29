@@ -15,7 +15,7 @@ type WaitForSnapshotRequest struct {
 	Timeout    time.Duration
 }
 
-// WaitForImage wait for the image to be in a "terminal state" before returning.
+// WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
 func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
 	if req.Timeout == 0 {
 		req.Timeout = defaultTimeout
