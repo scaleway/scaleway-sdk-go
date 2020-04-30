@@ -136,7 +136,7 @@ func TestSaveConfig(t *testing.T) {
 		{
 			name: "Custom-path config",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/valid1/test.conf",
+				ScwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
@@ -277,7 +277,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/valid1/test.conf",
+				ScwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
@@ -286,7 +286,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/valid3/test.conf",
+				ScwConfigPathEnv: "{HOME}/valid3/test.conf",
 			},
 			files: map[string]string{
 				"valid3/test.conf": v2SimpleValidConfigFile,
@@ -389,7 +389,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
 				"HOME":              "{HOME}",
-				scwActiveProfileEnv: v2ValidProfile,
+				ScwActiveProfileEnv: v2ValidProfile,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -407,7 +407,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Err: custom-path config with valid V1",
 			env: map[string]string{
-				scwConfigPathEnv: "{HOME}/valid2/test.conf",
+				ScwConfigPathEnv: "{HOME}/valid2/test.conf",
 			},
 			files: map[string]string{
 				"valid2/test.conf": v1ValidConfigFile,
