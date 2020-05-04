@@ -304,6 +304,8 @@ const (
 	DomainStatusExpiring = DomainStatus("expiring")
 	// DomainStatusUpdating is [insert doc].
 	DomainStatusUpdating = DomainStatus("updating")
+	// DomainStatusPending is [insert doc].
+	DomainStatusPending = DomainStatus("pending")
 )
 
 func (enum DomainStatus) String() string {
@@ -1446,6 +1448,16 @@ type RefreshDNSZoneResponse struct {
 	DNSZones []*DNSZone `json:"dns_zones"`
 }
 
+type RegisterExternalDomainResponse struct {
+	Domain string `json:"domain"`
+
+	OrganizationID string `json:"organization_id"`
+
+	ValidationToken string `json:"validation_token"`
+
+	CreatedAt time.Time `json:"created_at"`
+}
+
 // RestoreDNSZoneVersionResponse: restore dns zone version response
 type RestoreDNSZoneVersionResponse struct {
 }
@@ -1817,7 +1829,7 @@ type RegisterExternalDomainRequest struct {
 //
 // Request the register of an external domain name.
 //
-func (s *API) RegisterExternalDomain(req *RegisterExternalDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+func (s *API) RegisterExternalDomain(req *RegisterExternalDomainRequest, opts ...scw.RequestOption) (*RegisterExternalDomainResponse, error) {
 	var err error
 
 	if req.OrganizationID == "" {
@@ -1836,7 +1848,7 @@ func (s *API) RegisterExternalDomain(req *RegisterExternalDomainRequest, opts ..
 		return nil, err
 	}
 
-	var resp Domain
+	var resp RegisterExternalDomainResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
