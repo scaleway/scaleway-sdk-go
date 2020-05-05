@@ -22,11 +22,11 @@ func TestGetImageByLabel(t *testing.T) {
 		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
-			ImageLabel:     "ubuntu-focal",
+			ImageLabel:     "ubuntu_focal",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu-focal DEV1-S at par1: ce6c9d21-0ff3-4355-b385-c930c9f22d9d
+		// ubuntu_focal DEV1-S at par1: ce6c9d21-0ff3-4355-b385-c930c9f22d9d
 		testhelpers.Equals(t, "ce6c9d21-0ff3-4355-b385-c930c9f22d9d", imageID)
 	})
 
@@ -37,11 +37,11 @@ func TestGetImageByLabel(t *testing.T) {
 		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "dev1-s",
-			ImageLabel:     "ubuntu-focal",
+			ImageLabel:     "ubuntu_focal",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu-focal DEV1-S at par1: ce6c9d21-0ff3-4355-b385-c930c9f22d9d
+		// ubuntu_focal DEV1-S at par1: ce6c9d21-0ff3-4355-b385-c930c9f22d9d
 		testhelpers.Equals(t, "ce6c9d21-0ff3-4355-b385-c930c9f22d9d", imageID)
 	})
 

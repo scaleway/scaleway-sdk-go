@@ -35,7 +35,7 @@ func TestWaitForImage(t *testing.T) {
 func createImage(t *testing.T, instanceAPI *API, imageName string) (*Image, func()) {
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
-		Image:          "ubuntu-focal",
+		Image:          "ubuntu_focal",
 	})
 	testhelpers.AssertNoError(t, err)
 

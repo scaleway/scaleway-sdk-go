@@ -95,7 +95,7 @@ func Example_createServer() {
 	instanceAPI := instance.NewAPI(client)
 
 	serverType := "DEV1-S"
-	image := "ubuntu-focal"
+	image := "ubuntu_focal"
 
 	// Create a new DEV1-S server
 	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
