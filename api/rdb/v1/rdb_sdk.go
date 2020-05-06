@@ -786,6 +786,8 @@ type EngineVersion struct {
 	AvailableSettings []*EngineSetting `json:"available_settings"`
 
 	Disabled bool `json:"disabled"`
+
+	Beta bool `json:"beta"`
 }
 
 // Instance: instance
@@ -932,6 +934,8 @@ type NodeType struct {
 	IsBssdCompatible bool `json:"is_bssd_compatible"`
 
 	Disabled bool `json:"disabled"`
+
+	Beta bool `json:"beta"`
 
 	Region scw.Region `json:"region"`
 }
