@@ -772,6 +772,10 @@ const (
 	TaskTypeRenewSslCertificate = TaskType("renew_ssl_certificate")
 	// TaskTypeSendMessage is [insert doc].
 	TaskTypeSendMessage = TaskType("send_message")
+	// TaskTypeDeleteDomainExpired is [insert doc].
+	TaskTypeDeleteDomainExpired = TaskType("delete_domain_expired")
+	// TaskTypeDeleteExternalDomain is [insert doc].
+	TaskTypeDeleteExternalDomain = TaskType("delete_external_domain")
 )
 
 func (enum TaskType) String() string {
