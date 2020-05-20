@@ -19,7 +19,7 @@ func TestUpdateVolume(t *testing.T) {
 
 	var (
 		zone          = scw.ZoneFrPar1
-		organization  = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
+		organization  = "951df375-e094-4d26-97c1-ba548eeb9c42"
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
 		volumeType    = VolumeTypeLSSD
