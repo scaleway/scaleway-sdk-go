@@ -1207,6 +1207,10 @@ type UpdateServerResponse struct {
 	Server *Server `json:"server"`
 }
 
+type UpdateVolumeResponse struct {
+	Volume *Volume `json:"volume"`
+}
+
 // Volume: volume
 type Volume struct {
 	// ID: the volumes unique ID
@@ -2719,6 +2723,55 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 	}
 
 	var resp GetVolumeResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateVolumeRequest struct {
+	Zone scw.Zone `json:"-"`
+	// VolumeID: UUID of the volume
+	VolumeID string `json:"-"`
+	// Name: the volume name
+	Name *string `json:"name,omitempty"`
+	// Size: the volume disk size
+	Size *scw.Size `json:"size,omitempty"`
+}
+
+// UpdateVolume: update volume
+//
+// Replace name and/or size properties of given ID volume with the given value(s). Any volume name can be changed while, for now, only `b_ssd` volume growing is supported.
+func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return nil, errors.New("field VolumeID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateVolumeResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
