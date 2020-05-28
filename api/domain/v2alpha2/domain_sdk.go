@@ -101,6 +101,42 @@ func (enum *Civility) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ContactEmailStatus string
+
+const (
+	// ContactEmailStatusEmailStatusUnknown is [insert doc].
+	ContactEmailStatusEmailStatusUnknown = ContactEmailStatus("email_status_unknown")
+	// ContactEmailStatusValidated is [insert doc].
+	ContactEmailStatusValidated = ContactEmailStatus("validated")
+	// ContactEmailStatusNotValidated is [insert doc].
+	ContactEmailStatusNotValidated = ContactEmailStatus("not_validated")
+	// ContactEmailStatusInvalidEmail is [insert doc].
+	ContactEmailStatusInvalidEmail = ContactEmailStatus("invalid_email")
+)
+
+func (enum ContactEmailStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "email_status_unknown"
+	}
+	return string(enum)
+}
+
+func (enum ContactEmailStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContactEmailStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContactEmailStatus(ContactEmailStatus(tmp).String())
+	return nil
+}
+
 type DNSZoneStatus string
 
 const (
@@ -304,8 +340,8 @@ const (
 	DomainStatusExpiring = DomainStatus("expiring")
 	// DomainStatusUpdating is [insert doc].
 	DomainStatusUpdating = DomainStatus("updating")
-	// DomainStatusPending is [insert doc].
-	DomainStatusPending = DomainStatus("pending")
+	// DomainStatusChecking is [insert doc].
+	DomainStatusChecking = DomainStatus("checking")
 )
 
 func (enum DomainStatus) String() string {
@@ -935,6 +971,10 @@ type Contact struct {
 	ExtensionEu *ExtensionEU `json:"extension_eu"`
 
 	WhoisOptOut bool `json:"whois_opt_out"`
+	// EmailStatus:
+	//
+	// Default value: email_status_unknown
+	EmailStatus ContactEmailStatus `json:"email_status"`
 }
 
 type ContactRoles struct {
