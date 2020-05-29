@@ -1608,6 +1608,8 @@ type ListTasksRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	Domain string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListTasks: list tasks
@@ -1627,6 +1629,7 @@ func (s *API) ListTasks(req *ListTasksRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1933,6 +1936,8 @@ func (s *API) DeleteExternalDomain(req *DeleteExternalDomainRequest, opts ...scw
 
 type ListContactsRequest struct {
 	Domain *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListContacts: list contacts
@@ -1945,6 +1950,7 @@ func (s *API) ListContacts(req *ListContactsRequest, opts ...scw.RequestOption) 
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2093,6 +2099,8 @@ type ListDomainsRequest struct {
 	//
 	// Default value: unknown
 	Status DomainStatus `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDomains: list domains
@@ -2112,6 +2120,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "registrar", req.Registrar)
 	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2495,6 +2504,8 @@ type ListDNSZonesRequest struct {
 	Domain string `json:"-"`
 
 	DNSZone string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZones: list DNS zones
@@ -2516,6 +2527,7 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -2707,6 +2719,8 @@ type ListDNSZoneRecordsRequest struct {
 	//
 	// Default value: unknown
 	Type RecordType `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZoneRecords: list DNS zone records
@@ -2728,6 +2742,7 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
@@ -2825,6 +2840,8 @@ func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw
 
 type ListDNSZoneNameserversRequest struct {
 	DNSZone string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZoneNameservers: list DNS zone nameservers
@@ -2833,6 +2850,9 @@ type ListDNSZoneNameserversRequest struct {
 func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ...scw.RequestOption) (*ListDNSZoneNameserversResponse, error) {
 	var err error
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
 	}
@@ -2840,6 +2860,7 @@ func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ..
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/domain/v2alpha2/dns-zones/" + fmt.Sprint(req.DNSZone) + "/nameservers",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -3072,6 +3093,8 @@ func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOpti
 
 type ListDNSZoneVersionsRequest struct {
 	DNSZone string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZoneVersions: list DNS zone versions
@@ -3083,6 +3106,9 @@ type ListDNSZoneVersionsRequest struct {
 func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionsResponse, error) {
 	var err error
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
 	}
@@ -3090,6 +3116,7 @@ func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/domain/v2alpha2/dns-zones/" + fmt.Sprint(req.DNSZone) + "/versions",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -3106,6 +3133,8 @@ type ListDNSZoneVersionRecordsRequest struct {
 	DNSZone string `json:"-"`
 
 	Version string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZoneVersionRecords: list DNS zone version records
@@ -3113,6 +3142,9 @@ type ListDNSZoneVersionRecordsRequest struct {
 // Get a list of records from an old DNS zone version.
 func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionRecordsResponse, error) {
 	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
@@ -3125,6 +3157,7 @@ func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, o
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/domain/v2alpha2/dns-zones/" + fmt.Sprint(req.DNSZone) + "/versions/" + fmt.Sprint(req.Version) + "/records",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -3248,6 +3281,8 @@ type ListSSLCertificatesRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	DNSZone string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListSSLCertificates: list all user SSL certificate
@@ -3263,6 +3298,7 @@ func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.R
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
