@@ -102,7 +102,6 @@ profiles:
 type Config struct {
 	Profile       `yaml:",inline"`
 	ActiveProfile *string             `yaml:"active_profile,omitempty"`
-	SendTelemetry *bool               `yaml:"send_telemetry,omitempty"`
 	Profiles      map[string]*Profile `yaml:"profiles,omitempty"`
 }
 
@@ -114,6 +113,7 @@ type Profile struct {
 	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
 	DefaultRegion         *string `yaml:"default_region,omitempty"`
 	DefaultZone           *string `yaml:"default_zone,omitempty"`
+	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty"`
 }
 
 func (p *Profile) String() string {
