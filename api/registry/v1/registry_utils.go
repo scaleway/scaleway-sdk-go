@@ -8,16 +8,29 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+const (
+	defaultTimeout       = 5 * time.Minute
+	defaultRetryInterval = 15 * time.Second
+)
+
 // WaitForNamespaceRequest is used by WaitForNamespace method
 type WaitForNamespaceRequest struct {
-	NamespaceID string
-	Region      scw.Region
-	Timeout     time.Duration
+	NamespaceID   string
+	Region        scw.Region
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForNamespace wait for the namespace to be in a "terminal state" before returning.
 // This function can be used to wait for a namespace to be ready for example.
 func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error) {
+	if req.Timeout == 0 {
+		req.Timeout = defaultTimeout
+	}
+	if req.RetryInterval == 0 {
+		req.RetryInterval = defaultRetryInterval
+	}
+
 	terminalStatus := map[NamespaceStatus]struct{}{
 		NamespaceStatusReady:   {},
 		NamespaceStatusLocked:  {},
@@ -40,7 +53,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error)
 			return ns, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for namespace failed")

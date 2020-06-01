@@ -10,14 +10,22 @@ import (
 
 // WaitForNamespaceRequest is used by WaitForNamespace method
 type WaitForImageRequest struct {
-	ImageID string
-	Region  scw.Region
-	Timeout time.Duration
+	ImageID       string
+	Region        scw.Region
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForImage wait for the image to be in a "terminal state" before returning.
 // This function can be used to wait for an image to be ready for example.
 func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
+	if req.Timeout == 0 {
+		req.Timeout = defaultTimeout
+	}
+	if req.RetryInterval == 0 {
+		req.RetryInterval = defaultRetryInterval
+	}
+
 	terminalStatus := map[ImageStatus]struct{}{
 		ImageStatusReady:   {},
 		ImageStatusLocked:  {},
@@ -40,7 +48,7 @@ func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
 			return img, isTerminal, err
 		},
 		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for image failed")

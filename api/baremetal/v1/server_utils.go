@@ -28,6 +28,10 @@ type WaitForServerRequest struct {
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be created.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
+	if req.Timeout == 0 {
+		req.Timeout = defaultTimeout
+	}
+
 	terminalStatus := map[ServerStatus]struct{}{
 		ServerStatusReady:   {},
 		ServerStatusStopped: {},
