@@ -476,11 +476,11 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 func TestConfigString(t *testing.T) {
 	var c = &Config{
 		Profile: Profile{
-			AccessKey: s(v2ValidAccessKey),
-			SecretKey: s(v2ValidSecretKey),
+			AccessKey:     s(v2ValidAccessKey),
+			SecretKey:     s(v2ValidSecretKey),
+			SendTelemetry: b(true),
 		},
 		ActiveProfile: s(v2ValidProfile),
-		SendTelemetry: b(true),
 		Profiles: map[string]*Profile{
 			v2ValidProfile: {
 				AccessKey: s(v2ValidAccessKey2),
@@ -491,8 +491,8 @@ func TestConfigString(t *testing.T) {
 
 	testhelpers.Equals(t, `access_key: SCW1234567890ABCDEFG
 secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-active_profile: flantier
 send_telemetry: true
+active_profile: flantier
 profiles:
   flantier:
     access_key: SCW234567890ABCDEFGH
@@ -756,11 +756,11 @@ access_key: SCW1234567890ABCDEFG
 	t.Run("full", run(&testCase{
 		config: &Config{
 			Profile: Profile{
-				AccessKey: s(v2ValidAccessKey),
-				SecretKey: s(v2ValidSecretKey),
+				AccessKey:     s(v2ValidAccessKey),
+				SecretKey:     s(v2ValidSecretKey),
+				SendTelemetry: b(true),
 			},
 			ActiveProfile: s(v2ValidProfile),
-			SendTelemetry: b(true),
 			Profiles: map[string]*Profile{
 				"profile1": {
 					AccessKey: s(v2ValidAccessKey2),
