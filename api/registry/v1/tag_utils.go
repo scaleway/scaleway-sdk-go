@@ -19,11 +19,13 @@ type WaitForTagRequest struct {
 // WaitForTag wait for the tag to be in a "terminal state" before returning.
 // This function can be used to wait for a tag to be ready for example.
 func (s *API) WaitForTag(req *WaitForTagRequest) (*Tag, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
 	}
-	if req.RetryInterval == 0 {
-		req.RetryInterval = defaultRetryInterval
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
 	}
 
 	terminalStatus := map[TagStatus]struct{}{
@@ -47,8 +49,8 @@ func (s *API) WaitForTag(req *WaitForTagRequest) (*Tag, error) {
 
 			return t, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for tag failed")

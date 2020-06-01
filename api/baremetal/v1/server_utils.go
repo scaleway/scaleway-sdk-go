@@ -24,11 +24,13 @@ type WaitForServerRequest struct {
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be created.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
 	}
-	if req.RetryInterval == 0 {
-		req.RetryInterval = defaultRetryInterval
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
 	}
 
 	terminalStatus := map[ServerStatus]struct{}{
@@ -52,8 +54,8 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			_, isTerminal := terminalStatus[res.Status]
 			return res, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
@@ -74,11 +76,13 @@ type WaitForServerInstallRequest struct {
 // "terminal state" before returning.
 // This function can be used to wait for a server to be installed.
 func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
 	}
-	if req.RetryInterval == 0 {
-		req.RetryInterval = defaultRetryInterval
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
 	}
 
 	installTerminalStatus := map[ServerInstallStatus]struct{}{
@@ -104,8 +108,8 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 			_, isTerminal := installTerminalStatus[res.Install.Status]
 			return res, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server installation failed")

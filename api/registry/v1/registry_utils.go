@@ -24,11 +24,13 @@ type WaitForNamespaceRequest struct {
 // WaitForNamespace wait for the namespace to be in a "terminal state" before returning.
 // This function can be used to wait for a namespace to be ready for example.
 func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
 	}
-	if req.RetryInterval == 0 {
-		req.RetryInterval = defaultRetryInterval
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
 	}
 
 	terminalStatus := map[NamespaceStatus]struct{}{
@@ -52,8 +54,8 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error)
 
 			return ns, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(req.RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for namespace failed")
