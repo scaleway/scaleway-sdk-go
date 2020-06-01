@@ -107,7 +107,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testDefaultOrganizationID),
 			s(string(testDefaultRegion)),
 			s(string(testDefaultZone)),
-			BoolPtr(true),
+			b(true),
 		}
 
 		client, err := NewClient(WithProfile(profile))
