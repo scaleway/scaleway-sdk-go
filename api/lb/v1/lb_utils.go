@@ -8,16 +8,31 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+const (
+	defaultRetryInterval = 2 * time.Second
+	defaultTimeout       = 10 * time.Minute
+)
+
 // WaitForLbRequest is used by WaitForLb method.
 type WaitForLbRequest struct {
-	LbID    string
-	Region  scw.Region
-	Timeout time.Duration
+	LbID          string
+	Region        scw.Region
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForLb waits for the lb to be in a "terminal state" before returning.
 // This function can be used to wait for a lb to be ready for example.
 func (s *API) WaitForLb(req *WaitForLbRequest) (*Lb, error) {
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
+	}
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
+	}
+
 	terminalStatus := map[LbStatus]struct{}{
 		LbStatusReady:   {},
 		LbStatusStopped: {},
@@ -39,8 +54,8 @@ func (s *API) WaitForLb(req *WaitForLbRequest) (*Lb, error) {
 
 			return res, isTerminal, nil
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for lb failed")

@@ -19,10 +19,6 @@ const (
 	defaultRetryInterval = 5 * time.Second
 )
 
-var (
-	RetryInterval = defaultRetryInterval
-)
-
 // CreateServer creates a server.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	// If image is not a UUID we try to fetch it from marketplace.
@@ -52,14 +48,23 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 
 // WaitForServerRequest is used by WaitForServer method.
 type WaitForServerRequest struct {
-	ServerID string
-	Zone     scw.Zone
-	Timeout  time.Duration
+	ServerID      string
+	Zone          scw.Zone
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
+	}
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
+	}
 	terminalStatus := map[ServerState]struct{}{
 		ServerStateStopped:        {},
 		ServerStateStoppedInPlace: {},
@@ -81,8 +86,8 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 
 			return res.Server, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for server failed")
@@ -97,7 +102,8 @@ type ServerActionAndWaitRequest struct {
 	Action   ServerAction
 
 	// Timeout: maximum time to wait before (default: 5 minutes)
-	Timeout time.Duration
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // ServerActionAndWait start an action and wait for the server to be in the correct "terminal state"

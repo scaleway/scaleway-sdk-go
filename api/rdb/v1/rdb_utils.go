@@ -8,16 +8,31 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+const (
+	defaultRetryInterval = 15 * time.Second
+	defaultTimeout       = 15 * time.Minute
+)
+
 // WaitForInstanceRequest is used by WaitForInstance method.
 type WaitForInstanceRequest struct {
-	InstanceID string
-	Region     scw.Region
-	Timeout    time.Duration
+	InstanceID    string
+	Region        scw.Region
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForInstance waits for the instance to be in a "terminal state" before returning.
 // This function can be used to wait for an instance to be ready for example.
 func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
+	}
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
+	}
+
 	terminalStatus := map[InstanceStatus]struct{}{
 		InstanceStatusReady:    {},
 		InstanceStatusDiskFull: {},
@@ -38,8 +53,8 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
 
 			return res, isTerminal, nil
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for instance failed")

@@ -16,7 +16,7 @@ import (
 func init() {
 	// set interval strategy to 0 when replaying cassettes
 	if httprecorder.IsUpdatingCassette() {
-		RetryInterval = 0
+
 	}
 }
 

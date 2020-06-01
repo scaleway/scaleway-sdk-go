@@ -10,15 +10,21 @@ import (
 
 // WaitForImageRequest is used by WaitForImage method.
 type WaitForSnapshotRequest struct {
-	SnapshotID string
-	Zone       scw.Zone
-	Timeout    time.Duration
+	SnapshotID    string
+	Zone          scw.Zone
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
 func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
+	}
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
 	}
 
 	terminalStatus := map[SnapshotState]struct{}{
@@ -40,8 +46,8 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
 
 			return res.Snapshot, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for snapshot failed")

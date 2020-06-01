@@ -8,16 +8,31 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+const (
+	waitForClusterDefaultTimeout = 15 * time.Minute
+	defaultRetryInterval         = 5 * time.Second
+)
+
 // WaitForClusterRequest is used by WaitForCluster method.
 type WaitForClusterRequest struct {
-	ClusterID string
-	Region    scw.Region
-	Status    ClusterStatus
-	Timeout   time.Duration
+	ClusterID     string
+	Region        scw.Region
+	Status        ClusterStatus
+	Timeout       time.Duration
+	RetryInterval time.Duration
 }
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
 func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
+	timeout := req.Timeout
+	if timeout == 0 {
+		timeout = waitForClusterDefaultTimeout
+	}
+	retryInterval := req.RetryInterval
+	if retryInterval == 0 {
+		retryInterval = defaultRetryInterval
+	}
+
 	terminalStatus := map[ClusterStatus]struct{}{
 		ClusterStatusReady:   {},
 		ClusterStatusError:   {},
@@ -39,8 +54,8 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 			_, isTerminal := terminalStatus[cluster.Status]
 			return cluster, isTerminal, nil
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(5 * time.Second),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for cluster failed")
