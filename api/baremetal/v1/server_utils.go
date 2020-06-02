@@ -18,7 +18,7 @@ type WaitForServerRequest struct {
 	ServerID      string
 	Zone          scw.Zone
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
@@ -28,9 +28,9 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[ServerStatus]struct{}{
@@ -69,7 +69,7 @@ type WaitForServerInstallRequest struct {
 	ServerID      string
 	Zone          scw.Zone
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForServerInstall wait for the server install to be in a
@@ -80,9 +80,9 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	installTerminalStatus := map[ServerInstallStatus]struct{}{

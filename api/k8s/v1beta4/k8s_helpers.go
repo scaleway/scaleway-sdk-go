@@ -21,7 +21,7 @@ type WaitForClusterRequest struct {
 	Region        scw.Region
 	Status        ClusterStatus
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
@@ -30,9 +30,9 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[ClusterStatus]struct{}{
@@ -70,7 +70,7 @@ type WaitForPoolRequest struct {
 	PoolID        string
 	Region        scw.Region
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForPool waits for a pool to be ready
@@ -79,9 +79,9 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[PoolStatus]struct{}{
@@ -115,7 +115,7 @@ type WaitForNodeRequest struct {
 	NodeID        string
 	Region        scw.Region
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForNode waits for a Node to be ready
@@ -124,9 +124,9 @@ func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[NodeStatus]struct{}{

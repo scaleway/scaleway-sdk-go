@@ -13,7 +13,7 @@ type WaitForImageRequest struct {
 	ImageID       string
 	Region        scw.Region
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForImage wait for the image to be in a "terminal state" before returning.
@@ -23,9 +23,9 @@ func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[ImageStatus]struct{}{

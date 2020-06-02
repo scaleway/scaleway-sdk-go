@@ -18,7 +18,7 @@ type WaitForLbRequest struct {
 	LbID          string
 	Region        scw.Region
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForLb waits for the lb to be in a "terminal state" before returning.
@@ -28,9 +28,9 @@ func (s *API) WaitForLb(req *WaitForLbRequest) (*Lb, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[LbStatus]struct{}{

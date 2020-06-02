@@ -18,7 +18,7 @@ type WaitForNamespaceRequest struct {
 	NamespaceID   string
 	Region        scw.Region
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForNamespace wait for the namespace to be in a "terminal state" before returning.
@@ -28,9 +28,9 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error)
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[NamespaceStatus]struct{}{

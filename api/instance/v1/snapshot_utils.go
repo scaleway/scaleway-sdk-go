@@ -13,7 +13,7 @@ type WaitForSnapshotRequest struct {
 	SnapshotID    string
 	Zone          scw.Zone
 	Timeout       *time.Duration
-	RetryInterval time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
@@ -22,9 +22,9 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
-	retryInterval := req.RetryInterval
-	if retryInterval == 0 {
-		retryInterval = defaultRetryInterval
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[SnapshotState]struct{}{
