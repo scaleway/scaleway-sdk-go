@@ -24,9 +24,9 @@ type WaitForClusterRequest struct {
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
 func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForClusterDefaultTimeout
+	timeout := waitForClusterDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {

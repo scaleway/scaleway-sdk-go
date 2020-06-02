@@ -24,9 +24,9 @@ type WaitForServerRequest struct {
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be created.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {
@@ -76,9 +76,9 @@ type WaitForServerInstallRequest struct {
 // "terminal state" before returning.
 // This function can be used to wait for a server to be installed.
 func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {

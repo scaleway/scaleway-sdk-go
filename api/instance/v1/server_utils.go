@@ -57,9 +57,9 @@ type WaitForServerRequest struct {
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {
@@ -109,9 +109,9 @@ type ServerActionAndWaitRequest struct {
 // ServerActionAndWait start an action and wait for the server to be in the correct "terminal state"
 // expected by this action.
 func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 
 	_, err := s.ServerAction(&ServerActionRequest{

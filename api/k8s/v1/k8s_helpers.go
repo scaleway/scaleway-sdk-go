@@ -122,9 +122,9 @@ type WaitForNodeRequest struct {
 
 // WaitForNode waits for a Node to be ready
 func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForNodeDefaultTimeout
+	timeout := waitForNodeDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {

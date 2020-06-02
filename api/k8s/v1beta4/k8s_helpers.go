@@ -26,9 +26,9 @@ type WaitForClusterRequest struct {
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
 func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForClusterDefaultTimeout
+	timeout := waitForClusterDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {
@@ -75,9 +75,9 @@ type WaitForPoolRequest struct {
 
 // WaitForPool waits for a pool to be ready
 func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForPoolDefaultTimeout
+	timeout := waitForPoolDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {
@@ -120,9 +120,9 @@ type WaitForNodeRequest struct {
 
 // WaitForNode waits for a Node to be ready
 func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForNodeDefaultTimeout
+	timeout := waitForNodeDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {

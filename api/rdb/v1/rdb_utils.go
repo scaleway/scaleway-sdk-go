@@ -24,9 +24,9 @@ type WaitForInstanceRequest struct {
 // WaitForInstance waits for the instance to be in a "terminal state" before returning.
 // This function can be used to wait for an instance to be ready for example.
 func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := req.RetryInterval
 	if retryInterval == 0 {
