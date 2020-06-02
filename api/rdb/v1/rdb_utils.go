@@ -17,14 +17,14 @@ const (
 type WaitForInstanceRequest struct {
 	InstanceID    string
 	Region        scw.Region
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForInstance waits for the instance to be in a "terminal state" before returning.
 // This function can be used to wait for an instance to be ready for example.
 func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}

@@ -50,14 +50,14 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 type WaitForServerRequest struct {
 	ServerID      string
 	Zone          scw.Zone
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}
@@ -102,15 +102,16 @@ type ServerActionAndWaitRequest struct {
 	Action   ServerAction
 
 	// Timeout: maximum time to wait before (default: 5 minutes)
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // ServerActionAndWait start an action and wait for the server to be in the correct "terminal state"
 // expected by this action.
 func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := *req.Timeout
+	if timeout == 0 {
+		timeout = defaultTimeout
 	}
 
 	_, err := s.ServerAction(&ServerActionRequest{
@@ -125,7 +126,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 	finalServer, err := s.WaitForServer(&WaitForServerRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
-		Timeout:  req.Timeout,
+		Timeout:  &timeout,
 	})
 	if err != nil {
 		return err

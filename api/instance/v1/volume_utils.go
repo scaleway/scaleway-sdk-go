@@ -12,13 +12,13 @@ import (
 type WaitForVolumeRequest struct {
 	VolumeID      string
 	Zone          scw.Zone
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
 func (s *API) WaitForVolume(req *WaitForVolumeRequest) (*Volume, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}

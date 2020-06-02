@@ -17,14 +17,14 @@ const (
 type WaitForServerRequest struct {
 	ServerID      string
 	Zone          scw.Zone
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be created.
 func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}
@@ -68,7 +68,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 type WaitForServerInstallRequest struct {
 	ServerID      string
 	Zone          scw.Zone
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
@@ -76,7 +76,7 @@ type WaitForServerInstallRequest struct {
 // "terminal state" before returning.
 // This function can be used to wait for a server to be installed.
 func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}

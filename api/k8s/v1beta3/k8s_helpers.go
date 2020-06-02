@@ -18,13 +18,13 @@ type WaitForClusterRequest struct {
 	ClusterID     string
 	Region        scw.Region
 	Status        ClusterStatus
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
 func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = waitForClusterDefaultTimeout
 	}

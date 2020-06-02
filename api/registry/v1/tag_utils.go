@@ -12,14 +12,14 @@ import (
 type WaitForTagRequest struct {
 	TagID         string
 	Region        scw.Region
-	Timeout       time.Duration
+	Timeout       *time.Duration
 	RetryInterval time.Duration
 }
 
 // WaitForTag wait for the tag to be in a "terminal state" before returning.
 // This function can be used to wait for a tag to be ready for example.
 func (s *API) WaitForTag(req *WaitForTagRequest) (*Tag, error) {
-	timeout := req.Timeout
+	timeout := *req.Timeout
 	if timeout == 0 {
 		timeout = defaultTimeout
 	}
