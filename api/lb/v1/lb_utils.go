@@ -10,7 +10,7 @@ import (
 
 const (
 	defaultRetryInterval = 2 * time.Second
-	defaultTimeout       = 10 * time.Minute
+	defaultTimeout       = 5 * time.Minute
 )
 
 // WaitForLbRequest is used by WaitForLb method.
