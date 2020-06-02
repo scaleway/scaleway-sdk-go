@@ -18,9 +18,9 @@ type WaitForImageRequest struct {
 
 // WaitForImage wait for the image to be in a "terminal state" before returning.
 func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := defaultRetryInterval
 	if req.RetryInterval != nil {
