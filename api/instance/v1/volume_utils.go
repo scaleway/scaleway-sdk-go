@@ -10,15 +10,21 @@ import (
 
 // WaitForImageRequest is used by WaitForImage method.
 type WaitForVolumeRequest struct {
-	VolumeID string
-	Zone     scw.Zone
-	Timeout  time.Duration
+	VolumeID      string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
 func (s *API) WaitForVolume(req *WaitForVolumeRequest) (*Volume, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[VolumeState]struct{}{
@@ -40,8 +46,8 @@ func (s *API) WaitForVolume(req *WaitForVolumeRequest) (*Volume, error) {
 
 			return res.Volume, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for volume failed")
