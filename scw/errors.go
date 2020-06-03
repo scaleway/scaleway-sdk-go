@@ -253,7 +253,8 @@ func (e *UnknownResource) ToResourceNotFoundError() SdkError {
 		resourceNotFound.ResourceID = messageParts[0]
 	case 3: // message like: `Security Group "111..." not found`
 		resourceNotFound.ResourceID = messageParts[1]
-		resourceNotFound.Resource = strings.TrimSpace(messageParts[0])
+		// transform `Security group ` to `security_group`
+		resourceNotFound.Resource = strings.Replace(strings.ToLower(strings.TrimSpace(messageParts[0])), " ", "_")
 	default:
 		return nil
 	}
