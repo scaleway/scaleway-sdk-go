@@ -162,7 +162,7 @@ func TestAPI_CreateServer(t *testing.T) {
 
 	testhelpers.AssertNoError(t, err)
 	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
-	testhelpers.Equals(t, "ce6c9d21-0ff3-4355-b385-c930c9f22d9d", res.Server.Image.ID)
+	testhelpers.Equals(t, "365a8b9c-0c6e-4875-a887-dc3213db9e20", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,
