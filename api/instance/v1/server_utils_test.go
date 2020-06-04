@@ -157,12 +157,12 @@ func TestAPI_CreateServer(t *testing.T) {
 	res, err := instanceAPI.CreateServer(&CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "GP1-XS",
-		Image:          "ubuntu-bionic",
+		Image:          "ubuntu_focal",
 	})
 
 	testhelpers.AssertNoError(t, err)
-	// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
-	testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
+	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
+	testhelpers.Equals(t, "365a8b9c-0c6e-4875-a887-dc3213db9e20", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,

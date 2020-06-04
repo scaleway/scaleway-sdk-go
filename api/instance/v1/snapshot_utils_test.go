@@ -34,7 +34,7 @@ func TestWaitForSnapshot(t *testing.T) {
 func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snapshot, func()) {
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
-		Image:          "ubuntu-bionic",
+		Image:          "ubuntu_focal",
 	})
 	testhelpers.AssertNoError(t, err)
 
