@@ -95,7 +95,7 @@ func Example_createServer() {
 	instanceAPI := instance.NewAPI(client)
 
 	serverType := "DEV1-S"
-	image := "ubuntu-bionic"
+	image := "ubuntu_focal"
 
 	// Create a new DEV1-S server
 	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
@@ -109,10 +109,11 @@ func Example_createServer() {
 	}
 
 	// Start the server and wait until it's ready.
+	timeout := 5 * time.Minute
 	err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 		ServerID: createRes.Server.ID,
 		Action:   instance.ServerActionPoweron,
-		Timeout:  5 * time.Minute,
+		Timeout:  &timeout,
 	})
 	if err != nil {
 		panic(err)
@@ -139,13 +140,14 @@ func Example_rebootAllServers() {
 	}
 
 	// For each server if they are running we reboot them using ServerActionAndWait
+	timeout := 5 * time.Minute
 	for _, server := range response.Servers {
 		if server.State == instance.ServerStateRunning {
 			fmt.Println("Rebooting server with ID", server.ID)
 			err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 				ServerID: server.ID,
 				Action:   instance.ServerActionReboot,
-				Timeout:  5 * time.Minute,
+				Timeout:  &timeout,
 			})
 			if err != nil {
 				panic(err)

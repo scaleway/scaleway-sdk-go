@@ -592,7 +592,7 @@ interactions:
       "zone": "ams1"}, {"compatible_commercial_types": ["VC1S", "VC1M", "VC1L", "START1-XS",
       "START1-S", "START1-M", "START1-L", "X64-15GB", "X64-30GB", "X64-60GB", "X64-120GB",
       "RENDER-S", "GP1-XS", "GP1-S", "GP1-M", "GP1-L", "GP1-XL", "DEV1-S", "DEV1-M",
-      "DEV1-L", "DEV1-XL"], "arch": "x86_64", "id": "ce6c9d21-0ff3-4355-b385-c930c9f22d9d",
+      "DEV1-L", "DEV1-XL"], "arch": "x86_64", "id": "365a8b9c-0c6e-4875-a887-dc3213db9e20",
       "zone": "par1"}], "name": "2020-04-28T15:08:03.913957+00:00"}], "current_public_version":
       "61cf23b2-447a-48d4-9cfe-02b965fa651b", "label": "ubuntu_focal", "organization":
       {"id": "51b656e3-4865-41e8-adbc-0c45bdd780db", "name": "Instances User Resources

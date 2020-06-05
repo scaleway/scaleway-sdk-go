@@ -8,25 +8,20 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-var (
-	// RetryInterval is needed when running recorded tests (e.g. on scaleway-cli)
-	// it allows to execute the WaitFor funcs immediately
-	RetryInterval = defaultRetryInterval
-)
-
 const (
-	waitForClusterDefaultTimeout = time.Minute * 15
-	waitForPoolDefaultTimeout    = time.Minute * 15
-	waitForNodeDefaultTimeout    = time.Minute * 15
-	defaultRetryInterval         = time.Second * 5
+	waitForClusterDefaultTimeout = 15 * time.Minute
+	waitForPoolDefaultTimeout    = 15 * time.Minute
+	waitForNodeDefaultTimeout    = 15 * time.Minute
+	defaultRetryInterval         = 5 * time.Second
 )
 
 // WaitForClusterRequest is used by WaitForCluster method.
 type WaitForClusterRequest struct {
-	ClusterID string
-	Region    scw.Region
-	Status    ClusterStatus
-	Timeout   *time.Duration
+	ClusterID     string
+	Region        scw.Region
+	Status        ClusterStatus
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
@@ -35,6 +30,11 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 	if req.Timeout != nil {
 		timeout = *req.Timeout
 	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
 	terminalStatus := map[ClusterStatus]struct{}{
 		ClusterStatusReady:   {},
 		ClusterStatusError:   {},
@@ -57,7 +57,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 			return cluster, isTerminal, nil
 		},
 		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for cluster failed")
@@ -67,21 +67,26 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest) (*Cluster, error) {
 
 // WaitForPoolRequest is used by WaitForPool method.
 type WaitForPoolRequest struct {
-	PoolID  string
-	Region  scw.Region
-	Timeout *time.Duration
+	PoolID        string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForPool waits for a pool to be ready
 func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
-	terminalStatus := map[PoolStatus]struct{}{
-		PoolStatusReady:   {},
-		PoolStatusWarning: {},
-	}
-
 	timeout := waitForPoolDefaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[PoolStatus]struct{}{
+		PoolStatusReady:   {},
+		PoolStatusWarning: {},
 	}
 
 	pool, err := async.WaitSync(&async.WaitSyncConfig{
@@ -99,7 +104,7 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 			return res, isTerminal, nil
 		},
 		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 
 	return pool.(*Pool), err
@@ -107,21 +112,26 @@ func (s *API) WaitForPool(req *WaitForPoolRequest) (*Pool, error) {
 
 // WaitForNodeRequest is used by WaitForNode method.
 type WaitForNodeRequest struct {
-	NodeID  string
-	Region  scw.Region
-	Timeout *time.Duration
+	NodeID        string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForNode waits for a Node to be ready
 func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
-	terminalStatus := map[NodeStatus]struct{}{
-		NodeStatusCreationError: {},
-		NodeStatusReady:         {},
-	}
-
 	timeout := waitForNodeDefaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[NodeStatus]struct{}{
+		NodeStatusCreationError: {},
+		NodeStatusReady:         {},
 	}
 
 	node, err := async.WaitSync(&async.WaitSyncConfig{
@@ -139,7 +149,7 @@ func (s *API) WaitForNode(req *WaitForNodeRequest) (*Node, error) {
 			return res, isTerminal, nil
 		},
 		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 
 	return node.(*Node), err

@@ -22,12 +22,12 @@ func TestGetImageByLabel(t *testing.T) {
 		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
-			ImageLabel:     "ubuntu-bionic",
+			ImageLabel:     "ubuntu_focal",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
-		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
+		// ubuntu_focal DEV1-S at par1: 365a8b9c-0c6e-4875-a887-dc3213db9e20
+		testhelpers.Equals(t, "365a8b9c-0c6e-4875-a887-dc3213db9e20", imageID)
 	})
 
 	t.Run("matching input for GetLocalImageIDByLabel with lowercase image label", func(t *testing.T) {
@@ -37,12 +37,12 @@ func TestGetImageByLabel(t *testing.T) {
 		imageID, err := marketplaceAPI.GetLocalImageIDByLabel(&GetLocalImageIDByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "dev1-s",
-			ImageLabel:     "ubuntu-bionic",
+			ImageLabel:     "ubuntu_focal",
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu-bionic DEV1-S at par1: f974feac-abae-4365-b988-8ec7d1cec10d
-		testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", imageID)
+		// ubuntu_focal DEV1-S at par1: 365a8b9c-0c6e-4875-a887-dc3213db9e20
+		testhelpers.Equals(t, "365a8b9c-0c6e-4875-a887-dc3213db9e20", imageID)
 	})
 
 	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {

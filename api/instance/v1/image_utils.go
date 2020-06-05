@@ -10,15 +10,21 @@ import (
 
 // WaitForImageRequest is used by WaitForImage method.
 type WaitForImageRequest struct {
-	ImageID string
-	Zone    scw.Zone
-	Timeout time.Duration
+	ImageID       string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
 // WaitForImage wait for the image to be in a "terminal state" before returning.
 func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
-	if req.Timeout == 0 {
-		req.Timeout = defaultTimeout
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
 	terminalStatus := map[ImageState]struct{}{
@@ -40,8 +46,8 @@ func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
 
 			return res.Image, isTerminal, err
 		},
-		Timeout:          req.Timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(RetryInterval),
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for image failed")
