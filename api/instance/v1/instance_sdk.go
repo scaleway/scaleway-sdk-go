@@ -856,6 +856,12 @@ type ListVolumesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+type ListVolumesTypesResponse struct {
+	Volumes map[string]*VolumeType `json:"volumes"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
 type NullableStringValue struct {
 	Null bool `json:"null,omitempty"`
 
@@ -1269,6 +1275,24 @@ type VolumeTemplate struct {
 	Organization string `json:"organization,omitempty"`
 }
 
+type VolumeType struct {
+	DisplayName string `json:"display_name"`
+
+	Capabilities *VolumeTypeCapabilities `json:"capabilities"`
+
+	Constraints *VolumeTypeConstraints `json:"constraints"`
+}
+
+type VolumeTypeCapabilities struct {
+	Snapshot bool `json:"snapshot"`
+}
+
+type VolumeTypeConstraints struct {
+	MinSize scw.Size `json:"min_size"`
+
+	MaxSize scw.Size `json:"max_size"`
+}
+
 // setIPResponse: set ip response
 type setIPResponse struct {
 	IP *IP `json:"ip"`
@@ -1389,6 +1413,54 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	}
 
 	var resp ListServersTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListVolumesTypesRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	PerPage *uint32 `json:"-"`
+
+	Page *int32 `json:"-"`
+}
+
+// ListVolumesTypes: list volumes types
+//
+// Get volumes types technical details.
+func (s *API) ListVolumesTypes(req *ListVolumesTypesRequest, opts ...scw.RequestOption) (*ListVolumesTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/products/volumes",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListVolumesTypesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
