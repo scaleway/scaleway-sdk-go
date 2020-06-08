@@ -22,7 +22,7 @@ func TestUpdateVolume(t *testing.T) {
 		organization  = "951df375-e094-4d26-97c1-ba548eeb9c42"
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
-		volumeType    = VolumeTypeLSSD
+		volumeType    = VolumeVolumeTypeLSSD
 		newVolumeName = "some new volume name"
 
 		volumeID string
