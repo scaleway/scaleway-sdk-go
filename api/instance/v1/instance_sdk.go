@@ -567,16 +567,16 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type VolumeType string
+type VolumeVolumeType string
 
 const (
-	// VolumeTypeLSSD is [insert doc].
-	VolumeTypeLSSD = VolumeType("l_ssd")
-	// VolumeTypeBSSD is [insert doc].
-	VolumeTypeBSSD = VolumeType("b_ssd")
+	// VolumeVolumeTypeLSSD is [insert doc].
+	VolumeVolumeTypeLSSD = VolumeVolumeType("l_ssd")
+	// VolumeVolumeTypeBSSD is [insert doc].
+	VolumeVolumeTypeBSSD = VolumeVolumeType("b_ssd")
 )
 
-func (enum VolumeType) String() string {
+func (enum VolumeVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "l_ssd"
@@ -584,18 +584,18 @@ func (enum VolumeType) String() string {
 	return string(enum)
 }
 
-func (enum VolumeType) MarshalJSON() ([]byte, error) {
+func (enum VolumeVolumeType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *VolumeType) UnmarshalJSON(data []byte) error {
+func (enum *VolumeVolumeType) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = VolumeType(VolumeType(tmp).String())
+	*enum = VolumeVolumeType(VolumeVolumeType(tmp).String())
 	return nil
 }
 
@@ -852,6 +852,12 @@ type ListSnapshotsResponse struct {
 
 type ListVolumesResponse struct {
 	Volumes []*Volume `json:"volumes"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+type ListVolumesTypesResponse struct {
+	Volumes map[string]*VolumeType `json:"volumes"`
 
 	TotalCount uint32 `json:"total_count"`
 }
@@ -1144,7 +1150,7 @@ type Snapshot struct {
 	// VolumeType:
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
+	VolumeType VolumeVolumeType `json:"volume_type"`
 
 	Size scw.Size `json:"size"`
 	// State:
@@ -1224,7 +1230,7 @@ type Volume struct {
 	// VolumeType: the volumes type
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
+	VolumeType VolumeVolumeType `json:"volume_type"`
 	// CreationDate: the volumes creation date
 	CreationDate time.Time `json:"creation_date"`
 	// ModificationDate: the volumes modification date
@@ -1250,7 +1256,7 @@ type VolumeSummary struct {
 	// VolumeType:
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
+	VolumeType VolumeVolumeType `json:"volume_type"`
 }
 
 // VolumeTemplate: volume template
@@ -1264,9 +1270,27 @@ type VolumeTemplate struct {
 	// VolumeType: type of the volume
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type,omitempty"`
+	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 	// Organization: organization ID of the volume
 	Organization string `json:"organization,omitempty"`
+}
+
+type VolumeType struct {
+	DisplayName string `json:"display_name"`
+
+	Capabilities *VolumeTypeCapabilities `json:"capabilities"`
+
+	Constraints *VolumeTypeConstraints `json:"constraints"`
+}
+
+type VolumeTypeCapabilities struct {
+	Snapshot bool `json:"snapshot"`
+}
+
+type VolumeTypeConstraints struct {
+	MinSize scw.Size `json:"min_size"`
+
+	MaxSize scw.Size `json:"max_size"`
 }
 
 // setIPResponse: set ip response
@@ -1389,6 +1413,54 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 	}
 
 	var resp ListServersTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListVolumesTypesRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	PerPage *uint32 `json:"-"`
+
+	Page *int32 `json:"-"`
+}
+
+// ListVolumesTypes: list volumes types
+//
+// Get volumes technical details.
+func (s *API) ListVolumesTypes(req *ListVolumesTypesRequest, opts ...scw.RequestOption) (*ListVolumesTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/products/volumes",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListVolumesTypesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2457,7 +2529,7 @@ type SetSnapshotRequest struct {
 	// VolumeType:
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
+	VolumeType VolumeVolumeType `json:"volume_type"`
 
 	Size scw.Size `json:"size"`
 	// State:
@@ -2559,7 +2631,7 @@ type ListVolumesRequest struct {
 	// VolumeType: filter by volume type
 	//
 	// Default value: l_ssd
-	VolumeType *VolumeType `json:"-"`
+	VolumeType *VolumeVolumeType `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
 	// Default value: 50
@@ -2641,7 +2713,7 @@ type CreateVolumeRequest struct {
 	// VolumeType:
 	//
 	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
+	VolumeType VolumeVolumeType `json:"volume_type"`
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	Size *scw.Size `json:"size,omitempty"`
