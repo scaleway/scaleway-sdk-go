@@ -1288,9 +1288,9 @@ type VolumeTypeCapabilities struct {
 }
 
 type VolumeTypeConstraints struct {
-	MinSize scw.Size `json:"min_size"`
+	Min scw.Size `json:"min"`
 
-	MaxSize scw.Size `json:"max_size"`
+	Max scw.Size `json:"max"`
 }
 
 // setIPResponse: set ip response
