@@ -214,6 +214,8 @@ const (
 	IngressNginx = Ingress("nginx")
 	// IngressTraefik is [insert doc].
 	IngressTraefik = Ingress("traefik")
+	// IngressTraefik2 is [insert doc].
+	IngressTraefik2 = Ingress("traefik2")
 )
 
 func (enum Ingress) String() string {
