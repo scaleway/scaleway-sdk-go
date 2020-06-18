@@ -115,6 +115,8 @@ type SSHKey struct {
 	CreationInfo *SSHKeyCreationInfo `json:"creation_info"`
 
 	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
 }
 
 type SSHKeyCreationInfo struct {
