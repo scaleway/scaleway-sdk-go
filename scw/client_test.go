@@ -18,6 +18,7 @@ const (
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	testDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	testDefaultRegion         = RegionFrPar
 	testDefaultZone           = ZoneFrPar1
 	testDefaultPageSize       = uint32(5)
@@ -60,6 +61,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
 			WithDefaultOrganizationID(testDefaultOrganizationID),
+			WithDefaultProjectID(testDefaultProjectID),
 			WithDefaultRegion(testDefaultRegion),
 			WithDefaultZone(testDefaultZone),
 			WithDefaultPageSize(testDefaultPageSize),
@@ -76,6 +78,10 @@ func TestNewClientWithOptions(t *testing.T) {
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
 		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
+
+		defaultProjectID, exist := client.GetDefaultProjectID()
+		testhelpers.Equals(t, testDefaultProjectID, defaultProjectID)
+		testhelpers.Assert(t, exist, "defaultProjectID must exist")
 
 		defaultRegion, exist := client.GetDefaultRegion()
 		testhelpers.Equals(t, testDefaultRegion, defaultRegion)
@@ -105,6 +111,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testAPIURL),
 			b(testInsecure),
 			s(testDefaultOrganizationID),
+			s(testDefaultProjectID),
 			s(string(testDefaultRegion)),
 			s(string(testDefaultZone)),
 			b(true),
@@ -124,6 +131,10 @@ func TestNewClientWithOptions(t *testing.T) {
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
 		testhelpers.Assert(t, exist, "defaultOrganizationID must exist")
+
+		defaultProjectID, exist := client.GetDefaultProjectID()
+		testhelpers.Equals(t, testDefaultProjectID, defaultProjectID)
+		testhelpers.Assert(t, exist, "defaultProjectID must exist")
 
 		defaultRegion, exist := client.GetDefaultRegion()
 		testhelpers.Equals(t, testDefaultRegion, defaultRegion)

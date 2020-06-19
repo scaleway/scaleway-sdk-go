@@ -18,6 +18,7 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedAPIURL                *string
 		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
+		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
 	}{
@@ -30,6 +31,7 @@ func TestLoadEnvProfile(t *testing.T) {
 				ScwAPIURLEnv:                v2ValidAPIURL,
 				ScwInsecureEnv:              "false",
 				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
+				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
 				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
 				ScwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
@@ -38,6 +40,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
@@ -47,11 +50,13 @@ func TestLoadEnvProfile(t *testing.T) {
 				terraformAccessKeyEnv:    v2ValidAccessKey,
 				terraformSecretKeyEnv:    v2ValidSecretKey,
 				terraformOrganizationEnv: v2ValidDefaultOrganizationID,
-				terraformRegionEnv:       v2ValidDefaultRegion,
+				// Note: projects might break some tf pipelines.
+				terraformRegionEnv: v2ValidDefaultRegion,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
@@ -59,12 +64,14 @@ func TestLoadEnvProfile(t *testing.T) {
 			env: map[string]string{
 				cliSecretKeyEnv:    v2ValidSecretKey2,
 				cliOrganizationEnv: v2ValidDefaultOrganizationID2,
-				cliRegionEnv:       v2ValidDefaultRegion2,
-				cliTLSVerifyEnv:    "false",
+				// Note: projects might break some cli pipelines.
+				cliRegionEnv:    v2ValidDefaultRegion2,
+				cliTLSVerifyEnv: "false",
 			},
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 		},
 	}

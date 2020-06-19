@@ -21,6 +21,7 @@ var (
 	v2ValidInsecure2              = "true"
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
+	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
 
@@ -30,6 +31,7 @@ var (
 	v2ValidInsecure              = "false"
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	v2ValidDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	v2ValidDefaultRegion         = string(RegionNlAms)
 	v2ValidDefaultZone           = string(ZoneNlAms1)
 	v2ValidProfile               = "flantier"
@@ -37,6 +39,7 @@ var (
 	v2InvalidAccessKey             = "invalid"
 	v2InvalidSecretKey             = "invalid"
 	v2InvalidDefaultOrganizationID = "invalid"
+	v2InvalidDefaultProjectID      = "invalid"
 	v2InvalidDefaultRegion         = "invalid"
 	v2InvalidDefaultZone           = "invalid"
 
@@ -45,6 +48,7 @@ var (
 			AccessKey:             &v2ValidAccessKey,
 			SecretKey:             &v2ValidSecretKey,
 			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
+			DefaultProjectID:      &v2ValidDefaultProjectID,
 			DefaultRegion:         &v2ValidDefaultRegion,
 		},
 	}
@@ -54,6 +58,7 @@ secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone
 
@@ -66,6 +71,7 @@ profiles:
     insecure: ` + v2ValidInsecure2 + `
     send_telemetry: ` + v2ValidSendTelemetry2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
+    default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
 `
@@ -77,6 +83,7 @@ api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry2 + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
 active_profile: ` + v2ValidProfile + `
@@ -87,6 +94,7 @@ profiles:
     api_url: ` + v2ValidAPIURL2 + `
     insecure: ` + v2ValidInsecure2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
+    default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
 `
@@ -98,6 +106,7 @@ api_url: ` + v2ValidAPIURL + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
 active_profile: ` + v2ValidProfile + `
@@ -111,6 +120,7 @@ profiles:
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
+default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 `
 
@@ -119,6 +129,7 @@ default_region: ` + v2ValidDefaultRegion + `
 
 	v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
 default_organization_id: ` + v1ValidOrganizationID + `
+default_project_id: ` + v1ValidOrganizationID + `
 `
 )
 
@@ -146,6 +157,7 @@ func TestSaveConfig(t *testing.T) {
 					AccessKey:             s(v2ValidAccessKey),
 					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+					DefaultProjectID:      s(v2ValidDefaultProjectID),
 					DefaultRegion:         s(v2ValidDefaultRegion),
 				},
 			},
@@ -163,6 +175,7 @@ func TestSaveConfig(t *testing.T) {
 					AccessKey:             s(v2ValidAccessKey),
 					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+					DefaultProjectID:      s(v2ValidDefaultProjectID),
 					DefaultRegion:         s(v2ValidDefaultRegion),
 				},
 			},
@@ -204,6 +217,7 @@ func TestSaveConfig(t *testing.T) {
 					APIURL:                s(v2ValidAPIURL2),
 					Insecure:              b(true),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
+					DefaultProjectID:      s(v2ValidDefaultProjectID2),
 					DefaultRegion:         s(v2ValidDefaultRegion2),
 					DefaultZone:           s(v2ValidDefaultZone2),
 				}}
@@ -259,6 +273,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedInsecure              *bool
 		expectedSendTelemetry         *bool
 		expectedDefaultOrganizationID *string
+		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
 	}{
@@ -294,6 +309,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
@@ -307,6 +323,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
@@ -320,6 +337,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			isMigrated:                    true,
 			expectedSecretKey:             s(v1ValidToken),
 			expectedDefaultOrganizationID: s(v1ValidOrganizationID),
+			expectedDefaultProjectID:      s(v1ValidOrganizationID),
 		},
 		{
 			name: "Simple config with valid V2 and valid V1",
@@ -333,6 +351,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
@@ -348,6 +367,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
@@ -364,6 +384,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 			expectedSendTelemetry:         b(true),
@@ -381,6 +402,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 			expectedSendTelemetry:         b(true),
@@ -399,6 +421,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAPIURL:                s(v2ValidAPIURL2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 		},
@@ -462,6 +485,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 				testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
 				testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
+				testhelpers.Equals(t, test.expectedDefaultProjectID, p.DefaultProjectID)
 				testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 				testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 				testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
@@ -631,6 +655,9 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
+# Your project ID is the identifier of the project your resources are attached to.
+# default_project_id: 11111111-1111-1111-1111-111111111111
+
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
 # It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
@@ -671,7 +698,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 #   myProfile:
 #     access_key: 11111111-1111-1111-1111-111111111111
 #     secret_key: 11111111-1111-1111-1111-111111111111
-#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_organization_id: 11111111-1111-1111-1111-111111111111
+#     default_project_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
@@ -705,6 +733,9 @@ access_key: SCW1234567890ABCDEFG
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
+# Your project ID is the identifier of the project your resources are attached to.
+# default_project_id: 11111111-1111-1111-1111-111111111111
+
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
 # It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
@@ -745,7 +776,8 @@ access_key: SCW1234567890ABCDEFG
 #   myProfile:
 #     access_key: 11111111-1111-1111-1111-111111111111
 #     secret_key: 11111111-1111-1111-1111-111111111111
-#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_organization_id: 11111111-1111-1111-1111-111111111111
+#     default_project_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
@@ -793,6 +825,9 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
+# Your project ID is the identifier of the project your resources are attached to.
+# default_project_id: 11111111-1111-1111-1111-111111111111
+
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
 # It can contain multiple availability zones.
 # Example of region: fr-par, nl-ams
@@ -834,6 +869,7 @@ profiles:
     access_key: SCW234567890ABCDEFGH
     secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
     # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_project_id: 11111111-1111-1111-1111-111111111111
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
@@ -843,6 +879,7 @@ profiles:
     access_key: SCW234567890ABCDEFGH
     secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
     # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_project_id: 11111111-1111-1111-1111-111111111111
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
