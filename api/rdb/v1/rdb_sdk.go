@@ -1467,9 +1467,16 @@ type UpgradeInstanceRequest struct {
 
 	InstanceID string `json:"-"`
 
-	NodeType string `json:"node_type"`
+	// Precisely one of EnableHighAvailability, NodeType must be set.
+	NodeType *string `json:"node_type,omitempty"`
+
+	// Precisely one of EnableHighAvailability, NodeType must be set.
+	EnableHighAvailability *bool `json:"enable_high_availability,omitempty"`
 }
 
+// UpgradeInstance:
+//
+// Upgrade your current `node_type` or enable high availability on your standalone database instance.
 func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
