@@ -18,7 +18,7 @@ const (
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	testDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	testDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6e"
 	testDefaultRegion         = RegionFrPar
 	testDefaultZone           = ZoneFrPar1
 	testDefaultPageSize       = uint32(5)

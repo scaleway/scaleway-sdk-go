@@ -39,7 +39,7 @@ const configFileTemplate = `# Scaleway configuration file
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 {{ if .DefaultOrganizationID }}default_organization_id: {{ .DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
 
-# Your project ID is the identifier of the project your resources are attached to.
+# Your project ID is the identifier of the project your resources are attached to (beta).
 {{ if .DefaultProjectID }}default_project_id: {{ .DefaultProjectID }}{{ else }}# default_project_id: 11111111-1111-1111-1111-111111111111{{ end }}
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).

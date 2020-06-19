@@ -21,7 +21,7 @@ var (
 	v2ValidInsecure2              = "true"
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
-	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
+	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696f"
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
 
@@ -31,7 +31,7 @@ var (
 	v2ValidInsecure              = "false"
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	v2ValidDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	v2ValidDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6e"
 	v2ValidDefaultRegion         = string(RegionNlAms)
 	v2ValidDefaultZone           = string(ZoneNlAms1)
 	v2ValidProfile               = "flantier"
@@ -655,7 +655,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
-# Your project ID is the identifier of the project your resources are attached to.
+# Your project ID is the identifier of the project your resources are attached to (beta).
 # default_project_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
@@ -733,7 +733,7 @@ access_key: SCW1234567890ABCDEFG
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
-# Your project ID is the identifier of the project your resources are attached to.
+# Your project ID is the identifier of the project your resources are attached to (beta).
 # default_project_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
@@ -825,7 +825,7 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 # default_organization_id: 11111111-1111-1111-1111-111111111111
 
-# Your project ID is the identifier of the project your resources are attached to.
+# Your project ID is the identifier of the project your resources are attached to (beta).
 # default_project_id: 11111111-1111-1111-1111-111111111111
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).

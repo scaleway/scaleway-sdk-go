@@ -50,8 +50,7 @@ func TestLoadEnvProfile(t *testing.T) {
 				terraformAccessKeyEnv:    v2ValidAccessKey,
 				terraformSecretKeyEnv:    v2ValidSecretKey,
 				terraformOrganizationEnv: v2ValidDefaultOrganizationID,
-				// Note: projects might break some tf pipelines.
-				terraformRegionEnv: v2ValidDefaultRegion,
+				terraformRegionEnv:       v2ValidDefaultRegion,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
@@ -64,9 +63,8 @@ func TestLoadEnvProfile(t *testing.T) {
 			env: map[string]string{
 				cliSecretKeyEnv:    v2ValidSecretKey2,
 				cliOrganizationEnv: v2ValidDefaultOrganizationID2,
-				// Note: projects might break some cli pipelines.
-				cliRegionEnv:    v2ValidDefaultRegion2,
-				cliTLSVerifyEnv: "false",
+				cliRegionEnv:       v2ValidDefaultRegion2,
+				cliTLSVerifyEnv:    "false",
 			},
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedInsecure:              b(true),
