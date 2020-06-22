@@ -125,9 +125,9 @@ func WithDefaultOrganizationID(organizationID string) ClientOption {
 	}
 }
 
-// WithDefaultProjectnID client option sets the client default project ID.
+// WithDefaultProjectID client option sets the client default project ID.
 //
-// It will be used as the default value of the project_id field in all requests made with this client.
+// It will be used as the default value of the projectID field in all requests made with this client.
 func WithDefaultProjectID(projectID string) ClientOption {
 	return func(s *settings) {
 		s.defaultProjectID = &projectID
