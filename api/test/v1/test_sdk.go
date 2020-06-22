@@ -213,6 +213,8 @@ type Human struct {
 
 	Name string `json:"name"`
 
+	ProjectID string `json:"project_id"`
+
 	Region scw.Region `json:"region"`
 }
 
@@ -286,6 +288,8 @@ type ListHumansRequest struct {
 	OrderBy ListHumansRequestOrderBy `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
 // ListHumans: list all your humans
@@ -307,6 +311,7 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -408,18 +413,22 @@ type CreateHumanRequest struct {
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
 
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
 
 	Name string `json:"name"`
+
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
 // CreateHuman: create a new human
 func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
