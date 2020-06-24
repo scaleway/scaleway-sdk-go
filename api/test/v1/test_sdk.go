@@ -426,6 +426,11 @@ type CreateHumanRequest struct {
 func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
 	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
 	if exist && req.OrganizationID == nil && req.ProjectID == nil {
 		req.OrganizationID = &defaultOrganizationID
