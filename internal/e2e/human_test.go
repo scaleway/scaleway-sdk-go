@@ -65,7 +65,7 @@ func TestHuman(t *testing.T) {
 		HairCount:            9223372036854775808,
 		IsHappy:              true,
 		EyesColor:            test.EyeColorsAmber,
-		OrganizationID:       "b3ba839a-dcf2-4b0a-ac81-fc32370052a0",
+		OrganizationID:       scw.StringPtr("b3ba839a-dcf2-4b0a-ac81-fc32370052a0"),
 	})
 
 	testhelpers.AssertNoError(t, err)
