@@ -46,7 +46,7 @@ func TestInstanceHelpers(t *testing.T) {
 		// Create IP
 		createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
 			Zone:         zone,
-			Organization: organization,
+			Organization: &organization,
 		})
 		testhelpers.AssertNoError(t, err)
 		ipID = createIPResponse.IP.ID
