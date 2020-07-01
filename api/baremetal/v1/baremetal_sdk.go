@@ -508,6 +508,24 @@ type Offer struct {
 	Memories []*Memory `json:"memories"`
 	// QuotaName: name of the quota associated to the offer
 	QuotaName string `json:"quota_name"`
+	// PersistentMemories: persistent memory specifications of the offer
+	PersistentMemories []*PersistentMemory `json:"persistent_memories"`
+	// RaidControllers: raid controller specifications of the offer
+	RaidControllers []*RaidController `json:"raid_controllers"`
+}
+
+type PersistentMemory struct {
+	Capacity scw.Size `json:"capacity"`
+
+	Type string `json:"type"`
+
+	Frequency uint32 `json:"frequency"`
+}
+
+type RaidController struct {
+	Model string `json:"model"`
+
+	RaidLevel []string `json:"raid_level"`
 }
 
 // Server: server
