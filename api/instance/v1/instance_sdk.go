@@ -1295,11 +1295,6 @@ type VolumeTypeConstraints struct {
 	Max scw.Size `json:"max"`
 }
 
-// setIPResponse: set ip response
-type setIPResponse struct {
-	IP *IP `json:"ip"`
-}
-
 // setImageResponse: set image response
 type setImageResponse struct {
 	Image *Image `json:"image"`
@@ -4117,70 +4112,6 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 	}
 
 	var resp GetIPResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type SetIPRequest struct {
-	Zone scw.Zone `json:"-"`
-
-	ID string `json:"-"`
-
-	Address net.IP `json:"address"`
-
-	Reverse *string `json:"reverse"`
-
-	Server *ServerSummary `json:"server"`
-
-	Organization string `json:"organization"`
-
-	Tags []string `json:"tags"`
-
-	Project string `json:"project"`
-}
-
-func (s *API) setIP(req *SetIPRequest, opts ...scw.RequestOption) (*setIPResponse, error) {
-	var err error
-
-	if req.Project == "" {
-		defaultProject, _ := s.client.GetDefaultProjectID()
-		req.Project = defaultProject
-	}
-
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
-	}
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.ID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp setIPResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
