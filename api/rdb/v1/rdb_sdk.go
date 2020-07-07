@@ -1386,7 +1386,7 @@ type CloneInstanceRequest struct {
 	InstanceID string `json:"-"`
 	// Name: name of the clone instance
 	Name string `json:"name"`
-	// NodeType: node type of the clone (DEV1-S, ...)
+	// NodeType: node type of the clone
 	NodeType *string `json:"node_type"`
 }
 
@@ -1672,7 +1672,7 @@ type CreateInstanceRequest struct {
 	UserName string `json:"user_name"`
 	// Password: password of the user
 	Password string `json:"password"`
-	// NodeType: type of node to use for the instance (DEV1-S, ...)
+	// NodeType: type of node to use for the instance
 	NodeType string `json:"node_type"`
 	// IsHaCluster: whether or not High-Availability is enabled
 	IsHaCluster bool `json:"is_ha_cluster"`
