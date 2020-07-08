@@ -714,6 +714,10 @@ type Hub struct {
 	DeviceCount uint64 `json:"device_count"`
 	// ConnectedDeviceCount: number of currently connected devices
 	ConnectedDeviceCount uint64 `json:"connected_device_count"`
+	// EventsEnabled: wether Hub events are enabled or not
+	EventsEnabled bool `json:"events_enabled"`
+	// EventsTopicPrefix: hub events topic prefix
+	EventsTopicPrefix string `json:"events_topic_prefix"`
 }
 
 // ListDevicesResponse: list devices response
@@ -985,6 +989,10 @@ type CreateHubRequest struct {
 	//
 	// Default value: plan_unknown
 	ProductPlan ProductPlan `json:"product_plan"`
+	// DisableEvents: disable Hub events (default false)
+	DisableEvents *bool `json:"disable_events"`
+	// EventsTopicPrefix: hub events topic prefix (default '$SCW/events')
+	EventsTopicPrefix *string `json:"events_topic_prefix"`
 }
 
 // CreateHub: create a hub
@@ -1069,6 +1077,10 @@ type UpdateHubRequest struct {
 	HubID string `json:"-"`
 	// Name: hub name (up to 255 characters)
 	Name *string `json:"name"`
+	// DisableEvents: disable events
+	DisableEvents *bool `json:"disable_events"`
+	// EventsTopicPrefix: hub events topic prefix
+	EventsTopicPrefix *string `json:"events_topic_prefix"`
 }
 
 // UpdateHub: update a hub
