@@ -614,9 +614,9 @@ type ListServersRequest struct {
 	OrganizationID *string `json:"-"`
 }
 
-// ListServers: list servers
+// ListServers: list baremetal servers
 //
-// List all created servers.
+// List baremetal servers.
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -684,7 +684,7 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServer: get server
+// GetServer: get a specific baremetal server
 //
 // Get the server associated with the given ID.
 func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -732,9 +732,9 @@ type CreateServerRequest struct {
 	Tags []string `json:"tags"`
 }
 
-// CreateServer: create server
+// CreateServer: create a baremetal server
 //
-// Create a new server. Once the server is created, you probably want to install an OS.
+// Create a new baremetal server. Once the server is created, you probably want to install an OS.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -784,7 +784,7 @@ type UpdateServerRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdateServer: update server
+// UpdateServer: update a baremetal server
 //
 // Update the server associated with the given ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -835,7 +835,7 @@ type InstallServerRequest struct {
 	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
-// InstallServer: install server
+// InstallServer: install a baremetal server
 //
 // Install an OS on the server associated with the given ID.
 func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -920,7 +920,7 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete server
+// DeleteServer: delete a baremetal server
 //
 // Delete the server associated with the given ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -964,7 +964,7 @@ type RebootServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// RebootServer: reboot server
+// RebootServer: reboot a baremetal server
 //
 // Reboot the server associated with the given ID, use boot param to reboot in rescue.
 func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1009,7 +1009,7 @@ type StartServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StartServer: start server
+// StartServer: start a baremetal server
 //
 // Start the server associated with the given ID.
 func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1054,7 +1054,7 @@ type StopServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopServer: stop server
+// StopServer: stop a baremetal server
 //
 // Stop the server associated with the given ID.
 func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1468,7 +1468,7 @@ type ListOSRequest struct {
 	OfferID *string `json:"-"`
 }
 
-// ListOS: list OS
+// ListOS: list all available OS that can be install on a baremetal server
 //
 // List all available OS that can be install on a baremetal server.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
@@ -1530,11 +1530,11 @@ func (r *ListOSResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetOSRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OsID: ID of the researched OS
+	// OsID: ID of the OS
 	OsID string `json:"-"`
 }
 
-// GetOS: get OS
+// GetOS: get an OS with a given ID
 //
 // Return specific OS for the given ID.
 func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
