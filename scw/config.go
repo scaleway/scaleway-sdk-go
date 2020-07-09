@@ -16,6 +16,9 @@ import (
 const (
 	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
 	defaultConfigPermission = 0600
+
+	// Reserved name for the default profile.
+	DefaultProfileName = "default"
 )
 
 const configFileTemplate = `# Scaleway configuration file
@@ -217,7 +220,11 @@ func LoadConfigFromPath(path string) (*Config, error) {
 // GetProfile returns the profile corresponding to the given profile name.
 func (c *Config) GetProfile(profileName string) (*Profile, error) {
 	if profileName == "" {
-		return nil, errors.New("active profile cannot be empty")
+		return nil, errors.New("profileName cannot be empty")
+	}
+
+	if profileName == DefaultProfileName {
+		return &c.Profile, nil
 	}
 
 	p, exist := c.Profiles[profileName]
