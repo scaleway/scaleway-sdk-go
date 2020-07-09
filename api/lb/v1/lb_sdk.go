@@ -1082,6 +1082,8 @@ type Frontend struct {
 	TimeoutClient *time.Duration `json:"timeout_client"`
 
 	Certificate *Certificate `json:"certificate"`
+
+	CertificateIDs []string `json:"certificate_ids"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -2720,8 +2722,12 @@ type CreateFrontendRequest struct {
 	BackendID string `json:"backend_id"`
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID: certificate ID
-	CertificateID *string `json:"certificate_id"`
+	// CertificateID: certificate ID, deprecated in favor of certificate_ids array !
+	// Precisely one of CertificateID, CertificateIDs must be set.
+	CertificateID *string `json:"certificate_id,omitempty"`
+	// CertificateIDs: list of certificate IDs to bind on the frontend
+	// Precisely one of CertificateID, CertificateIDs must be set.
+	CertificateIDs *[]string `json:"certificate_ids,omitempty"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2841,8 +2847,12 @@ type UpdateFrontendRequest struct {
 	BackendID string `json:"backend_id"`
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID: certificate ID
-	CertificateID *string `json:"certificate_id"`
+	// CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
+	// Precisely one of CertificateID, CertificateIDs must be set.
+	CertificateID *string `json:"certificate_id,omitempty"`
+	// CertificateIDs: list of certificate IDs to bind on the frontend
+	// Precisely one of CertificateID, CertificateIDs must be set.
+	CertificateIDs *[]string `json:"certificate_ids,omitempty"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
