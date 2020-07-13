@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: docker registry API
+// API: container registry API
 type API struct {
 	client *scw.Client
 }

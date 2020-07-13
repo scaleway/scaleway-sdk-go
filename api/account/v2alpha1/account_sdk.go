@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows to manage your scaleway account
+// API: account API
 type API struct {
 	client *scw.Client
 }
@@ -146,7 +146,7 @@ type ListSSHKeysRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSSHKeys: list all SSH keys
+// ListSSHKeys: list all SSH keys of your organization
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
@@ -211,9 +211,9 @@ type CreateSSHKeyRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSSHKey: add a SSH key to your Scaleway account
+// CreateSSHKey: add a SSH key to your organization
 //
-// Add a SSH key to your Scaleway account.
+// Add a SSH key to your organization.
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -252,7 +252,9 @@ type GetSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// GetSSHKey: get SSH key details
+// GetSSHKey: get a SSH key from your organization
+//
+// Get a SSH key from your organization.
 func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -281,7 +283,9 @@ type UpdateSSHKeyRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateSSHKey: update an SSH key
+// UpdateSSHKey: update a SSH key on your organization
+//
+// Update a SSH key on your organization.
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -313,9 +317,9 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: remove a SSH key from your Scaleway account
+// DeleteSSHKey: remove a SSH key from your organization
 //
-// Remove a SSH key from your Scaleway account.
+// Remove a SSH key from your organization.
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
