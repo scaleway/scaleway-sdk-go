@@ -640,7 +640,7 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 }
 
 type ACLRule struct {
-	IP net.IP `json:"ip"`
+	IP scw.IPNet `json:"ip"`
 
 	Port uint32 `json:"port"`
 	// Protocol:
@@ -660,7 +660,7 @@ type ACLRule struct {
 }
 
 type ACLRuleRequest struct {
-	IP net.IP `json:"ip"`
+	IP scw.IPNet `json:"ip"`
 
 	Description string `json:"description"`
 }

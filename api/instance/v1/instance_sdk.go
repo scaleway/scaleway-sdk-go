@@ -1492,7 +1492,7 @@ type ListServersRequest struct {
 	Tags []string `json:"-"`
 }
 
-// ListServers: list servers
+// ListServers: list all servers
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -1590,7 +1590,7 @@ type CreateServerRequest struct {
 	PlacementGroup *string `json:"placement_group,omitempty"`
 }
 
-// createServer: create server
+// createServer: create a server
 func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
@@ -1638,7 +1638,7 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete server
+// DeleteServer: delete a server
 //
 // Delete a server with the given ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) error {
@@ -1676,7 +1676,7 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServer: get server
+// GetServer: get a server
 //
 // Get the details of a specified Server.
 func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetServerResponse, error) {
@@ -1841,7 +1841,7 @@ type UpdateServerRequest struct {
 	PlacementGroup *NullableStringValue `json:"placement_group,omitempty"`
 }
 
-// updateServer: update server
+// updateServer: update a server
 func (s *API) updateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*UpdateServerResponse, error) {
 	var err error
 
@@ -2073,7 +2073,7 @@ type ListImagesRequest struct {
 	Arch *string `json:"-"`
 }
 
-// ListImages: list images
+// ListImages: list instance images
 //
 // List all images available in an account.
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
@@ -2142,7 +2142,7 @@ type GetImageRequest struct {
 	ImageID string `json:"-"`
 }
 
-// GetImage: get image
+// GetImage: get an instance image
 //
 // Get details of an image with the given ID.
 func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetImageResponse, error) {
@@ -2196,7 +2196,7 @@ type CreateImageRequest struct {
 	Public bool `json:"public,omitempty"`
 }
 
-// CreateImage: create image
+// CreateImage: create an instance image
 func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*CreateImageResponse, error) {
 	var err error
 
@@ -2320,7 +2320,7 @@ type DeleteImageRequest struct {
 	ImageID string `json:"-"`
 }
 
-// DeleteImage: delete image
+// DeleteImage: delete an instance image
 //
 // Delete the image with the given ID.
 func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) error {
@@ -2433,7 +2433,7 @@ type CreateSnapshotRequest struct {
 	Organization string `json:"organization,omitempty"`
 }
 
-// CreateSnapshot: create snapshot
+// CreateSnapshot: create a snapshot from a given volume
 func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*CreateSnapshotResponse, error) {
 	var err error
 
@@ -2481,7 +2481,7 @@ type GetSnapshotRequest struct {
 	SnapshotID string `json:"-"`
 }
 
-// GetSnapshot: get snapshot
+// GetSnapshot: get a snapshot
 //
 // Get details of a snapshot with the given ID.
 func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*GetSnapshotResponse, error) {
@@ -2591,7 +2591,7 @@ type DeleteSnapshotRequest struct {
 	SnapshotID string `json:"-"`
 }
 
-// DeleteSnapshot: delete snapshot
+// DeleteSnapshot: delete a snapshot
 //
 // Delete the snapshot with the given ID.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) error {
@@ -2722,7 +2722,7 @@ type CreateVolumeRequest struct {
 	BaseSnapshot *string `json:"base_snapshot,omitempty"`
 }
 
-// CreateVolume: create volume
+// CreateVolume: create a volume
 func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*CreateVolumeResponse, error) {
 	var err error
 
@@ -2766,7 +2766,7 @@ type GetVolumeRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// GetVolume: get volume
+// GetVolume: get a volume
 //
 // Get details of a volume with the given ID.
 func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetVolumeResponse, error) {
@@ -2810,7 +2810,7 @@ type UpdateVolumeRequest struct {
 	Size *scw.Size `json:"size,omitempty"`
 }
 
-// UpdateVolume: update volume
+// UpdateVolume: update a volume
 //
 // Replace name and/or size properties of given ID volume with the given value(s). Any volume name can be changed while, for now, only `b_ssd` volume growing is supported.
 func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
@@ -2855,7 +2855,7 @@ type DeleteVolumeRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// DeleteVolume: delete volume
+// DeleteVolume: delete a volume
 //
 // Delete the volume with the given ID.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
@@ -2988,7 +2988,7 @@ type CreateSecurityGroupRequest struct {
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 }
 
-// CreateSecurityGroup: create security group
+// CreateSecurityGroup: create a security group
 func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.RequestOption) (*CreateSecurityGroupResponse, error) {
 	var err error
 
@@ -3036,7 +3036,7 @@ type GetSecurityGroupRequest struct {
 	SecurityGroupID string `json:"-"`
 }
 
-// GetSecurityGroup: get security group
+// GetSecurityGroup: get a security group
 //
 // Get the details of a Security Group with the given ID.
 func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.RequestOption) (*GetSecurityGroupResponse, error) {
@@ -3076,7 +3076,7 @@ type DeleteSecurityGroupRequest struct {
 	SecurityGroupID string `json:"-"`
 }
 
-// DeleteSecurityGroup: delete security group
+// DeleteSecurityGroup: delete a security group
 func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3138,7 +3138,7 @@ type setSecurityGroupRequest struct {
 	Stateful bool `json:"stateful"`
 }
 
-// setSecurityGroup: update security group
+// setSecurityGroup: update a security group
 //
 // Replace all security group properties with a security group message.
 func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.RequestOption) (*setSecurityGroupResponse, error) {
@@ -3574,7 +3574,7 @@ type CreatePlacementGroupRequest struct {
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
 }
 
-// CreatePlacementGroup: create placement group
+// CreatePlacementGroup: create a placement group
 //
 // Create a new placement group.
 func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw.RequestOption) (*CreatePlacementGroupResponse, error) {
@@ -3624,7 +3624,7 @@ type GetPlacementGroupRequest struct {
 	PlacementGroupID string `json:"-"`
 }
 
-// GetPlacementGroup: get placement group
+// GetPlacementGroup: get a placement group
 //
 // Get the given placement group.
 func (s *API) GetPlacementGroup(req *GetPlacementGroupRequest, opts ...scw.RequestOption) (*GetPlacementGroupResponse, error) {
@@ -3736,7 +3736,7 @@ type UpdatePlacementGroupRequest struct {
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
 }
 
-// UpdatePlacementGroup: update placement group
+// UpdatePlacementGroup: update a placement group
 //
 // Update one or more parameter of the given placement group.
 func (s *API) UpdatePlacementGroup(req *UpdatePlacementGroupRequest, opts ...scw.RequestOption) (*UpdatePlacementGroupResponse, error) {
@@ -3963,7 +3963,7 @@ type ListIPsRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListIPs: list IPs
+// ListIPs: list all flexible IPs
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
@@ -4037,7 +4037,7 @@ type CreateIPRequest struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-// CreateIP: reserve an IP
+// CreateIP: reserve a flexible IP
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*CreateIPResponse, error) {
 	var err error
 
@@ -4086,7 +4086,7 @@ type GetIPRequest struct {
 	IP string `json:"-"`
 }
 
-// GetIP: get IP
+// GetIP: get a flexible IP
 //
 // Get details of an IP with the given ID or address.
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPResponse, error) {
@@ -4132,7 +4132,7 @@ type UpdateIPRequest struct {
 	Server *NullableStringValue `json:"server,omitempty"`
 }
 
-// UpdateIP: update IP
+// UpdateIP: update a flexible IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*UpdateIPResponse, error) {
 	var err error
 
@@ -4175,7 +4175,7 @@ type DeleteIPRequest struct {
 	IP string `json:"-"`
 }
 
-// DeleteIP: delete IP
+// DeleteIP: delete a flexible IP
 //
 // Delete the IP with the given ID.
 func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
