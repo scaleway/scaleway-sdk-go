@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage your Kapsule clusters
+// API: kapsule API
 type API struct {
 	client *scw.Client
 }
