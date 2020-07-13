@@ -16,6 +16,9 @@ import (
 const (
 	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
 	defaultConfigPermission = 0600
+
+	// Reserved name for the default profile.
+	DefaultProfileName = "default"
 )
 
 const configFileTemplate = `# Scaleway configuration file
@@ -106,20 +109,20 @@ profiles:
 
 type Config struct {
 	Profile       `yaml:",inline"`
-	ActiveProfile *string             `yaml:"active_profile,omitempty"`
-	Profiles      map[string]*Profile `yaml:"profiles,omitempty"`
+	ActiveProfile *string             `yaml:"active_profile,omitempty" json:"active_profile,omitempty"`
+	Profiles      map[string]*Profile `yaml:"profiles,omitempty" json:"profiles,omitempty"`
 }
 
 type Profile struct {
-	AccessKey             *string `yaml:"access_key,omitempty"`
-	SecretKey             *string `yaml:"secret_key,omitempty"`
-	APIURL                *string `yaml:"api_url,omitempty"`
-	Insecure              *bool   `yaml:"insecure,omitempty"`
-	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
-	DefaultProjectID      *string `yaml:"default_project_id,omitempty"`
-	DefaultRegion         *string `yaml:"default_region,omitempty"`
-	DefaultZone           *string `yaml:"default_zone,omitempty"`
-	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty"`
+	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
+	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
+	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
+	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
+	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
+	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
+	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty"`
+	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty"`
+	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty"`
 }
 
 func (p *Profile) String() string {
@@ -217,7 +220,11 @@ func LoadConfigFromPath(path string) (*Config, error) {
 // GetProfile returns the profile corresponding to the given profile name.
 func (c *Config) GetProfile(profileName string) (*Profile, error) {
 	if profileName == "" {
-		return nil, errors.New("active profile cannot be empty")
+		return nil, errors.New("profileName cannot be empty")
+	}
+
+	if profileName == DefaultProfileName {
+		return &c.Profile, nil
 	}
 
 	p, exist := c.Profiles[profileName]
