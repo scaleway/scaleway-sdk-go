@@ -116,9 +116,9 @@ type WaitForInstanceLogRequest struct {
 	RetryInterval *time.Duration
 }
 
-// WaitForInstanceLogs waits for the instance logs to be in a "terminal state" before returning.
+// WaitForInstanceLog waits for the instance logs to be in a "terminal state" before returning.
 // This function can be used to wait for an instance logs to be ready for example.
-func (s *API) WaitForInstanceLogs(req *WaitForInstanceLogRequest) (*InstanceLog, error) {
+func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest) (*InstanceLog, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
