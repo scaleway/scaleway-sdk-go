@@ -354,7 +354,7 @@ func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to get
 	HumanID string `json:"-"`
 }
 
@@ -467,7 +467,7 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 
 type UpdateHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to update
 	HumanID string `json:"-"`
 
 	Height *float64 `json:"height"`
@@ -532,7 +532,7 @@ func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*
 
 type DeleteHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to delete
 	HumanID string `json:"-"`
 }
 
@@ -572,7 +572,7 @@ func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*
 
 type RunHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to make run
 	HumanID string `json:"-"`
 }
 
@@ -617,7 +617,7 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 
 type SmokeHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to make smoking
 	HumanID string `json:"-"`
 }
 

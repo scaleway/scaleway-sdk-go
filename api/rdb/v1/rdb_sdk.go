@@ -1339,7 +1339,7 @@ func (s *API) RestoreDatabaseBackup(req *RestoreDatabaseBackupRequest, opts ...s
 
 type ExportDatabaseBackupRequest struct {
 	Region scw.Region `json:"-"`
-
+	// DatabaseBackupID: UUID of the database backup you want to export
 	DatabaseBackupID string `json:"-"`
 }
 
@@ -1494,12 +1494,12 @@ func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, err
 
 type UpgradeInstanceRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want to upgrade
 	InstanceID string `json:"-"`
-
+	// NodeType: node type of the instance you want to upgrade to
 	// Precisely one of EnableHa, NodeType must be set.
 	NodeType *string `json:"node_type,omitempty"`
-
+	// EnableHa: set to true to enable high availability on your instance
 	// Precisely one of EnableHa, NodeType must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 }

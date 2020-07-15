@@ -279,7 +279,7 @@ func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHK
 
 type UpdateSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
-
+	// Name: name of the SSH key
 	Name *string `json:"name"`
 }
 
