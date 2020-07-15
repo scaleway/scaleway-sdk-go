@@ -897,7 +897,9 @@ type ListInstanceACLRulesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListInstanceLogsResponse: list instance logs response
 type ListInstanceLogsResponse struct {
+	// InstanceLogs: available logs in a given instance
 	InstanceLogs []*InstanceLog `json:"instance_logs"`
 }
 
@@ -1339,7 +1341,7 @@ func (s *API) RestoreDatabaseBackup(req *RestoreDatabaseBackupRequest, opts ...s
 
 type ExportDatabaseBackupRequest struct {
 	Region scw.Region `json:"-"`
-
+	// DatabaseBackupID: UUID of the database backup you want to export
 	DatabaseBackupID string `json:"-"`
 }
 
@@ -1494,12 +1496,12 @@ func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, err
 
 type UpgradeInstanceRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want to upgrade
 	InstanceID string `json:"-"`
-
+	// NodeType: node type of the instance you want to upgrade to
 	// Precisely one of EnableHa, NodeType must be set.
 	NodeType *string `json:"node_type,omitempty"`
-
+	// EnableHa: set to true to enable high availability on your instance
 	// Precisely one of EnableHa, NodeType must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 }
@@ -1900,9 +1902,9 @@ func (s *API) PrepareInstanceLogs(req *PrepareInstanceLogsRequest, opts ...scw.R
 
 type ListInstanceLogsRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
-	// OrderBy:
+	// OrderBy: criteria to use when ordering instance logs listing
 	//
 	// Default value: created_at_asc
 	OrderBy ListInstanceLogsRequestOrderBy `json:"-"`
@@ -1936,6 +1938,44 @@ func (s *API) ListInstanceLogs(req *ListInstanceLogsRequest, opts ...scw.Request
 	}
 
 	var resp ListInstanceLogsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetInstanceLogRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceLogID: UUID of the instance_log you want
+	InstanceLogID string `json:"-"`
+}
+
+// GetInstanceLog: get specific logs of a given instance
+func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOption) (*InstanceLog, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceLogID) == "" {
+		return nil, errors.New("field InstanceLogID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/logs/" + fmt.Sprint(req.InstanceLogID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp InstanceLog
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
