@@ -1672,7 +1672,7 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 
 type GetServerRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: UUID of the server you want to get
 	ServerID string `json:"-"`
 }
 
@@ -2138,7 +2138,7 @@ func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetImageRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// ImageID: UUID of the image you want to get
 	ImageID string `json:"-"`
 }
 
@@ -2316,7 +2316,7 @@ func (s *API) setImage(req *SetImageRequest, opts ...scw.RequestOption) (*setIma
 
 type DeleteImageRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// ImageID: UUID of the image you want to delete
 	ImageID string `json:"-"`
 }
 
@@ -2477,7 +2477,7 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 
 type GetSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// SnapshotID: UUID of the snapshot you want to get
 	SnapshotID string `json:"-"`
 }
 
@@ -2587,7 +2587,7 @@ func (s *API) setSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 
 type DeleteSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// SnapshotID: UUID of the snapshot you want to delete
 	SnapshotID string `json:"-"`
 }
 
@@ -2762,7 +2762,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 
 type GetVolumeRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// VolumeID: UUID of the volume you want to get
 	VolumeID string `json:"-"`
 }
 
@@ -2851,7 +2851,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 
 type DeleteVolumeRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// VolumeID: UUID of the volume you want to delete
 	VolumeID string `json:"-"`
 }
 
@@ -3032,7 +3032,7 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 
 type GetSecurityGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// SecurityGroupID: UUID of the security group you want to get
 	SecurityGroupID string `json:"-"`
 }
 
@@ -3072,7 +3072,7 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 
 type DeleteSecurityGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// SecurityGroupID: UUID of the security group you want to delete
 	SecurityGroupID string `json:"-"`
 }
 
@@ -3620,7 +3620,7 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 
 type GetPlacementGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// PlacementGroupID: UUID of the placement group you want to get
 	PlacementGroupID string `json:"-"`
 }
 
@@ -3777,7 +3777,7 @@ func (s *API) UpdatePlacementGroup(req *UpdatePlacementGroupRequest, opts ...scw
 
 type DeletePlacementGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// PlacementGroupID: UUID of the placement group you want to delete
 	PlacementGroupID string `json:"-"`
 }
 
