@@ -109,7 +109,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest) (*Databas
 	return backup.(*DatabaseBackup), nil
 }
 
-type WaitForInstanceLogsRequest struct {
+type WaitForInstanceLogRequest struct {
 	InstanceLogID string
 	Region        scw.Region
 	Timeout       *time.Duration
@@ -118,7 +118,7 @@ type WaitForInstanceLogsRequest struct {
 
 // WaitForInstanceLogs waits for the instance logs to be in a "terminal state" before returning.
 // This function can be used to wait for an instance logs to be ready for example.
-func (s *API) WaitForInstanceLogs(req *WaitForInstanceLogsRequest) (*InstanceLog, error) {
+func (s *API) WaitForInstanceLogs(req *WaitForInstanceLogRequest) (*InstanceLog, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
