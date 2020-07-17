@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage your Load Balancer service
+// API: this API allows you to manage your load balancer service
 type API struct {
 	client *scw.Client
 }
@@ -333,26 +333,26 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type LbStatus string
+type LBStatus string
 
 const (
-	// LbStatusUnknown is [insert doc].
-	LbStatusUnknown = LbStatus("unknown")
-	// LbStatusReady is [insert doc].
-	LbStatusReady = LbStatus("ready")
-	// LbStatusPending is [insert doc].
-	LbStatusPending = LbStatus("pending")
-	// LbStatusStopped is [insert doc].
-	LbStatusStopped = LbStatus("stopped")
-	// LbStatusError is [insert doc].
-	LbStatusError = LbStatus("error")
-	// LbStatusLocked is [insert doc].
-	LbStatusLocked = LbStatus("locked")
-	// LbStatusMigrating is [insert doc].
-	LbStatusMigrating = LbStatus("migrating")
+	// LBStatusUnknown is [insert doc].
+	LBStatusUnknown = LBStatus("unknown")
+	// LBStatusReady is [insert doc].
+	LBStatusReady = LBStatus("ready")
+	// LBStatusPending is [insert doc].
+	LBStatusPending = LBStatus("pending")
+	// LBStatusStopped is [insert doc].
+	LBStatusStopped = LBStatus("stopped")
+	// LBStatusError is [insert doc].
+	LBStatusError = LBStatus("error")
+	// LBStatusLocked is [insert doc].
+	LBStatusLocked = LBStatus("locked")
+	// LBStatusMigrating is [insert doc].
+	LBStatusMigrating = LBStatus("migrating")
 )
 
-func (enum LbStatus) String() string {
+func (enum LBStatus) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown"
@@ -360,35 +360,35 @@ func (enum LbStatus) String() string {
 	return string(enum)
 }
 
-func (enum LbStatus) MarshalJSON() ([]byte, error) {
+func (enum LBStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *LbStatus) UnmarshalJSON(data []byte) error {
+func (enum *LBStatus) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = LbStatus(LbStatus(tmp).String())
+	*enum = LBStatus(LBStatus(tmp).String())
 	return nil
 }
 
-type LbTypeStock string
+type LBTypeStock string
 
 const (
-	// LbTypeStockUnknown is [insert doc].
-	LbTypeStockUnknown = LbTypeStock("unknown")
-	// LbTypeStockLowStock is [insert doc].
-	LbTypeStockLowStock = LbTypeStock("low_stock")
-	// LbTypeStockOutOfStock is [insert doc].
-	LbTypeStockOutOfStock = LbTypeStock("out_of_stock")
-	// LbTypeStockAvailable is [insert doc].
-	LbTypeStockAvailable = LbTypeStock("available")
+	// LBTypeStockUnknown is [insert doc].
+	LBTypeStockUnknown = LBTypeStock("unknown")
+	// LBTypeStockLowStock is [insert doc].
+	LBTypeStockLowStock = LBTypeStock("low_stock")
+	// LBTypeStockOutOfStock is [insert doc].
+	LBTypeStockOutOfStock = LBTypeStock("out_of_stock")
+	// LBTypeStockAvailable is [insert doc].
+	LBTypeStockAvailable = LBTypeStock("available")
 )
 
-func (enum LbTypeStock) String() string {
+func (enum LBTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown"
@@ -396,18 +396,18 @@ func (enum LbTypeStock) String() string {
 	return string(enum)
 }
 
-func (enum LbTypeStock) MarshalJSON() ([]byte, error) {
+func (enum LBTypeStock) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *LbTypeStock) UnmarshalJSON(data []byte) error {
+func (enum *LBTypeStock) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = LbTypeStock(LbTypeStock(tmp).String())
+	*enum = LBTypeStock(LBTypeStock(tmp).String())
 	return nil
 }
 
@@ -555,20 +555,20 @@ func (enum *ListFrontendsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListLbsRequestOrderBy string
+type ListLBsRequestOrderBy string
 
 const (
-	// ListLbsRequestOrderByCreatedAtAsc is [insert doc].
-	ListLbsRequestOrderByCreatedAtAsc = ListLbsRequestOrderBy("created_at_asc")
-	// ListLbsRequestOrderByCreatedAtDesc is [insert doc].
-	ListLbsRequestOrderByCreatedAtDesc = ListLbsRequestOrderBy("created_at_desc")
-	// ListLbsRequestOrderByNameAsc is [insert doc].
-	ListLbsRequestOrderByNameAsc = ListLbsRequestOrderBy("name_asc")
-	// ListLbsRequestOrderByNameDesc is [insert doc].
-	ListLbsRequestOrderByNameDesc = ListLbsRequestOrderBy("name_desc")
+	// ListLBsRequestOrderByCreatedAtAsc is [insert doc].
+	ListLBsRequestOrderByCreatedAtAsc = ListLBsRequestOrderBy("created_at_asc")
+	// ListLBsRequestOrderByCreatedAtDesc is [insert doc].
+	ListLBsRequestOrderByCreatedAtDesc = ListLBsRequestOrderBy("created_at_desc")
+	// ListLBsRequestOrderByNameAsc is [insert doc].
+	ListLBsRequestOrderByNameAsc = ListLBsRequestOrderBy("name_asc")
+	// ListLBsRequestOrderByNameDesc is [insert doc].
+	ListLBsRequestOrderByNameDesc = ListLBsRequestOrderBy("name_desc")
 )
 
-func (enum ListLbsRequestOrderBy) String() string {
+func (enum ListLBsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "created_at_asc"
@@ -576,18 +576,18 @@ func (enum ListLbsRequestOrderBy) String() string {
 	return string(enum)
 }
 
-func (enum ListLbsRequestOrderBy) MarshalJSON() ([]byte, error) {
+func (enum ListLBsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *ListLbsRequestOrderBy) UnmarshalJSON(data []byte) error {
+func (enum *ListLBsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = ListLbsRequestOrderBy(ListLbsRequestOrderBy(tmp).String())
+	*enum = ListLBsRequestOrderBy(ListLBsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -946,7 +946,7 @@ type Backend struct {
 
 	Pool []string `json:"pool"`
 
-	Lb *Lb `json:"lb"`
+	LB *LB `json:"lb"`
 
 	SendProxyV2 bool `json:"send_proxy_v2"`
 
@@ -1047,8 +1047,8 @@ type Certificate struct {
 	//
 	// Default value: pending
 	Status CertificateStatus `json:"status"`
-	// Lb: load Balancer object
-	Lb *Lb `json:"lb"`
+	// LB: load balancer object
+	LB *LB `json:"lb"`
 	// Name: certificate name
 	Name string `json:"name"`
 }
@@ -1061,9 +1061,9 @@ type CreateCertificateRequestCustomCertificate struct {
 
 // CreateCertificateRequestLetsencryptConfig: generate a new SSL certificate using Let's Encrypt.
 type CreateCertificateRequestLetsencryptConfig struct {
-	// CommonName: main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
+	// CommonName: main domain name of certificate (make sure this domain exists and resolves to your load balancer HA IP)
 	CommonName string `json:"common_name"`
-	// SubjectAlternativeName: alternative domain names (make sure all domain names exists and resolves to your Load Balancer HA IP)
+	// SubjectAlternativeName: alternative domain names (make sure all domain names exists and resolves to your load balancer HA IP)
 	SubjectAlternativeName []string `json:"subject_alternative_name"`
 }
 
@@ -1077,7 +1077,7 @@ type Frontend struct {
 
 	Backend *Backend `json:"backend"`
 
-	Lb *Lb `json:"lb"`
+	LB *LB `json:"lb"`
 
 	TimeoutClient *time.Duration `json:"timeout_client"`
 
@@ -1228,7 +1228,7 @@ type IP struct {
 
 	OrganizationID string `json:"organization_id"`
 
-	LbID *string `json:"lb_id"`
+	LBID *string `json:"lb_id"`
 
 	Reverse string `json:"reverse"`
 
@@ -1247,8 +1247,8 @@ type Instance struct {
 	Region scw.Region `json:"region"`
 }
 
-// Lb: lb
-type Lb struct {
+// LB: lb
+type LB struct {
 	ID string `json:"id"`
 
 	Name string `json:"name"`
@@ -1257,7 +1257,7 @@ type Lb struct {
 	// Status:
 	//
 	// Default value: unknown
-	Status LbStatus `json:"status"`
+	Status LBStatus `json:"status"`
 
 	Instances []*Instance `json:"instances"`
 
@@ -1282,18 +1282,18 @@ type Lb struct {
 	Region scw.Region `json:"region"`
 }
 
-// LbStats: lb stats
-type LbStats struct {
+// LBStats: lb stats
+type LBStats struct {
 	// BackendServersStats: list stats object of your loadbalancer
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 }
 
-type LbType struct {
+type LBType struct {
 	Name string `json:"name"`
 	// StockStatus:
 	//
 	// Default value: unknown
-	StockStatus LbTypeStock `json:"stock_status"`
+	StockStatus LBTypeStock `json:"stock_status"`
 
 	Description string `json:"description"`
 
@@ -1318,7 +1318,7 @@ type ListBackendStatsResponse struct {
 
 // ListBackendsResponse: list backends response
 type ListBackendsResponse struct {
-	// Backends: list Backend objects of a Load Balancer
+	// Backends: list Backend objects of a load balancer
 	Backends []*Backend `json:"backends"`
 	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
@@ -1346,21 +1346,21 @@ type ListIPsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
-type ListLbPrivateNetworksResponse struct {
+type ListLBPrivateNetworksResponse struct {
 	PrivateNetwork []*PrivateNetwork `json:"private_network"`
 
 	TotalCount uint32 `json:"total_count"`
 }
 
-type ListLbTypesResponse struct {
-	LbTypes []*LbType `json:"lb_types"`
+type ListLBTypesResponse struct {
+	LBTypes []*LBType `json:"lb_types"`
 
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListLbsResponse: list lbs response
-type ListLbsResponse struct {
-	Lbs []*Lb `json:"lbs"`
+// ListLBsResponse: list lbs response
+type ListLBsResponse struct {
+	LBs []*LB `json:"lbs"`
 
 	TotalCount uint32 `json:"total_count"`
 }
@@ -1375,9 +1375,9 @@ type ListSubscriberResponse struct {
 
 // PrivateNetwork: private network
 type PrivateNetwork struct {
-	// Lb: loadBalancer object
-	Lb *Lb `json:"lb"`
-	// IPAddress: local ip address of Load Balancer instance
+	// LB: loadBalancer object
+	LB *LB `json:"lb"`
+	// IPAddress: local ip address of load balancer instance
 	IPAddress []string `json:"ip_address"`
 	// PrivateNetworkID: instance private network id
 	PrivateNetworkID string `json:"private_network_id"`
@@ -1446,14 +1446,14 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type ListLbsRequest struct {
+type ListLBsRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
 	// OrderBy:
 	//
 	// Default value: created_at_asc
-	OrderBy ListLbsRequestOrderBy `json:"-"`
+	OrderBy ListLBsRequestOrderBy `json:"-"`
 
 	PageSize *uint32 `json:"-"`
 
@@ -1462,7 +1462,8 @@ type ListLbsRequest struct {
 	OrganizationID *string `json:"-"`
 }
 
-func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
+// ListLBs: list load balancers
+func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1493,7 +1494,7 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 		Headers: http.Header{},
 	}
 
-	var resp ListLbsResponse
+	var resp ListLBsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1504,24 +1505,24 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListLBsResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLbsResponse)
+func (r *ListLBsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.Lbs = append(r.Lbs, results.Lbs...)
-	r.TotalCount += uint32(len(results.Lbs))
-	return uint32(len(results.Lbs)), nil
+	r.LBs = append(r.LBs, results.LBs...)
+	r.TotalCount += uint32(len(results.LBs))
+	return uint32(len(results.LBs)), nil
 }
 
-type CreateLbRequest struct {
+type CreateLBRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID: owner of resources
 	OrganizationID string `json:"organization_id"`
@@ -1529,11 +1530,11 @@ type CreateLbRequest struct {
 	Name string `json:"name"`
 	// Description: resource description
 	Description string `json:"description"`
-	// IPID: just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later
+	// IPID: just like for compute instances, when you destroy a load balancer, you can keep its highly available IP address and reuse it for another load balancer later
 	IPID *string `json:"ip_id"`
 	// Tags: list of keyword
 	Tags []string `json:"tags"`
-	// Type: load Balancer offer type
+	// Type: load balancer offer type
 	Type string `json:"type"`
 	// SslCompatibilityLevel:
 	//
@@ -1546,7 +1547,8 @@ type CreateLbRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// CreateLB: create a load balancer
+func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.OrganizationID == "" {
@@ -1574,7 +1576,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1583,13 +1585,14 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	return &resp, nil
 }
 
-type GetLbRequest struct {
+type GetLBRequest struct {
 	Region scw.Region `json:"-"`
 
-	LbID string `json:"-"`
+	LBID string `json:"-"`
 }
 
-func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// GetLB: get a load balancer
+func (s *API) GetLB(req *GetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1601,17 +1604,17 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Headers: http.Header{},
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1620,10 +1623,10 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	return &resp, nil
 }
 
-type UpdateLbRequest struct {
+type UpdateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
 	// Description: resource description
@@ -1641,7 +1644,8 @@ type UpdateLbRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// UpdateLB: update a load balancer
+func (s *API) UpdateLB(req *UpdateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1653,13 +1657,13 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1668,7 +1672,7 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1677,15 +1681,16 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	return &resp, nil
 }
 
-type DeleteLbRequest struct {
+type DeleteLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// ReleaseIP: set true if you don't want to keep this IP address
 	ReleaseIP bool `json:"-"`
 }
 
-func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
+// DeleteLB: delete a load balancer
+func (s *API) DeleteLB(req *DeleteLBRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1700,13 +1705,13 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 		return errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1718,16 +1723,16 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	return nil
 }
 
-type MigrateLbRequest struct {
+type MigrateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
-	// Type: load Balancer type (check /lb-types to list all type)
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Type: load balancer type (check /lb-types to list all type)
 	Type string `json:"type"`
 }
 
-// MigrateLb: migrate Load Balancer
-func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// MigrateLB: migrate a load balancer
+func (s *API) MigrateLB(req *MigrateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1739,13 +1744,13 @@ func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, 
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/migrate",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/migrate",
 		Headers: http.Header{},
 	}
 
@@ -1754,7 +1759,7 @@ func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, 
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1842,7 +1847,7 @@ type CreateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// CreateIP: create IP
+// CreateIP: create an IP
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1886,7 +1891,7 @@ type GetIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// GetIP: get IP
+// GetIP: get an IP
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1924,7 +1929,7 @@ type ReleaseIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// ReleaseIP: release IP
+// ReleaseIP: delete an IP
 func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1962,7 +1967,7 @@ type UpdateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// UpdateIP: update IP
+// UpdateIP: update an IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2001,8 +2006,8 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type ListBackendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
 	// OrderBy: choose order of response
@@ -2015,6 +2020,7 @@ type ListBackendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListBackends: list backends in a given load balancer
 func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
@@ -2038,13 +2044,13 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -2079,8 +2085,8 @@ func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
 	// ForwardProtocol: backend protocol. TCP or HTTP
@@ -2169,6 +2175,7 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateBackend: create a backend in a given load balancer
 func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2181,13 +2188,13 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backends",
 		Headers: http.Header{},
 	}
 
@@ -2211,6 +2218,7 @@ type GetBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
+// GetBackend: get a backend in a given load balancer
 func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2322,6 +2330,7 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateBackend: update a backend in a given load balancer
 func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2364,6 +2373,7 @@ type DeleteBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
+// DeleteBackend: delete a backend in a given load balancer
 func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2401,6 +2411,7 @@ type AddBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// AddBackendServers: add a set of servers in a given backend
 func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2445,6 +2456,7 @@ type RemoveBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// RemoveBackendServers: remove a set of servers for a given backend
 func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2489,6 +2501,7 @@ type SetBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// SetBackendServers: define all servers in a given backend
 func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2596,6 +2609,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateHealthCheck: update an healthcheck for a given backend
 func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
@@ -2634,8 +2648,8 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 type ListFrontendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
 	// OrderBy: response order
@@ -2648,6 +2662,7 @@ type ListFrontendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListFrontends: list frontends in a given load balancer
 func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
@@ -2671,13 +2686,13 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/frontends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -2712,8 +2727,8 @@ func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
 	// InboundPort: TCP port to listen on the front side
@@ -2762,6 +2777,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateFrontend: create a frontend in a given load balancer
 func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2774,13 +2790,13 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/frontends",
 		Headers: http.Header{},
 	}
 
@@ -2804,6 +2820,7 @@ type GetFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
+// GetFrontend: get a frontend
 func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2887,6 +2904,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateFrontend: update a frontend
 func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2929,6 +2947,7 @@ type DeleteFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
+// DeleteFrontend: delete a frontend
 func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2958,13 +2977,14 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-type GetLbStatsRequest struct {
+type GetLBStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 }
 
-func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
+// GetLBStats: get usage statistics of a given load balancer
+func (s *API) GetLBStats(req *GetLBStatsRequest, opts ...scw.RequestOption) (*LBStats, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2976,17 +2996,17 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/stats",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/stats",
 		Headers: http.Header{},
 	}
 
-	var resp LbStats
+	var resp LBStats
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2997,8 +3017,8 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 type ListBackendStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
 	// PageSize: the number of items to return
@@ -3026,13 +3046,13 @@ func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.Request
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backend-stats",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backend-stats",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -3081,6 +3101,7 @@ type ListACLsRequest struct {
 	Name *string `json:"-"`
 }
 
+// ListACLs: list ACL for a given frontend
 func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
@@ -3164,6 +3185,7 @@ type CreateACLRequest struct {
 	Index int32 `json:"index"`
 }
 
+// CreateACL: create an ACL
 func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3206,6 +3228,7 @@ type GetACLRequest struct {
 	ACLID string `json:"-"`
 }
 
+// GetACL: get an ACL
 func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3251,6 +3274,7 @@ type UpdateACLRequest struct {
 	Index int32 `json:"index"`
 }
 
+// UpdateACL: update an ACL
 func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3293,6 +3317,7 @@ type DeleteACLRequest struct {
 	ACLID string `json:"-"`
 }
 
+// DeleteACL: delete an ACL
 func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3324,8 +3349,8 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 
 type CreateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// Name: certificate name
 	Name string `json:"name"`
 	// Letsencrypt: let's Encrypt type
@@ -3336,9 +3361,9 @@ type CreateCertificateRequest struct {
 	CustomCertificate *CreateCertificateRequestCustomCertificate `json:"custom_certificate,omitempty"`
 }
 
-// CreateCertificate: create Certificate
+// CreateCertificate: create a TLS certificate
 //
-// Generate a new SSL certificate using Let's Encrypt or import your certificate.
+// Generate a new TLS certificate using Let's Encrypt or import your certificate.
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3351,13 +3376,13 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/certificates",
 		Headers: http.Header{},
 	}
 
@@ -3377,8 +3402,8 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 
 type ListCertificatesRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
@@ -3391,7 +3416,7 @@ type ListCertificatesRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListCertificates: list Certificates
+// ListCertificates: list all TLS certificates on a given load balancer
 func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -3415,13 +3440,13 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/certificates",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -3460,7 +3485,7 @@ type GetCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// GetCertificate: get Certificate
+// GetCertificate: get a TLS certificate
 func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3500,7 +3525,7 @@ type UpdateCertificateRequest struct {
 	Name string `json:"name"`
 }
 
-// UpdateCertificate: update Certificate
+// UpdateCertificate: update a TLS certificate
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3543,7 +3568,7 @@ type DeleteCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// DeleteCertificate: delete Certificate
+// DeleteCertificate: delete a TLS certificate
 func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3573,7 +3598,7 @@ func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.Reque
 	return nil
 }
 
-type ListLbTypesRequest struct {
+type ListLBTypesRequest struct {
 	Region scw.Region `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -3581,8 +3606,8 @@ type ListLbTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListLbTypes: list all Load Balancer offer type
-func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*ListLbTypesResponse, error) {
+// ListLBTypes: list all load balancer offer type
+func (s *API) ListLBTypes(req *ListLBTypesRequest, opts ...scw.RequestOption) (*ListLBTypesResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3610,7 +3635,7 @@ func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*
 		Headers: http.Header{},
 	}
 
-	var resp ListLbTypesResponse
+	var resp ListLBTypesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3621,21 +3646,21 @@ func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListLBTypesResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLbTypesResponse)
+func (r *ListLBTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.LbTypes = append(r.LbTypes, results.LbTypes...)
-	r.TotalCount += uint32(len(results.LbTypes))
-	return uint32(len(results.LbTypes)), nil
+	r.LBTypes = append(r.LBTypes, results.LBTypes...)
+	r.TotalCount += uint32(len(results.LBTypes))
+	return uint32(len(results.LBTypes)), nil
 }
 
 type CreateSubscriberRequest struct {
@@ -3891,16 +3916,16 @@ func (s *API) DeleteSubscriber(req *DeleteSubscriberRequest, opts ...scw.Request
 	return nil
 }
 
-type SubscribeToLbRequest struct {
+type SubscribeToLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// SubscriberID: subscriber ID
 	SubscriberID string `json:"subscriber_id"`
 }
 
-// SubscribeToLb: link Load Balancer to a subscriber
-func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// SubscribeToLB: subscribe a subscriber to a given load balancer
+func (s *API) SubscribeToLB(req *SubscribeToLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3912,13 +3937,13 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LbID) + "/subscribe",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LBID) + "/subscribe",
 		Headers: http.Header{},
 	}
 
@@ -3927,7 +3952,7 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3936,14 +3961,14 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type UnsubscribeFromLbRequest struct {
+type UnsubscribeFromLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 }
 
-// UnsubscribeFromLb: remove link between Load Balancer and subscriber
-func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// UnsubscribeFromLB: unsubscribe a subscriber from a given load balancer
+func (s *API) UnsubscribeFromLB(req *UnsubscribeFromLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3955,17 +3980,17 @@ func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.Reque
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LbID) + "/unsubscribe",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LBID) + "/unsubscribe",
 		Headers: http.Header{},
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3974,10 +3999,10 @@ func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-type ListLbPrivateNetworksRequest struct {
+type ListLBPrivateNetworksRequest struct {
 	Region scw.Region `json:"-"`
 
-	LbID string `json:"-"`
+	LBID string `json:"-"`
 	// OrderBy:
 	//
 	// Default value: created_at_asc
@@ -3988,8 +4013,8 @@ type ListLbPrivateNetworksRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListLbPrivateNetworks: bETA - List attached private network of Load Balancer
-func (s *API) ListLbPrivateNetworks(req *ListLbPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLbPrivateNetworksResponse, error) {
+// ListLBPrivateNetworks: bETA - List attached private network of load balancer
+func (s *API) ListLBPrivateNetworks(req *ListLBPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLBPrivateNetworksResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -4011,18 +4036,18 @@ func (s *API) ListLbPrivateNetworks(req *ListLbPrivateNetworksRequest, opts ...s
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/private-networks",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks",
 		Query:   query,
 		Headers: http.Header{},
 	}
 
-	var resp ListLbPrivateNetworksResponse
+	var resp ListLBPrivateNetworksResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -4033,14 +4058,14 @@ func (s *API) ListLbPrivateNetworks(req *ListLbPrivateNetworksRequest, opts ...s
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbPrivateNetworksResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListLBPrivateNetworksResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLbPrivateNetworksResponse)
+func (r *ListLBPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBPrivateNetworksResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
@@ -4052,15 +4077,15 @@ func (r *ListLbPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, e
 
 type AttachPrivateNetworkRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 	// PrivateNetworkID: set your instance private network id
 	PrivateNetworkID string `json:"-"`
-	// IPAddress: define two local ip address of your choice for each Load Balancer instance
+	// IPAddress: define two local ip address of your choice for each load balancer instance
 	IPAddress []string `json:"ip_address"`
 }
 
-// AttachPrivateNetwork: bETA - Add Load Balancer on instance private network
+// AttachPrivateNetwork: bETA - Add load balancer on instance private network
 func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
@@ -4073,8 +4098,8 @@ func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.PrivateNetworkID) == "" {
@@ -4083,7 +4108,7 @@ func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/attach",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/attach",
 		Headers: http.Header{},
 	}
 
@@ -4106,10 +4131,10 @@ type DetachPrivateNetworkRequest struct {
 
 	PrivateNetworkID string `json:"-"`
 
-	LbID string `json:"-"`
+	LBID string `json:"-"`
 }
 
-// DetachPrivateNetwork: bETA - Remove Load Balancer of private network
+// DetachPrivateNetwork: bETA - Remove load balancer of private network
 func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4126,13 +4151,13 @@ func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw
 		return errors.New("field PrivateNetworkID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/detach",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/detach",
 		Headers: http.Header{},
 	}
 
