@@ -113,6 +113,7 @@ var commonInitialisms = map[string]bool{
 	"ID":    true,
 	"IP":    true,
 	"JSON":  true,
+	"LB":    true,
 	"LHS":   true,
 	"QPS":   true,
 	"RAM":   true,
@@ -150,6 +151,7 @@ var customInitialisms = map[string][2]string{
 	"IDS":   {"IDs", "ids"},
 	"IPS":   {"IPs", "ips"},
 	"IPV":   {"IPv", "ipv"}, // handle IPV4 && IPV6
+	"LBS":   {"LBs", "lbs"},
 	"UIDS":  {"UIDs", "uids"},
 	"UUIDS": {"UUIDs", "uuids"},
 	"URIS":  {"URIs", "uris"},
