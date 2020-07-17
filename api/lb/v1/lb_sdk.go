@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage your Load Balancer service
+// API: this API allows you to manage your load balancer service
 type API struct {
 	client *scw.Client
 }
@@ -1047,7 +1047,7 @@ type Certificate struct {
 	//
 	// Default value: pending
 	Status CertificateStatus `json:"status"`
-	// Lb: load Balancer object
+	// Lb: load balancer object
 	Lb *Lb `json:"lb"`
 	// Name: certificate name
 	Name string `json:"name"`
@@ -1061,9 +1061,9 @@ type CreateCertificateRequestCustomCertificate struct {
 
 // CreateCertificateRequestLetsencryptConfig: generate a new SSL certificate using Let's Encrypt.
 type CreateCertificateRequestLetsencryptConfig struct {
-	// CommonName: main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
+	// CommonName: main domain name of certificate (make sure this domain exists and resolves to your load balancer HA IP)
 	CommonName string `json:"common_name"`
-	// SubjectAlternativeName: alternative domain names (make sure all domain names exists and resolves to your Load Balancer HA IP)
+	// SubjectAlternativeName: alternative domain names (make sure all domain names exists and resolves to your load balancer HA IP)
 	SubjectAlternativeName []string `json:"subject_alternative_name"`
 }
 
@@ -1318,7 +1318,7 @@ type ListBackendStatsResponse struct {
 
 // ListBackendsResponse: list backends response
 type ListBackendsResponse struct {
-	// Backends: list Backend objects of a Load Balancer
+	// Backends: list Backend objects of a load balancer
 	Backends []*Backend `json:"backends"`
 	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
@@ -1377,7 +1377,7 @@ type ListSubscriberResponse struct {
 type PrivateNetwork struct {
 	// Lb: loadBalancer object
 	Lb *Lb `json:"lb"`
-	// IPAddress: local ip address of Load Balancer instance
+	// IPAddress: local ip address of load balancer instance
 	IPAddress []string `json:"ip_address"`
 	// PrivateNetworkID: instance private network id
 	PrivateNetworkID string `json:"private_network_id"`
@@ -1462,6 +1462,7 @@ type ListLbsRequest struct {
 	OrganizationID *string `json:"-"`
 }
 
+// ListLbs: list load balancers
 func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
 	var err error
 
@@ -1529,11 +1530,11 @@ type CreateLbRequest struct {
 	Name string `json:"name"`
 	// Description: resource description
 	Description string `json:"description"`
-	// IPID: just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later
+	// IPID: just like for compute instances, when you destroy a load balancer, you can keep its highly available IP address and reuse it for another load balancer later
 	IPID *string `json:"ip_id"`
 	// Tags: list of keyword
 	Tags []string `json:"tags"`
-	// Type: load Balancer offer type
+	// Type: load balancer offer type
 	Type string `json:"type"`
 	// SslCompatibilityLevel:
 	//
@@ -1546,6 +1547,7 @@ type CreateLbRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
+// CreateLb: create a load balancer
 func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -1589,6 +1591,7 @@ type GetLbRequest struct {
 	LbID string `json:"-"`
 }
 
+// GetLb: get a load balancer
 func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -1622,7 +1625,7 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 
 type UpdateLbRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
@@ -1641,6 +1644,7 @@ type UpdateLbRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
+// UpdateLb: update a load balancer
 func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -1679,12 +1683,13 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 
 type DeleteLbRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// ReleaseIP: set true if you don't want to keep this IP address
 	ReleaseIP bool `json:"-"`
 }
 
+// DeleteLb: delete a load balancer
 func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1720,13 +1725,13 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 
 type MigrateLbRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
-	// Type: load Balancer type (check /lb-types to list all type)
+	// Type: load balancer type (check /lb-types to list all type)
 	Type string `json:"type"`
 }
 
-// MigrateLb: migrate Load Balancer
+// MigrateLb: migrate a load balancer
 func (s *API) MigrateLb(req *MigrateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -1842,7 +1847,7 @@ type CreateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// CreateIP: create IP
+// CreateIP: create an IP
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1886,7 +1891,7 @@ type GetIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// GetIP: get IP
+// GetIP: get an IP
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1924,7 +1929,7 @@ type ReleaseIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// ReleaseIP: release IP
+// ReleaseIP: delete an IP
 func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1962,7 +1967,7 @@ type UpdateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// UpdateIP: update IP
+// UpdateIP: update an IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2001,7 +2006,7 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type ListBackendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
@@ -2015,6 +2020,7 @@ type ListBackendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListBackends: list backends in a given load balancer
 func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
@@ -2079,7 +2085,7 @@ func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
@@ -2169,6 +2175,7 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateBackend: create a backend in a given load balancer
 func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2211,6 +2218,7 @@ type GetBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
+// GetBackend: get a backend in a given load balancer
 func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2322,6 +2330,7 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateBackend: update a backend in a given load balancer
 func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2364,6 +2373,7 @@ type DeleteBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
+// DeleteBackend: delete a backend in a given load balancer
 func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2401,6 +2411,7 @@ type AddBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// AddBackendServers: add a set of servers in a given backend
 func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2445,6 +2456,7 @@ type RemoveBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// RemoveBackendServers: remove a set of servers for a given backend
 func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2489,6 +2501,7 @@ type SetBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// SetBackendServers: define all servers in a given backend
 func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2596,6 +2609,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateHealthCheck: update an healthcheck for a given backend
 func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
@@ -2634,7 +2648,7 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 type ListFrontendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
@@ -2648,6 +2662,7 @@ type ListFrontendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListFrontends: list frontends in a given load balancer
 func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
@@ -2712,7 +2727,7 @@ func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: resource name
 	Name string `json:"name"`
@@ -2762,6 +2777,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateFrontend: create a frontend in a given load balancer
 func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2804,6 +2820,7 @@ type GetFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
+// GetFrontend: get a frontend
 func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2887,6 +2904,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateFrontend: update a frontend
 func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2929,6 +2947,7 @@ type DeleteFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
+// DeleteFrontend: delete a frontend
 func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2960,10 +2979,11 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 
 type GetLbStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 }
 
+// GetLbStats: get usage statistics of a given load balancer
 func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
 	var err error
 
@@ -2997,7 +3017,7 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 type ListBackendStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -3081,6 +3101,7 @@ type ListACLsRequest struct {
 	Name *string `json:"-"`
 }
 
+// ListACLs: list ACL for a given frontend
 func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
@@ -3164,6 +3185,7 @@ type CreateACLRequest struct {
 	Index int32 `json:"index"`
 }
 
+// CreateACL: create an ACL
 func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3206,6 +3228,7 @@ type GetACLRequest struct {
 	ACLID string `json:"-"`
 }
 
+// GetACL: get an ACL
 func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3251,6 +3274,7 @@ type UpdateACLRequest struct {
 	Index int32 `json:"index"`
 }
 
+// UpdateACL: update an ACL
 func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3293,6 +3317,7 @@ type DeleteACLRequest struct {
 	ACLID string `json:"-"`
 }
 
+// DeleteACL: delete an ACL
 func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3324,7 +3349,7 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 
 type CreateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// Name: certificate name
 	Name string `json:"name"`
@@ -3336,9 +3361,9 @@ type CreateCertificateRequest struct {
 	CustomCertificate *CreateCertificateRequestCustomCertificate `json:"custom_certificate,omitempty"`
 }
 
-// CreateCertificate: create Certificate
+// CreateCertificate: create a TLS certificate
 //
-// Generate a new SSL certificate using Let's Encrypt or import your certificate.
+// Generate a new TLS certificate using Let's Encrypt or import your certificate.
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3377,7 +3402,7 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 
 type ListCertificatesRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
@@ -3391,7 +3416,7 @@ type ListCertificatesRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListCertificates: list Certificates
+// ListCertificates: list all TLS certificates on a given load balancer
 func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -3460,7 +3485,7 @@ type GetCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// GetCertificate: get Certificate
+// GetCertificate: get a TLS certificate
 func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3500,7 +3525,7 @@ type UpdateCertificateRequest struct {
 	Name string `json:"name"`
 }
 
-// UpdateCertificate: update Certificate
+// UpdateCertificate: update a TLS certificate
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3543,7 +3568,7 @@ type DeleteCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// DeleteCertificate: delete Certificate
+// DeleteCertificate: delete a TLS certificate
 func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3581,7 +3606,7 @@ type ListLbTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListLbTypes: list all Load Balancer offer type
+// ListLbTypes: list all load balancer offer type
 func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*ListLbTypesResponse, error) {
 	var err error
 
@@ -3893,13 +3918,13 @@ func (s *API) DeleteSubscriber(req *DeleteSubscriberRequest, opts ...scw.Request
 
 type SubscribeToLbRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// SubscriberID: subscriber ID
 	SubscriberID string `json:"subscriber_id"`
 }
 
-// SubscribeToLb: link Load Balancer to a subscriber
+// SubscribeToLb: subscribe a subscriber to a given load balancer
 func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -3938,11 +3963,11 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 
 type UnsubscribeFromLbRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 }
 
-// UnsubscribeFromLb: remove link between Load Balancer and subscriber
+// UnsubscribeFromLb: unsubscribe a subscriber from a given load balancer
 func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	var err error
 
@@ -3988,7 +4013,7 @@ type ListLbPrivateNetworksRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListLbPrivateNetworks: bETA - List attached private network of Load Balancer
+// ListLbPrivateNetworks: bETA - List attached private network of load balancer
 func (s *API) ListLbPrivateNetworks(req *ListLbPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLbPrivateNetworksResponse, error) {
 	var err error
 
@@ -4052,15 +4077,15 @@ func (r *ListLbPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, e
 
 type AttachPrivateNetworkRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID: load Balancer ID
+	// LbID: load balancer ID
 	LbID string `json:"-"`
 	// PrivateNetworkID: set your instance private network id
 	PrivateNetworkID string `json:"-"`
-	// IPAddress: define two local ip address of your choice for each Load Balancer instance
+	// IPAddress: define two local ip address of your choice for each load balancer instance
 	IPAddress []string `json:"ip_address"`
 }
 
-// AttachPrivateNetwork: bETA - Add Load Balancer on instance private network
+// AttachPrivateNetwork: bETA - Add load balancer on instance private network
 func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
@@ -4109,7 +4134,7 @@ type DetachPrivateNetworkRequest struct {
 	LbID string `json:"-"`
 }
 
-// DetachPrivateNetwork: bETA - Remove Load Balancer of private network
+// DetachPrivateNetwork: bETA - Remove load balancer of private network
 func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
