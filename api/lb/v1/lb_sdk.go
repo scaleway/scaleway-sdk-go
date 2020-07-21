@@ -1587,7 +1587,7 @@ func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, er
 
 type GetLBRequest struct {
 	Region scw.Region `json:"-"`
-
+	// LBID: load balancer ID
 	LBID string `json:"-"`
 }
 
@@ -2738,11 +2738,9 @@ type CreateFrontendRequest struct {
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// CertificateID: certificate ID, deprecated in favor of certificate_ids array !
-	// Precisely one of CertificateID, CertificateIDs must be set.
-	CertificateID *string `json:"certificate_id,omitempty"`
+	CertificateID *string `json:"certificate_id"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
-	// Precisely one of CertificateID, CertificateIDs must be set.
-	CertificateIDs *[]string `json:"certificate_ids,omitempty"`
+	CertificateIDs *[]string `json:"certificate_ids"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2865,11 +2863,9 @@ type UpdateFrontendRequest struct {
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
-	// Precisely one of CertificateID, CertificateIDs must be set.
-	CertificateID *string `json:"certificate_id,omitempty"`
+	CertificateID *string `json:"certificate_id"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
-	// Precisely one of CertificateID, CertificateIDs must be set.
-	CertificateIDs *[]string `json:"certificate_ids,omitempty"`
+	CertificateIDs *[]string `json:"certificate_ids"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
