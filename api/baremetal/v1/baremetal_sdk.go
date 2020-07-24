@@ -1017,6 +1017,10 @@ type StartServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to start
 	ServerID string `json:"-"`
+	// BootType: the type of boot
+	//
+	// Default value: unknown_boot_type
+	BootType ServerBootType `json:"boot_type"`
 }
 
 // StartServer: start a baremetal server
