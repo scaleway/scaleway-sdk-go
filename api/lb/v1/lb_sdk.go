@@ -3193,7 +3193,7 @@ type CreateACLRequest struct {
 	Index int32 `json:"index"`
 }
 
-// CreateACL: create an ACL
+// CreateACL: create an ACL for a given frontend
 func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 

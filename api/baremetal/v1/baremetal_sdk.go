@@ -393,6 +393,14 @@ type CPU struct {
 	Frequency uint32 `json:"frequency"`
 }
 
+type CreateServerRequestInstall struct {
+	OsID string `json:"os_id"`
+
+	Hostname string `json:"hostname"`
+
+	SSHKeyIDs []string `json:"ssh_key_ids"`
+}
+
 // Disk: disk
 type Disk struct {
 	// Capacity: capacity of the disk in bytes
@@ -730,6 +738,8 @@ type CreateServerRequest struct {
 	Description string `json:"description"`
 	// Tags: tags to associate to the server
 	Tags []string `json:"tags"`
+
+	Install *CreateServerRequestInstall `json:"install"`
 }
 
 // CreateServer: create a baremetal server
