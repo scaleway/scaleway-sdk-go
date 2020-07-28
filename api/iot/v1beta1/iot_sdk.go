@@ -2340,7 +2340,9 @@ type CreateNetworkRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: network name
 	Name string `json:"name"`
-	// OrganizationID: organization owning the resource
+	// OrganizationID: deprecated: Organization owning the resource, do not use
+	//
+	// Will always be assigned to the organization owning the IoT hub.
 	OrganizationID string `json:"organization_id"`
 	// Type: type of network to connect with
 	//
