@@ -1193,7 +1193,7 @@ type StartBMCAccessRequest struct {
 	IP net.IP `json:"ip"`
 }
 
-// StartBMCAccess: start BMC (Baseboard Management Controller) access
+// StartBMCAccess: start BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Start BMC (Baseboard Management Controller) access associated with the given ID.
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
@@ -1240,7 +1240,7 @@ type GetBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetBMCAccess: get BMC (Baseboard Management Controller) access
+// GetBMCAccess: get BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Get the BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
@@ -1280,7 +1280,7 @@ type StopBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopBMCAccess: stop BMC (Baseboard Management Controller) access
+// StopBMCAccess: stop BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Stop BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) StopBMCAccess(req *StopBMCAccessRequest, opts ...scw.RequestOption) error {
