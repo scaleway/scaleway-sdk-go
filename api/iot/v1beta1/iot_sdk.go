@@ -398,6 +398,8 @@ const (
 	NetworkNetworkTypeUnknown = NetworkNetworkType("unknown")
 	// NetworkNetworkTypeSigfox is [insert doc].
 	NetworkNetworkTypeSigfox = NetworkNetworkType("sigfox")
+	// NetworkNetworkTypeRest is [insert doc].
+	NetworkNetworkTypeRest = NetworkNetworkType("rest")
 )
 
 func (enum NetworkNetworkType) String() string {
