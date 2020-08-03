@@ -377,6 +377,8 @@ type Namespace struct {
 	Description string `json:"description"`
 	// OrganizationID: owner of the namespace
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project of the namespace
+	ProjectID string `json:"project_id"`
 	// Status: namespace status
 	//
 	// Default value: unknown
@@ -431,8 +433,10 @@ type ListNamespacesRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
-	// OrganizationID: filter by the namespace owner
+	// OrganizationID: filter by Organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter by Project ID
+	ProjectID *string `json:"-"`
 	// Name: filter by the namespace name (exact match)
 	Name *string `json:"-"`
 }
@@ -456,6 +460,7 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Region) == "" {
@@ -543,8 +548,12 @@ type CreateNamespaceRequest struct {
 	Name string `json:"name"`
 	// Description: define a description
 	Description string `json:"description"`
-	// OrganizationID: define the namespace owner
-	OrganizationID string `json:"organization_id"`
+	// OrganizationID: assign the namespace owner (deprecated)
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the namespace to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// IsPublic: define the default visibility policy
 	IsPublic bool `json:"is_public"`
 }
@@ -553,9 +562,14 @@ type CreateNamespaceRequest struct {
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -692,6 +706,8 @@ type ListImagesRequest struct {
 	Name *string `json:"-"`
 	// OrganizationID: filter by Organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter by Project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListImages: list all your images
@@ -715,6 +731,7 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
