@@ -301,6 +301,46 @@ func (enum *DomainFeatureStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DomainRegistrationProcessTransferStatus string
+
+const (
+	// DomainRegistrationProcessTransferStatusTransferStatusUnknown is [insert doc].
+	DomainRegistrationProcessTransferStatusTransferStatusUnknown = DomainRegistrationProcessTransferStatus("transfer_status_unknown")
+	// DomainRegistrationProcessTransferStatusPending is [insert doc].
+	DomainRegistrationProcessTransferStatusPending = DomainRegistrationProcessTransferStatus("pending")
+	// DomainRegistrationProcessTransferStatusWaitingVote is [insert doc].
+	DomainRegistrationProcessTransferStatusWaitingVote = DomainRegistrationProcessTransferStatus("waitingVote")
+	// DomainRegistrationProcessTransferStatusRejected is [insert doc].
+	DomainRegistrationProcessTransferStatusRejected = DomainRegistrationProcessTransferStatus("rejected")
+	// DomainRegistrationProcessTransferStatusProcessing is [insert doc].
+	DomainRegistrationProcessTransferStatusProcessing = DomainRegistrationProcessTransferStatus("processing")
+	// DomainRegistrationProcessTransferStatusDone is [insert doc].
+	DomainRegistrationProcessTransferStatusDone = DomainRegistrationProcessTransferStatus("done")
+)
+
+func (enum DomainRegistrationProcessTransferStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "transfer_status_unknown"
+	}
+	return string(enum)
+}
+
+func (enum DomainRegistrationProcessTransferStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainRegistrationProcessTransferStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainRegistrationProcessTransferStatus(DomainRegistrationProcessTransferStatus(tmp).String())
+	return nil
+}
+
 type DomainStatus string
 
 const (
@@ -1100,6 +1140,27 @@ type Domain struct {
 	TechnicalContact *Contact `json:"technical_contact"`
 
 	AdministrativeContact *Contact `json:"administrative_contact"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	ExternalDomainRegistrationProcess *DomainRegistrationProcessExternalDomain `json:"external_domain_registration_process,omitempty"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	TransferRegistrationProcess *DomainRegistrationProcessTransfer `json:"transfer_registration_process,omitempty"`
+}
+
+type DomainRegistrationProcessExternalDomain struct {
+	ValidationToken string `json:"validation_token"`
+}
+
+type DomainRegistrationProcessTransfer struct {
+	// Status:
+	//
+	// Default value: transfer_status_unknown
+	Status DomainRegistrationProcessTransferStatus `json:"status"`
+
+	VoteOldOwner bool `json:"vote_old_owner"`
+
+	VoteNewOwner bool `json:"vote_new_owner"`
 }
 
 type DomainSummary struct {
@@ -2101,6 +2162,8 @@ type ListDomainsRequest struct {
 	Status DomainStatus `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	IsExternal *bool `json:"-"`
 }
 
 // ListDomains: list domains
@@ -2121,6 +2184,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "registrar", req.Registrar)
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "is_external", req.IsExternal)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
