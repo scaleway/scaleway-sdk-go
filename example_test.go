@@ -173,7 +173,7 @@ func Example_createLoadBalancer() {
 	newLB, err := lbAPI.CreateLB(&lb.CreateLBRequest{
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
-		OrganizationID: "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+		OrganizationID: scw.StringPtr("000a115d-2852-4b0a-9ce8-47f1134ba95a"),
 		Region:         scw.RegionFrPar,
 	})
 
