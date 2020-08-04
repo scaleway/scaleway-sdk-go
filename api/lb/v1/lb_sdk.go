@@ -1232,6 +1232,8 @@ type IP struct {
 
 	Reverse string `json:"reverse"`
 
+	ProjectID string `json:"project_id"`
+
 	Region scw.Region `json:"region"`
 }
 
@@ -1278,6 +1280,8 @@ type LB struct {
 	//
 	// Default value: ssl_compatibility_level_unknown
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
+
+	ProjectID string `json:"project_id"`
 
 	Region scw.Region `json:"region"`
 }
@@ -1458,8 +1462,10 @@ type ListLBsRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
-
+	// OrganizationID: filter LBs by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter LBs by project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListLBs: list load balancers
@@ -1482,6 +1488,7 @@ func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1525,7 +1532,11 @@ func (r *ListLBsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 type CreateLBRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID: owner of resources
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Name: resource names
 	Name string `json:"name"`
 	// Description: resource description
@@ -1551,9 +1562,14 @@ type CreateLBRequest struct {
 func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -1780,8 +1796,10 @@ type ListIPsRequest struct {
 	PageSize *uint32 `json:"-"`
 	// IPAddress: use this to search by IP address
 	IPAddress *string `json:"-"`
-
+	// OrganizationID: filter IPs by organization id
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter IPs by project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListIPs: list IPs
@@ -1803,6 +1821,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "ip_address", req.IPAddress)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1846,7 +1865,11 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 type CreateIPRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID: owner of resources
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Reverse: reverse domain name
 	Reverse *string `json:"reverse"`
 }
@@ -1855,9 +1878,14 @@ type CreateIPRequest struct {
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -3690,16 +3718,25 @@ type CreateSubscriberRequest struct {
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 	// OrganizationID: owner of resources
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
 // CreateSubscriber: create a subscriber, webhook or email
 func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -3781,8 +3818,10 @@ type ListSubscriberRequest struct {
 	PageSize *uint32 `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrganizationID: owner of resources
+	// OrganizationID: filter Subscribers by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter Subscribers by project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListSubscriber: list all subscriber
@@ -3805,6 +3844,7 @@ func (s *API) ListSubscriber(req *ListSubscriberRequest, opts ...scw.RequestOpti
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3847,7 +3887,7 @@ func (r *ListSubscriberResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type UpdateSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// SubscriberID: subscriber ID
+	// SubscriberID: assign the resource to a project IDs
 	SubscriberID string `json:"-"`
 	// Name: subscriber name
 	Name string `json:"name"`
