@@ -393,6 +393,14 @@ type CPU struct {
 	Frequency uint32 `json:"frequency"`
 }
 
+type CreateServerRequestInstall struct {
+	OsID string `json:"os_id"`
+
+	Hostname string `json:"hostname"`
+
+	SSHKeyIDs []string `json:"ssh_key_ids"`
+}
+
 // Disk: disk
 type Disk struct {
 	// Capacity: capacity of the disk in bytes
@@ -730,6 +738,8 @@ type CreateServerRequest struct {
 	Description string `json:"description"`
 	// Tags: tags to associate to the server
 	Tags []string `json:"tags"`
+
+	Install *CreateServerRequestInstall `json:"install"`
 }
 
 // CreateServer: create a baremetal server
@@ -1007,6 +1017,10 @@ type StartServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to start
 	ServerID string `json:"-"`
+	// BootType: the type of boot
+	//
+	// Default value: unknown_boot_type
+	BootType ServerBootType `json:"boot_type"`
 }
 
 // StartServer: start a baremetal server
@@ -1179,7 +1193,7 @@ type StartBMCAccessRequest struct {
 	IP net.IP `json:"ip"`
 }
 
-// StartBMCAccess: start BMC (Baseboard Management Controller) access
+// StartBMCAccess: start BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Start BMC (Baseboard Management Controller) access associated with the given ID.
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
@@ -1226,7 +1240,7 @@ type GetBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetBMCAccess: get BMC (Baseboard Management Controller) access
+// GetBMCAccess: get BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Get the BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
@@ -1266,7 +1280,7 @@ type StopBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopBMCAccess: stop BMC (Baseboard Management Controller) access
+// StopBMCAccess: stop BMC (Baseboard Management Controller) access for a given baremetal server
 //
 // Stop BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) StopBMCAccess(req *StopBMCAccessRequest, opts ...scw.RequestOption) error {

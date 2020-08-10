@@ -170,10 +170,10 @@ func Example_createLoadBalancer() {
 	lbAPI := lb.NewAPI(client)
 
 	// Call the CreateLb method on the LB SDK to create a new load balancer.
-	newLb, err := lbAPI.CreateLb(&lb.CreateLbRequest{
+	newLB, err := lbAPI.CreateLB(&lb.CreateLBRequest{
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
-		OrganizationID: "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+		OrganizationID: scw.StringPtr("000a115d-2852-4b0a-9ce8-47f1134ba95a"),
 		Region:         scw.RegionFrPar,
 	})
 
@@ -182,5 +182,5 @@ func Example_createLoadBalancer() {
 	}
 
 	// Do something with the newly created LB...
-	fmt.Println(newLb)
+	fmt.Println(newLB)
 }
