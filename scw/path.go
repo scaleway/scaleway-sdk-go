@@ -63,7 +63,7 @@ func GetConfigPath() string {
 
 // getConfigV2FilePath returns the path to the v2 config file
 func getConfigV2FilePath() (string, bool) {
-	configDir, err := getScwConfigDir()
+	configDir, err := GetScwConfigDir()
 	if err != nil {
 		return "", false
 	}
@@ -79,8 +79,8 @@ func getConfigV1FilePath() (string, bool) {
 	return filepath.Clean(filepath.Join(path, ".scwrc")), true
 }
 
-// getScwConfigDir returns the path to scw config folder
-func getScwConfigDir() (string, error) {
+// GetScwConfigDir returns the path to scw config folder
+func GetScwConfigDir() (string, error) {
 	if xdgPath := os.Getenv(xdgConfigDirEnv); xdgPath != "" {
 		return filepath.Join(xdgPath, "scw"), nil
 	}
