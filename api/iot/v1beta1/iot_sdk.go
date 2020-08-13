@@ -1079,7 +1079,11 @@ type UpdateHubRequest struct {
 	HubID string `json:"-"`
 	// Name: hub name (up to 255 characters)
 	Name *string `json:"name"`
-	// DisableEvents: disable events
+	// ProductPlan: hub feature set
+	//
+	// Default value: plan_unknown
+	ProductPlan ProductPlan `json:"product_plan"`
+	// DisableEvents: disable Hub events
 	DisableEvents *bool `json:"disable_events"`
 	// EventsTopicPrefix: hub events topic prefix
 	EventsTopicPrefix *string `json:"events_topic_prefix"`
