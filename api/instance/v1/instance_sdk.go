@@ -615,6 +615,8 @@ type Bootscript struct {
 	Kernel string `json:"kernel"`
 	// Organization: the bootscript organization
 	Organization string `json:"organization"`
+	// Project: the bootscript project ID
+	Project string `json:"project"`
 	// Public: provide information if the bootscript is public
 	Public bool `json:"public"`
 	// Title: the bootscript title
@@ -787,6 +789,8 @@ type Image struct {
 	// Default value: available
 	State ImageState `json:"state"`
 
+	Project string `json:"project"`
+
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -878,6 +882,8 @@ type PlacementGroup struct {
 	Name string `json:"name"`
 	// Organization: the placement group organization
 	Organization string `json:"organization"`
+	// Project: the placement group project ID
+	Project string `json:"project"`
 	// PolicyMode: select the failling mode when the placement cannot be  respected, either optional or enforced
 	//
 	// Default value: optional
@@ -920,8 +926,12 @@ type SecurityGroup struct {
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 	// Organization: the security groups organization ID
 	Organization string `json:"organization"`
+	// Project: the project ID of the security group
+	Project string `json:"project"`
 	// OrganizationDefault: true if it is your default security group for this organization
 	OrganizationDefault bool `json:"organization_default"`
+	// ProjectDefault: true if it is your default security group for this project id
+	ProjectDefault bool `json:"project_default"`
 	// CreationDate: the security group creation date
 	CreationDate time.Time `json:"creation_date"`
 	// ModificationDate: the security group modification date
@@ -982,6 +992,8 @@ type Server struct {
 	Name string `json:"name"`
 	// Organization: the server organization
 	Organization string `json:"organization"`
+	// Project: the server project ID
+	Project string `json:"project"`
 	// AllowedActions: provide as list of allowed actions on the server
 	AllowedActions []ServerAction `json:"allowed_actions"`
 	// Tags: the server associated tags
@@ -1166,6 +1178,8 @@ type Snapshot struct {
 
 	ModificationDate time.Time `json:"modification_date"`
 
+	Project string `json:"project"`
+
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -1239,6 +1253,8 @@ type Volume struct {
 	ModificationDate time.Time `json:"modification_date"`
 	// Organization: the volumes organization
 	Organization string `json:"organization"`
+	// Project: the volumes project ID
+	Project string `json:"project"`
 	// Server: the server attached to the volume
 	Server *ServerSummary `json:"server"`
 	// State: the volumes state
@@ -1275,6 +1291,8 @@ type VolumeTemplate struct {
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 	// Organization: organization ID of the volume
 	Organization string `json:"organization,omitempty"`
+	// Project: project ID of the volume
+	Project string `json:"project,omitempty"`
 }
 
 type VolumeType struct {
@@ -1476,6 +1494,8 @@ type ListServersRequest struct {
 	Page *int32 `json:"-"`
 	// Organization: list only servers of this organization
 	Organization *string `json:"-"`
+	// Project: list only servers of this project ID
+	Project *string `json:"-"`
 	// Name: filter servers by name (for eg. "server1" will return "server100" and "server1" but not "foo")
 	Name *string `json:"-"`
 	// PrivateIP: list servers by private_ip
@@ -1510,6 +1530,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "private_ip", req.PrivateIP)
 	parameter.AddToQuery(query, "without_ip", req.WithoutIP)
@@ -1581,7 +1602,11 @@ type CreateServerRequest struct {
 	// Bootscript: the bootscript ID to use when `boot_type` is set to `bootscript`
 	Bootscript *string `json:"bootscript,omitempty"`
 	// Organization: the server organization ID
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+	// Project: the server project ID
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 	// Tags: the server tags
 	Tags []string `json:"tags,omitempty"`
 	// SecurityGroup: the security group ID
@@ -1594,9 +1619,14 @@ type CreateServerRequest struct {
 func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -1718,6 +1748,8 @@ type setServerRequest struct {
 	Name string `json:"name"`
 	// Organization: the server organization
 	Organization string `json:"organization"`
+	// Project: the server project ID
+	Project string `json:"project"`
 	// AllowedActions: provide as list of allowed actions on the server
 	AllowedActions []ServerAction `json:"allowed_actions"`
 	// Tags: the server associated tags
@@ -1774,6 +1806,11 @@ type setServerRequest struct {
 
 func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setServerResponse, error) {
 	var err error
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
+	}
 
 	if req.Organization == "" {
 		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
@@ -2071,6 +2108,8 @@ type ListImagesRequest struct {
 	Public *bool `json:"-"`
 
 	Arch *string `json:"-"`
+
+	Project *string `json:"-"`
 }
 
 // ListImages: list instance images
@@ -2096,6 +2135,7 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "public", req.Public)
 	parameter.AddToQuery(query, "arch", req.Arch)
+	parameter.AddToQuery(query, "project", req.Project)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -2191,7 +2231,11 @@ type CreateImageRequest struct {
 	// ExtraVolumes: additional volumes of the image
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
 	// Organization: organization ID of the image
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+	// Project: project ID of the image
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 	// Public: true to create a public image
 	Public bool `json:"public,omitempty"`
 }
@@ -2200,9 +2244,14 @@ type CreateImageRequest struct {
 func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*CreateImageResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -2268,6 +2317,8 @@ type SetImageRequest struct {
 	//
 	// Default value: available
 	State ImageState `json:"state"`
+
+	Project string `json:"project"`
 }
 
 // setImage: update image
@@ -2275,6 +2326,11 @@ type SetImageRequest struct {
 // Replace all image properties with an image message.
 func (s *API) setImage(req *SetImageRequest, opts ...scw.RequestOption) (*setImageResponse, error) {
 	var err error
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
+	}
 
 	if req.Organization == "" {
 		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
@@ -2362,6 +2418,8 @@ type ListSnapshotsRequest struct {
 	Page *int32 `json:"-"`
 
 	Name *string `json:"-"`
+
+	Project *string `json:"-"`
 }
 
 // ListSnapshots: list snapshots
@@ -2383,6 +2441,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "project", req.Project)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -2430,16 +2489,25 @@ type CreateSnapshotRequest struct {
 	// VolumeID: UUID of the volume
 	VolumeID string `json:"volume_id,omitempty"`
 
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 }
 
 // CreateSnapshot: create a snapshot from a given volume
 func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*CreateSnapshotResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -2539,6 +2607,8 @@ type SetSnapshotRequest struct {
 	CreationDate time.Time `json:"creation_date"`
 
 	ModificationDate time.Time `json:"modification_date"`
+
+	Project string `json:"project"`
 }
 
 // setSnapshot: update snapshot
@@ -2546,6 +2616,11 @@ type SetSnapshotRequest struct {
 // Replace all snapshot properties with a snapshot message.
 func (s *API) setSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
 	var err error
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
+	}
 
 	if req.Organization == "" {
 		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
@@ -2637,6 +2712,8 @@ type ListVolumesRequest struct {
 	Page *int32 `json:"-"`
 	// Organization: filter volume by organization
 	Organization *string `json:"-"`
+	// Project: filter volume by project ID
+	Project *string `json:"-"`
 	// Name: filter volume by name (for eg. "vol" will return "myvolume" but not "data")
 	Name *string `json:"-"`
 }
@@ -2660,6 +2737,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -2706,7 +2784,8 @@ type CreateVolumeRequest struct {
 
 	Name string `json:"name,omitempty"`
 
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
 	// VolumeType:
 	//
 	// Default value: l_ssd
@@ -2720,15 +2799,23 @@ type CreateVolumeRequest struct {
 
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	BaseSnapshot *string `json:"base_snapshot,omitempty"`
+
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 }
 
 // CreateVolume: create a volume
 func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*CreateVolumeResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -2893,6 +2980,8 @@ type ListSecurityGroupsRequest struct {
 	Name *string `json:"-"`
 	// Organization: the security group organization ID
 	Organization *string `json:"-"`
+	// Project: the security group project ID
+	Project *string `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
 	// Default value: 50
@@ -2920,6 +3009,7 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
@@ -2969,11 +3059,21 @@ type CreateSecurityGroupRequest struct {
 	// Description: description of the security group
 	Description string `json:"description,omitempty"`
 	// Organization: organization the security group belongs to
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+	// Project: project ID the security group belong to
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 	// OrganizationDefault: whether this security group becomes the default security group for new instances
 	//
 	// Default value: false
-	OrganizationDefault bool `json:"organization_default,omitempty"`
+	// Precisely one of OrganizationDefault, ProjectDefault must be set.
+	OrganizationDefault *bool `json:"organization_default,omitempty"`
+	// ProjectDefault: whether this security group becomes the default security group for new instances
+	//
+	// Default value: false
+	// Precisely one of OrganizationDefault, ProjectDefault must be set.
+	ProjectDefault *bool `json:"project_default,omitempty"`
 	// Stateful: whether the security group is stateful or not
 	//
 	// Default value: false
@@ -2992,9 +3092,14 @@ type CreateSecurityGroupRequest struct {
 func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.RequestOption) (*CreateSecurityGroupResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -3136,6 +3241,10 @@ type setSecurityGroupRequest struct {
 	Servers []*ServerSummary `json:"servers"`
 
 	Stateful bool `json:"stateful"`
+
+	Project string `json:"project"`
+
+	ProjectDefault bool `json:"project_default"`
 }
 
 // setSecurityGroup: update a security group
@@ -3143,6 +3252,11 @@ type setSecurityGroupRequest struct {
 // Replace all security group properties with a security group message.
 func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.RequestOption) (*setSecurityGroupResponse, error) {
 	var err error
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
+	}
 
 	if req.Organization == "" {
 		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
@@ -3493,6 +3607,8 @@ type ListPlacementGroupsRequest struct {
 	Page *int32 `json:"-"`
 	// Organization: list only placement groups of this organization
 	Organization *string `json:"-"`
+	// Project: list only placement groups of this project ID
+	Project *string `json:"-"`
 	// Name: filter placement groups by name (for eg. "cluster1" will return "cluster100" and "cluster1" but not "foo")
 	Name *string `json:"-"`
 }
@@ -3517,6 +3633,7 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -3563,7 +3680,11 @@ type CreatePlacementGroupRequest struct {
 	// Name: name of the placement group
 	Name string `json:"name,omitempty"`
 
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 	// PolicyMode:
 	//
 	// Default value: optional
@@ -3580,9 +3701,14 @@ type CreatePlacementGroupRequest struct {
 func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw.RequestOption) (*CreatePlacementGroupResponse, error) {
 	var err error
 
-	if req.Organization == "" {
-		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
-		req.Organization = defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Project = &defaultProject
+	}
+
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Organization == nil && req.Project == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Zone == "" {
@@ -3674,6 +3800,8 @@ type SetPlacementGroupRequest struct {
 	//
 	// Default value: max_availability
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
+
+	Project string `json:"project"`
 }
 
 // SetPlacementGroup: set placement group
@@ -3681,6 +3809,11 @@ type SetPlacementGroupRequest struct {
 // Set all parameters of the given placement group.
 func (s *API) SetPlacementGroup(req *SetPlacementGroupRequest, opts ...scw.RequestOption) (*SetPlacementGroupResponse, error) {
 	var err error
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
+	}
 
 	if req.Organization == "" {
 		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
@@ -4328,6 +4461,8 @@ type GetDashboardRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
+
+	Project *string `json:"-"`
 }
 
 func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) (*GetDashboardResponse, error) {
@@ -4340,6 +4475,7 @@ func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) 
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
