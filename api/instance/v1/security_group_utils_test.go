@@ -19,8 +19,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone         = scw.ZoneFrPar1
-		organization = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
+		zone    = scw.ZoneFrPar1
+		project = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
 	)
 
 	createResponse, err := instanceAPI.CreateSecurityGroup(&CreateSecurityGroupRequest{
@@ -30,7 +30,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		Stateful:              true,
 		InboundDefaultPolicy:  SecurityGroupPolicyAccept,
 		OutboundDefaultPolicy: SecurityGroupPolicyDrop,
-		Organization:          organization,
+		Project:               &project,
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -47,7 +47,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		InboundDefaultPolicy:  &drop,
 		OutboundDefaultPolicy: &accept,
 		// Keep false here, switch it to true is too dangerous for the one who update the test cassette.
-		OrganizationDefault: scw.BoolPtr(false),
+		ProjectDefault: scw.BoolPtr(false),
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -56,6 +56,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, SecurityGroupPolicyDrop, updateResponse.SecurityGroup.InboundDefaultPolicy)
 	testhelpers.Equals(t, SecurityGroupPolicyAccept, updateResponse.SecurityGroup.OutboundDefaultPolicy)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.Stateful)
+	testhelpers.Equals(t, false, updateResponse.SecurityGroup.ProjectDefault)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.OrganizationDefault)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
@@ -75,8 +76,8 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone         = scw.ZoneFrPar1
-		organization = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
+		zone    = scw.ZoneFrPar1
+		project = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
 	)
 
 	bootstrap := func(t *testing.T) (*SecurityGroup, *SecurityGroupRule, func()) {
@@ -87,7 +88,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 			Stateful:              true,
 			InboundDefaultPolicy:  SecurityGroupPolicyAccept,
 			OutboundDefaultPolicy: SecurityGroupPolicyDrop,
-			Organization:          organization,
+			Project:               &project,
 		})
 
 		testhelpers.AssertNoError(t, err)

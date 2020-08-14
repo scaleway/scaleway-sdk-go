@@ -18,22 +18,22 @@ func TestInstanceHelpers(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		serverID     string
-		ipID         string
-		volumeID     string
-		zone         = scw.ZoneFrPar1
-		organization = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
-		image        = "f974feac-abae-4365-b988-8ec7d1cec10d"
-		reverse      = &NullableStringValue{Value: "1.1.1.1"}
-		nullReverse  = &NullableStringValue{Null: true}
+		serverID    string
+		ipID        string
+		volumeID    string
+		zone        = scw.ZoneFrPar1
+		project     = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
+		image       = "f974feac-abae-4365-b988-8ec7d1cec10d"
+		reverse     = &NullableStringValue{Value: "1.1.1.1"}
+		nullReverse = &NullableStringValue{Null: true}
 	)
 
 	t.Run("create server", func(t *testing.T) {
 		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
-			Zone:         zone,
-			Name:         "instance_utils_test",
-			Organization: organization,
-			Image:        image,
+			Zone:    zone,
+			Name:    "instance_utils_test",
+			Project: &project,
+			Image:   image,
 		})
 		testhelpers.AssertNoError(t, err)
 		serverID = createServerResponse.Server.ID
@@ -45,8 +45,8 @@ func TestInstanceHelpers(t *testing.T) {
 	t.Run("test ip related functions", func(t *testing.T) {
 		// Create IP
 		createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
-			Zone:         zone,
-			Organization: &organization,
+			Zone:    zone,
+			Project: &project,
 		})
 		testhelpers.AssertNoError(t, err)
 		ipID = createIPResponse.IP.ID
