@@ -1,7 +1,7 @@
 <p align="center"><img width="50%" src="docs/static_files/sdk-artwork.png" /></p>
 
 <p align="center">
-  <a href="https://pkg.go.dev/scaleway/scaleway-sdk-go/"><img src="https://pkg.go.dev/badge/scaleway/scaleway-sdk-go/" alt="PkgGoDev"></a>
+  <a href="https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc"><img src="https://pkg.go.dev/badge/github.com/scaleway/scaleway-sdk-go/" alt="PkgGoDev"></a>
   <a href="https://github.com/scaleway/scaleway-sdk-go/actions?query=workflow%3Apull-request"><img src="https://github.com/scaleway/scaleway-sdk-go/workflows/pull-request/badge.svg" alt="GitHub Actions" /></a>
   <a href="https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go"><img src="https://goreportcard.com/badge/scaleway/scaleway-sdk-go" alt="GoReportCard" /></a>
 </p>
