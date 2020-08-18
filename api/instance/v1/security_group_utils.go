@@ -18,6 +18,7 @@ type UpdateSecurityGroupRequest struct {
 	OutboundDefaultPolicy *SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 	Stateful              *bool                `json:"stateful,omitempty"`
 	OrganizationDefault   *bool                `json:"organization_default,omitempty"`
+	ProjectDefault        *bool                `json:"project_default,omitempty"`
 }
 
 type UpdateSecurityGroupResponse struct {
@@ -54,7 +55,9 @@ func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.R
 		Name:                  getSGResponse.SecurityGroup.Name,
 		Description:           getSGResponse.SecurityGroup.Description,
 		Organization:          getSGResponse.SecurityGroup.Organization,
+		Project:               getSGResponse.SecurityGroup.Project,
 		OrganizationDefault:   getSGResponse.SecurityGroup.OrganizationDefault,
+		ProjectDefault:        getSGResponse.SecurityGroup.ProjectDefault,
 		OutboundDefaultPolicy: getSGResponse.SecurityGroup.OutboundDefaultPolicy,
 		InboundDefaultPolicy:  getSGResponse.SecurityGroup.InboundDefaultPolicy,
 		Stateful:              getSGResponse.SecurityGroup.Stateful,
@@ -83,6 +86,9 @@ func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.R
 	}
 	if req.OrganizationDefault != nil {
 		setRequest.OrganizationDefault = *req.OrganizationDefault
+	}
+	if req.ProjectDefault != nil {
+		setRequest.ProjectDefault = *req.ProjectDefault
 	}
 
 	setRes, err := s.setSecurityGroup(setRequest, opts...)

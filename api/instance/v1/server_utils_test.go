@@ -49,7 +49,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
-		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
+		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -88,7 +88,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
-		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
+		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
