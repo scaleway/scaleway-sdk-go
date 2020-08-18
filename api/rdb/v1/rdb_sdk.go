@@ -714,17 +714,17 @@ type DatabaseBackup struct {
 	// Size: size of the database backup
 	Size *scw.Size `json:"size"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: updated date (Format ISO 8601)
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// InstanceName: name of the instance of the backup
 	InstanceName string `json:"instance_name"`
 	// DownloadURL: URL you can download the backup from
 	DownloadURL *string `json:"download_url"`
 	// DownloadURLExpiresAt: expiration date of the download link
-	DownloadURLExpiresAt time.Time `json:"download_url_expires_at"`
+	DownloadURLExpiresAt *time.Time `json:"download_url_expires_at"`
 	// Region: region of this database backup
 	Region scw.Region `json:"region"`
 }
@@ -788,7 +788,7 @@ type EngineVersion struct {
 
 	Name string `json:"name"`
 
-	EndOfLife time.Time `json:"end_of_life"`
+	EndOfLife *time.Time `json:"end_of_life"`
 
 	AvailableSettings []*EngineSetting `json:"available_settings"`
 
@@ -800,7 +800,7 @@ type EngineVersion struct {
 // Instance: instance
 type Instance struct {
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Volume: volumes of the instance
 	Volume *Volume `json:"volume"`
 	// Region: region the instance is in
@@ -846,9 +846,9 @@ type InstanceLog struct {
 	// NodeName: name of the undelying node
 	NodeName string `json:"node_name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Region: region the instance is in
 	Region scw.Region `json:"region"`
 }
@@ -1133,7 +1133,7 @@ type CreateDatabaseBackupRequest struct {
 	// Name: name of the backup
 	Name string `json:"name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CreateDatabaseBackup: create a database backup
@@ -1214,7 +1214,7 @@ type UpdateDatabaseBackupRequest struct {
 	// Name: name of the Database Backup
 	Name *string `json:"name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // UpdateDatabaseBackup: update a database backup
@@ -1856,9 +1856,9 @@ type PrepareInstanceLogsRequest struct {
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
 	// StartDate: start datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`
-	StartDate time.Time `json:"start_date"`
+	StartDate *time.Time `json:"start_date"`
 	// EndDate: end datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`
-	EndDate time.Time `json:"end_date"`
+	EndDate *time.Time `json:"end_date"`
 }
 
 // PrepareInstanceLogs: prepare logs of a given instance
@@ -1989,9 +1989,9 @@ type GetInstanceMetricsRequest struct {
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
 	// StartDate: start date to gather metrics from
-	StartDate time.Time `json:"-"`
+	StartDate *time.Time `json:"-"`
 	// EndDate: end date to gather metrics from
-	EndDate time.Time `json:"-"`
+	EndDate *time.Time `json:"-"`
 	// MetricName: name of the metric to gather
 	MetricName *string `json:"-"`
 }

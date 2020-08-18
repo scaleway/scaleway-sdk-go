@@ -600,7 +600,7 @@ type DatabaseRoute struct {
 	// Topic: topic the route subscribes to (wildcards allowed). It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Query: SQL query to be executed ($TOPIC and $PAYLOAD variables are available, see documentation)
 	Query string `json:"query"`
 	// Database: database settings
@@ -636,13 +636,13 @@ type Device struct {
 	// HubID: hub ID
 	HubID string `json:"hub_id"`
 	// CreatedAt: device add date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: device last modification date
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
 	AllowInsecure bool `json:"allow_insecure"`
 	// LastActivityAt: device last connection/activity date
-	LastActivityAt time.Time `json:"last_activity_at"`
+	LastActivityAt *time.Time `json:"last_activity_at"`
 	// IsConnected: whether the device is connected to the Hub or not
 	IsConnected bool `json:"is_connected"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
@@ -679,7 +679,7 @@ type FunctionsRoute struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// URI: uri of the function
 	URI string `json:"uri"`
 }
@@ -707,9 +707,9 @@ type Hub struct {
 	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
 	Endpoint string `json:"endpoint"`
 	// CreatedAt: hub creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: hub last modification date
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// Enabled: whether the hub has been enabled
 	Enabled bool `json:"enabled"`
 	// DeviceCount: number of registered devices
@@ -771,7 +771,7 @@ type MetricsMetric struct {
 // MetricsMetricValue: metrics. metric. value
 type MetricsMetricValue struct {
 	// Time: timestamp for the value
-	Time time.Time `json:"time"`
+	Time *time.Time `json:"time"`
 	// Value: numeric value
 	Value int64 `json:"value"`
 }
@@ -795,7 +795,7 @@ type Network struct {
 	// HubID: hub ID to connect the Network to
 	HubID string `json:"hub_id"`
 	// CreatedAt: network creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// TopicPrefix: topic prefix for the Network
 	//
 	// This prefix will be prepended to all topics for this Network.
@@ -815,7 +815,7 @@ type RestRoute struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Verb: HTTP Verb used to call REST URI
 	//
 	// Default value: get
@@ -843,7 +843,7 @@ type Route struct {
 	// Default value: unknown
 	Type RouteRouteType `json:"type"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // S3Route: s3 route
@@ -859,7 +859,7 @@ type S3Route struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// BucketRegion: region of the S3 route's destination bucket (eg 'fr-par')
 	BucketRegion string `json:"bucket_region"`
 	// BucketName: name of the S3 route's destination bucket
@@ -1079,7 +1079,11 @@ type UpdateHubRequest struct {
 	HubID string `json:"-"`
 	// Name: hub name (up to 255 characters)
 	Name *string `json:"name"`
-	// DisableEvents: disable events
+	// ProductPlan: hub feature set
+	//
+	// Default value: plan_unknown
+	ProductPlan ProductPlan `json:"product_plan"`
+	// DisableEvents: disable Hub events
 	DisableEvents *bool `json:"disable_events"`
 	// EventsTopicPrefix: hub events topic prefix
 	EventsTopicPrefix *string `json:"events_topic_prefix"`

@@ -580,9 +580,9 @@ type Cluster struct {
 	// DNSWildcard: the DNS wildcard resovling all the ready nodes of the cluster
 	DNSWildcard string `json:"dns_wildcard"`
 	// CreatedAt: the date at which the cluster was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the cluster was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CurrentCoreCount: the total number of cores of all the nodes in the cluster
 	CurrentCoreCount uint32 `json:"current_core_count"`
 	// CurrentNodeCount: the total number of nodes in the cluster
@@ -772,9 +772,9 @@ type Node struct {
 	// Default value: unknown
 	Status NodeStatus `json:"status"`
 	// CreatedAt: the date at which the node was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the node was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Pool: pool
@@ -784,9 +784,9 @@ type Pool struct {
 	// ClusterID: the cluster ID of the pool
 	ClusterID string `json:"cluster_id"`
 	// CreatedAt: the date at which the pool was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the pool was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// Name: the name of the pool
 	Name string `json:"name"`
 	// CurrentNodeCount: the total number of nodes in the pool

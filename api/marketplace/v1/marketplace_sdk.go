@@ -80,11 +80,11 @@ type Image struct {
 	// Categories: list of categories this image belongs to
 	Categories []string `json:"categories"`
 	// CreationDate: creation date of this image
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: date of the last modification of this image
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// ValidUntil: expiration date of this image
-	ValidUntil time.Time `json:"valid_until"`
+	ValidUntil *time.Time `json:"valid_until"`
 	// Label: label of this image
 	Label string `json:"label"`
 	// Versions: list of versions of this image
@@ -132,9 +132,9 @@ type Version struct {
 	// Name: name of this version
 	Name string `json:"name"`
 	// CreationDate: creation date of this image version
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: date of the last modification of this version
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// LocalImages: list of local images available in this version
 	LocalImages []*LocalImage `json:"local_images"`
 }

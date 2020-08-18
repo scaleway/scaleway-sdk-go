@@ -555,6 +555,8 @@ type Cluster struct {
 	Region scw.Region `json:"region"`
 	// OrganizationID: the ID of the organization owning the cluster
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: the ID of the project owning the cluster
+	ProjectID string `json:"project_id"`
 	// Tags: the tags associated with the cluster
 	Tags []string `json:"tags"`
 	// Cni: the Container Network Interface (CNI) plugin running in the cluster
@@ -568,9 +570,9 @@ type Cluster struct {
 	// DNSWildcard: the DNS wildcard resovling all the ready nodes of the cluster
 	DNSWildcard string `json:"dns_wildcard"`
 	// CreatedAt: the date at which the cluster was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the cluster was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// AutoscalerConfig: the autoscaler config for the cluster
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 	// DashboardEnabled: the enablement of the Kubernetes Dashboard in the cluster
@@ -759,9 +761,9 @@ type Node struct {
 	// Default value: unknown
 	Status NodeStatus `json:"status"`
 	// CreatedAt: the date at which the node was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the node was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Pool: pool
@@ -771,9 +773,9 @@ type Pool struct {
 	// ClusterID: the cluster ID of the pool
 	ClusterID string `json:"cluster_id"`
 	// CreatedAt: the date at which the pool was created
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the pool was last updated
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// Name: the name of the pool
 	Name string `json:"name"`
 	// Status: the status of the pool
@@ -872,6 +874,8 @@ type ListClustersRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID: the organization ID on which to filter the returned clusters
 	OrganizationID *string `json:"-"`
+	// ProjectID: the project ID on which to filter the returned clusters
+	ProjectID *string `json:"-"`
 	// OrderBy: the sort order of the returned clusters
 	//
 	// Default value: created_at_asc
@@ -906,6 +910,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -954,7 +959,11 @@ func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 type CreateClusterRequest struct {
 	Region scw.Region `json:"-"`
 	// OrganizationID: the organization ID where the cluster will be created
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: the project ID where the cluster will be created
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Name: the name of the cluster
 	Name string `json:"name"`
 	// Description: the description of the cluster
@@ -995,9 +1004,14 @@ type CreateClusterRequest struct {
 func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
