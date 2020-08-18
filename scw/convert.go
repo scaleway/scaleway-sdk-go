@@ -161,6 +161,11 @@ func TimeDurationPtr(v time.Duration) *time.Duration {
 	return &v
 }
 
+// TimePtr returns a pointer to the Time value passed in.
+func TimePtr(v time.Time) *time.Time {
+	return &v
+}
+
 // SizePtr returns a pointer to the Size value passed in.
 func SizePtr(v Size) *Size {
 	return &v
