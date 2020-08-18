@@ -336,9 +336,9 @@ type Image struct {
 	// Image size in bytes, calculated from the size of image layers. One layer used in two tags of the same image is counted once but one layer used in two images is counted twice.
 	Size scw.Size `json:"size"`
 	// CreatedAt: creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last modification date, from the user or the service
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// Tags: list of docker tags of the image
 	Tags []string `json:"tags"`
 }
@@ -392,9 +392,9 @@ type Namespace struct {
 	// Size: total size of the namespace, calculated as the sum of the size of all images in the namespace
 	Size scw.Size `json:"size"`
 	// CreatedAt: creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last modification date, from the user or the service
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// ImageCount: number of images in the namespace
 	ImageCount uint32 `json:"image_count"`
 	// Region: region the namespace belongs to
@@ -416,9 +416,9 @@ type Tag struct {
 	// Digest: hash of the tag actual content. Several tags of a same image may have the same digest
 	Digest string `json:"digest"`
 	// CreatedAt: creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last modification date, from the user or the service
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Service API

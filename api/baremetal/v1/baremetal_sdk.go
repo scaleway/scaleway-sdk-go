@@ -378,7 +378,7 @@ type BMCAccess struct {
 	// Password: the password to use for the BMC (Baseboard Management Controller) access authentification
 	Password string `json:"password"`
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CPU: cpu
@@ -547,9 +547,9 @@ type Server struct {
 	// Description: description of the server
 	Description string `json:"description"`
 	// UpdatedAt: date of last modification of the server
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the server
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the server
 	//
 	// Default value: unknown
@@ -583,9 +583,9 @@ type ServerEvent struct {
 	// Action: the action that will be applied to the server
 	Action string `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type ServerInstall struct {

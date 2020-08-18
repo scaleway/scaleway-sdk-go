@@ -654,9 +654,9 @@ type IPFailover struct {
 	// Tags: tags associated to the IP failover
 	Tags []string `json:"tags"`
 	// UpdatedAt: date of last update of the IP failover
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the IP failover
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the IP failover
 	//
 	// Default value: unknown
@@ -692,9 +692,9 @@ type IPFailoverEvent struct {
 	// Default value: unknown
 	Action IPFailoverEventAction `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // ListIPFailoverEventsResponse: list ip failover events response
@@ -809,7 +809,7 @@ type RemoteServerAccess struct {
 	// Password: the password to use for the remote access authentification
 	Password string `json:"password"`
 	// ExpiresAt: the date after which the remote access will be closed
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // Server: server
@@ -823,9 +823,9 @@ type Server struct {
 	// Description: description of the server
 	Description string `json:"description"`
 	// UpdatedAt: date of last modification of the server
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the server
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the server
 	//
 	// Default value: unknown
@@ -859,9 +859,9 @@ type ServerEvent struct {
 	// Action: the action that will be applied to the server
 	Action string `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // ServerInstall: server install
