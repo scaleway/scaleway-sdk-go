@@ -108,9 +108,9 @@ type SSHKey struct {
 
 	Fingerprint string `json:"fingerprint"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CreationInfo *SSHKeyCreationInfo `json:"creation_info"`
 

@@ -769,9 +769,9 @@ type Image struct {
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
 
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 
 	DefaultBootscript *Bootscript `json:"default_bootscript"`
 
@@ -933,9 +933,9 @@ type SecurityGroup struct {
 	// ProjectDefault: true if it is your default security group for this project id
 	ProjectDefault bool `json:"project_default"`
 	// CreationDate: the security group creation date
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: the security group modification date
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// Servers: list of servers attached to this security group
 	Servers []*ServerSummary `json:"servers"`
 	// Stateful: true if the security group is stateful
@@ -1001,7 +1001,7 @@ type Server struct {
 	// CommercialType: the server commercial type (eg. GP1-M)
 	CommercialType string `json:"commercial_type"`
 	// CreationDate: the server creation date
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// DynamicIPRequired: true if a dynamic IP is required
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 	// EnableIPv6: true if IPv6 is enabled
@@ -1017,7 +1017,7 @@ type Server struct {
 	// PublicIP: information about the public IP
 	PublicIP *ServerIP `json:"public_ip"`
 	// ModificationDate: the server modification date
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// State: the server state
 	//
 	// Default value: running
@@ -1174,9 +1174,9 @@ type Snapshot struct {
 
 	BaseVolume *SnapshotBaseVolume `json:"base_volume"`
 
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 
 	Project string `json:"project"`
 
@@ -1198,9 +1198,9 @@ type Task struct {
 	// Progress: the progress of the task in percent
 	Progress int32 `json:"progress"`
 	// StartedAt: the task start date
-	StartedAt time.Time `json:"started_at"`
+	StartedAt *time.Time `json:"started_at"`
 	// TerminatedAt: the task end date
-	TerminatedAt time.Time `json:"terminated_at"`
+	TerminatedAt *time.Time `json:"terminated_at"`
 	// Status: the task status
 	//
 	// Default value: pending
@@ -1248,9 +1248,9 @@ type Volume struct {
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type"`
 	// CreationDate: the volumes creation date
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: the volumes modification date
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// Organization: the volumes organization
 	Organization string `json:"organization"`
 	// Project: the volumes project ID
@@ -1757,7 +1757,7 @@ type setServerRequest struct {
 	// CommercialType: the server commercial type (eg. GP1-M)
 	CommercialType string `json:"commercial_type"`
 	// CreationDate: the server creation date
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 	// DynamicIPRequired: true if a dynamic IP is required
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 	// EnableIPv6: true if IPv6 is enabled
@@ -1773,7 +1773,7 @@ type setServerRequest struct {
 	// PublicIP: information about the public IP
 	PublicIP *ServerIP `json:"public_ip"`
 	// ModificationDate: the server modification date
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 	// State: the server state
 	//
 	// Default value: running
@@ -2298,9 +2298,9 @@ type SetImageRequest struct {
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
 
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 
 	DefaultBootscript *Bootscript `json:"default_bootscript"`
 
@@ -2604,9 +2604,9 @@ type SetSnapshotRequest struct {
 
 	BaseVolume *SnapshotBaseVolume `json:"base_volume"`
 
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 
 	Project string `json:"project"`
 }
@@ -3218,9 +3218,9 @@ type setSecurityGroupRequest struct {
 
 	Name string `json:"name"`
 
-	CreationDate time.Time `json:"creation_date"`
+	CreationDate *time.Time `json:"creation_date"`
 
-	ModificationDate time.Time `json:"modification_date"`
+	ModificationDate *time.Time `json:"modification_date"`
 
 	Description string `json:"description"`
 

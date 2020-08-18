@@ -1018,7 +1018,7 @@ type BackendServerStats struct {
 	// Default value: stopped
 	ServerState BackendServerStatsServerState `json:"server_state"`
 	// ServerStateChangedAt: time since last operational change
-	ServerStateChangedAt time.Time `json:"server_state_changed_at"`
+	ServerStateChangedAt *time.Time `json:"server_state_changed_at"`
 	// LastHealthCheckStatus: last health check status (unknown/neutral/failed/passed/condpass)
 	//
 	// Default value: unknown
@@ -1040,9 +1040,9 @@ type Certificate struct {
 	// Fingerprint: identifier (SHA-1) of the certificate
 	Fingerprint string `json:"fingerprint"`
 	// NotValidBefore: validity bounds
-	NotValidBefore time.Time `json:"not_valid_before"`
+	NotValidBefore *time.Time `json:"not_valid_before"`
 	// NotValidAfter: validity bounds
-	NotValidAfter time.Time `json:"not_valid_after"`
+	NotValidAfter *time.Time `json:"not_valid_after"`
 	// Status: status of certificate
 	//
 	// Default value: pending

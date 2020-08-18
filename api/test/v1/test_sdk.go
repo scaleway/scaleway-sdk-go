@@ -185,9 +185,9 @@ type Human struct {
 
 	OrganizationID string `json:"organization_id"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Height float64 `json:"height"`
 
