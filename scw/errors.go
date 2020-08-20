@@ -248,6 +248,12 @@ func (e *UnknownResource) ToResourceNotFoundError() SdkError {
 	}
 
 	messageParts := strings.Split(e.Message, `"`)
+
+	// Some errors uses ' and not "
+	if len(messageParts) == 1 {
+		messageParts = strings.Split(e.Message, "'")
+	}
+
 	switch len(messageParts) {
 	case 2: // message like: `"111..." not found`
 		resourceNotFound.ResourceID = messageParts[0]
