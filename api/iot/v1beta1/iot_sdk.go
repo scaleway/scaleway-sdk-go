@@ -625,8 +625,6 @@ type DatabaseSettings struct {
 type Device struct {
 	// ID: device ID, also used as MQTT Client ID or Username
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: device name
 	Name string `json:"name"`
 	// Status: device status
@@ -635,18 +633,20 @@ type Device struct {
 	Status DeviceStatus `json:"status"`
 	// HubID: hub ID
 	HubID string `json:"hub_id"`
-	// CreatedAt: device add date
-	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: device last modification date
-	UpdatedAt *time.Time `json:"updated_at"`
-	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
-	AllowInsecure bool `json:"allow_insecure"`
 	// LastActivityAt: device last connection/activity date
 	LastActivityAt *time.Time `json:"last_activity_at"`
 	// IsConnected: whether the device is connected to the Hub or not
 	IsConnected bool `json:"is_connected"`
+	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
+	AllowInsecure bool `json:"allow_insecure"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
+	// CreatedAt: device add date
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: device last modification date
+	UpdatedAt *time.Time `json:"updated_at"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // DeviceMessageFilters: device message filters
@@ -686,12 +686,8 @@ type FunctionsRoute struct {
 
 // Hub: hub
 type Hub struct {
-	// Region: region of the Hub
-	Region scw.Region `json:"region"`
 	// ID: hub ID
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: hub name
 	Name string `json:"name"`
 	// Status: current status of the Hub
@@ -702,24 +698,28 @@ type Hub struct {
 	//
 	// Default value: plan_unknown
 	ProductPlan ProductPlan `json:"product_plan"`
-	// Endpoint: host to connect your devices to
-	//
-	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
-	Endpoint string `json:"endpoint"`
-	// CreatedAt: hub creation date
-	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: hub last modification date
-	UpdatedAt *time.Time `json:"updated_at"`
 	// Enabled: whether the hub has been enabled
 	Enabled bool `json:"enabled"`
 	// DeviceCount: number of registered devices
 	DeviceCount uint64 `json:"device_count"`
 	// ConnectedDeviceCount: number of currently connected devices
 	ConnectedDeviceCount uint64 `json:"connected_device_count"`
+	// Endpoint: host to connect your devices to
+	//
+	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
+	Endpoint string `json:"endpoint"`
 	// EventsEnabled: wether Hub events are enabled or not
 	EventsEnabled bool `json:"events_enabled"`
 	// EventsTopicPrefix: hub events topic prefix
 	EventsTopicPrefix string `json:"events_topic_prefix"`
+	// Region: region of the Hub
+	Region scw.Region `json:"region"`
+	// CreatedAt: hub creation date
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: hub last modification date
+	UpdatedAt *time.Time `json:"updated_at"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // ListDevicesResponse: list devices response
@@ -778,20 +778,16 @@ type MetricsMetricValue struct {
 
 // Network: network
 type Network struct {
-	// Region: region of the Network
-	Region scw.Region `json:"region"`
 	// ID: network ID
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: network name
 	Name string `json:"name"`
-	// Endpoint: endpoint to use for interacting with the network
-	Endpoint string `json:"endpoint"`
 	// Type: type of network to connect with
 	//
 	// Default value: unknown
 	Type NetworkNetworkType `json:"type"`
+	// Endpoint: endpoint to use for interacting with the network
+	Endpoint string `json:"endpoint"`
 	// HubID: hub ID to connect the Network to
 	HubID string `json:"hub_id"`
 	// CreatedAt: network creation date
@@ -800,6 +796,10 @@ type Network struct {
 	//
 	// This prefix will be prepended to all topics for this Network.
 	TopicPrefix string `json:"topic_prefix"`
+	// Region: region of the Network
+	Region scw.Region `json:"region"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // RestRoute: rest route
@@ -989,7 +989,7 @@ type CreateHubRequest struct {
 	OrganizationID string `json:"organization_id"`
 	// ProductPlan: hub feature set
 	//
-	// Default value: plan_unknown
+	// Default value: plan_shared
 	ProductPlan ProductPlan `json:"product_plan"`
 	// DisableEvents: disable Hub events (default false)
 	DisableEvents *bool `json:"disable_events"`
@@ -1009,6 +1009,10 @@ func (s *API) CreateHub(req *CreateHubRequest, opts ...scw.RequestOption) (*Hub,
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("hub")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1398,6 +1402,10 @@ func (s *API) CreateDevice(req *CreateDeviceRequest, opts ...scw.RequestOption) 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("device")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -2372,6 +2380,10 @@ func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("network")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
