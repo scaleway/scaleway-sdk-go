@@ -645,6 +645,10 @@ type CreatePlacementGroupResponse struct {
 	PlacementGroup *PlacementGroup `json:"placement_group"`
 }
 
+type CreatePrivateNICResponse struct {
+	PrivateNic *PrivateNIC `json:"private_nic"`
+}
+
 type CreateSecurityGroupResponse struct {
 	SecurityGroup *SecurityGroup `json:"security_group"`
 }
@@ -709,6 +713,10 @@ type GetPlacementGroupResponse struct {
 
 type GetPlacementGroupServersResponse struct {
 	Servers []*PlacementGroupServer `json:"servers"`
+}
+
+type GetPrivateNICResponse struct {
+	PrivateNic *PrivateNIC `json:"private_nic"`
 }
 
 type GetSecurityGroupResponse struct {
@@ -818,6 +826,10 @@ type ListPlacementGroupsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+type ListPrivateNICsResponse struct {
+	PrivateNics []*PrivateNIC `json:"private_nics"`
+}
+
 type ListSecurityGroupRulesResponse struct {
 	Rules []*SecurityGroupRule `json:"rules"`
 
@@ -904,6 +916,18 @@ type PlacementGroupServer struct {
 	Name string `json:"name"`
 
 	PolicyRespected bool `json:"policy_respected"`
+}
+
+// PrivateNIC: private nic
+type PrivateNIC struct {
+	// ID: the private NIC unique ID
+	ID string `json:"id,omitempty"`
+	// ServerID: the server the private NIC is attached to
+	ServerID string `json:"server_id,omitempty"`
+	// PrivateNetworkID: the private network where the private NIC is attached
+	PrivateNetworkID string `json:"private_network_id,omitempty"`
+	// MacAddress: the private NIC MAC address
+	MacAddress string `json:"mac_address,omitempty"`
 }
 
 // SecurityGroup: security group
@@ -1046,6 +1070,8 @@ type Server struct {
 	Arch Arch `json:"arch"`
 	// PlacementGroup: the server placement group
 	PlacementGroup *PlacementGroup `json:"placement_group"`
+	// PrivateNics: the server private NICs
+	PrivateNics []*PrivateNIC `json:"private_nics"`
 	// Zone: the zone in which is the server
 	Zone scw.Zone `json:"zone"`
 }
@@ -1613,6 +1639,8 @@ type CreateServerRequest struct {
 	SecurityGroup *string `json:"security_group,omitempty"`
 	// PlacementGroup: placement group ID if server must be part of a placement group
 	PlacementGroup *string `json:"placement_group,omitempty"`
+	// PrivateNetwork: private Network IDs if the server need to be part of one or more Private Networks
+	PrivateNetwork []string `json:"private_network,omitempty"`
 }
 
 // createServer: create a server
@@ -1802,6 +1830,8 @@ type setServerRequest struct {
 	Arch Arch `json:"arch"`
 	// PlacementGroup: the server placement group
 	PlacementGroup *PlacementGroup `json:"placement_group"`
+	// PrivateNics: the server private NICs
+	PrivateNics []*PrivateNIC `json:"private_nics"`
 }
 
 func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setServerResponse, error) {
@@ -1876,6 +1906,8 @@ type UpdateServerRequest struct {
 	SecurityGroup *SecurityGroupTemplate `json:"security_group,omitempty"`
 	// PlacementGroup: placement group ID if server must be part of a placement group
 	PlacementGroup *NullableStringValue `json:"placement_group,omitempty"`
+	// PrivateNics: the server private NICs
+	PrivateNics []*PrivateNIC `json:"private_nics,omitempty"`
 }
 
 // updateServer: update a server
@@ -4330,6 +4362,183 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IP) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListPrivateNICsRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+}
+
+// ListPrivateNICs: list all private NICs
+//
+// List all private NICs of a given server.
+func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOption) (*ListPrivateNICsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics",
+		Headers: http.Header{},
+	}
+
+	var resp ListPrivateNICsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreatePrivateNICRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PrivateNetworkID string `json:"private_network_id,omitempty"`
+}
+
+// CreatePrivateNIC: create a private NIC connecting a server to a private network
+//
+// Create a private NIC connecting a server to a private network.
+func (s *API) CreatePrivateNIC(req *CreatePrivateNICRequest, opts ...scw.RequestOption) (*CreatePrivateNICResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CreatePrivateNICResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetPrivateNICRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PrivateNicID string `json:"-"`
+}
+
+// GetPrivateNIC: get a private NIC
+//
+// Get private NIC properties.
+func (s *API) GetPrivateNIC(req *GetPrivateNICRequest, opts ...scw.RequestOption) (*GetPrivateNICResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNicID) == "" {
+		return nil, errors.New("field PrivateNicID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics/" + fmt.Sprint(req.PrivateNicID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp GetPrivateNICResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeletePrivateNICRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PrivateNicID string `json:"-"`
+}
+
+// DeletePrivateNIC: delete a private NIC
+//
+// Delete a private NIC.
+func (s *API) DeletePrivateNIC(req *DeletePrivateNICRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNicID) == "" {
+		return errors.New("field PrivateNicID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics/" + fmt.Sprint(req.PrivateNicID) + "",
 		Headers: http.Header{},
 	}
 
