@@ -28,6 +28,7 @@ type Client struct {
 	apiURL                string
 	userAgent             string
 	defaultOrganizationID *string
+	defaultProjectID      *string
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
@@ -76,6 +77,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		apiURL:                s.apiURL,
 		userAgent:             s.userAgent,
 		defaultOrganizationID: s.defaultOrganizationID,
+		defaultProjectID:      s.defaultProjectID,
 		defaultRegion:         s.defaultRegion,
 		defaultZone:           s.defaultZone,
 		defaultPageSize:       s.defaultPageSize,
@@ -88,6 +90,16 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 func (c *Client) GetDefaultOrganizationID() (organizationID string, exists bool) {
 	if c.defaultOrganizationID != nil {
 		return *c.defaultOrganizationID, true
+	}
+	return "", false
+}
+
+// GetDefaultProjectID returns the default project ID
+// of the client. This value can be set in the client option
+// WithDefaultProjectID(). Be aware this value can be empty.
+func (c *Client) GetDefaultProjectID() (projectID string, exists bool) {
+	if c.defaultProjectID != nil {
+		return *c.defaultProjectID, true
 	}
 	return "", false
 }
@@ -110,6 +122,20 @@ func (c *Client) GetDefaultZone() (zone Zone, exists bool) {
 		return *c.defaultZone, true
 	}
 	return Zone(""), false
+}
+
+func (c *Client) GetSecretKey() (secretKey string, exists bool) {
+	if token, isToken := c.auth.(*auth.Token); isToken {
+		return token.SecretKey, isToken
+	}
+	return "", false
+}
+
+func (c *Client) GetAccessKey() (accessKey string, exists bool) {
+	if token, isToken := c.auth.(*auth.Token); isToken {
+		return token.AccessKey, isToken
+	}
+	return "", false
 }
 
 // GetDefaultPageSize returns the default page size of the client.

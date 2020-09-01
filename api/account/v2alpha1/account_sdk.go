@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -29,6 +30,7 @@ var (
 	_ http.Header
 	_ bytes.Reader
 	_ time.Time
+	_ = strings.Join
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
@@ -37,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API this API allows to manage your scaleway account
+// API: account API
 type API struct {
 	client *scw.Client
 }
@@ -89,14 +91,14 @@ func (enum *ListSSHKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ListSSHKeysResponse list ssh keys response
+// ListSSHKeysResponse: list ssh keys response
 type ListSSHKeysResponse struct {
 	SSHKeys []*SSHKey `json:"ssh_keys"`
 
 	TotalCount uint32 `json:"total_count"`
 }
 
-// SSHKey ssh key
+// SSHKey: ssh key
 type SSHKey struct {
 	ID string `json:"id"`
 
@@ -106,13 +108,15 @@ type SSHKey struct {
 
 	Fingerprint string `json:"fingerprint"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CreationInfo *SSHKeyCreationInfo `json:"creation_info"`
 
 	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
 }
 
 type SSHKeyCreationInfo struct {
@@ -126,7 +130,7 @@ type SSHKeyCreationInfo struct {
 // Service API
 
 type ListSSHKeysRequest struct {
-	// OrderBy
+	// OrderBy:
 	//
 	// Default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
@@ -138,9 +142,11 @@ type ListSSHKeysRequest struct {
 	Name *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
-// ListSSHKeys list all SSH keys
+// ListSSHKeys: list all SSH keys of your organization
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
@@ -155,6 +161,7 @@ func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -192,20 +199,32 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 }
 
 type CreateSSHKeyRequest struct {
+	// Name: the name of the SSH key
 	Name string `json:"name"`
-
+	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
 	PublicKey string `json:"public_key"`
-
-	OrganizationID string `json:"organization_id"`
+	// OrganizationID: organization owning the resource
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: project owning the resource
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSSHKey create an SSH key
+// CreateSSHKey: add a SSH key to your organization
+//
+// Add a SSH key to your organization.
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -229,10 +248,13 @@ func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) 
 }
 
 type GetSSHKeyRequest struct {
+	// SSHKeyID: the ID of the SSH key
 	SSHKeyID string `json:"-"`
 }
 
-// GetSSHKey get SSH key details
+// GetSSHKey: get a SSH key from your organization
+//
+// Get a SSH key from your organization.
 func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -257,11 +279,13 @@ func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHK
 
 type UpdateSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
-
+	// Name: name of the SSH key
 	Name *string `json:"name"`
 }
 
-// UpdateSSHKey update an SSH key
+// UpdateSSHKey: update a SSH key on your organization
+//
+// Update a SSH key on your organization.
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -293,7 +317,9 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey delete an SSH key
+// DeleteSSHKey: remove a SSH key from your organization
+//
+// Remove a SSH key from your organization.
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 

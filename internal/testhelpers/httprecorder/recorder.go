@@ -77,6 +77,8 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 			scw.WithHTTPClient(httpClient),
 			scw.WithProfile(activeProfile),
 			scw.WithEnv(),
+			scw.WithDefaultRegion(scw.RegionFrPar),
+			scw.WithDefaultZone(scw.ZoneFrPar1),
 		)
 		if err != nil {
 			return nil, nil, err
@@ -85,6 +87,8 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		// No need for auth when using cassette
 		client, err = scw.NewClient(
 			scw.WithHTTPClient(httpClient),
+			scw.WithDefaultRegion(scw.RegionFrPar),
+			scw.WithDefaultZone(scw.ZoneFrPar1),
 		)
 		if err != nil {
 			return nil, nil, err

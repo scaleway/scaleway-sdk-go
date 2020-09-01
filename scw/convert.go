@@ -155,8 +155,14 @@ func Float64SlicePtr(src []float64) []*float64 {
 	return dst
 }
 
-// DurationPtr returns a pointer to the Duration value passed in.
-func DurationPtr(v time.Duration) *time.Duration {
+// TimeDurationPtr returns a pointer to the Duration value passed in.
+// Deprecated: the use of time.Duration in request is deprecated and only available in lb API
+func TimeDurationPtr(v time.Duration) *time.Duration {
+	return &v
+}
+
+// TimePtr returns a pointer to the Time value passed in.
+func TimePtr(v time.Time) *time.Time {
 	return &v
 }
 

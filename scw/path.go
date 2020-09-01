@@ -31,8 +31,8 @@ var (
 func GetCacheDirectory() string {
 	cacheDir := ""
 	switch {
-	case os.Getenv(scwCacheDirEnv) != "":
-		cacheDir = os.Getenv(scwCacheDirEnv)
+	case os.Getenv(ScwCacheDirEnv) != "":
+		cacheDir = os.Getenv(ScwCacheDirEnv)
 	case os.Getenv(xdgCacheDirEnv) != "":
 		cacheDir = filepath.Join(os.Getenv(xdgCacheDirEnv), "scw")
 	case os.Getenv(unixHomeDirEnv) != "":
@@ -54,7 +54,7 @@ func GetCacheDirectory() string {
 // - $HOME/.config/scw/config.yaml
 // - $USERPROFILE/.config/scw/config.yaml
 func GetConfigPath() string {
-	configPath := os.Getenv(scwConfigPathEnv)
+	configPath := os.Getenv(ScwConfigPathEnv)
 	if configPath == "" {
 		configPath, _ = getConfigV2FilePath()
 	}
@@ -63,7 +63,7 @@ func GetConfigPath() string {
 
 // getConfigV2FilePath returns the path to the v2 config file
 func getConfigV2FilePath() (string, bool) {
-	configDir, err := getScwConfigDir()
+	configDir, err := GetScwConfigDir()
 	if err != nil {
 		return "", false
 	}
@@ -72,36 +72,24 @@ func getConfigV2FilePath() (string, bool) {
 
 // getConfigV1FilePath returns the path to the v1 config file
 func getConfigV1FilePath() (string, bool) {
-	path, err := getHomeDir()
+	path, err := os.UserHomeDir()
 	if err != nil {
 		return "", false
 	}
 	return filepath.Clean(filepath.Join(path, ".scwrc")), true
 }
 
-// getScwConfigDir returns the path to scw config folder
-func getScwConfigDir() (string, error) {
+// GetScwConfigDir returns the path to scw config folder
+func GetScwConfigDir() (string, error) {
 	if xdgPath := os.Getenv(xdgConfigDirEnv); xdgPath != "" {
 		return filepath.Join(xdgPath, "scw"), nil
 	}
 
-	homeDir, err := getHomeDir()
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
 	return filepath.Join(homeDir, ".config", "scw"), nil
-}
-
-// getHomeDir returns the path to your home directory
-func getHomeDir() (string, error) {
-	switch {
-	case os.Getenv(unixHomeDirEnv) != "":
-		return os.Getenv(unixHomeDirEnv), nil
-	case os.Getenv(windowsHomeDirEnv) != "":
-		return os.Getenv(windowsHomeDirEnv), nil
-	default:
-		return "", ErrNoHomeDir
-	}
 }
 
 func fileExist(name string) bool {

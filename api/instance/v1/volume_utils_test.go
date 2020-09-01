@@ -19,10 +19,10 @@ func TestUpdateVolume(t *testing.T) {
 
 	var (
 		zone          = scw.ZoneFrPar1
-		organization  = "d429f6a1-c0a6-48cf-8b5a-1f9dfe76ffd3"
+		project       = "951df375-e094-4d26-97c1-ba548eeb9c42"
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
-		volumeType    = VolumeTypeLSSD
+		volumeType    = VolumeVolumeTypeLSSD
 		newVolumeName = "some new volume name"
 
 		volumeID string
@@ -30,11 +30,11 @@ func TestUpdateVolume(t *testing.T) {
 
 	// Create volume
 	createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
-		Zone:         zone,
-		Name:         volumeName,
-		Organization: organization,
-		Size:         &volumeSize,
-		VolumeType:   volumeType,
+		Zone:       zone,
+		Name:       volumeName,
+		Project:    &project,
+		Size:       &volumeSize,
+		VolumeType: volumeType,
 	})
 
 	testhelpers.AssertNoError(t, err)

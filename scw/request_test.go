@@ -113,7 +113,7 @@ func TestSetBody(t *testing.T) {
 		Name:    "plop",
 		Slice:   []string{"plop", "plop"},
 		Flag:    true,
-		Timeout: DurationPtr(time.Second),
+		Timeout: TimeDurationPtr(time.Second),
 	}
 
 	req := ScalewayRequest{

@@ -1,5 +1,49 @@
 # Changelog
 
+## v1.0.0-beta.6 (2020-02-28)
+
+### Features
+
+* **baremetal**: add zone in primary resource ([#305](https://github.com/scaleway/scaleway-sdk-go/pull/305))
+* **baremetal**: add get metrics method ([#298](https://github.com/scaleway/scaleway-sdk-go/pull/298))
+* **core**: add String method to scw.Money ([#284](https://github.com/scaleway/scaleway-sdk-go/pull/284))
+* **core**: add send_telemetry setting in the config ([#273](https://github.com/scaleway/scaleway-sdk-go/pull/273))
+* **core**: add custom duration type ([#291](https://github.com/scaleway/scaleway-sdk-go/pull/291))
+* **core**: handle instance quota exceeded error ([#287](https://github.com/scaleway/scaleway-sdk-go/pull/287))
+* **core**: handle non standard errors ([#274](https://github.com/scaleway/scaleway-sdk-go/pull/274))
+* **core**: support more instance error types ([#278](https://github.com/scaleway/scaleway-sdk-go/pull/278))
+* **core**: Add ResourceExpiredError ([#280](https://github.com/scaleway/scaleway-sdk-go/pull/280))
+* **core**: add GetCacheDirectory method ([#304](https://github.com/scaleway/scaleway-sdk-go/pull/304))
+* **domain**: first release of the API ([#297](https://github.com/scaleway/scaleway-sdk-go/pull/297))
+* **instance**: add OrganizationDefault to UpdateSecurityGroup ([#279](https://github.com/scaleway/scaleway-sdk-go/pull/279))
+* **instance**: add zone field in instance resources response ([#331](https://github.com/scaleway/scaleway-sdk-go/pull/331))
+* **instance**: allow empty boot type on create server [#325](https://github.com/scaleway/scaleway-sdk-go/pull/325))
+* **k8s**: add FeatureGates and AdmissionPlugins ([#289](https://github.com/scaleway/scaleway-sdk-go/pull/289))
+* **k8s**: add WaitForPoolNodesReady and WaitForClusterNodesReady helper methods ([#312](https://github.com/scaleway/scaleway-sdk-go/pull/312))
+* **k8s**: add creation_error node status ([#328](https://github.com/scaleway/scaleway-sdk-go/pull/328))
+* **k8s**: add upgrading pool status ([#319](https://github.com/scaleway/scaleway-sdk-go/pull/319))
+* **k8s**: add UpgradeAvailable in pool ([#276](https://github.com/scaleway/scaleway-sdk-go/pull/276))
+* **k8s**: add a field to rename Cluster ([#285](https://github.com/scaleway/scaleway-sdk-go/pull/285))
+* **k8s**: add v1beta4 version ([#276](https://github.com/scaleway/scaleway-sdk-go/pull/276))
+* **lb**: add CreateIP method ([#290](https://github.com/scaleway/scaleway-sdk-go/pull/290))
+* **lb**: add support for proxy protocol ([#299](https://github.com/scaleway/scaleway-sdk-go/pull/299))
+* **lb**: add Subscriber related methods ([#276](https://github.com/scaleway/scaleway-sdk-go/pull/276))
+* **rdb**: add ExportDatabaseBackup method ([#292](https://github.com/scaleway/scaleway-sdk-go/pull/292))
+* **rdb**: add OrganizationID field to ListDatabaseBackups ([#321](https://github.com/scaleway/scaleway-sdk-go/pull/321))
+* **strcase**: add functions ([#275](https://github.com/scaleway/scaleway-sdk-go/pull/275))
+
+### Fixes
+
+* **core**: doc typo ([#293](https://github.com/scaleway/scaleway-sdk-go/pull/293))
+* **core**: do not omit empty Money fields ([#288](https://github.com/scaleway/scaleway-sdk-go/pull/288))
+* **core**: handle content-types in ResponseError ([#315](https://github.com/scaleway/scaleway-sdk-go/pull/315))
+* **core**: handle precision and clean rounding of Money ([#286](https://github.com/scaleway/scaleway-sdk-go/pull/286))
+* **instance**: set all server user data stop deleting all keys ([#281](https://github.com/scaleway/scaleway-sdk-go/pull/281))
+* **instance**: properly convert ipId to ip-id, rename field of DeleteIpRequest ([#272](https://github.com/scaleway/scaleway-sdk-go/pull/272))
+* **lb**: UpdateIP method reverse field ([#320](https://github.com/scaleway/scaleway-sdk-go/pull/320))
+* **scripts**: golangci-lint binary installation test ([#301](https://github.com/scaleway/scaleway-sdk-go/pull/301))
+
+
 ## v1.0.0-beta.5 (2019-12-09)
 
 ### Features
