@@ -49,6 +49,7 @@ type Metadata struct {
 	Name           string `json:"name,omitempty"`
 	Hostname       string `json:"hostname,omitempty"`
 	Organization   string `json:"organization,omitempty"`
+	Project        string `json:"project,omitempty"`
 	CommercialType string `json:"commercial_type,omitempty"`
 	PublicIP       struct {
 		Dynamic bool   `json:"dynamic,omitempty"`
@@ -98,6 +99,7 @@ type Metadata struct {
 		Bootcmdargs  string `json:"bootcmdargs,omitempty"`
 		Architecture string `json:"architecture,omitempty"`
 		Organization string `json:"organization,omitempty"`
+		Project      string `json:"project,omitempty"`
 		ID           string `json:"id,omitempty"`
 	} `json:"bootscript,omitempty"`
 	Volumes map[string]struct {
@@ -108,6 +110,7 @@ type Metadata struct {
 		CreationDate     string `json:"creation_date,omitempty"`
 		State            string `json:"state,omitempty"`
 		Organization     string `json:"organization,omitempty"`
+		Project          string `json:"project,omitempty"`
 		Server           struct {
 			ID   string `json:"id,omitempty"`
 			Name string `json:"name,omitempty"`
