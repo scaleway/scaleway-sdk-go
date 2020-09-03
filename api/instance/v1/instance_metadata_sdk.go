@@ -75,18 +75,10 @@ type Metadata struct {
 		Description      string `json:"description,omitempty"`
 		ModificationDate string `json:"modification_date,omitempty"`
 		IP               string `json:"ip,omitempty"`
-		Email            string `json:"email,omitempty"`
-		UserAgent        struct {
-			Platform string `json:"platform,omitempty"`
-			Version  string `json:"version,omitempty"`
-			String   string `json:"string,omitempty"`
-			Browser  string `json:"browser,omitempty"`
-		} `json:"user_agent,omitempty"`
-		Key          string `json:"key,omitempty"`
-		Fingerprint  string `json:"fingerprint,omitempty"`
-		ID           string `json:"id,omitempty"`
-		CreationDate string `json:"creation_date,omitempty"`
-		Port         int    `json:"port,omitempty"`
+		Key              string `json:"key,omitempty"`
+		Fingerprint      string `json:"fingerprint,omitempty"`
+		ID               string `json:"id,omitempty"`
+		CreationDate     string `json:"creation_date,omitempty"`
 	} `json:"ssh_public_keys,omitempty"`
 	Timezone   string `json:"timezone,omitempty"`
 	Bootscript struct {
