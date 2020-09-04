@@ -795,6 +795,8 @@ type EngineVersion struct {
 	Disabled bool `json:"disabled"`
 
 	Beta bool `json:"beta"`
+
+	InitSettings []*EngineSetting `json:"init_settings"`
 }
 
 // Instance: instance
@@ -831,6 +833,8 @@ type Instance struct {
 	ReadReplicas []*Endpoint `json:"read_replicas"`
 	// NodeType: node type of the instance
 	NodeType string `json:"node_type"`
+	// InitSettings: list of engine settings to be set at database initialisation
+	InitSettings []*InstanceSetting `json:"init_settings"`
 }
 
 // InstanceLog: instance log
@@ -1682,6 +1686,8 @@ type CreateInstanceRequest struct {
 	DisableBackup bool `json:"disable_backup"`
 	// Tags: tags to apply to the instance
 	Tags []string `json:"tags"`
+	// InitSettings: list of engine settings to be set at database initialisation
+	InitSettings []*InstanceSetting `json:"init_settings"`
 }
 
 // CreateInstance: create an instance
