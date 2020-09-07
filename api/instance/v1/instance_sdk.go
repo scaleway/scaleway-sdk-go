@@ -613,7 +613,7 @@ type Bootscript struct {
 	Initrd string `json:"initrd"`
 	// Kernel: the server kernel version
 	Kernel string `json:"kernel"`
-	// Organization: the bootscript organization
+	// Organization: the bootscript organization ID
 	Organization string `json:"organization"`
 	// Project: the bootscript project ID
 	Project string `json:"project"`
@@ -892,7 +892,7 @@ type PlacementGroup struct {
 	ID string `json:"id"`
 	// Name: the placement group name
 	Name string `json:"name"`
-	// Organization: the placement group organization
+	// Organization: the placement group organization ID
 	Organization string `json:"organization"`
 	// Project: the placement group project ID
 	Project string `json:"project"`
@@ -950,11 +950,11 @@ type SecurityGroup struct {
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 	// Organization: the security groups organization ID
 	Organization string `json:"organization"`
-	// Project: the project ID of the security group
+	// Project: the security group project ID
 	Project string `json:"project"`
-	// OrganizationDefault: true if it is your default security group for this organization
+	// OrganizationDefault: true if it is your default security group for this organization ID
 	OrganizationDefault bool `json:"organization_default"`
-	// ProjectDefault: true if it is your default security group for this project id
+	// ProjectDefault: true if it is your default security group for this project ID
 	ProjectDefault bool `json:"project_default"`
 	// CreationDate: the security group creation date
 	CreationDate *time.Time `json:"creation_date"`
@@ -1014,7 +1014,7 @@ type Server struct {
 	ID string `json:"id"`
 	// Name: the server name
 	Name string `json:"name"`
-	// Organization: the server organization
+	// Organization: the server organization ID
 	Organization string `json:"organization"`
 	// Project: the server project ID
 	Project string `json:"project"`
@@ -1277,7 +1277,7 @@ type Volume struct {
 	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: the volumes modification date
 	ModificationDate *time.Time `json:"modification_date"`
-	// Organization: the volumes organization
+	// Organization: the volumes organization ID
 	Organization string `json:"organization"`
 	// Project: the volumes project ID
 	Project string `json:"project"`
@@ -1518,7 +1518,7 @@ type ListServersRequest struct {
 	PerPage *uint32 `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
-	// Organization: list only servers of this organization
+	// Organization: list only servers of this organization ID
 	Organization *string `json:"-"`
 	// Project: list only servers of this project ID
 	Project *string `json:"-"`
@@ -1774,7 +1774,7 @@ type setServerRequest struct {
 	ID string `json:"-"`
 	// Name: the server name
 	Name string `json:"name"`
-	// Organization: the server organization
+	// Organization: the server organization ID
 	Organization string `json:"organization"`
 	// Project: the server project ID
 	Project string `json:"project"`
@@ -2742,7 +2742,7 @@ type ListVolumesRequest struct {
 	PerPage *uint32 `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
-	// Organization: filter volume by organization
+	// Organization: filter volume by organization ID
 	Organization *string `json:"-"`
 	// Project: filter volume by project ID
 	Project *string `json:"-"`
@@ -3090,7 +3090,7 @@ type CreateSecurityGroupRequest struct {
 	Name string `json:"name,omitempty"`
 	// Description: description of the security group
 	Description string `json:"description,omitempty"`
-	// Organization: organization the security group belongs to
+	// Organization: organization ID the security group belongs to
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID the security group belong to
@@ -3637,7 +3637,7 @@ type ListPlacementGroupsRequest struct {
 	PerPage *uint32 `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
-	// Organization: list only placement groups of this organization
+	// Organization: list only placement groups of this organization ID
 	Organization *string `json:"-"`
 	// Project: list only placement groups of this project ID
 	Project *string `json:"-"`
@@ -4114,8 +4114,6 @@ func (s *API) UpdatePlacementGroupServers(req *UpdatePlacementGroupServersReques
 
 type ListIPsRequest struct {
 	Zone scw.Zone `json:"-"`
-	// Project: the project ID the IPs are reserved in
-	Project *string `json:"-"`
 	// Organization: the organization ID the IPs are reserved in
 	Organization *string `json:"-"`
 	// Name: filter on the IP address (Works as a LIKE operation on the IP address)
@@ -4126,6 +4124,8 @@ type ListIPsRequest struct {
 	PerPage *uint32 `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
+	// Project: the project ID the IPs are reserved in
+	Project *string `json:"-"`
 }
 
 // ListIPs: list all flexible IPs
@@ -4143,11 +4143,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "project", req.Project)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
