@@ -1480,6 +1480,8 @@ type UpdateDeviceRequest struct {
 	AllowInsecure *bool `json:"allow_insecure"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
+	// HubID: change Hub for this device, additional fees may apply, see IoT Hub pricing
+	HubID *string `json:"hub_id"`
 }
 
 // UpdateDevice: update a device
