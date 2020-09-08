@@ -1191,6 +1191,12 @@ type DomainSummary struct {
 	Status DomainStatus `json:"status"`
 
 	DNSZoneCount uint32 `json:"dns_zone_count"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	ExternalDomainRegistrationProcess *DomainRegistrationProcessExternalDomain `json:"external_domain_registration_process,omitempty"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	TransferRegistrationProcess *DomainRegistrationProcessTransfer `json:"transfer_registration_process,omitempty"`
 }
 
 type DomainTrademarkProtectionConfig struct {
