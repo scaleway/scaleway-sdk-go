@@ -19,6 +19,10 @@ func TestParseZone(t *testing.T) {
 			expected: ZoneFrPar1,
 		},
 		{
+			input:    "pl-waw-1",
+			expected: ZonePlWaw1,
+		},
+		{
 			input:    "par1",
 			expected: ZoneFrPar1,
 		},
@@ -95,6 +99,10 @@ func TestParseRegion(t *testing.T) {
 		{
 			input:    "ams1",
 			expected: RegionNlAms,
+		},
+		{
+			input:    "pl-waw",
+			expected: RegionPlWaw,
 		},
 		{
 			input:    "xx-xxx",
