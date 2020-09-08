@@ -1316,9 +1316,11 @@ type VolumeTemplate struct {
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 	// Organization: organization ID of the volume
-	Organization string `json:"organization,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the volume
-	Project string `json:"project,omitempty"`
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 }
 
 type VolumeType struct {
