@@ -649,6 +649,8 @@ type IPFailover struct {
 	ID string `json:"id"`
 	// OrganizationID: organization ID the IP failover is attached to
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project ID the IP failover is attached to
+	ProjectID string `json:"project_id"`
 	// Description: description of the IP failover
 	Description string `json:"description"`
 	// Tags: tags associated to the IP failover
@@ -1640,7 +1642,11 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 type CreateIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OrganizationID: ID of the organization to associate to the IP failover
-	OrganizationID string `json:"organization_id"`
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: ID of the project to associate to the IP failover
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Description: description to associate to the IP failover, max 255 characters
 	Description string `json:"description"`
 	// Tags: tags to associate to the IP failover
@@ -1659,9 +1665,14 @@ type CreateIPFailoverRequest struct {
 func (s *API) CreateIPFailover(req *CreateIPFailoverRequest, opts ...scw.RequestOption) (*IPFailover, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Zone == "" {
@@ -1751,6 +1762,8 @@ type ListIPFailoversRequest struct {
 	ServerIDs []string `json:"-"`
 	// OrganizationID: filter servers by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter servers by project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListIPFailovers: list IP failovers
@@ -1777,6 +1790,7 @@ func (s *API) ListIPFailovers(req *ListIPFailoversRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "server_ids", req.ServerIDs)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
