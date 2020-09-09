@@ -180,18 +180,10 @@ const (
 	ListDevicesRequestOrderByUpdatedAtAsc = ListDevicesRequestOrderBy("updated_at_asc")
 	// ListDevicesRequestOrderByUpdatedAtDesc is [insert doc].
 	ListDevicesRequestOrderByUpdatedAtDesc = ListDevicesRequestOrderBy("updated_at_desc")
-	// ListDevicesRequestOrderByEnabledAsc is [insert doc].
-	ListDevicesRequestOrderByEnabledAsc = ListDevicesRequestOrderBy("enabled_asc")
-	// ListDevicesRequestOrderByEnabledDesc is [insert doc].
-	ListDevicesRequestOrderByEnabledDesc = ListDevicesRequestOrderBy("enabled_desc")
 	// ListDevicesRequestOrderByAllowInsecureAsc is [insert doc].
 	ListDevicesRequestOrderByAllowInsecureAsc = ListDevicesRequestOrderBy("allow_insecure_asc")
 	// ListDevicesRequestOrderByAllowInsecureDesc is [insert doc].
 	ListDevicesRequestOrderByAllowInsecureDesc = ListDevicesRequestOrderBy("allow_insecure_desc")
-	// ListDevicesRequestOrderByLastSeenAtAsc is [insert doc].
-	ListDevicesRequestOrderByLastSeenAtAsc = ListDevicesRequestOrderBy("last_seen_at_asc")
-	// ListDevicesRequestOrderByLastSeenAtDesc is [insert doc].
-	ListDevicesRequestOrderByLastSeenAtDesc = ListDevicesRequestOrderBy("last_seen_at_desc")
 )
 
 func (enum ListDevicesRequestOrderBy) String() string {
@@ -240,10 +232,6 @@ const (
 	ListHubsRequestOrderByUpdatedAtAsc = ListHubsRequestOrderBy("updated_at_asc")
 	// ListHubsRequestOrderByUpdatedAtDesc is [insert doc].
 	ListHubsRequestOrderByUpdatedAtDesc = ListHubsRequestOrderBy("updated_at_desc")
-	// ListHubsRequestOrderByEnabledAsc is [insert doc].
-	ListHubsRequestOrderByEnabledAsc = ListHubsRequestOrderBy("enabled_asc")
-	// ListHubsRequestOrderByEnabledDesc is [insert doc].
-	ListHubsRequestOrderByEnabledDesc = ListHubsRequestOrderBy("enabled_desc")
 )
 
 func (enum ListHubsRequestOrderBy) String() string {
@@ -1311,11 +1299,11 @@ type ListDevicesRequest struct {
 	Name *string `json:"-"`
 	// HubID: filter on the hub
 	HubID *string `json:"-"`
-	// Enabled: filter on the enabled flag
+	// Enabled: deprecated, ignored filter
 	Enabled *bool `json:"-"`
 	// AllowInsecure: filter on the allow_insecure flag
 	AllowInsecure *bool `json:"-"`
-	// IsConnected: filter on the is_connected state
+	// IsConnected: deprecated, ignored filter
 	IsConnected *bool `json:"-"`
 }
 

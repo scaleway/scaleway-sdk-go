@@ -1181,37 +1181,41 @@ type SetPlacementGroupServersResponse struct {
 	Servers []*PlacementGroupServer `json:"servers"`
 }
 
+// Snapshot: snapshot
 type Snapshot struct {
+	// ID: the snapshot ID
 	ID string `json:"id"`
-
+	// Name: the snapshot name
 	Name string `json:"name"`
-
+	// Organization: the snapshot organization ID
 	Organization string `json:"organization"`
-	// VolumeType:
+	// Project: the snapshot project ID
+	Project string `json:"project"`
+	// VolumeType: the snapshot volume type
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type"`
-
+	// Size: the snapshot size
 	Size scw.Size `json:"size"`
-	// State:
+	// State: the snapshot state
 	//
 	// Default value: available
 	State SnapshotState `json:"state"`
-
+	// BaseVolume: the volume on which the snapshot is based on
 	BaseVolume *SnapshotBaseVolume `json:"base_volume"`
-
+	// CreationDate: the snapshot creation date
 	CreationDate *time.Time `json:"creation_date"`
-
+	// ModificationDate: the snapshot modification date
 	ModificationDate *time.Time `json:"modification_date"`
-
-	Project string `json:"project"`
-
+	// Zone: the snapshot zone
 	Zone scw.Zone `json:"zone"`
 }
 
+// SnapshotBaseVolume: snapshot. base volume
 type SnapshotBaseVolume struct {
+	// ID: the volume ID on which the snapshot is based on
 	ID string `json:"id"`
-
+	// Name: the volume name on which the snapshot is based on
 	Name string `json:"name"`
 }
 
@@ -1261,29 +1265,29 @@ type UpdateVolumeResponse struct {
 
 // Volume: volume
 type Volume struct {
-	// ID: the volumes unique ID
+	// ID: the volume unique ID
 	ID string `json:"id"`
-	// Name: the volumes names
+	// Name: the volume name
 	Name string `json:"name"`
-	// ExportURI: show the volumes NBD export URI
+	// ExportURI: show the volume NBD export URI
 	ExportURI string `json:"export_uri"`
-	// Size: the volumes disk size
+	// Size: the volume disk size
 	Size scw.Size `json:"size"`
-	// VolumeType: the volumes type
+	// VolumeType: the volume type
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type"`
-	// CreationDate: the volumes creation date
+	// CreationDate: the volume creation date
 	CreationDate *time.Time `json:"creation_date"`
-	// ModificationDate: the volumes modification date
+	// ModificationDate: the volume modification date
 	ModificationDate *time.Time `json:"modification_date"`
-	// Organization: the volumes organization ID
+	// Organization: the volume organization ID
 	Organization string `json:"organization"`
-	// Project: the volumes project ID
+	// Project: the volume project ID
 	Project string `json:"project"`
 	// Server: the server attached to the volume
 	Server *ServerSummary `json:"server"`
-	// State: the volumes state
+	// State: the volume state
 	//
 	// Default value: available
 	State VolumeState `json:"state"`
@@ -2522,10 +2526,10 @@ type CreateSnapshotRequest struct {
 	Name string `json:"name,omitempty"`
 	// VolumeID: UUID of the volume
 	VolumeID string `json:"volume_id,omitempty"`
-
+	// Organization: organization ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
-
+	// Project: project ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
 }
@@ -2815,27 +2819,27 @@ func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateVolumeRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// Name: the volume name
 	Name string `json:"name,omitempty"`
-
+	// Organization: the volume organization ID
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
-	// VolumeType:
+	// Project: the volume project ID
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
+	// VolumeType: the volume type
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type"`
-
+	// Size: the volume disk size
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	Size *scw.Size `json:"size,omitempty"`
-
+	// BaseVolume: the ID of the volume on which this volume will be based
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	BaseVolume *string `json:"base_volume,omitempty"`
-
+	// BaseSnapshot: the ID of the snapshot on which this volume will be based
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	BaseSnapshot *string `json:"base_snapshot,omitempty"`
-
-	// Precisely one of Organization, Project must be set.
-	Project *string `json:"project,omitempty"`
 }
 
 // CreateVolume: create a volume
@@ -3247,38 +3251,38 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 
 type setSecurityGroupRequest struct {
 	Zone scw.Zone `json:"-"`
-
+	// ID: the ID of the security group (will be ignored)
 	ID string `json:"-"`
-
+	// Name: the name of the security group
 	Name string `json:"name"`
-
+	// CreationDate: the creation date of the security group (will be ignored)
 	CreationDate *time.Time `json:"creation_date"`
-
+	// ModificationDate: the modification date of the security group (will be ignored)
 	ModificationDate *time.Time `json:"modification_date"`
-
+	// Description: the description of the security group
 	Description string `json:"description"`
-
+	// EnableDefaultSecurity: true to block SMTP on IPv4 and IPv6
 	EnableDefaultSecurity bool `json:"enable_default_security"`
-	// InboundDefaultPolicy:
+	// InboundDefaultPolicy: the default inbound policy
 	//
 	// Default value: accept
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
-
-	Organization string `json:"organization"`
-
-	OrganizationDefault bool `json:"organization_default"`
-	// OutboundDefaultPolicy:
+	// OutboundDefaultPolicy: the default outbound policy
 	//
 	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
-
-	Servers []*ServerSummary `json:"servers"`
-
-	Stateful bool `json:"stateful"`
-
+	// Organization: the security groups organization ID
+	Organization string `json:"organization"`
+	// Project: the security group project ID
 	Project string `json:"project"`
-
+	// OrganizationDefault: please use project_default instead
+	OrganizationDefault bool `json:"organization_default"`
+	// ProjectDefault: true use this security group for future instances created in this project
 	ProjectDefault bool `json:"project_default"`
+	// Servers: the servers attached to this security group
+	Servers []*ServerSummary `json:"servers"`
+	// Stateful: true to set the security group as stateful
+	Stateful bool `json:"stateful"`
 }
 
 // setSecurityGroup: update a security group
@@ -3713,17 +3717,17 @@ type CreatePlacementGroupRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name: name of the placement group
 	Name string `json:"name,omitempty"`
-
+	// Organization: organization ID of the placement group
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
-
+	// Project: project ID of the placement group
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// PolicyMode:
+	// PolicyMode: the operating mode of the placement group
 	//
 	// Default value: optional
 	PolicyMode PlacementGroupPolicyMode `json:"policy_mode"`
-	// PolicyType:
+	// PolicyType: the policy type of the placement group
 	//
 	// Default value: max_availability
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
