@@ -12,7 +12,7 @@ import (
 func Example_apiClient() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
@@ -59,7 +59,7 @@ func Example_apiClientWithConfig() {
 func Example_listServers() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
@@ -83,7 +83,7 @@ func Example_listServers() {
 func Example_createServer() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultOrganizationID("ORGANIZATION_ID"),
 		scw.WithDefaultZone(scw.ZoneFrPar1),
 	)
@@ -123,7 +123,7 @@ func Example_createServer() {
 func Example_rebootAllServers() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultZone(scw.ZoneFrPar1),
 	)
 	if err != nil {
@@ -160,7 +160,7 @@ func Example_rebootAllServers() {
 func Example_createLoadBalancer() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
