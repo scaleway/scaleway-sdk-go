@@ -1542,6 +1542,8 @@ type ListServersRequest struct {
 	State *ServerState `json:"-"`
 	// Tags: list servers with these exact tags
 	Tags []string `json:"-"`
+	// PrivateNetwork: list servers in this Private Network
+	PrivateNetwork *string `json:"-"`
 }
 
 // ListServers: list all servers
@@ -1571,6 +1573,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if len(req.Tags) != 0 {
 		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
 	}
+	parameter.AddToQuery(query, "private_network", req.PrivateNetwork)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
