@@ -255,6 +255,7 @@ type GetPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
+// GetPrivateNetwork: get a private network
 func (s *API) GetPrivateNetwork(req *GetPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
