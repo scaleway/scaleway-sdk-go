@@ -8,9 +8,7 @@
 
 # Scaleway GO SDK
 
-
 **:warning: This is an early release, keep in mind that the API can break**
-
 
 Scaleway is a single way to create, deploy and scale your infrastructure in the cloud. We help thousands of businesses to run their infrastructures easily.
 
@@ -42,7 +40,7 @@ func main() {
 
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		// Get your credentials at https://console.scaleway.com/account/credentials
+		// Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
 	)
