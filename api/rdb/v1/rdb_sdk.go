@@ -731,13 +731,15 @@ type DatabaseBackup struct {
 	Region scw.Region `json:"region"`
 }
 
+// DatabaseEngine: database engine
 type DatabaseEngine struct {
+	// Name: engine name
 	Name string `json:"name"`
-
+	// LogoURL: engine logo URL
 	LogoURL string `json:"logo_url"`
-
+	// Versions: available versions
 	Versions []*EngineVersion `json:"versions"`
-
+	// Region: region of this database engine
 	Region scw.Region `json:"region"`
 }
 
@@ -763,42 +765,46 @@ type Endpoint struct {
 	Name *string `json:"name"`
 }
 
+// EngineSetting: engine setting
 type EngineSetting struct {
+	// Name: setting name from database engine
 	Name string `json:"name"`
-
+	// DefaultValue: value set when not specified
 	DefaultValue string `json:"default_value"`
-
+	// HotConfigurable: setting can be applied without restarting
 	HotConfigurable bool `json:"hot_configurable"`
-
+	// Description: setting description
 	Description string `json:"description"`
-	// PropertyType:
+	// PropertyType: setting type
 	//
 	// Default value: BOOLEAN
 	PropertyType EngineSettingPropertyType `json:"property_type"`
-
+	// Unit: setting base unit
 	Unit *string `json:"unit"`
-
+	// StringConstraint: validation regex for string type settings
 	StringConstraint *string `json:"string_constraint"`
-
+	// IntMin: minimum value for int types
 	IntMin *int32 `json:"int_min"`
-
+	// IntMax: maximum value for int types
 	IntMax *int32 `json:"int_max"`
 }
 
+// EngineVersion: engine version
 type EngineVersion struct {
+	// Version: database engine version
 	Version string `json:"version"`
-
+	// Name: database engine name
 	Name string `json:"name"`
-
+	// EndOfLife: end of life date
 	EndOfLife *time.Time `json:"end_of_life"`
-
+	// AvailableSettings: engine settings available to be set
 	AvailableSettings []*EngineSetting `json:"available_settings"`
-
+	// Disabled: disabled versions cannot be created
 	Disabled bool `json:"disabled"`
-
+	// Beta: beta status of engine version
 	Beta bool `json:"beta"`
-
-	InitSettings []*EngineSetting `json:"init_settings"`
+	// AvailableInitSettings: engine settings available to be set at database initialisation
+	AvailableInitSettings []*EngineSetting `json:"available_init_settings"`
 }
 
 // Instance: instance

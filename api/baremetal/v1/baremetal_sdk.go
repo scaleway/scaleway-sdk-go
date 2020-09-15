@@ -735,7 +735,7 @@ type CreateServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OfferID: offer ID of the new server
 	OfferID string `json:"offer_id"`
-	// OrganizationID: organization ID with which the server will be created
+	// Deprecated: OrganizationID: organization ID with which the server will be created
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: project ID with which the server will be created

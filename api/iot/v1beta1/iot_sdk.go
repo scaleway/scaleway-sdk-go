@@ -1299,11 +1299,11 @@ type ListDevicesRequest struct {
 	Name *string `json:"-"`
 	// HubID: filter on the hub
 	HubID *string `json:"-"`
-	// Enabled: deprecated, ignored filter
+	// Deprecated: Enabled: deprecated, ignored filter
 	Enabled *bool `json:"-"`
 	// AllowInsecure: filter on the allow_insecure flag
 	AllowInsecure *bool `json:"-"`
-	// IsConnected: deprecated, ignored filter
+	// Deprecated: IsConnected: deprecated, ignored filter
 	IsConnected *bool `json:"-"`
 }
 
@@ -2344,7 +2344,7 @@ type CreateNetworkRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: network name
 	Name string `json:"name"`
-	// OrganizationID: deprecated: Organization owning the resource, do not use
+	// Deprecated: OrganizationID: deprecated: Organization owning the resource, do not use
 	//
 	// Will always be assigned to the organization owning the IoT hub.
 	OrganizationID string `json:"organization_id"`

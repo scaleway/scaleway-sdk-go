@@ -958,7 +958,7 @@ func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateClusterRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID: the organization ID where the cluster will be created
+	// Deprecated: OrganizationID: the organization ID where the cluster will be created
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: the project ID where the cluster will be created
