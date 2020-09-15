@@ -5,7 +5,7 @@
 Recommended config file:
 
 ```yaml
-# Get your credentials on https://console.scaleway.com/account/credentials
+# Get your credentials on https://console.scaleway.com/project/credentials
 access_key: SCWXXXXXXXXXXXXXXXXX
 secret_key: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 default_organization_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -46,10 +46,10 @@ scw.NewClient(
 
 | Variable                       | Description                                                                                      | Legacy variables                                                                                              |
 | :----------------------------- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `$SCW_ACCESS_KEY`              | Access key of a token ([get yours](https://console.scaleway.com/account/credentials))            | `$SCALEWAY_ACCESS_KEY` (used by terraform)                                                                    |
-| `$SCW_SECRET_KEY`              | Secret key of a token ([get yours](https://console.scaleway.com/account/credentials))            | `$SCW_TOKEN` (used by cli), `$SCALEWAY_TOKEN` (used by terraform), `$SCALEWAY_ACCESS_KEY` (used by terraform) |
-| `$SCW_DEFAULT_ORGANIZATION_ID` | Your default organization ID ([get yours](https://console.scaleway.com/account/credentials))     | `$SCW_ORGANIZATION` (used by cli),`$SCALEWAY_ORGANIZATION` (used by terraform)                                |
-| `$SCW_DEFAULT_PROJECT_ID`      | Your default project ID ([get yours](https://console.scaleway.com/account/credentials))          |                                                                                                               |
+| `$SCW_ACCESS_KEY`              | Access key of a token ([get yours](https://console.scaleway.com/project/credentials))            | `$SCALEWAY_ACCESS_KEY` (used by terraform)                                                                    |
+| `$SCW_SECRET_KEY`              | Secret key of a token ([get yours](https://console.scaleway.com/project/credentials))            | `$SCW_TOKEN` (used by cli), `$SCALEWAY_TOKEN` (used by terraform), `$SCALEWAY_ACCESS_KEY` (used by terraform) |
+| `$SCW_DEFAULT_ORGANIZATION_ID` | Your default organization ID ([get yours](https://console.scaleway.com/project/credentials))     | `$SCW_ORGANIZATION` (used by cli),`$SCALEWAY_ORGANIZATION` (used by terraform)                                |
+| `$SCW_DEFAULT_PROJECT_ID`      | Your default project ID ([get yours](https://console.scaleway.com/project/credentials))          |                                                                                                               |
 | `$SCW_DEFAULT_REGION`          | Your default [region](https://developers.scaleway.com/en/quickstart/#region-and-zone)            | `$SCW_REGION` (used by cli),`$SCALEWAY_REGION` (used by terraform)                                            |
 | `$SCW_DEFAULT_ZONE`            | Your default [availability zone](https://developers.scaleway.com/en/quickstart/#region-and-zone) | `$SCW_ZONE` (used by cli),`$SCALEWAY_ZONE` (used by terraform)                                                |
 | `$SCW_API_URL`                 | Url of the API                                                                                   | -                                                                                                             |
