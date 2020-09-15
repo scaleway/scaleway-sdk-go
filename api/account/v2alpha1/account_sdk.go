@@ -203,7 +203,7 @@ type CreateSSHKeyRequest struct {
 	Name string `json:"name"`
 	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
 	PublicKey string `json:"public_key"`
-	// OrganizationID: use project_id field instead
+	// Deprecated: OrganizationID: use project_id field instead
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: project owning the resource

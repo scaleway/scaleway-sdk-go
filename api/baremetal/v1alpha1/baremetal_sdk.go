@@ -772,9 +772,9 @@ type Offer struct {
 	Bandwidth uint32 `json:"bandwidth"`
 	// CommercialRange: commercial range of the offer
 	CommercialRange string `json:"commercial_range"`
-	// PriceByMinute: price of the offer by minutes, this field is deprecated, please use `price_per_sixty_minutes` instead
+	// Deprecated: PriceByMinute: price of the offer by minutes, this field is deprecated, please use `price_per_sixty_minutes` instead
 	PriceByMinute *scw.Money `json:"price_by_minute"`
-	// PriceByMonth: price of the offer by months, this field is deprecated, please use `price_per_month` instead
+	// Deprecated: PriceByMonth: price of the offer by months, this field is deprecated, please use `price_per_month` instead
 	PriceByMonth *scw.Money `json:"price_by_month"`
 	// PricePerSixtyMinutes: price of the offer for the next 60 minutes (a server order at 11h32 will be payed until 12h32)
 	PricePerSixtyMinutes *scw.Money `json:"price_per_sixty_minutes"`
@@ -1641,7 +1641,7 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type CreateIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OrganizationID: ID of the organization to associate to the IP failover
+	// Deprecated: OrganizationID: ID of the organization to associate to the IP failover
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: ID of the project to associate to the IP failover

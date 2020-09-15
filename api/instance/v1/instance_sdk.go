@@ -952,7 +952,7 @@ type SecurityGroup struct {
 	Organization string `json:"organization"`
 	// Project: the security group project ID
 	Project string `json:"project"`
-	// OrganizationDefault: true if it is your default security group for this organization ID
+	// Deprecated: OrganizationDefault: true if it is your default security group for this organization ID
 	OrganizationDefault bool `json:"organization_default"`
 	// ProjectDefault: true if it is your default security group for this project ID
 	ProjectDefault bool `json:"project_default"`
@@ -1319,7 +1319,7 @@ type VolumeTemplate struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
-	// Organization: organization ID of the volume
+	// Deprecated: Organization: organization ID of the volume
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the volume
@@ -1636,7 +1636,7 @@ type CreateServerRequest struct {
 	BootType *BootType `json:"boot_type,omitempty"`
 	// Bootscript: the bootscript ID to use when `boot_type` is set to `bootscript`
 	Bootscript *string `json:"bootscript,omitempty"`
-	// Organization: the server organization ID
+	// Deprecated: Organization: the server organization ID
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: the server project ID
@@ -2271,7 +2271,7 @@ type CreateImageRequest struct {
 	DefaultBootscript string `json:"default_bootscript,omitempty"`
 	// ExtraVolumes: additional volumes of the image
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
-	// Organization: organization ID of the image
+	// Deprecated: Organization: organization ID of the image
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the image
@@ -2529,7 +2529,7 @@ type CreateSnapshotRequest struct {
 	Name string `json:"name,omitempty"`
 	// VolumeID: UUID of the volume
 	VolumeID string `json:"volume_id,omitempty"`
-	// Organization: organization ID of the snapshot
+	// Deprecated: Organization: organization ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the snapshot
@@ -2824,7 +2824,7 @@ type CreateVolumeRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name: the volume name
 	Name string `json:"name,omitempty"`
-	// Organization: the volume organization ID
+	// Deprecated: Organization: the volume organization ID
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: the volume project ID
@@ -3099,13 +3099,13 @@ type CreateSecurityGroupRequest struct {
 	Name string `json:"name,omitempty"`
 	// Description: description of the security group
 	Description string `json:"description,omitempty"`
-	// Organization: organization ID the security group belongs to
+	// Deprecated: Organization: organization ID the security group belongs to
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID the security group belong to
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// OrganizationDefault: whether this security group becomes the default security group for new instances
+	// Deprecated: OrganizationDefault: whether this security group becomes the default security group for new instances
 	//
 	// Default value: false
 	// Precisely one of OrganizationDefault, ProjectDefault must be set.
@@ -3278,7 +3278,7 @@ type setSecurityGroupRequest struct {
 	Organization string `json:"organization"`
 	// Project: the security group project ID
 	Project string `json:"project"`
-	// OrganizationDefault: please use project_default instead
+	// Deprecated: OrganizationDefault: please use project_default instead
 	OrganizationDefault bool `json:"organization_default"`
 	// ProjectDefault: true use this security group for future instances created in this project
 	ProjectDefault bool `json:"project_default"`
@@ -3720,7 +3720,7 @@ type CreatePlacementGroupRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name: name of the placement group
 	Name string `json:"name,omitempty"`
-	// Organization: organization ID of the placement group
+	// Deprecated: Organization: organization ID of the placement group
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the placement group
@@ -4199,7 +4199,7 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateIPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// Organization: the organization ID the IP is reserved in
+	// Deprecated: Organization: the organization ID the IP is reserved in
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
 	// Project: the project ID the IP is reserved in

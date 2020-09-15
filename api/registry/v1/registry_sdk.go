@@ -548,7 +548,7 @@ type CreateNamespaceRequest struct {
 	Name string `json:"name"`
 	// Description: define a description
 	Description string `json:"description"`
-	// OrganizationID: assign the namespace owner (deprecated)
+	// Deprecated: OrganizationID: assign the namespace owner (deprecated)
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: assign the namespace to a project ID
