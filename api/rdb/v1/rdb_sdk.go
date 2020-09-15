@@ -166,6 +166,8 @@ const (
 	DatabaseBackupStatusError = DatabaseBackupStatus("error")
 	// DatabaseBackupStatusExporting is [insert doc].
 	DatabaseBackupStatusExporting = DatabaseBackupStatus("exporting")
+	// DatabaseBackupStatusLocked is [insert doc].
+	DatabaseBackupStatusLocked = DatabaseBackupStatus("locked")
 )
 
 func (enum DatabaseBackupStatus) String() string {
