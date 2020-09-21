@@ -821,6 +821,8 @@ type Instance struct {
 	Name string `json:"name"`
 	// OrganizationID: organization ID the instance belongs to
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project ID the instance belongs to
+	ProjectID string `json:"project_id"`
 	// Status: status of the instance
 	//
 	// Default value: unknown
@@ -917,9 +919,9 @@ type ListInstanceLogsResponse struct {
 
 // ListInstancesResponse: list instances response
 type ListInstancesResponse struct {
-	// Instances: list all instances available in a given organization
+	// Instances: list all instances available in a given organization/project
 	Instances []*Instance `json:"instances"`
-	// TotalCount: total count of instances available in a given organization
+	// TotalCount: total count of instances available in a given organization/project
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1069,6 +1071,8 @@ type ListDatabaseBackupsRequest struct {
 	InstanceID *string `json:"-"`
 	// OrganizationID: organization ID the database backups belongs to
 	OrganizationID *string `json:"-"`
+	// ProjectID: project ID the database backups belongs to
+	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1094,6 +1098,7 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "instance_id", req.InstanceID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -1571,8 +1576,10 @@ type ListInstancesRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListInstancesRequestOrderBy `json:"-"`
-	// OrganizationID: organization ID to list the instance of
+	// OrganizationID: please use `project_id` instead
 	OrganizationID *string `json:"-"`
+	// ProjectID: project ID to list the instance of
+	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1598,6 +1605,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -1680,8 +1688,12 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 
 type CreateInstanceRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID: the organization ID on which to create the instance
-	OrganizationID string `json:"organization_id"`
+	// Deprecated: OrganizationID: please use `project_id` instead
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: the project ID on which to create the instance
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Name: name of the instance
 	Name string `json:"name"`
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...)
@@ -1706,9 +1718,14 @@ type CreateInstanceRequest struct {
 func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
