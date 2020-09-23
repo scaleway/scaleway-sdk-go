@@ -1648,8 +1648,6 @@ type CreateServerRequest struct {
 	SecurityGroup *string `json:"security_group,omitempty"`
 	// PlacementGroup: placement group ID if server must be part of a placement group
 	PlacementGroup *string `json:"placement_group,omitempty"`
-	// PrivateNetwork: private Network IDs if the server need to be part of one or more Private Networks
-	PrivateNetwork []string `json:"private_network,omitempty"`
 }
 
 // createServer: create a server
