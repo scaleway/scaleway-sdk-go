@@ -166,6 +166,8 @@ const (
 	DatabaseBackupStatusError = DatabaseBackupStatus("error")
 	// DatabaseBackupStatusExporting is [insert doc].
 	DatabaseBackupStatusExporting = DatabaseBackupStatus("exporting")
+	// DatabaseBackupStatusLocked is [insert doc].
+	DatabaseBackupStatusLocked = DatabaseBackupStatus("locked")
 )
 
 func (enum DatabaseBackupStatus) String() string {
@@ -714,28 +716,30 @@ type DatabaseBackup struct {
 	// Size: size of the database backup
 	Size *scw.Size `json:"size"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: updated date (Format ISO 8601)
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// InstanceName: name of the instance of the backup
 	InstanceName string `json:"instance_name"`
 	// DownloadURL: URL you can download the backup from
 	DownloadURL *string `json:"download_url"`
 	// DownloadURLExpiresAt: expiration date of the download link
-	DownloadURLExpiresAt time.Time `json:"download_url_expires_at"`
+	DownloadURLExpiresAt *time.Time `json:"download_url_expires_at"`
 	// Region: region of this database backup
 	Region scw.Region `json:"region"`
 }
 
+// DatabaseEngine: database engine
 type DatabaseEngine struct {
+	// Name: engine name
 	Name string `json:"name"`
-
+	// LogoURL: engine logo URL
 	LogoURL string `json:"logo_url"`
-
+	// Versions: available versions
 	Versions []*EngineVersion `json:"versions"`
-
+	// Region: region of this database engine
 	Region scw.Region `json:"region"`
 }
 
@@ -761,46 +765,52 @@ type Endpoint struct {
 	Name *string `json:"name"`
 }
 
+// EngineSetting: engine setting
 type EngineSetting struct {
+	// Name: setting name from database engine
 	Name string `json:"name"`
-
+	// DefaultValue: value set when not specified
 	DefaultValue string `json:"default_value"`
-
+	// HotConfigurable: setting can be applied without restarting
 	HotConfigurable bool `json:"hot_configurable"`
-
+	// Description: setting description
 	Description string `json:"description"`
-	// PropertyType:
+	// PropertyType: setting type
 	//
 	// Default value: BOOLEAN
 	PropertyType EngineSettingPropertyType `json:"property_type"`
-
+	// Unit: setting base unit
 	Unit *string `json:"unit"`
-
+	// StringConstraint: validation regex for string type settings
 	StringConstraint *string `json:"string_constraint"`
-
+	// IntMin: minimum value for int types
 	IntMin *int32 `json:"int_min"`
-
+	// IntMax: maximum value for int types
 	IntMax *int32 `json:"int_max"`
 }
 
+// EngineVersion: engine version
 type EngineVersion struct {
+	// Version: database engine version
 	Version string `json:"version"`
-
+	// Name: database engine name
 	Name string `json:"name"`
-
-	EndOfLife time.Time `json:"end_of_life"`
-
+	// EndOfLife: end of life date
+	EndOfLife *time.Time `json:"end_of_life"`
+	// AvailableSettings: engine settings available to be set
 	AvailableSettings []*EngineSetting `json:"available_settings"`
-
+	// Disabled: disabled versions cannot be created
 	Disabled bool `json:"disabled"`
-
+	// Beta: beta status of engine version
 	Beta bool `json:"beta"`
+	// AvailableInitSettings: engine settings available to be set at database initialisation
+	AvailableInitSettings []*EngineSetting `json:"available_init_settings"`
 }
 
 // Instance: instance
 type Instance struct {
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Volume: volumes of the instance
 	Volume *Volume `json:"volume"`
 	// Region: region the instance is in
@@ -811,6 +821,8 @@ type Instance struct {
 	Name string `json:"name"`
 	// OrganizationID: organization ID the instance belongs to
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project ID the instance belongs to
+	ProjectID string `json:"project_id"`
 	// Status: status of the instance
 	//
 	// Default value: unknown
@@ -831,6 +843,8 @@ type Instance struct {
 	ReadReplicas []*Endpoint `json:"read_replicas"`
 	// NodeType: node type of the instance
 	NodeType string `json:"node_type"`
+	// InitSettings: list of engine settings to be set at database initialisation
+	InitSettings []*InstanceSetting `json:"init_settings"`
 }
 
 // InstanceLog: instance log
@@ -846,9 +860,9 @@ type InstanceLog struct {
 	// NodeName: name of the undelying node
 	NodeName string `json:"node_name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 	// CreatedAt: creation date (Format ISO 8601)
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Region: region the instance is in
 	Region scw.Region `json:"region"`
 }
@@ -905,9 +919,9 @@ type ListInstanceLogsResponse struct {
 
 // ListInstancesResponse: list instances response
 type ListInstancesResponse struct {
-	// Instances: list all instances available in a given organization
+	// Instances: list all instances available in a given organization/project
 	Instances []*Instance `json:"instances"`
-	// TotalCount: total count of instances available in a given organization
+	// TotalCount: total count of instances available in a given organization/project
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1057,6 +1071,8 @@ type ListDatabaseBackupsRequest struct {
 	InstanceID *string `json:"-"`
 	// OrganizationID: organization ID the database backups belongs to
 	OrganizationID *string `json:"-"`
+	// ProjectID: project ID the database backups belongs to
+	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1082,6 +1098,7 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "instance_id", req.InstanceID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -1133,7 +1150,7 @@ type CreateDatabaseBackupRequest struct {
 	// Name: name of the backup
 	Name string `json:"name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CreateDatabaseBackup: create a database backup
@@ -1143,6 +1160,10 @@ func (s *API) CreateDatabaseBackup(req *CreateDatabaseBackupRequest, opts ...scw
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("bkp")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1214,7 +1235,7 @@ type UpdateDatabaseBackupRequest struct {
 	// Name: name of the Database Backup
 	Name *string `json:"name"`
 	// ExpiresAt: expiration date (Format ISO 8601)
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // UpdateDatabaseBackup: update a database backup
@@ -1555,8 +1576,10 @@ type ListInstancesRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListInstancesRequestOrderBy `json:"-"`
-	// OrganizationID: organization ID to list the instance of
+	// OrganizationID: please use `project_id` instead
 	OrganizationID *string `json:"-"`
+	// ProjectID: project ID to list the instance of
+	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1582,6 +1605,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -1664,8 +1688,12 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 
 type CreateInstanceRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID: the organization ID on which to create the instance
-	OrganizationID string `json:"organization_id"`
+	// Deprecated: OrganizationID: please use `project_id` instead
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: the project ID on which to create the instance
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Name: name of the instance
 	Name string `json:"name"`
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...)
@@ -1682,20 +1710,31 @@ type CreateInstanceRequest struct {
 	DisableBackup bool `json:"disable_backup"`
 	// Tags: tags to apply to the instance
 	Tags []string `json:"tags"`
+	// InitSettings: list of engine settings to be set at database initialisation
+	InitSettings []*InstanceSetting `json:"init_settings"`
 }
 
 // CreateInstance: create an instance
 func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("ins")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1856,9 +1895,9 @@ type PrepareInstanceLogsRequest struct {
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
 	// StartDate: start datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`
-	StartDate time.Time `json:"start_date"`
+	StartDate *time.Time `json:"start_date"`
 	// EndDate: end datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`
-	EndDate time.Time `json:"end_date"`
+	EndDate *time.Time `json:"end_date"`
 }
 
 // PrepareInstanceLogs: prepare logs of a given instance
@@ -1989,9 +2028,9 @@ type GetInstanceMetricsRequest struct {
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
 	// StartDate: start date to gather metrics from
-	StartDate time.Time `json:"-"`
+	StartDate *time.Time `json:"-"`
 	// EndDate: end date to gather metrics from
-	EndDate time.Time `json:"-"`
+	EndDate *time.Time `json:"-"`
 	// MetricName: name of the metric to gather
 	MetricName *string `json:"-"`
 }

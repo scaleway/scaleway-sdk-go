@@ -108,9 +108,9 @@ type SSHKey struct {
 
 	Fingerprint string `json:"fingerprint"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CreationInfo *SSHKeyCreationInfo `json:"creation_info"`
 
@@ -146,7 +146,7 @@ type ListSSHKeysRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSSHKeys: list all SSH keys of your organization
+// ListSSHKeys: list all SSH keys of your project
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
@@ -203,7 +203,7 @@ type CreateSSHKeyRequest struct {
 	Name string `json:"name"`
 	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
 	PublicKey string `json:"public_key"`
-	// OrganizationID: organization owning the resource
+	// Deprecated: OrganizationID: use project_id field instead
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: project owning the resource
@@ -211,9 +211,7 @@ type CreateSSHKeyRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSSHKey: add a SSH key to your organization
-//
-// Add a SSH key to your organization.
+// CreateSSHKey: add an SSH key to your project
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -252,9 +250,7 @@ type GetSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// GetSSHKey: get a SSH key from your organization
-//
-// Get a SSH key from your organization.
+// GetSSHKey: get an SSH key from your project
 func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -283,9 +279,7 @@ type UpdateSSHKeyRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateSSHKey: update a SSH key on your organization
-//
-// Update a SSH key on your organization.
+// UpdateSSHKey: update an SSH key on your project
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -317,9 +311,7 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: remove a SSH key from your organization
-//
-// Remove a SSH key from your organization.
+// DeleteSSHKey: remove an SSH key from your project
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 

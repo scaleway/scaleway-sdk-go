@@ -378,7 +378,7 @@ type BMCAccess struct {
 	// Password: the password to use for the BMC (Baseboard Management Controller) access authentification
 	Password string `json:"password"`
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CPU: cpu
@@ -542,14 +542,16 @@ type Server struct {
 	ID string `json:"id"`
 	// OrganizationID: organization ID the server is attached to
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project ID the server is attached to
+	ProjectID string `json:"project_id"`
 	// Name: name of the server
 	Name string `json:"name"`
 	// Description: description of the server
 	Description string `json:"description"`
 	// UpdatedAt: date of last modification of the server
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the server
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the server
 	//
 	// Default value: unknown
@@ -583,9 +585,9 @@ type ServerEvent struct {
 	// Action: the action that will be applied to the server
 	Action string `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type ServerInstall struct {
@@ -620,11 +622,13 @@ type ListServersRequest struct {
 	Name *string `json:"-"`
 	// OrganizationID: filter servers by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter servers by project ID
+	ProjectID *string `json:"-"`
 }
 
-// ListServers: list baremetal servers
+// ListServers: list baremetal servers for organization
 //
-// List baremetal servers.
+// List baremetal servers for organization.
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -646,6 +650,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -730,8 +735,12 @@ type CreateServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OfferID: offer ID of the new server
 	OfferID string `json:"offer_id"`
-	// OrganizationID: organization ID with which the server will be created
-	OrganizationID string `json:"organization_id"`
+	// Deprecated: OrganizationID: organization ID with which the server will be created
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: project ID with which the server will be created
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Name: name of the server (≠hostname)
 	Name string `json:"name"`
 	// Description: description associated to the server, max 255 characters
@@ -748,9 +757,14 @@ type CreateServerRequest struct {
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Zone == "" {

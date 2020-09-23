@@ -1059,7 +1059,7 @@ type DNSZone struct {
 
 	Message *string `json:"message"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	OrganizationIDs []string `json:"organization_ids"`
 }
@@ -1117,9 +1117,9 @@ type Domain struct {
 
 	Epp []string `json:"epp"`
 
-	ExpiredAt time.Time `json:"expired_at"`
+	ExpiredAt *time.Time `json:"expired_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Registrar string `json:"registrar"`
 
@@ -1178,9 +1178,9 @@ type DomainSummary struct {
 
 	Epp []string `json:"epp"`
 
-	ExpiredAt time.Time `json:"expired_at"`
+	ExpiredAt *time.Time `json:"expired_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Registrar string `json:"registrar"`
 
@@ -1191,6 +1191,12 @@ type DomainSummary struct {
 	Status DomainStatus `json:"status"`
 
 	DNSZoneCount uint32 `json:"dns_zone_count"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	ExternalDomainRegistrationProcess *DomainRegistrationProcessExternalDomain `json:"external_domain_registration_process,omitempty"`
+
+	// Precisely one of ExternalDomainRegistrationProcess, TransferRegistrationProcess must be set.
+	TransferRegistrationProcess *DomainRegistrationProcessTransfer `json:"transfer_registration_process,omitempty"`
 }
 
 type DomainTrademarkProtectionConfig struct {
@@ -1223,7 +1229,7 @@ type ExtensionFR struct {
 }
 
 type ExtensionFRAssociationInfos struct {
-	PublicationJo time.Time `json:"publication_jo"`
+	PublicationJo *time.Time `json:"publication_jo"`
 
 	PublicationJoPage uint32 `json:"publication_jo_page"`
 }
@@ -1560,7 +1566,7 @@ type RegisterExternalDomainResponse struct {
 
 	ValidationToken string `json:"validation_token"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response
@@ -1584,9 +1590,9 @@ type Task struct {
 	// Default value: unavailable
 	Status TaskStatus `json:"status"`
 
-	StartedAt time.Time `json:"started_at"`
+	StartedAt *time.Time `json:"started_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	ID string `json:"id"`
 
@@ -1640,7 +1646,7 @@ type UpdateDNSZoneRecordsResponse struct {
 }
 
 type Version struct {
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type ZoneSSL struct {
@@ -1656,9 +1662,9 @@ type ZoneSSL struct {
 
 	Certificate []string `json:"certificate"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	ExpiredAt time.Time `json:"expired_at"`
+	ExpiredAt *time.Time `json:"expired_at"`
 }
 
 // Service API

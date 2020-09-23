@@ -1,22 +1,20 @@
 <p align="center"><img width="50%" src="docs/static_files/sdk-artwork.png" /></p>
 
 <p align="center">
-  <a href="https://godoc.org/github.com/scaleway/scaleway-sdk-go"><img src="https://godoc.org/github.com/scaleway/scaleway-sdk-go?status.svg" alt="GoDoc"/></a>
-  <a href="https://circleci.com/gh/scaleway/scaleway-sdk-go"><img src="https://circleci.com/gh/scaleway/scaleway-sdk-go.svg?style=shield" alt="CircleCI" /></a>
+  <a href="https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc"><img src="https://pkg.go.dev/badge/github.com/scaleway/scaleway-sdk-go/" alt="PkgGoDev"></a>
+  <a href="https://github.com/scaleway/scaleway-sdk-go/actions?query=workflow%3Apull-request"><img src="https://github.com/scaleway/scaleway-sdk-go/workflows/pull-request/badge.svg" alt="GitHub Actions" /></a>
   <a href="https://goreportcard.com/report/github.com/scaleway/scaleway-sdk-go"><img src="https://goreportcard.com/badge/scaleway/scaleway-sdk-go" alt="GoReportCard" /></a>
 </p>
 
 # Scaleway GO SDK
 
-
 **:warning: This is an early release, keep in mind that the API can break**
-
 
 Scaleway is a single way to create, deploy and scale your infrastructure in the cloud. We help thousands of businesses to run their infrastructures easily.
 
 ## Documentation
 
-- [Godoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go)
+- [Godoc](https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc)
 - [Developers website](https://developers.scaleway.com) (API documentation)
 
 ## Installation
@@ -42,7 +40,7 @@ func main() {
 
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		// Get your credentials at https://console.scaleway.com/account/credentials
+		// Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
 		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
 	)
@@ -71,7 +69,7 @@ func main() {
 
 ## Examples
 
-You can find additional examples in the [GoDoc](https://godoc.org/github.com/scaleway/scaleway-sdk-go).
+You can find additional examples in the [GoDoc](https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc).
 
 ## Development
 

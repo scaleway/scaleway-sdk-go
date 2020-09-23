@@ -649,14 +649,16 @@ type IPFailover struct {
 	ID string `json:"id"`
 	// OrganizationID: organization ID the IP failover is attached to
 	OrganizationID string `json:"organization_id"`
+	// ProjectID: project ID the IP failover is attached to
+	ProjectID string `json:"project_id"`
 	// Description: description of the IP failover
 	Description string `json:"description"`
 	// Tags: tags associated to the IP failover
 	Tags []string `json:"tags"`
 	// UpdatedAt: date of last update of the IP failover
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the IP failover
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the IP failover
 	//
 	// Default value: unknown
@@ -692,9 +694,9 @@ type IPFailoverEvent struct {
 	// Default value: unknown
 	Action IPFailoverEventAction `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // ListIPFailoverEventsResponse: list ip failover events response
@@ -770,9 +772,9 @@ type Offer struct {
 	Bandwidth uint32 `json:"bandwidth"`
 	// CommercialRange: commercial range of the offer
 	CommercialRange string `json:"commercial_range"`
-	// PriceByMinute: price of the offer by minutes, this field is deprecated, please use `price_per_sixty_minutes` instead
+	// Deprecated: PriceByMinute: price of the offer by minutes, this field is deprecated, please use `price_per_sixty_minutes` instead
 	PriceByMinute *scw.Money `json:"price_by_minute"`
-	// PriceByMonth: price of the offer by months, this field is deprecated, please use `price_per_month` instead
+	// Deprecated: PriceByMonth: price of the offer by months, this field is deprecated, please use `price_per_month` instead
 	PriceByMonth *scw.Money `json:"price_by_month"`
 	// PricePerSixtyMinutes: price of the offer for the next 60 minutes (a server order at 11h32 will be payed until 12h32)
 	PricePerSixtyMinutes *scw.Money `json:"price_per_sixty_minutes"`
@@ -809,7 +811,7 @@ type RemoteServerAccess struct {
 	// Password: the password to use for the remote access authentification
 	Password string `json:"password"`
 	// ExpiresAt: the date after which the remote access will be closed
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // Server: server
@@ -823,9 +825,9 @@ type Server struct {
 	// Description: description of the server
 	Description string `json:"description"`
 	// UpdatedAt: date of last modification of the server
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the server
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Status: status of the server
 	//
 	// Default value: unknown
@@ -859,9 +861,9 @@ type ServerEvent struct {
 	// Action: the action that will be applied to the server
 	Action string `json:"action"`
 	// UpdatedAt: date of last modification of the action
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the action
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // ServerInstall: server install
@@ -1639,8 +1641,12 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type CreateIPFailoverRequest struct {
 	Zone scw.Zone `json:"-"`
-	// OrganizationID: ID of the organization to associate to the IP failover
-	OrganizationID string `json:"organization_id"`
+	// Deprecated: OrganizationID: ID of the organization to associate to the IP failover
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: ID of the project to associate to the IP failover
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 	// Description: description to associate to the IP failover, max 255 characters
 	Description string `json:"description"`
 	// Tags: tags to associate to the IP failover
@@ -1659,9 +1665,14 @@ type CreateIPFailoverRequest struct {
 func (s *API) CreateIPFailover(req *CreateIPFailoverRequest, opts ...scw.RequestOption) (*IPFailover, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Zone == "" {
@@ -1751,6 +1762,8 @@ type ListIPFailoversRequest struct {
 	ServerIDs []string `json:"-"`
 	// OrganizationID: filter servers by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter servers by project ID
+	ProjectID *string `json:"-"`
 }
 
 // ListIPFailovers: list IP failovers
@@ -1777,6 +1790,7 @@ func (s *API) ListIPFailovers(req *ListIPFailoversRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "server_ids", req.ServerIDs)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")

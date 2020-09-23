@@ -394,9 +394,9 @@ type Cluster struct {
 	// DNSWildcard: display the dns wildcard associated with the cluster
 	DNSWildcard string `json:"dns_wildcard"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CurrentCoreCount uint32 `json:"current_core_count"`
 
@@ -541,9 +541,9 @@ type Node struct {
 	// Default value: unknown
 	Status NodeStatus `json:"status"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Pool: pool
@@ -579,9 +579,9 @@ type Pool struct {
 	// PlacementGroupID: display ID of the placement group if any
 	PlacementGroupID *string `json:"placement_group_id"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CurrentCoreCount uint32 `json:"current_core_count"`
 

@@ -947,7 +947,7 @@ type Backend struct {
 	Pool []string `json:"pool"`
 
 	LB *LB `json:"lb"`
-
+	// Deprecated
 	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -1018,7 +1018,7 @@ type BackendServerStats struct {
 	// Default value: stopped
 	ServerState BackendServerStatsServerState `json:"server_state"`
 	// ServerStateChangedAt: time since last operational change
-	ServerStateChangedAt time.Time `json:"server_state_changed_at"`
+	ServerStateChangedAt *time.Time `json:"server_state_changed_at"`
 	// LastHealthCheckStatus: last health check status (unknown/neutral/failed/passed/condpass)
 	//
 	// Default value: unknown
@@ -1040,9 +1040,9 @@ type Certificate struct {
 	// Fingerprint: identifier (SHA-1) of the certificate
 	Fingerprint string `json:"fingerprint"`
 	// NotValidBefore: validity bounds
-	NotValidBefore time.Time `json:"not_valid_before"`
+	NotValidBefore *time.Time `json:"not_valid_before"`
 	// NotValidAfter: validity bounds
-	NotValidAfter time.Time `json:"not_valid_after"`
+	NotValidAfter *time.Time `json:"not_valid_after"`
 	// Status: status of certificate
 	//
 	// Default value: pending
@@ -1080,7 +1080,7 @@ type Frontend struct {
 	LB *LB `json:"lb"`
 
 	TimeoutClient *time.Duration `json:"timeout_client"`
-
+	// Deprecated
 	Certificate *Certificate `json:"certificate"`
 
 	CertificateIDs []string `json:"certificate_ids"`
@@ -1531,7 +1531,7 @@ func (r *ListLBsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID: owner of resources
+	// Deprecated: OrganizationID: owner of resources
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: assign the resource to a project ID
@@ -1864,7 +1864,7 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateIPRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID: owner of resources
+	// Deprecated: OrganizationID: owner of resources
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: assign the resource to a project ID
@@ -2141,7 +2141,7 @@ type CreateBackendRequest struct {
 	HealthCheck *HealthCheck `json:"health_check"`
 	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
 	ServerIP []string `json:"server_ip"`
-	// SendProxyV2: deprecated in favor of proxy_protocol field !
+	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
 	SendProxyV2 bool `json:"send_proxy_v2"`
 	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -2308,7 +2308,7 @@ type UpdateBackendRequest struct {
 	StickySessions StickySessionsType `json:"sticky_sessions"`
 
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-
+	// Deprecated
 	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -2773,7 +2773,7 @@ type CreateFrontendRequest struct {
 	BackendID string `json:"backend_id"`
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID: certificate ID, deprecated in favor of certificate_ids array !
+	// Deprecated: CertificateID: certificate ID, deprecated in favor of certificate_ids array !
 	CertificateID *string `json:"certificate_id"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
@@ -2902,7 +2902,7 @@ type UpdateFrontendRequest struct {
 	BackendID string `json:"backend_id"`
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
+	// Deprecated: CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
 	CertificateID *string `json:"certificate_id"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
@@ -3019,7 +3019,7 @@ type GetLBStatsRequest struct {
 	LBID string `json:"-"`
 }
 
-// GetLBStats: get usage statistics of a given load balancer
+// Deprecated: GetLBStats: get usage statistics of a given load balancer
 func (s *API) GetLBStats(req *GetLBStatsRequest, opts ...scw.RequestOption) (*LBStats, error) {
 	var err error
 
@@ -3717,7 +3717,7 @@ type CreateSubscriberRequest struct {
 	// WebhookConfig: webHook URI configuration
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
-	// OrganizationID: owner of resources
+	// Deprecated: OrganizationID: owner of resources
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 	// ProjectID: assign the resource to a project ID

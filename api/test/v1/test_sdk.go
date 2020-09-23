@@ -185,9 +185,9 @@ type Human struct {
 
 	OrganizationID string `json:"organization_id"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Height float64 `json:"height"`
 
@@ -412,7 +412,7 @@ type CreateHumanRequest struct {
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
-
+	// Deprecated
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
@@ -617,11 +617,11 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 
 type SmokeHumanRequest struct {
 	Region scw.Region `json:"-"`
-	// HumanID: UUID of the human you want to make smoking
+	// Deprecated: HumanID: UUID of the human you want to make smoking
 	HumanID string `json:"-"`
 }
 
-// SmokeHuman: make a human smoke
+// Deprecated: SmokeHuman: make a human smoke
 //
 // Make a human smoke.
 func (s *API) SmokeHuman(req *SmokeHumanRequest, opts ...scw.RequestOption) (*Human, error) {

@@ -180,18 +180,10 @@ const (
 	ListDevicesRequestOrderByUpdatedAtAsc = ListDevicesRequestOrderBy("updated_at_asc")
 	// ListDevicesRequestOrderByUpdatedAtDesc is [insert doc].
 	ListDevicesRequestOrderByUpdatedAtDesc = ListDevicesRequestOrderBy("updated_at_desc")
-	// ListDevicesRequestOrderByEnabledAsc is [insert doc].
-	ListDevicesRequestOrderByEnabledAsc = ListDevicesRequestOrderBy("enabled_asc")
-	// ListDevicesRequestOrderByEnabledDesc is [insert doc].
-	ListDevicesRequestOrderByEnabledDesc = ListDevicesRequestOrderBy("enabled_desc")
 	// ListDevicesRequestOrderByAllowInsecureAsc is [insert doc].
 	ListDevicesRequestOrderByAllowInsecureAsc = ListDevicesRequestOrderBy("allow_insecure_asc")
 	// ListDevicesRequestOrderByAllowInsecureDesc is [insert doc].
 	ListDevicesRequestOrderByAllowInsecureDesc = ListDevicesRequestOrderBy("allow_insecure_desc")
-	// ListDevicesRequestOrderByLastSeenAtAsc is [insert doc].
-	ListDevicesRequestOrderByLastSeenAtAsc = ListDevicesRequestOrderBy("last_seen_at_asc")
-	// ListDevicesRequestOrderByLastSeenAtDesc is [insert doc].
-	ListDevicesRequestOrderByLastSeenAtDesc = ListDevicesRequestOrderBy("last_seen_at_desc")
 )
 
 func (enum ListDevicesRequestOrderBy) String() string {
@@ -240,10 +232,6 @@ const (
 	ListHubsRequestOrderByUpdatedAtAsc = ListHubsRequestOrderBy("updated_at_asc")
 	// ListHubsRequestOrderByUpdatedAtDesc is [insert doc].
 	ListHubsRequestOrderByUpdatedAtDesc = ListHubsRequestOrderBy("updated_at_desc")
-	// ListHubsRequestOrderByEnabledAsc is [insert doc].
-	ListHubsRequestOrderByEnabledAsc = ListHubsRequestOrderBy("enabled_asc")
-	// ListHubsRequestOrderByEnabledDesc is [insert doc].
-	ListHubsRequestOrderByEnabledDesc = ListHubsRequestOrderBy("enabled_desc")
 )
 
 func (enum ListHubsRequestOrderBy) String() string {
@@ -600,7 +588,7 @@ type DatabaseRoute struct {
 	// Topic: topic the route subscribes to (wildcards allowed). It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Query: SQL query to be executed ($TOPIC and $PAYLOAD variables are available, see documentation)
 	Query string `json:"query"`
 	// Database: database settings
@@ -625,8 +613,6 @@ type DatabaseSettings struct {
 type Device struct {
 	// ID: device ID, also used as MQTT Client ID or Username
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: device name
 	Name string `json:"name"`
 	// Status: device status
@@ -635,18 +621,20 @@ type Device struct {
 	Status DeviceStatus `json:"status"`
 	// HubID: hub ID
 	HubID string `json:"hub_id"`
-	// CreatedAt: device add date
-	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt: device last modification date
-	UpdatedAt time.Time `json:"updated_at"`
-	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
-	AllowInsecure bool `json:"allow_insecure"`
 	// LastActivityAt: device last connection/activity date
-	LastActivityAt time.Time `json:"last_activity_at"`
+	LastActivityAt *time.Time `json:"last_activity_at"`
 	// IsConnected: whether the device is connected to the Hub or not
 	IsConnected bool `json:"is_connected"`
+	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
+	AllowInsecure bool `json:"allow_insecure"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
+	// CreatedAt: device add date
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: device last modification date
+	UpdatedAt *time.Time `json:"updated_at"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // DeviceMessageFilters: device message filters
@@ -679,19 +667,15 @@ type FunctionsRoute struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// URI: uri of the function
 	URI string `json:"uri"`
 }
 
 // Hub: hub
 type Hub struct {
-	// Region: region of the Hub
-	Region scw.Region `json:"region"`
 	// ID: hub ID
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: hub name
 	Name string `json:"name"`
 	// Status: current status of the Hub
@@ -702,24 +686,28 @@ type Hub struct {
 	//
 	// Default value: plan_unknown
 	ProductPlan ProductPlan `json:"product_plan"`
-	// Endpoint: host to connect your devices to
-	//
-	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
-	Endpoint string `json:"endpoint"`
-	// CreatedAt: hub creation date
-	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt: hub last modification date
-	UpdatedAt time.Time `json:"updated_at"`
 	// Enabled: whether the hub has been enabled
 	Enabled bool `json:"enabled"`
 	// DeviceCount: number of registered devices
 	DeviceCount uint64 `json:"device_count"`
 	// ConnectedDeviceCount: number of currently connected devices
 	ConnectedDeviceCount uint64 `json:"connected_device_count"`
+	// Endpoint: host to connect your devices to
+	//
+	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
+	Endpoint string `json:"endpoint"`
 	// EventsEnabled: wether Hub events are enabled or not
 	EventsEnabled bool `json:"events_enabled"`
 	// EventsTopicPrefix: hub events topic prefix
 	EventsTopicPrefix string `json:"events_topic_prefix"`
+	// Region: region of the Hub
+	Region scw.Region `json:"region"`
+	// CreatedAt: hub creation date
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: hub last modification date
+	UpdatedAt *time.Time `json:"updated_at"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // ListDevicesResponse: list devices response
@@ -771,35 +759,35 @@ type MetricsMetric struct {
 // MetricsMetricValue: metrics. metric. value
 type MetricsMetricValue struct {
 	// Time: timestamp for the value
-	Time time.Time `json:"time"`
+	Time *time.Time `json:"time"`
 	// Value: numeric value
 	Value int64 `json:"value"`
 }
 
 // Network: network
 type Network struct {
-	// Region: region of the Network
-	Region scw.Region `json:"region"`
 	// ID: network ID
 	ID string `json:"id"`
-	// OrganizationID: organization owning the resource
-	OrganizationID string `json:"organization_id"`
 	// Name: network name
 	Name string `json:"name"`
-	// Endpoint: endpoint to use for interacting with the network
-	Endpoint string `json:"endpoint"`
 	// Type: type of network to connect with
 	//
 	// Default value: unknown
 	Type NetworkNetworkType `json:"type"`
+	// Endpoint: endpoint to use for interacting with the network
+	Endpoint string `json:"endpoint"`
 	// HubID: hub ID to connect the Network to
 	HubID string `json:"hub_id"`
 	// CreatedAt: network creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// TopicPrefix: topic prefix for the Network
 	//
 	// This prefix will be prepended to all topics for this Network.
 	TopicPrefix string `json:"topic_prefix"`
+	// Region: region of the Network
+	Region scw.Region `json:"region"`
+	// OrganizationID: organization owning the resource
+	OrganizationID string `json:"organization_id"`
 }
 
 // RestRoute: rest route
@@ -815,7 +803,7 @@ type RestRoute struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// Verb: HTTP Verb used to call REST URI
 	//
 	// Default value: get
@@ -843,7 +831,7 @@ type Route struct {
 	// Default value: unknown
 	Type RouteRouteType `json:"type"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // S3Route: s3 route
@@ -859,7 +847,7 @@ type S3Route struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
 	Topic string `json:"topic"`
 	// CreatedAt: route creation date
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	// BucketRegion: region of the S3 route's destination bucket (eg 'fr-par')
 	BucketRegion string `json:"bucket_region"`
 	// BucketName: name of the S3 route's destination bucket
@@ -989,7 +977,7 @@ type CreateHubRequest struct {
 	OrganizationID string `json:"organization_id"`
 	// ProductPlan: hub feature set
 	//
-	// Default value: plan_unknown
+	// Default value: plan_shared
 	ProductPlan ProductPlan `json:"product_plan"`
 	// DisableEvents: disable Hub events (default false)
 	DisableEvents *bool `json:"disable_events"`
@@ -1009,6 +997,10 @@ func (s *API) CreateHub(req *CreateHubRequest, opts ...scw.RequestOption) (*Hub,
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("hub")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1079,7 +1071,11 @@ type UpdateHubRequest struct {
 	HubID string `json:"-"`
 	// Name: hub name (up to 255 characters)
 	Name *string `json:"name"`
-	// DisableEvents: disable events
+	// ProductPlan: hub feature set
+	//
+	// Default value: plan_unknown
+	ProductPlan ProductPlan `json:"product_plan"`
+	// DisableEvents: disable Hub events
 	DisableEvents *bool `json:"disable_events"`
 	// EventsTopicPrefix: hub events topic prefix
 	EventsTopicPrefix *string `json:"events_topic_prefix"`
@@ -1303,11 +1299,11 @@ type ListDevicesRequest struct {
 	Name *string `json:"-"`
 	// HubID: filter on the hub
 	HubID *string `json:"-"`
-	// Enabled: filter on the enabled flag
+	// Deprecated: Enabled: deprecated, ignored filter
 	Enabled *bool `json:"-"`
 	// AllowInsecure: filter on the allow_insecure flag
 	AllowInsecure *bool `json:"-"`
-	// IsConnected: filter on the is_connected state
+	// Deprecated: IsConnected: deprecated, ignored filter
 	IsConnected *bool `json:"-"`
 }
 
@@ -1396,6 +1392,10 @@ func (s *API) CreateDevice(req *CreateDeviceRequest, opts ...scw.RequestOption) 
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("device")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -1468,6 +1468,8 @@ type UpdateDeviceRequest struct {
 	AllowInsecure *bool `json:"allow_insecure"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
+	// HubID: change Hub for this device, additional fees may apply, see IoT Hub pricing
+	HubID *string `json:"hub_id"`
 }
 
 // UpdateDevice: update a device
@@ -2342,7 +2344,7 @@ type CreateNetworkRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: network name
 	Name string `json:"name"`
-	// OrganizationID: deprecated: Organization owning the resource, do not use
+	// Deprecated: OrganizationID: deprecated: Organization owning the resource, do not use
 	//
 	// Will always be assigned to the organization owning the IoT hub.
 	OrganizationID string `json:"organization_id"`
@@ -2368,6 +2370,10 @@ func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("network")
 	}
 
 	if fmt.Sprint(req.Region) == "" {

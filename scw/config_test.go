@@ -643,7 +643,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
-# Generate your token at the following address: https://console.scaleway.com/account/credentials
+# Generate your token at the following address: https://console.scaleway.com/project/credentials
 
 # An access key is a secret key identifier.
 # access_key: SCW11111111111111111
@@ -721,7 +721,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
-# Generate your token at the following address: https://console.scaleway.com/account/credentials
+# Generate your token at the following address: https://console.scaleway.com/project/credentials
 
 # An access key is a secret key identifier.
 access_key: SCW1234567890ABCDEFG
@@ -813,7 +813,7 @@ access_key: SCW1234567890ABCDEFG
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
-# Generate your token at the following address: https://console.scaleway.com/account/credentials
+# Generate your token at the following address: https://console.scaleway.com/project/credentials
 
 # An access key is a secret key identifier.
 access_key: SCW1234567890ABCDEFG
