@@ -1,5 +1,143 @@
 # Changelog
 
+## v1.0.0-beta.7 (2020-10-07)
+
+### Features
+
+* **account**: add project id to ssh key object ([#447](https://github.com/scaleway/scaleway-sdk-go/pull/447))
+* **account**: add project_id in ssh-key ([#438](https://github.com/scaleway/scaleway-sdk-go/pull/438))
+
+* **baremetal**: add RetryInterval variable ([#357](https://github.com/scaleway/scaleway-sdk-go/pull/357))
+* **baremetal**: add boot type in start server ([#500](https://github.com/scaleway/scaleway-sdk-go/pull/500))
+* **baremetal**: add install in create server ([#499](https://github.com/scaleway/scaleway-sdk-go/pull/499))
+* **baremetal**: add ping status in server ([#390](https://github.com/scaleway/scaleway-sdk-go/pull/390))
+* **baremetal**: add project-id to ipfailover v1alpha1 ([#559](https://github.com/scaleway/scaleway-sdk-go/pull/559))
+* **baremetal**: add server helpers func in v1 ([#397](https://github.com/scaleway/scaleway-sdk-go/pull/397))
+* **baremetal**: add support for projects ([#535](https://github.com/scaleway/scaleway-sdk-go/pull/535))
+* **baremetal**: add v1 ([#396](https://github.com/scaleway/scaleway-sdk-go/pull/396))
+
+* **config**: add support for default profile ([#478](https://github.com/scaleway/scaleway-sdk-go/pull/478))
+* **config**: move telemetry config in profile ([#427](https://github.com/scaleway/scaleway-sdk-go/pull/427))
+
+* **core**: add GetSecretKey and GetAccessKey ([#386](https://github.com/scaleway/scaleway-sdk-go/pull/386))
+
+* **domain**: add domain registration process on DomainSummary ([#560](https://github.com/scaleway/scaleway-sdk-go/pull/560))
+* **domain**: add external domain support ([#401](https://github.com/scaleway/scaleway-sdk-go/pull/401))
+* **domain**: add new task types ([#415](https://github.com/scaleway/scaleway-sdk-go/pull/415))
+* **domain**: add new types in messages and email validated in domain contact ([#423](https://github.com/scaleway/scaleway-sdk-go/pull/423))
+* **domain**: add organization_id filter ([#424](https://github.com/scaleway/scaleway-sdk-go/pull/424))
+* **domain**: add registration process and is_external filter ([#507](https://github.com/scaleway/scaleway-sdk-go/pull/507))
+
+* **error**: add resource locked error ([#361](https://github.com/scaleway/scaleway-sdk-go/pull/361))
+* **errors**: handle instance unknown resource ([#374](https://github.com/scaleway/scaleway-sdk-go/pull/374))
+
+* **instance**: Add private_network filter on ListServers ([#567](https://github.com/scaleway/scaleway-sdk-go/pull/567))
+* **instance**: Remove private_networks in CreateServerRequest ([#572](https://github.com/scaleway/scaleway-sdk-go/pull/572))
+* **instance**: add a WaitForImage method ([#381](https://github.com/scaleway/scaleway-sdk-go/pull/381))
+* **instance**: add a wait on volume ([#418](https://github.com/scaleway/scaleway-sdk-go/pull/418))
+* **instance**: add project to others resources ([#519](https://github.com/scaleway/scaleway-sdk-go/pull/519))
+* **instance**: add project to resource IP ([#460](https://github.com/scaleway/scaleway-sdk-go/pull/460))
+* **instance**: add snapshot wait utils ([#398](https://github.com/scaleway/scaleway-sdk-go/pull/398))
+* **instance**: add support for name in backup action ([#383](https://github.com/scaleway/scaleway-sdk-go/pull/383))
+* **instance**: add tags to IP ([#344](https://github.com/scaleway/scaleway-sdk-go/pull/344))
+* **instance**: add volume type endpoint ([#440](https://github.com/scaleway/scaleway-sdk-go/pull/440))
+* **instance**: allow filter by tags in server list ([#373](https://github.com/scaleway/scaleway-sdk-go/pull/373))
+* **instance**: exclude SetIp of the SDK ([#461](https://github.com/scaleway/scaleway-sdk-go/pull/461))
+* **instance**: fix volume template project oneof ([#561](https://github.com/scaleway/scaleway-sdk-go/pull/561))
+* **instance**: fix volume type endpoint ([#441](https://github.com/scaleway/scaleway-sdk-go/pull/441))
+* **instance**: update metadata struct ([#541](https://github.com/scaleway/scaleway-sdk-go/pull/541))
+* **instance**: use generated UpdateVolume ([#417](https://github.com/scaleway/scaleway-sdk-go/pull/417))
+
+* **iot**: add REST network type ([#505](https://github.com/scaleway/scaleway-sdk-go/pull/505))
+* **iot**: add WaitForHub IoT helper ([#445](https://github.com/scaleway/scaleway-sdk-go/pull/445))
+* **iot**: add hub events settings ([#476](https://github.com/scaleway/scaleway-sdk-go/pull/476))
+* **iot**: add name generation on hub network and device ([#526](https://github.com/scaleway/scaleway-sdk-go/pull/526))
+* **iot**: add product plan in UpdateHubRequest ([#513](https://github.com/scaleway/scaleway-sdk-go/pull/513))
+* **iot**: add support for hub-id in an UpdateDeviceRequest #554
+* **iot**: enable sdk generation ([#444](https://github.com/scaleway/scaleway-sdk-go/pull/444))
+
+* **k8s**: add kubeconfig and helpers ([#364](https://github.com/scaleway/scaleway-sdk-go/pull/364))
+* **k8s**: add project support ([#517](https://github.com/scaleway/scaleway-sdk-go/pull/517))
+* **k8s**: add scaledown unneeded time ([#385](https://github.com/scaleway/scaleway-sdk-go/pull/385))
+* **k8s**: add traefik2 ingress ([#443](https://github.com/scaleway/scaleway-sdk-go/pull/443))
+* **k8s**: add v1 api
+* **k8s**: add wait for node method ([#352](https://github.com/scaleway/scaleway-sdk-go/pull/352))
+* **k8s**: flag to delete block and pvc with kapsule ([#416](https://github.com/scaleway/scaleway-sdk-go/pull/416))
+
+* **lb**: add SSL compatibility level ([#343](https://github.com/scaleway/scaleway-sdk-go/pull/343))
+* **lb**: multi-certificacte in frontend ([#492](https://github.com/scaleway/scaleway-sdk-go/pull/492))
+* **lb**: add default on the lb name generation ([#493](https://github.com/scaleway/scaleway-sdk-go/pull/493))
+* **lb**: add private network ([#402](https://github.com/scaleway/scaleway-sdk-go/pull/402))
+* **lb**: add support for multiple certificates in frontend ([#479](https://github.com/scaleway/scaleway-sdk-go/pull/479))
+* **lb**: remove subscriber from cli generation ([#490](https://github.com/scaleway/scaleway-sdk-go/pull/490))
+* **lb**: support projects ([#504](https://github.com/scaleway/scaleway-sdk-go/pull/504))
+
+* **rdb**: add GetInstanceLogs method ([#484](https://github.com/scaleway/scaleway-sdk-go/pull/484))
+* **rdb**: add beta flags ([#411](https://github.com/scaleway/scaleway-sdk-go/pull/411))
+* **rdb**: add generated prefix ([#558](https://github.com/scaleway/scaleway-sdk-go/pull/558))
+* **rdb**: add project_id to resources ([#571](https://github.com/scaleway/scaleway-sdk-go/pull/571))
+* **rdb**: allow setting initial settings while creating an RDB instance. ([#536](https://github.com/scaleway/scaleway-sdk-go/pull/536))
+* **rdb**: update upgrade call to add non-ha to ha upgrade ([#451](https://github.com/scaleway/scaleway-sdk-go/pull/451))
+
+* **registry**: add wait functions on image and tag ([#426](https://github.com/scaleway/scaleway-sdk-go/pull/426))
+* **registry**: support projects ([#506](https://github.com/scaleway/scaleway-sdk-go/pull/506))
+
+* **vpc**: add support for project ([#565](https://github.com/scaleway/scaleway-sdk-go/pull/565))
+* **vpc**: generate doc/cli/sdk ([#532](https://github.com/scaleway/scaleway-sdk-go/pull/532))
+
+* add configurable retryInterval and timeout ([#428](https://github.com/scaleway/scaleway-sdk-go/pull/428))
+* add projects ([#452](https://github.com/scaleway/scaleway-sdk-go/pull/452))
+* add support for pl-waw-1 zone and pl-waw region ([#557](https://github.com/scaleway/scaleway-sdk-go/pull/557))
+* set default project client value when request is empty ([#457](https://github.com/scaleway/scaleway-sdk-go/pull/457))
+* use pointer to time.Time to allow null value ([#523](https://github.com/scaleway/scaleway-sdk-go/pull/523))
+
+### Fixes
+
+* **config**: LoadConfigFromPath better handle cross platform error ([#395](https://github.com/scaleway/scaleway-sdk-go/pull/395))
+* **config**: debug level when reading env ([#349](https://github.com/scaleway/scaleway-sdk-go/pull/349))
+* **errors**: handle all instance not found return messages ([#432](https://github.com/scaleway/scaleway-sdk-go/pull/432))
+* **instance**: GetServerTypesAvailabilityResponse nested object
+* **instance**: volume listing return all types by default
+* **k8s**: add global retry interval for wait func ([#354](https://github.com/scaleway/scaleway-sdk-go/pull/354))
+* **k8s**: change type for kubeconfig certificates ([#362](https://github.com/scaleway/scaleway-sdk-go/pull/362))
+* **k8s**: panic on helpers timeout ([#369](https://github.com/scaleway/scaleway-sdk-go/pull/369))
+* **k8s**: remove oldbinpacking from autoscaler estimator ([#389](https://github.com/scaleway/scaleway-sdk-go/pull/389))
+* **rdb**: switch from ip to ipnet in ACL ([#482](https://github.com/scaleway/scaleway-sdk-go/pull/482))
+* **registry**: use scw.Size ([#391](https://github.com/scaleway/scaleway-sdk-go/pull/391))
+* date format in query parameters ([#471](https://github.com/scaleway/scaleway-sdk-go/pull/471))
+* handle additional non standards errors ([#525](https://github.com/scaleway/scaleway-sdk-go/pull/525))
+
+### Others
+
+* **chore - baremetal**: rename to GetOfferFromOfferNameRequest ([#353](https://github.com/scaleway/scaleway-sdk-go/pull/353))
+* **chore - config**: use os.UserHomeDir
+* **chore - iot**: deprecate organization ID in CreateNetworkRequest ([#501](https://github.com/scaleway/scaleway-sdk-go/pull/501))
+* **chore - locality**: small fixes ([#455](https://github.com/scaleway/scaleway-sdk-go/pull/455))
+* **chore - rdb**: add locked status ([#568](https://github.com/scaleway/scaleway-sdk-go/pull/568))
+* **chore - sdk_compilation_test**: add missing api packages in test ([#446](https://github.com/scaleway/scaleway-sdk-go/pull/446))
+* **chore - vendor**: remove vendor folder and rely on go module instead ([#469](https://github.com/scaleway/scaleway-sdk-go/pull/469))
+* **chore**: export Scaleway environment variable constants ([#400](https://github.com/scaleway/scaleway-sdk-go/pull/400))
+* **chore**: export scw.getScwConfigDir ([#514](https://github.com/scaleway/scaleway-sdk-go/pull/514))
+* **chore**: use focal fossa as an example ([#408](https://github.com/scaleway/scaleway-sdk-go/pull/408))
+* **doc - account**: improve ssh-key documentation ([#375](https://github.com/scaleway/scaleway-sdk-go/pull/375))
+* **doc - config**: add project_id ([#543](https://github.com/scaleway/scaleway-sdk-go/pull/543))
+* **doc - core**: update credentials links ([#564](https://github.com/scaleway/scaleway-sdk-go/pull/564))
+* **doc - instance**: documentation improvments ([#563](https://github.com/scaleway/scaleway-sdk-go/pull/563))
+* **doc - instance**: fix project documentation ([#551](https://github.com/scaleway/scaleway-sdk-go/pull/551))
+* **doc - rdb**: add go doc ([#465](https://github.com/scaleway/scaleway-sdk-go/pull/465))
+* **doc - rdb**: remove dev1-s mention ([#472](https://github.com/scaleway/scaleway-sdk-go/pull/472))
+* **docs**: add deprecation notices ([#570](https://github.com/scaleway/scaleway-sdk-go/pull/570))
+* **docs**: improve API documentations ([#345](https://github.com/scaleway/scaleway-sdk-go/pull/345))
+* **docs**: update generated godoc ([#481](https://github.com/scaleway/scaleway-sdk-go/pull/481))
+* **docs - account**: comment few fields #380
+* **docs - baremetal**: update comment ([#503](https://github.com/scaleway/scaleway-sdk-go/pull/503))
+* **docs**: fix badges and update godoc links ([#520](https://github.com/scaleway/scaleway-sdk-go/pull/520))
+* **rdb**: add support for wait on backup resource ([#474](https://github.com/scaleway/scaleway-sdk-go/pull/474))
+* **rdb**: add wait function for instance logs ([#485](https://github.com/scaleway/scaleway-sdk-go/pull/485))
+* **refactor**: rename method DurationPtr
+
+
+
 ## v1.0.0-beta.6 (2020-02-28)
 
 ### Features
