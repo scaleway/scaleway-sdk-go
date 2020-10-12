@@ -17,7 +17,7 @@ type WaitForVolumeRequest struct {
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
-func (s *API) WaitForVolume(req *WaitForVolumeRequest) (*Volume, error) {
+func (s *API) WaitForVolume(req *WaitForVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -37,7 +37,7 @@ func (s *API) WaitForVolume(req *WaitForVolumeRequest) (*Volume, error) {
 			res, err := s.GetVolume(&GetVolumeRequest{
 				VolumeID: req.VolumeID,
 				Zone:     req.Zone,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err

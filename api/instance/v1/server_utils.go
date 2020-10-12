@@ -56,7 +56,7 @@ type WaitForServerRequest struct {
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be started for example.
-func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -78,7 +78,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err
@@ -109,7 +109,7 @@ type ServerActionAndWaitRequest struct {
 
 // ServerActionAndWait start an action and wait for the server to be in the correct "terminal state"
 // expected by this action.
-func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
+func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest, opts ...scw.RequestOption) error {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -123,7 +123,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
 		Action:   req.Action,
-	})
+	}, opts...)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (s *API) ServerActionAndWait(req *ServerActionAndWaitRequest) error {
 		ServerID:      req.ServerID,
 		Timeout:       &timeout,
 		RetryInterval: &retryInterval,
-	})
+	}, opts...)
 	if err != nil {
 		return err
 	}

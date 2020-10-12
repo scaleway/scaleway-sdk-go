@@ -18,7 +18,7 @@ type WaitForTagRequest struct {
 
 // WaitForTag wait for the tag to be in a "terminal state" before returning.
 // This function can be used to wait for a tag to be ready for example.
-func (s *API) WaitForTag(req *WaitForTagRequest) (*Tag, error) {
+func (s *API) WaitForTag(req *WaitForTagRequest, opts ...scw.RequestOption) (*Tag, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -40,7 +40,7 @@ func (s *API) WaitForTag(req *WaitForTagRequest) (*Tag, error) {
 			t, err := s.GetTag(&GetTagRequest{
 				Region: req.Region,
 				TagID:  req.TagID,
-			})
+			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}

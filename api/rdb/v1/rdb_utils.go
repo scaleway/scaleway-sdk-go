@@ -23,7 +23,7 @@ type WaitForInstanceRequest struct {
 
 // WaitForInstance waits for the instance to be in a "terminal state" before returning.
 // This function can be used to wait for an instance to be ready for example.
-func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
+func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -44,7 +44,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest) (*Instance, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				InstanceID: req.InstanceID,
 				Region:     req.Region,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err
@@ -71,7 +71,7 @@ type WaitForDatabaseBackupRequest struct {
 
 // WaitForDatabaseBackup waits for the backup to be in a "terminal state" before returning.
 // This function can be used to wait for a backup to be ready for example.
-func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest) (*DatabaseBackup, error) {
+func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -91,7 +91,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest) (*Databas
 			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
 				DatabaseBackupID: req.DatabaseBackupID,
 				Region:           req.Region,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err
@@ -118,7 +118,7 @@ type WaitForInstanceLogRequest struct {
 
 // WaitForInstanceLog waits for the instance logs to be in a "terminal state" before returning.
 // This function can be used to wait for an instance logs to be ready for example.
-func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest) (*InstanceLog, error) {
+func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.RequestOption) (*InstanceLog, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -137,7 +137,7 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest) (*InstanceLog, 
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
 				Region: req.Region,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err

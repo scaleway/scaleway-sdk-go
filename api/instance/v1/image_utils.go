@@ -17,7 +17,7 @@ type WaitForImageRequest struct {
 }
 
 // WaitForImage wait for the image to be in a "terminal state" before returning.
-func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
+func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) (*Image, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -37,7 +37,7 @@ func (s *API) WaitForImage(req *WaitForImageRequest) (*Image, error) {
 			res, err := s.GetImage(&GetImageRequest{
 				ImageID: req.ImageID,
 				Zone:    req.Zone,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err
