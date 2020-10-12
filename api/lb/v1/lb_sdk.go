@@ -266,6 +266,8 @@ const (
 	ForwardPortAlgorithmRoundrobin = ForwardPortAlgorithm("roundrobin")
 	// ForwardPortAlgorithmLeastconn is [insert doc].
 	ForwardPortAlgorithmLeastconn = ForwardPortAlgorithm("leastconn")
+	// ForwardPortAlgorithmFirst is [insert doc].
+	ForwardPortAlgorithmFirst = ForwardPortAlgorithm("first")
 )
 
 func (enum ForwardPortAlgorithm) String() string {
