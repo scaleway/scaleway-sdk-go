@@ -949,34 +949,56 @@ type ListUsersResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// NodeType: node type
 type NodeType struct {
+	// Name: node Type name identifier
 	Name string `json:"name"`
-	// StockStatus:
+	// StockStatus: current stock status for the Node Type
 	//
 	// Default value: unknown
 	StockStatus NodeTypeStock `json:"stock_status"`
-
+	// Description: current specs of the offer
 	Description string `json:"description"`
-
+	// Vcpus: number of virtual CPUs
 	Vcpus uint32 `json:"vcpus"`
-
+	// Memory: quantity of RAM
 	Memory scw.Size `json:"memory"`
-
+	// Deprecated: VolumeConstraint: [deprecated] Node Type volume constraints
 	VolumeConstraint *NodeTypeVolumeConstraintSizes `json:"volume_constraint"`
-
+	// Deprecated: IsBssdCompatible: the Node Type is compliant with Block Storage
 	IsBssdCompatible bool `json:"is_bssd_compatible"`
-
+	// Disabled: the Node Type is currently disabled
 	Disabled bool `json:"disabled"`
-
+	// Beta: the Node Type is currently in beta
 	Beta bool `json:"beta"`
-
+	// AvailableVolumeTypes: available storage options for the Node Type
+	AvailableVolumeTypes []*NodeTypeVolumeType `json:"available_volume_types"`
+	// Region: region the Node Type is in
 	Region scw.Region `json:"region"`
 }
 
+// NodeTypeVolumeConstraintSizes: node type. volume constraint sizes
 type NodeTypeVolumeConstraintSizes struct {
+	// MinSize: [deprecated] Mimimum size required for the Volume
 	MinSize scw.Size `json:"min_size"`
-
+	// MaxSize: [deprecated] Maximum size required for the Volume
 	MaxSize scw.Size `json:"max_size"`
+}
+
+// NodeTypeVolumeType: node type. volume type
+type NodeTypeVolumeType struct {
+	// Type: volume Type
+	//
+	// Default value: lssd
+	Type VolumeType `json:"type"`
+	// Description: the description of the Volume
+	Description string `json:"description"`
+	// MinSize: mimimum size required for the Volume
+	MinSize scw.Size `json:"min_size"`
+	// MaxSize: maximum size required for the Volume
+	MaxSize scw.Size `json:"max_size"`
+	// ChunkSize: minimum increment level for a Block Storage volume size
+	ChunkSize scw.Size `json:"chunk_size"`
 }
 
 // PrepareInstanceLogsResponse: prepare instance logs response
@@ -1712,6 +1734,12 @@ type CreateInstanceRequest struct {
 	Tags []string `json:"tags"`
 	// InitSettings: list of engine settings to be set at database initialisation
 	InitSettings []*InstanceSetting `json:"init_settings"`
+	// VolumeType: type of volume where data are stored (lssd, bssd, ...)
+	//
+	// Default value: lssd
+	VolumeType VolumeType `json:"volume_type"`
+	// VolumeSize: volume size when volume_type is not lssd
+	VolumeSize scw.Size `json:"volume_size"`
 }
 
 // CreateInstance: create an instance
