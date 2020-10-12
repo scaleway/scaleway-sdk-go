@@ -23,7 +23,7 @@ type WaitForHubRequest struct {
 }
 
 // WaitForHub waits for the hub to be in a ready state before returning.
-func (s *API) WaitForHub(req *WaitForHubRequest) (*Hub, error) {
+func (s *API) WaitForHub(req *WaitForHubRequest, opts ...scw.RequestOption) (*Hub, error) {
 	timeout := waitForHubDefaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -44,7 +44,7 @@ func (s *API) WaitForHub(req *WaitForHubRequest) (*Hub, error) {
 			hub, err := s.GetHub(&GetHubRequest{
 				HubID:  req.HubID,
 				Region: req.Region,
-			})
+			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}

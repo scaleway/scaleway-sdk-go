@@ -23,7 +23,7 @@ type WaitForServerRequest struct {
 
 // WaitForServer wait for the server to be in a "terminal state" before returning.
 // This function can be used to wait for a server to be created.
-func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -46,7 +46,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest) (*Server, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
-			})
+			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}
@@ -75,7 +75,7 @@ type WaitForServerInstallRequest struct {
 // WaitForServerInstall wait for the server install to be in a
 // "terminal state" before returning.
 // This function can be used to wait for a server to be installed.
-func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, error) {
+func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest, opts ...scw.RequestOption) (*Server, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -96,7 +96,7 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest) (*Server, e
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
-			})
+			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}

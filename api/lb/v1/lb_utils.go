@@ -23,7 +23,7 @@ type WaitForLBRequest struct {
 
 // WaitForLb waits for the lb to be in a "terminal state" before returning.
 // This function can be used to wait for a lb to be ready for example.
-func (s *API) WaitForLb(req *WaitForLBRequest) (*LB, error) {
+func (s *API) WaitForLb(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -45,7 +45,7 @@ func (s *API) WaitForLb(req *WaitForLBRequest) (*LB, error) {
 			res, err := s.GetLB(&GetLBRequest{
 				LBID:   req.LBID,
 				Region: req.Region,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err

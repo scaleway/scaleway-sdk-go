@@ -23,7 +23,7 @@ type WaitForNamespaceRequest struct {
 
 // WaitForNamespace wait for the namespace to be in a "terminal state" before returning.
 // This function can be used to wait for a namespace to be ready for example.
-func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error) {
+func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -45,7 +45,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest) (*Namespace, error)
 			ns, err := s.GetNamespace(&GetNamespaceRequest{
 				Region:      req.Region,
 				NamespaceID: req.NamespaceID,
-			})
+			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}

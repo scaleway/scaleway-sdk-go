@@ -17,7 +17,7 @@ type WaitForSnapshotRequest struct {
 }
 
 // WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
-func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
+func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -37,7 +37,7 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest) (*Snapshot, error) {
 			res, err := s.GetSnapshot(&GetSnapshotRequest{
 				SnapshotID: req.SnapshotID,
 				Zone:       req.Zone,
-			})
+			}, opts...)
 
 			if err != nil {
 				return nil, false, err
