@@ -3,7 +3,9 @@ package strcase
 import "strings"
 
 var customBashNames = map[string]string{
-	"ipid": "ip-id",
+	"aclid": "acl-id",
+	"ipid":  "ip-id",
+	"lbid":  "lb-id",
 }
 
 // ToBashArg returns the Bash public name of the given string.

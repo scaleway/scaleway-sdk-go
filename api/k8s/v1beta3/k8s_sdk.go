@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -29,6 +30,7 @@ var (
 	_ http.Header
 	_ bytes.Reader
 	_ time.Time
+	_ = strings.Join
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
@@ -37,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API this API allows you to manage your kapsule clusters
+// API: this API allows you to manage your kapsule clusters
 type API struct {
 	client *scw.Client
 }
@@ -365,36 +367,36 @@ func (enum *PoolStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Cluster cluster
+// Cluster: cluster
 type Cluster struct {
-	// ID display the cluster unique ID
+	// ID: display the cluster unique ID
 	ID string `json:"id"`
-	// Region display the cluster region
+	// Region: display the cluster region
 	Region scw.Region `json:"region"`
-	// Name display the cluster name
+	// Name: display the cluster name
 	Name string `json:"name"`
-	// Description display the cluster description
+	// Description: display the cluster description
 	Description string `json:"description"`
-	// OrganizationID display the cluster organization
+	// OrganizationID: display the cluster organization
 	OrganizationID string `json:"organization_id"`
-	// Tags display the cluster associated tags
+	// Tags: display the cluster associated tags
 	Tags []string `json:"tags"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"status"`
-	// Version display the cluster version
+	// Version: display the cluster version
 	Version string `json:"version"`
-	// Cni display the cni model
+	// Cni: display the cni model
 	Cni string `json:"cni"`
-	// ClusterURL display the cluster URL
+	// ClusterURL: display the cluster URL
 	ClusterURL string `json:"cluster_url"`
-	// DNSWildcard display the dns wildcard associated with the cluster
+	// DNSWildcard: display the dns wildcard associated with the cluster
 	DNSWildcard string `json:"dns_wildcard"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CurrentCoreCount uint32 `json:"current_core_count"`
 
@@ -403,13 +405,13 @@ type Cluster struct {
 	CurrentMemCount uint64 `json:"current_mem_count"`
 
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
-	// DashboardEnabled display if the Kubernetes dashboard is enabled
+	// DashboardEnabled: display if the Kubernetes dashboard is enabled
 	DashboardEnabled bool `json:"dashboard_enabled"`
-	// Ingress display which ingress is deployed
+	// Ingress: display which ingress is deployed
 	Ingress string `json:"ingress"`
 
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
-	// UpgradeAvailable true if a new Kubernetes version is available
+	// UpgradeAvailable: true if a new Kubernetes version is available
 	UpgradeAvailable bool `json:"upgrade_available"`
 }
 
@@ -477,109 +479,109 @@ type CreateClusterRequestDefaultPoolConfig struct {
 	Tags []string `json:"tags"`
 }
 
-// ListClusterAvailableVersionsResponse list cluster available versions response
+// ListClusterAvailableVersionsResponse: list cluster available versions response
 type ListClusterAvailableVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
-// ListClustersResponse list clusters response
+// ListClustersResponse: list clusters response
 type ListClustersResponse struct {
 	TotalCount uint32 `json:"total_count"`
 
 	Clusters []*Cluster `json:"clusters"`
 }
 
-// ListNodesResponse list nodes response
+// ListNodesResponse: list nodes response
 type ListNodesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 
 	Nodes []*Node `json:"nodes"`
 }
 
-// ListPoolsResponse list pools response
+// ListPoolsResponse: list pools response
 type ListPoolsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 
 	Pools []*Pool `json:"pools"`
 }
 
-// ListVersionsResponse list versions response
+// ListVersionsResponse: list versions response
 type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
 type MaintenanceWindow struct {
 	StartHour uint32 `json:"start_hour"`
-	// Day
+	// Day:
 	//
 	// Default value: any
 	Day MaintenanceWindowDayOfTheWeek `json:"day"`
 }
 
-// Node node
+// Node: node
 type Node struct {
-	// ID display node unique ID
+	// ID: display node unique ID
 	ID string `json:"id"`
-	// PoolID display pool unique ID
+	// PoolID: display pool unique ID
 	PoolID string `json:"pool_id"`
-	// ClusterID display cluster unique ID
+	// ClusterID: display cluster unique ID
 	ClusterID string `json:"cluster_id"`
 
 	Region scw.Region `json:"region"`
-	// Name display node name
+	// Name: display node name
 	Name string `json:"name"`
-	// PublicIPV4 display the servers public IPv4 address
+	// PublicIPV4: display the servers public IPv4 address
 	PublicIPV4 *string `json:"public_ip_v4"`
-	// PublicIPV6 display the servers public IPv6 address
+	// PublicIPV6: display the servers public IPv6 address
 	PublicIPV6 *string `json:"public_ip_v6"`
-	// NpdStatus display kubernetes node conditions
+	// NpdStatus: display kubernetes node conditions
 	NpdStatus map[string]string `json:"npd_status"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
 	Status NodeStatus `json:"status"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-// Pool pool
+// Pool: pool
 type Pool struct {
-	// ID display pool unique ID
+	// ID: display pool unique ID
 	ID string `json:"id"`
-	// ClusterID display cluster unique ID
+	// ClusterID: display cluster unique ID
 	ClusterID string `json:"cluster_id"`
-	// Region display the cluster region
+	// Region: display the cluster region
 	Region scw.Region `json:"region"`
-	// Name display pool name
+	// Name: display pool name
 	Name string `json:"name"`
-	// Tags displat pool tags
+	// Tags: displat pool tags
 	Tags []string `json:"tags"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
 	Status PoolStatus `json:"status"`
-	// Version display pool version
+	// Version: display pool version
 	Version string `json:"version"`
-	// NodeType display nodes commercial type (e.g. GP1-M)
+	// NodeType: display nodes commercial type (e.g. GP1-M)
 	NodeType string `json:"node_type"`
-	// Autoscaling enable or disable autoscaling
+	// Autoscaling: enable or disable autoscaling
 	Autoscaling bool `json:"autoscaling"`
-	// Autohealing enable or disable autohealing
+	// Autohealing: enable or disable autohealing
 	Autohealing bool `json:"autohealing"`
-	// Size target number of nodes
+	// Size: target number of nodes
 	Size uint32 `json:"size"`
-	// MinSize display lower limit for this pool
+	// MinSize: display lower limit for this pool
 	MinSize uint32 `json:"min_size"`
-	// MaxSize display upper limit for this pool
+	// MaxSize: display upper limit for this pool
 	MaxSize uint32 `json:"max_size"`
-	// PlacementGroupID display ID of the placement group if any
+	// PlacementGroupID: display ID of the placement group if any
 	PlacementGroupID *string `json:"placement_group_id"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	CurrentCoreCount uint32 `json:"current_core_count"`
 
@@ -590,7 +592,7 @@ type Pool struct {
 	ContainerRuntime string `json:"container_runtime"`
 }
 
-// ResetClusterAdminTokenResponse reset cluster admin token response
+// ResetClusterAdminTokenResponse: reset cluster admin token response
 type ResetClusterAdminTokenResponse struct {
 }
 
@@ -616,7 +618,7 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 }
 
-// Version version
+// Version: version
 type Version struct {
 	Name string `json:"name"`
 
@@ -637,25 +639,25 @@ type Version struct {
 
 type ListClustersRequest struct {
 	Region scw.Region `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListClustersRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize set the maximum list size
+	// PageSize: set the maximum list size
 	PageSize *uint32 `json:"-"`
-	// Name filter clusters per name
+	// Name: filter clusters per name
 	Name *string `json:"-"`
-	// OrganizationID filter cluster by organization
+	// OrganizationID: filter cluster by organization
 	OrganizationID *string `json:"-"`
-	// Status filter cluster by status
+	// Status: filter cluster by status
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"-"`
 }
 
-// ListClusters list all your clusters
+// ListClusters: list all your clusters
 func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) (*ListClustersResponse, error) {
 	var err error
 
@@ -718,21 +720,21 @@ func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateClusterRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID organization owning the resource
+	// OrganizationID: organization owning the resource
 	OrganizationID string `json:"organization_id"`
-	// Name cluster name
+	// Name: cluster name
 	Name string `json:"name"`
-	// Description description
+	// Description: description
 	Description string `json:"description"`
-	// Tags list of keyword
+	// Tags: list of keyword
 	Tags []string `json:"tags"`
-	// Version set the cluster version (you can get available versions by calling ListVersions)
+	// Version: set the cluster version (you can get available versions by calling ListVersions)
 	Version string `json:"version"`
-	// Cni set the Container Network Interface
+	// Cni: set the Container Network Interface
 	Cni string `json:"cni"`
-	// EnableDashboard enable or disable Kubernetes dashboard preinstallation
+	// EnableDashboard: enable or disable Kubernetes dashboard preinstallation
 	EnableDashboard bool `json:"enable_dashboard"`
-	// Ingress preinstall an ingress controller into your cluster
+	// Ingress: preinstall an ingress controller into your cluster
 	Ingress string `json:"ingress"`
 
 	DefaultPoolConfig *CreateClusterRequestDefaultPoolConfig `json:"default_pool_config"`
@@ -742,7 +744,7 @@ type CreateClusterRequest struct {
 	AutoUpgrade *CreateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 }
 
-// CreateCluster create a new cluster
+// CreateCluster: create a new cluster
 //
 // Create a new kubernetes cluster.
 func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
@@ -788,7 +790,7 @@ type GetClusterRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// GetCluster get cluster details
+// GetCluster: get cluster details
 //
 // Get the cluster details associated with the given id.
 func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
@@ -824,25 +826,25 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 
 type UpdateClusterRequest struct {
 	Region scw.Region `json:"-"`
-	// ClusterID cluster ID
+	// ClusterID: cluster ID
 	ClusterID string `json:"-"`
-	// Description description
+	// Description: description
 	Description *string `json:"description"`
-	// Name name
+	// Name: name
 	Name *string `json:"name"`
-	// Tags list of keyword
+	// Tags: list of keyword
 	Tags *[]string `json:"tags"`
 
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
-	// EnableDashboard enable Kubernetes dashboard
+	// EnableDashboard: enable Kubernetes dashboard
 	EnableDashboard *bool `json:"enable_dashboard"`
-	// Ingress select a Kubernetes Ingress Controller
+	// Ingress: select a Kubernetes Ingress Controller
 	Ingress *string `json:"ingress"`
 
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 }
 
-// UpdateCluster update an existing cluster
+// UpdateCluster: update an existing cluster
 //
 // Update the cluster associated with the given id.
 func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
@@ -887,7 +889,7 @@ type DeleteClusterRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// DeleteCluster delete an existing cluster
+// DeleteCluster: delete an existing cluster
 //
 // Delete the cluster associated with the given id.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
@@ -931,7 +933,7 @@ type UpgradeClusterRequest struct {
 	UpgradePools bool `json:"upgrade_pools"`
 }
 
-// UpgradeCluster upgrade an existing cluster
+// UpgradeCluster: upgrade an existing cluster
 //
 // Upgrade the cluster associated with the given id.
 func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
@@ -1013,7 +1015,7 @@ type GetClusterKubeConfigRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// getClusterKubeConfig download kubeconfig
+// getClusterKubeConfig: download kubeconfig
 func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -1051,7 +1053,7 @@ type ResetClusterAdminTokenRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// ResetClusterAdminToken revoke and renew your admin token
+// ResetClusterAdminToken: revoke and renew your admin token
 //
 // Revoke and renew your cluster admin token, you will have to download kubeconfig again.
 func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ...scw.RequestOption) (*ResetClusterAdminTokenResponse, error) {
@@ -1092,21 +1094,21 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 
 type ListPoolsRequest struct {
 	Region scw.Region `json:"-"`
-	// ClusterID display the cluster unique ID
+	// ClusterID: display the cluster unique ID
 	ClusterID string `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListPoolsRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize set the maximum list size
+	// PageSize: set the maximum list size
 	PageSize *uint32 `json:"-"`
-	// Name filter pools per name
+	// Name: filter pools per name
 	Name *string `json:"-"`
 }
 
-// ListPools list all your cluster pools
+// ListPools: list all your cluster pools
 func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*ListPoolsResponse, error) {
 	var err error
 
@@ -1195,7 +1197,7 @@ type CreatePoolRequest struct {
 	Tags []string `json:"tags"`
 }
 
-// CreatePool create a new pool
+// CreatePool: create a new pool
 //
 // Create a new pool in your cluster.
 func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -1240,7 +1242,7 @@ type GetPoolRequest struct {
 	PoolID string `json:"-"`
 }
 
-// GetPool get pool details
+// GetPool: get pool details
 //
 // Get the pool details associated with the given id.
 func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -1282,7 +1284,7 @@ type UpgradePoolRequest struct {
 	Version string `json:"version"`
 }
 
-// UpgradePool upgrade an existing cluster pool
+// UpgradePool: upgrade an existing cluster pool
 //
 // Upgrade the pool associated with the given id.
 func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -1339,7 +1341,7 @@ type UpdatePoolRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdatePool update an existing cluster pool
+// UpdatePool: update an existing cluster pool
 //
 // Update the pool associated with the given id (nodes will be replaced one by one, quotas must be set to allow user to have -at least- one more node than the size of its current pool).
 func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -1384,7 +1386,7 @@ type DeletePoolRequest struct {
 	PoolID string `json:"-"`
 }
 
-// DeletePool delete an existing cluster pool
+// DeletePool: delete an existing cluster pool
 //
 // Delete the pool associated with the given id.
 func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -1420,27 +1422,27 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 
 type ListNodesRequest struct {
 	Region scw.Region `json:"-"`
-	// ClusterID cluster unique ID
+	// ClusterID: cluster unique ID
 	ClusterID string `json:"-"`
-	// PoolID filter nodes by pool id
+	// PoolID: filter nodes by pool id
 	PoolID *string `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListNodesRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize set the maximum list size
+	// PageSize: set the maximum list size
 	PageSize *uint32 `json:"-"`
-	// Name filter nodes by name
+	// Name: filter nodes by name
 	Name *string `json:"-"`
-	// Status filter nodes by status
+	// Status: filter nodes by status
 	//
 	// Default value: unknown
 	Status NodeStatus `json:"-"`
 }
 
-// ListNodes list all your cluster nodes
+// ListNodes: list all your cluster nodes
 func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*ListNodesResponse, error) {
 	var err error
 
@@ -1511,7 +1513,7 @@ type GetNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// GetNode get node details
+// GetNode: get node details
 //
 // Get the node associated with the given id.
 func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, error) {
@@ -1551,7 +1553,7 @@ type ReplaceNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// ReplaceNode replace a node by another
+// ReplaceNode: replace a node by another
 //
 // Replace a node by another (first the node is deleted, then a new one is created).
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
@@ -1596,7 +1598,7 @@ type RebootNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// RebootNode reboot node
+// RebootNode: reboot node
 //
 // Reboot node.
 func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*Node, error) {
@@ -1639,7 +1641,7 @@ type ListVersionsRequest struct {
 	Region scw.Region `json:"-"`
 }
 
-// ListVersions list available versions
+// ListVersions: list available versions
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 

@@ -1,0 +1,58 @@
+name: pull-request
+
+on:
+- pull_request
+
+jobs:
+  unit-test:
+    strategy:
+      matrix:
+        go-version: [1.12.x, 1.13.x, 1.14.x]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Run unit tests
+      run: go test -v ./...
+  build-arch-test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [ubuntu-latest]
+        arch: [386, amd64, arm, arm64]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Test to build binary
+      run: GOARCH=${{ matrix.arch }} go build ./...
+  build-platform-test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Test to build binary
+      run: go build ./...

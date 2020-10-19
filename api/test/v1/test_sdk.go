@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -29,6 +30,7 @@ var (
 	_ http.Header
 	_ bytes.Reader
 	_ time.Time
+	_ = strings.Join
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
@@ -37,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API no Auth Service for end-to-end testing
+// API: no Auth Service for end-to-end testing
 //
 // Test is a fake service that aim to manage fake humans. It is used for internal and public end-to-end tests.
 //
@@ -183,9 +185,9 @@ type Human struct {
 
 	OrganizationID string `json:"organization_id"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Height float64 `json:"height"`
 
@@ -200,16 +202,18 @@ type Human struct {
 	HairCount uint64 `json:"hair_count"`
 
 	IsHappy bool `json:"is_happy"`
-	// EyesColor
+	// EyesColor:
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
 	Status HumanStatus `json:"status"`
 
 	Name string `json:"name"`
+
+	ProjectID string `json:"project_id"`
 
 	Region scw.Region `json:"region"`
 }
@@ -234,7 +238,7 @@ type RegisterRequest struct {
 	Username string `json:"username"`
 }
 
-// Register register a user
+// Register: register a user
 //
 // Register a human and return a access-key and a secret-key that must be used in all other commands.
 //
@@ -278,15 +282,17 @@ type ListHumansRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy
+	// OrderBy:
 	//
 	// Default value: created_at_asc
 	OrderBy ListHumansRequestOrderBy `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
-// ListHumans list all your humans
+// ListHumans: list all your humans
 func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*ListHumansResponse, error) {
 	var err error
 
@@ -305,6 +311,7 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -347,11 +354,11 @@ func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type GetHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to get
 	HumanID string `json:"-"`
 }
 
-// GetHuman get human details
+// GetHuman: get human details
 //
 // Get the human details associated with the given id.
 func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human, error) {
@@ -401,23 +408,32 @@ type CreateHumanRequest struct {
 	HairCount uint64 `json:"hair_count"`
 
 	IsHappy bool `json:"is_happy"`
-	// EyesColor
+	// EyesColor:
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
-
-	OrganizationID string `json:"organization_id"`
+	// Deprecated
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
 
 	Name string `json:"name"`
+
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateHuman create a new human
+// CreateHuman: create a new human
 func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -451,7 +467,7 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 
 type UpdateHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to update
 	HumanID string `json:"-"`
 
 	Height *float64 `json:"height"`
@@ -467,7 +483,7 @@ type UpdateHumanRequest struct {
 	HairCount *uint64 `json:"hair_count"`
 
 	IsHappy *bool `json:"is_happy"`
-	// EyesColor
+	// EyesColor:
 	//
 	// Default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
@@ -475,7 +491,7 @@ type UpdateHumanRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateHuman update an existing human
+// UpdateHuman: update an existing human
 //
 // Update the human associated with the given id.
 func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
@@ -516,11 +532,11 @@ func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*
 
 type DeleteHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to delete
 	HumanID string `json:"-"`
 }
 
-// DeleteHuman delete an existing human
+// DeleteHuman: delete an existing human
 //
 // Delete the human associated with the given id.
 func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*Human, error) {
@@ -556,11 +572,11 @@ func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*
 
 type RunHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// HumanID: UUID of the human you want to make run
 	HumanID string `json:"-"`
 }
 
-// RunHuman start a 1h running for the given human
+// RunHuman: start a 1h running for the given human
 //
 // Start a one hour running for the given human.
 func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human, error) {
@@ -601,11 +617,11 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 
 type SmokeHumanRequest struct {
 	Region scw.Region `json:"-"`
-
+	// Deprecated: HumanID: UUID of the human you want to make smoking
 	HumanID string `json:"-"`
 }
 
-// SmokeHuman make a human smoke
+// Deprecated: SmokeHuman: make a human smoke
 //
 // Make a human smoke.
 func (s *API) SmokeHuman(req *SmokeHumanRequest, opts ...scw.RequestOption) (*Human, error) {

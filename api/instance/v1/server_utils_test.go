@@ -13,13 +13,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func init() {
-	// set interval strategy to 0 when replaying cassettes
-	if httprecorder.IsUpdatingCassette() {
-		RetryInterval = 0
-	}
-}
-
 func TestAPI_GetServerType(t *testing.T) {
 	client, r, err := httprecorder.CreateRecordedScwClient("get-server-type")
 	testhelpers.AssertNoError(t, err)
@@ -56,7 +49,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
-		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
+		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -95,7 +88,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
-		Organization:   "14d2f7ae-9775-414c-9bed-6810e060d500",
+		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -164,12 +157,12 @@ func TestAPI_CreateServer(t *testing.T) {
 	res, err := instanceAPI.CreateServer(&CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "GP1-XS",
-		Image:          "ubuntu-bionic",
+		Image:          "ubuntu_focal",
 	})
 
 	testhelpers.AssertNoError(t, err)
-	// this UUID might change when running the cassette later when the image "ubuntu-bionic" got a new version
-	testhelpers.Equals(t, "f974feac-abae-4365-b988-8ec7d1cec10d", res.Server.Image.ID)
+	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
+	testhelpers.Equals(t, "365a8b9c-0c6e-4875-a887-dc3213db9e20", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,

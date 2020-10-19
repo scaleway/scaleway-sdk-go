@@ -105,6 +105,41 @@ func TestNonStandardError(t *testing.T) {
 		},
 	}))
 
+	t.Run("unknown_resource ", run(&testCase{
+		resStatus:     "404 Not Found",
+		resStatusCode: http.StatusNotFound,
+		contentType:   "application/json",
+		resBody:       `{"type": "unknown_resource", "message": "\"11111111-1111-4111-8111-111111111111\" not found"}`,
+		expectedError: &ResourceNotFoundError{
+			ResourceID: "11111111-1111-4111-8111-111111111111",
+			RawBody:    []byte(`{"type": "unknown_resource", "message": "\"11111111-1111-4111-8111-111111111111\" not found"}`),
+		},
+	}))
+
+	t.Run("unknown_resource bis", run(&testCase{
+		resStatus:     "404 Not Found",
+		resStatusCode: http.StatusNotFound,
+		contentType:   "application/json",
+		resBody:       `{"type": "unknown_resource", "message": "Security group \"11111111-1111-4111-8111-111111111111\" not found"}`,
+		expectedError: &ResourceNotFoundError{
+			ResourceID: "11111111-1111-4111-8111-111111111111",
+			Resource:   "security_group",
+			RawBody:    []byte(`{"type": "unknown_resource", "message": "Security group \"11111111-1111-4111-8111-111111111111\" not found"}`),
+		},
+	}))
+
+	t.Run("unknown_resource single qupte", run(&testCase{
+		resStatus:     "404 Not Found",
+		resStatusCode: http.StatusNotFound,
+		contentType:   "application/json",
+		resBody:       `{"type": "unknown_resource", "message": "Volume '11111111-1111-4111-8111-111111111111' not found"}`,
+		expectedError: &ResourceNotFoundError{
+			ResourceID: "11111111-1111-4111-8111-111111111111",
+			Resource:   "volume",
+			RawBody:    []byte(`{"type": "unknown_resource", "message": "Volume '11111111-1111-4111-8111-111111111111' not found"}`),
+		},
+	}))
+
 	t.Run("conflict type", run(&testCase{
 		resStatus:     "409 Conflict",
 		resStatusCode: http.StatusConflict,

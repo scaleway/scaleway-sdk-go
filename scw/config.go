@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"syscall"
 	"text/template"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -17,6 +16,9 @@ import (
 const (
 	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
 	defaultConfigPermission = 0600
+
+	// Reserved name for the default profile.
+	DefaultProfileName = "default"
 )
 
 const configFileTemplate = `# Scaleway configuration file
@@ -28,7 +30,7 @@ const configFileTemplate = `# Scaleway configuration file
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
 # You need an access key and a secret key to connect to Scaleway API.
-# Generate your token at the following address: https://console.scaleway.com/account/credentials
+# Generate your token at the following address: https://console.scaleway.com/project/credentials
 
 # An access key is a secret key identifier.
 {{ if .AccessKey }}access_key: {{.AccessKey}}{{ else }}# access_key: SCW11111111111111111{{ end }}
@@ -39,6 +41,9 @@ const configFileTemplate = `# Scaleway configuration file
 
 # Your organization ID is the identifier of your account inside Scaleway infrastructure.
 {{ if .DefaultOrganizationID }}default_organization_id: {{ .DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
+
+# Your project ID is the identifier of the project your resources are attached to (beta).
+{{ if .DefaultProjectID }}default_project_id: {{ .DefaultProjectID }}{{ else }}# default_project_id: 11111111-1111-1111-1111-111111111111{{ end }}
 
 # A region is represented as a geographical area such as France (Paris) or the Netherlands (Amsterdam).
 # It can contain multiple availability zones.
@@ -82,6 +87,7 @@ profiles:
     {{ if $v.AccessKey }}access_key: {{ $v.AccessKey }}{{ else }}# access_key: SCW11111111111111111{{ end }}
     {{ if $v.SecretKey }}secret_key: {{ $v.SecretKey }}{{ else }}# secret_key: 11111111-1111-1111-1111-111111111111{{ end }}
     {{ if $v.DefaultOrganizationID }}default_organization_id: {{ $v.DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
+    {{ if $v.DefaultProjectID }}default_project_id: {{ $v.DefaultProjectID }}{{ else }}# default_project_id: 11111111-1111-1111-1111-111111111111{{ end }}
     {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
     {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
     {{ if $v.APIURL }}api_url: {{ $v.APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
@@ -92,7 +98,8 @@ profiles:
 #   myProfile:
 #     access_key: 11111111-1111-1111-1111-111111111111
 #     secret_key: 11111111-1111-1111-1111-111111111111
-#     organization_id: 11111111-1111-1111-1111-111111111111
+#     default_organization_id: 11111111-1111-1111-1111-111111111111
+#     default_project_id: 11111111-1111-1111-1111-111111111111
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
@@ -102,19 +109,20 @@ profiles:
 
 type Config struct {
 	Profile       `yaml:",inline"`
-	ActiveProfile *string             `yaml:"active_profile,omitempty"`
-	SendTelemetry bool                `yaml:"send_telemetry,omitempty"`
-	Profiles      map[string]*Profile `yaml:"profiles,omitempty"`
+	ActiveProfile *string             `yaml:"active_profile,omitempty" json:"active_profile,omitempty"`
+	Profiles      map[string]*Profile `yaml:"profiles,omitempty" json:"profiles,omitempty"`
 }
 
 type Profile struct {
-	AccessKey             *string `yaml:"access_key,omitempty"`
-	SecretKey             *string `yaml:"secret_key,omitempty"`
-	APIURL                *string `yaml:"api_url,omitempty"`
-	Insecure              *bool   `yaml:"insecure,omitempty"`
-	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty"`
-	DefaultRegion         *string `yaml:"default_region,omitempty"`
-	DefaultZone           *string `yaml:"default_zone,omitempty"`
+	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
+	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
+	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
+	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
+	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
+	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
+	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty"`
+	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty"`
+	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty"`
 }
 
 func (p *Profile) String() string {
@@ -141,6 +149,10 @@ func (c *Config) String() string {
 
 	configRaw, _ := yaml.Marshal(c2)
 	return string(configRaw)
+}
+
+func (c *Config) IsEmpty() bool {
+	return c.String() == "{}\n"
 }
 
 func hideSecretKey(key *string) *string {
@@ -178,11 +190,16 @@ func LoadConfig() (*Config, error) {
 
 // LoadConfigFromPath read the config from the given path.
 func LoadConfigFromPath(path string) (*Config, error) {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return nil, configFileNotFound(path)
+	}
+	if err != nil {
+		return nil, err
+	}
+
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
-		if pathError, isPathError := err.(*os.PathError); isPathError && pathError.Err == syscall.ENOENT {
-			return nil, configFileNotFound(pathError.Path)
-		}
 		return nil, errors.Wrap(err, "cannot read config file")
 	}
 
@@ -203,7 +220,11 @@ func LoadConfigFromPath(path string) (*Config, error) {
 // GetProfile returns the profile corresponding to the given profile name.
 func (c *Config) GetProfile(profileName string) (*Profile, error) {
 	if profileName == "" {
-		return nil, errors.New("active profile cannot be empty")
+		return nil, errors.New("profileName cannot be empty")
+	}
+
+	if profileName == DefaultProfileName {
+		return &c.Profile, nil
 	}
 
 	p, exist := c.Profiles[profileName]
@@ -219,11 +240,11 @@ func (c *Config) GetProfile(profileName string) (*Profile, error) {
 // env SCW_PROFILE > config active_profile > config root profile
 func (c *Config) GetActiveProfile() (*Profile, error) {
 	switch {
-	case os.Getenv(scwActiveProfileEnv) != "":
-		logger.Debugf("using active profile from env: %s=%s", scwActiveProfileEnv, os.Getenv(scwActiveProfileEnv))
-		return c.GetProfile(os.Getenv(scwActiveProfileEnv))
+	case os.Getenv(ScwActiveProfileEnv) != "":
+		logger.Debugf("using active profile from env: %s=%s", ScwActiveProfileEnv, os.Getenv(ScwActiveProfileEnv))
+		return c.GetProfile(os.Getenv(ScwActiveProfileEnv))
 	case c.ActiveProfile != nil:
-		logger.Debugf("using active profile from config: active_profile=%s", scwActiveProfileEnv, *c.ActiveProfile)
+		logger.Debugf("using active profile from config: active_profile=%s", ScwActiveProfileEnv, *c.ActiveProfile)
 		return c.GetProfile(*c.ActiveProfile)
 	default:
 		return &c.Profile, nil
@@ -286,6 +307,7 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		APIURL:                original.APIURL,
 		Insecure:              original.Insecure,
 		DefaultOrganizationID: original.DefaultOrganizationID,
+		DefaultProjectID:      original.DefaultProjectID,
 		DefaultRegion:         original.DefaultRegion,
 		DefaultZone:           original.DefaultZone,
 	}
@@ -305,6 +327,9 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		}
 		if other.DefaultOrganizationID != nil {
 			np.DefaultOrganizationID = other.DefaultOrganizationID
+		}
+		if other.DefaultProjectID != nil {
+			np.DefaultProjectID = other.DefaultProjectID
 		}
 		if other.DefaultRegion != nil {
 			np.DefaultRegion = other.DefaultRegion

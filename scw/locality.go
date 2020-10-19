@@ -23,6 +23,8 @@ const (
 	ZoneFrPar2 = Zone("fr-par-2")
 	// ZoneNlAms1 represents the nl-ams-1 zone
 	ZoneNlAms1 = Zone("nl-ams-1")
+	// ZonePlWaw1 represents the pl-waw-1 zone
+	ZonePlWaw1 = Zone("pl-waw-1")
 )
 
 var (
@@ -31,6 +33,7 @@ var (
 		ZoneFrPar1,
 		ZoneFrPar2,
 		ZoneNlAms1,
+		ZonePlWaw1,
 	}
 )
 
@@ -68,6 +71,8 @@ const (
 	RegionFrPar = Region("fr-par")
 	// RegionNlAms represents the nl-ams region
 	RegionNlAms = Region("nl-ams")
+	// RegionPlWaw represents the pl-waw region
+	RegionPlWaw = Region("pl-waw")
 )
 
 var (
@@ -75,6 +80,7 @@ var (
 	AllRegions = []Region{
 		RegionFrPar,
 		RegionNlAms,
+		RegionPlWaw,
 	}
 )
 
@@ -95,6 +101,8 @@ func (region Region) GetZones() []Zone {
 		return []Zone{ZoneFrPar1, ZoneFrPar2}
 	case RegionNlAms:
 		return []Zone{ZoneNlAms1}
+	case RegionPlWaw:
+		return []Zone{ZonePlWaw1}
 	default:
 		return []Zone{}
 	}
@@ -122,7 +130,7 @@ func ParseZone(zone string) (Zone, error) {
 
 		newZone := Zone(zone)
 		if !newZone.Exists() {
-			logger.Warningf("%s is an unknown zone", newZone)
+			logger.Infof("%s is an unknown zone\n", newZone)
 		}
 		return newZone, nil
 	}
@@ -168,7 +176,7 @@ func ParseRegion(region string) (Region, error) {
 
 		newRegion := Region(region)
 		if !newRegion.Exists() {
-			logger.Warningf("%s is an unknown region", newRegion)
+			logger.Infof("%s is an unknown region\n", newRegion)
 		}
 		return newRegion, nil
 	}

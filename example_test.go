@@ -12,7 +12,7 @@ import (
 func Example_apiClient() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
@@ -59,7 +59,7 @@ func Example_apiClientWithConfig() {
 func Example_listServers() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
@@ -83,7 +83,7 @@ func Example_listServers() {
 func Example_createServer() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultOrganizationID("ORGANIZATION_ID"),
 		scw.WithDefaultZone(scw.ZoneFrPar1),
 	)
@@ -95,7 +95,7 @@ func Example_createServer() {
 	instanceAPI := instance.NewAPI(client)
 
 	serverType := "DEV1-S"
-	image := "ubuntu-bionic"
+	image := "ubuntu_focal"
 
 	// Create a new DEV1-S server
 	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
@@ -109,10 +109,11 @@ func Example_createServer() {
 	}
 
 	// Start the server and wait until it's ready.
+	timeout := 5 * time.Minute
 	err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 		ServerID: createRes.Server.ID,
 		Action:   instance.ServerActionPoweron,
-		Timeout:  5 * time.Minute,
+		Timeout:  &timeout,
 	})
 	if err != nil {
 		panic(err)
@@ -122,7 +123,7 @@ func Example_createServer() {
 func Example_rebootAllServers() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 		scw.WithDefaultZone(scw.ZoneFrPar1),
 	)
 	if err != nil {
@@ -139,13 +140,14 @@ func Example_rebootAllServers() {
 	}
 
 	// For each server if they are running we reboot them using ServerActionAndWait
+	timeout := 5 * time.Minute
 	for _, server := range response.Servers {
 		if server.State == instance.ServerStateRunning {
 			fmt.Println("Rebooting server with ID", server.ID)
 			err = instanceAPI.ServerActionAndWait(&instance.ServerActionAndWaitRequest{
 				ServerID: server.ID,
 				Action:   instance.ServerActionReboot,
-				Timeout:  5 * time.Minute,
+				Timeout:  &timeout,
 			})
 			if err != nil {
 				panic(err)
@@ -158,7 +160,7 @@ func Example_rebootAllServers() {
 func Example_createLoadBalancer() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/account/credentials
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
 	)
 	if err != nil {
 		// handle error
@@ -168,10 +170,10 @@ func Example_createLoadBalancer() {
 	lbAPI := lb.NewAPI(client)
 
 	// Call the CreateLb method on the LB SDK to create a new load balancer.
-	newLb, err := lbAPI.CreateLb(&lb.CreateLbRequest{
+	newLB, err := lbAPI.CreateLB(&lb.CreateLBRequest{
 		Name:           "My new load balancer",
 		Description:    "This is a example of a load balancer",
-		OrganizationID: "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+		OrganizationID: scw.StringPtr("000a115d-2852-4b0a-9ce8-47f1134ba95a"),
 		Region:         scw.RegionFrPar,
 	})
 
@@ -180,5 +182,5 @@ func Example_createLoadBalancer() {
 	}
 
 	// Do something with the newly created LB...
-	fmt.Println(newLb)
+	fmt.Println(newLB)
 }

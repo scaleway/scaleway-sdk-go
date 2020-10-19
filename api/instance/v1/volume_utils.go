@@ -1,113 +1,56 @@
 package instance
 
 import (
-	"fmt"
-	"net/http"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-// UpdateVolumeRequest contains the parameters to update on a volume
-type UpdateVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
-	// VolumeID is the volumes unique ID
-	VolumeID string `json:"-"`
-	// Name display the volumes names
-	Name *string `json:"name,omitempty"`
+// WaitForImageRequest is used by WaitForImage method.
+type WaitForVolumeRequest struct {
+	VolumeID      string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
 }
 
-// UpdateVolumeResponse contains the updated volume.
-type UpdateVolumeResponse struct {
-	Volume *Volume `json:"volume,omitempty"`
-}
-
-// setVolumeRequest contains all the params to PUT volumes
-type setVolumeRequest struct {
-	Zone scw.Zone `json:"-"`
-	// ID display the volumes unique ID
-	ID string `json:"id"`
-	// Name display the volumes names
-	Name string `json:"name"`
-	// ExportURI show the volumes NBD export URI
-	ExportURI string `json:"export_uri"`
-	// Size display the volumes disk size
-	Size scw.Size `json:"size"`
-	// VolumeType display the volumes type
-	//
-	// Default value: l_ssd
-	VolumeType VolumeType `json:"volume_type"`
-	// CreationDate display the volumes creation date
-	CreationDate time.Time `json:"creation_date"`
-	// ModificationDate display the volumes modification date
-	ModificationDate time.Time `json:"modification_date"`
-	// Organization display the volumes organization
-	Organization string `json:"organization"`
-	// Server display information about the server attached to the volume
-	Server *ServerSummary `json:"server"`
-}
-
-// UpdateVolume updates the set fields on the volume.
-func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
+// WaitForSnapshot wait for the snapshot to be in a "terminal state" before returning.
+func (s *API) WaitForVolume(req *WaitForVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
 	}
 
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
+	terminalStatus := map[VolumeState]struct{}{
+		VolumeStateAvailable: {},
+		VolumeStateError:     {},
 	}
 
-	if fmt.Sprint(req.VolumeID) == "" {
-		return nil, errors.New("field VolumeID cannot be empty in request")
-	}
+	volume, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetVolume(&GetVolumeRequest{
+				VolumeID: req.VolumeID,
+				Zone:     req.Zone,
+			}, opts...)
 
-	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
-		Zone:     req.Zone,
-		VolumeID: req.VolumeID,
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.Volume.State]
+
+			return res.Volume, isTerminal, err
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "waiting for volume failed")
 	}
-
-	setVolumeRequest := &setVolumeRequest{
-		Zone:             req.Zone,
-		ID:               getVolumeResponse.Volume.ID,
-		Name:             getVolumeResponse.Volume.Name,
-		ExportURI:        getVolumeResponse.Volume.ExportURI,
-		Size:             getVolumeResponse.Volume.Size,
-		VolumeType:       getVolumeResponse.Volume.VolumeType,
-		CreationDate:     getVolumeResponse.Volume.CreationDate,
-		ModificationDate: getVolumeResponse.Volume.ModificationDate,
-		Organization:     getVolumeResponse.Volume.Organization,
-		Server:           getVolumeResponse.Volume.Server,
-	}
-
-	// Override the values that need to be updated
-	if req.Name != nil {
-		setVolumeRequest.Name = *req.Name
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(setVolumeRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	var res UpdateVolumeResponse
-
-	err = s.client.Do(scwReq, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return volume.(*Volume), nil
 }

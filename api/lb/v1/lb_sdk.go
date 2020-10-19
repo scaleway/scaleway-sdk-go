@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -29,6 +30,7 @@ var (
 	_ http.Header
 	_ bytes.Reader
 	_ time.Time
+	_ = strings.Join
 
 	_ scw.ScalewayRequest
 	_ marshaler.Duration
@@ -37,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API this API allows you to manage your Load Balancer service
+// API: this API allows you to manage your load balancer service
 type API struct {
 	client *scw.Client
 }
@@ -264,6 +266,8 @@ const (
 	ForwardPortAlgorithmRoundrobin = ForwardPortAlgorithm("roundrobin")
 	// ForwardPortAlgorithmLeastconn is [insert doc].
 	ForwardPortAlgorithmLeastconn = ForwardPortAlgorithm("leastconn")
+	// ForwardPortAlgorithmFirst is [insert doc].
+	ForwardPortAlgorithmFirst = ForwardPortAlgorithm("first")
 )
 
 func (enum ForwardPortAlgorithm) String() string {
@@ -331,26 +335,26 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type LbStatus string
+type LBStatus string
 
 const (
-	// LbStatusUnknown is [insert doc].
-	LbStatusUnknown = LbStatus("unknown")
-	// LbStatusReady is [insert doc].
-	LbStatusReady = LbStatus("ready")
-	// LbStatusPending is [insert doc].
-	LbStatusPending = LbStatus("pending")
-	// LbStatusStopped is [insert doc].
-	LbStatusStopped = LbStatus("stopped")
-	// LbStatusError is [insert doc].
-	LbStatusError = LbStatus("error")
-	// LbStatusLocked is [insert doc].
-	LbStatusLocked = LbStatus("locked")
-	// LbStatusMigrating is [insert doc].
-	LbStatusMigrating = LbStatus("migrating")
+	// LBStatusUnknown is [insert doc].
+	LBStatusUnknown = LBStatus("unknown")
+	// LBStatusReady is [insert doc].
+	LBStatusReady = LBStatus("ready")
+	// LBStatusPending is [insert doc].
+	LBStatusPending = LBStatus("pending")
+	// LBStatusStopped is [insert doc].
+	LBStatusStopped = LBStatus("stopped")
+	// LBStatusError is [insert doc].
+	LBStatusError = LBStatus("error")
+	// LBStatusLocked is [insert doc].
+	LBStatusLocked = LBStatus("locked")
+	// LBStatusMigrating is [insert doc].
+	LBStatusMigrating = LBStatus("migrating")
 )
 
-func (enum LbStatus) String() string {
+func (enum LBStatus) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown"
@@ -358,35 +362,35 @@ func (enum LbStatus) String() string {
 	return string(enum)
 }
 
-func (enum LbStatus) MarshalJSON() ([]byte, error) {
+func (enum LBStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *LbStatus) UnmarshalJSON(data []byte) error {
+func (enum *LBStatus) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = LbStatus(LbStatus(tmp).String())
+	*enum = LBStatus(LBStatus(tmp).String())
 	return nil
 }
 
-type LbTypeStock string
+type LBTypeStock string
 
 const (
-	// LbTypeStockUnknown is [insert doc].
-	LbTypeStockUnknown = LbTypeStock("unknown")
-	// LbTypeStockLowStock is [insert doc].
-	LbTypeStockLowStock = LbTypeStock("low_stock")
-	// LbTypeStockOutOfStock is [insert doc].
-	LbTypeStockOutOfStock = LbTypeStock("out_of_stock")
-	// LbTypeStockAvailable is [insert doc].
-	LbTypeStockAvailable = LbTypeStock("available")
+	// LBTypeStockUnknown is [insert doc].
+	LBTypeStockUnknown = LBTypeStock("unknown")
+	// LBTypeStockLowStock is [insert doc].
+	LBTypeStockLowStock = LBTypeStock("low_stock")
+	// LBTypeStockOutOfStock is [insert doc].
+	LBTypeStockOutOfStock = LBTypeStock("out_of_stock")
+	// LBTypeStockAvailable is [insert doc].
+	LBTypeStockAvailable = LBTypeStock("available")
 )
 
-func (enum LbTypeStock) String() string {
+func (enum LBTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown"
@@ -394,18 +398,18 @@ func (enum LbTypeStock) String() string {
 	return string(enum)
 }
 
-func (enum LbTypeStock) MarshalJSON() ([]byte, error) {
+func (enum LBTypeStock) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *LbTypeStock) UnmarshalJSON(data []byte) error {
+func (enum *LBTypeStock) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = LbTypeStock(LbTypeStock(tmp).String())
+	*enum = LBTypeStock(LBTypeStock(tmp).String())
 	return nil
 }
 
@@ -553,20 +557,20 @@ func (enum *ListFrontendsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListLbsRequestOrderBy string
+type ListLBsRequestOrderBy string
 
 const (
-	// ListLbsRequestOrderByCreatedAtAsc is [insert doc].
-	ListLbsRequestOrderByCreatedAtAsc = ListLbsRequestOrderBy("created_at_asc")
-	// ListLbsRequestOrderByCreatedAtDesc is [insert doc].
-	ListLbsRequestOrderByCreatedAtDesc = ListLbsRequestOrderBy("created_at_desc")
-	// ListLbsRequestOrderByNameAsc is [insert doc].
-	ListLbsRequestOrderByNameAsc = ListLbsRequestOrderBy("name_asc")
-	// ListLbsRequestOrderByNameDesc is [insert doc].
-	ListLbsRequestOrderByNameDesc = ListLbsRequestOrderBy("name_desc")
+	// ListLBsRequestOrderByCreatedAtAsc is [insert doc].
+	ListLBsRequestOrderByCreatedAtAsc = ListLBsRequestOrderBy("created_at_asc")
+	// ListLBsRequestOrderByCreatedAtDesc is [insert doc].
+	ListLBsRequestOrderByCreatedAtDesc = ListLBsRequestOrderBy("created_at_desc")
+	// ListLBsRequestOrderByNameAsc is [insert doc].
+	ListLBsRequestOrderByNameAsc = ListLBsRequestOrderBy("name_asc")
+	// ListLBsRequestOrderByNameDesc is [insert doc].
+	ListLBsRequestOrderByNameDesc = ListLBsRequestOrderBy("name_desc")
 )
 
-func (enum ListLbsRequestOrderBy) String() string {
+func (enum ListLBsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "created_at_asc"
@@ -574,18 +578,50 @@ func (enum ListLbsRequestOrderBy) String() string {
 	return string(enum)
 }
 
-func (enum ListLbsRequestOrderBy) MarshalJSON() ([]byte, error) {
+func (enum ListLBsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *ListLbsRequestOrderBy) UnmarshalJSON(data []byte) error {
+func (enum *ListLBsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = ListLbsRequestOrderBy(ListLbsRequestOrderBy(tmp).String())
+	*enum = ListLBsRequestOrderBy(ListLBsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListPrivateNetworksRequestOrderBy string
+
+const (
+	// ListPrivateNetworksRequestOrderByCreatedAtAsc is [insert doc].
+	ListPrivateNetworksRequestOrderByCreatedAtAsc = ListPrivateNetworksRequestOrderBy("created_at_asc")
+	// ListPrivateNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListPrivateNetworksRequestOrderByCreatedAtDesc = ListPrivateNetworksRequestOrderBy("created_at_desc")
+)
+
+func (enum ListPrivateNetworksRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPrivateNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPrivateNetworksRequestOrderBy(ListPrivateNetworksRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -657,6 +693,42 @@ func (enum *OnMarkedDownAction) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PrivateNetworkStatus string
+
+const (
+	// PrivateNetworkStatusUnknown is [insert doc].
+	PrivateNetworkStatusUnknown = PrivateNetworkStatus("unknown")
+	// PrivateNetworkStatusReady is [insert doc].
+	PrivateNetworkStatusReady = PrivateNetworkStatus("ready")
+	// PrivateNetworkStatusPending is [insert doc].
+	PrivateNetworkStatusPending = PrivateNetworkStatus("pending")
+	// PrivateNetworkStatusError is [insert doc].
+	PrivateNetworkStatusError = PrivateNetworkStatus("error")
+)
+
+func (enum PrivateNetworkStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum PrivateNetworkStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PrivateNetworkStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PrivateNetworkStatus(PrivateNetworkStatus(tmp).String())
+	return nil
+}
+
 type Protocol string
 
 const (
@@ -689,7 +761,7 @@ func (enum *Protocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ProxyProtocol pROXY protocol, forward client's address (must be supported by backend servers software)
+// ProxyProtocol: pROXY protocol, forward client's address (must be supported by backend servers software)
 //
 // The PROXY protocol informs the other end about the incoming connection, so that it can know the client's address or the public address it accessed to, whatever the upper layer protocol.
 //
@@ -739,6 +811,42 @@ func (enum *ProxyProtocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SSLCompatibilityLevel string
+
+const (
+	// SSLCompatibilityLevelSslCompatibilityLevelUnknown is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelUnknown = SSLCompatibilityLevel("ssl_compatibility_level_unknown")
+	// SSLCompatibilityLevelSslCompatibilityLevelIntermediate is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelIntermediate = SSLCompatibilityLevel("ssl_compatibility_level_intermediate")
+	// SSLCompatibilityLevelSslCompatibilityLevelModern is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelModern = SSLCompatibilityLevel("ssl_compatibility_level_modern")
+	// SSLCompatibilityLevelSslCompatibilityLevelOld is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelOld = SSLCompatibilityLevel("ssl_compatibility_level_old")
+)
+
+func (enum SSLCompatibilityLevel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "ssl_compatibility_level_unknown"
+	}
+	return string(enum)
+}
+
+func (enum SSLCompatibilityLevel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SSLCompatibilityLevel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SSLCompatibilityLevel(SSLCompatibilityLevel(tmp).String())
+	return nil
+}
+
 type StickySessionsType string
 
 const (
@@ -773,60 +881,63 @@ func (enum *StickySessionsType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ACL the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
+// ACL: the use of Access Control Lists (ACL) provide a flexible solution to perform a action generally consist in blocking or allow a request based on ip (and URL on HTTP)
 type ACL struct {
-	// ID iD of your ACL ressource
+	// ID: ID of your ACL ressource
 	ID string `json:"id"`
-	// Name name of you ACL ressource
+	// Name: name of you ACL ressource
 	Name string `json:"name"`
-	// Match see the AclMatch object description
+	// Match: the ACL match rule. At least `ip_subnet` or `http_filter` and `http_filter_value` are required
 	Match *ACLMatch `json:"match"`
-	// Action see the AclAction object description
+	// Action: action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
-	// Frontend see the Frontend object description
+	// Frontend: see the Frontend object description
 	Frontend *Frontend `json:"frontend"`
-	// Index order between your Acls (ascending order, 0 is first acl executed)
+	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
 }
 
-// ACLAction action if your ACL filter match
+// ACLAction: acl action
 type ACLAction struct {
-	// Type <allow> or <deny> request
+	// Type: the action type
 	//
 	// Default value: allow
 	Type ACLActionType `json:"type"`
 }
 
-// ACLMatch settings of your ACL filter
+// ACLMatch: acl match
 type ACLMatch struct {
-	// IPSubnet this is the source IP v4/v6 address of the client of the session to match or not. Addresses values can be specified either as plain addresses or with a netmask appended
+	// IPSubnet: a list of IPs or CIDR v4/v6 addresses of the client of the session to match
 	IPSubnet []*string `json:"ip_subnet"`
-	// HTTPFilter you can set http filter (if your backend protocole have a http forward protocol. This extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). You can choose between <path_begin> prefix match (like /admin), <path_end> suffix match (like .php) and <regex>
+	// HTTPFilter: the HTTP filter to match
+	//
+	// The HTTP filter to match. This filter is supported only if your backend supports HTTP forwarding.
+	// It extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part).
 	//
 	// Default value: acl_http_filter_none
 	HTTPFilter ACLHTTPFilter `json:"http_filter"`
-
+	// HTTPFilterValue: a list of possible values to match for the given HTTP filter
 	HTTPFilterValue []*string `json:"http_filter_value"`
-	// Invert by default match filter is a IF condition. You can set invert to true to have a unless condition
+	// Invert: if set to `true`, the ACL matching condition will be of type "UNLESS"
 	Invert bool `json:"invert"`
 }
 
-// Backend backend
+// Backend: backend
 type Backend struct {
 	ID string `json:"id"`
 
 	Name string `json:"name"`
-	// ForwardProtocol
+	// ForwardProtocol:
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
 
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm
+	// ForwardPortAlgorithm:
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions
+	// StickySessions:
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
@@ -837,8 +948,8 @@ type Backend struct {
 
 	Pool []string `json:"pool"`
 
-	Lb *Lb `json:"lb"`
-
+	LB *LB `json:"lb"`
+	// Deprecated
 	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -846,11 +957,11 @@ type Backend struct {
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
 
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction
+	// OnMarkedDownAction:
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol
+	// ProxyProtocol:
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
@@ -896,69 +1007,69 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// BackendServerStats state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
+// BackendServerStats: state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
 type BackendServerStats struct {
-	// InstanceID iD of your loadbalancer cluster server
+	// InstanceID: ID of your loadbalancer cluster server
 	InstanceID string `json:"instance_id"`
-	// BackendID iD of your Backend
+	// BackendID: ID of your Backend
 	BackendID string `json:"backend_id"`
-	// IP iPv4 or IPv6 address of the server backend
+	// IP: iPv4 or IPv6 address of the server backend
 	IP string `json:"ip"`
-	// ServerState server operational state (stopped/starting/running/stopping)
+	// ServerState: server operational state (stopped/starting/running/stopping)
 	//
 	// Default value: stopped
 	ServerState BackendServerStatsServerState `json:"server_state"`
-	// ServerStateChangedAt time since last operational change
-	ServerStateChangedAt time.Time `json:"server_state_changed_at"`
-	// LastHealthCheckStatus last health check status (unknown/neutral/failed/passed/condpass)
+	// ServerStateChangedAt: time since last operational change
+	ServerStateChangedAt *time.Time `json:"server_state_changed_at"`
+	// LastHealthCheckStatus: last health check status (unknown/neutral/failed/passed/condpass)
 	//
 	// Default value: unknown
 	LastHealthCheckStatus BackendServerStatsHealthCheckStatus `json:"last_health_check_status"`
 }
 
-// Certificate sSL certificate
+// Certificate: sSL certificate
 type Certificate struct {
-	// Type type of certificate (Let's encrypt or custom)
+	// Type: type of certificate (Let's encrypt or custom)
 	//
 	// Default value: letsencryt
 	Type CertificateType `json:"type"`
-	// ID certificate ID
+	// ID: certificate ID
 	ID string `json:"id"`
-	// CommonName main domain name of certificate
+	// CommonName: main domain name of certificate
 	CommonName string `json:"common_name"`
-	// SubjectAlternativeName alternative domain names
+	// SubjectAlternativeName: alternative domain names
 	SubjectAlternativeName []string `json:"subject_alternative_name"`
-	// Fingerprint identifier (SHA-1) of the certificate
+	// Fingerprint: identifier (SHA-1) of the certificate
 	Fingerprint string `json:"fingerprint"`
-	// NotValidBefore validity bounds
-	NotValidBefore time.Time `json:"not_valid_before"`
-	// NotValidAfter validity bounds
-	NotValidAfter time.Time `json:"not_valid_after"`
-	// Status status of certificate
+	// NotValidBefore: validity bounds
+	NotValidBefore *time.Time `json:"not_valid_before"`
+	// NotValidAfter: validity bounds
+	NotValidAfter *time.Time `json:"not_valid_after"`
+	// Status: status of certificate
 	//
 	// Default value: pending
 	Status CertificateStatus `json:"status"`
-	// Lb load Balancer object
-	Lb *Lb `json:"lb"`
-	// Name certificate name
+	// LB: load balancer object
+	LB *LB `json:"lb"`
+	// Name: certificate name
 	Name string `json:"name"`
 }
 
-// CreateCertificateRequestCustomCertificate import a custom SSL certificate
+// CreateCertificateRequestCustomCertificate: import a custom SSL certificate
 type CreateCertificateRequestCustomCertificate struct {
-	// CertificateChain the full PEM-formatted include an entire certificate chain including public key, private key, and optionally certificate authorities.
+	// CertificateChain: the full PEM-formatted include an entire certificate chain including public key, private key, and optionally certificate authorities.
 	CertificateChain string `json:"certificate_chain"`
 }
 
-// CreateCertificateRequestLetsencryptConfig generate a new SSL certificate using Let's Encrypt.
+// CreateCertificateRequestLetsencryptConfig: generate a new SSL certificate using Let's Encrypt.
 type CreateCertificateRequestLetsencryptConfig struct {
-	// CommonName main domain name of certificate (make sure this domain exists and resolves to your Load Balancer HA IP)
+	// CommonName: main domain name of certificate (make sure this domain exists and resolves to your load balancer HA IP)
 	CommonName string `json:"common_name"`
-	// SubjectAlternativeName alternative domain names (make sure all domain names exists and resolves to your Load Balancer HA IP)
+	// SubjectAlternativeName: alternative domain names (make sure all domain names exists and resolves to your load balancer HA IP)
 	SubjectAlternativeName []string `json:"subject_alternative_name"`
 }
 
-// Frontend frontend
+// Frontend: frontend
 type Frontend struct {
 	ID string `json:"id"`
 
@@ -968,11 +1079,13 @@ type Frontend struct {
 
 	Backend *Backend `json:"backend"`
 
-	Lb *Lb `json:"lb"`
+	LB *LB `json:"lb"`
 
 	TimeoutClient *time.Duration `json:"timeout_client"`
-
+	// Deprecated
 	Certificate *Certificate `json:"certificate"`
+
+	CertificateIDs []string `json:"certificate_ids"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1007,15 +1120,15 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// HealthCheck health check
+// HealthCheck: health check
 type HealthCheck struct {
-	// MysqlConfig the check requires MySQL >=3.22, for older versions, use TCP check
+	// MysqlConfig: the check requires MySQL >=3.22, for older versions, use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-	// LdapConfig the response is analyzed to find an LDAPv3 response message
+	// LdapConfig: the response is analyzed to find an LDAPv3 response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig the response is analyzed to find the +PONG response message
+	// RedisConfig: the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
@@ -1109,7 +1222,7 @@ type HealthCheckRedisConfig struct {
 type HealthCheckTCPConfig struct {
 }
 
-// IP ip
+// IP: ip
 type IP struct {
 	ID string `json:"id"`
 
@@ -1117,16 +1230,18 @@ type IP struct {
 
 	OrganizationID string `json:"organization_id"`
 
-	LbID *string `json:"lb_id"`
+	LBID *string `json:"lb_id"`
 
 	Reverse string `json:"reverse"`
+
+	ProjectID string `json:"project_id"`
 
 	Region scw.Region `json:"region"`
 }
 
 type Instance struct {
 	ID string `json:"id"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
 	Status InstanceStatus `json:"status"`
@@ -1136,17 +1251,17 @@ type Instance struct {
 	Region scw.Region `json:"region"`
 }
 
-// Lb lb
-type Lb struct {
+// LB: lb
+type LB struct {
 	ID string `json:"id"`
 
 	Name string `json:"name"`
 
 	Description string `json:"description"`
-	// Status
+	// Status:
 	//
 	// Default value: unknown
-	Status LbStatus `json:"status"`
+	Status LBStatus `json:"status"`
 
 	Instances []*Instance `json:"instances"`
 
@@ -1163,49 +1278,55 @@ type Lb struct {
 	Type string `json:"type"`
 
 	Subscriber *Subscriber `json:"subscriber"`
+	// SslCompatibilityLevel:
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
+
+	ProjectID string `json:"project_id"`
 
 	Region scw.Region `json:"region"`
 }
 
-// LbStats lb stats
-type LbStats struct {
-	// BackendServersStats list stats object of your loadbalancer
+// LBStats: lb stats
+type LBStats struct {
+	// BackendServersStats: list stats object of your loadbalancer
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 }
 
-type LbType struct {
+type LBType struct {
 	Name string `json:"name"`
-	// StockStatus
+	// StockStatus:
 	//
 	// Default value: unknown
-	StockStatus LbTypeStock `json:"stock_status"`
+	StockStatus LBTypeStock `json:"stock_status"`
 
 	Description string `json:"description"`
 
 	Region scw.Region `json:"region"`
 }
 
-// ListACLResponse list acl response
+// ListACLResponse: list acl response
 type ListACLResponse struct {
-	// ACLs list of Acl object (see Acl object description)
+	// ACLs: list of Acl object (see Acl object description)
 	ACLs []*ACL `json:"acls"`
-	// TotalCount the total number of items
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListBackendStatsResponse list backend stats response
+// ListBackendStatsResponse: list backend stats response
 type ListBackendStatsResponse struct {
-	// BackendServersStats list backend stats object of your loadbalancer
+	// BackendServersStats: list backend stats object of your loadbalancer
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
-	// TotalCount the total number of items
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListBackendsResponse list backends response
+// ListBackendsResponse: list backends response
 type ListBackendsResponse struct {
-	// Backends list Backend objects of a Load Balancer
+	// Backends: list Backend objects of a load balancer
 	Backends []*Backend `json:"backends"`
-	// TotalCount total count, wihtout pagination
+	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1215,66 +1336,86 @@ type ListCertificatesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListFrontendsResponse list frontends response
+// ListFrontendsResponse: list frontends response
 type ListFrontendsResponse struct {
-	// Frontends list frontends object of your loadbalancer
+	// Frontends: list frontends object of your loadbalancer
 	Frontends []*Frontend `json:"frontends"`
-	// TotalCount total count, wihtout pagination
+	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListIPsResponse list ips response
+// ListIPsResponse: list ips response
 type ListIPsResponse struct {
-	// IPs list IP address object
+	// IPs: list IP address object
 	IPs []*IP `json:"ips"`
-	// TotalCount total count, wihtout pagination
+	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
 }
 
-type ListLbTypesResponse struct {
-	LbTypes []*LbType `json:"lb_types"`
-
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListLbsResponse list lbs response
-type ListLbsResponse struct {
-	Lbs []*Lb `json:"lbs"`
+type ListLBPrivateNetworksResponse struct {
+	PrivateNetwork []*PrivateNetwork `json:"private_network"`
 
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListSubscriberResponse list subscriber response
+type ListLBTypesResponse struct {
+	LBTypes []*LBType `json:"lb_types"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// ListLBsResponse: list lbs response
+type ListLBsResponse struct {
+	LBs []*LB `json:"lbs"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// ListSubscriberResponse: list subscriber response
 type ListSubscriberResponse struct {
-	// Subscribers list of Subscribers object
+	// Subscribers: list of Subscribers object
 	Subscribers []*Subscriber `json:"subscribers"`
-	// TotalCount the total number of items
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
-// Subscriber subscriber
+// PrivateNetwork: private network
+type PrivateNetwork struct {
+	// LB: loadBalancer object
+	LB *LB `json:"lb"`
+	// IPAddress: local ip address of load balancer instance
+	IPAddress []string `json:"ip_address"`
+	// PrivateNetworkID: instance private network id
+	PrivateNetworkID string `json:"private_network_id"`
+	// Status: status (running, to create...) of private network connection
+	//
+	// Default value: unknown
+	Status PrivateNetworkStatus `json:"status"`
+}
+
+// Subscriber: subscriber
 type Subscriber struct {
-	// ID subscriber ID
+	// ID: subscriber ID
 	ID string `json:"id"`
-	// Name subscriber name
+	// Name: subscriber name
 	Name string `json:"name"`
-	// EmailConfig email address of subscriber
+	// EmailConfig: email address of subscriber
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	EmailConfig *SubscriberEmailConfig `json:"email_config,omitempty"`
-	// WebhookConfig webHook URI of subscriber
+	// WebhookConfig: webHook URI of subscriber
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 }
 
-// SubscriberEmailConfig email alert of subscriber
+// SubscriberEmailConfig: email alert of subscriber
 type SubscriberEmailConfig struct {
-	// Email email who receive alert
+	// Email: email who receive alert
 	Email string `json:"email"`
 }
 
-// SubscriberWebhookConfig webhook alert of subscriber
+// SubscriberWebhookConfig: webhook alert of subscriber
 type SubscriberWebhookConfig struct {
-	// URI uRI who receive POST request
+	// URI: URI who receive POST request
 	URI string `json:"uri"`
 }
 
@@ -1311,23 +1452,26 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type ListLbsRequest struct {
+type ListLBsRequest struct {
 	Region scw.Region `json:"-"`
-	// Name use this to search by name
+	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy
+	// OrderBy:
 	//
 	// Default value: created_at_asc
-	OrderBy ListLbsRequestOrderBy `json:"-"`
+	OrderBy ListLBsRequestOrderBy `json:"-"`
 
 	PageSize *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
-
+	// OrganizationID: filter LBs by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter LBs by project ID
+	ProjectID *string `json:"-"`
 }
 
-func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsResponse, error) {
+// ListLBs: list load balancers
+func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1346,6 +1490,7 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1358,7 +1503,7 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 		Headers: http.Header{},
 	}
 
-	var resp ListLbsResponse
+	var resp ListLBsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1369,50 +1514,73 @@ func (s *API) ListLbs(req *ListLbsRequest, opts ...scw.RequestOption) (*ListLbsR
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListLBsResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLbsResponse)
+func (r *ListLBsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.Lbs = append(r.Lbs, results.Lbs...)
-	r.TotalCount += uint32(len(results.Lbs))
-	return uint32(len(results.Lbs)), nil
+	r.LBs = append(r.LBs, results.LBs...)
+	r.TotalCount += uint32(len(results.LBs))
+	return uint32(len(results.LBs)), nil
 }
 
-type CreateLbRequest struct {
+type CreateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID owner of resources
-	OrganizationID string `json:"organization_id"`
-	// Name resource names
+	// Deprecated: OrganizationID: owner of resources
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+	// Name: resource names
 	Name string `json:"name"`
-	// Description resource description
+	// Description: resource description
 	Description string `json:"description"`
-	// IPID just like for compute instances, when you destroy a Load Balancer, you can keep its highly available IP address and reuse it for another Load Balancer later
+	// IPID: just like for compute instances, when you destroy a load balancer, you can keep its highly available IP address and reuse it for another load balancer later
 	IPID *string `json:"ip_id"`
-	// Tags list of keyword
+	// Tags: list of keyword
 	Tags []string `json:"tags"`
-	// Type load Balancer offer type
+	// Type: load balancer offer type
 	Type string `json:"type"`
+	// SslCompatibilityLevel:
+	//
+	// Enforces minimal SSL version (in SSL/TLS offloading context).
+	// - `intermediate` General-purpose servers with a variety of clients, recommended for almost all systems (Supports Firefox 27, Android 4.4.2, Chrome 31, Edge, IE 11 on Windows 7, Java 8u31, OpenSSL 1.0.1, Opera 20, and Safari 9).
+	// - `modern` Services with clients that support TLS 1.3 and don't need backward compatibility (Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, and Safari 12.1).
+	// - `old` Compatible with a number of very old clients, and should be used only as a last resort (Firefox 1, Android 2.3, Chrome 1, Edge 12, IE8 on Windows XP, Java 6, OpenSSL 0.9.8, Opera 5, and Safari 1).
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// CreateLB: create a load balancer
+func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("lb")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1430,7 +1598,7 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1439,13 +1607,14 @@ func (s *API) CreateLb(req *CreateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	return &resp, nil
 }
 
-type GetLbRequest struct {
+type GetLBRequest struct {
 	Region scw.Region `json:"-"`
-
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 }
 
-func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// GetLB: get a load balancer
+func (s *API) GetLB(req *GetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1457,17 +1626,17 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Headers: http.Header{},
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1476,19 +1645,29 @@ func (s *API) GetLb(req *GetLbRequest, opts ...scw.RequestOption) (*Lb, error) {
 	return &resp, nil
 }
 
-type UpdateLbRequest struct {
+type UpdateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name resource name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: resource name
 	Name string `json:"name"`
-	// Description resource description
+	// Description: resource description
 	Description string `json:"description"`
-	// Tags list of keywords
+	// Tags: list of keywords
 	Tags []string `json:"tags"`
+	// SslCompatibilityLevel:
+	//
+	// Enforces minimal SSL version (in SSL/TLS offloading context).
+	// - `intermediate` General-purpose servers with a variety of clients, recommended for almost all systems (Supports Firefox 27, Android 4.4.2, Chrome 31, Edge, IE 11 on Windows 7, Java 8u31, OpenSSL 1.0.1, Opera 20, and Safari 9).
+	// - `modern` Services with clients that support TLS 1.3 and don't need backward compatibility (Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, and Safari 12.1).
+	// - `old` Compatible with a number of very old clients, and should be used only as a last resort (Firefox 1, Android 2.3, Chrome 1, Edge 12, IE8 on Windows XP, Java 6, OpenSSL 0.9.8, Opera 5, and Safari 1).
+	//
+	// Default value: ssl_compatibility_level_unknown
+	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// UpdateLB: update a load balancer
+func (s *API) UpdateLB(req *UpdateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -1500,13 +1679,13 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1515,7 +1694,7 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1524,15 +1703,16 @@ func (s *API) UpdateLb(req *UpdateLbRequest, opts ...scw.RequestOption) (*Lb, er
 	return &resp, nil
 }
 
-type DeleteLbRequest struct {
+type DeleteLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// ReleaseIP set true if you don't want to keep this IP address
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// ReleaseIP: set true if you don't want to keep this IP address
 	ReleaseIP bool `json:"-"`
 }
 
-func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
+// DeleteLB: delete a load balancer
+func (s *API) DeleteLB(req *DeleteLBRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -1547,13 +1727,13 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 		return errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1565,19 +1745,66 @@ func (s *API) DeleteLb(req *DeleteLbRequest, opts ...scw.RequestOption) error {
 	return nil
 }
 
-type ListIPsRequest struct {
+type MigrateLBRequest struct {
 	Region scw.Region `json:"-"`
-	// Page page number
-	Page *int32 `json:"-"`
-	// PageSize the number of items to return
-	PageSize *uint32 `json:"-"`
-	// IPAddress use this to search by IP address
-	IPAddress *string `json:"-"`
-
-	OrganizationID *string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Type: load balancer type (check /lb-types to list all type)
+	Type string `json:"type"`
 }
 
-// ListIPs list IPs
+// MigrateLB: migrate a load balancer
+func (s *API) MigrateLB(req *MigrateLBRequest, opts ...scw.RequestOption) (*LB, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/migrate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp LB
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListIPsRequest struct {
+	Region scw.Region `json:"-"`
+	// Page: page number
+	Page *int32 `json:"-"`
+	// PageSize: the number of items to return
+	PageSize *uint32 `json:"-"`
+	// IPAddress: use this to search by IP address
+	IPAddress *string `json:"-"`
+	// OrganizationID: filter IPs by organization id
+	OrganizationID *string `json:"-"`
+	// ProjectID: filter IPs by project ID
+	ProjectID *string `json:"-"`
+}
+
+// ListIPs: list IPs
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
@@ -1596,6 +1823,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "ip_address", req.IPAddress)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1638,19 +1866,28 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateIPRequest struct {
 	Region scw.Region `json:"-"`
-	// OrganizationID owner of resources
-	OrganizationID string `json:"organization_id"`
-	// Reverse reverse domain name
+	// Deprecated: OrganizationID: owner of resources
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+	// Reverse: reverse domain name
 	Reverse *string `json:"reverse"`
 }
 
-// CreateIP create IP
+// CreateIP: create an IP
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -1684,11 +1921,11 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type GetIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID: IP address ID
 	IPID string `json:"-"`
 }
 
-// GetIP get IP
+// GetIP: get an IP
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1722,11 +1959,11 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 
 type ReleaseIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID: IP address ID
 	IPID string `json:"-"`
 }
 
-// ReleaseIP release IP
+// ReleaseIP: delete an IP
 func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1758,13 +1995,13 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 
 type UpdateIPRequest struct {
 	Region scw.Region `json:"-"`
-	// IPID iP address ID
+	// IPID: IP address ID
 	IPID string `json:"-"`
-	// Reverse reverse DNS
+	// Reverse: reverse DNS
 	Reverse *string `json:"reverse"`
 }
 
-// UpdateIP update IP
+// UpdateIP: update an IP
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1803,20 +2040,21 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 
 type ListBackendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name use this to search by name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy choose order of response
+	// OrderBy: choose order of response
 	//
 	// Default value: created_at_asc
 	OrderBy ListBackendsRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to returns
+	// PageSize: the number of items to returns
 	PageSize *uint32 `json:"-"`
 }
 
+// ListBackends: list backends in a given load balancer
 func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
@@ -1840,13 +2078,13 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -1881,43 +2119,43 @@ func (r *ListBackendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name resource name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: resource name
 	Name string `json:"name"`
-	// ForwardProtocol backend protocol. TCP or HTTP
+	// ForwardProtocol: backend protocol. TCP or HTTP
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
-	// ForwardPort user sessions will be forwarded to this port of backend servers
+	// ForwardPort: user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm load balancing algorithm
+	// ForwardPortAlgorithm: load balancing algorithm
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions enables cookie-based session persistence
+	// StickySessions: enables cookie-based session persistence
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-	// StickySessionsCookieName cookie name for for sticky sessions
+	// StickySessionsCookieName: cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-	// HealthCheck see the Healthcheck object description
+	// HealthCheck: see the Healthcheck object description
 	HealthCheck *HealthCheck `json:"health_check"`
-	// ServerIP backend server IP addresses list (IPv4 or IPv6)
+	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
 	ServerIP []string `json:"server_ip"`
-	// SendProxyV2 deprecated in favor of proxy_protocol field !
+	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
 	SendProxyV2 bool `json:"send_proxy_v2"`
-	// TimeoutServer maximum server connection inactivity time
+	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
-	// TimeoutConnect maximum initical server connection establishment time
+	// TimeoutConnect: maximum initical server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-	// TimeoutTunnel maximum tunnel inactivity time
+	// TimeoutTunnel: maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction modify what occurs when a backend server is marked down
+	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol pROXY protocol, forward client's address (must be supported by backend servers software)
+	// ProxyProtocol: pROXY protocol, forward client's address (must be supported by backend servers software)
 	//
 	// The PROXY protocol informs the other end about the incoming connection, so that it can know the client's address or the public address it accessed to, whatever the upper layer protocol.
 	//
@@ -1971,6 +2209,7 @@ func (m CreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateBackend: create a backend in a given load balancer
 func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -1979,17 +2218,21 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("lbb")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backends",
 		Headers: http.Header{},
 	}
 
@@ -2009,10 +2252,11 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 
 type GetBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"-"`
 }
 
+// GetBackend: get a backend in a given load balancer
 func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2050,23 +2294,23 @@ type UpdateBackendRequest struct {
 	BackendID string `json:"-"`
 
 	Name string `json:"name"`
-	// ForwardProtocol
+	// ForwardProtocol:
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
 
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm
+	// ForwardPortAlgorithm:
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions
+	// StickySessions:
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
 
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-
+	// Deprecated
 	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -2074,11 +2318,11 @@ type UpdateBackendRequest struct {
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
 
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction
+	// OnMarkedDownAction:
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol
+	// ProxyProtocol:
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
@@ -2124,6 +2368,7 @@ func (m UpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateBackend: update a backend in a given load balancer
 func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2162,10 +2407,11 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 
 type DeleteBackendRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID iD of the backend to delete
+	// BackendID: ID of the backend to delete
 	BackendID string `json:"-"`
 }
 
+// DeleteBackend: delete a backend in a given load balancer
 func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2197,12 +2443,13 @@ func (s *API) DeleteBackend(req *DeleteBackendRequest, opts ...scw.RequestOption
 
 type AddBackendServersRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"-"`
-	// ServerIP set all IPs to add on your backend
+	// ServerIP: set all IPs to add on your backend
 	ServerIP []string `json:"server_ip"`
 }
 
+// AddBackendServers: add a set of servers in a given backend
 func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2241,12 +2488,13 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 
 type RemoveBackendServersRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"-"`
-	// ServerIP set all IPs to remove of your backend
+	// ServerIP: set all IPs to remove of your backend
 	ServerIP []string `json:"server_ip"`
 }
 
+// RemoveBackendServers: remove a set of servers for a given backend
 func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2285,12 +2533,13 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 
 type SetBackendServersRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"-"`
-	// ServerIP set all IPs to add on your backend and remove all other
+	// ServerIP: set all IPs to add on your backend and remove all other
 	ServerIP []string `json:"server_ip"`
 }
 
+// SetBackendServers: define all servers in a given backend
 func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2329,23 +2578,23 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 
 type UpdateHealthCheckRequest struct {
 	Region scw.Region `json:"-"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"-"`
-	// Port specify the port used to health check
+	// Port: specify the port used to health check
 	Port int32 `json:"port"`
-	// CheckDelay time between two consecutive health checks
+	// CheckDelay: time between two consecutive health checks
 	CheckDelay *time.Duration `json:"check_delay"`
-	// CheckTimeout additional check timeout, after the connection has been already established
+	// CheckTimeout: additional check timeout, after the connection has been already established
 	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckMaxRetries number of consecutive unsuccessful health checks, after wich the server will be considered dead
+	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries"`
-	// MysqlConfig the check requires MySQL >=3.22, for older version, please use TCP check
+	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-	// LdapConfig the response is analyzed to find an LDAPv3 response message
+	// LdapConfig: the response is analyzed to find an LDAPv3 response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig the response is analyzed to find the +PONG response message
+	// RedisConfig: the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
 
@@ -2398,6 +2647,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateHealthCheck: update an healthcheck for a given backend
 func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
@@ -2436,20 +2686,21 @@ func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.Reque
 
 type ListFrontendsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name use this to search by name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy response order
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListFrontendsRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to returns
+	// PageSize: the number of items to returns
 	PageSize *uint32 `json:"-"`
 }
 
+// ListFrontends: list frontends in a given load balancer
 func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
@@ -2473,13 +2724,13 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/frontends",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -2514,18 +2765,20 @@ func (r *ListFrontendsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name resource name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: resource name
 	Name string `json:"name"`
-	// InboundPort tCP port to listen on the front side
+	// InboundPort: TCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"backend_id"`
-	// TimeoutClient set the maximum inactivity time on the client side
+	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID certificate ID
+	// Deprecated: CertificateID: certificate ID, deprecated in favor of certificate_ids array !
 	CertificateID *string `json:"certificate_id"`
+	// CertificateIDs: list of certificate IDs to bind on the frontend
+	CertificateIDs *[]string `json:"certificate_ids"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2560,6 +2813,7 @@ func (m CreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// CreateFrontend: create a frontend in a given load balancer
 func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2568,17 +2822,21 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("lbf")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/frontends",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/frontends",
 		Headers: http.Header{},
 	}
 
@@ -2598,10 +2856,11 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 
 type GetFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID frontend ID
+	// FrontendID: frontend ID
 	FrontendID string `json:"-"`
 }
 
+// GetFrontend: get a frontend
 func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2635,18 +2894,20 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 
 type UpdateFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID frontend ID
+	// FrontendID: frontend ID
 	FrontendID string `json:"-"`
-	// Name resource name
+	// Name: resource name
 	Name string `json:"name"`
-	// InboundPort tCP port to listen on the front side
+	// InboundPort: TCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port"`
-	// BackendID backend ID
+	// BackendID: backend ID
 	BackendID string `json:"backend_id"`
-	// TimeoutClient client session maximum inactivity time
+	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// CertificateID certificate ID
+	// Deprecated: CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
 	CertificateID *string `json:"certificate_id"`
+	// CertificateIDs: list of certificate IDs to bind on the frontend
+	CertificateIDs *[]string `json:"certificate_ids"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -2681,6 +2942,7 @@ func (m UpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// UpdateFrontend: update a frontend
 func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2719,10 +2981,11 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 
 type DeleteFrontendRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID frontend ID to delete
+	// FrontendID: frontend ID to delete
 	FrontendID string `json:"-"`
 }
 
+// DeleteFrontend: delete a frontend
 func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2752,13 +3015,14 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-type GetLbStatsRequest struct {
+type GetLBStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 }
 
-func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*LbStats, error) {
+// Deprecated: GetLBStats: get usage statistics of a given load balancer
+func (s *API) GetLBStats(req *GetLBStatsRequest, opts ...scw.RequestOption) (*LBStats, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2770,17 +3034,17 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/stats",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/stats",
 		Headers: http.Header{},
 	}
 
-	var resp LbStats
+	var resp LBStats
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2791,11 +3055,11 @@ func (s *API) GetLbStats(req *GetLbStatsRequest, opts ...scw.RequestOption) (*Lb
 
 type ListBackendStatsRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Page page number
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to return
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
@@ -2820,13 +3084,13 @@ func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.Request
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/backend-stats",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/backend-stats",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -2861,20 +3125,21 @@ func (r *ListBackendStatsResponse) UnsafeAppend(res interface{}) (uint32, error)
 
 type ListACLsRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID iD of your frontend
+	// FrontendID: ID of your frontend
 	FrontendID string `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListACLRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to return
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-	// Name filter acl per name
+	// Name: filter acl per name
 	Name *string `json:"-"`
 }
 
+// ListACLs: list ACL for a given frontend
 func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
@@ -2939,24 +3204,36 @@ func (r *ListACLResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type CreateACLRequest struct {
 	Region scw.Region `json:"-"`
-	// FrontendID iD of your frontend
+	// FrontendID: ID of your frontend
 	FrontendID string `json:"-"`
-	// Name name of your ACL ressource
+	// Name: name of your ACL ressource
 	Name string `json:"name"`
-	// Action see the AclAction object description
+	// Action: action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
-	// Match see the AclMatch object description
+	// Match: the ACL match rule
+	//
+	// The ACL match rule. You can have one of those three cases:
+	//
+	//   - `ip_subnet` is defined
+	//   - `http_filter` and `http_filter_value` are defined
+	//   - `ip_subnet`, `http_filter` and `http_filter_value` are defined
+	//
 	Match *ACLMatch `json:"match"`
-	// Index order between your Acls (ascending order, 0 is first acl executed)
+	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
 }
 
+// CreateACL: create an ACL for a given frontend
 func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("acl")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -2989,10 +3266,11 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type GetACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID: ID of your ACL ressource
 	ACLID string `json:"-"`
 }
 
+// GetACL: get an ACL
 func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3026,18 +3304,19 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 
 type UpdateACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID: ID of your ACL ressource
 	ACLID string `json:"-"`
-	// Name name of your ACL ressource
+	// Name: name of your ACL ressource
 	Name string `json:"name"`
-	// Action see the AclAction object description
+	// Action: action to undertake when an ACL filter matches
 	Action *ACLAction `json:"action"`
-	// Match see the AclMatch object description
+	// Match: the ACL match rule. At least `ip_subnet` or `http_filter` and `http_filter_value` are required
 	Match *ACLMatch `json:"match"`
-	// Index order between your Acls (ascending order, 0 is first acl executed)
+	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
 }
 
+// UpdateACL: update an ACL
 func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3076,10 +3355,11 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 
 type DeleteACLRequest struct {
 	Region scw.Region `json:"-"`
-	// ACLID iD of your ACL ressource
+	// ACLID: ID of your ACL ressource
 	ACLID string `json:"-"`
 }
 
+// DeleteACL: delete an ACL
 func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3111,21 +3391,21 @@ func (s *API) DeleteACL(req *DeleteACLRequest, opts ...scw.RequestOption) error 
 
 type CreateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// Name certificate name
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// Name: certificate name
 	Name string `json:"name"`
-	// Letsencrypt let's Encrypt type
+	// Letsencrypt: let's Encrypt type
 	// Precisely one of CustomCertificate, Letsencrypt must be set.
 	Letsencrypt *CreateCertificateRequestLetsencryptConfig `json:"letsencrypt,omitempty"`
-	// CustomCertificate custom import certificate
+	// CustomCertificate: custom import certificate
 	// Precisely one of CustomCertificate, Letsencrypt must be set.
 	CustomCertificate *CreateCertificateRequestCustomCertificate `json:"custom_certificate,omitempty"`
 }
 
-// CreateCertificate create Certificate
+// CreateCertificate: create a TLS certificate
 //
-// Generate a new SSL certificate using Let's Encrypt or import your certificate.
+// Generate a new TLS certificate using Let's Encrypt or import your certificate.
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3134,17 +3414,21 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("certiticate")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/certificates",
 		Headers: http.Header{},
 	}
 
@@ -3164,21 +3448,21 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 
 type ListCertificatesRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListCertificatesRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to return
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-	// Name use this to search by name
+	// Name: use this to search by name
 	Name *string `json:"-"`
 }
 
-// ListCertificates list Certificates
+// ListCertificates: list all TLS certificates on a given load balancer
 func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -3202,13 +3486,13 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LbID) + "/certificates",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/certificates",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -3243,11 +3527,11 @@ func (r *ListCertificatesResponse) UnsafeAppend(res interface{}) (uint32, error)
 
 type GetCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// CertificateID certificate ID
+	// CertificateID: certificate ID
 	CertificateID string `json:"-"`
 }
 
-// GetCertificate get Certificate
+// GetCertificate: get a TLS certificate
 func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3281,13 +3565,13 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 
 type UpdateCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// CertificateID certificate ID
+	// CertificateID: certificate ID
 	CertificateID string `json:"-"`
-	// Name certificate name
+	// Name: certificate name
 	Name string `json:"name"`
 }
 
-// UpdateCertificate update Certificate
+// UpdateCertificate: update a TLS certificate
 func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3326,11 +3610,11 @@ func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.Reque
 
 type DeleteCertificateRequest struct {
 	Region scw.Region `json:"-"`
-	// CertificateID certificate ID
+	// CertificateID: certificate ID
 	CertificateID string `json:"-"`
 }
 
-// DeleteCertificate delete Certificate
+// DeleteCertificate: delete a TLS certificate
 func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3360,16 +3644,16 @@ func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.Reque
 	return nil
 }
 
-type ListLbTypesRequest struct {
+type ListLBTypesRequest struct {
 	Region scw.Region `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to return
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
-// ListLbTypes list all Load Balancer offer type
-func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*ListLbTypesResponse, error) {
+// ListLBTypes: list all load balancer offer type
+func (s *API) ListLBTypes(req *ListLBTypesRequest, opts ...scw.RequestOption) (*ListLBTypesResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3397,7 +3681,7 @@ func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*
 		Headers: http.Header{},
 	}
 
-	var resp ListLbTypesResponse
+	var resp ListLBTypesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3408,44 +3692,53 @@ func (s *API) ListLbTypes(req *ListLbTypesRequest, opts ...scw.RequestOption) (*
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListLBTypesResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLbTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLbTypesResponse)
+func (r *ListLBTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.LbTypes = append(r.LbTypes, results.LbTypes...)
-	r.TotalCount += uint32(len(results.LbTypes))
-	return uint32(len(results.LbTypes)), nil
+	r.LBTypes = append(r.LBTypes, results.LBTypes...)
+	r.TotalCount += uint32(len(results.LBTypes))
+	return uint32(len(results.LBTypes)), nil
 }
 
 type CreateSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// Name subscriber name
+	// Name: subscriber name
 	Name string `json:"name"`
-	// EmailConfig email address configuration
+	// EmailConfig: email address configuration
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	EmailConfig *SubscriberEmailConfig `json:"email_config,omitempty"`
-	// WebhookConfig webHook URI configuration
+	// WebhookConfig: webHook URI configuration
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
-	// OrganizationID owner of resources
-	OrganizationID string `json:"organization_id"`
+	// Deprecated: OrganizationID: owner of resources
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+	// ProjectID: assign the resource to a project ID
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSubscriber create a subscriber, webhook or email
+// CreateSubscriber: create a subscriber, webhook or email
 func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Region == "" {
@@ -3479,11 +3772,11 @@ func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.Request
 
 type GetSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// SubscriberID subscriber ID
+	// SubscriberID: subscriber ID
 	SubscriberID string `json:"-"`
 }
 
-// GetSubscriber get a subscriber
+// GetSubscriber: get a subscriber
 func (s *API) GetSubscriber(req *GetSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
@@ -3517,21 +3810,23 @@ func (s *API) GetSubscriber(req *GetSubscriberRequest, opts ...scw.RequestOption
 
 type ListSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// OrderBy you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
 	//
 	// Default value: created_at_asc
 	OrderBy ListSubscriberRequestOrderBy `json:"-"`
-	// Page page number
+	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize the number of items to return
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-	// Name use this to search by name
+	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrganizationID owner of resources
+	// OrganizationID: filter Subscribers by organization ID
 	OrganizationID *string `json:"-"`
+	// ProjectID: filter Subscribers by project ID
+	ProjectID *string `json:"-"`
 }
 
-// ListSubscriber list all subscriber
+// ListSubscriber: list all subscriber
 func (s *API) ListSubscriber(req *ListSubscriberRequest, opts ...scw.RequestOption) (*ListSubscriberResponse, error) {
 	var err error
 
@@ -3551,6 +3846,7 @@ func (s *API) ListSubscriber(req *ListSubscriberRequest, opts ...scw.RequestOpti
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3593,19 +3889,19 @@ func (r *ListSubscriberResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 type UpdateSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// SubscriberID subscriber ID
+	// SubscriberID: assign the resource to a project IDs
 	SubscriberID string `json:"-"`
-	// Name subscriber name
+	// Name: subscriber name
 	Name string `json:"name"`
-	// EmailConfig email address configuration
+	// EmailConfig: email address configuration
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	EmailConfig *SubscriberEmailConfig `json:"email_config,omitempty"`
-	// WebhookConfig webHook URI configuration
+	// WebhookConfig: webHook URI configuration
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 }
 
-// UpdateSubscriber update a subscriber
+// UpdateSubscriber: update a subscriber
 func (s *API) UpdateSubscriber(req *UpdateSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
@@ -3644,11 +3940,11 @@ func (s *API) UpdateSubscriber(req *UpdateSubscriberRequest, opts ...scw.Request
 
 type DeleteSubscriberRequest struct {
 	Region scw.Region `json:"-"`
-	// SubscriberID subscriber ID
+	// SubscriberID: subscriber ID
 	SubscriberID string `json:"-"`
 }
 
-// DeleteSubscriber delete a subscriber
+// DeleteSubscriber: delete a subscriber
 func (s *API) DeleteSubscriber(req *DeleteSubscriberRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3678,16 +3974,16 @@ func (s *API) DeleteSubscriber(req *DeleteSubscriberRequest, opts ...scw.Request
 	return nil
 }
 
-type SubscribeToLbRequest struct {
+type SubscribeToLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
-	// SubscriberID subscriber ID
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// SubscriberID: subscriber ID
 	SubscriberID string `json:"subscriber_id"`
 }
 
-// SubscribeToLb link Load Balancer to a subscriber
-func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// SubscribeToLB: subscribe a subscriber to a given load balancer
+func (s *API) SubscribeToLB(req *SubscribeToLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3699,13 +3995,13 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LbID) + "/subscribe",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LBID) + "/subscribe",
 		Headers: http.Header{},
 	}
 
@@ -3714,7 +4010,7 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3723,14 +4019,14 @@ func (s *API) SubscribeToLb(req *SubscribeToLbRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type UnsubscribeFromLbRequest struct {
+type UnsubscribeFromLBRequest struct {
 	Region scw.Region `json:"-"`
-	// LbID load Balancer ID
-	LbID string `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
 }
 
-// UnsubscribeFromLb remove link between Load Balancer and subscriber
-func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.RequestOption) (*Lb, error) {
+// UnsubscribeFromLB: unsubscribe a subscriber from a given load balancer
+func (s *API) UnsubscribeFromLB(req *UnsubscribeFromLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3742,21 +4038,195 @@ func (s *API) UnsubscribeFromLb(req *UnsubscribeFromLbRequest, opts ...scw.Reque
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.LbID) == "" {
-		return nil, errors.New("field LbID cannot be empty in request")
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LbID) + "/unsubscribe",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/" + fmt.Sprint(req.LBID) + "/unsubscribe",
 		Headers: http.Header{},
 	}
 
-	var resp Lb
+	var resp LB
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
+}
+
+type ListLBPrivateNetworksRequest struct {
+	Region scw.Region `json:"-"`
+
+	LBID string `json:"-"`
+	// OrderBy:
+	//
+	// Default value: created_at_asc
+	OrderBy ListPrivateNetworksRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Page *int32 `json:"-"`
+}
+
+// ListLBPrivateNetworks: bETA - List attached private network of load balancer
+func (s *API) ListLBPrivateNetworks(req *ListLBPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLBPrivateNetworksResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListLBPrivateNetworksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListLBPrivateNetworksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListLBPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLBPrivateNetworksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.PrivateNetwork = append(r.PrivateNetwork, results.PrivateNetwork...)
+	r.TotalCount += uint32(len(results.PrivateNetwork))
+	return uint32(len(results.PrivateNetwork)), nil
+}
+
+type AttachPrivateNetworkRequest struct {
+	Region scw.Region `json:"-"`
+	// LBID: load balancer ID
+	LBID string `json:"-"`
+	// PrivateNetworkID: set your instance private network id
+	PrivateNetworkID string `json:"-"`
+	// IPAddress: define two local ip address of your choice for each load balancer instance
+	IPAddress []string `json:"ip_address"`
+}
+
+// AttachPrivateNetwork: bETA - Add load balancer on instance private network
+func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/attach",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNetwork
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DetachPrivateNetworkRequest struct {
+	Region scw.Region `json:"-"`
+
+	PrivateNetworkID string `json:"-"`
+
+	LBID string `json:"-"`
+}
+
+// DetachPrivateNetwork: bETA - Remove load balancer of private network
+func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return errors.New("field LBID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/detach",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -18,6 +18,7 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedAPIURL                *string
 		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
+		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
 	}{
@@ -25,19 +26,21 @@ func TestLoadEnvProfile(t *testing.T) {
 		{
 			name: "No config with env variables",
 			env: map[string]string{
-				scwAccessKeyEnv:             v2ValidAccessKey,
-				scwSecretKeyEnv:             v2ValidSecretKey,
-				scwAPIURLEnv:                v2ValidAPIURL,
-				scwInsecureEnv:              "false",
-				scwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				scwDefaultRegionEnv:         v2ValidDefaultRegion,
-				scwDefaultZoneEnv:           v2ValidDefaultZone,
+				ScwAccessKeyEnv:             v2ValidAccessKey,
+				ScwSecretKeyEnv:             v2ValidSecretKey,
+				ScwAPIURLEnv:                v2ValidAPIURL,
+				ScwInsecureEnv:              "false",
+				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
+				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
+				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
+				ScwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
@@ -52,6 +55,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 		{
@@ -65,6 +69,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion2),
 		},
 	}

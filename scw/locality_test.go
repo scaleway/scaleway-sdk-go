@@ -19,6 +19,10 @@ func TestParseZone(t *testing.T) {
 			expected: ZoneFrPar1,
 		},
 		{
+			input:    "pl-waw-1",
+			expected: ZonePlWaw1,
+		},
+		{
 			input:    "par1",
 			expected: ZoneFrPar1,
 		},
@@ -33,17 +37,17 @@ func TestParseZone(t *testing.T) {
 		{
 			input:    "fr-par",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1, pl-waw-1"),
 		},
 		{
 			input:    "fr-par-n",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1, pl-waw-1"),
 		},
 		{
 			input:    "fr-par-0",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, nl-ams-1, pl-waw-1"),
 		},
 	}
 
@@ -97,18 +101,22 @@ func TestParseRegion(t *testing.T) {
 			expected: RegionNlAms,
 		},
 		{
+			input:    "pl-waw",
+			expected: RegionPlWaw,
+		},
+		{
 			input:    "xx-xxx",
 			expected: "xx-xxx",
 		},
 		{
 			input:    "fr-par-1",
 			expected: "",
-			err:      errors.New("bad region format, available regions are: fr-par, nl-ams"),
+			err:      errors.New("bad region format, available regions are: fr-par, nl-ams, pl-waw"),
 		},
 		{
 			input:    "fr-pa1",
 			expected: "",
-			err:      errors.New("bad region format, available regions are: fr-par, nl-ams"),
+			err:      errors.New("bad region format, available regions are: fr-par, nl-ams, pl-waw"),
 		},
 	}
 
