@@ -496,7 +496,29 @@ type DeniedAuthenticationError struct {
 }
 
 func (r DeniedAuthenticationError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: authentication denied with method %s: %s", r.Method, r.Reason)
+	var reason string
+	var method string
+
+	switch r.Method {
+	case "unknown_method":
+		method = "unknown method"
+	case "jwt":
+		method = "JWT"
+	case "api_key":
+		method = "API key"
+	}
+
+	switch r.Reason {
+	case "unknown_reason":
+		reason = "unknown reason"
+	case "invalid_argument":
+		reason = "invalid " + method + " format or empty value"
+	case "not_found":
+		reason = method + " does not exist"
+	case "expired":
+		reason = method + " is expired"
+	}
+	return fmt.Sprintf("scaleway-sdk-go: denied authentication: %s", reason)
 }
 
 func (r DeniedAuthenticationError) IsScwSdkError() {}
