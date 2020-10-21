@@ -145,6 +145,10 @@ func unmarshalStandardError(errorType string, body []byte) error {
 		stdErr = &OutOfStockError{RawBody: body}
 	case "resource_expired":
 		stdErr = &ResourceExpiredError{RawBody: body}
+	case "denied_authentication":
+		stdErr = &DeniedAuthenticationError{RawBody: body}
+	case "precondition_failed":
+		stdErr = &PreconditionFailedError{RawBody: body}
 	default:
 		return nil
 	}
@@ -482,3 +486,66 @@ func (r ResourceExpiredError) Error() string {
 }
 
 func (r ResourceExpiredError) IsScwSdkError() {}
+
+// DeniedAuthenticationError implements the SdkError interface
+type DeniedAuthenticationError struct {
+	Method string `json:"method"`
+	Reason string `json:"reason"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (r DeniedAuthenticationError) Error() string {
+	var reason string
+	var method string
+
+	switch r.Method {
+	case "unknown_method":
+		method = "unknown method"
+	case "jwt":
+		method = "JWT"
+	case "api_key":
+		method = "API key"
+	}
+
+	switch r.Reason {
+	case "unknown_reason":
+		reason = "unknown reason"
+	case "invalid_argument":
+		reason = "invalid " + method + " format or empty value"
+	case "not_found":
+		reason = method + " does not exist"
+	case "expired":
+		reason = method + " is expired"
+	}
+	return fmt.Sprintf("scaleway-sdk-go: denied authentication: %s", reason)
+}
+
+func (r DeniedAuthenticationError) IsScwSdkError() {}
+
+// PreconditionFailedError implements the SdkError interface
+type PreconditionFailedError struct {
+	Precondition string `json:"method"`
+	HelpMessage  string `json:"help_message"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (r PreconditionFailedError) Error() string {
+	var msg string
+	switch r.Precondition {
+	case "unknown_precondition":
+		msg = "unknown precondition"
+	case "resource_still_in_use":
+		msg = "resource is still in use"
+	case "attribute_must_be_set":
+		msg = "attribute must be set"
+	}
+	if r.HelpMessage != "" {
+		msg += ", " + r.HelpMessage
+	}
+
+	return fmt.Sprintf("scaleway-sdk-go: precondition failed: %s", msg)
+}
+
+func (r PreconditionFailedError) IsScwSdkError() {}
