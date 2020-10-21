@@ -145,6 +145,10 @@ func unmarshalStandardError(errorType string, body []byte) error {
 		stdErr = &OutOfStockError{RawBody: body}
 	case "resource_expired":
 		stdErr = &ResourceExpiredError{RawBody: body}
+	case "denied_authentication":
+		stdErr = &DeniedAuthenticationError{RawBody: body}
+	case "precondition_failed":
+		stdErr = &PreconditionFailedError{RawBody: body}
 	default:
 		return nil
 	}
@@ -482,3 +486,44 @@ func (r ResourceExpiredError) Error() string {
 }
 
 func (r ResourceExpiredError) IsScwSdkError() {}
+
+// DeniedAuthenticationError implements the SdkError interface
+type DeniedAuthenticationError struct {
+	Method string `json:"method"`
+	Reason string `json:"reason"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (r DeniedAuthenticationError) Error() string {
+	return fmt.Sprintf("scaleway-sdk-go: authentication denied with method %s: %s", r.Method, r.Reason)
+}
+
+func (r DeniedAuthenticationError) IsScwSdkError() {}
+
+// PreconditionFailedError implements the SdkError interface
+type PreconditionFailedError struct {
+	Precondition string `json:"method"`
+	HelpMessage  string `json:"help_message"`
+
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (r PreconditionFailedError) Error() string {
+	var msg string
+	switch r.Precondition {
+	case "unknown_precondition":
+		msg = "unknown precondition"
+	case "resource_still_in_use":
+		msg = "resource is still in use"
+	case "attribute_must_be_set":
+		msg = "attribute must be set"
+	}
+	if r.HelpMessage != "" {
+		msg += ", " + r.HelpMessage
+	}
+
+	return fmt.Sprintf("scaleway-sdk-go: precondition failed: %s", msg)
+}
+
+func (r PreconditionFailedError) IsScwSdkError() {}
