@@ -1918,6 +1918,46 @@ func (s *API) GetInstanceCertificate(req *GetInstanceCertificateRequest, opts ..
 	return &resp, nil
 }
 
+type RenewInstanceCertificateRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+}
+
+func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/renew-certificate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type PrepareInstanceLogsRequest struct {
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
