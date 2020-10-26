@@ -589,6 +589,10 @@ type Cluster struct {
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of enabled admission plugins
 	AdmissionPlugins []string `json:"admission_plugins"`
+	// OpenIDConnectConfig: aLPHA - The OpenID Connect configuration of the cluster
+	//
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration is the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	OpenIDConnectConfig *ClusterOpenIDConnectConfig `json:"open_id_connect_config"`
 }
 
 // ClusterAutoUpgrade: cluster. auto upgrade
@@ -625,6 +629,39 @@ type ClusterAutoscalerConfig struct {
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
 }
 
+// ClusterOpenIDConnectConfig: cluster. open id connect config
+type ClusterOpenIDConnectConfig struct {
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
+	//
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	//
+	IssuerURL string `json:"issuer_url"`
+	// ClientID: a client id that all tokens must be issued for
+	ClientID string `json:"client_id"`
+	// UsernameClaim: jWT claim to use as the user name
+	//
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	//
+	UsernameClaim string `json:"username_claim"`
+	// UsernamePrefix: prefix prepended to username
+	//
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	//
+	UsernamePrefix string `json:"username_prefix"`
+	// GroupsClaim: jWT claim to use as the user's group
+	GroupsClaim []string `json:"groups_claim"`
+	// GroupsPrefix: prefix prepended to group claims
+	//
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	//
+	GroupsPrefix string `json:"groups_prefix"`
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
+	//
+	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
+	//
+	RequiredClaim []string `json:"required_claim"`
+}
+
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade
 type CreateClusterRequestAutoUpgrade struct {
 	// Enable: whether or not auto upgrade is enabled for the cluster
@@ -657,6 +694,39 @@ type CreateClusterRequestAutoscalerConfig struct {
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
+}
+
+// CreateClusterRequestOpenIDConnectConfig: create cluster request. open id connect config
+type CreateClusterRequestOpenIDConnectConfig struct {
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
+	//
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	//
+	IssuerURL string `json:"issuer_url"`
+	// ClientID: a client id that all tokens must be issued for
+	ClientID string `json:"client_id"`
+	// UsernameClaim: jWT claim to use as the user name
+	//
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	//
+	UsernameClaim *string `json:"username_claim"`
+	// UsernamePrefix: prefix prepended to username
+	//
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	//
+	UsernamePrefix *string `json:"username_prefix"`
+	// GroupsClaim: jWT claim to use as the user's group
+	GroupsClaim *[]string `json:"groups_claim"`
+	// GroupsPrefix: prefix prepended to group claims
+	//
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	//
+	GroupsPrefix *string `json:"groups_prefix"`
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
+	//
+	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
+	//
+	RequiredClaim *[]string `json:"required_claim"`
 }
 
 // CreateClusterRequestPoolConfig: create cluster request. pool config
@@ -848,6 +918,39 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 }
 
+// UpdateClusterRequestOpenIDConnectConfig: update cluster request. open id connect config
+type UpdateClusterRequestOpenIDConnectConfig struct {
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
+	//
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	//
+	IssuerURL *string `json:"issuer_url"`
+	// ClientID: a client id that all tokens must be issued for
+	ClientID *string `json:"client_id"`
+	// UsernameClaim: jWT claim to use as the user name
+	//
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	//
+	UsernameClaim *string `json:"username_claim"`
+	// UsernamePrefix: prefix prepended to username
+	//
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	//
+	UsernamePrefix *string `json:"username_prefix"`
+	// GroupsClaim: jWT claim to use as the user's group
+	GroupsClaim *[]string `json:"groups_claim"`
+	// GroupsPrefix: prefix prepended to group claims
+	//
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	//
+	GroupsPrefix *string `json:"groups_prefix"`
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
+	//
+	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
+	//
+	RequiredClaim *[]string `json:"required_claim"`
+}
+
 // Version: version
 type Version struct {
 	// Name: the name of the Kubernetes version
@@ -996,6 +1099,10 @@ type CreateClusterRequest struct {
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of admission plugins to enable
 	AdmissionPlugins []string `json:"admission_plugins"`
+	// OpenIDConnectConfig: aLPHA - The OpenID Connect configuration of the cluster
+	//
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to set the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	OpenIDConnectConfig *CreateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 }
 
 // CreateCluster: create a new cluster
@@ -1113,6 +1220,10 @@ type UpdateClusterRequest struct {
 	FeatureGates *[]string `json:"feature_gates"`
 	// AdmissionPlugins: list of admission plugins to enable
 	AdmissionPlugins *[]string `json:"admission_plugins"`
+	// OpenIDConnectConfig: aLPHA - The new OpenID Connect configuration of the cluster
+	//
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to update the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	OpenIDConnectConfig *UpdateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 }
 
 // UpdateCluster: update a cluster
