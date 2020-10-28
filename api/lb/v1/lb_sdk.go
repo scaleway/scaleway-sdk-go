@@ -625,6 +625,38 @@ func (enum *ListPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+type ListRoutesRequestOrderBy string
+
+const (
+	// ListRoutesRequestOrderByCreatedAtAsc is [insert doc].
+	ListRoutesRequestOrderByCreatedAtAsc = ListRoutesRequestOrderBy("created_at_asc")
+	// ListRoutesRequestOrderByCreatedAtDesc is [insert doc].
+	ListRoutesRequestOrderByCreatedAtDesc = ListRoutesRequestOrderBy("created_at_desc")
+)
+
+func (enum ListRoutesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListRoutesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListRoutesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListRoutesRequestOrderBy(ListRoutesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListSubscriberRequestOrderBy string
 
 const (
@@ -1371,6 +1403,14 @@ type ListLBsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListRoutesResponse: list routes response
+type ListRoutesResponse struct {
+	// Routes: list of Routes object
+	Routes []*Route `json:"routes"`
+	// TotalCount: the total number of items
+	TotalCount uint32 `json:"total_count"`
+}
+
 // ListSubscriberResponse: list subscriber response
 type ListSubscriberResponse struct {
 	// Subscribers: list of Subscribers object
@@ -1391,6 +1431,26 @@ type PrivateNetwork struct {
 	//
 	// Default value: unknown
 	Status PrivateNetworkStatus `json:"status"`
+}
+
+// Route: route
+type Route struct {
+	// ID: id of match ressource
+	ID string `json:"id"`
+	// FrontendID: id of frontend
+	FrontendID string `json:"frontend_id"`
+	// BackendID: id of backend
+	BackendID string `json:"backend_id"`
+	// Match: value to match a redirection
+	Match *RouteMatch `json:"match"`
+}
+
+// RouteMatch: route. match
+type RouteMatch struct {
+	// Sni: server Name Indication TLS extension (SNI)
+	//
+	// Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer
+	Sni *string `json:"sni"`
 }
 
 // Subscriber: subscriber
@@ -3005,6 +3065,243 @@ func (s *API) DeleteFrontend(req *DeleteFrontendRequest, opts ...scw.RequestOpti
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/frontends/" + fmt.Sprint(req.FrontendID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListRoutesRequest struct {
+	Region scw.Region `json:"-"`
+	// OrderBy:
+	//
+	// Default value: created_at_asc
+	OrderBy ListRoutesRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	FrontendID *string `json:"-"`
+}
+
+// ListRoutes: list all backend redirections
+func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*ListRoutesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "frontend_id", req.FrontendID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListRoutesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListRoutesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Routes = append(r.Routes, results.Routes...)
+	r.TotalCount += uint32(len(results.Routes))
+	return uint32(len(results.Routes)), nil
+}
+
+type CreateRouteRequest struct {
+	Region scw.Region `json:"-"`
+	// FrontendID: origin of redirection
+	FrontendID string `json:"frontend_id"`
+	// BackendID: destination of destination
+	BackendID string `json:"backend_id"`
+	// Match: value to match a redirection
+	Match *RouteMatch `json:"match"`
+}
+
+// CreateRoute: create a backend redirection
+func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetRouteRequest struct {
+	Region scw.Region `json:"-"`
+	// RouteID: id of route to get
+	RouteID string `json:"-"`
+}
+
+// GetRoute: get single backend redirection
+func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return nil, errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateRouteRequest struct {
+	Region scw.Region `json:"-"`
+	// RouteID: route id to update
+	RouteID string `json:"-"`
+	// BackendID: backend id of redirection
+	BackendID string `json:"backend_id"`
+	// Match: value to match a redirection
+	Match *RouteMatch `json:"match"`
+}
+
+// UpdateRoute: edit a backend redirection
+func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return nil, errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteRouteRequest struct {
+	Region scw.Region `json:"-"`
+	// RouteID: route id to delete
+	RouteID string `json:"-"`
+}
+
+// DeleteRoute: delete a backend redirection
+func (s *API) DeleteRoute(req *DeleteRouteRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
 		Headers: http.Header{},
 	}
 
