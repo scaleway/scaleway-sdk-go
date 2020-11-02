@@ -3257,7 +3257,7 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
+		Method:  "PUT",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
 		Headers: http.Header{},
 	}
