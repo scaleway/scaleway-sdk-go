@@ -499,7 +499,7 @@ type Offer struct {
 	// Default value: empty
 	Stock OfferStock `json:"stock"`
 	// Bandwidth: bandwidth available in bits/s with the offer
-	Bandwidth uint32 `json:"bandwidth"`
+	Bandwidth uint64 `json:"bandwidth"`
 	// CommercialRange: commercial range of the offer
 	CommercialRange string `json:"commercial_range"`
 	// PricePerHour: price of the offer for the next 60 minutes (a server order at 11h32 will be payed until 12h32)
