@@ -3898,14 +3898,14 @@ type UpdatePlacementGroupRequest struct {
 	PlacementGroupID string `json:"-"`
 	// Name: name of the placement group
 	Name *string `json:"name,omitempty"`
-	// PolicyMode:
+	// PolicyMode: the operating mode of the placement group
 	//
 	// Default value: optional
-	PolicyMode PlacementGroupPolicyMode `json:"policy_mode"`
-	// PolicyType:
+	PolicyMode *PlacementGroupPolicyMode `json:"policy_mode,omitempty"`
+	// PolicyType: the policy type of the placement group
 	//
 	// Default value: max_availability
-	PolicyType PlacementGroupPolicyType `json:"policy_type"`
+	PolicyType *PlacementGroupPolicyType `json:"policy_type,omitempty"`
 }
 
 // UpdatePlacementGroup: update a placement group
