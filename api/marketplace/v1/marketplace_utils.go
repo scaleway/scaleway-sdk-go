@@ -28,7 +28,7 @@ func (version *Version) getLocalImage(zone scw.Zone, commercialType string) (*Lo
 	return nil, fmt.Errorf("couldn't find compatible local image for this image version (%s)", version.ID)
 }
 
-// getLatestVersion returns the current/latests version on an image,
+// getLatestVersion returns the current/latest version on an image,
 // or an error in case the image doesn't have a public version.
 func (image *Image) getLatestVersion() (*Version, error) {
 	for _, version := range image.Versions {
@@ -49,14 +49,15 @@ type GetLocalImageIDByLabelRequest struct {
 
 // GetLocalImageIDByLabel search for an image with the given label (exact match) in the given region
 // it returns the latest version of this specific image.
-func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByLabelRequest) (string, error) {
+func (s *API) GetLocalImageIDByLabel(req *GetLocalImageIDByLabelRequest, opts ...scw.RequestOption) (string, error) {
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
 	}
 
 	listImageRequest := &ListImagesRequest{}
-	listImageResponse, err := s.ListImages(listImageRequest, scw.WithAllPages())
+	opts = append(opts, scw.WithAllPages())
+	listImageResponse, err := s.ListImages(listImageRequest, opts...)
 	if err != nil {
 		return "", err
 	}
