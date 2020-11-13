@@ -75,7 +75,7 @@ func newLogger(w io.Writer, level LogLevel) *loggerT {
 	warningW := ioutil.Discard
 	infoW := ioutil.Discard
 	debugW := ioutil.Discard
-	if isEnabled("SCW_DEBUG") {
+	if isEnabled(DebugEnv) {
 		level = LogLevelDebug
 	}
 	switch level {
