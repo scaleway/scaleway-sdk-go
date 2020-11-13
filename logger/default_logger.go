@@ -7,8 +7,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-
-	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 var DefaultLogger = newLogger(os.Stderr, LogLevelWarning)
@@ -77,7 +75,7 @@ func newLogger(w io.Writer, level LogLevel) *loggerT {
 	warningW := ioutil.Discard
 	infoW := ioutil.Discard
 	debugW := ioutil.Discard
-	if isEnabled(scw.DebugEnv) {
+	if isEnabled(DebugEnv) {
 		level = LogLevelDebug
 	}
 	switch level {
