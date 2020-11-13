@@ -21,6 +21,7 @@ const (
 	ScwDefaultProjectIDEnv      = "SCW_DEFAULT_PROJECT_ID"
 	ScwDefaultRegionEnv         = "SCW_DEFAULT_REGION"
 	ScwDefaultZoneEnv           = "SCW_DEFAULT_ZONE"
+	DebugEnv                    = "SCW_DEBUG"
 
 	// All deprecated (cli&terraform)
 	terraformAccessKeyEnv    = "SCALEWAY_ACCESS_KEY" // used both as access key and secret key
