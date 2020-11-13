@@ -627,6 +627,8 @@ type Device struct {
 	IsConnected bool `json:"is_connected"`
 	// AllowInsecure: whether to allow device to connect without TLS mutual authentication
 	AllowInsecure bool `json:"allow_insecure"`
+	// AllowMultipleConnections: whether to allow multiple physical devices to connect with this device's credentials
+	AllowMultipleConnections bool `json:"allow_multiple_connections"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
 	// CreatedAt: device add date
@@ -1379,6 +1381,8 @@ type CreateDeviceRequest struct {
 	HubID string `json:"hub_id"`
 	// AllowInsecure: allow plain and server-authenticated SSL connections in addition to mutually-authenticated ones
 	AllowInsecure bool `json:"allow_insecure"`
+	// AllowMultipleConnections: allow multiple physical devices to connect with this device's credentials
+	AllowMultipleConnections bool `json:"allow_multiple_connections"`
 	// MessageFilters: filter-sets to authorize or deny the device to publish/subscribe to specific topics
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
 }
@@ -1466,6 +1470,8 @@ type UpdateDeviceRequest struct {
 	Name *string `json:"name"`
 	// AllowInsecure: allow plain and server-authenticated SSL connections in addition to mutually-authenticated ones
 	AllowInsecure *bool `json:"allow_insecure"`
+	// AllowMultipleConnections: allow multiple physical devices to connect with this device's credentials
+	AllowMultipleConnections *bool `json:"allow_multiple_connections"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
 	// HubID: change Hub for this device, additional fees may apply, see IoT Hub pricing
