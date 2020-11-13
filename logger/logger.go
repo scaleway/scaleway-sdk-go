@@ -4,6 +4,8 @@ import "os"
 
 type LogLevel int
 
+const DebugEnv = "SCW_DEBUG"
+
 const (
 	// LogLevelDebug indicates Debug severity.
 	LogLevelDebug LogLevel = iota
