@@ -494,8 +494,6 @@ const (
 	RouteRouteTypeUnknown = RouteRouteType("unknown")
 	// RouteRouteTypeS3 is [insert doc].
 	RouteRouteTypeS3 = RouteRouteType("s3")
-	// RouteRouteTypeFunctions is [insert doc].
-	RouteRouteTypeFunctions = RouteRouteType("functions")
 	// RouteRouteTypeDatabase is [insert doc].
 	RouteRouteTypeDatabase = RouteRouteType("database")
 	// RouteRouteTypeRest is [insert doc].
@@ -654,24 +652,6 @@ type DeviceMessageFiltersMessageFilterSet struct {
 	Policy DeviceMessageFiltersPolicy `json:"policy"`
 
 	Topics *[]string `json:"topics"`
-}
-
-// FunctionsRoute: functions route
-type FunctionsRoute struct {
-	// ID: route ID
-	ID string `json:"id"`
-	// Name: route name
-	Name string `json:"name"`
-	// OrganizationID: organization owning the route
-	OrganizationID string `json:"organization_id"`
-	// HubID: ID of the route's hub
-	HubID string `json:"hub_id"`
-	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
-	Topic string `json:"topic"`
-	// CreatedAt: route creation date
-	CreatedAt *time.Time `json:"created_at"`
-	// URI: uri of the function
-	URI string `json:"uri"`
 }
 
 // Hub: hub
@@ -1876,131 +1856,6 @@ func (s *API) DeleteS3Route(req *DeleteS3RouteRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/routes/s3/" + fmt.Sprint(req.RouteID) + "",
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type CreateFunctionsRouteRequest struct {
-	Region scw.Region `json:"-"`
-	// Name: name of the route
-	Name string `json:"name"`
-	// HubID: ID of the route's hub
-	HubID string `json:"hub_id"`
-	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
-	Topic string `json:"topic"`
-	// URI: uri of the function
-	URI string `json:"uri"`
-	// Token: authentication JWT token
-	Token *string `json:"token"`
-}
-
-// CreateFunctionsRoute: create a Functions route
-//
-// Create a route that will forward subscribed MQTT messages to a function and publish the returned payload (if provided).
-// <b>You need to create the function by yourself</b>.
-//
-func (s *API) CreateFunctionsRoute(req *CreateFunctionsRouteRequest, opts ...scw.RequestOption) (*FunctionsRoute, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/routes/functions",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp FunctionsRoute
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetFunctionsRouteRequest struct {
-	Region scw.Region `json:"-"`
-	// RouteID: route ID
-	RouteID string `json:"-"`
-}
-
-// GetFunctionsRoute: get a Functions route
-func (s *API) GetFunctionsRoute(req *GetFunctionsRouteRequest, opts ...scw.RequestOption) (*FunctionsRoute, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.RouteID) == "" {
-		return nil, errors.New("field RouteID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/routes/functions/" + fmt.Sprint(req.RouteID) + "",
-		Headers: http.Header{},
-	}
-
-	var resp FunctionsRoute
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteFunctionsRouteRequest struct {
-	Region scw.Region `json:"-"`
-	// RouteID: route ID
-	RouteID string `json:"-"`
-}
-
-// DeleteFunctionsRoute: delete a Functions route
-func (s *API) DeleteFunctionsRoute(req *DeleteFunctionsRouteRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.RouteID) == "" {
-		return errors.New("field RouteID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/routes/functions/" + fmt.Sprint(req.RouteID) + "",
 		Headers: http.Header{},
 	}
 
