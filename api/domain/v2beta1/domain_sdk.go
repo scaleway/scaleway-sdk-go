@@ -1867,8 +1867,6 @@ type UpdateDNSZoneRecordsRequest struct {
 	Changes []*RecordChange `json:"changes"`
 
 	ReturnAllRecords *bool `json:"return_all_records"`
-
-	ProjectID string `json:"project_id"`
 }
 
 // UpdateDNSZoneRecords: update DNS zone records
@@ -1893,11 +1891,6 @@ type UpdateDNSZoneRecordsRequest struct {
 //
 func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw.RequestOption) (*UpdateDNSZoneRecordsResponse, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
