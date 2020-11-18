@@ -288,6 +288,8 @@ const (
 	InstanceStatusDiskFull = InstanceStatus("disk_full")
 	// InstanceStatusBackuping is [insert doc].
 	InstanceStatusBackuping = InstanceStatus("backuping")
+	// InstanceStatusSnapshotting is [insert doc].
+	InstanceStatusSnapshotting = InstanceStatus("snapshotting")
 )
 
 func (enum InstanceStatus) String() string {
@@ -499,6 +501,46 @@ func (enum *ListPrivilegesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListSnapshotsRequestOrderBy string
+
+const (
+	// ListSnapshotsRequestOrderByCreatedAtAsc is [insert doc].
+	ListSnapshotsRequestOrderByCreatedAtAsc = ListSnapshotsRequestOrderBy("created_at_asc")
+	// ListSnapshotsRequestOrderByCreatedAtDesc is [insert doc].
+	ListSnapshotsRequestOrderByCreatedAtDesc = ListSnapshotsRequestOrderBy("created_at_desc")
+	// ListSnapshotsRequestOrderByNameAsc is [insert doc].
+	ListSnapshotsRequestOrderByNameAsc = ListSnapshotsRequestOrderBy("name_asc")
+	// ListSnapshotsRequestOrderByNameDesc is [insert doc].
+	ListSnapshotsRequestOrderByNameDesc = ListSnapshotsRequestOrderBy("name_desc")
+	// ListSnapshotsRequestOrderByExpiresAtAsc is [insert doc].
+	ListSnapshotsRequestOrderByExpiresAtAsc = ListSnapshotsRequestOrderBy("expires_at_asc")
+	// ListSnapshotsRequestOrderByExpiresAtDesc is [insert doc].
+	ListSnapshotsRequestOrderByExpiresAtDesc = ListSnapshotsRequestOrderBy("expires_at_desc")
+)
+
+func (enum ListSnapshotsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListSnapshotsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSnapshotsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSnapshotsRequestOrderBy(ListSnapshotsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListUsersRequestOrderBy string
 
 const (
@@ -606,6 +648,48 @@ func (enum *Permission) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = Permission(Permission(tmp).String())
+	return nil
+}
+
+type SnapshotStatus string
+
+const (
+	// SnapshotStatusUnknown is [insert doc].
+	SnapshotStatusUnknown = SnapshotStatus("unknown")
+	// SnapshotStatusCreating is [insert doc].
+	SnapshotStatusCreating = SnapshotStatus("creating")
+	// SnapshotStatusReady is [insert doc].
+	SnapshotStatusReady = SnapshotStatus("ready")
+	// SnapshotStatusRestoring is [insert doc].
+	SnapshotStatusRestoring = SnapshotStatus("restoring")
+	// SnapshotStatusDeleting is [insert doc].
+	SnapshotStatusDeleting = SnapshotStatus("deleting")
+	// SnapshotStatusError is [insert doc].
+	SnapshotStatusError = SnapshotStatus("error")
+	// SnapshotStatusLocked is [insert doc].
+	SnapshotStatusLocked = SnapshotStatus("locked")
+)
+
+func (enum SnapshotStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum SnapshotStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SnapshotStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SnapshotStatus(SnapshotStatus(tmp).String())
 	return nil
 }
 
@@ -941,6 +1025,14 @@ type ListPrivilegesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListSnapshotsResponse: list snapshots response
+type ListSnapshotsResponse struct {
+	// Snapshots: list of snapshots
+	Snapshots []*Snapshot `json:"snapshots"`
+	// TotalCount: total count of snapshots available
+	TotalCount uint32 `json:"total_count"`
+}
+
 // ListUsersResponse: list users response
 type ListUsersResponse struct {
 	// Users: list of users in a given instance
@@ -1031,6 +1123,32 @@ type SetInstanceSettingsResponse struct {
 	Settings []*InstanceSetting `json:"settings"`
 }
 
+// Snapshot: snapshot
+type Snapshot struct {
+	// ID: UUID of the snapshot
+	ID string `json:"id"`
+	// InstanceID: UUID of the instance
+	InstanceID string `json:"instance_id"`
+	// Name: name of the snapshot
+	Name string `json:"name"`
+	// Status: status of the snapshot
+	//
+	// Default value: unknown
+	Status SnapshotStatus `json:"status"`
+	// Size: size of the snapshot
+	Size *scw.Size `json:"size"`
+	// ExpiresAt: expiration date (Format ISO 8601)
+	ExpiresAt *time.Time `json:"expires_at"`
+	// CreatedAt: creation date (Format ISO 8601)
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: updated date (Format ISO 8601)
+	UpdatedAt *time.Time `json:"updated_at"`
+	// InstanceName: name of the instance of the snapshot
+	InstanceName string `json:"instance_name"`
+	// Region: region of this snapshot
+	Region scw.Region `json:"region"`
+}
+
 // User: user
 type User struct {
 	// Name: name of the user (Length must be between 1 and 63 characters, First character must be an alphabet character (a-zA-Z), Your Username cannot start with '_rdb', Only a-zA-Z0-9_$- characters are accepted)
@@ -1079,6 +1197,139 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 	return &resp, nil
+}
+
+type ListDatabaseEnginesRequest struct {
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDatabaseEngines: list available database engines
+func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.RequestOption) (*ListDatabaseEnginesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/database-engines",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListDatabaseEnginesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatabaseEnginesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDatabaseEnginesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Engines = append(r.Engines, results.Engines...)
+	r.TotalCount += uint32(len(results.Engines))
+	return uint32(len(results.Engines)), nil
+}
+
+type ListNodeTypesRequest struct {
+	Region scw.Region `json:"-"`
+	// IncludeDisabledTypes: whether or not to include disabled types
+	IncludeDisabledTypes bool `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListNodeTypes: list available node types
+func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "include_disabled_types", req.IncludeDisabledTypes)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/node-types",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListNodeTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNodeTypesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNodeTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNodeTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.NodeTypes = append(r.NodeTypes, results.NodeTypes...)
+	r.TotalCount += uint32(len(results.NodeTypes))
+	return uint32(len(results.NodeTypes)), nil
 }
 
 type ListDatabaseBackupsRequest struct {
@@ -1425,118 +1676,6 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 	return &resp, nil
 }
 
-type CloneInstanceRequest struct {
-	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to clone
-	InstanceID string `json:"-"`
-	// Name: name of the clone instance
-	Name string `json:"name"`
-	// NodeType: node type of the clone
-	NodeType *string `json:"node_type"`
-}
-
-// CloneInstance: clone an instance
-func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.InstanceID) == "" {
-		return nil, errors.New("field InstanceID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/clone",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Instance
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListDatabaseEnginesRequest struct {
-	Region scw.Region `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-}
-
-// ListDatabaseEngines: list available database engines
-func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.RequestOption) (*ListDatabaseEnginesResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/database-engines",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListDatabaseEnginesResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDatabaseEnginesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDatabaseEnginesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Engines = append(r.Engines, results.Engines...)
-	r.TotalCount += uint32(len(results.Engines))
-	return uint32(len(results.Engines)), nil
-}
-
 type UpgradeInstanceRequest struct {
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to upgrade
@@ -1880,6 +2019,53 @@ func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+type CloneInstanceRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance you want to clone
+	InstanceID string `json:"-"`
+	// Name: name of the clone instance
+	Name string `json:"name"`
+	// NodeType: node type of the clone
+	NodeType *string `json:"node_type"`
+}
+
+// CloneInstance: clone an instance
+func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/clone",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Instance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type GetInstanceCertificateRequest struct {
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
@@ -1956,6 +2142,58 @@ func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opt
 		return err
 	}
 	return nil
+}
+
+type GetInstanceMetricsRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance
+	InstanceID string `json:"-"`
+	// StartDate: start date to gather metrics from
+	StartDate *time.Time `json:"-"`
+	// EndDate: end date to gather metrics from
+	EndDate *time.Time `json:"-"`
+	// MetricName: name of the metric to gather
+	MetricName *string `json:"-"`
+}
+
+// GetInstanceMetrics: get instance metrics
+//
+// Get database instance metrics.
+func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "metric_name", req.MetricName)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/metrics",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp InstanceMetrics
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type PrepareInstanceLogsRequest struct {
@@ -2083,58 +2321,6 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 	}
 
 	var resp InstanceLog
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetInstanceMetricsRequest struct {
-	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance
-	InstanceID string `json:"-"`
-	// StartDate: start date to gather metrics from
-	StartDate *time.Time `json:"-"`
-	// EndDate: end date to gather metrics from
-	EndDate *time.Time `json:"-"`
-	// MetricName: name of the metric to gather
-	MetricName *string `json:"-"`
-}
-
-// GetInstanceMetrics: get instance metrics
-//
-// Get database instance metrics.
-func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "start_date", req.StartDate)
-	parameter.AddToQuery(query, "end_date", req.EndDate)
-	parameter.AddToQuery(query, "metric_name", req.MetricName)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.InstanceID) == "" {
-		return nil, errors.New("field InstanceID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/metrics",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp InstanceMetrics
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3012,18 +3198,28 @@ func (s *API) SetPrivilege(req *SetPrivilegeRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type ListNodeTypesRequest struct {
+type ListSnapshotsRequest struct {
 	Region scw.Region `json:"-"`
-	// IncludeDisabledTypes: whether or not to include disabled types
-	IncludeDisabledTypes bool `json:"-"`
+	// Name: name of the snapshot
+	Name *string `json:"-"`
+	// OrderBy: criteria to use when ordering snapshot listing
+	//
+	// Default value: created_at_asc
+	OrderBy ListSnapshotsRequestOrderBy `json:"-"`
+	// InstanceID: UUID of the instance
+	InstanceID *string `json:"-"`
+	// OrganizationID: organization ID the snapshots belongs to
+	OrganizationID *string `json:"-"`
+	// ProjectID: project ID the snapshots belongs to
+	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
 }
 
-// ListNodeTypes: list available node types
-func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
+// ListSnapshots: list instance snapshots
+func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3037,7 +3233,11 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "include_disabled_types", req.IncludeDisabledTypes)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "instance_id", req.InstanceID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -3047,12 +3247,12 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/node-types",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/snapshots",
 		Query:   query,
 		Headers: http.Header{},
 	}
 
-	var resp ListNodeTypesResponse
+	var resp ListSnapshotsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3063,19 +3263,238 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListNodeTypesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListSnapshotsResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNodeTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNodeTypesResponse)
+func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSnapshotsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.NodeTypes = append(r.NodeTypes, results.NodeTypes...)
-	r.TotalCount += uint32(len(results.NodeTypes))
-	return uint32(len(results.NodeTypes)), nil
+	r.Snapshots = append(r.Snapshots, results.Snapshots...)
+	r.TotalCount += uint32(len(results.Snapshots))
+	return uint32(len(results.Snapshots)), nil
+}
+
+type GetSnapshotRequest struct {
+	Region scw.Region `json:"-"`
+	// SnapshotID: UUID of the snapshot
+	SnapshotID string `json:"-"`
+}
+
+// GetSnapshot: get an instance snapshot
+func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateSnapshotRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance
+	InstanceID string `json:"-"`
+	// Name: name of the snapshot
+	Name string `json:"name"`
+	// ExpiresAt: expiration date (Format ISO 8601)
+	ExpiresAt *time.Time `json:"expires_at"`
+}
+
+// CreateSnapshot: create an instance snapshot
+func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("snp")
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/snapshots",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateSnapshotRequest struct {
+	Region scw.Region `json:"-"`
+	// SnapshotID: UUID of the snapshot to update
+	SnapshotID string `json:"-"`
+	// Name: name of the snapshot
+	Name *string `json:"name"`
+	// ExpiresAt: expiration date (Format ISO 8601)
+	ExpiresAt *time.Time `json:"expires_at"`
+}
+
+// UpdateSnapshot: update an instance snapshot
+func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteSnapshotRequest struct {
+	Region scw.Region `json:"-"`
+	// SnapshotID: UUID of the snapshot to delete
+	SnapshotID string `json:"-"`
+}
+
+// DeleteSnapshot: delete an instance snapshot
+func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateInstanceFromSnapshotRequest struct {
+	Region scw.Region `json:"-"`
+	// SnapshotID: block snapshot of the instance
+	SnapshotID string `json:"-"`
+	// InstanceName: name of the instance created with the snapshot
+	InstanceName string `json:"instance_name"`
+}
+
+// CreateInstanceFromSnapshot: create a new instance from a given snapshot
+func (s *API) CreateInstanceFromSnapshot(req *CreateInstanceFromSnapshotRequest, opts ...scw.RequestOption) (*Instance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "/create-instance",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Instance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
