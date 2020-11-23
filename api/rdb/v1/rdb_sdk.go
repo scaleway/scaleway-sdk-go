@@ -288,6 +288,8 @@ const (
 	InstanceStatusDiskFull = InstanceStatus("disk_full")
 	// InstanceStatusBackuping is [insert doc].
 	InstanceStatusBackuping = InstanceStatus("backuping")
+	// InstanceStatusSnapshotting is [insert doc].
+	InstanceStatusSnapshotting = InstanceStatus("snapshotting")
 )
 
 func (enum InstanceStatus) String() string {
@@ -1081,6 +1083,139 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+type ListDatabaseEnginesRequest struct {
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDatabaseEngines: list available database engines
+func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.RequestOption) (*ListDatabaseEnginesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/database-engines",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListDatabaseEnginesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatabaseEnginesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDatabaseEnginesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Engines = append(r.Engines, results.Engines...)
+	r.TotalCount += uint32(len(results.Engines))
+	return uint32(len(results.Engines)), nil
+}
+
+type ListNodeTypesRequest struct {
+	Region scw.Region `json:"-"`
+	// IncludeDisabledTypes: whether or not to include disabled types
+	IncludeDisabledTypes bool `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListNodeTypes: list available node types
+func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "include_disabled_types", req.IncludeDisabledTypes)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/node-types",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListNodeTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNodeTypesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNodeTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNodeTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.NodeTypes = append(r.NodeTypes, results.NodeTypes...)
+	r.TotalCount += uint32(len(results.NodeTypes))
+	return uint32(len(results.NodeTypes)), nil
+}
+
 type ListDatabaseBackupsRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: name of the database backups
@@ -1423,118 +1558,6 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 		return nil, err
 	}
 	return &resp, nil
-}
-
-type CloneInstanceRequest struct {
-	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to clone
-	InstanceID string `json:"-"`
-	// Name: name of the clone instance
-	Name string `json:"name"`
-	// NodeType: node type of the clone
-	NodeType *string `json:"node_type"`
-}
-
-// CloneInstance: clone an instance
-func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.InstanceID) == "" {
-		return nil, errors.New("field InstanceID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/clone",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Instance
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListDatabaseEnginesRequest struct {
-	Region scw.Region `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-}
-
-// ListDatabaseEngines: list available database engines
-func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.RequestOption) (*ListDatabaseEnginesResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/database-engines",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListDatabaseEnginesResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDatabaseEnginesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDatabaseEnginesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDatabaseEnginesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Engines = append(r.Engines, results.Engines...)
-	r.TotalCount += uint32(len(results.Engines))
-	return uint32(len(results.Engines)), nil
 }
 
 type UpgradeInstanceRequest struct {
@@ -1880,6 +1903,53 @@ func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+type CloneInstanceRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance you want to clone
+	InstanceID string `json:"-"`
+	// Name: name of the clone instance
+	Name string `json:"name"`
+	// NodeType: node type of the clone
+	NodeType *string `json:"node_type"`
+}
+
+// CloneInstance: clone an instance
+func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/clone",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Instance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type GetInstanceCertificateRequest struct {
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
@@ -1956,6 +2026,58 @@ func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opt
 		return err
 	}
 	return nil
+}
+
+type GetInstanceMetricsRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance
+	InstanceID string `json:"-"`
+	// StartDate: start date to gather metrics from
+	StartDate *time.Time `json:"-"`
+	// EndDate: end date to gather metrics from
+	EndDate *time.Time `json:"-"`
+	// MetricName: name of the metric to gather
+	MetricName *string `json:"-"`
+}
+
+// GetInstanceMetrics: get instance metrics
+//
+// Get database instance metrics.
+func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "metric_name", req.MetricName)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/metrics",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp InstanceMetrics
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type PrepareInstanceLogsRequest struct {
@@ -2083,58 +2205,6 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 	}
 
 	var resp InstanceLog
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetInstanceMetricsRequest struct {
-	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance
-	InstanceID string `json:"-"`
-	// StartDate: start date to gather metrics from
-	StartDate *time.Time `json:"-"`
-	// EndDate: end date to gather metrics from
-	EndDate *time.Time `json:"-"`
-	// MetricName: name of the metric to gather
-	MetricName *string `json:"-"`
-}
-
-// GetInstanceMetrics: get instance metrics
-//
-// Get database instance metrics.
-func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "start_date", req.StartDate)
-	parameter.AddToQuery(query, "end_date", req.EndDate)
-	parameter.AddToQuery(query, "metric_name", req.MetricName)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.InstanceID) == "" {
-		return nil, errors.New("field InstanceID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/metrics",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp InstanceMetrics
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3010,72 +3080,4 @@ func (s *API) SetPrivilege(req *SetPrivilegeRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
-}
-
-type ListNodeTypesRequest struct {
-	Region scw.Region `json:"-"`
-	// IncludeDisabledTypes: whether or not to include disabled types
-	IncludeDisabledTypes bool `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-}
-
-// ListNodeTypes: list available node types
-func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "include_disabled_types", req.IncludeDisabledTypes)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/node-types",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListNodeTypesResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNodeTypesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNodeTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNodeTypesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.NodeTypes = append(r.NodeTypes, results.NodeTypes...)
-	r.TotalCount += uint32(len(results.NodeTypes))
-	return uint32(len(results.NodeTypes)), nil
 }
