@@ -627,6 +627,8 @@ type ClusterAutoscalerConfig struct {
 	ExpendablePodsPriorityCutoff int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
+	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
+	ScaleDownUtilizationThreshold float32 `json:"scale_down_utilization_threshold"`
 }
 
 // ClusterOpenIDConnectConfig: cluster. open id connect config
@@ -694,6 +696,8 @@ type CreateClusterRequestAutoscalerConfig struct {
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
+	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
+	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 }
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request. open id connect config
@@ -758,6 +762,8 @@ type CreateClusterRequestPoolConfig struct {
 	Autohealing bool `json:"autohealing"`
 	// Tags: the tags associated with the pool
 	Tags []string `json:"tags"`
+	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
+	KubeletArgs map[string]string `json:"kubelet_args"`
 }
 
 // ListClusterAvailableVersionsResponse: list cluster available versions response
@@ -880,6 +886,8 @@ type Pool struct {
 	Tags []string `json:"tags"`
 	// PlacementGroupID: the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
+	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
+	KubeletArgs map[string]string `json:"kubelet_args"`
 	// Region: the cluster region of the pool
 	Region scw.Region `json:"region"`
 }
@@ -916,6 +924,8 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
+	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
+	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 }
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request. open id connect config
@@ -969,6 +979,8 @@ type Version struct {
 	AvailableFeatureGates []string `json:"available_feature_gates"`
 	// AvailableAdmissionPlugins: the supported admission plugins for this version
 	AvailableAdmissionPlugins []string `json:"available_admission_plugins"`
+	// AvailableKubeletArgs: the supported kubelet arguments for this version
+	AvailableKubeletArgs map[string]string `json:"available_kubelet_args"`
 }
 
 // Service API
@@ -1606,6 +1618,8 @@ type CreatePoolRequest struct {
 	Autohealing bool `json:"autohealing"`
 	// Tags: the tags associated with the pool
 	Tags []string `json:"tags"`
+	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
+	KubeletArgs map[string]string `json:"kubelet_args"`
 }
 
 // CreatePool: create a new pool in a cluster
@@ -1750,6 +1764,8 @@ type UpdatePoolRequest struct {
 	Autohealing *bool `json:"autohealing"`
 	// Tags: the new tags associated with the pool
 	Tags *[]string `json:"tags"`
+	// KubeletArgs: the new Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
+	KubeletArgs *map[string]string `json:"kubelet_args"`
 }
 
 // UpdatePool: update a pool in a cluster
