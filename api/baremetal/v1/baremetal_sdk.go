@@ -344,6 +344,8 @@ const (
 	ServerStatusDeleting = ServerStatus("deleting")
 	// ServerStatusLocked is [insert doc].
 	ServerStatusLocked = ServerStatus("locked")
+	// ServerStatusOutOfStock is [insert doc].
+	ServerStatusOutOfStock = ServerStatus("out_of_stock")
 )
 
 func (enum ServerStatus) String() string {
