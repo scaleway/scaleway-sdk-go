@@ -629,6 +629,8 @@ type ClusterAutoscalerConfig struct {
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
 	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
 	ScaleDownUtilizationThreshold float32 `json:"scale_down_utilization_threshold"`
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node
+	MaxGracefulTerminationSec uint32 `json:"max_graceful_termination_sec"`
 }
 
 // ClusterOpenIDConnectConfig: cluster. open id connect config
@@ -698,6 +700,8 @@ type CreateClusterRequestAutoscalerConfig struct {
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node
+	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
 }
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request. open id connect config
@@ -926,6 +930,8 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 	// ScaleDownUtilizationThreshold: node utilization level, defined as sum of requested resources divided by capacity, below which a node can be considered for scale down
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node
+	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
 }
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request. open id connect config
