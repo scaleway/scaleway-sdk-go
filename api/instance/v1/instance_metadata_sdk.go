@@ -109,7 +109,15 @@ type Metadata struct {
 		} `json:"server,omitempty"`
 		ID   string `json:"id,omitempty"`
 		Size int    `json:"size,omitempty"`
-	}
+	} `json:"volumes,omitempty"`
+	PrivateNICs []struct {
+		ID               string `json:"id,omitempty"`
+		PrivateNetworkID string `json:"private_network_id,omitempty"`
+		ServerID         string `json:"server_id,omitempty"`
+		MacAddress       string `json:"mac_address,omitempty"`
+		CreationDate     string `json:"creation_date,omitempty"`
+		Zone             string `json:"zone,omitempty"`
+	} `json:"private_nics,omitempty"`
 }
 
 // ListUserData returns the metadata available from the server
