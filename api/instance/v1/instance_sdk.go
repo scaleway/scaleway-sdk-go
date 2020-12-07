@@ -856,10 +856,12 @@ type ListServersResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListServersTypesResponse: list servers types response
 type ListServersTypesResponse struct {
-	Servers map[string]*ServerType `json:"servers"`
-
+	// TotalCount: total number of server types
 	TotalCount uint32 `json:"total_count"`
+	// Servers: list of server types
+	Servers map[string]*ServerType `json:"servers"`
 }
 
 type ListSnapshotsResponse struct {
@@ -1121,55 +1123,65 @@ type ServerSummary struct {
 	Name string `json:"name"`
 }
 
+// ServerType: server type
 type ServerType struct {
+	// Deprecated: MonthlyPrice: estimated monthly price, for a 30 days month, in Euro
 	MonthlyPrice float32 `json:"monthly_price"`
-
+	// HourlyPrice: hourly price in Euro
 	HourlyPrice float32 `json:"hourly_price"`
-
+	// AltNames: alternative instance name if any
 	AltNames []string `json:"alt_names"`
-
+	// PerVolumeConstraint: additional volume constraints
 	PerVolumeConstraint *ServerTypeVolumeConstraintsByType `json:"per_volume_constraint"`
-
+	// VolumesConstraint: initial volume constraints
 	VolumesConstraint *ServerTypeVolumeConstraintSizes `json:"volumes_constraint"`
-
+	// Ncpus: number of CPU
 	Ncpus uint32 `json:"ncpus"`
-
+	// Gpu: number of GPU
 	Gpu *uint64 `json:"gpu"`
-
+	// RAM: available RAM in bytes
 	RAM uint64 `json:"ram"`
-	// Arch:
+	// Arch: CPU architecture
 	//
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
-
+	// Baremetal: true if it is a baremetal instance
 	Baremetal bool `json:"baremetal"`
-
+	// Network: network available for the instance
 	Network *ServerTypeNetwork `json:"network"`
 }
 
+// ServerTypeNetwork: server type. network
 type ServerTypeNetwork struct {
+	// Interfaces: list of available network interfaces
 	Interfaces []*ServerTypeNetworkInterface `json:"interfaces"`
-
+	// SumInternalBandwidth: total maximum internal bandwidth in bits per seconds
 	SumInternalBandwidth *uint64 `json:"sum_internal_bandwidth"`
-
+	// SumInternetBandwidth: total maximum internet bandwidth in bits per seconds
 	SumInternetBandwidth *uint64 `json:"sum_internet_bandwidth"`
-
+	// IPv6Support: true if IPv6 is enabled
 	IPv6Support bool `json:"ipv6_support"`
 }
 
+// ServerTypeNetworkInterface: server type. network. interface
 type ServerTypeNetworkInterface struct {
+	// InternalBandwidth: maximum internal bandwidth in bits per seconds
 	InternalBandwidth *uint64 `json:"internal_bandwidth"`
-
+	// InternetBandwidth: maximum internet bandwidth in bits per seconds
 	InternetBandwidth *uint64 `json:"internet_bandwidth"`
 }
 
+// ServerTypeVolumeConstraintSizes: server type. volume constraint sizes
 type ServerTypeVolumeConstraintSizes struct {
+	// MinSize: minimum volume size in bytes
 	MinSize scw.Size `json:"min_size"`
-
+	// MaxSize: maximum volume size in bytes
 	MaxSize scw.Size `json:"max_size"`
 }
 
+// ServerTypeVolumeConstraintsByType: server type. volume constraints by type
 type ServerTypeVolumeConstraintsByType struct {
+	// LSSD: local SSD volumes
 	LSSD *ServerTypeVolumeConstraintSizes `json:"l_ssd"`
 }
 
