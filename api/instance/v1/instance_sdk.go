@@ -3138,7 +3138,7 @@ type CreateSecurityGroupRequest struct {
 	// Default value: accept
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 	// EnableDefaultSecurity: true to block SMTP on IPv4 and IPv6
-	EnableDefaultSecurity bool `json:"enable_default_security,omitempty"`
+	EnableDefaultSecurity *bool `json:"enable_default_security,omitempty"`
 }
 
 // CreateSecurityGroup: create a security group
