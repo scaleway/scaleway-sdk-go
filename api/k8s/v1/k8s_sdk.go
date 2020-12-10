@@ -96,6 +96,8 @@ const (
 	AutoscalerExpanderLeastWaste = AutoscalerExpander("least_waste")
 	// AutoscalerExpanderPriority is [insert doc].
 	AutoscalerExpanderPriority = AutoscalerExpander("priority")
+	// AutoscalerExpanderPrice is [insert doc].
+	AutoscalerExpanderPrice = AutoscalerExpander("price")
 )
 
 func (enum AutoscalerExpander) String() string {
