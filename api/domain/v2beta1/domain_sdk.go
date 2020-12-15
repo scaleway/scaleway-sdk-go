@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: domain API
+// API: DNS API
 //
 // Manage your DNS zones and records.
 type API struct {
@@ -53,9 +53,9 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// RegistrarAPI: domain registrar API
+// RegistrarAPI: domains registrar API
 //
-// Manage your domain and contact.
+// Manage your domains and contacts.
 type RegistrarAPI struct {
 	client *scw.Client
 }
@@ -1565,7 +1565,7 @@ type ListDNSZonesRequest struct {
 // ListDNSZones: list DNS zones
 //
 // Returns a list of manageable DNS zones.
-// You can filter the DNS zones by a domain name.
+// You can filter the DNS zones by domain name.
 //
 func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) (*ListDNSZonesResponse, error) {
 	var err error
@@ -1803,8 +1803,8 @@ type ListDNSZoneRecordsRequest struct {
 
 // ListDNSZoneRecords: list DNS zone records
 //
-// Returns a list of DNS records about a DNS zone with default NS.
-// You can filter the records by a type and a name.
+// Returns a list of DNS records of a DNS zone with default NS.
+// You can filter the records by type and name.
 //
 func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneRecordsResponse, error) {
 	var err error
@@ -1887,7 +1887,7 @@ type UpdateDNSZoneRecordsRequest struct {
 //  - clear:
 //   - Delete all records from a DNS zone
 //
-// Any edition will be versioned.
+// All edits will be versioned.
 //
 func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw.RequestOption) (*UpdateDNSZoneRecordsResponse, error) {
 	var err error
@@ -1924,7 +1924,7 @@ type ListDNSZoneNameserversRequest struct {
 
 // ListDNSZoneNameservers: list DNS zone nameservers
 //
-// Returns a list of Nameservers and there optionnal glue records for a DNS zone.
+// Returns a list of Nameservers and their optional glue records for a DNS zone.
 func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ...scw.RequestOption) (*ListDNSZoneNameserversResponse, error) {
 	var err error
 
@@ -1959,7 +1959,7 @@ type UpdateDNSZoneNameserversRequest struct {
 
 // UpdateDNSZoneNameservers: update DNS zone nameservers
 //
-// Update DNS zone nameservers and set optionnal glue records.
+// Update DNS zone nameservers and set optional glue records.
 func (s *API) UpdateDNSZoneNameservers(req *UpdateDNSZoneNameserversRequest, opts ...scw.RequestOption) (*UpdateDNSZoneNameserversResponse, error) {
 	var err error
 
@@ -1995,7 +1995,7 @@ type ClearDNSZoneRecordsRequest struct {
 //
 // Only available with default NS.<br/>
 // Delete all the records from a DNS zone.
-// Any edition will be versioned.
+// All edits will be versioned.
 //
 func (s *API) ClearDNSZoneRecords(req *ClearDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ClearDNSZoneRecordsResponse, error) {
 	var err error
@@ -2029,7 +2029,7 @@ type ExportRawDNSZoneRequest struct {
 
 // ExportRawDNSZone: export raw DNS zone
 //
-// Get DNS zone from a given format with default NS.
+// Get a DNS zone in a given format with default NS.
 func (s *API) ExportRawDNSZone(req *ExportRawDNSZoneRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -2151,7 +2151,7 @@ type RefreshDNSZoneRequest struct {
 // RefreshDNSZone: refresh DNS zone
 //
 // Refresh SOA DNS zone.
-// You can recreate the given DNS zone and it's sub DNS zone if needed.
+// You can recreate the given DNS zone and its sub DNS zone if needed.
 //
 func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOption) (*RefreshDNSZoneResponse, error) {
 	var err error
@@ -2187,8 +2187,8 @@ type ListDNSZoneVersionsRequest struct {
 // ListDNSZoneVersions: list DNS zone versions
 //
 // Get a list of DNS zone versions.<br/>
-// You are limited to 100 versions.<br/>
-// Beyound that, the most older version will be erased after each new modification.
+// The maximum version count is 100.<br/>
+// If the count reaches this limit, the oldest version will be deleted after each new modification.
 //
 func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionsResponse, error) {
 	var err error
@@ -2218,7 +2218,7 @@ type ListDNSZoneVersionRecordsRequest struct {
 
 // ListDNSZoneVersionRecords: list DNS zone version records
 //
-// Get a list of records from an old DNS zone version.
+// Get a list of records from a previous DNS zone version.
 func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionRecordsResponse, error) {
 	var err error
 
@@ -2247,7 +2247,7 @@ type GetDNSZoneVersionDiffRequest struct {
 
 // GetDNSZoneVersionDiff: get DNS zone version diff
 //
-// Get all differences from an old DNS zone version.
+// Get all differences from a previous DNS zone version.
 func (s *API) GetDNSZoneVersionDiff(req *GetDNSZoneVersionDiffRequest, opts ...scw.RequestOption) (*GetDNSZoneVersionDiffResponse, error) {
 	var err error
 
@@ -2276,7 +2276,7 @@ type RestoreDNSZoneVersionRequest struct {
 
 // RestoreDNSZoneVersion: restore DNS zone version
 //
-// Restore and active old DNS zone version.
+// Restore and activate a previous DNS zone version.
 func (s *API) RestoreDNSZoneVersion(req *RestoreDNSZoneVersionRequest, opts ...scw.RequestOption) (*RestoreDNSZoneVersionResponse, error) {
 	var err error
 
@@ -2308,7 +2308,7 @@ type GetSSLCertificateRequest struct {
 	DNSZone string `json:"-"`
 }
 
-// GetSSLCertificate: get the zone SSL certificate if exists
+// GetSSLCertificate: get the zone SSL certificate if it exists
 func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
 
@@ -2371,7 +2371,7 @@ type ListSSLCertificatesRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSSLCertificates: list all user SSL certificate
+// ListSSLCertificates: list all user SSL certificates
 func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.RequestOption) (*ListSSLCertificatesResponse, error) {
 	var err error
 
@@ -2519,7 +2519,7 @@ type RegistrarAPIListTasksRequest struct {
 // ListTasks: list tasks
 //
 // List all account tasks.
-// You can filter the list by a domain name.
+// You can filter the list by domain name.
 //
 func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.RequestOption) (*ListTasksResponse, error) {
 	var err error
@@ -2600,7 +2600,7 @@ type RegistrarAPIBuyDomainRequest struct {
 // BuyDomain: buy a domain
 //
 // Request the registration of a domain name.
-// You can give an owned domain contact or a full new contact.
+// You can provide an already existing domain's contact or a new contact.
 //
 func (s *RegistrarAPI) BuyDomain(req *RegistrarAPIBuyDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2638,7 +2638,7 @@ type RegistrarAPIRenewDomainRequest struct {
 
 // RenewDomain: renew a domain
 //
-// Request the renew of a domain name.
+// Request the renewal of a domain name.
 //
 func (s *RegistrarAPI) RenewDomain(req *RegistrarAPIRenewDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2695,7 +2695,7 @@ type RegistrarAPITransferInDomainRequest struct {
 
 // TransferInDomain: transfer a domain
 //
-// Request the transfer from an other registrar domain to Scaleway.
+// Request the transfer from another registrar domain to Scaleway.
 //
 func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2740,9 +2740,9 @@ type RegistrarAPITradeDomainRequest struct {
 // TradeDomain: trade a domain contact
 //
 // Request a trade for the contact owner.<br/>
-// If an `organization_id` is given, the change is a from the current Scaleway account to another Scaleway account.<br/>
+// If an `organization_id` is given, the change is from the current Scaleway account to another Scaleway account.<br/>
 // If no contact is given, the first contact of the other Scaleway account is taken.<br/>
-// If the other Scaleway account has no contact. An error occurred.
+// If the other Scaleway account has no contact. An error occurs.
 //
 func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2779,7 +2779,7 @@ type RegistrarAPIRegisterExternalDomainRequest struct {
 
 // RegisterExternalDomain: register an external domain
 //
-// Request the register of an external domain name.
+// Request the registration of an external domain name.
 //
 func (s *RegistrarAPI) RegisterExternalDomain(req *RegistrarAPIRegisterExternalDomainRequest, opts ...scw.RequestOption) (*RegisterExternalDomainResponse, error) {
 	var err error
@@ -2854,7 +2854,7 @@ type RegistrarAPIListContactsRequest struct {
 // ListContacts: list contacts
 //
 // Return a list of contacts with their domains and roles.
-// You can filter the list by a domain name.
+// You can filter the list by domain name.
 //
 func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts ...scw.RequestOption) (*ListContactsResponse, error) {
 	var err error
@@ -2912,7 +2912,7 @@ type RegistrarAPIGetContactRequest struct {
 
 // GetContact: get a contact
 //
-// Return a contact details retrieve from the registrar by a given contact ID.
+// Return a contact details retrieved from the registrar using a given contact ID.
 func (s *RegistrarAPI) GetContact(req *RegistrarAPIGetContactRequest, opts ...scw.RequestOption) (*Contact, error) {
 	var err error
 
@@ -3137,7 +3137,7 @@ type RegistrarAPIUpdateDomainRequest struct {
 // UpdateDomain: update a domain
 //
 // Update the domain contacts or create a new one.<br/>
-// If you add the same contact for multiple roles. Only one ID will be created and use for all of them.
+// If you add the same contact for multiple roles. Only one ID will be created and used for all of them.
 //
 func (s *RegistrarAPI) UpdateDomain(req *RegistrarAPIUpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -3172,7 +3172,7 @@ type RegistrarAPILockDomainTransferRequest struct {
 
 // LockDomainTransfer: lock domain transfer
 //
-// Lock domain transfer, a lock domain transfer can't be transferred and the auth code can't be requested.
+// Lock domain transfer. A locked domain transfer can't be transferred and the auth code can't be requested.
 //
 func (s *RegistrarAPI) LockDomainTransfer(req *RegistrarAPILockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -3207,7 +3207,7 @@ type RegistrarAPIUnlockDomainTransferRequest struct {
 
 // UnlockDomainTransfer: unlock domain transfer
 //
-// Unlock domain transfer, an unlock domain transfer can be transferred and the auth code can be requested.
+// Unlock domain transfer. An unlocked domain can be transferred and the auth code can be requested for this.
 //
 func (s *RegistrarAPI) UnlockDomainTransfer(req *RegistrarAPIUnlockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -3306,8 +3306,8 @@ type RegistrarAPIGetDomainAuthCodeRequest struct {
 
 // GetDomainAuthCode: return domain auth code
 //
-// If possible, return the auth code for an unlock domain transfer, or an error if the domain is locked.
-// Some TLD may have a different procedure to retrieve the auth code, in that case, the informations is given in the message field.
+// If possible, return the auth code for an unlocked domain transfer, or an error if the domain is locked.
+// Some TLD may have a different procedure to retrieve the auth code, in that case, the information is given in the message field.
 //
 func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeRequest, opts ...scw.RequestOption) (*GetDomainAuthCodeResponse, error) {
 	var err error
@@ -3340,7 +3340,7 @@ type RegistrarAPIEnableDomainDNSSECRequest struct {
 // EnableDomainDNSSEC: update domain DNSSEC
 //
 // If your domain has the default Scaleway NS and uses another registrar, you have to update the DS record manually.
-// For the algorithm, here the code number for each type:
+// For the algorithm, here are the code numbers for each type:
 //   - 1: RSAMD5
 //   - 2: DIFFIE_HELLMAN
 //   - 3: DSA_SHA1
