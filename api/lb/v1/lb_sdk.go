@@ -927,6 +927,10 @@ type ACL struct {
 	Frontend *Frontend `json:"frontend"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
+	// CreatedAt: date at which the ACL was created
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: date at which the ACL was last updated
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // ACLAction: acl action
@@ -997,6 +1001,10 @@ type Backend struct {
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -1085,6 +1093,10 @@ type Certificate struct {
 	LB *LB `json:"lb"`
 	// Name: certificate name
 	Name string `json:"name"`
+	// CreatedAt: date at which the certificate was created
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: date at which the certificate was last updated
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // CreateCertificateRequestCustomCertificate: import a custom SSL certificate
@@ -1118,6 +1130,10 @@ type Frontend struct {
 	Certificate *Certificate `json:"certificate"`
 
 	CertificateIDs []string `json:"certificate_ids"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1280,6 +1296,10 @@ type Instance struct {
 
 	IPAddress string `json:"ip_address"`
 
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
 	Region scw.Region `json:"region"`
 }
 
@@ -1316,6 +1336,10 @@ type LB struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 
 	ProjectID string `json:"project_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	Region scw.Region `json:"region"`
 }
@@ -1431,6 +1455,10 @@ type PrivateNetwork struct {
 	//
 	// Default value: unknown
 	Status PrivateNetworkStatus `json:"status"`
+	// CreatedAt: date at which the PN was created
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: date at which the PN was last updated
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Route: route
@@ -1443,6 +1471,10 @@ type Route struct {
 	BackendID string `json:"backend_id"`
 	// Match: value to match a redirection
 	Match *RouteMatch `json:"match"`
+	// CreatedAt: date at which the route was created
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: date at which the route was last updated
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // RouteMatch: route. match
