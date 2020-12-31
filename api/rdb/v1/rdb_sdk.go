@@ -2648,7 +2648,7 @@ type CreateUserRequest struct {
 	IsAdmin bool `json:"is_admin"`
 }
 
-// CreateUser: create an user in a given instance
+// CreateUser: create a user on a given instance
 func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2697,7 +2697,7 @@ type UpdateUserRequest struct {
 	IsAdmin *bool `json:"is_admin"`
 }
 
-// UpdateUser: update an user in a given instance
+// UpdateUser: update a user on a given instance
 func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2746,7 +2746,7 @@ type DeleteUserRequest struct {
 	Name string `json:"-"`
 }
 
-// DeleteUser: delete an user in a given instance
+// DeleteUser: delete a user on a given instance
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2970,7 +2970,7 @@ type ListPrivilegesRequest struct {
 	UserName *string `json:"-"`
 }
 
-// ListPrivileges: list privileges of a given user in a given database in a given instance
+// ListPrivileges: list privileges of a given user for a given database on a given instance
 func (s *API) ListPrivileges(req *ListPrivilegesRequest, opts ...scw.RequestOption) (*ListPrivilegesResponse, error) {
 	var err error
 
@@ -3048,7 +3048,7 @@ type SetPrivilegeRequest struct {
 	Permission Permission `json:"permission"`
 }
 
-// SetPrivilege: set privileges of a given user in a given database in a given instance
+// SetPrivilege: set privileges of a given user for a given database on a given instance
 func (s *API) SetPrivilege(req *SetPrivilegeRequest, opts ...scw.RequestOption) (*Privilege, error) {
 	var err error
 
