@@ -1131,6 +1131,8 @@ type Frontend struct {
 
 	CertificateIDs []string `json:"certificate_ids"`
 
+	ACLs []*ACL `json:"acls"`
+
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -1455,7 +1457,7 @@ type PrivateNetwork struct {
 	//
 	// Default value: unknown
 	Status PrivateNetworkStatus `json:"status"`
-	// CreatedAt: date at which the PN was created
+	// CreatedAt: date at which the PN was added
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: date at which the PN was last updated
 	UpdatedAt *time.Time `json:"updated_at"`
