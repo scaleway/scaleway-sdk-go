@@ -462,7 +462,7 @@ func TestDuration_MarshallJSON(t *testing.T) {
 			want:     `"0.000000000s"`,
 		},
 		{
-			name:     "negative big seconds, big nanos",
+			name:     "null duration",
 			duration: nil,
 			want:     `null`,
 		},
