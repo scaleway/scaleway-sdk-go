@@ -412,54 +412,59 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 func TestDuration_MarshallJSON(t *testing.T) {
 	cases := []struct {
 		name     string
-		duration Duration
+		duration *Duration
 		want     string
 		err      error
 	}{
 		{
 			name:     "small seconds",
-			duration: Duration{Seconds: 3, Nanos: 0},
+			duration: &Duration{Seconds: 3, Nanos: 0},
 			want:     `"3.000000000s"`,
 		},
 		{
 			name:     "small seconds, small nanos",
-			duration: Duration{Seconds: 3, Nanos: 12e7},
+			duration: &Duration{Seconds: 3, Nanos: 12e7},
 			want:     `"3.120000000s"`,
 		},
 		{
 			name:     "small seconds, big nanos",
-			duration: Duration{Seconds: 3, Nanos: 123456789},
+			duration: &Duration{Seconds: 3, Nanos: 123456789},
 			want:     `"3.123456789s"`,
 		},
 		{
 			name:     "big seconds, big nanos",
-			duration: Duration{Seconds: 345679384, Nanos: 123456789},
+			duration: &Duration{Seconds: 345679384, Nanos: 123456789},
 			want:     `"345679384.123456789s"`,
 		},
 		{
 			name:     "negative small seconds",
-			duration: Duration{Seconds: -3, Nanos: 0},
+			duration: &Duration{Seconds: -3, Nanos: 0},
 			want:     `"-3.000000000s"`,
 		},
 		{
 			name:     "negative small seconds, small nanos",
-			duration: Duration{Seconds: -3, Nanos: -12e7},
+			duration: &Duration{Seconds: -3, Nanos: -12e7},
 			want:     `"-3.120000000s"`,
 		},
 		{
 			name:     "negative small seconds, big nanos",
-			duration: Duration{Seconds: -3, Nanos: -123456789},
+			duration: &Duration{Seconds: -3, Nanos: -123456789},
 			want:     `"-3.123456789s"`,
 		},
 		{
 			name:     "negative big seconds, big nanos",
-			duration: Duration{Seconds: -345679384, Nanos: -123456789},
+			duration: &Duration{Seconds: -345679384, Nanos: -123456789},
 			want:     `"-345679384.123456789s"`,
 		},
 		{
 			name:     "negative big seconds, big nanos",
-			duration: Duration{},
+			duration: &Duration{},
 			want:     `"0.000000000s"`,
+		},
+		{
+			name:     "negative big seconds, big nanos",
+			duration: nil,
+			want:     `null`,
 		},
 	}
 
