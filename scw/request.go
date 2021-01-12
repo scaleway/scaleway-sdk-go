@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
@@ -19,11 +20,14 @@ type ScalewayRequest struct {
 	Headers http.Header
 	Query   url.Values
 	Body    io.Reader
+	Zone    Zone
+	Region  Region
 
 	// request options
-	ctx      context.Context
-	auth     auth.Auth
-	allPages bool
+	ctx        context.Context
+	auth       auth.Auth
+	allPages   bool
+	multiZones []Zone
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
@@ -51,7 +55,23 @@ func (req *ScalewayRequest) getAllHeaders(token auth.Auth, userAgent string, ano
 
 // getURL constructs a URL based on the base url and the client.
 func (req *ScalewayRequest) getURL(baseURL string) (*url.URL, error) {
-	url, err := url.Parse(baseURL + req.Path)
+	inject := func(str string) string {
+		if req.Zone.String() != "" {
+			str = strings.Replace(str, "{zone}", req.Zone.String(), -1)
+			region, err := req.Zone.Region()
+			if err != nil {
+				panic(err)
+			}
+			str = strings.Replace(str, "{region}", region.String(), -1)
+		} else if req.Region.String() != "" {
+			str = strings.Replace(str, "{region}", req.Region.String(), -1)
+		} else {
+			str = strings.Replace(str, "{region}", RegionFrPar.String(), -1)
+		}
+		return str
+	}
+
+	url, err := url.Parse(inject(baseURL) + inject(req.Path))
 	if err != nil {
 		return nil, errors.New("invalid url %s: %s", baseURL+req.Path, err)
 	}

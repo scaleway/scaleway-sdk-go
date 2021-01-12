@@ -24,6 +24,14 @@ func WithAllPages() RequestOption {
 	}
 }
 
+// WithZones aggregate response from multiple zones
+// Will error when  multiple zone is not supported on the request.
+func WithZones(zones ...Zone) RequestOption {
+	return func(s *ScalewayRequest) {
+		s.multiZones = zones
+	}
+}
+
 // WithAuthRequest overwrites the client access key and secret key used in the request.
 func WithAuthRequest(accessKey, secretKey string) RequestOption {
 	return func(s *ScalewayRequest) {
