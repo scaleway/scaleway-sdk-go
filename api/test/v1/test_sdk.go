@@ -214,8 +214,6 @@ type Human struct {
 	Name string `json:"name"`
 
 	ProjectID string `json:"project_id"`
-
-	Region scw.Region `json:"region"`
 }
 
 type ListHumansResponse struct {
@@ -233,8 +231,6 @@ type RegisterResponse struct {
 // Service API
 
 type RegisterRequest struct {
-	Region scw.Region `json:"-"`
-
 	Username string `json:"username"`
 }
 
@@ -247,18 +243,9 @@ type RegisterRequest struct {
 func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*RegisterResponse, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/register",
+		Path:    "/test/v1/register",
 		Headers: http.Header{},
 	}
 
@@ -277,8 +264,6 @@ func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*Regist
 }
 
 type ListHumansRequest struct {
-	Region scw.Region `json:"-"`
-
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
@@ -296,11 +281,6 @@ type ListHumansRequest struct {
 func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*ListHumansResponse, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
 		req.PageSize = &defaultPageSize
@@ -313,13 +293,9 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
+		Path:    "/test/v1/humans",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -353,7 +329,6 @@ func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
 }
 
 type GetHumanRequest struct {
-	Region scw.Region `json:"-"`
 	// HumanID: UUID of the human you want to get
 	HumanID string `json:"-"`
 }
@@ -364,22 +339,13 @@ type GetHumanRequest struct {
 func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.HumanID) == "" {
 		return nil, errors.New("field HumanID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 
@@ -393,8 +359,6 @@ func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human,
 }
 
 type CreateHumanRequest struct {
-	Region scw.Region `json:"-"`
-
 	Height float64 `json:"height"`
 
 	ShoeSize float32 `json:"shoe_size"`
@@ -436,18 +400,9 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 		req.OrganizationID = &defaultOrganizationID
 	}
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans",
+		Path:    "/test/v1/humans",
 		Headers: http.Header{},
 	}
 
@@ -466,7 +421,6 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 }
 
 type UpdateHumanRequest struct {
-	Region scw.Region `json:"-"`
 	// HumanID: UUID of the human you want to update
 	HumanID string `json:"-"`
 
@@ -497,22 +451,13 @@ type UpdateHumanRequest struct {
 func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.HumanID) == "" {
 		return nil, errors.New("field HumanID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 
@@ -531,7 +476,6 @@ func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteHumanRequest struct {
-	Region scw.Region `json:"-"`
 	// HumanID: UUID of the human you want to delete
 	HumanID string `json:"-"`
 }
@@ -542,22 +486,13 @@ type DeleteHumanRequest struct {
 func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.HumanID) == "" {
 		return nil, errors.New("field HumanID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "",
+		Path:    "/test/v1/humans/" + fmt.Sprint(req.HumanID) + "",
 		Headers: http.Header{},
 	}
 
@@ -571,7 +506,6 @@ func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*
 }
 
 type RunHumanRequest struct {
-	Region scw.Region `json:"-"`
 	// HumanID: UUID of the human you want to make run
 	HumanID string `json:"-"`
 }
@@ -582,22 +516,13 @@ type RunHumanRequest struct {
 func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.HumanID) == "" {
 		return nil, errors.New("field HumanID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "/run",
+		Path:    "/test/v1/humans/" + fmt.Sprint(req.HumanID) + "/run",
 		Headers: http.Header{},
 	}
 
@@ -616,7 +541,6 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 }
 
 type SmokeHumanRequest struct {
-	Region scw.Region `json:"-"`
 	// Deprecated: HumanID: UUID of the human you want to make smoking
 	HumanID string `json:"-"`
 }
@@ -627,22 +551,13 @@ type SmokeHumanRequest struct {
 func (s *API) SmokeHuman(req *SmokeHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.HumanID) == "" {
 		return nil, errors.New("field HumanID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/test/v1/regions/" + fmt.Sprint(req.Region) + "/humans/" + fmt.Sprint(req.HumanID) + "/smoke",
+		Path:    "/test/v1/humans/" + fmt.Sprint(req.HumanID) + "/smoke",
 		Headers: http.Header{},
 	}
 
