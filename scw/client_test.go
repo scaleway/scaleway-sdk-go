@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	testAPIURL                = "https://api.example.com/"
+	testAPIURL                = "https://api.example.com"
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
