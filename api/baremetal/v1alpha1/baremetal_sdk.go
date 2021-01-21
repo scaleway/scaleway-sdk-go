@@ -741,10 +741,6 @@ type ListServerEventsResponse struct {
 	Event []*ServerEvent `json:"event"`
 }
 
-type ListServerUsersResponse struct {
-	Users []*ServerUser `json:"users"`
-}
-
 // ListServersResponse: list servers response
 type ListServersResponse struct {
 	// TotalCount: total count of matching servers
@@ -884,10 +880,6 @@ type ServerInstall struct {
 	//
 	// Default value: unknown
 	Status ServerInstallStatus `json:"status"`
-}
-
-type ServerUser struct {
-	Name string `json:"name"`
 }
 
 // Service API
@@ -1641,46 +1633,6 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	}
 
 	var resp IP
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListServerUsersRequest struct {
-	Zone scw.Zone `json:"-"`
-
-	ServerID string `json:"-"`
-}
-
-// ListServerUsers: list Users By Server
-//
-// Return list of User for the given ServerID.
-func (s *API) ListServerUsers(req *ListServerUsersRequest, opts ...scw.RequestOption) (*ListServerUsersResponse, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ServerID) == "" {
-		return nil, errors.New("field ServerID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/baremetal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/users",
-		Headers: http.Header{},
-	}
-
-	var resp ListServerUsersResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
