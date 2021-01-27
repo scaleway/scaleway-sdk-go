@@ -436,6 +436,8 @@ const (
 	NodeStatusRebooting = NodeStatus("rebooting")
 	// NodeStatusCreationError is [insert doc].
 	NodeStatusCreationError = NodeStatus("creation_error")
+	// NodeStatusUpgrading is [insert doc].
+	NodeStatusUpgrading = NodeStatus("upgrading")
 )
 
 func (enum NodeStatus) String() string {
@@ -770,6 +772,24 @@ type CreateClusterRequestPoolConfig struct {
 	Tags []string `json:"tags"`
 	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
 	KubeletArgs map[string]string `json:"kubelet_args"`
+	// UpgradePolicy: the Pool upgrade policy
+	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
+}
+
+// CreateClusterRequestPoolConfigUpgradePolicy: create cluster request. pool config. upgrade policy
+type CreateClusterRequestPoolConfigUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be not ready at the same time
+	MaxUnavailable *uint32 `json:"max_unavailable"`
+	// MaxSurge: the maximum number of nodes to be created during the upgrade
+	MaxSurge *uint32 `json:"max_surge"`
+}
+
+type CreatePoolRequestUpgradePolicy struct {
+	MaxUnavailable *uint32 `json:"max_unavailable"`
+
+	MaxSurge *uint32 `json:"max_surge"`
 }
 
 // ListClusterAvailableVersionsResponse: list cluster available versions response
@@ -894,8 +914,18 @@ type Pool struct {
 	PlacementGroupID *string `json:"placement_group_id"`
 	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
 	KubeletArgs map[string]string `json:"kubelet_args"`
+	// UpgradePolicy: the Pool upgrade policy
+	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
 	// Region: the cluster region of the pool
 	Region scw.Region `json:"region"`
+}
+
+type PoolUpgradePolicy struct {
+	MaxUnavailable uint32 `json:"max_unavailable"`
+
+	MaxSurge uint32 `json:"max_surge"`
 }
 
 // UpdateClusterRequestAutoUpgrade: update cluster request. auto upgrade
@@ -967,6 +997,12 @@ type UpdateClusterRequestOpenIDConnectConfig struct {
 	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
 	//
 	RequiredClaim *[]string `json:"required_claim"`
+}
+
+type UpdatePoolRequestUpgradePolicy struct {
+	MaxUnavailable *uint32 `json:"max_unavailable"`
+
+	MaxSurge *uint32 `json:"max_surge"`
 }
 
 // Version: version
@@ -1628,6 +1664,10 @@ type CreatePoolRequest struct {
 	Tags []string `json:"tags"`
 	// KubeletArgs: the Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
 	KubeletArgs map[string]string `json:"kubelet_args"`
+	// UpgradePolicy: the Pool upgrade policy
+	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
 }
 
 // CreatePool: create a new pool in a cluster
@@ -1639,6 +1679,11 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1774,6 +1819,8 @@ type UpdatePoolRequest struct {
 	Tags *[]string `json:"tags"`
 	// KubeletArgs: the new Kubelet arguments to be used by this pool. Note that this feature is to be considered as experimental
 	KubeletArgs *map[string]string `json:"kubelet_args"`
+	// UpgradePolicy: the Pool upgrade policy
+	UpgradePolicy *UpdatePoolRequestUpgradePolicy `json:"upgrade_policy"`
 }
 
 // UpdatePool: update a pool in a cluster
