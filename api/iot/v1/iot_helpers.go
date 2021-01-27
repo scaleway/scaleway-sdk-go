@@ -17,7 +17,6 @@ const (
 type WaitForHubRequest struct {
 	HubID         string
 	Region        scw.Region
-	Status        HubStatus
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
