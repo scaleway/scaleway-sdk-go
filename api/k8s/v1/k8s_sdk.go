@@ -774,6 +774,8 @@ type CreateClusterRequestPoolConfig struct {
 	KubeletArgs map[string]string `json:"kubelet_args"`
 	// UpgradePolicy: the Pool upgrade policy
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
 }
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request. pool config. upgrade policy
@@ -914,6 +916,8 @@ type Pool struct {
 	KubeletArgs map[string]string `json:"kubelet_args"`
 	// UpgradePolicy: the Pool upgrade policy
 	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
 	// Region: the cluster region of the pool
 	Region scw.Region `json:"region"`
 }
@@ -1662,6 +1666,8 @@ type CreatePoolRequest struct {
 	KubeletArgs map[string]string `json:"kubelet_args"`
 	// UpgradePolicy: the Pool upgrade policy
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy"`
+	// Zone: the Zone in which the Pool's node will be spawn in
+	Zone scw.Zone `json:"zone"`
 }
 
 // CreatePool: create a new pool in a cluster
@@ -1673,6 +1679,11 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
 
 	if fmt.Sprint(req.Region) == "" {
