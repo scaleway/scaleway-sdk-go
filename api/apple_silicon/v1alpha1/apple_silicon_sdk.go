@@ -41,17 +41,15 @@ var (
 
 // API: apple Mac mini M1 as a service
 //
-// Scaleway Apple silicon as a Service are Bare Metal Cloud Instances built using Apple Mac mini M1 hardware.
+// Scaleway Apple silicon M1 as-a-Service is built using the latest generation of Apple Mac mini hardware (fifth generation).
 //
-// These dedicated Mac mini M1s are designed for developing, building, testing, and signing applications for Apple devices, including iPhones, iPads, Mac computer and much more.
-//
-// Mac mini M1 uses an advanced neural engine for up to 15x faster machine learning.
+// These dedicated Mac mini M1s are designed for developing, building, testing, and signing applications for Apple devices, including iPhones, iPads, Mac computers and much more.
 //
 // Get set to explore, learn and build on a dedicated Mac mini M1 with more performance and speed than you ever thought possible.
 //
-// **Apple silicon as a Services comes with a minimum allocation period of 24 hours**.
+// **Apple silicon as a Service comes with a minimum allocation period of 24 hours**.
 //
-// Mac mini, macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions.
+// Mac mini and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions.
 // IOS is a trademark or registered trademark of Cisco in the U.S. and other countries and is used by Apple under license.
 // Scaleway is not affiliated with Apple Inc.
 //
