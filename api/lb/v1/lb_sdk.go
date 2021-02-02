@@ -1199,6 +1199,8 @@ type HealthCheck struct {
 	CheckTimeout *time.Duration `json:"check_timeout"`
 
 	CheckDelay *time.Duration `json:"check_delay"`
+	// CheckSendProxy: it defines whether the healthcheck should be done considering the proxy protocol
+	CheckSendProxy bool `json:"check_send_proxy"`
 }
 
 func (m *HealthCheck) UnmarshalJSON(b []byte) error {
@@ -2701,6 +2703,8 @@ type UpdateHealthCheckRequest struct {
 
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
+	// CheckSendProxy: it defines whether the healthcheck should be done considering the proxy protocol
+	CheckSendProxy bool `json:"check_send_proxy"`
 }
 
 func (m *UpdateHealthCheckRequest) UnmarshalJSON(b []byte) error {
@@ -4292,7 +4296,7 @@ func (s *API) DeleteSubscriber(req *DeleteSubscriberRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/subscription/" + fmt.Sprint(req.SubscriberID) + "",
+		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lb/subscriber/" + fmt.Sprint(req.SubscriberID) + "",
 		Headers: http.Header{},
 	}
 
