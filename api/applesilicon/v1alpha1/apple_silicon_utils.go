@@ -1,4 +1,4 @@
-package apple_silicon
+package applesilicon
 
 import (
 	"time"
