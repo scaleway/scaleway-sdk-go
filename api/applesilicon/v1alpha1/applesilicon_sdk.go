@@ -234,6 +234,8 @@ type Server struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// DeletableAt: the date at which the server was last deleted
 	DeletableAt *time.Time `json:"deletable_at"`
+	// Zone: the zone of the server
+	Zone scw.Zone `json:"zone"`
 }
 
 // ServerType: server type
