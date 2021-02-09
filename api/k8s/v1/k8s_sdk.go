@@ -743,6 +743,7 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 
 // CreateClusterRequestPoolConfig: create cluster request. pool config
 type CreateClusterRequestPoolConfig struct {
+	// Name: the name of the pool
 	Name string `json:"name"`
 	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
 	NodeType string `json:"node_type"`
