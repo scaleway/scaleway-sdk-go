@@ -111,12 +111,6 @@ const (
 	ServerStatusRebooting = ServerStatus("rebooting")
 	// ServerStatusUpdating is [insert doc].
 	ServerStatusUpdating = ServerStatus("updating")
-	// ServerStatusLocking is [insert doc].
-	ServerStatusLocking = ServerStatus("locking")
-	// ServerStatusLocked is [insert doc].
-	ServerStatusLocked = ServerStatus("locked")
-	// ServerStatusUnlocking is [insert doc].
-	ServerStatusUnlocking = ServerStatus("unlocking")
 )
 
 func (enum ServerStatus) String() string {
@@ -240,8 +234,6 @@ type Server struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// DeletableAt: the date at which the server was last deleted
 	DeletableAt *time.Time `json:"deletable_at"`
-	// Zone: the zone of the server
-	Zone scw.Zone `json:"zone"`
 }
 
 // ServerType: server type
@@ -413,10 +405,6 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("as")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
