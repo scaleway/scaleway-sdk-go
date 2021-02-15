@@ -597,6 +597,8 @@ type Cluster struct {
 	//
 	// This feature is in ALPHA state, it may be deleted or modified. This configuration is the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *ClusterOpenIDConnectConfig `json:"open_id_connect_config"`
+	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate
+	ApiserverCertSans []string `json:"apiserver_cert_sans"`
 }
 
 // ClusterAutoUpgrade: cluster. auto upgrade
@@ -743,6 +745,7 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 
 // CreateClusterRequestPoolConfig: create cluster request. pool config
 type CreateClusterRequestPoolConfig struct {
+	// Name: the name of the pool
 	Name string `json:"name"`
 	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
 	NodeType string `json:"node_type"`
@@ -1159,6 +1162,8 @@ type CreateClusterRequest struct {
 	//
 	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to set the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *CreateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
+	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate
+	ApiserverCertSans []string `json:"apiserver_cert_sans"`
 }
 
 // CreateCluster: create a new cluster
@@ -1280,6 +1285,8 @@ type UpdateClusterRequest struct {
 	//
 	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to update the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *UpdateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
+	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate
+	ApiserverCertSans *[]string `json:"apiserver_cert_sans"`
 }
 
 // UpdateCluster: update a cluster
