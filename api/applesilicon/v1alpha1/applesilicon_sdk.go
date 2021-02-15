@@ -117,6 +117,8 @@ const (
 	ServerStatusLocked = ServerStatus("locked")
 	// ServerStatusUnlocking is [insert doc].
 	ServerStatusUnlocking = ServerStatus("unlocking")
+	// ServerStatusReinstalling is [insert doc].
+	ServerStatusReinstalling = ServerStatus("reinstalling")
 )
 
 func (enum ServerStatus) String() string {
