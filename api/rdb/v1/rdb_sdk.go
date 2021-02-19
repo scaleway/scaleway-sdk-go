@@ -202,6 +202,8 @@ const (
 	EngineSettingPropertyTypeINT = EngineSettingPropertyType("INT")
 	// EngineSettingPropertyTypeSTRING is [insert doc].
 	EngineSettingPropertyTypeSTRING = EngineSettingPropertyType("STRING")
+	// EngineSettingPropertyTypeFLOAT is [insert doc].
+	EngineSettingPropertyTypeFLOAT = EngineSettingPropertyType("FLOAT")
 )
 
 func (enum EngineSettingPropertyType) String() string {
@@ -789,6 +791,10 @@ type EngineSetting struct {
 	IntMin *int32 `json:"int_min"`
 	// IntMax: maximum value for int types
 	IntMax *int32 `json:"int_max"`
+	// FloatMin: minimum value for float types
+	FloatMin *float32 `json:"float_min"`
+	// FloatMax: maximum value for float types
+	FloatMax *float32 `json:"float_max"`
 }
 
 // EngineVersion: engine version
