@@ -685,10 +685,6 @@ type Hub struct {
 	//
 	// When an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your hub. The hub uses the common name of the device certifcate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
 	EnableDeviceAutoProvisioning bool `json:"enable_device_auto_provisioning"`
-	// HasCustomCa: whether the hub is using a custom certificate authority
-	//
-	// After creating a hub, this flag is set to False as the hub certificates are managed by Scaleway. Once a custom certificate authority is installed, this flag will be set to true.
-	HasCustomCa bool `json:"has_custom_ca"`
 }
 
 // ListDevicesResponse: list devices response
