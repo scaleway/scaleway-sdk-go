@@ -577,6 +577,10 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("ns")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
