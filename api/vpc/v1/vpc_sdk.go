@@ -178,25 +178,6 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListPrivateNetworksResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListPrivateNetworksResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.PrivateNetworks = append(r.PrivateNetworks, results.PrivateNetworks...)
-	r.TotalCount += uint32(len(results.PrivateNetworks))
-	return uint32(len(results.PrivateNetworks)), nil
-}
-
 type CreatePrivateNetworkRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name: the name of the private network
@@ -368,4 +349,23 @@ func (s *API) DeletePrivateNetwork(req *DeletePrivateNetworkRequest, opts ...scw
 		return err
 	}
 	return nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPrivateNetworksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListPrivateNetworksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.PrivateNetworks = append(r.PrivateNetworks, results.PrivateNetworks...)
+	r.TotalCount += uint32(len(results.PrivateNetworks))
+	return uint32(len(results.PrivateNetworks)), nil
 }

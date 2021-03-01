@@ -483,25 +483,6 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNamespacesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNamespacesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNamespacesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Namespaces = append(r.Namespaces, results.Namespaces...)
-	r.TotalCount += uint32(len(results.Namespaces))
-	return uint32(len(results.Namespaces)), nil
-}
-
 type GetNamespaceRequest struct {
 	Region scw.Region `json:"-"`
 	// NamespaceID: the unique ID of the Namespace
@@ -575,10 +556,6 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("ns")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -755,25 +732,6 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListImagesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListImagesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Images = append(r.Images, results.Images...)
-	r.TotalCount += uint32(len(results.Images))
-	return uint32(len(results.Images)), nil
 }
 
 type GetImageRequest struct {
@@ -965,25 +923,6 @@ func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTa
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTagsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTagsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Tags = append(r.Tags, results.Tags...)
-	r.TotalCount += uint32(len(results.Tags))
-	return uint32(len(results.Tags)), nil
-}
-
 type GetTagRequest struct {
 	Region scw.Region `json:"-"`
 	// TagID: the unique ID of the Tag
@@ -1068,4 +1007,61 @@ func (s *API) DeleteTag(req *DeleteTagRequest, opts ...scw.RequestOption) (*Tag,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNamespacesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNamespacesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNamespacesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Namespaces = append(r.Namespaces, results.Namespaces...)
+	r.TotalCount += uint32(len(results.Namespaces))
+	return uint32(len(results.Namespaces)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListImagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Images = append(r.Images, results.Images...)
+	r.TotalCount += uint32(len(results.Images))
+	return uint32(len(results.Images)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTagsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tags = append(r.Tags, results.Tags...)
+	r.TotalCount += uint32(len(results.Tags))
+	return uint32(len(results.Tags)), nil
 }

@@ -1099,25 +1099,6 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListClustersResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Clusters = append(r.Clusters, results.Clusters...)
-	r.TotalCount += uint32(len(results.Clusters))
-	return uint32(len(results.Clusters)), nil
-}
-
 type CreateClusterRequest struct {
 	Region scw.Region `json:"-"`
 	// Deprecated: OrganizationID: the organization ID where the cluster will be created
@@ -1185,10 +1166,6 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("k8s")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1622,25 +1599,6 @@ func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListPoolsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListPoolsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Pools = append(r.Pools, results.Pools...)
-	r.TotalCount += uint32(len(results.Pools))
-	return uint32(len(results.Pools)), nil
-}
-
 type CreatePoolRequest struct {
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster in which the pool will be created
@@ -1695,10 +1653,6 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("pool")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1987,25 +1941,6 @@ func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNodesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNodesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Nodes = append(r.Nodes, results.Nodes...)
-	r.TotalCount += uint32(len(results.Nodes))
-	return uint32(len(results.Nodes)), nil
-}
-
 type GetNodeRequest struct {
 	Region scw.Region `json:"-"`
 	// NodeID: the ID of the requested node
@@ -2208,4 +2143,61 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListClustersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Clusters = append(r.Clusters, results.Clusters...)
+	r.TotalCount += uint32(len(results.Clusters))
+	return uint32(len(results.Clusters)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListPoolsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pools = append(r.Pools, results.Pools...)
+	r.TotalCount += uint32(len(results.Pools))
+	return uint32(len(results.Pools)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNodesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNodesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Nodes = append(r.Nodes, results.Nodes...)
+	r.TotalCount += uint32(len(results.Nodes))
+	return uint32(len(results.Nodes)), nil
 }

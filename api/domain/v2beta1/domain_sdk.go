@@ -1600,25 +1600,6 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDNSZonesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDNSZonesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDNSZonesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.DNSZones = append(r.DNSZones, results.DNSZones...)
-	r.TotalCount += uint32(len(results.DNSZones))
-	return uint32(len(results.DNSZones)), nil
-}
-
 type CreateDNSZoneRequest struct {
 	Domain string `json:"domain"`
 
@@ -1840,25 +1821,6 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDNSZoneRecordsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDNSZoneRecordsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDNSZoneRecordsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Records = append(r.Records, results.Records...)
-	r.TotalCount += uint32(len(results.Records))
-	return uint32(len(results.Records)), nil
 }
 
 type UpdateDNSZoneRecordsRequest struct {
@@ -2402,25 +2364,6 @@ func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListSSLCertificatesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListSSLCertificatesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListSSLCertificatesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Certificates = append(r.Certificates, results.Certificates...)
-	r.TotalCount += uint32(len(results.Certificates))
-	return uint32(len(results.Certificates)), nil
-}
-
 type DeleteSSLCertificateRequest struct {
 	DNSZone string `json:"-"`
 }
@@ -2550,25 +2493,6 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTasksResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTasksResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTasksResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Tasks = append(r.Tasks, results.Tasks...)
-	r.TotalCount += uint32(len(results.Tasks))
-	return uint32(len(results.Tasks)), nil
 }
 
 type RegistrarAPIBuyDomainRequest struct {
@@ -2887,25 +2811,6 @@ func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts .
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListContactsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListContactsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListContactsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Contacts = append(r.Contacts, results.Contacts...)
-	r.TotalCount += uint32(len(results.Contacts))
-	return uint32(len(results.Contacts)), nil
-}
-
 type RegistrarAPIGetContactRequest struct {
 	ContactID string `json:"-"`
 }
@@ -3062,25 +2967,6 @@ func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDomainsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Domains = append(r.Domains, results.Domains...)
-	r.TotalCount += uint32(len(results.Domains))
-	return uint32(len(results.Domains)), nil
 }
 
 type RegistrarAPIGetDomainRequest struct {
@@ -3416,4 +3302,118 @@ func (s *RegistrarAPI) DisableDomainDNSSEC(req *RegistrarAPIDisableDomainDNSSECR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDNSZonesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDNSZonesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDNSZonesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.DNSZones = append(r.DNSZones, results.DNSZones...)
+	r.TotalCount += uint32(len(results.DNSZones))
+	return uint32(len(results.DNSZones)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDNSZoneRecordsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDNSZoneRecordsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDNSZoneRecordsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Records = append(r.Records, results.Records...)
+	r.TotalCount += uint32(len(results.Records))
+	return uint32(len(results.Records)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSSLCertificatesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSSLCertificatesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSSLCertificatesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Certificates = append(r.Certificates, results.Certificates...)
+	r.TotalCount += uint32(len(results.Certificates))
+	return uint32(len(results.Certificates)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTasksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTasksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTasksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tasks = append(r.Tasks, results.Tasks...)
+	r.TotalCount += uint32(len(results.Tasks))
+	return uint32(len(results.Tasks)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListContactsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListContactsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListContactsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Contacts = append(r.Contacts, results.Contacts...)
+	r.TotalCount += uint32(len(results.Contacts))
+	return uint32(len(results.Contacts)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Domains = append(r.Domains, results.Domains...)
+	r.TotalCount += uint32(len(results.Domains))
+	return uint32(len(results.Domains)), nil
 }
