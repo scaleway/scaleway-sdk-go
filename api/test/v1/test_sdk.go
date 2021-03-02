@@ -309,25 +309,6 @@ func (s *API) ListHumans(req *ListHumansRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListHumansResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListHumansResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Humans = append(r.Humans, results.Humans...)
-	r.TotalCount += uint32(len(results.Humans))
-	return uint32(len(results.Humans)), nil
-}
-
 type GetHumanRequest struct {
 	// HumanID: UUID of the human you want to get
 	HumanID string `json:"-"`
@@ -573,4 +554,23 @@ func (s *API) SmokeHuman(req *SmokeHumanRequest, opts ...scw.RequestOption) (*Hu
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListHumansResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListHumansResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Humans = append(r.Humans, results.Humans...)
+	r.TotalCount += uint32(len(results.Humans))
+	return uint32(len(results.Humans)), nil
 }

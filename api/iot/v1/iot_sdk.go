@@ -685,6 +685,10 @@ type Hub struct {
 	//
 	// When an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your hub. The hub uses the common name of the device certifcate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
 	EnableDeviceAutoProvisioning bool `json:"enable_device_auto_provisioning"`
+	// HasCustomCa: whether the hub is using a custom certificate authority
+	//
+	// After creating a hub, this flag is set to False as the hub certificates are managed by Scaleway. Once a custom certificate authority is installed, this flag will be set to true.
+	HasCustomCa bool `json:"has_custom_ca"`
 }
 
 // ListDevicesResponse: list devices response
@@ -927,25 +931,6 @@ func (s *API) ListHubs(req *ListHubsRequest, opts ...scw.RequestOption) (*ListHu
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListHubsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListHubsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListHubsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Hubs = append(r.Hubs, results.Hubs...)
-	r.TotalCount += uint32(len(results.Hubs))
-	return uint32(len(results.Hubs)), nil
 }
 
 type CreateHubRequest struct {
@@ -1387,25 +1372,6 @@ func (s *API) ListDevices(req *ListDevicesRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDevicesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDevicesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDevicesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Devices = append(r.Devices, results.Devices...)
-	r.TotalCount += uint32(len(results.Devices))
-	return uint32(len(results.Devices)), nil
-}
-
 type CreateDeviceRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: device name
@@ -1818,25 +1784,6 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListRoutesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListRoutesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListRoutesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Routes = append(r.Routes, results.Routes...)
-	r.TotalCount += uint32(len(results.Routes))
-	return uint32(len(results.Routes)), nil
-}
-
 type CreateRouteRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: route name
@@ -2035,25 +1982,6 @@ func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNetworksResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNetworksResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Networks = append(r.Networks, results.Networks...)
-	r.TotalCount += uint32(len(results.Networks))
-	return uint32(len(results.Networks)), nil
-}
-
 type CreateNetworkRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: network name
@@ -2177,4 +2105,80 @@ func (s *API) DeleteNetwork(req *DeleteNetworkRequest, opts ...scw.RequestOption
 		return err
 	}
 	return nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListHubsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListHubsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListHubsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Hubs = append(r.Hubs, results.Hubs...)
+	r.TotalCount += uint32(len(results.Hubs))
+	return uint32(len(results.Hubs)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDevicesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDevicesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDevicesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Devices = append(r.Devices, results.Devices...)
+	r.TotalCount += uint32(len(results.Devices))
+	return uint32(len(results.Devices)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListRoutesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Routes = append(r.Routes, results.Routes...)
+	r.TotalCount += uint32(len(results.Routes))
+	return uint32(len(results.Routes)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNetworksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNetworksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Networks = append(r.Networks, results.Networks...)
+	r.TotalCount += uint32(len(results.Networks))
+	return uint32(len(results.Networks)), nil
 }

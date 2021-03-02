@@ -179,25 +179,6 @@ func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListSSHKeysResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListSSHKeysResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.SSHKeys = append(r.SSHKeys, results.SSHKeys...)
-	r.TotalCount += uint32(len(results.SSHKeys))
-	return uint32(len(results.SSHKeys)), nil
-}
-
 type CreateSSHKeyRequest struct {
 	// Name: the name of the SSH key
 	Name string `json:"name"`
@@ -330,4 +311,23 @@ func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) 
 		return err
 	}
 	return nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSSHKeysResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSSHKeysResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.SSHKeys = append(r.SSHKeys, results.SSHKeys...)
+	r.TotalCount += uint32(len(results.SSHKeys))
+	return uint32(len(results.SSHKeys)), nil
 }

@@ -674,25 +674,6 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListServersResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListServersResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Servers = append(r.Servers, results.Servers...)
-	r.TotalCount += uint32(len(results.Servers))
-	return uint32(len(results.Servers)), nil
-}
-
 type GetServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
@@ -1182,25 +1163,6 @@ func (s *API) ListServerEvents(req *ListServerEventsRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListServerEventsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListServerEventsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListServerEventsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Events = append(r.Events, results.Events...)
-	r.TotalCount += uint32(len(results.Events))
-	return uint32(len(results.Events)), nil
-}
-
 type StartBMCAccessRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
@@ -1429,25 +1391,6 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListOffersResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListOffersResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListOffersResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Offers = append(r.Offers, results.Offers...)
-	r.TotalCount += uint32(len(results.Offers))
-	return uint32(len(results.Offers)), nil
-}
-
 type GetOfferRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OfferID: ID of the researched Offer
@@ -1539,25 +1482,6 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListOSResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListOSResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListOSResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Os = append(r.Os, results.Os...)
-	r.TotalCount += uint32(len(results.Os))
-	return uint32(len(results.Os)), nil
-}
-
 type GetOSRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OsID: ID of the OS
@@ -1596,4 +1520,80 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListServersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Servers = append(r.Servers, results.Servers...)
+	r.TotalCount += uint32(len(results.Servers))
+	return uint32(len(results.Servers)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServerEventsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServerEventsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListServerEventsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Events = append(r.Events, results.Events...)
+	r.TotalCount += uint32(len(results.Events))
+	return uint32(len(results.Events)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOffersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOffersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListOffersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Offers = append(r.Offers, results.Offers...)
+	r.TotalCount += uint32(len(results.Offers))
+	return uint32(len(results.Offers)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOSResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOSResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListOSResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Os = append(r.Os, results.Os...)
+	r.TotalCount += uint32(len(results.Os))
+	return uint32(len(results.Os)), nil
 }
