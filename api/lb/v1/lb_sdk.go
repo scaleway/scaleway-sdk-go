@@ -1315,8 +1315,10 @@ type Instance struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// Deprecated
 	Region scw.Region `json:"region"`
+
+	Zone scw.Zone `json:"zone"`
 }
 
 // LB: lb
