@@ -492,6 +492,11 @@ type DHCP struct {
 	DNSServersOverride []string `json:"dns_servers_override"`
 	// DNSSearch: add search paths to the pushed DNS configuration
 	DNSSearch []string `json:"dns_search"`
+	// DNSLocalName: tLD given to hostnames in the Private Networks
+	//
+	// TLD given to hostnames in the Private Network. If an instance with hostname `foo` gets a lease, and this is set to `bar`, `foo.bar` will resolve.
+	//
+	DNSLocalName string `json:"dns_local_name"`
 	// Zone: zone this configuration is available in
 	Zone scw.Zone `json:"zone"`
 }
@@ -1333,6 +1338,11 @@ type CreateDHCPRequest struct {
 	DNSServersOverride *[]string `json:"dns_servers_override"`
 	// DNSSearch: additional DNS search paths
 	DNSSearch *[]string `json:"dns_search"`
+	// DNSLocalName: tLD given to hosts in the Private Network
+	//
+	// TLD given to hostnames in the Private Network. Allowed characters are `a-z0-9-.`. Defaults to the slugified Private Network name if created along a GatewayNetwork, or else to `priv`.
+	//
+	DNSLocalName *string `json:"dns_local_name"`
 }
 
 // CreateDHCP: create a DHCP configuration
@@ -1412,6 +1422,10 @@ type UpdateDHCPRequest struct {
 	DNSServersOverride *[]string `json:"dns_servers_override"`
 	// DNSSearch: additional DNS search paths
 	DNSSearch *[]string `json:"dns_search"`
+	// DNSLocalName: tLD given to hosts in the Private Network
+	//
+	// TLD given to hostnames in the Private Network. Allowed characters are `a-z0-9-.`.
+	DNSLocalName *string `json:"dns_local_name"`
 }
 
 // UpdateDHCP: update a DHCP configuration
