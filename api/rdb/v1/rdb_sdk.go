@@ -1514,14 +1514,19 @@ type UpgradeInstanceRequest struct {
 	// InstanceID: UUID of the instance you want to upgrade
 	InstanceID string `json:"-"`
 	// NodeType: node type of the instance you want to upgrade to
-	// Precisely one of EnableHa, NodeType, VolumeSize must be set.
+	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
 	NodeType *string `json:"node_type,omitempty"`
 	// EnableHa: set to true to enable high availability on your instance
-	// Precisely one of EnableHa, NodeType, VolumeSize must be set.
+	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 	// VolumeSize: increase your block storage volume size
-	// Precisely one of EnableHa, NodeType, VolumeSize must be set.
+	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
+	// VolumeType: change your instance storage type
+	//
+	// Default value: lssd
+	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
+	VolumeType *VolumeType `json:"volume_type,omitempty"`
 }
 
 // UpgradeInstance: upgrade an instance to an higher instance type
