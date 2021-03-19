@@ -492,6 +492,11 @@ type DHCP struct {
 	DNSServersOverride []string `json:"dns_servers_override"`
 	// DNSSearch: add search paths to the pushed DNS configuration
 	DNSSearch []string `json:"dns_search"`
+	// DNSLocalName: tLD given to hostnames in the Private Networks
+	//
+	// TLD given to hostnames in the Private Network. If an instance with hostname `foo` gets a lease, and this is set to `bar`, `foo.bar` will resolve.
+	//
+	DNSLocalName string `json:"dns_local_name"`
 	// Zone: zone this configuration is available in
 	Zone scw.Zone `json:"zone"`
 }
@@ -941,6 +946,49 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	return nil
 }
 
+type UpgradeGatewayRequest struct {
+	Zone scw.Zone `json:"-"`
+	// GatewayID: ID of the gateway to upgrade
+	GatewayID string `json:"-"`
+}
+
+// UpgradeGateway: upgrade a VPC Public Gateway to the latest version
+func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return nil, errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/upgrade",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Gateway
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type ListGatewayNetworksRequest struct {
 	Zone scw.Zone `json:"-"`
 	// OrderBy: order in which to return results
@@ -1333,6 +1381,11 @@ type CreateDHCPRequest struct {
 	DNSServersOverride *[]string `json:"dns_servers_override"`
 	// DNSSearch: additional DNS search paths
 	DNSSearch *[]string `json:"dns_search"`
+	// DNSLocalName: tLD given to hosts in the Private Network
+	//
+	// TLD given to hostnames in the Private Network. Allowed characters are `a-z0-9-.`. Defaults to the slugified Private Network name if created along a GatewayNetwork, or else to `priv`.
+	//
+	DNSLocalName *string `json:"dns_local_name"`
 }
 
 // CreateDHCP: create a DHCP configuration
@@ -1412,6 +1465,10 @@ type UpdateDHCPRequest struct {
 	DNSServersOverride *[]string `json:"dns_servers_override"`
 	// DNSSearch: additional DNS search paths
 	DNSSearch *[]string `json:"dns_search"`
+	// DNSLocalName: tLD given to hosts in the Private Network
+	//
+	// TLD given to hostnames in the Private Network. Allowed characters are `a-z0-9-.`.
+	DNSLocalName *string `json:"dns_local_name"`
 }
 
 // UpdateDHCP: update a DHCP configuration
