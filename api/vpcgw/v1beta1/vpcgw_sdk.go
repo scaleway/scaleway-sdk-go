@@ -553,6 +553,10 @@ type Gateway struct {
 	GatewayNetworks []*GatewayNetwork `json:"gateway_networks"`
 	// UpstreamDNSServers: override the gateway's default recursive DNS servers
 	UpstreamDNSServers []string `json:"upstream_dns_servers"`
+	// Version: version of the running gateway software
+	Version *string `json:"version"`
+	// CanUpgradeTo: newly available gateway software version that can be updated to
+	CanUpgradeTo *string `json:"can_upgrade_to"`
 	// Zone: zone the gateway is available in
 	Zone scw.Zone `json:"zone"`
 }
