@@ -553,6 +553,10 @@ type Gateway struct {
 	GatewayNetworks []*GatewayNetwork `json:"gateway_networks"`
 	// UpstreamDNSServers: override the gateway's default recursive DNS servers
 	UpstreamDNSServers []string `json:"upstream_dns_servers"`
+	// Version: version of the running gateway software
+	Version *string `json:"version"`
+	// CanUpgradeTo: newly available gateway software version that can be updated to
+	CanUpgradeTo *string `json:"can_upgrade_to"`
 	// Zone: zone the gateway is available in
 	Zone scw.Zone `json:"zone"`
 }
@@ -691,6 +695,46 @@ type PATRule struct {
 	Protocol PATRuleProtocol `json:"protocol"`
 	// Zone: zone this rule is available in
 	Zone scw.Zone `json:"zone"`
+}
+
+// SetDHCPEntriesRequestEntry: set dhcp entries request. entry
+type SetDHCPEntriesRequestEntry struct {
+	// MacAddress: mAC address to give a static entry to
+	//
+	// MAC address to give a static entry to. A matching entry will be upgraded to a reservation, and a matching reservation will be updated.
+	//
+	MacAddress string `json:"mac_address"`
+	// IPAddress: IP address to give to the machine
+	IPAddress net.IP `json:"ip_address"`
+}
+
+// SetDHCPEntriesResponse: set dhcp entries response
+type SetDHCPEntriesResponse struct {
+	// DhcpEntries: list of DHCP entries
+	DhcpEntries []*DHCPEntry `json:"dhcp_entries"`
+}
+
+// SetPATRulesRequestRule: set pat rules request. rule
+type SetPATRulesRequestRule struct {
+	// PublicPort: public port to listen on
+	//
+	// Public port to listen on. Uniquely identifies the rule, and a matching rule will be updated with the new parameters.
+	//
+	PublicPort uint32 `json:"public_port"`
+	// PrivateIP: private IP to forward data to
+	PrivateIP net.IP `json:"private_ip"`
+	// PrivatePort: private port to translate to
+	PrivatePort uint32 `json:"private_port"`
+	// Protocol: protocol the rule should apply to
+	//
+	// Default value: unknown
+	Protocol PATRuleProtocol `json:"protocol"`
+}
+
+// SetPATRulesResponse: set pat rules response
+type SetPATRulesResponse struct {
+	// PatRules: list of PAT rules
+	PatRules []*PATRule `json:"pat_rules"`
 }
 
 // Service API
@@ -1738,6 +1782,50 @@ func (s *API) UpdateDHCPEntry(req *UpdateDHCPEntryRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
+type SetDHCPEntriesRequest struct {
+	Zone scw.Zone `json:"-"`
+	// GatewayNetworkID: gateway Network on which to set DHCP reservation list
+	GatewayNetworkID string `json:"gateway_network_id"`
+	// DhcpEntries: new list of DHCP reservations
+	DhcpEntries []*SetDHCPEntriesRequestEntry `json:"dhcp_entries"`
+}
+
+// SetDHCPEntries: set all DHCP reservations on a Gateway Network
+//
+// Set the list of DHCP reservations attached to a Gateway Network. Reservations are identified by their MAC address, and will sync the current DHCP entry list to the given list, creating, updating or deleting DHCP entries.
+//
+func (s *API) SetDHCPEntries(req *SetDHCPEntriesRequest, opts ...scw.RequestOption) (*SetDHCPEntriesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetDHCPEntriesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type DeleteDHCPEntryRequest struct {
 	Zone scw.Zone `json:"-"`
 	// DhcpEntryID: dHCP entry ID to delete
@@ -1968,6 +2056,50 @@ func (s *API) UpdatePATRule(req *UpdatePATRuleRequest, opts ...scw.RequestOption
 	}
 
 	var resp PATRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetPATRulesRequest struct {
+	Zone scw.Zone `json:"-"`
+	// GatewayID: gateway on which to set the PAT rules
+	GatewayID string `json:"gateway_id"`
+	// PatRules: new list of PAT rules
+	PatRules []*SetPATRulesRequestRule `json:"pat_rules"`
+}
+
+// SetPATRules: set all PAT rules on a Gateway
+//
+// Set the list of PAT rules attached to a Gateway. Rules are identified by their public port and protocol. This will sync the current PAT rule list with the givent list, creating, updating or deleting PAT rules.
+//
+func (s *API) SetPATRules(req *SetPATRulesRequest, opts ...scw.RequestOption) (*SetPATRulesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/pat-rules",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetPATRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
