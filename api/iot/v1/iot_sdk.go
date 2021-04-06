@@ -637,6 +637,10 @@ type GetDeviceMetricsResponse struct {
 	Metrics []*scw.TimeSeries `json:"metrics"`
 }
 
+type GetHubCAResponse struct {
+	CaCertPem string `json:"ca_cert_pem"`
+}
+
 // GetHubMetricsResponse: get hub metrics response
 type GetHubMetricsResponse struct {
 	// Metrics: metrics for a hub over the requested period
@@ -1299,6 +1303,44 @@ func (s *API) SetHubCA(req *SetHubCARequest, opts ...scw.RequestOption) (*Hub, e
 	}
 
 	var resp Hub
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetHubCARequest struct {
+	Region scw.Region `json:"-"`
+
+	HubID string `json:"-"`
+}
+
+// GetHubCA: get the certificate authority of a hub
+func (s *API) GetHubCA(req *GetHubCARequest, opts ...scw.RequestOption) (*GetHubCAResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HubID) == "" {
+		return nil, errors.New("field HubID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/hubs/" + fmt.Sprint(req.HubID) + "/ca",
+		Headers: http.Header{},
+	}
+
+	var resp GetHubCAResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
