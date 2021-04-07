@@ -1180,6 +1180,8 @@ type DomainSummary struct {
 
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 // GetDNSZoneTsigKeyResponse: get dns zone tsig key response
