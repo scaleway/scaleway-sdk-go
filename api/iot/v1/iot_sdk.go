@@ -782,6 +782,8 @@ type Route struct {
 	// RestConfig: when using Rest Route, Rest-specific configuration fields
 	// Precisely one of DbConfig, RestConfig, S3Config must be set.
 	RestConfig *RouteRestConfig `json:"rest_config,omitempty"`
+	// UpdatedAt: route last update date
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // RouteDatabaseConfig: route. database config
@@ -842,6 +844,45 @@ type RouteSummary struct {
 	Type RouteRouteType `json:"type"`
 	// CreatedAt: route creation date
 	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: route last update date
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+type UpdateRouteRequestDatabaseConfig struct {
+	Host *string `json:"host"`
+
+	Port *uint32 `json:"port"`
+
+	Dbname *string `json:"dbname"`
+
+	Username *string `json:"username"`
+
+	Password *string `json:"password"`
+
+	Query *string `json:"query"`
+}
+
+type UpdateRouteRequestRestConfig struct {
+	// Verb:
+	//
+	// Default value: unknown
+	Verb RouteRestConfigHTTPVerb `json:"verb"`
+
+	URI *string `json:"uri"`
+
+	Headers *map[string]string `json:"headers"`
+}
+
+type UpdateRouteRequestS3Config struct {
+	BucketRegion *string `json:"bucket_region"`
+
+	BucketName *string `json:"bucket_name"`
+
+	ObjectPrefix *string `json:"object_prefix"`
+	// Strategy:
+	//
+	// Default value: unknown
+	Strategy RouteS3ConfigS3Strategy `json:"strategy"`
 }
 
 // Service API
@@ -1873,6 +1914,62 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/routes",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateRouteRequest struct {
+	Region scw.Region `json:"-"`
+	// RouteID: route id
+	RouteID string `json:"-"`
+	// Name: route name
+	Name *string `json:"name"`
+	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters
+	Topic *string `json:"topic"`
+	// S3Config: when updating S3 Route, S3-specific configuration fields
+	// Precisely one of DbConfig, RestConfig, S3Config must be set.
+	S3Config *UpdateRouteRequestS3Config `json:"s3_config,omitempty"`
+	// DbConfig: when updating Database Route, DB-specific configuration fields
+	// Precisely one of DbConfig, RestConfig, S3Config must be set.
+	DbConfig *UpdateRouteRequestDatabaseConfig `json:"db_config,omitempty"`
+	// RestConfig: when updating Rest Route, Rest-specific configuration fields
+	// Precisely one of DbConfig, RestConfig, S3Config must be set.
+	RestConfig *UpdateRouteRequestRestConfig `json:"rest_config,omitempty"`
+}
+
+// UpdateRoute: update a route
+func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return nil, errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
 		Headers: http.Header{},
 	}
 
