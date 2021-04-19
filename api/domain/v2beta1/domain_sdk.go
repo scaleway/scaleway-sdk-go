@@ -1180,6 +1180,8 @@ type DomainSummary struct {
 
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 // GetDNSZoneTsigKeyResponse: get dns zone tsig key response
@@ -1224,13 +1226,15 @@ type ListContactsResponse struct {
 
 // ListDNSZoneNameserversResponse: list dns zone nameservers response
 type ListDNSZoneNameserversResponse struct {
+	// Ns: the returned DNS zone nameservers
 	Ns []*Nameserver `json:"ns"`
 }
 
 // ListDNSZoneRecordsResponse: list dns zone records response
 type ListDNSZoneRecordsResponse struct {
+	// TotalCount: the total number of DNS zone records
 	TotalCount uint32 `json:"total_count"`
-
+	// Records: the paginated returned DNS zone records
 	Records []*Record `json:"records"`
 }
 
@@ -1246,8 +1250,9 @@ type ListDNSZoneVersionsResponse struct {
 
 // ListDNSZonesResponse: list dns zones response
 type ListDNSZonesResponse struct {
+	// TotalCount: the total number of DNS zones
 	TotalCount uint32 `json:"total_count"`
-
+	// DNSZones: the paginated returned DNS zones
 	DNSZones []*DNSZone `json:"dns_zones"`
 }
 
@@ -1465,6 +1470,7 @@ type RecordWeightedConfigWeightedIP struct {
 
 // RefreshDNSZoneResponse: refresh dns zone response
 type RefreshDNSZoneResponse struct {
+	// DNSZones: the returned DNS zones
 	DNSZones []*DNSZone `json:"dns_zones"`
 }
 
@@ -1534,32 +1540,35 @@ type UpdateContactRequestQuestion struct {
 
 // UpdateDNSZoneNameserversResponse: update dns zone nameservers response
 type UpdateDNSZoneNameserversResponse struct {
+	// Ns: the returned DNS zone nameservers
 	Ns []*Nameserver `json:"ns"`
 }
 
 // UpdateDNSZoneRecordsResponse: update dns zone records response
 type UpdateDNSZoneRecordsResponse struct {
+	// Records: the returned DNS zone records
 	Records []*Record `json:"records"`
 }
 
 // Service API
 
 type ListDNSZonesRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// OrderBy:
+	// OrganizationID: the organization ID on which to filter the returned DNS zones
+	OrganizationID *string `json:"-"`
+	// ProjectID: the project ID on which to filter the returned DNS zones
+	ProjectID *string `json:"-"`
+	// OrderBy: the sort order of the returned DNS zones
 	//
 	// Default value: domain_asc
 	OrderBy ListDNSZonesRequestOrderBy `json:"-"`
-
+	// Page: the page number for the returned DNS zones
+	Page *int32 `json:"-"`
+	// PageSize: the maximum number of DNS zones per page
+	PageSize *uint32 `json:"-"`
+	// Domain: the domain on which to filter the returned DNS zones
 	Domain string `json:"-"`
-
+	// DNSZone: the DNS zone on which to filter the returned DNS zones
 	DNSZone string `json:"-"`
-
-	ProjectID *string `json:"-"`
-
-	OrganizationID *string `json:"-"`
 }
 
 // ListDNSZones: list DNS zones
@@ -1576,13 +1585,13 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1601,10 +1610,11 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 }
 
 type CreateDNSZoneRequest struct {
+	// Domain: the domain of the DNS zone to create
 	Domain string `json:"domain"`
-
+	// Subdomain: the subdomain of the DNS zone to create
 	Subdomain string `json:"subdomain"`
-
+	// ProjectID: the project ID where the DNS zone will be created
 	ProjectID string `json:"project_id"`
 }
 
@@ -1640,10 +1650,11 @@ func (s *API) CreateDNSZone(req *CreateDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type UpdateDNSZoneRequest struct {
+	// DNSZone: the DNS zone to update
 	DNSZone string `json:"-"`
-
+	// NewDNSZone: the new DNS zone
 	NewDNSZone *string `json:"new_dns_zone"`
-
+	// ProjectID: the project ID of the new DNS zone
 	ProjectID string `json:"project_id"`
 }
 
@@ -1683,12 +1694,13 @@ func (s *API) UpdateDNSZone(req *UpdateDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type CloneDNSZoneRequest struct {
+	// DNSZone: the DNS zone to clone
 	DNSZone string `json:"-"`
-
+	// DestDNSZone: the destinaton DNS zone
 	DestDNSZone string `json:"dest_dns_zone"`
-
+	// Overwrite: whether or not the destination DNS zone will be overwritten
 	Overwrite bool `json:"overwrite"`
-
+	// ProjectID: the project ID of the destination DNS zone
 	ProjectID *string `json:"project_id"`
 }
 
@@ -1723,8 +1735,9 @@ func (s *API) CloneDNSZone(req *CloneDNSZoneRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteDNSZoneRequest struct {
+	// DNSZone: the DNS zone to delete
 	DNSZone string `json:"-"`
-
+	// ProjectID: the project ID of the DNS zone to delete
 	ProjectID string `json:"-"`
 }
 
@@ -1763,23 +1776,24 @@ func (s *API) DeleteDNSZone(req *DeleteDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type ListDNSZoneRecordsRequest struct {
+	// DNSZone: the DNS zone on which to filter the returned DNS zone records
 	DNSZone string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// OrderBy:
+	// ProjectID: the project ID on which to filter the returned DNS zone records
+	ProjectID *string `json:"-"`
+	// OrderBy: the sort order of the returned DNS zone records
 	//
 	// Default value: name_asc
 	OrderBy ListDNSZoneRecordsRequestOrderBy `json:"-"`
-
+	// Page: the page number for the returned DNS zone records
+	Page *int32 `json:"-"`
+	// PageSize: the maximum number of DNS zone records per page
+	PageSize *uint32 `json:"-"`
+	// Name: the name on which to filter the returned DNS zone records
 	Name string `json:"-"`
-	// Type:
+	// Type: the record type on which to filter the returned DNS zone records
 	//
 	// Default value: unknown
 	Type RecordType `json:"-"`
-
-	ProjectID *string `json:"-"`
 }
 
 // ListDNSZoneRecords: list DNS zone records
@@ -1796,12 +1810,12 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "type", req.Type)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
@@ -1824,10 +1838,11 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 }
 
 type UpdateDNSZoneRecordsRequest struct {
+	// DNSZone: the DNS zone where the DNS zone records will be updated
 	DNSZone string `json:"-"`
-
+	// Changes: the changes made to the records
 	Changes []*RecordChange `json:"changes"`
-
+	// ReturnAllRecords: whether or not to return all the records
 	ReturnAllRecords *bool `json:"return_all_records"`
 }
 
@@ -1879,8 +1894,9 @@ func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw
 }
 
 type ListDNSZoneNameserversRequest struct {
+	// DNSZone: the DNS zone on which to filter the returned DNS zone nameservers
 	DNSZone string `json:"-"`
-
+	// ProjectID: the project ID on which to filter the returned DNS zone nameservers
 	ProjectID *string `json:"-"`
 }
 
@@ -1914,8 +1930,9 @@ func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ..
 }
 
 type UpdateDNSZoneNameserversRequest struct {
+	// DNSZone: the DNS zone where the DNS zone nameservers will be updated
 	DNSZone string `json:"-"`
-
+	// Ns: the new DNS zone nameservers
 	Ns []*Nameserver `json:"ns"`
 }
 
@@ -1950,6 +1967,7 @@ func (s *API) UpdateDNSZoneNameservers(req *UpdateDNSZoneNameserversRequest, opt
 }
 
 type ClearDNSZoneRecordsRequest struct {
+	// DNSZone: the DNS zone to clear
 	DNSZone string `json:"-"`
 }
 
@@ -2103,10 +2121,11 @@ func (s *API) ImportProviderDNSZone(req *ImportProviderDNSZoneRequest, opts ...s
 }
 
 type RefreshDNSZoneRequest struct {
+	// DNSZone: the DNS zone to refresh
 	DNSZone string `json:"-"`
-
+	// RecreateDNSZone: whether or not to recreate the DNS zone
 	RecreateDNSZone bool `json:"recreate_dns_zone"`
-
+	// RecreateSubDNSZone: whether or not to recreate the sub DNS zone
 	RecreateSubDNSZone bool `json:"recreate_sub_dns_zone"`
 }
 
