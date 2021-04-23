@@ -581,10 +581,10 @@ type GatewayNetwork struct {
 	//
 	// Default value: unknown
 	Status GatewayNetworkStatus `json:"status"`
-	// Dhcp: dHCP configuration for the connected private network
-	Dhcp *DHCP `json:"dhcp"`
-	// EnableDhcp: whether DHCP is enabled on the connected Private Network
-	EnableDhcp bool `json:"enable_dhcp"`
+	// DHCP: DHCP configuration for the connected private network
+	DHCP *DHCP `json:"dhcp"`
+	// EnableDHCP: whether DHCP is enabled on the connected Private Network
+	EnableDHCP bool `json:"enable_dhcp"`
 	// Zone: zone the connection lives in
 	Zone scw.Zone `json:"zone"`
 }
@@ -621,8 +621,8 @@ type IP struct {
 
 // ListDHCPEntriesResponse: list dhcp entries response
 type ListDHCPEntriesResponse struct {
-	// DhcpEntries: dHCP entries in this page
-	DhcpEntries []*DHCPEntry `json:"dhcp_entries"`
+	// DHCPEntries: DHCP entries in this page
+	DHCPEntries []*DHCPEntry `json:"dhcp_entries"`
 	// TotalCount: total DHCP entries matching the filter
 	TotalCount uint32 `json:"total_count"`
 }
@@ -710,8 +710,8 @@ type SetDHCPEntriesRequestEntry struct {
 
 // SetDHCPEntriesResponse: set dhcp entries response
 type SetDHCPEntriesResponse struct {
-	// DhcpEntries: list of DHCP entries
-	DhcpEntries []*DHCPEntry `json:"dhcp_entries"`
+	// DHCPEntries: list of DHCP entries
+	DHCPEntries []*DHCPEntry `json:"dhcp_entries"`
 }
 
 // SetPATRulesRequestRule: set pat rules request. rule
@@ -1049,8 +1049,8 @@ type ListGatewayNetworksRequest struct {
 	PrivateNetworkID *string `json:"-"`
 	// EnableMasquerade: filter by masquerade enablement
 	EnableMasquerade *bool `json:"-"`
-	// DhcpID: filter by DHCP configuration
-	DhcpID *string `json:"-"`
+	// DHCPID: filter by DHCP configuration
+	DHCPID *string `json:"-"`
 	// Status: filter GatewayNetworks by this status (unknown for any)
 	//
 	// Default value: unknown
@@ -1078,7 +1078,7 @@ func (s *API) ListGatewayNetworks(req *ListGatewayNetworksRequest, opts ...scw.R
 	parameter.AddToQuery(query, "gateway_id", req.GatewayID)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "enable_masquerade", req.EnableMasquerade)
-	parameter.AddToQuery(query, "dhcp_id", req.DhcpID)
+	parameter.AddToQuery(query, "dhcp_id", req.DHCPID)
 	parameter.AddToQuery(query, "status", req.Status)
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -1147,17 +1147,17 @@ type CreateGatewayNetworkRequest struct {
 	PrivateNetworkID string `json:"private_network_id"`
 	// EnableMasquerade: whether to enable masquerade on this network
 	EnableMasquerade bool `json:"enable_masquerade"`
-	// DhcpID: existing configuration
-	// Precisely one of Dhcp, DhcpID must be set.
-	DhcpID *string `json:"dhcp_id,omitempty"`
-	// Dhcp: new DHCP configuration
-	// Precisely one of Dhcp, DhcpID must be set.
-	Dhcp *CreateDHCPRequest `json:"dhcp,omitempty"`
-	// EnableDhcp: whether to enable DHCP on this Private Network
+	// DHCPID: existing configuration
+	// Precisely one of DHCP, DHCPID must be set.
+	DHCPID *string `json:"dhcp_id,omitempty"`
+	// DHCP: new DHCP configuration
+	// Precisely one of DHCP, DHCPID must be set.
+	DHCP *CreateDHCPRequest `json:"dhcp,omitempty"`
+	// EnableDHCP: whether to enable DHCP on this Private Network
 	//
 	// Whether to enable DHCP on this Private Network. Defaults to `true` if either `dhcp_id` or `dhcp` short: are present. If set to `true`, requires that either `dhcp_id` or `dhcp` to be present.
 	//
-	EnableDhcp *bool `json:"enable_dhcp"`
+	EnableDHCP *bool `json:"enable_dhcp"`
 }
 
 // CreateGatewayNetwork: attach a gateway to a Private Network
@@ -1199,10 +1199,10 @@ type UpdateGatewayNetworkRequest struct {
 	GatewayNetworkID string `json:"-"`
 	// EnableMasquerade: new masquerade enablement
 	EnableMasquerade *bool `json:"enable_masquerade"`
-	// DhcpID: new DHCP configuration
-	DhcpID *string `json:"dhcp_id"`
-	// EnableDhcp: whether to enable DHCP on the connected Private Network
-	EnableDhcp *bool `json:"enable_dhcp"`
+	// DHCPID: new DHCP configuration
+	DHCPID *string `json:"dhcp_id"`
+	// EnableDHCP: whether to enable DHCP on the connected Private Network
+	EnableDHCP *bool `json:"enable_dhcp"`
 }
 
 // UpdateGatewayNetwork: update a gateway connection to a Private Network
@@ -1286,7 +1286,7 @@ type ListDHCPsRequest struct {
 	OrderBy ListDHCPsRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: dHCP configurations per page
+	// PageSize: DHCP configurations per page
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: include only DHCPs in this organization
 	OrganizationID *string `json:"-"`
@@ -1343,8 +1343,8 @@ func (s *API) ListDHCPs(req *ListDHCPsRequest, opts ...scw.RequestOption) (*List
 
 type GetDHCPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpID: ID of the DHCP config to fetch
-	DhcpID string `json:"-"`
+	// DHCPID: ID of the DHCP config to fetch
+	DHCPID string `json:"-"`
 }
 
 // GetDHCP: get a DHCP configuration
@@ -1360,13 +1360,13 @@ func (s *API) GetDHCP(req *GetDHCPRequest, opts ...scw.RequestOption) (*DHCP, er
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpID) == "" {
-		return nil, errors.New("field DhcpID cannot be empty in request")
+	if fmt.Sprint(req.DHCPID) == "" {
+		return nil, errors.New("field DHCPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DhcpID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DHCPID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1472,8 +1472,8 @@ func (s *API) CreateDHCP(req *CreateDHCPRequest, opts ...scw.RequestOption) (*DH
 
 type UpdateDHCPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpID: dHCP config to update
-	DhcpID string `json:"-"`
+	// DHCPID: DHCP config to update
+	DHCPID string `json:"-"`
 	// Subnet: subnet for the DHCP server
 	Subnet *scw.IPNet `json:"subnet"`
 	// Address: address of the DHCP server. This will be the gateway's address in the private network
@@ -1528,13 +1528,13 @@ func (s *API) UpdateDHCP(req *UpdateDHCPRequest, opts ...scw.RequestOption) (*DH
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpID) == "" {
-		return nil, errors.New("field DhcpID cannot be empty in request")
+	if fmt.Sprint(req.DHCPID) == "" {
+		return nil, errors.New("field DHCPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DhcpID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DHCPID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1554,8 +1554,8 @@ func (s *API) UpdateDHCP(req *UpdateDHCPRequest, opts ...scw.RequestOption) (*DH
 
 type DeleteDHCPRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpID: dHCP config id to delete
-	DhcpID string `json:"-"`
+	// DHCPID: DHCP config id to delete
+	DHCPID string `json:"-"`
 }
 
 // DeleteDHCP: delete a DHCP configuration
@@ -1571,13 +1571,13 @@ func (s *API) DeleteDHCP(req *DeleteDHCPRequest, opts ...scw.RequestOption) erro
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpID) == "" {
-		return errors.New("field DhcpID cannot be empty in request")
+	if fmt.Sprint(req.DHCPID) == "" {
+		return errors.New("field DHCPID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DhcpID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcps/" + fmt.Sprint(req.DHCPID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1596,7 +1596,7 @@ type ListDHCPEntriesRequest struct {
 	OrderBy ListDHCPEntriesRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: dHCP entries per page
+	// PageSize: DHCP entries per page
 	PageSize *uint32 `json:"-"`
 	// GatewayNetworkID: filter entries based on the gateway network they are on
 	GatewayNetworkID *string `json:"-"`
@@ -1658,8 +1658,8 @@ func (s *API) ListDHCPEntries(req *ListDHCPEntriesRequest, opts ...scw.RequestOp
 
 type GetDHCPEntryRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpEntryID: ID of the DHCP entry to fetch
-	DhcpEntryID string `json:"-"`
+	// DHCPEntryID: ID of the DHCP entry to fetch
+	DHCPEntryID string `json:"-"`
 }
 
 // GetDHCPEntry: get DHCP entries
@@ -1675,13 +1675,13 @@ func (s *API) GetDHCPEntry(req *GetDHCPEntryRequest, opts ...scw.RequestOption) 
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpEntryID) == "" {
-		return nil, errors.New("field DhcpEntryID cannot be empty in request")
+	if fmt.Sprint(req.DHCPEntryID) == "" {
+		return nil, errors.New("field DHCPEntryID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DhcpEntryID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DHCPEntryID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1739,8 +1739,8 @@ func (s *API) CreateDHCPEntry(req *CreateDHCPEntryRequest, opts ...scw.RequestOp
 
 type UpdateDHCPEntryRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpEntryID: dHCP entry ID to update
-	DhcpEntryID string `json:"-"`
+	// DHCPEntryID: DHCP entry ID to update
+	DHCPEntryID string `json:"-"`
 	// IPAddress: new IP address to give to the machine
 	IPAddress *net.IP `json:"ip_address"`
 }
@@ -1758,13 +1758,13 @@ func (s *API) UpdateDHCPEntry(req *UpdateDHCPEntryRequest, opts ...scw.RequestOp
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpEntryID) == "" {
-		return nil, errors.New("field DhcpEntryID cannot be empty in request")
+	if fmt.Sprint(req.DHCPEntryID) == "" {
+		return nil, errors.New("field DHCPEntryID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DhcpEntryID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DHCPEntryID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1786,8 +1786,8 @@ type SetDHCPEntriesRequest struct {
 	Zone scw.Zone `json:"-"`
 	// GatewayNetworkID: gateway Network on which to set DHCP reservation list
 	GatewayNetworkID string `json:"gateway_network_id"`
-	// DhcpEntries: new list of DHCP reservations
-	DhcpEntries []*SetDHCPEntriesRequestEntry `json:"dhcp_entries"`
+	// DHCPEntries: new list of DHCP reservations
+	DHCPEntries []*SetDHCPEntriesRequestEntry `json:"dhcp_entries"`
 }
 
 // SetDHCPEntries: set all DHCP reservations on a Gateway Network
@@ -1828,8 +1828,8 @@ func (s *API) SetDHCPEntries(req *SetDHCPEntriesRequest, opts ...scw.RequestOpti
 
 type DeleteDHCPEntryRequest struct {
 	Zone scw.Zone `json:"-"`
-	// DhcpEntryID: dHCP entry ID to delete
-	DhcpEntryID string `json:"-"`
+	// DHCPEntryID: DHCP entry ID to delete
+	DHCPEntryID string `json:"-"`
 }
 
 // DeleteDHCPEntry: delete a DHCP reservation
@@ -1845,13 +1845,13 @@ func (s *API) DeleteDHCPEntry(req *DeleteDHCPEntryRequest, opts ...scw.RequestOp
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.DhcpEntryID) == "" {
-		return errors.New("field DhcpEntryID cannot be empty in request")
+	if fmt.Sprint(req.DHCPEntryID) == "" {
+		return errors.New("field DHCPEntryID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DhcpEntryID) + "",
+		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/dhcp-entries/" + fmt.Sprint(req.DHCPEntryID) + "",
 		Headers: http.Header{},
 	}
 
@@ -2482,9 +2482,9 @@ func (r *ListDHCPEntriesResponse) UnsafeAppend(res interface{}) (uint32, error) 
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.DhcpEntries = append(r.DhcpEntries, results.DhcpEntries...)
-	r.TotalCount += uint32(len(results.DhcpEntries))
-	return uint32(len(results.DhcpEntries)), nil
+	r.DHCPEntries = append(r.DHCPEntries, results.DHCPEntries...)
+	r.TotalCount += uint32(len(results.DHCPEntries))
+	return uint32(len(results.DHCPEntries)), nil
 }
 
 // UnsafeGetTotalCount should not be used
