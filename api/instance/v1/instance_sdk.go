@@ -215,6 +215,40 @@ func (enum *PlacementGroupPolicyType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PrivateNICState string
+
+const (
+	// PrivateNICStateAvailable is [insert doc].
+	PrivateNICStateAvailable = PrivateNICState("available")
+	// PrivateNICStateSyncing is [insert doc].
+	PrivateNICStateSyncing = PrivateNICState("syncing")
+	// PrivateNICStateSyncingError is [insert doc].
+	PrivateNICStateSyncingError = PrivateNICState("syncing_error")
+)
+
+func (enum PrivateNICState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
+func (enum PrivateNICState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PrivateNICState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PrivateNICState(PrivateNICState(tmp).String())
+	return nil
+}
+
 type SecurityGroupPolicy string
 
 const (
@@ -344,6 +378,40 @@ func (enum *SecurityGroupRuleProtocol) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = SecurityGroupRuleProtocol(SecurityGroupRuleProtocol(tmp).String())
+	return nil
+}
+
+type SecurityGroupState string
+
+const (
+	// SecurityGroupStateAvailable is [insert doc].
+	SecurityGroupStateAvailable = SecurityGroupState("available")
+	// SecurityGroupStateSyncing is [insert doc].
+	SecurityGroupStateSyncing = SecurityGroupState("syncing")
+	// SecurityGroupStateSyncingError is [insert doc].
+	SecurityGroupStateSyncingError = SecurityGroupState("syncing_error")
+)
+
+func (enum SecurityGroupState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
+func (enum SecurityGroupState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SecurityGroupState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SecurityGroupState(SecurityGroupState(tmp).String())
 	return nil
 }
 
@@ -542,6 +610,14 @@ const (
 	VolumeStateSnapshotting = VolumeState("snapshotting")
 	// VolumeStateError is [insert doc].
 	VolumeStateError = VolumeState("error")
+	// VolumeStateFetching is [insert doc].
+	VolumeStateFetching = VolumeState("fetching")
+	// VolumeStateResizing is [insert doc].
+	VolumeStateResizing = VolumeState("resizing")
+	// VolumeStateSaving is [insert doc].
+	VolumeStateSaving = VolumeState("saving")
+	// VolumeStateHotsyncing is [insert doc].
+	VolumeStateHotsyncing = VolumeState("hotsyncing")
 )
 
 func (enum VolumeState) String() string {
@@ -930,6 +1006,10 @@ type PrivateNIC struct {
 	PrivateNetworkID string `json:"private_network_id,omitempty"`
 	// MacAddress: the private NIC MAC address
 	MacAddress string `json:"mac_address,omitempty"`
+	// State: the private NIC state
+	//
+	// Default value: available
+	State PrivateNICState `json:"state,omitempty"`
 }
 
 // SecurityGroup: security group
@@ -966,6 +1046,10 @@ type SecurityGroup struct {
 	Servers []*ServerSummary `json:"servers"`
 	// Stateful: true if the security group is stateful
 	Stateful bool `json:"stateful"`
+	// State: security group state
+	//
+	// Default value: available
+	State SecurityGroupState `json:"state"`
 	// Zone: the zone in which is the security group
 	Zone scw.Zone `json:"zone"`
 }
