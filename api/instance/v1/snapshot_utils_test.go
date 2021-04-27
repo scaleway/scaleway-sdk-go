@@ -5,6 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestWaitForSnapshot(t *testing.T) {
@@ -63,4 +64,54 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 		})
 		testhelpers.AssertNoError(t, err)
 	}
+}
+
+func TestAPI_UpdateSnapshot(t *testing.T) {
+	client, r, err := httprecorder.CreateRecordedScwClient("snapshot-test")
+	testhelpers.AssertNoError(t, err)
+	defer func() {
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
+
+	instanceAPI := NewAPI(client)
+
+	var (
+		zone       = scw.ZoneFrPar1
+		volumeSize = 1 * scw.GB
+	)
+
+	createVolume, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
+		Name:       "volume_name",
+		VolumeType: VolumeVolumeTypeBSSD,
+		Zone:       zone,
+		Size:       &volumeSize,
+	})
+	testhelpers.AssertNoError(t, err)
+
+	createResponse, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
+		Zone:     zone,
+		Name:     "name",
+		VolumeID: createVolume.Volume.ID,
+	})
+	testhelpers.AssertNoError(t, err)
+
+	updateResponse, err := instanceAPI.UpdateSnapshot(&UpdateSnapshotRequest{
+		SnapshotID: createResponse.Snapshot.ID,
+		Zone:       zone,
+		Name:       scw.StringPtr("new_name"),
+	})
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "new_name", updateResponse.Snapshot.Name)
+
+	_, err = instanceAPI.WaitForSnapshot(&WaitForSnapshotRequest{
+		SnapshotID: createResponse.Snapshot.ID,
+		Zone:       zone,
+	})
+	testhelpers.AssertNoError(t, err)
+
+	err = instanceAPI.DeleteSnapshot(&DeleteSnapshotRequest{
+		Zone:       zone,
+		SnapshotID: createResponse.Snapshot.ID,
+	})
+	testhelpers.AssertNoError(t, err)
 }
