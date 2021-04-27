@@ -1907,6 +1907,10 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("route")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
