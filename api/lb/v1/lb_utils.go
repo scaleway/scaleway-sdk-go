@@ -28,7 +28,7 @@ func (s *API) WaitForLb(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, 
 		return s.GetLB(&GetLBRequest{
 			Region: req.Region,
 			LBID:   req.LBID,
-		})
+		}, opts...)
 	})
 }
 
@@ -47,7 +47,7 @@ func (s *ZonedAPI) WaitForLb(req *ZonedAPIWaitForLBRequest, opts ...scw.RequestO
 		return s.GetLB(&ZonedAPIGetLBRequest{
 			Zone: req.Zone,
 			LBID: req.LBID,
-		})
+		}, opts...)
 	})
 }
 
