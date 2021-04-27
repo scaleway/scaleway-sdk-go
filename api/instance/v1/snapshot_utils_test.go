@@ -103,6 +103,12 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, "new_name", updateResponse.Snapshot.Name)
 
+	_, err = instanceAPI.WaitForSnapshot(&WaitForSnapshotRequest{
+		SnapshotID: createResponse.Snapshot.ID,
+		Zone:       zone,
+	})
+	testhelpers.AssertNoError(t, err)
+
 	err = instanceAPI.DeleteSnapshot(&DeleteSnapshotRequest{
 		Zone:       zone,
 		SnapshotID: createResponse.Snapshot.ID,

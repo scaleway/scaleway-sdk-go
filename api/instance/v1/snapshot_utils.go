@@ -90,7 +90,8 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 
-	setRequest := &SetSnapshotRequest{
+	setRequest := &setSnapshotRequest{
+		SnapshotID:       getSnapshotResponse.Snapshot.ID,
 		Zone:             getSnapshotResponse.Snapshot.Zone,
 		ID:               getSnapshotResponse.Snapshot.ID,
 		Name:             getSnapshotResponse.Snapshot.Name,
