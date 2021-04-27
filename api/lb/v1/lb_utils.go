@@ -24,13 +24,41 @@ type WaitForLBRequest struct {
 // WaitForLb waits for the lb to be in a "terminal state" before returning.
 // This function can be used to wait for a lb to be ready for example.
 func (s *API) WaitForLb(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, error) {
-	timeout := defaultTimeout
-	if req.Timeout != nil {
-		timeout = *req.Timeout
+	return waitForLb(req.Timeout, req.RetryInterval, func() (*LB, error) {
+		return s.GetLB(&GetLBRequest{
+			Region: req.Region,
+			LBID:   req.LBID,
+		}, opts...)
+	})
+}
+
+// ZonedAPIWaitForLBRequest is used by WaitForLb method.
+type ZonedAPIWaitForLBRequest struct {
+	LBID          string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLb waits for the lb to be in a "terminal state" before returning.
+// This function can be used to wait for a lb to be ready for example.
+func (s *ZonedAPI) WaitForLb(req *ZonedAPIWaitForLBRequest, opts ...scw.RequestOption) (*LB, error) {
+	return waitForLb(req.Timeout, req.RetryInterval, func() (*LB, error) {
+		return s.GetLB(&ZonedAPIGetLBRequest{
+			Zone: req.Zone,
+			LBID: req.LBID,
+		}, opts...)
+	})
+}
+
+func waitForLb(timeout *time.Duration, retryInterval *time.Duration, getLB func() (*LB, error)) (*LB, error) {
+	t := defaultTimeout
+	if timeout != nil {
+		t = *timeout
 	}
-	retryInterval := defaultRetryInterval
-	if req.RetryInterval != nil {
-		retryInterval = *req.RetryInterval
+	r := defaultRetryInterval
+	if retryInterval != nil {
+		r = *retryInterval
 	}
 
 	terminalStatus := map[LBStatus]struct{}{
@@ -42,10 +70,7 @@ func (s *API) WaitForLb(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, 
 
 	lb, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
-			res, err := s.GetLB(&GetLBRequest{
-				LBID:   req.LBID,
-				Region: req.Region,
-			}, opts...)
+			res, err := getLB()
 
 			if err != nil {
 				return nil, false, err
@@ -54,8 +79,8 @@ func (s *API) WaitForLb(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, 
 
 			return res, isTerminal, nil
 		},
-		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          t,
+		IntervalStrategy: async.LinearIntervalStrategy(r),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for lb failed")
