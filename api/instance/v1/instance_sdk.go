@@ -2661,10 +2661,12 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type SetSnapshotRequest struct {
+type setSnapshotRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	ID string `json:"-"`
+	SnapshotID string `json:"-"`
+
+	ID string `json:"id"`
 
 	Name string `json:"name"`
 
@@ -2692,7 +2694,7 @@ type SetSnapshotRequest struct {
 // setSnapshot: update snapshot
 //
 // Replace all snapshot properties with a snapshot message.
-func (s *API) setSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
+func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
 	var err error
 
 	if req.Project == "" {
@@ -2714,13 +2716,13 @@ func (s *API) setSnapshot(req *SetSnapshotRequest, opts ...scw.RequestOption) (*
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.ID) + "",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
 		Headers: http.Header{},
 	}
 
