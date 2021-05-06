@@ -415,6 +415,40 @@ func (enum *NetworkNetworkType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RouteDatabaseConfigEngine string
+
+const (
+	// RouteDatabaseConfigEngineUnknown is [insert doc].
+	RouteDatabaseConfigEngineUnknown = RouteDatabaseConfigEngine("unknown")
+	// RouteDatabaseConfigEnginePostgresql is [insert doc].
+	RouteDatabaseConfigEnginePostgresql = RouteDatabaseConfigEngine("postgresql")
+	// RouteDatabaseConfigEngineMysql is [insert doc].
+	RouteDatabaseConfigEngineMysql = RouteDatabaseConfigEngine("mysql")
+)
+
+func (enum RouteDatabaseConfigEngine) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum RouteDatabaseConfigEngine) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RouteDatabaseConfigEngine) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RouteDatabaseConfigEngine(RouteDatabaseConfigEngine(tmp).String())
+	return nil
+}
+
 type RouteRestConfigHTTPVerb string
 
 const (
@@ -559,6 +593,10 @@ type CreateRouteRequestDatabaseConfig struct {
 	Password string `json:"password"`
 
 	Query string `json:"query"`
+	// Engine:
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type CreateRouteRequestRestConfig struct {
@@ -788,6 +826,10 @@ type Route struct {
 
 // RouteDatabaseConfig: route. database config
 type RouteDatabaseConfig struct {
+	// Engine: database engine the route will connect to. If not specified, will default to 'PostgreSQL'
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 	// Host: database host
 	Host string `json:"host"`
 	// Port: database port
@@ -860,6 +902,10 @@ type UpdateRouteRequestDatabaseConfig struct {
 	Password *string `json:"password"`
 
 	Query *string `json:"query"`
+	// Engine:
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type UpdateRouteRequestRestConfig struct {
