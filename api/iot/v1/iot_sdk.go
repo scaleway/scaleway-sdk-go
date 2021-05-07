@@ -415,6 +415,40 @@ func (enum *NetworkNetworkType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RouteDatabaseConfigEngine string
+
+const (
+	// RouteDatabaseConfigEngineUnknown is [insert doc].
+	RouteDatabaseConfigEngineUnknown = RouteDatabaseConfigEngine("unknown")
+	// RouteDatabaseConfigEnginePostgresql is [insert doc].
+	RouteDatabaseConfigEnginePostgresql = RouteDatabaseConfigEngine("postgresql")
+	// RouteDatabaseConfigEngineMysql is [insert doc].
+	RouteDatabaseConfigEngineMysql = RouteDatabaseConfigEngine("mysql")
+)
+
+func (enum RouteDatabaseConfigEngine) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum RouteDatabaseConfigEngine) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RouteDatabaseConfigEngine) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RouteDatabaseConfigEngine(RouteDatabaseConfigEngine(tmp).String())
+	return nil
+}
+
 type RouteRestConfigHTTPVerb string
 
 const (
@@ -559,6 +593,10 @@ type CreateRouteRequestDatabaseConfig struct {
 	Password string `json:"password"`
 
 	Query string `json:"query"`
+	// Engine:
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type CreateRouteRequestRestConfig struct {
@@ -608,6 +646,10 @@ type Device struct {
 	AllowMultipleConnections bool `json:"allow_multiple_connections"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
+	// HasCustomCertificate: whether the device was assigned a custom certificate
+	//
+	// Assigning a custom certificate allows a device to authenticate using that specific certificate without checking the hub's CA certificate.
+	HasCustomCertificate bool `json:"has_custom_certificate"`
 	// CreatedAt: device add date
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: device last modification date
@@ -629,6 +671,14 @@ type DeviceMessageFiltersRule struct {
 	Policy DeviceMessageFiltersRulePolicy `json:"policy"`
 
 	Topics *[]string `json:"topics"`
+}
+
+// GetDeviceCertificateResponse: get device certificate response
+type GetDeviceCertificateResponse struct {
+	// Device: created device information
+	Device *Device `json:"device"`
+	// CertificatePem: device certificate
+	CertificatePem string `json:"certificate_pem"`
 }
 
 // GetDeviceMetricsResponse: get device metrics response
@@ -788,6 +838,10 @@ type Route struct {
 
 // RouteDatabaseConfig: route. database config
 type RouteDatabaseConfig struct {
+	// Engine: database engine the route will connect to. If not specified, will default to 'PostgreSQL'
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 	// Host: database host
 	Host string `json:"host"`
 	// Port: database port
@@ -848,6 +902,12 @@ type RouteSummary struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+type SetDeviceCertificateResponse struct {
+	Device *Device `json:"device"`
+
+	CertificatePem string `json:"certificate_pem"`
+}
+
 type UpdateRouteRequestDatabaseConfig struct {
 	Host *string `json:"host"`
 
@@ -860,6 +920,10 @@ type UpdateRouteRequestDatabaseConfig struct {
 	Password *string `json:"password"`
 
 	Query *string `json:"query"`
+	// Engine:
+	//
+	// Default value: unknown
+	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type UpdateRouteRequestRestConfig struct {
@@ -1720,6 +1784,89 @@ func (s *API) RenewDeviceCertificate(req *RenewDeviceCertificateRequest, opts ..
 	}
 
 	var resp RenewDeviceCertificateResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetDeviceCertificateRequest struct {
+	Region scw.Region `json:"-"`
+	// DeviceID: device ID
+	DeviceID string `json:"-"`
+	// CertificatePem: the PEM-encoded custom certificate
+	CertificatePem string `json:"certificate_pem"`
+}
+
+// SetDeviceCertificate: set a custom certificate on a device
+func (s *API) SetDeviceCertificate(req *SetDeviceCertificateRequest, opts ...scw.RequestOption) (*SetDeviceCertificateResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeviceID) == "" {
+		return nil, errors.New("field DeviceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/devices/" + fmt.Sprint(req.DeviceID) + "/certificate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetDeviceCertificateResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetDeviceCertificateRequest struct {
+	Region scw.Region `json:"-"`
+	// DeviceID: device ID
+	DeviceID string `json:"-"`
+}
+
+// GetDeviceCertificate: get a device's certificate
+func (s *API) GetDeviceCertificate(req *GetDeviceCertificateRequest, opts ...scw.RequestOption) (*GetDeviceCertificateResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeviceID) == "" {
+		return nil, errors.New("field DeviceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/devices/" + fmt.Sprint(req.DeviceID) + "/certificate",
+		Headers: http.Header{},
+	}
+
+	var resp GetDeviceCertificateResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
