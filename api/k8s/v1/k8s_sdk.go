@@ -136,6 +136,8 @@ const (
 	CNIWeave = CNI("weave")
 	// CNIFlannel is [insert doc].
 	CNIFlannel = CNI("flannel")
+	// CNIKilo is [insert doc].
+	CNIKilo = CNI("kilo")
 )
 
 func (enum CNI) String() string {
