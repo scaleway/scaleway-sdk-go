@@ -2884,6 +2884,10 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 		req.Zone = defaultZone
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("vol")
+	}
+
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
