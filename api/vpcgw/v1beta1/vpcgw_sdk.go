@@ -585,6 +585,8 @@ type GatewayNetwork struct {
 	DHCP *DHCP `json:"dhcp"`
 	// EnableDHCP: whether DHCP is enabled on the connected Private Network
 	EnableDHCP bool `json:"enable_dhcp"`
+	// Address: address of the Gateway in CIDR form to use when DHCP is not used
+	Address *scw.IPNet `json:"address"`
 	// Zone: zone the connection lives in
 	Zone scw.Zone `json:"zone"`
 }
@@ -1148,11 +1150,14 @@ type CreateGatewayNetworkRequest struct {
 	// EnableMasquerade: whether to enable masquerade on this network
 	EnableMasquerade bool `json:"enable_masquerade"`
 	// DHCPID: existing configuration
-	// Precisely one of DHCP, DHCPID must be set.
+	// Precisely one of Address, DHCP, DHCPID must be set.
 	DHCPID *string `json:"dhcp_id,omitempty"`
 	// DHCP: new DHCP configuration
-	// Precisely one of DHCP, DHCPID must be set.
+	// Precisely one of Address, DHCP, DHCPID must be set.
 	DHCP *CreateDHCPRequest `json:"dhcp,omitempty"`
+	// Address: static IP address in CIDR format to to use without DHCP
+	// Precisely one of Address, DHCP, DHCPID must be set.
+	Address *scw.IPNet `json:"address,omitempty"`
 	// EnableDHCP: whether to enable DHCP on this Private Network
 	//
 	// Whether to enable DHCP on this Private Network. Defaults to `true` if either `dhcp_id` or `dhcp` short: are present. If set to `true`, requires that either `dhcp_id` or `dhcp` to be present.
@@ -1200,9 +1205,13 @@ type UpdateGatewayNetworkRequest struct {
 	// EnableMasquerade: new masquerade enablement
 	EnableMasquerade *bool `json:"enable_masquerade"`
 	// DHCPID: new DHCP configuration
-	DHCPID *string `json:"dhcp_id"`
+	// Precisely one of Address, DHCPID must be set.
+	DHCPID *string `json:"dhcp_id,omitempty"`
 	// EnableDHCP: whether to enable DHCP on the connected Private Network
 	EnableDHCP *bool `json:"enable_dhcp"`
+	// Address: new static IP address
+	// Precisely one of Address, DHCPID must be set.
+	Address *scw.IPNet `json:"address,omitempty"`
 }
 
 // UpdateGatewayNetwork: update a gateway connection to a Private Network
