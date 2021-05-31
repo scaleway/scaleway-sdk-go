@@ -1358,6 +1358,8 @@ type LB struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	PrivateNetworkCount int32 `json:"private_network_count"`
 	// Deprecated
 	Region scw.Region `json:"region"`
 
