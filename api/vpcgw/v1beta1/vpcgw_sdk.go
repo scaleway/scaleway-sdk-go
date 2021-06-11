@@ -595,6 +595,11 @@ type GatewayNetwork struct {
 type GatewayType struct {
 	// Name: type name
 	Name string `json:"name"`
+	// Bandwidth: bandwidth, in bps, the gateway has
+	//
+	// Bandwidth, in bps, the gateway has. This is the public bandwidth to the outer internet, and the internal bandwidth to each connected Private Networks.
+	//
+	Bandwidth uint64 `json:"bandwidth"`
 	// Zone: zone the type is available in
 	Zone scw.Zone `json:"zone"`
 }
