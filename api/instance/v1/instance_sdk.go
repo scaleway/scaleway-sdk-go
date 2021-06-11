@@ -151,6 +151,42 @@ func (enum *ImageState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListServersRequestOrder string
+
+const (
+	// ListServersRequestOrderCreationDateDesc is [insert doc].
+	ListServersRequestOrderCreationDateDesc = ListServersRequestOrder("creation_date_desc")
+	// ListServersRequestOrderCreationDateAsc is [insert doc].
+	ListServersRequestOrderCreationDateAsc = ListServersRequestOrder("creation_date_asc")
+	// ListServersRequestOrderModificationDateDesc is [insert doc].
+	ListServersRequestOrderModificationDateDesc = ListServersRequestOrder("modification_date_desc")
+	// ListServersRequestOrderModificationDateAsc is [insert doc].
+	ListServersRequestOrderModificationDateAsc = ListServersRequestOrder("modification_date_asc")
+)
+
+func (enum ListServersRequestOrder) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "creation_date_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListServersRequestOrder) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListServersRequestOrder) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListServersRequestOrder(ListServersRequestOrder(tmp).String())
+	return nil
+}
+
 type PlacementGroupPolicyMode string
 
 const (
@@ -1640,6 +1676,10 @@ type ListServersRequest struct {
 	Tags []string `json:"-"`
 	// PrivateNetwork: list servers in this Private Network
 	PrivateNetwork *string `json:"-"`
+	// Order: define the order of the returned servers
+	//
+	// Default value: creation_date_desc
+	Order ListServersRequestOrder `json:"-"`
 }
 
 // ListServers: list all servers
@@ -1670,6 +1710,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
 	}
 	parameter.AddToQuery(query, "private_network", req.PrivateNetwork)
+	parameter.AddToQuery(query, "order", req.Order)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
