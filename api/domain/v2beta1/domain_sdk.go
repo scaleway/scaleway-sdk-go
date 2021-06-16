@@ -710,6 +710,20 @@ const (
 	RecordTypeCAA = RecordType("CAA")
 	// RecordTypeALIAS is [insert doc].
 	RecordTypeALIAS = RecordType("ALIAS")
+	// RecordTypeLOC is [insert doc].
+	RecordTypeLOC = RecordType("LOC")
+	// RecordTypeSSHFP is [insert doc].
+	RecordTypeSSHFP = RecordType("SSHFP")
+	// RecordTypeHINFO is [insert doc].
+	RecordTypeHINFO = RecordType("HINFO")
+	// RecordTypeRP is [insert doc].
+	RecordTypeRP = RecordType("RP")
+	// RecordTypeURI is [insert doc].
+	RecordTypeURI = RecordType("URI")
+	// RecordTypeDS is [insert doc].
+	RecordTypeDS = RecordType("DS")
+	// RecordTypeNAPTR is [insert doc].
+	RecordTypeNAPTR = RecordType("NAPTR")
 )
 
 func (enum RecordType) String() string {
