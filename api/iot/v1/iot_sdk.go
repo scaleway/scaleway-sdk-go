@@ -415,6 +415,36 @@ func (enum *NetworkNetworkType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type NullValue string
+
+const (
+	// NullValueNULLVALUE is [insert doc].
+	NullValueNULLVALUE = NullValue("NULL_VALUE")
+)
+
+func (enum NullValue) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "NULL_VALUE"
+	}
+	return string(enum)
+}
+
+func (enum NullValue) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *NullValue) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = NullValue(NullValue(tmp).String())
+	return nil
+}
+
 type RouteDatabaseConfigEngine string
 
 const (
@@ -777,6 +807,18 @@ type ListRoutesResponse struct {
 	Routes []*RouteSummary `json:"routes"`
 }
 
+// ListTwinDocumentsResponse: list twin documents response
+type ListTwinDocumentsResponse struct {
+	// Documents: twin's document list
+	Documents []*ListTwinDocumentsResponseDocumentSummary `json:"documents"`
+}
+
+// ListTwinDocumentsResponseDocumentSummary: list twin documents response. document summary
+type ListTwinDocumentsResponseDocumentSummary struct {
+	// DocumentName: document's name
+	DocumentName string `json:"document_name"`
+}
+
 // Network: network
 type Network struct {
 	// ID: network ID
@@ -906,6 +948,18 @@ type SetDeviceCertificateResponse struct {
 	Device *Device `json:"device"`
 
 	CertificatePem string `json:"certificate_pem"`
+}
+
+// TwinDocument: twin document
+type TwinDocument struct {
+	// TwinID: document's parent twin ID
+	TwinID string `json:"twin_id"`
+	// DocumentName: document's name
+	DocumentName string `json:"document_name"`
+	// Version: document's new version
+	Version uint32 `json:"version"`
+	// Data: document's new data
+	Data []byte `json:"data"`
 }
 
 type UpdateRouteRequestDatabaseConfig struct {
@@ -2387,6 +2441,286 @@ func (s *API) DeleteNetwork(req *DeleteNetworkRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/networks/" + fmt.Sprint(req.NetworkID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetTwinDocumentRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+	// DocumentName: document name
+	DocumentName string `json:"-"`
+}
+
+// GetTwinDocument: bETA - Get a Cloud Twin Document
+func (s *API) GetTwinDocument(req *GetTwinDocumentRequest, opts ...scw.RequestOption) (*TwinDocument, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return nil, errors.New("field TwinID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DocumentName) == "" {
+		return nil, errors.New("field DocumentName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "/documents/" + fmt.Sprint(req.DocumentName) + "",
+		Headers: http.Header{},
+	}
+
+	var resp TwinDocument
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PutTwinDocumentRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+	// DocumentName: document name
+	DocumentName string `json:"-"`
+	// Version: the version of the document to update
+	//
+	// If set, ensures that the document's current version matches before persisting the update.
+	Version *uint32 `json:"version"`
+	// Data: new document data
+	//
+	// The new data that will replace the contents of the document.
+	Data []byte `json:"data"`
+}
+
+// PutTwinDocument: bETA - Update a Cloud Twin Document
+func (s *API) PutTwinDocument(req *PutTwinDocumentRequest, opts ...scw.RequestOption) (*TwinDocument, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return nil, errors.New("field TwinID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DocumentName) == "" {
+		return nil, errors.New("field DocumentName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "/documents/" + fmt.Sprint(req.DocumentName) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp TwinDocument
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PatchTwinDocumentRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+	// DocumentName: document name
+	DocumentName string `json:"-"`
+	// Version: the version of the document to update
+	//
+	// If set, ensures that the document's current version matches before persisting the update.
+	Version *uint32 `json:"version"`
+	// Data: patch data
+	//
+	// A json data that will be applied on the document's current data.
+	// Patching rules:
+	// * The patch goes recursively through the patch objects.
+	// * If the patch object property is null, then it is removed from the final object.
+	// * If the patch object property is a value (number, strings, bool, arrays), it is replaced.
+	// * If the patch object property is an object, the previous rules will be applied recursively on it.
+	//
+	Data []byte `json:"data"`
+}
+
+// PatchTwinDocument: bETA - Patch a Cloud Twin Document
+func (s *API) PatchTwinDocument(req *PatchTwinDocumentRequest, opts ...scw.RequestOption) (*TwinDocument, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return nil, errors.New("field TwinID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DocumentName) == "" {
+		return nil, errors.New("field DocumentName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "/documents/" + fmt.Sprint(req.DocumentName) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp TwinDocument
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteTwinDocumentRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+	// DocumentName: document name
+	DocumentName string `json:"-"`
+}
+
+// DeleteTwinDocument: bETA - Delete a Cloud Twin Document
+func (s *API) DeleteTwinDocument(req *DeleteTwinDocumentRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return errors.New("field TwinID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DocumentName) == "" {
+		return errors.New("field DocumentName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "/documents/" + fmt.Sprint(req.DocumentName) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListTwinDocumentsRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+}
+
+// ListTwinDocuments: bETA - List the documents of a Cloud Twin
+func (s *API) ListTwinDocuments(req *ListTwinDocumentsRequest, opts ...scw.RequestOption) (*ListTwinDocumentsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return nil, errors.New("field TwinID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp ListTwinDocumentsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteTwinDocumentsRequest struct {
+	Region scw.Region `json:"-"`
+	// TwinID: twin ID
+	TwinID string `json:"-"`
+}
+
+// DeleteTwinDocuments: bETA - Delete all the documents of a Cloud Twin
+func (s *API) DeleteTwinDocuments(req *DeleteTwinDocumentsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TwinID) == "" {
+		return errors.New("field TwinID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/iot/v1/regions/" + fmt.Sprint(req.Region) + "/twins/" + fmt.Sprint(req.TwinID) + "",
 		Headers: http.Header{},
 	}
 
