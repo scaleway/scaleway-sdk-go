@@ -106,6 +106,8 @@ const (
 	ACLHTTPFilterPathEnd = ACLHTTPFilter("path_end")
 	// ACLHTTPFilterRegex is [insert doc].
 	ACLHTTPFilterRegex = ACLHTTPFilter("regex")
+	// ACLHTTPFilterHTTPHeaderMatch is [insert doc].
+	ACLHTTPFilterHTTPHeaderMatch = ACLHTTPFilter("http_header_match")
 )
 
 func (enum ACLHTTPFilter) String() string {
@@ -966,6 +968,8 @@ type ACLMatch struct {
 	HTTPFilter ACLHTTPFilter `json:"http_filter"`
 	// HTTPFilterValue: a list of possible values to match for the given HTTP filter
 	HTTPFilterValue []*string `json:"http_filter_value"`
+	// HTTPFilterOption: a exra parameter. You can use this field with http_header_match acl type to set the header name to filter
+	HTTPFilterOption *string `json:"http_filter_option"`
 	// Invert: if set to `true`, the ACL matching condition will be of type "UNLESS"
 	Invert bool `json:"invert"`
 }
