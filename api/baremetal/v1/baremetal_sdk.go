@@ -522,6 +522,8 @@ type Offer struct {
 	PersistentMemories []*PersistentMemory `json:"persistent_memories"`
 	// RaidControllers: raid controller specifications of the offer
 	RaidControllers []*RaidController `json:"raid_controllers"`
+	// IncompatibleOsIDs: array of incompatible OS ids
+	IncompatibleOsIDs []string `json:"incompatible_os_ids"`
 }
 
 type PersistentMemory struct {
