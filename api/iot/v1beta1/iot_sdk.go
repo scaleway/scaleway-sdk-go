@@ -44,7 +44,7 @@ type API struct {
 	client *scw.Client
 }
 
-// NewAPI returns a API object from a Scaleway client.
+// Deprecated NewAPI returns a API object from a Scaleway client.
 func NewAPI(client *scw.Client) *API {
 	return &API{
 		client: client,
@@ -932,25 +932,6 @@ func (s *API) ListHubs(req *ListHubsRequest, opts ...scw.RequestOption) (*ListHu
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListHubsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListHubsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListHubsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Hubs = append(r.Hubs, results.Hubs...)
-	r.TotalCount += uint32(len(results.Hubs))
-	return uint32(len(results.Hubs)), nil
-}
-
 type CreateHubRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: hub name (up to 255 characters)
@@ -1334,25 +1315,6 @@ func (s *API) ListDevices(req *ListDevicesRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDevicesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDevicesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDevicesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Devices = append(r.Devices, results.Devices...)
-	r.TotalCount += uint32(len(results.Devices))
-	return uint32(len(results.Devices)), nil
-}
-
 type CreateDeviceRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: device name
@@ -1711,25 +1673,6 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListRoutesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListRoutesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListRoutesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Routes = append(r.Routes, results.Routes...)
-	r.TotalCount += uint32(len(results.Routes))
-	return uint32(len(results.Routes)), nil
 }
 
 type CreateS3RouteRequest struct {
@@ -2182,25 +2125,6 @@ func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNetworksResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNetworksResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Networks = append(r.Networks, results.Networks...)
-	r.TotalCount += uint32(len(results.Networks))
-	return uint32(len(results.Networks)), nil
-}
-
 type CreateNetworkRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: network name
@@ -2333,4 +2257,80 @@ func (s *API) DeleteNetwork(req *DeleteNetworkRequest, opts ...scw.RequestOption
 		return err
 	}
 	return nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListHubsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListHubsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListHubsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Hubs = append(r.Hubs, results.Hubs...)
+	r.TotalCount += uint32(len(results.Hubs))
+	return uint32(len(results.Hubs)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDevicesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDevicesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDevicesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Devices = append(r.Devices, results.Devices...)
+	r.TotalCount += uint32(len(results.Devices))
+	return uint32(len(results.Devices)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRoutesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListRoutesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Routes = append(r.Routes, results.Routes...)
+	r.TotalCount += uint32(len(results.Routes))
+	return uint32(len(results.Routes)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNetworksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNetworksResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNetworksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Networks = append(r.Networks, results.Networks...)
+	r.TotalCount += uint32(len(results.Networks))
+	return uint32(len(results.Networks)), nil
 }
