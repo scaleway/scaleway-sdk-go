@@ -16,6 +16,7 @@ import (
 var (
 	metadataURL           = "http://169.254.42.42"
 	metadataRetryBindPort = 200
+	metadataRetryRequests = 3
 )
 
 // MetadataAPI metadata API
@@ -29,18 +30,27 @@ func NewMetadataAPI() *MetadataAPI {
 
 // GetMetadata returns the metadata available from the server
 func (*MetadataAPI) GetMetadata() (m *Metadata, err error) {
-	resp, err := http.Get(metadataURL + "/conf?format=json")
-	if err != nil {
-		return nil, errors.Wrap(err, "error getting metadataURL")
-	}
-	defer resp.Body.Close()
 
-	metadata := &Metadata{}
-	err = json.NewDecoder(resp.Body).Decode(metadata)
-	if err != nil {
-		return nil, errors.Wrap(err, "error decoding metadata")
+	retries := 0
+	for retries <= metadataRetryRequests {
+		resp, err := http.Get(metadataURL + "/conf?format=json")
+		if err != nil {
+			retries++ // May be we have some netrork issues
+
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		defer resp.Body.Close()
+
+		metadata := &Metadata{}
+		err = json.NewDecoder(resp.Body).Decode(metadata)
+		if err != nil {
+			return nil, errors.Wrap(err, "error decoding metadata")
+		}
+		return metadata, nil
 	}
-	return metadata, nil
+
+	return nil, errors.Wrap(err, "error getting metadataURL, retry limit reached")
 }
 
 // Metadata represents the struct return by the metadata API
