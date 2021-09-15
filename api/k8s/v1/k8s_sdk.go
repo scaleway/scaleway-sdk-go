@@ -549,6 +549,8 @@ func (enum *Runtime) UnmarshalJSON(data []byte) error {
 type Cluster struct {
 	// ID: the ID of the cluster
 	ID string `json:"id"`
+	// Type: the type of the cluster
+	Type string `json:"type"`
 	// Name: the name of the cluster
 	Name string `json:"name"`
 	// Status: the status of the cluster
@@ -1054,6 +1056,8 @@ type ListClustersRequest struct {
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"-"`
+	// Type: the type on which to filter the returned clusters
+	Type *string `json:"-"`
 }
 
 // ListClusters: list all the clusters
@@ -1080,6 +1084,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1109,6 +1114,8 @@ type CreateClusterRequest struct {
 	// ProjectID: the project ID where the cluster will be created
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
+	// Type: the type of the cluster
+	Type string `json:"type"`
 	// Name: the name of the cluster
 	Name string `json:"name"`
 	// Description: the description of the cluster
