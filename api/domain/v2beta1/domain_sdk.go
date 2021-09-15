@@ -1226,6 +1226,24 @@ type ImportProviderDNSZoneResponse struct {
 	Records []*Record `json:"records"`
 }
 
+type ImportRawDNSZoneRequestAXFRSource struct {
+	NameServer string `json:"name_server"`
+
+	TsigKey *ImportRawDNSZoneRequestTsigKey `json:"tsig_key"`
+}
+
+type ImportRawDNSZoneRequestBindSource struct {
+	Content string `json:"content"`
+}
+
+type ImportRawDNSZoneRequestTsigKey struct {
+	Name string `json:"name"`
+
+	Key string `json:"key"`
+
+	Algorithm string `json:"algorithm"`
+}
+
 // ImportRawDNSZoneResponse: import raw dns zone response
 type ImportRawDNSZoneResponse struct {
 	Records []*Record `json:"records"`
@@ -1858,6 +1876,10 @@ type UpdateDNSZoneRecordsRequest struct {
 	Changes []*RecordChange `json:"changes"`
 	// ReturnAllRecords: whether or not to return all the records
 	ReturnAllRecords *bool `json:"return_all_records"`
+	// DisallowNewZoneCreation: forbid the creation of the target zone if not existing (default action is yes)
+	DisallowNewZoneCreation bool `json:"disallow_new_zone_creation"`
+	// Serial: don't use the autoincremenent serial but the provided one (0 to keep the same)
+	Serial *uint64 `json:"serial"`
 }
 
 // UpdateDNSZoneRecords: update DNS zone records
@@ -2054,14 +2076,20 @@ func (s *API) ExportRawDNSZone(req *ExportRawDNSZoneRequest, opts ...scw.Request
 type ImportRawDNSZoneRequest struct {
 	// DNSZone: the DNS zone to import
 	DNSZone string `json:"-"`
-
+	// Deprecated
 	Content string `json:"content"`
 
 	ProjectID string `json:"project_id"`
-	// Format:
+	// Deprecated: Format:
 	//
 	// Default value: unknown_raw_format
 	Format RawFormat `json:"format"`
+	// BindSource: import a bind file format
+	// Precisely one of AxfrSource, BindSource must be set.
+	BindSource *ImportRawDNSZoneRequestBindSource `json:"bind_source,omitempty"`
+	// AxfrSource: import from the nameserver given with tsig use or not
+	// Precisely one of AxfrSource, BindSource must be set.
+	AxfrSource *ImportRawDNSZoneRequestAXFRSource `json:"axfr_source,omitempty"`
 }
 
 // ImportRawDNSZone: import raw DNS zone
