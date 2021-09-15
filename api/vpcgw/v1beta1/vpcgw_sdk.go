@@ -965,6 +965,11 @@ type DeleteGatewayRequest struct {
 	Zone scw.Zone `json:"-"`
 	// GatewayID: ID of the gateway to delete
 	GatewayID string `json:"-"`
+	// CleanupDHCP: whether to cleanup attached DHCP configurations
+	//
+	// Whether to cleanup attached DHCP configurations (if any, and if not attached to another Gateway Network).
+	//
+	CleanupDHCP bool `json:"-"`
 }
 
 // DeleteGateway: delete a VPC Public Gateway
@@ -975,6 +980,9 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "cleanup_dhcp", req.CleanupDHCP)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return errors.New("field Zone cannot be empty in request")
@@ -987,6 +995,7 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -1260,6 +1269,11 @@ type DeleteGatewayNetworkRequest struct {
 	Zone scw.Zone `json:"-"`
 	// GatewayNetworkID: gatewayNetwork to delete
 	GatewayNetworkID string `json:"-"`
+	// CleanupDHCP: whether to cleanup the attached DHCP configuration
+	//
+	// Whether to cleanup the attached DHCP configuration (if any, and if not attached to another gateway_network).
+	//
+	CleanupDHCP bool `json:"-"`
 }
 
 // DeleteGatewayNetwork: detach a gateway from a Private Network
@@ -1270,6 +1284,9 @@ func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "cleanup_dhcp", req.CleanupDHCP)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return errors.New("field Zone cannot be empty in request")
@@ -1282,6 +1299,7 @@ func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/vpc-gw/v1beta1/zones/" + fmt.Sprint(req.Zone) + "/gateway-networks/" + fmt.Sprint(req.GatewayNetworkID) + "",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
