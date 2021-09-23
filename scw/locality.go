@@ -21,6 +21,8 @@ const (
 	ZoneFrPar1 = Zone("fr-par-1")
 	// ZoneFrPar2 represents the fr-par-2 zone
 	ZoneFrPar2 = Zone("fr-par-2")
+	// ZoneFrPar3 represents the fr-par-3 zone
+	ZoneFrPar3 = Zone("fr-par-3")
 	// ZoneNlAms1 represents the nl-ams-1 zone
 	ZoneNlAms1 = Zone("nl-ams-1")
 	// ZonePlWaw1 represents the pl-waw-1 zone
@@ -32,6 +34,7 @@ var (
 	AllZones = []Zone{
 		ZoneFrPar1,
 		ZoneFrPar2,
+		ZoneFrPar3,
 		ZoneNlAms1,
 		ZonePlWaw1,
 	}
@@ -98,7 +101,7 @@ func (region Region) Exists() bool {
 func (region Region) GetZones() []Zone {
 	switch region {
 	case RegionFrPar:
-		return []Zone{ZoneFrPar1, ZoneFrPar2}
+		return []Zone{ZoneFrPar1, ZoneFrPar2, ZoneFrPar3}
 	case RegionNlAms:
 		return []Zone{ZoneNlAms1}
 	case RegionPlWaw:
