@@ -242,8 +242,8 @@ func (n *IPNet) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
+	value.IP = ip
 	n.IPNet = *value
-	n.IP = ip
 
 	return nil
 }
