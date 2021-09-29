@@ -137,7 +137,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
-		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xff, 0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, scw.Uint32Ptr(1), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, scw.Uint32Ptr(2048), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
@@ -167,7 +167,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionDrop, updateResponse.Rule.Action)
-		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xff, 0x1, 0x1, 0x1, 0x1}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, uint32(22), *updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolUDP, updateResponse.Rule.Protocol)
@@ -189,7 +189,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
-		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xff, 0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolICMP, updateResponse.Rule.Protocol)
@@ -210,7 +210,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Equals(t, SecurityGroupRuleActionAccept, updateResponse.Rule.Action)
-		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
+		testhelpers.Equals(t, scw.IPNet{IPNet: net.IPNet{IP: net.IP{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xff, 0x8, 0x8, 0x8, 0x8}, Mask: net.IPMask{0xff, 0xff, 0xff, 0xff}}}, updateResponse.Rule.IPRange)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortFrom)
 		testhelpers.Equals(t, (*uint32)(nil), updateResponse.Rule.DestPortTo)
 		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
