@@ -344,7 +344,7 @@ func TestIPNet_MarshallJSON(t *testing.T) {
 			want:    `"42.42.42.42/16"`,
 		},
 		{
-			name:    "network ip2",
+			name:    "network with ip",
 			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
 			want:    `"192.168.1.42/24"`,
 		},
