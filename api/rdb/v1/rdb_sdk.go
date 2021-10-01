@@ -1040,6 +1040,16 @@ type ListInstanceACLRulesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+type ListInstanceLogsDetailsResponse struct {
+	Details []*ListInstanceLogsDetailsResponseInstanceLogDetail `json:"details"`
+}
+
+type ListInstanceLogsDetailsResponseInstanceLogDetail struct {
+	LogName string `json:"log_name"`
+
+	Size uint64 `json:"size"`
+}
+
 // ListInstanceLogsResponse: list instance logs response
 type ListInstanceLogsResponse struct {
 	// InstanceLogs: available logs in a given instance
@@ -2302,6 +2312,85 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 	}
 
 	var resp InstanceLog
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PurgeInstanceLogsRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+
+	LogName *string `json:"log_name"`
+}
+
+func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/purge-logs",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListInstanceLogsDetailsRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+}
+
+func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts ...scw.RequestOption) (*ListInstanceLogsDetailsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/logs-details",
+		Headers: http.Header{},
+	}
+
+	var resp ListInstanceLogsDetailsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
