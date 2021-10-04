@@ -4353,10 +4353,10 @@ func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw
 
 type DetachPrivateNetworkRequest struct {
 	Region scw.Region `json:"-"`
-
-	PrivateNetworkID string `json:"-"`
-
+	// LBID: load balancer ID
 	LBID string `json:"-"`
+	// PrivateNetworkID: set your instance private network id
+	PrivateNetworkID string `json:"-"`
 }
 
 // DetachPrivateNetwork: bETA - Remove load balancer of private network
@@ -4372,12 +4372,12 @@ func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw
 		return errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.LBID) == "" {
 		return errors.New("field LBID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -7199,10 +7199,10 @@ func (s *ZonedAPI) AttachPrivateNetwork(req *ZonedAPIAttachPrivateNetworkRequest
 
 type ZonedAPIDetachPrivateNetworkRequest struct {
 	Zone scw.Zone `json:"-"`
-
-	PrivateNetworkID string `json:"-"`
-
+	// LBID: load balancer ID
 	LBID string `json:"-"`
+	// PrivateNetworkID: set your instance private network id
+	PrivateNetworkID string `json:"-"`
 }
 
 // DetachPrivateNetwork: bETA - Remove load balancer of private network
@@ -7218,12 +7218,12 @@ func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
 	if fmt.Sprint(req.LBID) == "" {
 		return errors.New("field LBID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{

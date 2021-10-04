@@ -914,38 +914,48 @@ type Image struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+// ListBootscriptsResponse: list bootscripts response
 type ListBootscriptsResponse struct {
+	// TotalCount: total number of bootscripts
+	TotalCount uint32 `json:"total_count"`
+	// Bootscripts: list of bootscripts
 	Bootscripts []*Bootscript `json:"bootscripts"`
-
-	TotalCount uint32 `json:"total_count"`
 }
 
+// ListIPsResponse: list ips response
 type ListIPsResponse struct {
+	// TotalCount: total number of ips
+	TotalCount uint32 `json:"total_count"`
+	// IPs: list of ips
 	IPs []*IP `json:"ips"`
-
-	TotalCount uint32 `json:"total_count"`
 }
 
+// ListImagesResponse: list images response
 type ListImagesResponse struct {
-	Images []*Image `json:"images"`
-
+	// TotalCount: total number of images
 	TotalCount uint32 `json:"total_count"`
+	// Images: list of images
+	Images []*Image `json:"images"`
 }
 
+// ListPlacementGroupsResponse: list placement groups response
 type ListPlacementGroupsResponse struct {
-	PlacementGroups []*PlacementGroup `json:"placement_groups"`
-
+	// TotalCount: total number of placement groups
 	TotalCount uint32 `json:"total_count"`
+	// PlacementGroups: list of placement groups
+	PlacementGroups []*PlacementGroup `json:"placement_groups"`
 }
 
 type ListPrivateNICsResponse struct {
 	PrivateNics []*PrivateNIC `json:"private_nics"`
 }
 
+// ListSecurityGroupRulesResponse: list security group rules response
 type ListSecurityGroupRulesResponse struct {
-	Rules []*SecurityGroupRule `json:"rules"`
-
+	// TotalCount: total number of security groups
 	TotalCount uint32 `json:"total_count"`
+	// Rules: list of security groups
+	Rules []*SecurityGroupRule `json:"rules"`
 }
 
 type ListSecurityGroupsResponse struct {
@@ -962,10 +972,12 @@ type ListServerUserDataResponse struct {
 	UserData []string `json:"user_data"`
 }
 
+// ListServersResponse: list servers response
 type ListServersResponse struct {
-	Servers []*Server `json:"servers"`
-
+	// TotalCount: total number of servers
 	TotalCount uint32 `json:"total_count"`
+	// Servers: list of servers
+	Servers []*Server `json:"servers"`
 }
 
 // ListServersTypesResponse: list servers types response
@@ -976,22 +988,28 @@ type ListServersTypesResponse struct {
 	Servers map[string]*ServerType `json:"servers"`
 }
 
+// ListSnapshotsResponse: list snapshots response
 type ListSnapshotsResponse struct {
+	// TotalCount: total number of snapshots
+	TotalCount uint32 `json:"total_count"`
+	// Snapshots: list of snapshots
 	Snapshots []*Snapshot `json:"snapshots"`
-
-	TotalCount uint32 `json:"total_count"`
 }
 
+// ListVolumesResponse: list volumes response
 type ListVolumesResponse struct {
-	Volumes []*Volume `json:"volumes"`
-
+	// TotalCount: total number of volumes
 	TotalCount uint32 `json:"total_count"`
+	// Volumes: list of volumes
+	Volumes []*Volume `json:"volumes"`
 }
 
+// ListVolumesTypesResponse: list volumes types response
 type ListVolumesTypesResponse struct {
-	Volumes map[string]*VolumeType `json:"volumes"`
-
+	// TotalCount: total number of volume types
 	TotalCount uint32 `json:"total_count"`
+	// Volumes: map of volume types
+	Volumes map[string]*VolumeType `json:"volumes"`
 }
 
 type NullableStringValue struct {

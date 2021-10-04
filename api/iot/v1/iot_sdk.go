@@ -773,6 +773,13 @@ type Hub struct {
 	//
 	// After creating a hub, this flag is set to False as the hub certificates are managed by Scaleway. Once a custom certificate authority is installed, this flag will be set to true.
 	HasCustomCa bool `json:"has_custom_ca"`
+	// TwinsGraphiteConfig: bETA - not implemented yet
+	// Precisely one of TwinsGraphiteConfig must be set.
+	TwinsGraphiteConfig *HubTwinsGraphiteConfig `json:"twins_graphite_config,omitempty"`
+}
+
+type HubTwinsGraphiteConfig struct {
+	PushURI string `json:"push_uri"`
 }
 
 // ListDevicesResponse: list devices response
@@ -1110,6 +1117,9 @@ type CreateHubRequest struct {
 	DisableEvents *bool `json:"disable_events"`
 	// EventsTopicPrefix: hub events topic prefix (default '$SCW/events')
 	EventsTopicPrefix *string `json:"events_topic_prefix"`
+	// TwinsGraphiteConfig: bETA - not implemented yet
+	// Precisely one of TwinsGraphiteConfig must be set.
+	TwinsGraphiteConfig *HubTwinsGraphiteConfig `json:"twins_graphite_config,omitempty"`
 }
 
 // CreateHub: create a hub
@@ -1208,6 +1218,9 @@ type UpdateHubRequest struct {
 	EventsTopicPrefix *string `json:"events_topic_prefix"`
 	// EnableDeviceAutoProvisioning: enable device auto provisioning
 	EnableDeviceAutoProvisioning *bool `json:"enable_device_auto_provisioning"`
+	// TwinsGraphiteConfig: bETA - not implemented yet
+	// Precisely one of TwinsGraphiteConfig must be set.
+	TwinsGraphiteConfig *HubTwinsGraphiteConfig `json:"twins_graphite_config,omitempty"`
 }
 
 // UpdateHub: update a hub
@@ -1380,8 +1393,6 @@ type GetHubMetricsRequest struct {
 	// HubID: hub ID
 	HubID string `json:"-"`
 	// StartDate: start date used to compute the best scale for the returned metrics
-	//
-	// Default value: hour
 	StartDate *time.Time `json:"-"`
 }
 
@@ -1970,8 +1981,6 @@ type GetDeviceMetricsRequest struct {
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
 	// StartDate: start date used to compute the best scale for the returned metrics
-	//
-	// Default value: hour
 	StartDate *time.Time `json:"-"`
 }
 

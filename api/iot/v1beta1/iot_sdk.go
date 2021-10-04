@@ -1110,6 +1110,11 @@ func (s *API) EnableHub(req *EnableHubRequest, opts ...scw.RequestOption) (*Hub,
 		Headers: http.Header{},
 	}
 
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
 	var resp Hub
 
 	err = s.client.Do(scwReq, &resp, opts...)
@@ -1146,6 +1151,11 @@ func (s *API) DisableHub(req *DisableHubRequest, opts ...scw.RequestOption) (*Hu
 		Method:  "POST",
 		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/hubs/" + fmt.Sprint(req.HubID) + "/disable",
 		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Hub
@@ -1486,6 +1496,11 @@ func (s *API) EnableDevice(req *EnableDeviceRequest, opts ...scw.RequestOption) 
 		Headers: http.Header{},
 	}
 
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
 	var resp Device
 
 	err = s.client.Do(scwReq, &resp, opts...)
@@ -1522,6 +1537,11 @@ func (s *API) DisableDevice(req *DisableDeviceRequest, opts ...scw.RequestOption
 		Method:  "POST",
 		Path:    "/iot/v1beta1/regions/" + fmt.Sprint(req.Region) + "/devices/" + fmt.Sprint(req.DeviceID) + "/disable",
 		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Device

@@ -843,12 +843,49 @@ type DeleteInstanceSettingsResponse struct {
 
 // Endpoint: endpoint
 type Endpoint struct {
+	// ID: UUID of the endpoint
+	ID string `json:"id"`
 	// IP: iPv4 address of the endpoint
-	IP *net.IP `json:"ip"`
+	// Precisely one of Hostname, IP must be set.
+	IP *net.IP `json:"ip,omitempty"`
 	// Port: TCP port of the endpoint
 	Port uint32 `json:"port"`
 	// Name: name of the endpoint
 	Name *string `json:"name"`
+	// PrivateNetwork: private network details
+	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
+	// LoadBalancer: load balancer details
+	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	LoadBalancer *EndpointLoadBalancerDetails `json:"load_balancer,omitempty"`
+	// Hostname: hostname of the endpoint
+	// Precisely one of Hostname, IP must be set.
+	Hostname *string `json:"hostname,omitempty"`
+}
+
+type EndpointLoadBalancerDetails struct {
+}
+
+type EndpointPrivateNetworkDetails struct {
+	PrivateNetworkID string `json:"private_network_id"`
+}
+
+type EndpointSpec struct {
+
+	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	LoadBalancer *EndpointSpecLoadBalancer `json:"load_balancer,omitempty"`
+
+	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	PrivateNetwork *EndpointSpecPrivateNetwork `json:"private_network,omitempty"`
+}
+
+type EndpointSpecLoadBalancer struct {
+}
+
+type EndpointSpecPrivateNetwork struct {
+	PrivateNetworkID string `json:"private_network_id"`
+
+	ServiceIP scw.IPNet `json:"service_ip"`
 }
 
 // EngineSetting: engine setting
@@ -919,7 +956,7 @@ type Instance struct {
 	Status InstanceStatus `json:"status"`
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...)
 	Engine string `json:"engine"`
-	// Endpoint: endpoint of the instance
+	// Deprecated: Endpoint: endpoint of the instance
 	Endpoint *Endpoint `json:"endpoint"`
 	// Tags: list of tags applied to the instance
 	Tags []string `json:"tags"`
@@ -935,6 +972,8 @@ type Instance struct {
 	NodeType string `json:"node_type"`
 	// InitSettings: list of engine settings to be set at database initialisation
 	InitSettings []*InstanceSetting `json:"init_settings"`
+	// Endpoints: list of instance endpoints
+	Endpoints []*Endpoint `json:"endpoints"`
 }
 
 // InstanceLog: instance log
@@ -999,6 +1038,16 @@ type ListInstanceACLRulesResponse struct {
 	Rules []*ACLRule `json:"rules"`
 	// TotalCount: total count of ACL rules present on a given instance
 	TotalCount uint32 `json:"total_count"`
+}
+
+type ListInstanceLogsDetailsResponse struct {
+	Details []*ListInstanceLogsDetailsResponseInstanceLogDetail `json:"details"`
+}
+
+type ListInstanceLogsDetailsResponseInstanceLogDetail struct {
+	LogName string `json:"log_name"`
+
+	Size uint64 `json:"size"`
 }
 
 // ListInstanceLogsResponse: list instance logs response
@@ -1819,6 +1868,8 @@ type CreateInstanceRequest struct {
 	VolumeType VolumeType `json:"volume_type"`
 	// VolumeSize: volume size when volume_type is not lssd
 	VolumeSize scw.Size `json:"volume_size"`
+	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance
+	InitEndpoints []*EndpointSpec `json:"init_endpoints"`
 }
 
 // CreateInstance: create an instance
@@ -2261,6 +2312,85 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 	}
 
 	var resp InstanceLog
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PurgeInstanceLogsRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+
+	LogName *string `json:"log_name"`
+}
+
+func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/purge-logs",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListInstanceLogsDetailsRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+}
+
+func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts ...scw.RequestOption) (*ListInstanceLogsDetailsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/logs-details",
+		Headers: http.Header{},
+	}
+
+	var resp ListInstanceLogsDetailsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3340,6 +3470,122 @@ func (s *API) CreateInstanceFromSnapshot(req *CreateInstanceFromSnapshotRequest,
 	}
 
 	var resp Instance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateEndpointRequest struct {
+	Region scw.Region `json:"-"`
+
+	InstanceID string `json:"-"`
+
+	EndpointSpec *EndpointSpec `json:"endpoint_spec"`
+}
+
+func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/endpoints",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteEndpointRequest struct {
+	Region scw.Region `json:"-"`
+
+	EndpointID string `json:"-"`
+}
+
+func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetEndpointRequest struct {
+	Region scw.Region `json:"-"`
+
+	EndpointID string `json:"-"`
+}
+
+func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return nil, errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Endpoint
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
