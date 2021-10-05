@@ -21,6 +21,7 @@ jobs:
         fetch-depth: 1
     - name: Run unit tests
       run: go test -v ./...
+
   build-arch-test:
     strategy:
       matrix:
@@ -39,6 +40,7 @@ jobs:
         fetch-depth: 1
     - name: Test to build binary
       run: GOARCH=${{ matrix.arch }} go build ./...
+
   build-platform-test:
     strategy:
       matrix:
