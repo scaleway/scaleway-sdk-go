@@ -806,6 +806,8 @@ type Os struct {
 	Name string `json:"name"`
 	// Version: version of the OS
 	Version string `json:"version"`
+	// LogoURL: URL of this os's logo
+	LogoURL string `json:"logo_url"`
 }
 
 // RemoteServerAccess: remote server access
