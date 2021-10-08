@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage Flexible IPs on your bare metal server
+// API: flexible IP API
 type API struct {
 	client *scw.Client
 }
