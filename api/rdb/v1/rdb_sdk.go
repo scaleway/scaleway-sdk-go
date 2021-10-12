@@ -868,6 +868,8 @@ type EndpointLoadBalancerDetails struct {
 
 type EndpointPrivateNetworkDetails struct {
 	PrivateNetworkID string `json:"private_network_id"`
+
+	ServiceIP scw.IPNet `json:"service_ip"`
 }
 
 type EndpointSpec struct {
