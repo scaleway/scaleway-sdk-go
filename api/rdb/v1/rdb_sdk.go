@@ -976,6 +976,8 @@ type Instance struct {
 	InitSettings []*InstanceSetting `json:"init_settings"`
 	// Endpoints: list of instance endpoints
 	Endpoints []*Endpoint `json:"endpoints"`
+	// LogsPolicy: logs policy of the instance
+	LogsPolicy *LogsPolicy `json:"logs_policy"`
 }
 
 // InstanceLog: instance log
@@ -1096,6 +1098,14 @@ type ListUsersResponse struct {
 	Users []*User `json:"users"`
 	// TotalCount: total count of users present on a given instance
 	TotalCount uint32 `json:"total_count"`
+}
+
+// LogsPolicy: logs policy
+type LogsPolicy struct {
+	// MaxAgeRetention: max age of remote logs to keep on the database instance
+	MaxAgeRetention *uint32 `json:"max_age_retention"`
+	// TotalDiskRetention: max disk size of remote logs to keep on the database instance
+	TotalDiskRetention *scw.Size `json:"total_disk_retention"`
 }
 
 // NodeType: node type
@@ -1935,6 +1945,8 @@ type UpdateInstanceRequest struct {
 	Name *string `json:"name"`
 	// Tags: tags of a given instance
 	Tags *[]string `json:"tags"`
+	// LogsPolicy: logs policy of the instance
+	LogsPolicy *LogsPolicy `json:"logs_policy"`
 }
 
 // UpdateInstance: update an instance
