@@ -976,6 +976,8 @@ type Instance struct {
 	InitSettings []*InstanceSetting `json:"init_settings"`
 	// Endpoints: list of instance endpoints
 	Endpoints []*Endpoint `json:"endpoints"`
+	// LogsPolicy: logs policy of the instance
+	LogsPolicy *LogsPolicy `json:"logs_policy"`
 }
 
 // InstanceLog: instance log
@@ -1042,7 +1044,9 @@ type ListInstanceACLRulesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListInstanceLogsDetailsResponse: list instance logs details response
 type ListInstanceLogsDetailsResponse struct {
+	// Details: remote instance logs details
 	Details []*ListInstanceLogsDetailsResponseInstanceLogDetail `json:"details"`
 }
 
@@ -1096,6 +1100,14 @@ type ListUsersResponse struct {
 	Users []*User `json:"users"`
 	// TotalCount: total count of users present on a given instance
 	TotalCount uint32 `json:"total_count"`
+}
+
+// LogsPolicy: logs policy
+type LogsPolicy struct {
+	// MaxAgeRetention: max age of remote logs to keep on the database instance
+	MaxAgeRetention *uint32 `json:"max_age_retention"`
+	// TotalDiskRetention: max disk size of remote logs to keep on the database instance
+	TotalDiskRetention *scw.Size `json:"total_disk_retention"`
 }
 
 // NodeType: node type
@@ -1935,6 +1947,8 @@ type UpdateInstanceRequest struct {
 	Name *string `json:"name"`
 	// Tags: tags of a given instance
 	Tags *[]string `json:"tags"`
+	// LogsPolicy: logs policy of the instance
+	LogsPolicy *LogsPolicy `json:"logs_policy"`
 }
 
 // UpdateInstance: update an instance
@@ -2099,10 +2113,11 @@ func (s *API) GetInstanceCertificate(req *GetInstanceCertificateRequest, opts ..
 
 type RenewInstanceCertificateRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
 }
 
+// RenewInstanceCertificate: renew the TLS certificate of an instance
 func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2324,12 +2339,13 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 
 type PurgeInstanceLogsRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
-
+	// LogName: specific log name to purge
 	LogName *string `json:"log_name"`
 }
 
+// PurgeInstanceLogs: purge remote instances logs
 func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2366,10 +2382,11 @@ func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.Reque
 
 type ListInstanceLogsDetailsRequest struct {
 	Region scw.Region `json:"-"`
-
+	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
 }
 
+// ListInstanceLogsDetails: list remote instances logs details
 func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts ...scw.RequestOption) (*ListInstanceLogsDetailsResponse, error) {
 	var err error
 
@@ -2597,6 +2614,8 @@ type AddInstanceACLRulesRequest struct {
 }
 
 // AddInstanceACLRules: add an ACL instance to a given instance
+//
+// Add an additional ACL rule to a database instance.
 func (s *API) AddInstanceACLRules(req *AddInstanceACLRulesRequest, opts ...scw.RequestOption) (*AddInstanceACLRulesResponse, error) {
 	var err error
 
@@ -2642,6 +2661,8 @@ type SetInstanceACLRulesRequest struct {
 }
 
 // SetInstanceACLRules: set ACL rules for a given instance
+//
+// Replace all the ACL rules of a database instance.
 func (s *API) SetInstanceACLRules(req *SetInstanceACLRulesRequest, opts ...scw.RequestOption) (*SetInstanceACLRulesResponse, error) {
 	var err error
 
