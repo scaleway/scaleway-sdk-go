@@ -671,6 +671,10 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 		req.Region = defaultRegion
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("cns")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -928,6 +932,10 @@ func (s *API) CreateContainer(req *CreateContainerRequest, opts ...scw.RequestOp
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("ctnr")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
