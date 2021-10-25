@@ -480,8 +480,6 @@ type Function struct {
 
 	Description *string `json:"description"`
 
-	DomainName string `json:"domain_name"`
-
 	Region scw.Region `json:"region"`
 }
 
@@ -693,6 +691,10 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("ns")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -914,9 +916,9 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 type CreateFunctionRequest struct {
 	Region scw.Region `json:"-"`
 
-	NamespaceID string `json:"namespace_id"`
-
 	Name string `json:"name"`
+
+	NamespaceID string `json:"namespace_id"`
 
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
 
@@ -939,8 +941,6 @@ type CreateFunctionRequest struct {
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
-
-	DomainName *string `json:"domain_name"`
 }
 
 // CreateFunction: create a new function
@@ -950,6 +950,10 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("fn")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1000,8 +1004,6 @@ type UpdateFunctionRequest struct {
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
-
-	DomainName *string `json:"domain_name"`
 }
 
 // UpdateFunction: update an existing function
@@ -1089,6 +1091,9 @@ type DeployFunctionRequest struct {
 	FunctionID string `json:"-"`
 }
 
+// DeployFunction: deploy a function
+//
+// Deploy a function associated with the given id.
 func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1167,6 +1172,9 @@ type GetFunctionUploadURLRequest struct {
 	ContentLength uint64 `json:"-"`
 }
 
+// GetFunctionUploadURL: get an upload URL of a function
+//
+// Get an upload URL of a function associated with the given id.
 func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw.RequestOption) (*UploadURL, error) {
 	var err error
 
@@ -1208,6 +1216,9 @@ type GetFunctionDownloadURLRequest struct {
 	FunctionID string `json:"-"`
 }
 
+// GetFunctionDownloadURL: get a download URL of a function
+//
+// Get a download URL for a function associated with the given id.
 func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ...scw.RequestOption) (*DownloadURL, error) {
 	var err error
 
