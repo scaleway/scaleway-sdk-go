@@ -619,6 +619,38 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListRenewableDomainsRequestOrderBy string
+
+const (
+	// ListRenewableDomainsRequestOrderByDomainAsc is [insert doc].
+	ListRenewableDomainsRequestOrderByDomainAsc = ListRenewableDomainsRequestOrderBy("domain_asc")
+	// ListRenewableDomainsRequestOrderByDomainDesc is [insert doc].
+	ListRenewableDomainsRequestOrderByDomainDesc = ListRenewableDomainsRequestOrderBy("domain_desc")
+)
+
+func (enum ListRenewableDomainsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "domain_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListRenewableDomainsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListRenewableDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListRenewableDomainsRequestOrderBy(ListRenewableDomainsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type RawFormat string
 
 const (
@@ -746,6 +778,44 @@ func (enum *RecordType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = RecordType(RecordType(tmp).String())
+	return nil
+}
+
+type RenewableDomainStatus string
+
+const (
+	// RenewableDomainStatusUnknown is [insert doc].
+	RenewableDomainStatusUnknown = RenewableDomainStatus("unknown")
+	// RenewableDomainStatusRenewable is [insert doc].
+	RenewableDomainStatusRenewable = RenewableDomainStatus("renewable")
+	// RenewableDomainStatusLateReneweable is [insert doc].
+	RenewableDomainStatusLateReneweable = RenewableDomainStatus("late_reneweable")
+	// RenewableDomainStatusRestorable is [insert doc].
+	RenewableDomainStatusRestorable = RenewableDomainStatus("restorable")
+	// RenewableDomainStatusNotRenewable is [insert doc].
+	RenewableDomainStatusNotRenewable = RenewableDomainStatus("not_renewable")
+)
+
+func (enum RenewableDomainStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum RenewableDomainStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RenewableDomainStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RenewableDomainStatus(RenewableDomainStatus(tmp).String())
 	return nil
 }
 
@@ -956,6 +1026,8 @@ type Contact struct {
 	//
 	// Default value: email_status_unknown
 	EmailStatus ContactEmailStatus `json:"email_status"`
+
+	State string `json:"state"`
 }
 
 type ContactExtensionEU struct {
@@ -1295,6 +1367,13 @@ type ListDomainsResponse struct {
 	Domains []*DomainSummary `json:"domains"`
 }
 
+// ListRenewableDomainsResponse: list renewable domains response
+type ListRenewableDomainsResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	Domains []*RenewableDomain `json:"domains"`
+}
+
 // ListSSLCertificatesResponse: list ssl certificates response
 type ListSSLCertificatesResponse struct {
 	TotalCount uint32 `json:"total_count"`
@@ -1366,6 +1445,8 @@ type NewContact struct {
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
 
 	WhoisOptIn bool `json:"whois_opt_in"`
+
+	State *string `json:"state"`
 }
 
 type Record struct {
@@ -1516,6 +1597,22 @@ type RegisterExternalDomainResponse struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	ProjectID string `json:"project_id"`
+}
+
+type RenewableDomain struct {
+	Domain string `json:"domain"`
+
+	ProjectID string `json:"project_id"`
+
+	OrganizationID string `json:"organization_id"`
+	// Status:
+	//
+	// Default value: unknown
+	Status RenewableDomainStatus `json:"status"`
+
+	RenewableDurationInYears *int32 `json:"renewable_duration_in_years"`
+
+	ExpiredAt *time.Time `json:"expired_at"`
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response
@@ -2941,6 +3038,8 @@ type RegistrarAPIUpdateContactRequest struct {
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
 
 	WhoisOptIn *bool `json:"whois_opt_in"`
+
+	State *string `json:"state"`
 }
 
 // UpdateContact: update contact
@@ -3024,6 +3123,54 @@ func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...
 	}
 
 	var resp ListDomainsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RegistrarAPIListRenewableDomainsRequest struct {
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy:
+	//
+	// Default value: domain_asc
+	OrderBy ListRenewableDomainsRequestOrderBy `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+}
+
+// ListRenewableDomains: list scaleway domains that can or not be renewed
+//
+// Returns a list of domains owned by the user with a renew status and if renewable, the maximum renew duration in years.
+func (s *RegistrarAPI) ListRenewableDomains(req *RegistrarAPIListRenewableDomainsRequest, opts ...scw.RequestOption) (*ListRenewableDomainsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/domain/v2beta1/renewable-domains",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListRenewableDomainsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3472,6 +3619,25 @@ func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
 // Internal usage only
 func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Domains = append(r.Domains, results.Domains...)
+	r.TotalCount += uint32(len(results.Domains))
+	return uint32(len(results.Domains)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRenewableDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRenewableDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListRenewableDomainsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}

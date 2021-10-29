@@ -343,6 +343,11 @@ func TestIPNet_MarshallJSON(t *testing.T) {
 			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(16, 32)}},
 			want:    `"42.42.42.42/16"`,
 		},
+		{
+			name:    "network with ip",
+			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
+			want:    `"192.168.1.42/24"`,
+		},
 	}
 
 	for _, c := range cases {
@@ -372,7 +377,12 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 		{
 			name: "IPv4 with network",
 			json: `"192.0.2.1/24"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 0), Mask: net.CIDRMask(24, 32)}},
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 1), Mask: net.CIDRMask(24, 32)}},
+		},
+		{
+			name: "IPv4 with network 2",
+			json: `"192.168.1.42/24"`,
+			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
 		},
 		{
 			name: "IPv6 with network",

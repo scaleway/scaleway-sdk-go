@@ -217,6 +217,40 @@ func (enum *OfferStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type OfferSubscriptionPeriod string
+
+const (
+	// OfferSubscriptionPeriodUnknownSubscriptionPeriod is [insert doc].
+	OfferSubscriptionPeriodUnknownSubscriptionPeriod = OfferSubscriptionPeriod("unknown_subscription_period")
+	// OfferSubscriptionPeriodHourly is [insert doc].
+	OfferSubscriptionPeriodHourly = OfferSubscriptionPeriod("hourly")
+	// OfferSubscriptionPeriodMonthly is [insert doc].
+	OfferSubscriptionPeriodMonthly = OfferSubscriptionPeriod("monthly")
+)
+
+func (enum OfferSubscriptionPeriod) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_subscription_period"
+	}
+	return string(enum)
+}
+
+func (enum OfferSubscriptionPeriod) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OfferSubscriptionPeriod) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OfferSubscriptionPeriod(OfferSubscriptionPeriod(tmp).String())
+	return nil
+}
+
 type ServerBootType string
 
 const (
@@ -488,6 +522,8 @@ type OS struct {
 	Name string `json:"name"`
 	// Version: version of the OS
 	Version string `json:"version"`
+	// LogoURL: URL of this os's logo
+	LogoURL string `json:"logo_url"`
 }
 
 // Offer: offer
@@ -524,6 +560,14 @@ type Offer struct {
 	RaidControllers []*RaidController `json:"raid_controllers"`
 	// IncompatibleOsIDs: array of incompatible OS ids
 	IncompatibleOsIDs []string `json:"incompatible_os_ids"`
+	// SubscriptionPeriod: period of subscription for the offer
+	//
+	// Default value: unknown_subscription_period
+	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
+	// OperationPath: operation path of the service
+	OperationPath string `json:"operation_path"`
+	// Fee: fee to pay on order
+	Fee *scw.Money `json:"fee"`
 }
 
 type PersistentMemory struct {
@@ -1351,6 +1395,10 @@ type ListOffersRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: number of offers per page
 	PageSize *uint32 `json:"-"`
+	// SubscriptionPeriod: period of subscription to filter offers
+	//
+	// Default value: unknown_subscription_period
+	SubscriptionPeriod OfferSubscriptionPeriod `json:"-"`
 }
 
 // ListOffers: list offers
@@ -1372,6 +1420,7 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "subscription_period", req.SubscriptionPeriod)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
