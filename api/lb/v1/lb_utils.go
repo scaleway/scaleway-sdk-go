@@ -87,3 +87,70 @@ func waitForLb(timeout *time.Duration, retryInterval *time.Duration, getLB func(
 	}
 	return lb.(*LB), nil
 }
+
+// ZonedAPIWaitForLBPNRequest is used by WaitForLBPN method.
+type ZonedAPIWaitForLBPNRequest struct {
+	LBID          string
+	PNID          string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+func waitForPNLb(timeout *time.Duration, retryInterval *time.Duration, getPN func() (*PrivateNetwork, error)) (*PrivateNetwork, error) {
+	t := defaultTimeout
+	if timeout != nil {
+		t = *timeout
+	}
+	r := defaultRetryInterval
+	if retryInterval != nil {
+		r = *retryInterval
+	}
+
+	terminalStatus := map[PrivateNetworkStatus]struct{}{
+		PrivateNetworkStatusReady: {},
+		PrivateNetworkStatusError: {},
+	}
+
+	pn, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := getPN()
+
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.Status]
+
+			return res, isTerminal, nil
+		},
+		Timeout:          t,
+		IntervalStrategy: async.LinearIntervalStrategy(r),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for attachment failed")
+	}
+	return pn.(*PrivateNetwork), nil
+}
+
+// WaitForLBPN waits for the private_network attached status on a load balancer
+// to be in a "terminal state" before returning.
+// This function can be used to wait for an attached private_network to be ready for example.
+func (s *ZonedAPI) WaitForLBPN(req *ZonedAPIWaitForLBPNRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
+	return waitForPNLb(req.Timeout, req.RetryInterval, func() (*PrivateNetwork, error) {
+		lbPNs, err := s.ListLBPrivateNetworks(&ZonedAPIListLBPrivateNetworksRequest{
+			Zone: req.Zone,
+			LBID: req.LBID,
+		}, opts...)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, pn := range lbPNs.PrivateNetwork {
+			if pn.PrivateNetworkID == req.PNID {
+				return pn, nil
+			}
+		}
+
+		return nil, errors.Wrap(err, "private network not found")
+	})
+}
