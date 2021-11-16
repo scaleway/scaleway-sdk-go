@@ -455,6 +455,8 @@ type Container struct {
 	// Default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
 
+	Port uint32 `json:"port"`
+
 	Region scw.Region `json:"region"`
 }
 
@@ -923,6 +925,8 @@ type CreateContainerRequest struct {
 	//
 	// Default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
+
+	Port *uint32 `json:"port"`
 }
 
 // CreateContainer: create a new container
@@ -994,6 +998,8 @@ type UpdateContainerRequest struct {
 	//
 	// Default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
+
+	Port *uint32 `json:"port"`
 }
 
 // UpdateContainer: update an existing container
