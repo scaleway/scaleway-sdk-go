@@ -815,6 +815,8 @@ type DatabaseBackup struct {
 	DownloadURLExpiresAt *time.Time `json:"download_url_expires_at"`
 	// Region: region of this database backup
 	Region scw.Region `json:"region"`
+	// SameRegion: store logical backups in the same region as the source database instance
+	SameRegion bool `json:"same_region"`
 }
 
 // DatabaseEngine: database engine
@@ -866,19 +868,22 @@ type Endpoint struct {
 type EndpointLoadBalancerDetails struct {
 }
 
+// EndpointPrivateNetworkDetails: endpoint. private network details
 type EndpointPrivateNetworkDetails struct {
+	// PrivateNetworkID: UUID of the private network
 	PrivateNetworkID string `json:"private_network_id"`
-
+	// ServiceIP: cIDR notation of the endpoint IPv4 address
 	ServiceIP scw.IPNet `json:"service_ip"`
-
+	// Zone: private network zone
 	Zone scw.Zone `json:"zone"`
 }
 
+// EndpointSpec: endpoint spec
 type EndpointSpec struct {
-
+	// LoadBalancer: load balancer endpoint specifications
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointSpecLoadBalancer `json:"load_balancer,omitempty"`
-
+	// PrivateNetwork: private network endpoint specifications
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 }
@@ -886,9 +891,11 @@ type EndpointSpec struct {
 type EndpointSpecLoadBalancer struct {
 }
 
+// EndpointSpecPrivateNetwork: endpoint spec. private network
 type EndpointSpecPrivateNetwork struct {
+	// PrivateNetworkID: UUID of the private network to be connected to the database instance
 	PrivateNetworkID string `json:"private_network_id"`
-
+	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitation.
 	ServiceIP scw.IPNet `json:"service_ip"`
 }
 
@@ -980,6 +987,8 @@ type Instance struct {
 	Endpoints []*Endpoint `json:"endpoints"`
 	// LogsPolicy: logs policy of the instance
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion bool `json:"backup_same_region"`
 }
 
 // InstanceLog: instance log
@@ -1886,6 +1895,8 @@ type CreateInstanceRequest struct {
 	VolumeSize scw.Size `json:"volume_size"`
 	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance
 	InitEndpoints []*EndpointSpec `json:"init_endpoints"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion bool `json:"backup_same_region"`
 }
 
 // CreateInstance: create an instance
@@ -1951,6 +1962,8 @@ type UpdateInstanceRequest struct {
 	Tags *[]string `json:"tags"`
 	// LogsPolicy: logs policy of the instance
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion *bool `json:"backup_same_region"`
 }
 
 // UpdateInstance: update an instance
@@ -3511,7 +3524,7 @@ type CreateEndpointRequest struct {
 	EndpointSpec *EndpointSpec `json:"endpoint_spec"`
 }
 
-// CreateEndpoint: add an instance endpoint
+// CreateEndpoint: create a new instance endpoint
 func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
