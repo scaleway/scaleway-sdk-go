@@ -815,6 +815,8 @@ type DatabaseBackup struct {
 	DownloadURLExpiresAt *time.Time `json:"download_url_expires_at"`
 	// Region: region of this database backup
 	Region scw.Region `json:"region"`
+	// SameRegion: store logical backups in the same region as the source database instance
+	SameRegion bool `json:"same_region"`
 }
 
 // DatabaseEngine: database engine
@@ -980,6 +982,8 @@ type Instance struct {
 	Endpoints []*Endpoint `json:"endpoints"`
 	// LogsPolicy: logs policy of the instance
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion bool `json:"backup_same_region"`
 }
 
 // InstanceLog: instance log
@@ -1886,6 +1890,8 @@ type CreateInstanceRequest struct {
 	VolumeSize scw.Size `json:"volume_size"`
 	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance
 	InitEndpoints []*EndpointSpec `json:"init_endpoints"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion bool `json:"backup_same_region"`
 }
 
 // CreateInstance: create an instance
@@ -1951,6 +1957,8 @@ type UpdateInstanceRequest struct {
 	Tags *[]string `json:"tags"`
 	// LogsPolicy: logs policy of the instance
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
+	// BackupSameRegion: store logical backups in the same region as the database instance
+	BackupSameRegion *bool `json:"backup_same_region"`
 }
 
 // UpdateInstance: update an instance
