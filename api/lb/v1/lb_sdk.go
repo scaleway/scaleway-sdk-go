@@ -7099,7 +7099,7 @@ type ZonedAPIListLBPrivateNetworksRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListLBPrivateNetworks: list attached private network of load balancer
+// ListLBPrivateNetworks: bETA - List attached private network of load balancer
 func (s *ZonedAPI) ListLBPrivateNetworks(req *ZonedAPIListLBPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLBPrivateNetworksResponse, error) {
 	var err error
 
@@ -7156,7 +7156,7 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
 }
 
-// AttachPrivateNetwork: add load balancer on instance private network
+// AttachPrivateNetwork: bETA - Add load balancer on instance private network
 func (s *ZonedAPI) AttachPrivateNetwork(req *ZonedAPIAttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
@@ -7205,7 +7205,7 @@ type ZonedAPIDetachPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
-// DetachPrivateNetwork: remove load balancer of private network
+// DetachPrivateNetwork: bETA - Remove load balancer of private network
 func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
