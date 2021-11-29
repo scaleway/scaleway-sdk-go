@@ -292,6 +292,8 @@ const (
 	InstanceStatusBackuping = InstanceStatus("backuping")
 	// InstanceStatusSnapshotting is [insert doc].
 	InstanceStatusSnapshotting = InstanceStatus("snapshotting")
+	// InstanceStatusRestarting is [insert doc].
+	InstanceStatusRestarting = InstanceStatus("restarting")
 )
 
 func (enum InstanceStatus) String() string {
@@ -2071,6 +2073,49 @@ func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/clone",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Instance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RestartInstanceRequest struct {
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance you want to restart
+	InstanceID string `json:"-"`
+}
+
+// RestartInstance: restart an instance
+func (s *API) RestartInstance(req *RestartInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/restart",
 		Headers: http.Header{},
 	}
 
