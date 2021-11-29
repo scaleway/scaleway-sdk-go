@@ -581,6 +581,42 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type MaintenanceStatus string
+
+const (
+	// MaintenanceStatusUnknown is [insert doc].
+	MaintenanceStatusUnknown = MaintenanceStatus("unknown")
+	// MaintenanceStatusPending is [insert doc].
+	MaintenanceStatusPending = MaintenanceStatus("pending")
+	// MaintenanceStatusDone is [insert doc].
+	MaintenanceStatusDone = MaintenanceStatus("done")
+	// MaintenanceStatusCanceled is [insert doc].
+	MaintenanceStatusCanceled = MaintenanceStatus("canceled")
+)
+
+func (enum MaintenanceStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum MaintenanceStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *MaintenanceStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = MaintenanceStatus(MaintenanceStatus(tmp).String())
+	return nil
+}
+
 type NodeTypeStock string
 
 const (
@@ -991,6 +1027,8 @@ type Instance struct {
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
 	// BackupSameRegion: store logical backups in the same region as the database instance
 	BackupSameRegion bool `json:"backup_same_region"`
+	// Maintenances: list of instance maintenances
+	Maintenances []*Maintenance `json:"maintenances"`
 }
 
 // InstanceLog: instance log
@@ -1121,6 +1159,22 @@ type LogsPolicy struct {
 	MaxAgeRetention *uint32 `json:"max_age_retention"`
 	// TotalDiskRetention: max disk size of remote logs to keep on the database instance
 	TotalDiskRetention *scw.Size `json:"total_disk_retention"`
+}
+
+// Maintenance: maintenance
+type Maintenance struct {
+	// StartsAt: start date of the maintenance window
+	StartsAt *time.Time `json:"starts_at"`
+	// StopsAt: end date of the maintenance window
+	StopsAt *time.Time `json:"stops_at"`
+	// ClosedAt: closed maintenance date
+	ClosedAt *time.Time `json:"closed_at"`
+	// Reason: maintenance information message
+	Reason string `json:"reason"`
+	// Status: status of the maintenance
+	//
+	// Default value: unknown
+	Status MaintenanceStatus `json:"status"`
 }
 
 // NodeType: node type
