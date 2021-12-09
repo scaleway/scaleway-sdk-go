@@ -637,6 +637,80 @@ func (enum *TaskStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type VolumeServerState string
+
+const (
+	// VolumeServerStateAvailable is [insert doc].
+	VolumeServerStateAvailable = VolumeServerState("available")
+	// VolumeServerStateSnapshotting is [insert doc].
+	VolumeServerStateSnapshotting = VolumeServerState("snapshotting")
+	// VolumeServerStateError is [insert doc].
+	VolumeServerStateError = VolumeServerState("error")
+	// VolumeServerStateFetching is [insert doc].
+	VolumeServerStateFetching = VolumeServerState("fetching")
+	// VolumeServerStateResizing is [insert doc].
+	VolumeServerStateResizing = VolumeServerState("resizing")
+	// VolumeServerStateSaving is [insert doc].
+	VolumeServerStateSaving = VolumeServerState("saving")
+	// VolumeServerStateHotsyncing is [insert doc].
+	VolumeServerStateHotsyncing = VolumeServerState("hotsyncing")
+)
+
+func (enum VolumeServerState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
+func (enum VolumeServerState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *VolumeServerState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = VolumeServerState(VolumeServerState(tmp).String())
+	return nil
+}
+
+type VolumeServerVolumeType string
+
+const (
+	// VolumeServerVolumeTypeLSSD is [insert doc].
+	VolumeServerVolumeTypeLSSD = VolumeServerVolumeType("l_ssd")
+	// VolumeServerVolumeTypeBSSD is [insert doc].
+	VolumeServerVolumeTypeBSSD = VolumeServerVolumeType("b_ssd")
+)
+
+func (enum VolumeServerVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "l_ssd"
+	}
+	return string(enum)
+}
+
+func (enum VolumeServerVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *VolumeServerVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = VolumeServerVolumeType(VolumeServerVolumeType(tmp).String())
+	return nil
+}
+
 type VolumeState string
 
 const (
@@ -1197,7 +1271,7 @@ type Server struct {
 	// Default value: local
 	BootType BootType `json:"boot_type"`
 	// Volumes: the server volumes
-	Volumes map[string]*Volume `json:"volumes"`
+	Volumes map[string]*VolumeServer `json:"volumes"`
 	// SecurityGroup: the server security group
 	SecurityGroup *SecurityGroupSummary `json:"security_group"`
 	// Maintenances: the server planned maintenances
@@ -1443,6 +1517,62 @@ type Volume struct {
 	State VolumeState `json:"state"`
 	// Zone: the zone in which is the volume
 	Zone scw.Zone `json:"zone"`
+}
+
+type VolumeServer struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	ExportURI string `json:"export_uri"`
+
+	Organization string `json:"organization"`
+
+	Server *ServerSummary `json:"server"`
+
+	Size scw.Size `json:"size"`
+	// VolumeType:
+	//
+	// Default value: l_ssd
+	VolumeType VolumeServerVolumeType `json:"volume_type"`
+
+	CreationDate *time.Time `json:"creation_date"`
+
+	ModificationDate *time.Time `json:"modification_date"`
+	// State:
+	//
+	// Default value: available
+	State VolumeServerState `json:"state"`
+
+	Project string `json:"project"`
+
+	Boot bool `json:"boot"`
+
+	Zone scw.Zone `json:"zone"`
+}
+
+// VolumeServerTemplate: volume server template
+type VolumeServerTemplate struct {
+	// ID: UUID of the volume
+	ID string `json:"id,omitempty"`
+	// Boot: force the server to boot on this volume
+	//
+	// Default value: false
+	Boot bool `json:"boot,omitempty"`
+	// Name: name of the volume
+	Name string `json:"name,omitempty"`
+	// Size: disk size of the volume
+	Size scw.Size `json:"size,omitempty"`
+	// VolumeType: type of the volume
+	//
+	// Default value: l_ssd
+	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
+	// Deprecated: Organization: organization ID of the volume
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+	// Project: project ID of the volume
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 }
 
 type VolumeSummary struct {
@@ -1761,7 +1891,7 @@ type CreateServerRequest struct {
 	// Image: the server image ID or label
 	Image string `json:"image,omitempty"`
 	// Volumes: the volumes attached to the server
-	Volumes map[string]*VolumeTemplate `json:"volumes,omitempty"`
+	Volumes map[string]*VolumeServerTemplate `json:"volumes,omitempty"`
 	// EnableIPv6: true if IPv6 is enabled on the server
 	EnableIPv6 bool `json:"enable_ipv6,omitempty"`
 	// PublicIP: the ID of the reserved IP to attach to the server
@@ -2036,7 +2166,7 @@ type UpdateServerRequest struct {
 	// Tags: tags of the server
 	Tags *[]string `json:"tags,omitempty"`
 
-	Volumes *map[string]*VolumeTemplate `json:"volumes,omitempty"`
+	Volumes *map[string]*VolumeServerTemplate `json:"volumes,omitempty"`
 
 	Bootscript *string `json:"bootscript,omitempty"`
 
