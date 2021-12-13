@@ -120,7 +120,7 @@ func TestServerUpdate(t *testing.T) {
 		updateServerResponse, err := instanceAPI.updateServer(&UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
-			Volumes:  &map[string]*VolumeTemplate{},
+			Volumes:  &map[string]*VolumeServerTemplate{},
 		})
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
