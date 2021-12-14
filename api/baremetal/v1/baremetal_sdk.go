@@ -323,6 +323,44 @@ func (enum *ServerInstallStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ServerOptionOptionStatus string
+
+const (
+	// ServerOptionOptionStatusOptionStatusUnknown is [insert doc].
+	ServerOptionOptionStatusOptionStatusUnknown = ServerOptionOptionStatus("option_status_unknown")
+	// ServerOptionOptionStatusOptionStatusEnable is [insert doc].
+	ServerOptionOptionStatusOptionStatusEnable = ServerOptionOptionStatus("option_status_enable")
+	// ServerOptionOptionStatusOptionStatusEnabling is [insert doc].
+	ServerOptionOptionStatusOptionStatusEnabling = ServerOptionOptionStatus("option_status_enabling")
+	// ServerOptionOptionStatusOptionStatusDisabling is [insert doc].
+	ServerOptionOptionStatusOptionStatusDisabling = ServerOptionOptionStatus("option_status_disabling")
+	// ServerOptionOptionStatusOptionStatusError is [insert doc].
+	ServerOptionOptionStatusOptionStatusError = ServerOptionOptionStatus("option_status_error")
+)
+
+func (enum ServerOptionOptionStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "option_status_unknown"
+	}
+	return string(enum)
+}
+
+func (enum ServerOptionOptionStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerOptionOptionStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerOptionOptionStatus(ServerOptionOptionStatus(tmp).String())
+	return nil
+}
+
 type ServerPingStatus string
 
 const (
@@ -487,6 +525,14 @@ type ListOffersResponse struct {
 	Offers []*Offer `json:"offers"`
 }
 
+// ListOptionsResponse: list options response
+type ListOptionsResponse struct {
+	// TotalCount: total count of matching options
+	TotalCount uint32 `json:"total_count"`
+	// Options: options that match filters
+	Options []*Option `json:"options"`
+}
+
 // ListServerEventsResponse: list server events response
 type ListServerEventsResponse struct {
 	// TotalCount: total count of matching events
@@ -568,6 +614,28 @@ type Offer struct {
 	OperationPath string `json:"operation_path"`
 	// Fee: fee to pay on order
 	Fee *scw.Money `json:"fee"`
+	// Options: options available on offer
+	Options []*OfferOptionOffer `json:"options"`
+}
+
+type OfferOptionOffer struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Price *scw.Money `json:"price"`
+
+	Enabled bool `json:"enabled"`
+}
+
+// Option: option
+type Option struct {
+	// ID: ID of the option
+	ID string `json:"id"`
+	// Name: name of the option
+	Name string `json:"name"`
+	// Manageable: is false if the option could not be remove
+	Manageable bool `json:"manageable"`
 }
 
 type PersistentMemory struct {
@@ -624,6 +692,8 @@ type Server struct {
 	//
 	// Default value: ping_status_unknown
 	PingStatus ServerPingStatus `json:"ping_status"`
+	// Options: options enabled on server
+	Options []*ServerOption `json:"options"`
 }
 
 // ServerEvent: server event
@@ -650,6 +720,16 @@ type ServerInstall struct {
 	Status ServerInstallStatus `json:"status"`
 }
 
+type ServerOption struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+	// Status:
+	//
+	// Default value: option_status_unknown
+	Status ServerOptionOptionStatus `json:"status"`
+}
+
 // Service API
 
 type ListServersRequest struct {
@@ -672,6 +752,8 @@ type ListServersRequest struct {
 	OrganizationID *string `json:"-"`
 	// ProjectID: filter servers by project ID
 	ProjectID *string `json:"-"`
+	// OptionID: filter servers by option ID
+	OptionID *string `json:"-"`
 }
 
 // ListServers: list baremetal servers for organization
@@ -699,6 +781,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "option_id", req.OptionID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -778,6 +861,8 @@ type CreateServerRequest struct {
 	Tags []string `json:"tags"`
 
 	Install *CreateServerRequestInstall `json:"install"`
+	// OptionIDs: iDs of options to enable on server
+	OptionIDs []string `json:"option_ids"`
 }
 
 // CreateServer: create a baremetal server
@@ -1389,6 +1474,98 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	return &resp, nil
 }
 
+type AddOptionServerRequest struct {
+	Zone scw.Zone `json:"-"`
+	// ServerID: ID of the server
+	ServerID string `json:"-"`
+	// OptionID: ID of the option to delete
+	OptionID string `json:"-"`
+}
+
+// AddOptionServer: add server option
+//
+// Add an option on specific server.
+func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OptionID) == "" {
+		return nil, errors.New("field OptionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/server/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteOptionServerRequest struct {
+	Zone scw.Zone `json:"-"`
+	// ServerID: ID of the server
+	ServerID string `json:"-"`
+	// OptionID: ID of the option to delete
+	OptionID string `json:"-"`
+}
+
+// DeleteOptionServer: delete server option
+//
+// Delete an option on specific server.
+func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OptionID) == "" {
+		return nil, errors.New("field OptionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/server/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type ListOffersRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Page: page number
@@ -1474,6 +1651,100 @@ func (s *API) GetOffer(req *GetOfferRequest, opts ...scw.RequestOption) (*Offer,
 	}
 
 	var resp Offer
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetOptionRequest struct {
+	Zone scw.Zone `json:"-"`
+	// OptionID: ID of the option
+	OptionID string `json:"-"`
+}
+
+// GetOption: get option
+//
+// Return specific option for the given ID.
+func (s *API) GetOption(req *GetOptionRequest, opts ...scw.RequestOption) (*Option, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OptionID) == "" {
+		return nil, errors.New("field OptionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/options/" + fmt.Sprint(req.OptionID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Option
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListOptionsRequest struct {
+	Zone scw.Zone `json:"-"`
+	// Page: page number
+	Page *int32 `json:"-"`
+	// PageSize: number of options per page
+	PageSize *uint32 `json:"-"`
+	// OfferID: filter options by offer_id
+	OfferID *string `json:"-"`
+	// Name: filter options by name
+	Name *string `json:"-"`
+}
+
+// ListOptions: list options
+//
+// List all options matching with filters.
+func (s *API) ListOptions(req *ListOptionsRequest, opts ...scw.RequestOption) (*ListOptionsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "offer_id", req.OfferID)
+	parameter.AddToQuery(query, "name", req.Name)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/options",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListOptionsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1628,6 +1899,25 @@ func (r *ListOffersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Offers = append(r.Offers, results.Offers...)
 	r.TotalCount += uint32(len(results.Offers))
 	return uint32(len(results.Offers)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOptionsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOptionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListOptionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Options = append(r.Options, results.Options...)
+	r.TotalCount += uint32(len(results.Options))
+	return uint32(len(results.Options)), nil
 }
 
 // UnsafeGetTotalCount should not be used
