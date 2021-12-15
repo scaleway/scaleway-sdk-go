@@ -4253,7 +4253,7 @@ type ListLBPrivateNetworksRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListLBPrivateNetworks: list attached private network of load balancer
+// ListLBPrivateNetworks: bETA - List attached private network of load balancer
 func (s *API) ListLBPrivateNetworks(req *ListLBPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLBPrivateNetworksResponse, error) {
 	var err error
 
@@ -4310,7 +4310,7 @@ type AttachPrivateNetworkRequest struct {
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
 }
 
-// AttachPrivateNetwork: add load balancer on instance private network
+// AttachPrivateNetwork: bETA - Add load balancer on instance private network
 func (s *API) AttachPrivateNetwork(req *AttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
@@ -4359,7 +4359,7 @@ type DetachPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
-// DetachPrivateNetwork: remove load balancer of private network
+// DetachPrivateNetwork: bETA - Remove load balancer of private network
 func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
