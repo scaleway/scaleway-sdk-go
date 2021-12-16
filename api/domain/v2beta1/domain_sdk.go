@@ -444,6 +444,10 @@ const (
 	DomainStatusXfering = DomainStatus("xfering")
 	// DomainStatusXferError is [insert doc].
 	DomainStatusXferError = DomainStatus("xfer_error")
+	// DomainStatusRestoring is [insert doc].
+	DomainStatusRestoring = DomainStatus("restoring")
+	// DomainStatusRestoreError is [insert doc].
+	DomainStatusRestoreError = DomainStatus("restore_error")
 	// DomainStatusExpired is [insert doc].
 	DomainStatusExpired = DomainStatus("expired")
 	// DomainStatusExpiring is [insert doc].
@@ -786,6 +790,8 @@ const (
 	RenewableDomainStatusRenewable = RenewableDomainStatus("renewable")
 	// RenewableDomainStatusLateReneweable is [insert doc].
 	RenewableDomainStatusLateReneweable = RenewableDomainStatus("late_reneweable")
+	// RenewableDomainStatusRestorable is [insert doc].
+	RenewableDomainStatusRestorable = RenewableDomainStatus("restorable")
 	// RenewableDomainStatusNotRenewable is [insert doc].
 	RenewableDomainStatusNotRenewable = RenewableDomainStatus("not_renewable")
 )
@@ -902,6 +908,8 @@ const (
 	TaskTypeCreateExternalDomain = TaskType("create_external_domain")
 	// TaskTypeRenewDomain is [insert doc].
 	TaskTypeRenewDomain = TaskType("renew_domain")
+	// TaskTypeRestoreDomain is [insert doc].
+	TaskTypeRestoreDomain = TaskType("restore_domain")
 	// TaskTypeTransferDomain is [insert doc].
 	TaskTypeTransferDomain = TaskType("transfer_domain")
 	// TaskTypeTradeDomain is [insert doc].
@@ -955,14 +963,6 @@ func (enum *TaskType) UnmarshalJSON(data []byte) error {
 
 	*enum = TaskType(TaskType(tmp).String())
 	return nil
-}
-
-type AvailableDomain struct {
-	Domain string `json:"domain"`
-
-	Available bool `json:"available"`
-
-	Tld *Tld `json:"tld"`
 }
 
 // ClearDNSZoneRecordsResponse: clear dns zone records response
@@ -1344,17 +1344,11 @@ type ListDNSZoneRecordsResponse struct {
 
 // ListDNSZoneVersionRecordsResponse: list dns zone version records response
 type ListDNSZoneVersionRecordsResponse struct {
-	// TotalCount: the total number of DNS zones versions records
-	TotalCount uint32 `json:"total_count"`
-
 	Records []*Record `json:"records"`
 }
 
 // ListDNSZoneVersionsResponse: list dns zone versions response
 type ListDNSZoneVersionsResponse struct {
-	// TotalCount: the total number of DNS zones versions
-	TotalCount uint32 `json:"total_count"`
-
 	Versions []*DNSZoneVersion `json:"versions"`
 }
 
@@ -1453,18 +1447,6 @@ type NewContact struct {
 	WhoisOptIn bool `json:"whois_opt_in"`
 
 	State *string `json:"state"`
-}
-
-type OrderResponse struct {
-	Domain string `json:"domain"`
-
-	OrganizationID string `json:"organization_id"`
-
-	ProjectID string `json:"project_id"`
-
-	TaskID string `json:"task_id"`
-
-	CreatedAt *time.Time `json:"created_at"`
 }
 
 type Record struct {
@@ -1655,12 +1637,6 @@ type SSLCertificate struct {
 	ExpiredAt *time.Time `json:"expired_at"`
 }
 
-// SearchAvailableDomainsResponse: search available domains response
-type SearchAvailableDomainsResponse struct {
-	// AvailableDomains: array of available domains
-	AvailableDomains []*AvailableDomain `json:"available_domains"`
-}
-
 type Task struct {
 	ID string `json:"id"`
 
@@ -1683,26 +1659,6 @@ type Task struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	Message *string `json:"message"`
-}
-
-type Tld struct {
-	Name string `json:"name"`
-
-	DnssecSupport bool `json:"dnssec_support"`
-
-	DurationInYearsMin uint32 `json:"duration_in_years_min"`
-
-	DurationInYearsMax uint32 `json:"duration_in_years_max"`
-
-	IdnSupport bool `json:"idn_support"`
-
-	Offers map[string]*TldOffer `json:"offers"`
-}
-
-type TldOffer struct {
-	Action string `json:"action"`
-
-	OperationPath string `json:"operation_path"`
 }
 
 type UpdateContactRequestQuestion struct {
@@ -2348,10 +2304,6 @@ func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOpti
 
 type ListDNSZoneVersionsRequest struct {
 	DNSZone string `json:"-"`
-	// Page: the page number for the returned DNS zones versions
-	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zones versions per page
-	PageSize *uint32 `json:"-"`
 }
 
 // ListDNSZoneVersions: list DNS zone versions
@@ -2363,15 +2315,6 @@ type ListDNSZoneVersionsRequest struct {
 func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionsResponse, error) {
 	var err error
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
 	}
@@ -2379,7 +2322,6 @@ func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/domain/v2beta1/dns-zones/" + fmt.Sprint(req.DNSZone) + "/versions",
-		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -2394,10 +2336,6 @@ func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.R
 
 type ListDNSZoneVersionRecordsRequest struct {
 	DNSZoneVersionID string `json:"-"`
-	// Page: the page number for the returned DNS zones versions records
-	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zones versions records per page
-	PageSize *uint32 `json:"-"`
 }
 
 // ListDNSZoneVersionRecords: list DNS zone version records
@@ -2406,15 +2344,6 @@ type ListDNSZoneVersionRecordsRequest struct {
 func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionRecordsResponse, error) {
 	var err error
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
 	if fmt.Sprint(req.DNSZoneVersionID) == "" {
 		return nil, errors.New("field DNSZoneVersionID cannot be empty in request")
 	}
@@ -2422,7 +2351,6 @@ func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, o
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/domain/v2beta1/dns-zones/version/" + fmt.Sprint(req.DNSZoneVersionID) + "",
-		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -2758,7 +2686,7 @@ type RegistrarAPIBuyDomainRequest struct {
 // Request the registration of a domain name.
 // You can provide an already existing domain's contact or a new contact.
 //
-func (s *RegistrarAPI) BuyDomain(req *RegistrarAPIBuyDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) BuyDomain(req *RegistrarAPIBuyDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
 	if req.ProjectID == "" {
@@ -2777,7 +2705,7 @@ func (s *RegistrarAPI) BuyDomain(req *RegistrarAPIBuyDomainRequest, opts ...scw.
 		return nil, err
 	}
 
-	var resp OrderResponse
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2790,15 +2718,13 @@ type RegistrarAPIRenewDomainRequest struct {
 	Domain string `json:"-"`
 
 	DurationInYears uint32 `json:"duration_in_years"`
-
-	ForceLateRenewal *bool `json:"force_late_renewal"`
 }
 
 // RenewDomain: renew a domain
 //
 // Request the renewal of a domain name.
 //
-func (s *RegistrarAPI) RenewDomain(req *RegistrarAPIRenewDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) RenewDomain(req *RegistrarAPIRenewDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
 	if fmt.Sprint(req.Domain) == "" {
@@ -2816,7 +2742,7 @@ func (s *RegistrarAPI) RenewDomain(req *RegistrarAPIRenewDomainRequest, opts ...
 		return nil, err
 	}
 
-	var resp OrderResponse
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2855,7 +2781,7 @@ type RegistrarAPITransferInDomainRequest struct {
 //
 // Request the transfer from another registrar domain to Scaleway.
 //
-func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
 	if req.ProjectID == "" {
@@ -2874,7 +2800,7 @@ func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest
 		return nil, err
 	}
 
-	var resp OrderResponse
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2902,7 +2828,7 @@ type RegistrarAPITradeDomainRequest struct {
 // If no contact is given, the first contact of the other Scaleway account is taken.<br/>
 // If the other Scaleway account has no contact. An error occurs.
 //
-func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
 	if fmt.Sprint(req.Domain) == "" {
@@ -2920,7 +2846,7 @@ func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...
 		return nil, err
 	}
 
-	var resp OrderResponse
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3588,42 +3514,6 @@ func (s *RegistrarAPI) DisableDomainDNSSEC(req *RegistrarAPIDisableDomainDNSSECR
 	return &resp, nil
 }
 
-type RegistrarAPISearchAvailableDomainsRequest struct {
-	// Domains: a list of domain to search, TLD is optional
-	Domains []string `json:"-"`
-	// Tlds: array of tlds to search on
-	Tlds []string `json:"-"`
-}
-
-// SearchAvailableDomains: search available domains
-//
-// Search a domain (or at maximum, 10 domains).
-//
-// If the TLD list is empty or not set the search returns the results from the most popular TLDs.
-//
-func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDomainsRequest, opts ...scw.RequestOption) (*SearchAvailableDomainsResponse, error) {
-	var err error
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "domains", req.Domains)
-	parameter.AddToQuery(query, "tlds", req.Tlds)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/domain/v2beta1/search-domains",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp SearchAvailableDomainsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDNSZonesResponse) UnsafeGetTotalCount() uint32 {
@@ -3653,44 +3543,6 @@ func (r *ListDNSZoneRecordsResponse) UnsafeGetTotalCount() uint32 {
 // Internal usage only
 func (r *ListDNSZoneRecordsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListDNSZoneRecordsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Records = append(r.Records, results.Records...)
-	r.TotalCount += uint32(len(results.Records))
-	return uint32(len(results.Records)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDNSZoneVersionsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDNSZoneVersionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDNSZoneVersionsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Versions = append(r.Versions, results.Versions...)
-	r.TotalCount += uint32(len(results.Versions))
-	return uint32(len(results.Versions)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDNSZoneVersionRecordsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDNSZoneVersionRecordsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDNSZoneVersionRecordsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
