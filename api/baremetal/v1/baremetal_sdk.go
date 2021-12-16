@@ -418,6 +418,8 @@ const (
 	ServerStatusLocked = ServerStatus("locked")
 	// ServerStatusOutOfStock is [insert doc].
 	ServerStatusOutOfStock = ServerStatus("out_of_stock")
+	// ServerStatusOrdered is [insert doc].
+	ServerStatusOrdered = ServerStatus("ordered")
 )
 
 func (enum ServerStatus) String() string {
@@ -473,6 +475,14 @@ type CreateServerRequestInstall struct {
 	Hostname string `json:"hostname"`
 
 	SSHKeyIDs []string `json:"ssh_key_ids"`
+
+	User *string `json:"user"`
+
+	Password *string `json:"password"`
+
+	ServiceUser *string `json:"service_user"`
+
+	ServicePassword *string `json:"service_password"`
 }
 
 // Disk: disk
@@ -570,6 +580,24 @@ type OS struct {
 	Version string `json:"version"`
 	// LogoURL: URL of this os's logo
 	LogoURL string `json:"logo_url"`
+	// SSH: define the SSH requirements to install the OS
+	SSH *OSOSField `json:"ssh"`
+	// User: define the username requirements to install the OS
+	User *OSOSField `json:"user"`
+	// Password: define the password requirements to install the OS
+	Password *OSOSField `json:"password"`
+	// ServiceUser: define the username requirements to install the service
+	ServiceUser *OSOSField `json:"service_user"`
+	// ServicePassword: define the password requirements to install the service
+	ServicePassword *OSOSField `json:"service_password"`
+}
+
+type OSOSField struct {
+	Editable bool `json:"editable"`
+
+	Required bool `json:"required"`
+
+	DefaultValue *string `json:"default_value"`
 }
 
 // Offer: offer
@@ -694,6 +722,8 @@ type Server struct {
 	PingStatus ServerPingStatus `json:"ping_status"`
 	// Options: options enabled on server
 	Options []*ServerOption `json:"options"`
+	// ServiceURL: the address of the installed service
+	ServiceURL string `json:"service_url"`
 }
 
 // ServerEvent: server event
@@ -971,6 +1001,14 @@ type InstallServerRequest struct {
 	Hostname string `json:"hostname"`
 	// SSHKeyIDs: SSH key IDs authorized on the server
 	SSHKeyIDs []string `json:"ssh_key_ids"`
+	// User: user used for the installation
+	User *string `json:"user"`
+	// Password: password used for the installation
+	Password *string `json:"password"`
+	// ServiceUser: user used for the service to install
+	ServiceUser *string `json:"service_user"`
+	// ServicePassword: password used for the service to install
+	ServicePassword *string `json:"service_password"`
 }
 
 // InstallServer: install a baremetal server
