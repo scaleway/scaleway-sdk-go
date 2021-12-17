@@ -148,6 +148,8 @@ const (
 	GatewayStatusDeleting = GatewayStatus("deleting")
 	// GatewayStatusDeleted is [insert doc].
 	GatewayStatusDeleted = GatewayStatus("deleted")
+	// GatewayStatusLocked is [insert doc].
+	GatewayStatusLocked = GatewayStatus("locked")
 )
 
 func (enum GatewayStatus) String() string {
