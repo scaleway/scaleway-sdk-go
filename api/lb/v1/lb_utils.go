@@ -88,6 +88,76 @@ func waitForLb(timeout *time.Duration, retryInterval *time.Duration, getLB func(
 	return lb.(*LB), nil
 }
 
+// ZonedAPIWaitForLBInstancesRequest is used by WaitForLb method.
+type ZonedAPIWaitForLBInstancesRequest struct {
+	LBID          string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLbInstances waits for the lb to be in a "terminal state" and the attached instances before returning.
+func (s *ZonedAPI) WaitForLbInstances(req *ZonedAPIWaitForLBInstancesRequest, opts ...scw.RequestOption) (*LB, error) {
+	return waitForLbInstances(req.Timeout, req.RetryInterval, func() (*LB, error) {
+		return s.GetLB(&ZonedAPIGetLBRequest{
+			Zone: req.Zone,
+			LBID: req.LBID,
+		}, opts...)
+	})
+}
+
+func waitForLbInstances(timeout *time.Duration, retryInterval *time.Duration, getLB func() (*LB, error)) (*LB, error) {
+	t := defaultTimeout
+	if timeout != nil {
+		t = *timeout
+	}
+	r := defaultRetryInterval
+	if retryInterval != nil {
+		r = *retryInterval
+	}
+
+	terminalLBStatus := map[LBStatus]struct{}{
+		LBStatusReady:   {},
+		LBStatusStopped: {},
+		LBStatusError:   {},
+		LBStatusLocked:  {},
+	}
+
+	terminalInstanceStatus := map[InstanceStatus]struct{}{
+		InstanceStatusReady:   {},
+		InstanceStatusStopped: {},
+		InstanceStatusError:   {},
+		InstanceStatusLocked:  {},
+	}
+
+	lb, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := getLB()
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTerminal := terminalLBStatus[res.Status]
+
+			for _, i := range res.Instances {
+				_, isInstanceTerminal := terminalInstanceStatus[i.Status]
+				if !isInstanceTerminal {
+					return res, isTerminal, nil
+				}
+			}
+
+			return res, isTerminal, nil
+		},
+		Timeout:          t,
+		IntervalStrategy: async.LinearIntervalStrategy(r),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for lb failed")
+	}
+
+	return lb.(*LB), nil
+}
+
 // ZonedAPIWaitForLBPNRequest is used by WaitForLBPN method.
 type ZonedAPIWaitForLBPNRequest struct {
 	LBID          string
