@@ -624,8 +624,6 @@ type IP struct {
 	Address net.IP `json:"address"`
 	// Reverse: reverse domain name for the IP address
 	Reverse *string `json:"reverse"`
-	// GatewayID: gateway associated to the IP
-	GatewayID *string `json:"gateway_id"`
 	// Zone: zone this IP is available in
 	Zone scw.Zone `json:"zone"`
 }
