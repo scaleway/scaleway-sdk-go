@@ -772,17 +772,17 @@ type ListServersRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListServersRequestOrderBy `json:"-"`
-	// Tags: filter servers by tags
+	// Tags: filter by tags
 	Tags []string `json:"-"`
-	// Status: filter servers by status
+	// Status: filter by status
 	Status []string `json:"-"`
-	// Name: filter servers by name
+	// Name: filter by name
 	Name *string `json:"-"`
-	// OrganizationID: filter servers by organization ID
+	// OrganizationID: filter by organization ID
 	OrganizationID *string `json:"-"`
-	// ProjectID: filter servers by project ID
+	// ProjectID: filter by project ID
 	ProjectID *string `json:"-"`
-	// OptionID: filter servers by option ID
+	// OptionID: filter by option ID
 	OptionID *string `json:"-"`
 }
 
@@ -1516,13 +1516,13 @@ type AddOptionServerRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
-	// OptionID: ID of the option to delete
+	// OptionID: ID of the option to add
 	OptionID string `json:"-"`
 }
 
 // AddOptionServer: add server option
 //
-// Add an option on specific server.
+// Add an option to a specific server.
 func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1545,8 +1545,13 @@ func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/server/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
 		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Server
@@ -1568,7 +1573,7 @@ type DeleteOptionServerRequest struct {
 
 // DeleteOptionServer: delete server option
 //
-// Delete an option on specific server.
+// Delete an option from a specific server.
 func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1591,7 +1596,7 @@ func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
-		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/server/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
 		Headers: http.Header{},
 	}
 
