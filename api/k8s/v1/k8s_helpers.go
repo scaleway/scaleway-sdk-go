@@ -36,10 +36,9 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	terminalStatus := map[ClusterStatus]struct{}{
-		ClusterStatusReady:        {},
-		ClusterStatusLocked:       {},
-		ClusterStatusDeleted:      {},
-		ClusterStatusPoolRequired: {},
+		ClusterStatusReady:   {},
+		ClusterStatusLocked:  {},
+		ClusterStatusDeleted: {},
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
@@ -159,4 +158,51 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 	}
 
 	return node.(*Node), err
+}
+
+// WaitForClusterPoolRequest is used by WaitForClusterPool method.
+type WaitForClusterPoolRequest struct {
+	ClusterID     string
+	Region        scw.Region
+	Status        ClusterStatus
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForClusterPool waits for the pool be associated with a cluster as a "terminal state" before returning.
+func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	timeout := *req.Timeout
+	if timeout == 0 {
+		timeout = waitForClusterDefaultTimeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ClusterStatus]struct{}{
+		ClusterStatusPoolRequired: {},
+	}
+
+	cluster, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			cluster, err := s.GetCluster(&GetClusterRequest{
+				ClusterID: req.ClusterID,
+				Region:    req.Region,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTerminal := terminalStatus[cluster.Status]
+			return cluster, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for cluster failed")
+	}
+
+	return cluster.(*Cluster), nil
 }
