@@ -222,3 +222,56 @@ func (s *ZonedAPI) WaitForLBPN(req *ZonedAPIWaitForLBPNRequest, opts ...scw.Requ
 		return lbPNs.PrivateNetwork, nil
 	})
 }
+
+// ZonedAPIWaitForLBCertificateRequest is used by WaitForLbCertificate method.
+type ZonedAPIWaitForLBCertificateRequest struct {
+	CertID        string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLBCertificate waits for the certificate to be in a "terminal state"
+func (s *ZonedAPI) WaitForLBCertificate(req *ZonedAPIWaitForLBCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	return waitForLBCertificate(req.Timeout, req.RetryInterval, func() (*Certificate, error) {
+		return s.GetCertificate(&ZonedAPIGetCertificateRequest{
+			Zone:          req.Zone,
+			CertificateID: req.CertID,
+		}, opts...)
+	})
+}
+
+func waitForLBCertificate(timeout *time.Duration, retryInterval *time.Duration, getCertificate func() (*Certificate, error)) (*Certificate, error) {
+	t := defaultTimeout
+	if timeout != nil {
+		t = *timeout
+	}
+	r := defaultRetryInterval
+	if retryInterval != nil {
+		r = *retryInterval
+	}
+
+	terminalStatus := map[CertificateStatus]struct{}{
+		CertificateStatusError: {},
+		CertificateStatusReady: {},
+	}
+
+	crt, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := getCertificate()
+
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.Status]
+
+			return res, isTerminal, nil
+		},
+		Timeout:          t,
+		IntervalStrategy: async.LinearIntervalStrategy(r),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for lb failed")
+	}
+	return crt.(*Certificate), nil
+}
