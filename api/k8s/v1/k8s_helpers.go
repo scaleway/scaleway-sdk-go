@@ -36,9 +36,10 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	terminalStatus := map[ClusterStatus]struct{}{
-		ClusterStatusReady:   {},
-		ClusterStatusLocked:  {},
-		ClusterStatusDeleted: {},
+		ClusterStatusReady:        {},
+		ClusterStatusLocked:       {},
+		ClusterStatusDeleted:      {},
+		ClusterStatusPoolRequired: {},
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
