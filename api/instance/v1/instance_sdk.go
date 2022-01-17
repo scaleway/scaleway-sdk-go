@@ -985,8 +985,6 @@ type Image struct {
 
 	Project string `json:"project"`
 
-	Tags []string `json:"tags"`
-
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -1104,9 +1102,7 @@ type PlacementGroup struct {
 	Organization string `json:"organization"`
 	// Project: the placement group project ID
 	Project string `json:"project"`
-	// Tags: the placement group tags
-	Tags []string `json:"tags"`
-	// PolicyMode: select the failling mode when the placement cannot be respected, either optional or enforced
+	// PolicyMode: select the failling mode when the placement cannot be  respected, either optional or enforced
 	//
 	// Default value: optional
 	PolicyMode PlacementGroupPolicyMode `json:"policy_mode"`
@@ -1166,8 +1162,6 @@ type SecurityGroup struct {
 	Organization string `json:"organization"`
 	// Project: the security group project ID
 	Project string `json:"project"`
-	// Tags: the security group tags
-	Tags []string `json:"tags"`
 	// Deprecated: OrganizationDefault: true if it is your default security group for this organization ID
 	OrganizationDefault bool `json:"organization_default"`
 	// ProjectDefault: true if it is your default security group for this project ID
@@ -1421,8 +1415,6 @@ type Snapshot struct {
 	Organization string `json:"organization"`
 	// Project: the snapshot project ID
 	Project string `json:"project"`
-	// Tags: the snapshot tags
-	Tags []string `json:"tags"`
 	// VolumeType: the snapshot volume type
 	//
 	// Default value: l_ssd
@@ -1517,8 +1509,6 @@ type Volume struct {
 	Organization string `json:"organization"`
 	// Project: the volume project ID
 	Project string `json:"project"`
-	// Tags: the volume tags
-	Tags []string `json:"tags"`
 	// Server: the server attached to the volume
 	Server *ServerSummary `json:"server"`
 	// State: the volume state
@@ -1577,6 +1567,12 @@ type VolumeServerTemplate struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
+	// Deprecated: Organization: organization ID of the volume
+	// Precisely one of Organization, Project must be set.
+	Organization *string `json:"organization,omitempty"`
+	// Project: project ID of the volume
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 }
 
 type VolumeSummary struct {
@@ -1825,7 +1821,7 @@ type ListServersRequest struct {
 	// Default value: running
 	State *ServerState `json:"-"`
 	// Tags: list servers with these exact tags
-	Tags *string `json:"-"`
+	Tags []string `json:"-"`
 	// PrivateNetwork: list servers in this Private Network
 	PrivateNetwork *string `json:"-"`
 	// Order: define the order of the returned servers
@@ -1858,7 +1854,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "without_ip", req.WithoutIP)
 	parameter.AddToQuery(query, "commercial_type", req.CommercialType)
 	parameter.AddToQuery(query, "state", req.State)
-	parameter.AddToQuery(query, "tags", req.Tags)
+	if len(req.Tags) != 0 {
+		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
+	}
 	parameter.AddToQuery(query, "private_network", req.PrivateNetwork)
 	parameter.AddToQuery(query, "order", req.Order)
 
@@ -2417,8 +2415,6 @@ type ListImagesRequest struct {
 	Arch *string `json:"-"`
 
 	Project *string `json:"-"`
-
-	Tags *[]string `json:"-"`
 }
 
 // ListImages: list instance images
@@ -2445,7 +2441,6 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "public", req.Public)
 	parameter.AddToQuery(query, "arch", req.Arch)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -2527,8 +2522,6 @@ type CreateImageRequest struct {
 	// Project: project ID of the image
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// Tags: the tags of the image
-	Tags []string `json:"tags,omitempty"`
 	// Public: true to create a public image
 	Public bool `json:"public,omitempty"`
 }
@@ -2612,8 +2605,6 @@ type SetImageRequest struct {
 	State ImageState `json:"state"`
 
 	Project string `json:"project"`
-
-	Tags []string `json:"tags"`
 }
 
 // setImage: update image
@@ -2715,8 +2706,6 @@ type ListSnapshotsRequest struct {
 	Name *string `json:"-"`
 
 	Project *string `json:"-"`
-
-	Tags *[]string `json:"-"`
 }
 
 // ListSnapshots: list snapshots
@@ -2739,7 +2728,6 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -2767,8 +2755,6 @@ type CreateSnapshotRequest struct {
 	Name string `json:"name,omitempty"`
 	// VolumeID: UUID of the volume
 	VolumeID string `json:"volume_id,omitempty"`
-	// Tags: the tags of the snapshot
-	Tags []string `json:"tags,omitempty"`
 	// Deprecated: Organization: organization ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
@@ -2892,8 +2878,6 @@ type setSnapshotRequest struct {
 	ModificationDate *time.Time `json:"modification_date"`
 
 	Project string `json:"project"`
-
-	Tags []string `json:"tags"`
 }
 
 // setSnapshot: update snapshot
@@ -2999,8 +2983,6 @@ type ListVolumesRequest struct {
 	Organization *string `json:"-"`
 	// Project: filter volume by project ID
 	Project *string `json:"-"`
-	// Tags: filter volumes with these exact tags
-	Tags *string `json:"-"`
 	// Name: filter volume by name (for eg. "vol" will return "myvolume" but not "data")
 	Name *string `json:"-"`
 }
@@ -3025,7 +3007,6 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -3058,8 +3039,6 @@ type CreateVolumeRequest struct {
 	// Project: the volume project ID
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// Tags: the volume tags
-	Tags []string `json:"tags,omitempty"`
 	// VolumeType: the volume type
 	//
 	// Default value: l_ssd
@@ -3168,8 +3147,6 @@ type UpdateVolumeRequest struct {
 	VolumeID string `json:"-"`
 	// Name: the volume name
 	Name *string `json:"name,omitempty"`
-	// Tags: the tags of the volume
-	Tags *[]string `json:"tags,omitempty"`
 	// Size: the volume disk size
 	Size *scw.Size `json:"size,omitempty"`
 }
@@ -3259,8 +3236,6 @@ type ListSecurityGroupsRequest struct {
 	Organization *string `json:"-"`
 	// Project: the security group project ID
 	Project *string `json:"-"`
-	// Tags: list security groups with these exact tags
-	Tags *[]string `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
 	// Default value: 50
@@ -3289,7 +3264,6 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
@@ -3325,8 +3299,6 @@ type CreateSecurityGroupRequest struct {
 	// Project: project ID the security group belong to
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// Tags: the tags of the security group
-	Tags []string `json:"tags,omitempty"`
 	// Deprecated: OrganizationDefault: whether this security group becomes the default security group for new instances
 	//
 	// Default value: false
@@ -3482,8 +3454,6 @@ type setSecurityGroupRequest struct {
 	ID string `json:"-"`
 	// Name: the name of the security group
 	Name string `json:"name"`
-	// Tags: the tags of the security group
-	Tags []string `json:"tags"`
 	// CreationDate: the creation date of the security group (will be ignored)
 	CreationDate *time.Time `json:"creation_date"`
 	// ModificationDate: the modification date of the security group (will be ignored)
@@ -3857,8 +3827,6 @@ type ListPlacementGroupsRequest struct {
 	Organization *string `json:"-"`
 	// Project: list only placement groups of this project ID
 	Project *string `json:"-"`
-	// Tags: list placement groups with these exact tags
-	Tags *[]string `json:"-"`
 	// Name: filter placement groups by name (for eg. "cluster1" will return "cluster100" and "cluster1" but not "foo")
 	Name *string `json:"-"`
 }
@@ -3884,7 +3852,6 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization", req.Organization)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -3917,8 +3884,6 @@ type CreatePlacementGroupRequest struct {
 	// Project: project ID of the placement group
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
-	// Tags: the tags of the placement group
-	Tags []string `json:"tags,omitempty"`
 	// PolicyMode: the operating mode of the placement group
 	//
 	// Default value: optional
@@ -4036,8 +4001,6 @@ type SetPlacementGroupRequest struct {
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
 
 	Project string `json:"project"`
-
-	Tags []string `json:"tags"`
 }
 
 // SetPlacementGroup: set placement group
@@ -4095,8 +4058,6 @@ type UpdatePlacementGroupRequest struct {
 	PlacementGroupID string `json:"-"`
 	// Name: name of the placement group
 	Name *string `json:"name,omitempty"`
-	// Tags: the tags of the placement group
-	Tags *[]string `json:"tags,omitempty"`
 	// PolicyMode: the operating mode of the placement group
 	//
 	// Default value: optional
@@ -4332,8 +4293,6 @@ type ListIPsRequest struct {
 	Page *int32 `json:"-"`
 	// Project: the project ID the IPs are reserved in
 	Project *string `json:"-"`
-	// Tags: filter IPs with these exact tags
-	Tags *[]string `json:"-"`
 }
 
 // ListIPs: list all flexible IPs
@@ -4356,7 +4315,6 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "project", req.Project)
-	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -4383,13 +4341,13 @@ type CreateIPRequest struct {
 	// Deprecated: Organization: the organization ID the IP is reserved in
 	// Precisely one of Organization, Project must be set.
 	Organization *string `json:"organization,omitempty"`
+	// Project: the project ID the IP is reserved in
+	// Precisely one of Organization, Project must be set.
+	Project *string `json:"project,omitempty"`
 	// Server: UUID of the server you want to attach the IP to
 	Server *string `json:"server,omitempty"`
 	// Tags: an array of keywords you want to tag this IP with
 	Tags []string `json:"tags,omitempty"`
-	// Project: the project ID the IP is reserved in
-	// Precisely one of Organization, Project must be set.
-	Project *string `json:"project,omitempty"`
 }
 
 // CreateIP: reserve a flexible IP
