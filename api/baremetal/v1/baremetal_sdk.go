@@ -654,6 +654,12 @@ type OfferOptionOffer struct {
 	Price *scw.Money `json:"price"`
 
 	Enabled bool `json:"enabled"`
+	// SubscriptionPeriod:
+	//
+	// Default value: unknown_subscription_period
+	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
+
+	Manageable bool `json:"manageable"`
 }
 
 // Option: option
@@ -702,6 +708,8 @@ type Server struct {
 	Status ServerStatus `json:"status"`
 	// OfferID: offer ID of the server
 	OfferID string `json:"offer_id"`
+	// OfferName: offer name of the server
+	OfferName string `json:"offer_name"`
 	// Tags: array of customs tags attached to the server
 	Tags []string `json:"tags"`
 	// IPs: array of IPs attached to the server
@@ -758,6 +766,8 @@ type ServerOption struct {
 	//
 	// Default value: option_status_unknown
 	Status ServerOptionOptionStatus `json:"status"`
+
+	Manageable bool `json:"manageable"`
 }
 
 // Service API
