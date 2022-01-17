@@ -295,6 +295,8 @@ type CreateFlexibleIPRequest struct {
 	ServerID *string `json:"server_id"`
 	// Reverse: reverse DNS value
 	Reverse *string `json:"reverse"`
+	// IsIPv6: if true, creates a Flexible IP with an ipv6 address
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // CreateFlexibleIP: create a Flexible IP
