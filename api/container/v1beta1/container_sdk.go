@@ -1087,6 +1087,9 @@ type DeployContainerRequest struct {
 	ContainerID string `json:"-"`
 }
 
+// DeployContainer: deploy a container
+//
+// Deploy a container associated with the given id.
 func (s *API) DeployContainer(req *DeployContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 

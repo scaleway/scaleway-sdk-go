@@ -1703,6 +1703,8 @@ type TldOffer struct {
 	Action string `json:"action"`
 
 	OperationPath string `json:"operation_path"`
+
+	Price *scw.Money `json:"price"`
 }
 
 type UpdateContactRequestQuestion struct {
