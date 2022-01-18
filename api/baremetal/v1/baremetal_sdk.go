@@ -796,9 +796,9 @@ type ListServersRequest struct {
 	OptionID *string `json:"-"`
 }
 
-// ListServers: list baremetal servers for organization
+// ListServers: list elastic metal servers for organization
 //
-// List baremetal servers for organization.
+// List elastic metal servers for organization.
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -849,7 +849,7 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServer: get a specific baremetal server
+// GetServer: get a specific elastic metal server
 //
 // Get the server associated with the given ID.
 func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -905,9 +905,9 @@ type CreateServerRequest struct {
 	OptionIDs []string `json:"option_ids"`
 }
 
-// CreateServer: create a baremetal server
+// CreateServer: create a elastic metal server
 //
-// Create a new baremetal server. Once the server is created, you probably want to install an OS.
+// Create a new elastic metal server. Once the server is created, you probably want to install an OS.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -962,7 +962,7 @@ type UpdateServerRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdateServer: update a baremetal server
+// UpdateServer: update a elastic metal server
 //
 // Update the server associated with the given ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1021,7 +1021,7 @@ type InstallServerRequest struct {
 	ServicePassword *string `json:"service_password"`
 }
 
-// InstallServer: install a baremetal server
+// InstallServer: install a elastic metal server
 //
 // Install an OS on the server associated with the given ID.
 func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1106,7 +1106,7 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete a baremetal server
+// DeleteServer: delete a elastic metal server
 //
 // Delete the server associated with the given ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1150,7 +1150,7 @@ type RebootServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// RebootServer: reboot a baremetal server
+// RebootServer: reboot a elastic metal server
 //
 // Reboot the server associated with the given ID, use boot param to reboot in rescue.
 func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1199,7 +1199,7 @@ type StartServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// StartServer: start a baremetal server
+// StartServer: start a elastic metal server
 //
 // Start the server associated with the given ID.
 func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1244,7 +1244,7 @@ type StopServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopServer: stop a baremetal server
+// StopServer: stop a elastic metal server
 //
 // Stop the server associated with the given ID.
 func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1350,9 +1350,9 @@ type StartBMCAccessRequest struct {
 	IP net.IP `json:"ip"`
 }
 
-// StartBMCAccess: start BMC (Baseboard Management Controller) access for a given baremetal server
+// StartBMCAccess: unvailable - Start BMC (Baseboard Management Controller) access for a given elastic metal server
 //
-// Start BMC (Baseboard Management Controller) access associated with the given ID.
+// Unvailable - Start BMC (Baseboard Management Controller) access associated with the given ID.
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
 //
 func (s *API) StartBMCAccess(req *StartBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
@@ -1397,7 +1397,7 @@ type GetBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetBMCAccess: get BMC (Baseboard Management Controller) access for a given baremetal server
+// GetBMCAccess: get BMC (Baseboard Management Controller) access for a given elastic metal server
 //
 // Get the BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
@@ -1437,7 +1437,7 @@ type StopBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopBMCAccess: stop BMC (Baseboard Management Controller) access for a given baremetal server
+// StopBMCAccess: stop BMC (Baseboard Management Controller) access for a given elastic metal server
 //
 // Stop BMC (Baseboard Management Controller) access associated with the given ID.
 func (s *API) StopBMCAccess(req *StopBMCAccessRequest, opts ...scw.RequestOption) error {
@@ -1816,9 +1816,9 @@ type ListOSRequest struct {
 	OfferID *string `json:"-"`
 }
 
-// ListOS: list all available OS that can be install on a baremetal server
+// ListOS: list all available OS that can be install on a elastic metal server
 //
-// List all available OS that can be install on a baremetal server.
+// List all available OS that can be install on a elastic metal server.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
 
