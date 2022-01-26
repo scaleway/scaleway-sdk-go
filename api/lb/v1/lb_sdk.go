@@ -366,14 +366,6 @@ const (
 	LBStatusLocked = LBStatus("locked")
 	// LBStatusMigrating is [insert doc].
 	LBStatusMigrating = LBStatus("migrating")
-	// LBStatusToCreate is [insert doc].
-	LBStatusToCreate = LBStatus("to_create")
-	// LBStatusCreating is [insert doc].
-	LBStatusCreating = LBStatus("creating")
-	// LBStatusToDelete is [insert doc].
-	LBStatusToDelete = LBStatus("to_delete")
-	// LBStatusDeleting is [insert doc].
-	LBStatusDeleting = LBStatus("deleting")
 )
 
 func (enum LBStatus) String() string {
@@ -1029,8 +1021,6 @@ type Backend struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	FailoverHost *string `json:"failover_host"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -2253,11 +2243,6 @@ type CreateBackendRequest struct {
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
-	//
-	// Only the host part of the Scaleway S3 bucket website is expected e.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
-	FailoverHost *string `json:"failover_host"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2417,8 +2402,6 @@ type UpdateBackendRequest struct {
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-
-	FailoverHost *string `json:"failover_host"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5106,11 +5089,6 @@ type ZonedAPICreateBackendRequest struct {
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
-	//
-	// Only the host part of the Scaleway S3 bucket website is expected e.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
-	FailoverHost *string `json:"failover_host"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5270,8 +5248,6 @@ type ZonedAPIUpdateBackendRequest struct {
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-
-	FailoverHost *string `json:"failover_host"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
