@@ -2166,7 +2166,7 @@ type ListOsRequest struct {
 
 // ListOs: list OS
 //
-// List all available OS that can be install on a elastic metal server.
+// List all available OS that can be install on a baremetal server.
 func (s *API) ListOs(req *ListOsRequest, opts ...scw.RequestOption) (*ListOsResponse, error) {
 	var err error
 
