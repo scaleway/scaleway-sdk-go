@@ -982,6 +982,18 @@ type ACLMatch struct {
 	Invert bool `json:"invert"`
 }
 
+// ACLSpec: acl spec
+type ACLSpec struct {
+	// Name: name of your ACL resource
+	Name string `json:"name"`
+	// Action: action to undertake when an ACL filter matches
+	Action *ACLAction `json:"action"`
+	// Match: the ACL match rule. At least `ip_subnet` or `http_filter` and `http_filter_value` are required
+	Match *ACLMatch `json:"match"`
+	// Index: order between your Acls (ascending order, 0 is first acl executed)
+	Index int32 `json:"index"`
+}
+
 // Backend: backend
 type Backend struct {
 	ID string `json:"id"`
@@ -1534,6 +1546,14 @@ type RouteMatch struct {
 	//
 	// Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer
 	Sni *string `json:"sni"`
+}
+
+// SetACLsResponse: set acls response
+type SetACLsResponse struct {
+	// ACLs: list of ACLs object (see ACL object description)
+	ACLs []*ACL `json:"acls"`
+	// TotalCount: the total number of items
+	TotalCount uint32 `json:"total_count"`
 }
 
 // Subscriber: subscriber
@@ -6496,6 +6516,51 @@ func (s *ZonedAPI) DeleteACL(req *ZonedAPIDeleteACLRequest, opts ...scw.RequestO
 		return err
 	}
 	return nil
+}
+
+type ZonedAPISetACLsRequest struct {
+	Zone scw.Zone `json:"-"`
+	// FrontendID: the Frontend to change ACL to
+	FrontendID string `json:"-"`
+	// ACLs: array of ACLs to erease the existing ACLs
+	ACLs []*ACLSpec `json:"acls"`
+}
+
+// SetACLs: set all ACLs for a given frontend
+func (s *ZonedAPI) SetACLs(req *ZonedAPISetACLsRequest, opts ...scw.RequestOption) (*SetACLsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FrontendID) == "" {
+		return nil, errors.New("field FrontendID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/frontends/" + fmt.Sprint(req.FrontendID) + "/acls",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetACLsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type ZonedAPICreateCertificateRequest struct {
