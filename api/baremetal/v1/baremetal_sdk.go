@@ -183,6 +183,38 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListSettingsRequestOrderBy string
+
+const (
+	// ListSettingsRequestOrderByCreatedAtAsc is [insert doc].
+	ListSettingsRequestOrderByCreatedAtAsc = ListSettingsRequestOrderBy("created_at_asc")
+	// ListSettingsRequestOrderByCreatedAtDesc is [insert doc].
+	ListSettingsRequestOrderByCreatedAtDesc = ListSettingsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListSettingsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListSettingsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSettingsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSettingsRequestOrderBy(ListSettingsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type OfferStock string
 
 const (
@@ -445,6 +477,38 @@ func (enum *ServerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SettingType string
+
+const (
+	// SettingTypeUnknown is [insert doc].
+	SettingTypeUnknown = SettingType("unknown")
+	// SettingTypeSMTP is [insert doc].
+	SettingTypeSMTP = SettingType("smtp")
+)
+
+func (enum SettingType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum SettingType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SettingType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SettingType(SettingType(tmp).String())
+	return nil
+}
+
 // BMCAccess: bmc access
 type BMCAccess struct {
 	// URL: URL to access to the server console
@@ -557,6 +621,14 @@ type ListServersResponse struct {
 	TotalCount uint32 `json:"total_count"`
 	// Servers: servers that match filters
 	Servers []*Server `json:"servers"`
+}
+
+// ListSettingsResponse: list settings response
+type ListSettingsResponse struct {
+	// TotalCount: total count of matching sttings
+	TotalCount uint32 `json:"total_count"`
+	// Settings: settings that match filters
+	Settings []*Setting `json:"settings"`
 }
 
 // Memory: memory
@@ -768,6 +840,20 @@ type ServerOption struct {
 	Status ServerOptionOptionStatus `json:"status"`
 
 	Manageable bool `json:"manageable"`
+}
+
+// Setting: setting
+type Setting struct {
+	// ID: ID of the setting
+	ID string `json:"id"`
+	// Type: type of the setting
+	//
+	// Default value: unknown
+	Type SettingType `json:"type"`
+	// ProjectID: ID of the project ID
+	ProjectID string `json:"project_id"`
+	// Enabled: the setting is enable or disable
+	Enabled bool `json:"enabled"`
 }
 
 // Service API
@@ -1806,6 +1892,109 @@ func (s *API) ListOptions(req *ListOptionsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+type ListSettingsRequest struct {
+	Zone scw.Zone `json:"-"`
+	// Page: page number
+	Page *int32 `json:"-"`
+	// PageSize: set the maximum list size
+	PageSize *uint32 `json:"-"`
+	// OrderBy: order the response
+	//
+	// Default value: created_at_asc
+	OrderBy ListSettingsRequestOrderBy `json:"-"`
+	// ProjectID: ID of the project
+	ProjectID *string `json:"-"`
+}
+
+// ListSettings: list all settings
+//
+// Return all settings for a project ID.
+func (s *API) ListSettings(req *ListSettingsRequest, opts ...scw.RequestOption) (*ListSettingsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/settings",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListSettingsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateSettingRequest struct {
+	Zone scw.Zone `json:"-"`
+	// SettingID: ID of the setting
+	SettingID string `json:"-"`
+	// Enabled: enable/Disable the setting
+	Enabled *bool `json:"enabled"`
+}
+
+// UpdateSetting: update setting
+//
+// Update a setting for a project ID (enable or disable).
+func (s *API) UpdateSetting(req *UpdateSettingRequest, opts ...scw.RequestOption) (*Setting, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SettingID) == "" {
+		return nil, errors.New("field SettingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/settings/" + fmt.Sprint(req.SettingID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Setting
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type ListOSRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Page: page number
@@ -1971,6 +2160,25 @@ func (r *ListOptionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Options = append(r.Options, results.Options...)
 	r.TotalCount += uint32(len(results.Options))
 	return uint32(len(results.Options)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSettingsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSettingsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSettingsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Settings = append(r.Settings, results.Settings...)
+	r.TotalCount += uint32(len(results.Settings))
+	return uint32(len(results.Settings)), nil
 }
 
 // UnsafeGetTotalCount should not be used
