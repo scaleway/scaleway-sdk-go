@@ -802,8 +802,6 @@ type Server struct {
 	PingStatus ServerPingStatus `json:"ping_status"`
 	// Options: options enabled on server
 	Options []*ServerOption `json:"options"`
-	// ServiceURL: the address of the installed service
-	ServiceURL string `json:"service_url"`
 }
 
 // ServerEvent: server event
@@ -828,6 +826,12 @@ type ServerInstall struct {
 	//
 	// Default value: unknown
 	Status ServerInstallStatus `json:"status"`
+
+	User string `json:"user"`
+
+	ServiceUser string `json:"service_user"`
+
+	ServiceURL string `json:"service_url"`
 }
 
 type ServerOption struct {
