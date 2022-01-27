@@ -252,6 +252,8 @@ type FlexibleIP struct {
 	ServerID *string `json:"server_id"`
 	// Reverse: reverse DNS value
 	Reverse string `json:"reverse"`
+	// Zone: flexible IP Availability Zone
+	Zone scw.Zone `json:"zone"`
 }
 
 // ListFlexibleIPsResponse: list flexible i ps response
@@ -264,21 +266,24 @@ type ListFlexibleIPsResponse struct {
 
 // MACAddress: mac address
 type MACAddress struct {
+	// ID: ID of the Flexible IP
 	ID string `json:"id"`
-
+	// MacAddress: mAC address of the Virtual MAC
 	MacAddress string `json:"mac_address"`
-	// MacType:
+	// MacType: virtual MAC type
 	//
 	// Default value: unknown_type
 	MacType MACAddressType `json:"mac_type"`
-	// Status:
+	// Status: virtual MAC status
 	//
 	// Default value: unknown
 	Status MACAddressStatus `json:"status"`
-
+	// UpdatedAt: date of last update of the Virtual MAC
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// CreatedAt: date of creation of the Virtual MAC
 	CreatedAt *time.Time `json:"created_at"`
+	// Zone: mAC Addr IP Availability Zone
+	Zone scw.Zone `json:"zone"`
 }
 
 // Service API
