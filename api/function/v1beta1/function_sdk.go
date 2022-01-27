@@ -93,6 +93,46 @@ func (enum *CronStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DomainStatus string
+
+const (
+	// DomainStatusUnknown is [insert doc].
+	DomainStatusUnknown = DomainStatus("unknown")
+	// DomainStatusReady is [insert doc].
+	DomainStatusReady = DomainStatus("ready")
+	// DomainStatusDeleting is [insert doc].
+	DomainStatusDeleting = DomainStatus("deleting")
+	// DomainStatusError is [insert doc].
+	DomainStatusError = DomainStatus("error")
+	// DomainStatusCreating is [insert doc].
+	DomainStatusCreating = DomainStatus("creating")
+	// DomainStatusPending is [insert doc].
+	DomainStatusPending = DomainStatus("pending")
+)
+
+func (enum DomainStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum DomainStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainStatus(DomainStatus(tmp).String())
+	return nil
+}
+
 type FunctionPrivacy string
 
 const (
@@ -242,6 +282,42 @@ func (enum *ListCronsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListCronsRequestOrderBy(ListCronsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListDomainsRequestOrderBy string
+
+const (
+	// ListDomainsRequestOrderByCreatedAtAsc is [insert doc].
+	ListDomainsRequestOrderByCreatedAtAsc = ListDomainsRequestOrderBy("created_at_asc")
+	// ListDomainsRequestOrderByCreatedAtDesc is [insert doc].
+	ListDomainsRequestOrderByCreatedAtDesc = ListDomainsRequestOrderBy("created_at_desc")
+	// ListDomainsRequestOrderByHostnameAsc is [insert doc].
+	ListDomainsRequestOrderByHostnameAsc = ListDomainsRequestOrderBy("hostname_asc")
+	// ListDomainsRequestOrderByHostnameDesc is [insert doc].
+	ListDomainsRequestOrderByHostnameDesc = ListDomainsRequestOrderBy("hostname_desc")
+)
+
+func (enum ListDomainsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListDomainsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDomainsRequestOrderBy(ListDomainsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -436,6 +512,23 @@ type Cron struct {
 	Status CronStatus `json:"status"`
 }
 
+// Domain: domain
+type Domain struct {
+	ID string `json:"id"`
+
+	Hostname string `json:"hostname"`
+
+	FunctionID string `json:"function_id"`
+
+	URL string `json:"url"`
+	// Status:
+	//
+	// Default value: unknown
+	Status DomainStatus `json:"status"`
+
+	ErrorMessage *string `json:"error_message"`
+}
+
 type DownloadURL struct {
 	URL string `json:"url"`
 
@@ -486,6 +579,13 @@ type Function struct {
 // ListCronsResponse: list crons response
 type ListCronsResponse struct {
 	Crons []*Cron `json:"crons"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// ListDomainsResponse: list domains response
+type ListDomainsResponse struct {
+	Domains []*Domain `json:"domains"`
 
 	TotalCount uint32 `json:"total_count"`
 }
@@ -1535,6 +1635,173 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 	return &resp, nil
 }
 
+type ListDomainsRequest struct {
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy:
+	//
+	// Default value: created_at_asc
+	OrderBy ListDomainsRequestOrderBy `json:"-"`
+
+	FunctionID string `json:"-"`
+}
+
+func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "function_id", req.FunctionID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListDomainsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetDomainRequest struct {
+	Region scw.Region `json:"-"`
+
+	DomainID string `json:"-"`
+}
+
+func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainID) == "" {
+		return nil, errors.New("field DomainID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Domain
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateDomainRequest struct {
+	Region scw.Region `json:"-"`
+
+	Hostname string `json:"hostname"`
+
+	FunctionID string `json:"function_id"`
+}
+
+func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Domain
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteDomainRequest struct {
+	Region scw.Region `json:"-"`
+
+	DomainID string `json:"-"`
+}
+
+func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainID) == "" {
+		return nil, errors.New("field DomainID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Domain
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type IssueJWTRequest struct {
 	Region scw.Region `json:"-"`
 
@@ -1652,4 +1919,23 @@ func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Logs = append(r.Logs, results.Logs...)
 	r.TotalCount += uint32(len(results.Logs))
 	return uint32(len(results.Logs)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Domains = append(r.Domains, results.Domains...)
+	r.TotalCount += uint32(len(results.Domains))
+	return uint32(len(results.Domains)), nil
 }
