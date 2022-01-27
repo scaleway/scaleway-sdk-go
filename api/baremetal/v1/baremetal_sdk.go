@@ -732,6 +732,8 @@ type OfferOptionOffer struct {
 	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
 
 	Manageable bool `json:"manageable"`
+
+	OsID *string `json:"os_id"`
 }
 
 // Option: option
