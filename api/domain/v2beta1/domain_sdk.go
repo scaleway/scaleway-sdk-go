@@ -1456,7 +1456,7 @@ type NewContact struct {
 }
 
 type OrderResponse struct {
-	Domains []string `json:"domains"`
+	Domain string `json:"domain"`
 
 	OrganizationID string `json:"organization_id"`
 
@@ -2729,8 +2729,8 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	return &resp, nil
 }
 
-type RegistrarAPIBuyDomainsRequest struct {
-	Domains []string `json:"domains"`
+type RegistrarAPIBuyDomainRequest struct {
+	Domain string `json:"domain"`
 
 	DurationInYears uint32 `json:"duration_in_years"`
 
@@ -2755,12 +2755,12 @@ type RegistrarAPIBuyDomainsRequest struct {
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 }
 
-// BuyDomains: buy one or more domains
+// BuyDomain: buy a domain
 //
-// Request the registration of domain names.
+// Request the registration of a domain name.
 // You can provide an already existing domain's contact or a new contact.
 //
-func (s *RegistrarAPI) BuyDomains(req *RegistrarAPIBuyDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) BuyDomain(req *RegistrarAPIBuyDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
 	if req.ProjectID == "" {
@@ -2770,7 +2770,7 @@ func (s *RegistrarAPI) BuyDomains(req *RegistrarAPIBuyDomainsRequest, opts ...sc
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/domain/v2beta1/buy-domains",
+		Path:    "/domain/v2beta1/domains",
 		Headers: http.Header{},
 	}
 
@@ -2788,24 +2788,28 @@ func (s *RegistrarAPI) BuyDomains(req *RegistrarAPIBuyDomainsRequest, opts ...sc
 	return &resp, nil
 }
 
-type RegistrarAPIRenewDomainsRequest struct {
-	Domains []string `json:"domains"`
+type RegistrarAPIRenewDomainRequest struct {
+	Domain string `json:"-"`
 
 	DurationInYears uint32 `json:"duration_in_years"`
 
 	ForceLateRenewal *bool `json:"force_late_renewal"`
 }
 
-// RenewDomains: renew one or more domains
+// RenewDomain: renew a domain
 //
-// Request the renewal of domain names.
+// Request the renewal of a domain name.
 //
-func (s *RegistrarAPI) RenewDomains(req *RegistrarAPIRenewDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
+func (s *RegistrarAPI) RenewDomain(req *RegistrarAPIRenewDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/domain/v2beta1/renew-domains",
+		Path:    "/domain/v2beta1/domains/" + fmt.Sprint(req.Domain) + "/renew",
 		Headers: http.Header{},
 	}
 
