@@ -686,6 +686,8 @@ const (
 	RecordHTTPServiceConfigStrategyRandom = RecordHTTPServiceConfigStrategy("random")
 	// RecordHTTPServiceConfigStrategyHashed is [insert doc].
 	RecordHTTPServiceConfigStrategyHashed = RecordHTTPServiceConfigStrategy("hashed")
+	// RecordHTTPServiceConfigStrategyAll is [insert doc].
+	RecordHTTPServiceConfigStrategyAll = RecordHTTPServiceConfigStrategy("all")
 )
 
 func (enum RecordHTTPServiceConfigStrategy) String() string {
