@@ -559,6 +559,10 @@ type Gateway struct {
 	Version *string `json:"version"`
 	// CanUpgradeTo: newly available gateway software version that can be updated to
 	CanUpgradeTo *string `json:"can_upgrade_to"`
+	// BastionEnabled: whether SSH bastion is enabled on the gateway
+	BastionEnabled bool `json:"bastion_enabled"`
+	// BastionPort: port of the SSH bastion
+	BastionPort uint32 `json:"bastion_port"`
 	// Zone: zone the gateway is available in
 	Zone scw.Zone `json:"zone"`
 }
@@ -930,6 +934,10 @@ type UpdateGatewayRequest struct {
 	Tags *[]string `json:"tags"`
 	// UpstreamDNSServers: override the gateway's default recursive DNS servers, if DNS features are enabled
 	UpstreamDNSServers *[]string `json:"upstream_dns_servers"`
+	// EnableBastion: enable SSH bastion on the gateway
+	EnableBastion *bool `json:"enable_bastion"`
+	// BastionPort: port of the SSH bastion
+	BastionPort *uint32 `json:"bastion_port"`
 }
 
 // UpdateGateway: update a VPC Public Gateway
