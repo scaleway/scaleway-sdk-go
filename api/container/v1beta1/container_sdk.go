@@ -533,8 +533,6 @@ type Container struct {
 
 	Port uint32 `json:"port"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-
 	Region scw.Region `json:"region"`
 }
 
@@ -638,15 +636,7 @@ type Namespace struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-
 	Region scw.Region `json:"region"`
-}
-
-type Secret struct {
-	Key string `json:"key"`
-
-	Value *string `json:"value"`
 }
 
 type Token struct {
@@ -767,8 +757,6 @@ type CreateNamespaceRequest struct {
 	ProjectID string `json:"project_id"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // CreateNamespace: create a new namespace
@@ -821,8 +809,6 @@ type UpdateNamespaceRequest struct {
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // UpdateNamespace: update an existing namespace
@@ -1041,8 +1027,6 @@ type CreateContainerRequest struct {
 	Protocol ContainerProtocol `json:"protocol"`
 
 	Port *uint32 `json:"port"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // CreateContainer: create a new container
@@ -1116,8 +1100,6 @@ type UpdateContainerRequest struct {
 	Protocol ContainerProtocol `json:"protocol"`
 
 	Port *uint32 `json:"port"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // UpdateContainer: update an existing container
