@@ -573,8 +573,6 @@ type Function struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-
 	Region scw.Region `json:"region"`
 }
 
@@ -651,15 +649,7 @@ type Namespace struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-
 	Region scw.Region `json:"region"`
-}
-
-type Secret struct {
-	Key string `json:"key"`
-
-	Value *string `json:"value"`
 }
 
 type Token struct {
@@ -787,8 +777,6 @@ type CreateNamespaceRequest struct {
 	ProjectID string `json:"project_id"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // CreateNamespace: create a new namespace
@@ -841,8 +829,6 @@ type UpdateNamespaceRequest struct {
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // UpdateNamespace: update an existing namespace
@@ -1055,8 +1041,6 @@ type CreateFunctionRequest struct {
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // CreateFunction: create a new function
@@ -1120,8 +1104,6 @@ type UpdateFunctionRequest struct {
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // UpdateFunction: update an existing function
