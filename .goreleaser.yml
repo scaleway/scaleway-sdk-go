@@ -3,6 +3,8 @@
 before:
   hooks:
     - go mod tidy
+builds:
+  - skip: true
 source:
   enabled: true
   name_template: '{{ .ProjectName }}-{{ .Version }}'
