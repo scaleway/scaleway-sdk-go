@@ -1,0 +1,18 @@
+# Visit https://goreleaser.com for documentation on how to customize this
+# behavior.
+before:
+  hooks:
+    - go mod tidy
+source:
+  enabled: true
+  name_template: '{{ .ProjectName }}-{{ .Version }}'
+  format: 'tar.gz'
+  prefix_template: '{{ .ProjectName }}-{{ .Version }}/'
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+release:
+  # Manually examine the release before it's live
+  draft: true
+changelog:
+  skip: false
