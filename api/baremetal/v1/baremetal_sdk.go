@@ -997,7 +997,7 @@ type CreateServerRequest struct {
 	OptionIDs []string `json:"option_ids"`
 }
 
-// CreateServer: create a elastic metal server
+// CreateServer: create an elastic metal server
 //
 // Create a new elastic metal server. Once the server is created, you probably want to install an OS.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1054,7 +1054,7 @@ type UpdateServerRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdateServer: update a elastic metal server
+// UpdateServer: update an elastic metal server
 //
 // Update the server associated with the given ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1113,7 +1113,7 @@ type InstallServerRequest struct {
 	ServicePassword *string `json:"service_password"`
 }
 
-// InstallServer: install a elastic metal server
+// InstallServer: install an elastic metal server
 //
 // Install an OS on the server associated with the given ID.
 func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1198,7 +1198,7 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete a elastic metal server
+// DeleteServer: delete an elastic metal server
 //
 // Delete the server associated with the given ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1242,7 +1242,7 @@ type RebootServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// RebootServer: reboot a elastic metal server
+// RebootServer: reboot an elastic metal server
 //
 // Reboot the server associated with the given ID, use boot param to reboot in rescue.
 func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1291,7 +1291,7 @@ type StartServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// StartServer: start a elastic metal server
+// StartServer: start an elastic metal server
 //
 // Start the server associated with the given ID.
 func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -1336,7 +1336,7 @@ type StopServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopServer: stop a elastic metal server
+// StopServer: stop an elastic metal server
 //
 // Stop the server associated with the given ID.
 func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Server, error) {
@@ -2011,9 +2011,9 @@ type ListOSRequest struct {
 	OfferID *string `json:"-"`
 }
 
-// ListOS: list all available OS that can be install on a elastic metal server
+// ListOS: list all available OS that can be install on an elastic metal server
 //
-// List all available OS that can be install on a elastic metal server.
+// List all available OS that can be install on an elastic metal server.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
 
