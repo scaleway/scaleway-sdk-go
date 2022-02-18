@@ -534,6 +534,13 @@ type Container struct {
 	Port uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	//
+	// possible values:
+	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	//
+	HTTPOption string `json:"http_option"`
 
 	Region scw.Region `json:"region"`
 }
@@ -1043,6 +1050,13 @@ type CreateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	//
+	// possible values:
+	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	//
+	HTTPOption *string `json:"http_option"`
 }
 
 // CreateContainer: create a new container
@@ -1118,6 +1132,13 @@ type UpdateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	//
+	// possible values:
+	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	//
+	HTTPOption *string `json:"http_option"`
 }
 
 // UpdateContainer: update an existing container
