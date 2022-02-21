@@ -576,13 +576,6 @@ type Function struct {
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
-	//
-	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	//
-	HTTPOption string `json:"http_option"`
 }
 
 // ListCronsResponse: list crons response
@@ -1064,13 +1057,6 @@ type CreateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
-	//
-	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	//
-	HTTPOption *string `json:"http_option"`
 }
 
 // CreateFunction: create a new function
@@ -1136,13 +1122,6 @@ type UpdateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
-	//
-	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	//
-	HTTPOption *string `json:"http_option"`
 }
 
 // UpdateFunction: update an existing function

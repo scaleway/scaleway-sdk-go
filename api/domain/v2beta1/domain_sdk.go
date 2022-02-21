@@ -1709,12 +1709,6 @@ type TldOffer struct {
 	Price *scw.Money `json:"price"`
 }
 
-type TransferInDomainRequestTransferRequest struct {
-	Domain string `json:"domain"`
-
-	AuthCode string `json:"auth_code"`
-}
-
 type UpdateContactRequestQuestion struct {
 	Question *string `json:"question"`
 
@@ -2832,7 +2826,9 @@ func (s *RegistrarAPI) RenewDomains(req *RegistrarAPIRenewDomainsRequest, opts .
 }
 
 type RegistrarAPITransferInDomainRequest struct {
-	Domains []*TransferInDomainRequestTransferRequest `json:"domains"`
+	Domain string `json:"domain"`
+
+	AuthCode string `json:"auth_code"`
 
 	ProjectID string `json:"project_id"`
 
@@ -2869,7 +2865,7 @@ func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/domain/v2beta1/domains/transfer-domains",
+		Path:    "/domain/v2beta1/domains/domain-transfers",
 		Headers: http.Header{},
 	}
 
