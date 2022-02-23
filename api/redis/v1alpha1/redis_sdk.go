@@ -212,11 +212,6 @@ type ACLRule struct {
 	Description *string `json:"description"`
 }
 
-// ACLRuleResponse: acl rule response
-type ACLRuleResponse struct {
-	ACLRule *ACLRule `json:"acl_rule"`
-}
-
 // ACLRuleSpec: acl rule spec
 type ACLRuleSpec struct {
 	IP scw.IPNet `json:"ip"`
@@ -227,6 +222,13 @@ type ACLRuleSpec struct {
 // ACLRulesResponse: acl rules response
 type ACLRulesResponse struct {
 	ACLRules []*ACLRule `json:"acl_rules"`
+}
+
+// AddEndpointsResponse: add endpoints response
+type AddEndpointsResponse struct {
+	Endpoints []*Endpoint `json:"endpoints"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // AvailableClusterSetting: available cluster setting
@@ -322,19 +324,39 @@ type Endpoint struct {
 	// PrivateNetwork: private network details for endpoint
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PrivateNetwork *PrivateNetwork `json:"private_network,omitempty"`
-	// ID: UUID of current endpoint (Used for edit or delete PN endpoint)
+	// ID: UUID of current endpoint (Used for delete PN endpoint)
 	ID string `json:"id"`
 	// PublicNetwork: public network details for endpoint
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
-	PublicNetwork *PublicDetails `json:"public_network,omitempty"`
+	PublicNetwork *EndpointPublicNetwork `json:"public_network,omitempty"`
+	// IPs: list of ip in current endpoint
+	IPs []net.IP `json:"ips"`
+}
+
+// EndpointPublicNetwork: endpoint. public network
+type EndpointPublicNetwork struct {
 }
 
 // EndpointSpec: endpoint spec
 type EndpointSpec struct {
-	// ID: put UUID of the endpoint you want to edit or do not fill this field to create a new endpoint
-	ID *string `json:"id"`
 	// PrivateNetwork: private network details for endpoint
-	PrivateNetwork *PrivateNetworkSpec `json:"private_network"`
+	// Precisely one of PrivateNetwork, PublicNetwork must be set.
+	PrivateNetwork *EndpointSpecPrivateNetworkSpec `json:"private_network,omitempty"`
+	// PublicNetwork: public network details for endpoint
+	// Precisely one of PrivateNetwork, PublicNetwork must be set.
+	PublicNetwork *EndpointSpecPublicNetworkSpec `json:"public_network,omitempty"`
+}
+
+// EndpointSpecPrivateNetworkSpec: endpoint spec. private network spec
+type EndpointSpecPrivateNetworkSpec struct {
+	// ID: put UUID of the endpoint you want to connect cluster
+	ID string `json:"id"`
+	// ServiceIPs: put a list of IPv4 in CIDR format to expose the cluster in the private network. You must provide one IPv4 per node
+	ServiceIPs []scw.IPNet `json:"service_ips"`
+}
+
+// EndpointSpecPublicNetworkSpec: endpoint spec. public network spec
+type EndpointSpecPublicNetworkSpec struct {
 }
 
 // ListClustersResponse: list clusters response
@@ -379,6 +401,7 @@ type NodeType struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+// PrivateNetwork: private network
 type PrivateNetwork struct {
 	ID string `json:"id"`
 
@@ -387,17 +410,11 @@ type PrivateNetwork struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-// PrivateNetworkSpec: private network spec
-type PrivateNetworkSpec struct {
-	// ID: put UUID of the endpoint you want to connect cluster
-	ID string `json:"id"`
-	// ServiceIPs: put a list of IPv4 in CIDR format to expose the cluster in the private network. You must provide one IPv4 per node
-	ServiceIPs []scw.IPNet `json:"service_ips"`
-}
+// SetEndpointsResponse: set endpoints response
+type SetEndpointsResponse struct {
+	Endpoints []*Endpoint `json:"endpoints"`
 
-// PublicDetails: public details
-type PublicDetails struct {
-	IPs []net.IP `json:"ips"`
+	TotalCount uint32 `json:"total_count"`
 }
 
 // Service API
@@ -644,21 +661,22 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type AlterClusterRequest struct {
+type MigrateClusterRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ClusterID string `json:"-"`
 
-	Version *string `json:"version"`
+	// Precisely one of ClusterSize, NodeType, Version must be set.
+	Version *string `json:"version,omitempty"`
 
-	NodeType *string `json:"node_type"`
+	// Precisely one of ClusterSize, NodeType, Version must be set.
+	NodeType *string `json:"node_type,omitempty"`
 
-	ClusterSize *int32 `json:"cluster_size"`
-
-	Endpoints []*EndpointSpec `json:"endpoints"`
+	// Precisely one of ClusterSize, NodeType, Version must be set.
+	ClusterSize *uint32 `json:"cluster_size,omitempty"`
 }
 
-func (s *API) AlterCluster(req *AlterClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
+func (s *API) MigrateCluster(req *MigrateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -676,7 +694,7 @@ func (s *API) AlterCluster(req *AlterClusterRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
-		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/alter",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate",
 		Headers: http.Header{},
 	}
 
@@ -1006,15 +1024,15 @@ func (s *API) AddClusterSettings(req *AddClusterSettingsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-type DeleteClusterSettingsRequest struct {
+type DeleteClusterSettingRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ClusterID string `json:"-"`
 
-	SettingsName []string `json:"settings_name"`
+	SettingsName string `json:"settings_name"`
 }
 
-func (s *API) DeleteClusterSettings(req *DeleteClusterSettingsRequest, opts ...scw.RequestOption) (*ClusterSettingsResponse, error) {
+func (s *API) DeleteClusterSetting(req *DeleteClusterSettingRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1023,11 +1041,11 @@ func (s *API) DeleteClusterSettings(req *DeleteClusterSettingsRequest, opts ...s
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.ClusterID) == "" {
-		return nil, errors.New("field ClusterID cannot be empty in request")
+		return errors.New("field ClusterID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1038,16 +1056,14 @@ func (s *API) DeleteClusterSettings(req *DeleteClusterSettingsRequest, opts ...s
 
 	err = scwReq.SetBody(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var resp ClusterSettingsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &resp, nil
+	return nil
 }
 
 type SetClusterSettingsRequest struct {
@@ -1185,12 +1201,84 @@ func (s *API) AddACLRules(req *AddACLRulesRequest, opts ...scw.RequestOption) (*
 type DeleteACLRuleRequest struct {
 	Zone scw.Zone `json:"-"`
 
-	ClusterID string `json:"-"`
+	ACLID string `json:"-"`
+}
+
+func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return errors.New("field ACLID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetACLRuleRequest struct {
+	Zone scw.Zone `json:"-"`
 
 	ACLID string `json:"-"`
 }
 
-func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption) (*ACLRuleResponse, error) {
+func (s *API) GetACLRule(req *GetACLRuleRequest, opts ...scw.RequestOption) (*ACLRule, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return nil, errors.New("field ACLID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp ACLRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetEndpointsRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ClusterID string `json:"-"`
+
+	Endpoints []*EndpointSpec `json:"endpoints"`
+}
+
+func (s *API) SetEndpoints(req *SetEndpointsRequest, opts ...scw.RequestOption) (*SetEndpointsResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -1206,13 +1294,9 @@ func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption
 		return nil, errors.New("field ClusterID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ACLID) == "" {
-		return nil, errors.New("field ACLID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+		Method:  "PUT",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/endpoints",
 		Headers: http.Header{},
 	}
 
@@ -1221,7 +1305,123 @@ func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 
-	var resp ACLRuleResponse
+	var resp SetEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type AddEndpointsRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	ClusterID string `json:"-"`
+
+	Endpoints []*EndpointSpec `json:"endpoints"`
+}
+
+func (s *API) AddEndpoints(req *AddEndpointsRequest, opts ...scw.RequestOption) (*AddEndpointsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/endpoints",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteEndpointRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	EndpointID string `json:"-"`
+}
+
+func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetEndpointRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	EndpointID string `json:"-"`
+}
+
+func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return nil, errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Endpoint
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
