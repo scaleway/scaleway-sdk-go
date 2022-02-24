@@ -754,6 +754,8 @@ const (
 	RecordTypeDS = RecordType("DS")
 	// RecordTypeNAPTR is [insert doc].
 	RecordTypeNAPTR = RecordType("NAPTR")
+	// RecordTypeDNAME is [insert doc].
+	RecordTypeDNAME = RecordType("DNAME")
 )
 
 func (enum RecordType) String() string {
