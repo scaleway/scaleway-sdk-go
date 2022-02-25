@@ -754,6 +754,8 @@ const (
 	RecordTypeDS = RecordType("DS")
 	// RecordTypeNAPTR is [insert doc].
 	RecordTypeNAPTR = RecordType("NAPTR")
+	// RecordTypeDNAME is [insert doc].
+	RecordTypeDNAME = RecordType("DNAME")
 )
 
 func (enum RecordType) String() string {
@@ -1977,6 +1979,8 @@ type ListDNSZoneRecordsRequest struct {
 	//
 	// Default value: unknown
 	Type RecordType `json:"-"`
+	// ID: the record ID on which to filter the returned DNS zone records
+	ID *string `json:"-"`
 }
 
 // ListDNSZoneRecords: list DNS zone records
@@ -1999,6 +2003,7 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "id", req.ID)
 
 	if fmt.Sprint(req.DNSZone) == "" {
 		return nil, errors.New("field DNSZone cannot be empty in request")
