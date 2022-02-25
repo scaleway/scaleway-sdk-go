@@ -83,9 +83,10 @@ func (s *API) WaitForFunction(req *WaitForFunctionRequest, opts ...scw.RequestOp
 	}
 
 	terminalStatus := map[FunctionStatus]struct{}{
-		FunctionStatusError:  {},
-		FunctionStatusReady:  {},
-		FunctionStatusLocked: {},
+		FunctionStatusCreated: {},
+		FunctionStatusError:   {},
+		FunctionStatusLocked:  {},
+		FunctionStatusReady:   {},
 	}
 
 	function, err := async.WaitSync(&async.WaitSyncConfig{
