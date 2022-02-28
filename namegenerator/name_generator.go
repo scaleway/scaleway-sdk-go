@@ -15,6 +15,12 @@ func init() {
 	r = rand.New(source)
 }
 
+const (
+	// CharSetAlphaNum is the alphanumeric character set for use with
+	// RandStringFromCharSet
+	CharSetAlphaNum = "abcdefghijklmnopqrstuvwxyz012346789"
+)
+
 var (
 	left = [...]string{
 		"admiring",
@@ -853,11 +859,35 @@ var (
 // formatted as "scw-adjective-surname". For example 'scw-focused-turing'.
 func GetRandomName(prefixes ...string) string {
 begin:
-	parts := append(prefixes, left[r.Intn(len(left))], right[r.Intn(len(right))])
+	parts := append(
+		prefixes,
+		left[r.Intn(len(left))],
+		right[r.Intn(len(right))],
+	)
 	name := strings.Join(parts, "-")
 	if strings.Contains(name, "boring-wozniak") /* Steve Wozniak is not boring */ {
 		goto begin
 	}
 
 	return name
+}
+
+// RandString generates a random alphanumeric string of the length specified
+func RandString(strLen int) string {
+	return RandStringFromCharSet(strLen, CharSetAlphaNum)
+}
+
+// RandIntRange returns a random integer between min (inclusive) and max (exclusive)
+func RandIntRange(min int, max int) int {
+	return r.Intn(max-min) + min
+}
+
+// RandStringFromCharSet generates a random string by selecting characters from
+// the charset provided
+func RandStringFromCharSet(strLen int, charSet string) string {
+	result := make([]byte, strLen)
+	for i := 0; i < strLen; i++ {
+		result[i] = charSet[RandIntRange(0, len(charSet))]
+	}
+	return string(result)
 }

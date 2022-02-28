@@ -42,3 +42,18 @@ func TestNameFormatWithPrefixes(t *testing.T) {
 		t.Fatalf("Generated name contains numbers!")
 	}
 }
+
+func TestNameFormatWithRangeAndCharSet(t *testing.T) {
+	name := RandString(len("tf-scw"))
+	if strings.Count(name, "-") > 0 {
+		t.Fatalf("Generated name does not contain hyphens")
+	}
+
+	if !strings.ContainsAny(name, "0123456789") {
+		t.Fatalf("Generated name contains numbers!")
+	}
+
+	if len(name) > 6 {
+		t.Fatalf("Generated name container more element than expected")
+	}
+}
