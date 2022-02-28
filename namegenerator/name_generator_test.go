@@ -45,7 +45,7 @@ func TestNameFormatWithPrefixes(t *testing.T) {
 
 func TestNameFormatWithRangeAndCharSet(t *testing.T) {
 	name := RandString(len("tf-scw"))
-	if strings.Count(name, "-") > 0 {
+	if strings.ContainsAny(name, "-") {
 		t.Fatalf("Generated name does not contain hyphens")
 	}
 
