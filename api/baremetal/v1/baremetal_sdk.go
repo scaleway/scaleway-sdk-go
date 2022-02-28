@@ -804,6 +804,8 @@ type Server struct {
 	PingStatus ServerPingStatus `json:"ping_status"`
 	// Options: options enabled on server
 	Options []*ServerOption `json:"options"`
+	// RescueServer: configuration of rescue boot
+	RescueServer *ServerRescueServer `json:"rescue_server"`
 }
 
 // ServerEvent: server event
@@ -846,6 +848,12 @@ type ServerOption struct {
 	Status ServerOptionOptionStatus `json:"status"`
 
 	Manageable bool `json:"manageable"`
+}
+
+type ServerRescueServer struct {
+	User string `json:"user"`
+
+	Password string `json:"password"`
 }
 
 // Setting: setting
