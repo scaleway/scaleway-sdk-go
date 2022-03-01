@@ -83,9 +83,10 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 	}
 
 	terminalStatus := map[ContainerStatus]struct{}{
-		ContainerStatusError:  {},
-		ContainerStatusReady:  {},
-		ContainerStatusLocked: {},
+		ContainerStatusError:   {},
+		ContainerStatusCreated: {},
+		ContainerStatusReady:   {},
+		ContainerStatusLocked:  {},
 	}
 
 	container, err := async.WaitSync(&async.WaitSyncConfig{
