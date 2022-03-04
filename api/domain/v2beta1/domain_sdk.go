@@ -142,8 +142,8 @@ type ContactExtensionFRMode string
 const (
 	// ContactExtensionFRModeModeUnknown is [insert doc].
 	ContactExtensionFRModeModeUnknown = ContactExtensionFRMode("mode_unknown")
-	// ContactExtensionFRModeParticular is [insert doc].
-	ContactExtensionFRModeParticular = ContactExtensionFRMode("particular")
+	// ContactExtensionFRModeIndividual is [insert doc].
+	ContactExtensionFRModeIndividual = ContactExtensionFRMode("individual")
 	// ContactExtensionFRModeCompanyIdentificationCode is [insert doc].
 	ContactExtensionFRModeCompanyIdentificationCode = ContactExtensionFRMode("company_identification_code")
 	// ContactExtensionFRModeDuns is [insert doc].
@@ -152,8 +152,8 @@ const (
 	ContactExtensionFRModeLocal = ContactExtensionFRMode("local")
 	// ContactExtensionFRModeAssociation is [insert doc].
 	ContactExtensionFRModeAssociation = ContactExtensionFRMode("association")
-	// ContactExtensionFRModeBrand is [insert doc].
-	ContactExtensionFRModeBrand = ContactExtensionFRMode("brand")
+	// ContactExtensionFRModeTrademark is [insert doc].
+	ContactExtensionFRModeTrademark = ContactExtensionFRMode("trademark")
 	// ContactExtensionFRModeCodeAuthAfnic is [insert doc].
 	ContactExtensionFRModeCodeAuthAfnic = ContactExtensionFRMode("code_auth_afnic")
 )
@@ -181,15 +181,81 @@ func (enum *ContactExtensionFRMode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ContactExtensionNLLegalForm string
+
+const (
+	// ContactExtensionNLLegalFormLegalFormUnknown is [insert doc].
+	ContactExtensionNLLegalFormLegalFormUnknown = ContactExtensionNLLegalForm("legal_form_unknown")
+	// ContactExtensionNLLegalFormOther is [insert doc].
+	ContactExtensionNLLegalFormOther = ContactExtensionNLLegalForm("other")
+	// ContactExtensionNLLegalFormNonDutchEuCompany is [insert doc].
+	ContactExtensionNLLegalFormNonDutchEuCompany = ContactExtensionNLLegalForm("non_dutch_eu_company")
+	// ContactExtensionNLLegalFormNonDutchLegalFormEnterpriseSubsidiary is [insert doc].
+	ContactExtensionNLLegalFormNonDutchLegalFormEnterpriseSubsidiary = ContactExtensionNLLegalForm("non_dutch_legal_form_enterprise_subsidiary")
+	// ContactExtensionNLLegalFormLimitedCompany is [insert doc].
+	ContactExtensionNLLegalFormLimitedCompany = ContactExtensionNLLegalForm("limited_company")
+	// ContactExtensionNLLegalFormLimitedCompanyInFormation is [insert doc].
+	ContactExtensionNLLegalFormLimitedCompanyInFormation = ContactExtensionNLLegalForm("limited_company_in_formation")
+	// ContactExtensionNLLegalFormCooperative is [insert doc].
+	ContactExtensionNLLegalFormCooperative = ContactExtensionNLLegalForm("cooperative")
+	// ContactExtensionNLLegalFormLimitedPartnership is [insert doc].
+	ContactExtensionNLLegalFormLimitedPartnership = ContactExtensionNLLegalForm("limited_partnership")
+	// ContactExtensionNLLegalFormSoleCompany is [insert doc].
+	ContactExtensionNLLegalFormSoleCompany = ContactExtensionNLLegalForm("sole_company")
+	// ContactExtensionNLLegalFormEuropeanEconomicInterestGroup is [insert doc].
+	ContactExtensionNLLegalFormEuropeanEconomicInterestGroup = ContactExtensionNLLegalForm("european_economic_interest_group")
+	// ContactExtensionNLLegalFormReligiousEntity is [insert doc].
+	ContactExtensionNLLegalFormReligiousEntity = ContactExtensionNLLegalForm("religious_entity")
+	// ContactExtensionNLLegalFormPartnership is [insert doc].
+	ContactExtensionNLLegalFormPartnership = ContactExtensionNLLegalForm("partnership")
+	// ContactExtensionNLLegalFormPublicCompany is [insert doc].
+	ContactExtensionNLLegalFormPublicCompany = ContactExtensionNLLegalForm("public_company")
+	// ContactExtensionNLLegalFormMutualBenefitCompany is [insert doc].
+	ContactExtensionNLLegalFormMutualBenefitCompany = ContactExtensionNLLegalForm("mutual_benefit_company")
+	// ContactExtensionNLLegalFormResidential is [insert doc].
+	ContactExtensionNLLegalFormResidential = ContactExtensionNLLegalForm("residential")
+	// ContactExtensionNLLegalFormShippingCompany is [insert doc].
+	ContactExtensionNLLegalFormShippingCompany = ContactExtensionNLLegalForm("shipping_company")
+	// ContactExtensionNLLegalFormFoundation is [insert doc].
+	ContactExtensionNLLegalFormFoundation = ContactExtensionNLLegalForm("foundation")
+	// ContactExtensionNLLegalFormAssociation is [insert doc].
+	ContactExtensionNLLegalFormAssociation = ContactExtensionNLLegalForm("association")
+	// ContactExtensionNLLegalFormTradingPartnership is [insert doc].
+	ContactExtensionNLLegalFormTradingPartnership = ContactExtensionNLLegalForm("trading_partnership")
+)
+
+func (enum ContactExtensionNLLegalForm) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "legal_form_unknown"
+	}
+	return string(enum)
+}
+
+func (enum ContactExtensionNLLegalForm) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContactExtensionNLLegalForm) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContactExtensionNLLegalForm(ContactExtensionNLLegalForm(tmp).String())
+	return nil
+}
+
 type ContactLegalForm string
 
 const (
 	// ContactLegalFormLegalFormUnknown is [insert doc].
 	ContactLegalFormLegalFormUnknown = ContactLegalForm("legal_form_unknown")
-	// ContactLegalFormParticular is [insert doc].
-	ContactLegalFormParticular = ContactLegalForm("particular")
-	// ContactLegalFormSociety is [insert doc].
-	ContactLegalFormSociety = ContactLegalForm("society")
+	// ContactLegalFormIndividual is [insert doc].
+	ContactLegalFormIndividual = ContactLegalForm("individual")
+	// ContactLegalFormCorporate is [insert doc].
+	ContactLegalFormCorporate = ContactLegalForm("corporate")
 	// ContactLegalFormAssociation is [insert doc].
 	ContactLegalFormAssociation = ContactLegalForm("association")
 	// ContactLegalFormOther is [insert doc].
@@ -1032,6 +1098,8 @@ type Contact struct {
 	EmailStatus ContactEmailStatus `json:"email_status"`
 
 	State string `json:"state"`
+
+	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 }
 
 type ContactExtensionEU struct {
@@ -1044,44 +1112,53 @@ type ContactExtensionFR struct {
 	// Default value: mode_unknown
 	Mode ContactExtensionFRMode `json:"mode"`
 
-	// Precisely one of AssociationInfos, BrandInfos, CodeAuthAfnicInfos, DunsInfos, ParticularInfos must be set.
-	ParticularInfos *ContactExtensionFRParticularInfos `json:"particular_infos,omitempty"`
+	// Precisely one of AssociationInfo, CodeAuthAfnicInfo, DunsInfo, IndividualInfo, TrademarkInfo must be set.
+	IndividualInfo *ContactExtensionFRIndividualInfo `json:"individual_info,omitempty"`
 
-	// Precisely one of AssociationInfos, BrandInfos, CodeAuthAfnicInfos, DunsInfos, ParticularInfos must be set.
-	DunsInfos *ContactExtensionFRDunsInfos `json:"duns_infos,omitempty"`
+	// Precisely one of AssociationInfo, CodeAuthAfnicInfo, DunsInfo, IndividualInfo, TrademarkInfo must be set.
+	DunsInfo *ContactExtensionFRDunsInfo `json:"duns_info,omitempty"`
 
-	// Precisely one of AssociationInfos, BrandInfos, CodeAuthAfnicInfos, DunsInfos, ParticularInfos must be set.
-	AssociationInfos *ContactExtensionFRAssociationInfos `json:"association_infos,omitempty"`
+	// Precisely one of AssociationInfo, CodeAuthAfnicInfo, DunsInfo, IndividualInfo, TrademarkInfo must be set.
+	AssociationInfo *ContactExtensionFRAssociationInfo `json:"association_info,omitempty"`
 
-	// Precisely one of AssociationInfos, BrandInfos, CodeAuthAfnicInfos, DunsInfos, ParticularInfos must be set.
-	BrandInfos *ContactExtensionFRBrandInfos `json:"brand_infos,omitempty"`
+	// Precisely one of AssociationInfo, CodeAuthAfnicInfo, DunsInfo, IndividualInfo, TrademarkInfo must be set.
+	TrademarkInfo *ContactExtensionFRTrademarkInfo `json:"trademark_info,omitempty"`
 
-	// Precisely one of AssociationInfos, BrandInfos, CodeAuthAfnicInfos, DunsInfos, ParticularInfos must be set.
-	CodeAuthAfnicInfos *ContactExtensionFRCodeAuthAfnicInfos `json:"code_auth_afnic_infos,omitempty"`
+	// Precisely one of AssociationInfo, CodeAuthAfnicInfo, DunsInfo, IndividualInfo, TrademarkInfo must be set.
+	CodeAuthAfnicInfo *ContactExtensionFRCodeAuthAfnicInfo `json:"code_auth_afnic_info,omitempty"`
 }
 
-type ContactExtensionFRAssociationInfos struct {
+type ContactExtensionFRAssociationInfo struct {
 	PublicationJo *time.Time `json:"publication_jo"`
 
 	PublicationJoPage uint32 `json:"publication_jo_page"`
 }
 
-type ContactExtensionFRBrandInfos struct {
-	BrandInpi string `json:"brand_inpi"`
-}
-
-type ContactExtensionFRCodeAuthAfnicInfos struct {
+type ContactExtensionFRCodeAuthAfnicInfo struct {
 	CodeAuthAfnic string `json:"code_auth_afnic"`
 }
 
-type ContactExtensionFRDunsInfos struct {
+type ContactExtensionFRDunsInfo struct {
 	DunsID string `json:"duns_id"`
 
 	LocalID string `json:"local_id"`
 }
 
-type ContactExtensionFRParticularInfos struct {
+type ContactExtensionFRIndividualInfo struct {
 	WhoisOptIn bool `json:"whois_opt_in"`
+}
+
+type ContactExtensionFRTrademarkInfo struct {
+	TrademarkInpi string `json:"trademark_inpi"`
+}
+
+type ContactExtensionNL struct {
+	// LegalForm:
+	//
+	// Default value: legal_form_unknown
+	LegalForm ContactExtensionNLLegalForm `json:"legal_form"`
+
+	LegalFormRegistrationNumber string `json:"legal_form_registration_number"`
 }
 
 type ContactQuestion struct {
@@ -1457,6 +1534,8 @@ type NewContact struct {
 	WhoisOptIn bool `json:"whois_opt_in"`
 
 	State *string `json:"state"`
+
+	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 }
 
 type OrderResponse struct {
@@ -3123,6 +3202,8 @@ type RegistrarAPIUpdateContactRequest struct {
 	WhoisOptIn *bool `json:"whois_opt_in"`
 
 	State *string `json:"state"`
+
+	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 }
 
 // UpdateContact: update contact
