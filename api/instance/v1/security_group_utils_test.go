@@ -18,19 +18,12 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 
 	instanceAPI := NewAPI(client)
 
-	var (
-		zone    = scw.ZoneFrPar1
-		project = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
-	)
-
 	createResponse, err := instanceAPI.CreateSecurityGroup(&CreateSecurityGroupRequest{
-		Zone:                  zone,
 		Name:                  "name",
 		Description:           "description",
 		Stateful:              true,
 		InboundDefaultPolicy:  SecurityGroupPolicyAccept,
 		OutboundDefaultPolicy: SecurityGroupPolicyDrop,
-		Project:               &project,
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -39,7 +32,6 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	drop := SecurityGroupPolicyDrop
 
 	updateResponse, err := instanceAPI.UpdateSecurityGroup(&UpdateSecurityGroupRequest{
-		Zone:                  zone,
 		SecurityGroupID:       createResponse.SecurityGroup.ID,
 		Name:                  scw.StringPtr("new_name"),
 		Description:           scw.StringPtr("new_description"),
@@ -48,6 +40,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		OutboundDefaultPolicy: &accept,
 		// Keep false here, switch it to true is too dangerous for the one who update the test cassette.
 		ProjectDefault: scw.BoolPtr(false),
+		Tags:           scw.StringsPtr([]string{"foo", "bar"}),
 	})
 
 	testhelpers.AssertNoError(t, err)
@@ -58,9 +51,9 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.Stateful)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.ProjectDefault)
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.OrganizationDefault)
+	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.SecurityGroup.Tags)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
-		Zone:            zone,
 		SecurityGroupID: createResponse.SecurityGroup.ID,
 	})
 	testhelpers.AssertNoError(t, err)
@@ -75,26 +68,18 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 	instanceAPI := NewAPI(client)
 
-	var (
-		zone    = scw.ZoneFrPar1
-		project = "b3ba839a-dcf2-4b0a-ac81-fc32370052a0"
-	)
-
 	bootstrap := func(t *testing.T) (*SecurityGroup, *SecurityGroupRule, func()) {
 		createSecurityGroupResponse, err := instanceAPI.CreateSecurityGroup(&CreateSecurityGroupRequest{
-			Zone:                  zone,
 			Name:                  "name",
 			Description:           "description",
 			Stateful:              true,
 			InboundDefaultPolicy:  SecurityGroupPolicyAccept,
 			OutboundDefaultPolicy: SecurityGroupPolicyDrop,
-			Project:               &project,
 		})
 
 		testhelpers.AssertNoError(t, err)
 		_, ipNet, _ := net.ParseCIDR("8.8.8.8/32")
 		createRuleResponse, err := instanceAPI.CreateSecurityGroupRule(&CreateSecurityGroupRuleRequest{
-			Zone:            zone,
 			SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
 			Direction:       SecurityGroupRuleDirectionInbound,
 			Protocol:        SecurityGroupRuleProtocolTCP,
@@ -108,7 +93,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		return createSecurityGroupResponse.SecurityGroup, createRuleResponse.Rule, func() {
 			err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
-				Zone:            zone,
 				SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
 			})
 			testhelpers.AssertNoError(t, err)
@@ -124,7 +108,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		direction := SecurityGroupRuleDirectionOutbound
 		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
-			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
@@ -154,7 +137,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 
 		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
-			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Action:              &action,
@@ -181,7 +163,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		protocol := SecurityGroupRuleProtocolICMP
 
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
-			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			Protocol:            &protocol,
@@ -201,7 +182,6 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		defer cleanUp()
 
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
-			Zone:                zone,
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
 			DestPortFrom:        scw.Uint32Ptr(0),
