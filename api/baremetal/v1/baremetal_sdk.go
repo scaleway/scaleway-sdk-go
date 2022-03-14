@@ -662,6 +662,8 @@ type OS struct {
 	ServiceUser *OSOSField `json:"service_user"`
 	// ServicePassword: define the password requirements to install the service
 	ServicePassword *OSOSField `json:"service_password"`
+	// Enabled: state of OS
+	Enabled bool `json:"enabled"`
 }
 
 type OSOSField struct {
