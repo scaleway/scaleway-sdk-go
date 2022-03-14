@@ -573,7 +573,7 @@ type Function struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
 	// HTTPOption: configure how HTTP and HTTPS requests are handled
@@ -658,7 +658,7 @@ type Namespace struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
 }
@@ -667,6 +667,12 @@ type Secret struct {
 	Key string `json:"key"`
 
 	Value *string `json:"value"`
+}
+
+type SecretHashedValue struct {
+	Key string `json:"key"`
+
+	HashedValue string `json:"hashed_value"`
 }
 
 type Token struct {
