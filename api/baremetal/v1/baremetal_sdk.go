@@ -662,6 +662,8 @@ type OS struct {
 	ServiceUser *OSOSField `json:"service_user"`
 	// ServicePassword: define the password requirements to install the service
 	ServicePassword *OSOSField `json:"service_password"`
+	// Enabled: state of OS
+	Enabled bool `json:"enabled"`
 }
 
 type OSOSField struct {
@@ -1450,9 +1452,9 @@ type StartBMCAccessRequest struct {
 	IP net.IP `json:"ip"`
 }
 
-// StartBMCAccess: unvailable - Start BMC (Baseboard Management Controller) access for a given elastic metal server
+// StartBMCAccess: start BMC (Baseboard Management Controller) access for a given elastic metal server
 //
-// Unvailable - Start BMC (Baseboard Management Controller) access associated with the given ID.
+// Start BMC (Baseboard Management Controller) access associated with the given ID.
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
 //
 func (s *API) StartBMCAccess(req *StartBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
