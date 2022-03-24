@@ -2456,6 +2456,48 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	return nil
 }
 
+type RefreshSSHKeysRequest struct {
+	Zone scw.Zone `json:"-"`
+
+	GatewayID string `json:"-"`
+}
+
+func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOption) (*Gateway, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return nil, errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/vpc-gw/v1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/refresh-ssh-keys",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Gateway
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListGatewaysResponse) UnsafeGetTotalCount() uint32 {
