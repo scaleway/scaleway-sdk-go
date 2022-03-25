@@ -533,7 +533,7 @@ type Container struct {
 
 	Port uint32 `json:"port"`
 
-	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
@@ -645,7 +645,7 @@ type Namespace struct {
 
 	Description *string `json:"description"`
 
-	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
 }
@@ -654,12 +654,6 @@ type Secret struct {
 	Key string `json:"key"`
 
 	Value *string `json:"value"`
-}
-
-type SecretHashedValue struct {
-	Key string `json:"key"`
-
-	HashedValue string `json:"hashed_value"`
 }
 
 type Token struct {
