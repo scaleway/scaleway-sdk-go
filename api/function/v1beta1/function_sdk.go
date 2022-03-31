@@ -497,6 +497,42 @@ func (enum *NullValue) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RuntimeStatus string
+
+const (
+	// RuntimeStatusUnknownStatus is [insert doc].
+	RuntimeStatusUnknownStatus = RuntimeStatus("unknown_status")
+	// RuntimeStatusBeta is [insert doc].
+	RuntimeStatusBeta = RuntimeStatus("beta")
+	// RuntimeStatusAvailable is [insert doc].
+	RuntimeStatusAvailable = RuntimeStatus("available")
+	// RuntimeStatusDeprecated is [insert doc].
+	RuntimeStatusDeprecated = RuntimeStatus("deprecated")
+)
+
+func (enum RuntimeStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum RuntimeStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RuntimeStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RuntimeStatus(RuntimeStatus(tmp).String())
+	return nil
+}
+
 // Cron: cron
 type Cron struct {
 	ID string `json:"id"`
@@ -583,6 +619,8 @@ type Function struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
 	HTTPOption string `json:"http_option"`
+
+	RuntimeMessage string `json:"runtime_message"`
 }
 
 // ListCronsResponse: list crons response
@@ -601,7 +639,9 @@ type ListDomainsResponse struct {
 
 // ListFunctionRuntimesResponse: list function runtimes response
 type ListFunctionRuntimesResponse struct {
-	Runtimes []FunctionRuntime `json:"runtimes"`
+	Runtimes []*Runtime `json:"runtimes"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // ListFunctionsResponse: list functions response
@@ -661,6 +701,26 @@ type Namespace struct {
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
+}
+
+type Runtime struct {
+	Name string `json:"name"`
+
+	Language string `json:"language"`
+
+	Version string `json:"version"`
+
+	DefaultHandler string `json:"default_handler"`
+
+	CodeSample string `json:"code_sample"`
+	// Status:
+	//
+	// Default value: unknown_status
+	Status RuntimeStatus `json:"status"`
+
+	StatusMessage string `json:"status_message"`
+
+	Extension string `json:"extension"`
 }
 
 type Secret struct {
