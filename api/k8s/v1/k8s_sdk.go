@@ -585,7 +585,7 @@ type Cluster struct {
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 	// Deprecated: DashboardEnabled: the enablement of the Kubernetes Dashboard in the cluster
 	DashboardEnabled bool `json:"dashboard_enabled"`
-	// Ingress: the ingress controller used in the cluster
+	// Deprecated: Ingress: the ingress controller used in the cluster
 	//
 	// Default value: unknown_ingress
 	Ingress Ingress `json:"ingress"`
@@ -1130,7 +1130,7 @@ type CreateClusterRequest struct {
 	Cni CNI `json:"cni"`
 	// Deprecated: EnableDashboard: the enablement of the Kubernetes Dashboard in the cluster
 	EnableDashboard bool `json:"enable_dashboard"`
-	// Ingress: the Ingress Controller that will run in the cluster
+	// Deprecated: Ingress: the Ingress Controller that will run in the cluster
 	//
 	// Default value: unknown_ingress
 	Ingress Ingress `json:"ingress"`
@@ -1263,7 +1263,7 @@ type UpdateClusterRequest struct {
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
 	// Deprecated: EnableDashboard: the new value of the Kubernetes Dashboard enablement
 	EnableDashboard *bool `json:"enable_dashboard"`
-	// Ingress: the new Ingress Controller for the cluster
+	// Deprecated: Ingress: the new Ingress Controller for the cluster
 	//
 	// Default value: unknown_ingress
 	Ingress Ingress `json:"ingress"`
