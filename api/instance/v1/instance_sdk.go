@@ -1657,6 +1657,9 @@ type setSnapshotResponse struct {
 // Service API
 
 type GetServerTypesAvailabilityRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PerPage *uint32 `json:"-"`
@@ -1705,6 +1708,9 @@ func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest,
 }
 
 type ListServersTypesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PerPage *uint32 `json:"-"`
@@ -1753,6 +1759,9 @@ func (s *API) ListServersTypes(req *ListServersTypesRequest, opts ...scw.Request
 }
 
 type ListVolumesTypesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PerPage *uint32 `json:"-"`
@@ -1801,6 +1810,9 @@ func (s *API) ListVolumesTypes(req *ListVolumesTypesRequest, opts ...scw.Request
 }
 
 type ListServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
@@ -1885,6 +1897,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: the server name
 	Name string `json:"name,omitempty"`
@@ -1968,6 +1983,9 @@ func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -2006,6 +2024,9 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 }
 
 type GetServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to get
 	ServerID string `json:"-"`
@@ -2046,6 +2067,9 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*GetS
 }
 
 type setServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ID: the server unique ID
 	ID string `json:"-"`
@@ -2158,6 +2182,9 @@ func (s *API) setServer(req *setServerRequest, opts ...scw.RequestOption) (*setS
 }
 
 type UpdateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server
 	ServerID string `json:"-"`
@@ -2225,6 +2252,9 @@ func (s *API) updateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 }
 
 type ListServerActionsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -2265,6 +2295,9 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 }
 
 type ServerActionRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server
 	ServerID string `json:"-"`
@@ -2320,6 +2353,9 @@ func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) 
 }
 
 type ListServerUserDataRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server
 	ServerID string `json:"-"`
@@ -2360,6 +2396,9 @@ func (s *API) ListServerUserData(req *ListServerUserDataRequest, opts ...scw.Req
 }
 
 type DeleteServerUserDataRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server
 	ServerID string `json:"-"`
@@ -2404,6 +2443,9 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 }
 
 type ListImagesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
@@ -2470,6 +2512,9 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 }
 
 type GetImageRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ImageID: UUID of the image you want to get
 	ImageID string `json:"-"`
@@ -2510,6 +2555,9 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 }
 
 type CreateImageRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: name of the image
 	Name string `json:"name,omitempty"`
@@ -2583,6 +2631,9 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 }
 
 type SetImageRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ID string `json:"-"`
@@ -2668,6 +2719,9 @@ func (s *API) setImage(req *SetImageRequest, opts ...scw.RequestOption) (*setIma
 }
 
 type DeleteImageRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ImageID: UUID of the image you want to delete
 	ImageID string `json:"-"`
@@ -2706,6 +2760,9 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 }
 
 type ListSnapshotsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
@@ -2764,6 +2821,9 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 }
 
 type CreateSnapshotRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: name of the snapshot
 	Name string `json:"name,omitempty"`
@@ -2827,6 +2887,9 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type GetSnapshotRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SnapshotID: UUID of the snapshot you want to get
 	SnapshotID string `json:"-"`
@@ -2867,6 +2930,9 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 }
 
 type setSnapshotRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	SnapshotID string `json:"-"`
@@ -2948,6 +3014,9 @@ func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteSnapshotRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SnapshotID: UUID of the snapshot you want to delete
 	SnapshotID string `json:"-"`
@@ -2986,6 +3055,9 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type ListVolumesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// VolumeType: filter by volume type
 	//
@@ -3053,6 +3125,9 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateVolumeRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: the volume name
 	Name string `json:"name,omitempty"`
@@ -3127,6 +3202,9 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 }
 
 type GetVolumeRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// VolumeID: UUID of the volume you want to get
 	VolumeID string `json:"-"`
@@ -3167,6 +3245,9 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 }
 
 type UpdateVolumeRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// VolumeID: UUID of the volume
 	VolumeID string `json:"-"`
@@ -3218,6 +3299,9 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteVolumeRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// VolumeID: UUID of the volume you want to delete
 	VolumeID string `json:"-"`
@@ -3256,6 +3340,9 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 }
 
 type ListSecurityGroupsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: name of the security group
 	Name *string `json:"-"`
@@ -3320,6 +3407,9 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 }
 
 type CreateSecurityGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: name of the security group
 	Name string `json:"name,omitempty"`
@@ -3407,6 +3497,9 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 }
 
 type GetSecurityGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SecurityGroupID: UUID of the security group you want to get
 	SecurityGroupID string `json:"-"`
@@ -3447,6 +3540,9 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 }
 
 type DeleteSecurityGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SecurityGroupID: UUID of the security group you want to delete
 	SecurityGroupID string `json:"-"`
@@ -3483,6 +3579,9 @@ func (s *API) DeleteSecurityGroup(req *DeleteSecurityGroupRequest, opts ...scw.R
 }
 
 type setSecurityGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ID: the ID of the security group (will be ignored)
 	ID string `json:"-"`
@@ -3570,6 +3669,9 @@ func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.Request
 }
 
 type ListSecurityGroupRulesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SecurityGroupID: UUID of the security group
 	SecurityGroupID string `json:"-"`
@@ -3624,6 +3726,9 @@ func (s *API) ListSecurityGroupRules(req *ListSecurityGroupRulesRequest, opts ..
 }
 
 type CreateSecurityGroupRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SecurityGroupID: UUID of the security group
 	SecurityGroupID string `json:"-"`
@@ -3689,6 +3794,9 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 }
 
 type DeleteSecurityGroupRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
@@ -3733,6 +3841,9 @@ func (s *API) DeleteSecurityGroupRule(req *DeleteSecurityGroupRuleRequest, opts 
 }
 
 type GetSecurityGroupRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
@@ -3779,6 +3890,9 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 }
 
 type setSecurityGroupRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	SecurityGroupID string `json:"-"`
@@ -3852,6 +3966,9 @@ func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw
 }
 
 type ListPlacementGroupsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
@@ -3916,6 +4033,9 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 }
 
 type CreatePlacementGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: name of the placement group
 	Name string `json:"name,omitempty"`
@@ -3987,6 +4107,9 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 }
 
 type GetPlacementGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PlacementGroupID: UUID of the placement group you want to get
 	PlacementGroupID string `json:"-"`
@@ -4027,6 +4150,9 @@ func (s *API) GetPlacementGroup(req *GetPlacementGroupRequest, opts ...scw.Reque
 }
 
 type SetPlacementGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PlacementGroupID string `json:"-"`
@@ -4098,6 +4224,9 @@ func (s *API) SetPlacementGroup(req *SetPlacementGroupRequest, opts ...scw.Reque
 }
 
 type UpdatePlacementGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PlacementGroupID: UUID of the placement group
 	PlacementGroupID string `json:"-"`
@@ -4155,6 +4284,9 @@ func (s *API) UpdatePlacementGroup(req *UpdatePlacementGroupRequest, opts ...scw
 }
 
 type DeletePlacementGroupRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PlacementGroupID: UUID of the placement group you want to delete
 	PlacementGroupID string `json:"-"`
@@ -4193,6 +4325,9 @@ func (s *API) DeletePlacementGroup(req *DeletePlacementGroupRequest, opts ...scw
 }
 
 type GetPlacementGroupServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PlacementGroupID string `json:"-"`
@@ -4233,6 +4368,9 @@ func (s *API) GetPlacementGroupServers(req *GetPlacementGroupServersRequest, opt
 }
 
 type SetPlacementGroupServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	PlacementGroupID string `json:"-"`
@@ -4280,6 +4418,9 @@ func (s *API) SetPlacementGroupServers(req *SetPlacementGroupServersRequest, opt
 }
 
 type UpdatePlacementGroupServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// PlacementGroupID: UUID of the placement group
 	PlacementGroupID string `json:"-"`
@@ -4327,6 +4468,9 @@ func (s *API) UpdatePlacementGroupServers(req *UpdatePlacementGroupServersReques
 }
 
 type ListIPsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Organization: the organization ID the IPs are reserved in
 	Organization *string `json:"-"`
@@ -4389,6 +4533,9 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 }
 
 type CreateIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Deprecated: Organization: the organization ID the IP is reserved in
 	// Precisely one of Organization, Project must be set.
@@ -4446,6 +4593,9 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 }
 
 type GetIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// IP: the IP ID or address to get
 	IP string `json:"-"`
@@ -4486,6 +4636,9 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*GetIPRespons
 }
 
 type UpdateIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// IP: IP ID or IP address
 	IP string `json:"-"`
@@ -4535,6 +4688,9 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*Update
 }
 
 type DeleteIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// IP: the ID or the address of the IP to delete
 	IP string `json:"-"`
@@ -4573,6 +4729,9 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 }
 
 type ListPrivateNICsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -4613,6 +4772,9 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 }
 
 type CreatePrivateNICRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -4660,6 +4822,9 @@ func (s *API) CreatePrivateNIC(req *CreatePrivateNICRequest, opts ...scw.Request
 }
 
 type GetPrivateNICRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -4706,6 +4871,9 @@ func (s *API) GetPrivateNIC(req *GetPrivateNICRequest, opts ...scw.RequestOption
 }
 
 type DeletePrivateNICRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
@@ -4750,6 +4918,9 @@ func (s *API) DeletePrivateNIC(req *DeletePrivateNICRequest, opts ...scw.Request
 }
 
 type ListBootscriptsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	Arch *string `json:"-"`
@@ -4808,6 +4979,9 @@ func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOp
 }
 
 type GetBootscriptRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	BootscriptID string `json:"-"`
@@ -4848,6 +5022,9 @@ func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption
 }
 
 type GetDashboardRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	Organization *string `json:"-"`
