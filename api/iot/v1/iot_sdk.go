@@ -1013,6 +1013,9 @@ type UpdateRouteRequestS3Config struct {
 // Service API
 
 type GetServiceInfoRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 }
 
@@ -1044,6 +1047,9 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 }
 
 type ListHubsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -1104,6 +1110,9 @@ func (s *API) ListHubs(req *ListHubsRequest, opts ...scw.RequestOption) (*ListHu
 }
 
 type CreateHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: hub name (up to 255 characters)
 	Name string `json:"name"`
@@ -1165,6 +1174,9 @@ func (s *API) CreateHub(req *CreateHubRequest, opts ...scw.RequestOption) (*Hub,
 }
 
 type GetHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1203,6 +1215,9 @@ func (s *API) GetHub(req *GetHubRequest, opts ...scw.RequestOption) (*Hub, error
 }
 
 type UpdateHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1261,6 +1276,9 @@ func (s *API) UpdateHub(req *UpdateHubRequest, opts ...scw.RequestOption) (*Hub,
 }
 
 type EnableHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1304,6 +1322,9 @@ func (s *API) EnableHub(req *EnableHubRequest, opts ...scw.RequestOption) (*Hub,
 }
 
 type DisableHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1347,6 +1368,9 @@ func (s *API) DisableHub(req *DisableHubRequest, opts ...scw.RequestOption) (*Hu
 }
 
 type DeleteHubRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1389,6 +1413,9 @@ func (s *API) DeleteHub(req *DeleteHubRequest, opts ...scw.RequestOption) error 
 }
 
 type GetHubMetricsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1433,6 +1460,9 @@ func (s *API) GetHubMetrics(req *GetHubMetricsRequest, opts ...scw.RequestOption
 }
 
 type SetHubCARequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// HubID: hub ID
 	HubID string `json:"-"`
@@ -1482,6 +1512,9 @@ func (s *API) SetHubCA(req *SetHubCARequest, opts ...scw.RequestOption) (*Hub, e
 }
 
 type GetHubCARequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	HubID string `json:"-"`
@@ -1520,6 +1553,9 @@ func (s *API) GetHubCA(req *GetHubCARequest, opts ...scw.RequestOption) (*GetHub
 }
 
 type ListDevicesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -1585,6 +1621,9 @@ func (s *API) ListDevices(req *ListDevicesRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: device name
 	Name string `json:"name"`
@@ -1638,6 +1677,9 @@ func (s *API) CreateDevice(req *CreateDeviceRequest, opts ...scw.RequestOption) 
 }
 
 type GetDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1676,6 +1718,9 @@ func (s *API) GetDevice(req *GetDeviceRequest, opts ...scw.RequestOption) (*Devi
 }
 
 type UpdateDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1729,6 +1774,9 @@ func (s *API) UpdateDevice(req *UpdateDeviceRequest, opts ...scw.RequestOption) 
 }
 
 type EnableDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1772,6 +1820,9 @@ func (s *API) EnableDevice(req *EnableDeviceRequest, opts ...scw.RequestOption) 
 }
 
 type DisableDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1815,6 +1866,9 @@ func (s *API) DisableDevice(req *DisableDeviceRequest, opts ...scw.RequestOption
 }
 
 type RenewDeviceCertificateRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1858,6 +1912,9 @@ func (s *API) RenewDeviceCertificate(req *RenewDeviceCertificateRequest, opts ..
 }
 
 type SetDeviceCertificateRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1903,6 +1960,9 @@ func (s *API) SetDeviceCertificate(req *SetDeviceCertificateRequest, opts ...scw
 }
 
 type GetDeviceCertificateRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1941,6 +2001,9 @@ func (s *API) GetDeviceCertificate(req *GetDeviceCertificateRequest, opts ...scw
 }
 
 type DeleteDeviceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -1977,6 +2040,9 @@ func (s *API) DeleteDevice(req *DeleteDeviceRequest, opts ...scw.RequestOption) 
 }
 
 type GetDeviceMetricsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DeviceID: device ID
 	DeviceID string `json:"-"`
@@ -2021,6 +2087,9 @@ func (s *API) GetDeviceMetrics(req *GetDeviceMetricsRequest, opts ...scw.Request
 }
 
 type ListRoutesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -2078,6 +2147,9 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 }
 
 type CreateRouteRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: route name
 	Name string `json:"name"`
@@ -2146,6 +2218,9 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 }
 
 type UpdateRouteRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// RouteID: route id
 	RouteID string `json:"-"`
@@ -2202,6 +2277,9 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 }
 
 type GetRouteRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// RouteID: route ID
 	RouteID string `json:"-"`
@@ -2240,6 +2318,9 @@ func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route,
 }
 
 type DeleteRouteRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// RouteID: route ID
 	RouteID string `json:"-"`
@@ -2276,6 +2357,9 @@ func (s *API) DeleteRoute(req *DeleteRouteRequest, opts ...scw.RequestOption) er
 }
 
 type ListNetworksRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -2336,6 +2420,9 @@ func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) 
 }
 
 type CreateNetworkRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: network name
 	Name string `json:"name"`
@@ -2387,6 +2474,9 @@ func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption
 }
 
 type GetNetworkRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NetworkID: network ID
 	NetworkID string `json:"-"`
@@ -2425,6 +2515,9 @@ func (s *API) GetNetwork(req *GetNetworkRequest, opts ...scw.RequestOption) (*Ne
 }
 
 type DeleteNetworkRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NetworkID: network ID
 	NetworkID string `json:"-"`
@@ -2461,6 +2554,9 @@ func (s *API) DeleteNetwork(req *DeleteNetworkRequest, opts ...scw.RequestOption
 }
 
 type GetTwinDocumentRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
@@ -2505,6 +2601,9 @@ func (s *API) GetTwinDocument(req *GetTwinDocumentRequest, opts ...scw.RequestOp
 }
 
 type PutTwinDocumentRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
@@ -2562,6 +2661,9 @@ func (s *API) PutTwinDocument(req *PutTwinDocumentRequest, opts ...scw.RequestOp
 }
 
 type PatchTwinDocumentRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
@@ -2625,6 +2727,9 @@ func (s *API) PatchTwinDocument(req *PatchTwinDocumentRequest, opts ...scw.Reque
 }
 
 type DeleteTwinDocumentRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
@@ -2667,6 +2772,9 @@ func (s *API) DeleteTwinDocument(req *DeleteTwinDocumentRequest, opts ...scw.Req
 }
 
 type ListTwinDocumentsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
@@ -2705,6 +2813,9 @@ func (s *API) ListTwinDocuments(req *ListTwinDocumentsRequest, opts ...scw.Reque
 }
 
 type DeleteTwinDocumentsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TwinID: twin ID
 	TwinID string `json:"-"`
