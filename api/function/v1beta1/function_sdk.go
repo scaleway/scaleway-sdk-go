@@ -184,6 +184,24 @@ const (
 	FunctionRuntimeNode10 = FunctionRuntime("node10")
 	// FunctionRuntimeNode14 is [insert doc].
 	FunctionRuntimeNode14 = FunctionRuntime("node14")
+	// FunctionRuntimeNode16 is [insert doc].
+	FunctionRuntimeNode16 = FunctionRuntime("node16")
+	// FunctionRuntimeNode17 is [insert doc].
+	FunctionRuntimeNode17 = FunctionRuntime("node17")
+	// FunctionRuntimePython37 is [insert doc].
+	FunctionRuntimePython37 = FunctionRuntime("python37")
+	// FunctionRuntimePython38 is [insert doc].
+	FunctionRuntimePython38 = FunctionRuntime("python38")
+	// FunctionRuntimePython39 is [insert doc].
+	FunctionRuntimePython39 = FunctionRuntime("python39")
+	// FunctionRuntimePython310 is [insert doc].
+	FunctionRuntimePython310 = FunctionRuntime("python310")
+	// FunctionRuntimeGo113 is [insert doc].
+	FunctionRuntimeGo113 = FunctionRuntime("go113")
+	// FunctionRuntimeGo117 is [insert doc].
+	FunctionRuntimeGo117 = FunctionRuntime("go117")
+	// FunctionRuntimeGo118 is [insert doc].
+	FunctionRuntimeGo118 = FunctionRuntime("go118")
 )
 
 func (enum FunctionRuntime) String() string {
@@ -751,6 +769,9 @@ type UploadURL struct {
 // Service API
 
 type ListNamespacesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -811,6 +832,9 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 }
 
 type GetNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	NamespaceID string `json:"-"`
@@ -851,6 +875,9 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 }
 
 type CreateNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Name string `json:"name"`
@@ -907,6 +934,9 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 }
 
 type UpdateNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	NamespaceID string `json:"-"`
@@ -958,6 +988,9 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 }
 
 type DeleteNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	NamespaceID string `json:"-"`
@@ -998,6 +1031,9 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 }
 
 type ListFunctionsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1061,6 +1097,9 @@ func (s *API) ListFunctions(req *ListFunctionsRequest, opts ...scw.RequestOption
 }
 
 type GetFunctionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1101,6 +1140,9 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateFunctionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Name string `json:"name"`
@@ -1177,6 +1219,9 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 }
 
 type UpdateFunctionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1251,6 +1296,9 @@ func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOpti
 }
 
 type DeleteFunctionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1291,6 +1339,9 @@ func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOpti
 }
 
 type DeployFunctionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1336,6 +1387,9 @@ func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOpti
 }
 
 type ListFunctionRuntimesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 }
 
@@ -1370,6 +1424,9 @@ func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw
 }
 
 type GetFunctionUploadURLRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1416,6 +1473,9 @@ func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw
 }
 
 type GetFunctionDownloadURLRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1456,6 +1516,9 @@ func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ..
 }
 
 type ListCronsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1510,6 +1573,9 @@ func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*List
 }
 
 type GetCronRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	CronID string `json:"-"`
@@ -1550,6 +1616,9 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 }
 
 type CreateCronRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"function_id"`
@@ -1593,6 +1662,9 @@ func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cr
 }
 
 type UpdateCronRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	CronID string `json:"-"`
@@ -1644,6 +1716,9 @@ func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cr
 }
 
 type DeleteCronRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	CronID string `json:"-"`
@@ -1684,6 +1759,9 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 }
 
 type ListLogsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1741,6 +1819,9 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 }
 
 type ListDomainsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1794,6 +1875,9 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 }
 
 type GetDomainRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	DomainID string `json:"-"`
@@ -1831,6 +1915,9 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 }
 
 type CreateDomainRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Hostname string `json:"hostname"`
@@ -1871,6 +1958,9 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteDomainRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	DomainID string `json:"-"`
@@ -1908,6 +1998,9 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 }
 
 type IssueJWTRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	FunctionID *string `json:"-"`
