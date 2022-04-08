@@ -424,6 +424,9 @@ type Tag struct {
 // Service API
 
 type ListNamespacesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: a positive integer to choose the page to display
 	Page *int32 `json:"-"`
@@ -484,6 +487,9 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 }
 
 type GetNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NamespaceID: the unique ID of the Namespace
 	NamespaceID string `json:"-"`
@@ -524,6 +530,9 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 }
 
 type CreateNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: define a namespace name
 	Name string `json:"name"`
@@ -587,6 +596,9 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 }
 
 type UpdateNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NamespaceID: namespace ID to update
 	NamespaceID string `json:"-"`
@@ -636,6 +648,9 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 }
 
 type DeleteNamespaceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NamespaceID: the unique ID of the Namespace
 	NamespaceID string `json:"-"`
@@ -676,6 +691,9 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 }
 
 type ListImagesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Page: a positive integer to choose the page to display
 	Page *int32 `json:"-"`
@@ -739,6 +757,9 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 }
 
 type GetImageRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ImageID: the unique ID of the Image
 	ImageID string `json:"-"`
@@ -779,6 +800,9 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*Image,
 }
 
 type UpdateImageRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ImageID: image ID to update
 	ImageID string `json:"-"`
@@ -828,6 +852,9 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteImageRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ImageID: the unique ID of the Image
 	ImageID string `json:"-"`
@@ -868,6 +895,9 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) (*
 }
 
 type ListTagsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ImageID: the unique ID of the image
 	ImageID string `json:"-"`
@@ -928,6 +958,9 @@ func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTa
 }
 
 type GetTagRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TagID: the unique ID of the Tag
 	TagID string `json:"-"`
@@ -968,6 +1001,9 @@ func (s *API) GetTag(req *GetTagRequest, opts ...scw.RequestOption) (*Tag, error
 }
 
 type DeleteTagRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// TagID: the unique ID of the tag
 	TagID string `json:"-"`
