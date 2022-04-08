@@ -875,6 +875,9 @@ type Setting struct {
 // Service API
 
 type ListServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -946,6 +949,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 }
 
 type GetServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -986,6 +992,9 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 }
 
 type CreateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OfferID: offer ID of the new server
 	OfferID string `json:"offer_id"`
@@ -1053,6 +1062,9 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 }
 
 type UpdateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to update
 	ServerID string `json:"-"`
@@ -1104,6 +1116,9 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 }
 
 type InstallServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: server ID to install
 	ServerID string `json:"-"`
@@ -1163,6 +1178,9 @@ func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption
 }
 
 type GetServerMetricsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: server ID to get the metrics
 	ServerID string `json:"-"`
@@ -1203,6 +1221,9 @@ func (s *API) GetServerMetrics(req *GetServerMetricsRequest, opts ...scw.Request
 }
 
 type DeleteServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to delete
 	ServerID string `json:"-"`
@@ -1243,6 +1264,9 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 }
 
 type RebootServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to reboot
 	ServerID string `json:"-"`
@@ -1292,6 +1316,9 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 }
 
 type StartServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to start
 	ServerID string `json:"-"`
@@ -1341,6 +1368,9 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 }
 
 type StopServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server to stop
 	ServerID string `json:"-"`
@@ -1386,6 +1416,9 @@ func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Se
 }
 
 type ListServerEventsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server events searched
 	ServerID string `json:"-"`
@@ -1445,6 +1478,9 @@ func (s *API) ListServerEvents(req *ListServerEventsRequest, opts ...scw.Request
 }
 
 type StartBMCAccessRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1496,6 +1532,9 @@ func (s *API) StartBMCAccess(req *StartBMCAccessRequest, opts ...scw.RequestOpti
 }
 
 type GetBMCAccessRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1536,6 +1575,9 @@ func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) 
 }
 
 type StopBMCAccessRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1574,6 +1616,9 @@ func (s *API) StopBMCAccess(req *StopBMCAccessRequest, opts ...scw.RequestOption
 }
 
 type UpdateIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1627,6 +1672,9 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 }
 
 type AddOptionServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1678,6 +1726,9 @@ func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOp
 }
 
 type DeleteOptionServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: ID of the server
 	ServerID string `json:"-"`
@@ -1724,6 +1775,9 @@ func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.Req
 }
 
 type ListOffersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -1777,6 +1831,9 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 }
 
 type GetOfferRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OfferID: ID of the researched Offer
 	OfferID string `json:"-"`
@@ -1817,6 +1874,9 @@ func (s *API) GetOffer(req *GetOfferRequest, opts ...scw.RequestOption) (*Offer,
 }
 
 type GetOptionRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OptionID: ID of the option
 	OptionID string `json:"-"`
@@ -1857,6 +1917,9 @@ func (s *API) GetOption(req *GetOptionRequest, opts ...scw.RequestOption) (*Opti
 }
 
 type ListOptionsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -1911,6 +1974,9 @@ func (s *API) ListOptions(req *ListOptionsRequest, opts ...scw.RequestOption) (*
 }
 
 type ListSettingsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -1967,6 +2033,9 @@ func (s *API) ListSettings(req *ListSettingsRequest, opts ...scw.RequestOption) 
 }
 
 type UpdateSettingRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// SettingID: ID of the setting
 	SettingID string `json:"-"`
@@ -2014,6 +2083,9 @@ func (s *API) UpdateSetting(req *UpdateSettingRequest, opts ...scw.RequestOption
 }
 
 type ListOSRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
@@ -2065,6 +2137,9 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 }
 
 type GetOSRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OsID: ID of the OS
 	OsID string `json:"-"`

@@ -289,6 +289,9 @@ type MACAddress struct {
 // Service API
 
 type CreateFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ProjectID: ID of the project to associate with the Flexible IP
 	ProjectID string `json:"project_id"`
@@ -341,6 +344,9 @@ func (s *API) CreateFlexibleIP(req *CreateFlexibleIPRequest, opts ...scw.Request
 }
 
 type GetFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: flexible IP ID
 	FipID string `json:"-"`
@@ -379,6 +385,9 @@ func (s *API) GetFlexibleIP(req *GetFlexibleIPRequest, opts ...scw.RequestOption
 }
 
 type ListFlexibleIPsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OrderBy: the sort order of the returned Flexible IPs
 	//
@@ -445,6 +454,9 @@ func (s *API) ListFlexibleIPs(req *ListFlexibleIPsRequest, opts ...scw.RequestOp
 }
 
 type UpdateFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: ID of the Flexible IP to update
 	FipID string `json:"-"`
@@ -494,6 +506,9 @@ func (s *API) UpdateFlexibleIP(req *UpdateFlexibleIPRequest, opts ...scw.Request
 }
 
 type DeleteFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: ID of the Flexible IP to delete
 	FipID string `json:"-"`
@@ -530,6 +545,9 @@ func (s *API) DeleteFlexibleIP(req *DeleteFlexibleIPRequest, opts ...scw.Request
 }
 
 type AttachFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipsIDs: a list of Flexible IP IDs to attach
 	//
@@ -573,6 +591,9 @@ func (s *API) AttachFlexibleIP(req *AttachFlexibleIPRequest, opts ...scw.Request
 }
 
 type DetachFlexibleIPRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipsIDs: a list of Flexible IP IDs to detach
 	//
@@ -614,6 +635,9 @@ func (s *API) DetachFlexibleIP(req *DetachFlexibleIPRequest, opts ...scw.Request
 }
 
 type GenerateMACAddrRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: flexible IP ID on which to generate a Virtual MAC
 	FipID string `json:"-"`
@@ -661,6 +685,9 @@ func (s *API) GenerateMACAddr(req *GenerateMACAddrRequest, opts ...scw.RequestOp
 }
 
 type DuplicateMACAddrRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: flexible IP ID on which to duplicate the Virtual MAC
 	//
@@ -712,6 +739,9 @@ func (s *API) DuplicateMACAddr(req *DuplicateMACAddrRequest, opts ...scw.Request
 }
 
 type MoveMACAddrRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	FipID string `json:"-"`
@@ -756,6 +786,9 @@ func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteMACAddrRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// FipID: flexible IP ID from which to delete the Virtual MAC
 	//

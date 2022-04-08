@@ -1037,6 +1037,9 @@ type Version struct {
 // Service API
 
 type ListClustersRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// OrganizationID: the organization ID on which to filter the returned clusters
 	OrganizationID *string `json:"-"`
@@ -1107,6 +1110,9 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 }
 
 type CreateClusterRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Deprecated: OrganizationID: the organization ID where the cluster will be created
 	// Precisely one of OrganizationID, ProjectID must be set.
@@ -1206,6 +1212,9 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 }
 
 type GetClusterRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the requested cluster
 	ClusterID string `json:"-"`
@@ -1246,6 +1255,9 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 }
 
 type UpdateClusterRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster to update
 	ClusterID string `json:"-"`
@@ -1323,6 +1335,9 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 }
 
 type DeleteClusterRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster to delete
 	ClusterID string `json:"-"`
@@ -1369,6 +1384,9 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 }
 
 type UpgradeClusterRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster to upgrade
 	ClusterID string `json:"-"`
@@ -1422,6 +1440,9 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 }
 
 type ListClusterAvailableVersionsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster which the available Kuberentes versions will be listed from
 	ClusterID string `json:"-"`
@@ -1462,6 +1483,9 @@ func (s *API) ListClusterAvailableVersions(req *ListClusterAvailableVersionsRequ
 }
 
 type GetClusterKubeConfigRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster to download the kubeconfig from
 	ClusterID string `json:"-"`
@@ -1503,6 +1527,9 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 }
 
 type ResetClusterAdminTokenRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster of which the admin token will be renewed
 	ClusterID string `json:"-"`
@@ -1546,6 +1573,9 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 }
 
 type ListPoolsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster from which the pools will be listed from
 	ClusterID string `json:"-"`
@@ -1613,6 +1643,9 @@ func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*List
 }
 
 type CreatePoolRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the ID of the cluster in which the pool will be created
 	ClusterID string `json:"-"`
@@ -1701,6 +1734,9 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 }
 
 type GetPoolRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// PoolID: the ID of the requested pool
 	PoolID string `json:"-"`
@@ -1741,6 +1777,9 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 }
 
 type UpgradePoolRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// PoolID: the ID of the pool to upgrade
 	PoolID string `json:"-"`
@@ -1788,6 +1827,9 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 }
 
 type UpdatePoolRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// PoolID: the ID of the pool to update
 	PoolID string `json:"-"`
@@ -1849,6 +1891,9 @@ func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Po
 }
 
 type DeletePoolRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// PoolID: the ID of the pool to delete
 	PoolID string `json:"-"`
@@ -1889,6 +1934,9 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 }
 
 type ListNodesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// ClusterID: the cluster ID from which the nodes will be listed from
 	ClusterID string `json:"-"`
@@ -1959,6 +2007,9 @@ func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*List
 }
 
 type GetNodeRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NodeID: the ID of the requested node
 	NodeID string `json:"-"`
@@ -1999,6 +2050,9 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 }
 
 type ReplaceNodeRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NodeID: the ID of the node to replace
 	NodeID string `json:"-"`
@@ -2044,6 +2098,9 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 }
 
 type RebootNodeRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// NodeID: the ID of the node to reboot
 	NodeID string `json:"-"`
@@ -2089,6 +2146,9 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 }
 
 type ListVersionsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 }
 
@@ -2123,6 +2183,9 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 }
 
 type GetVersionRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// VersionName: the requested version name
 	VersionName string `json:"-"`
