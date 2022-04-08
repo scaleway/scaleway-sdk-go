@@ -691,6 +691,48 @@ func (enum *Permission) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ReadReplicaStatus string
+
+const (
+	// ReadReplicaStatusUnknown is [insert doc].
+	ReadReplicaStatusUnknown = ReadReplicaStatus("unknown")
+	// ReadReplicaStatusProvisioning is [insert doc].
+	ReadReplicaStatusProvisioning = ReadReplicaStatus("provisioning")
+	// ReadReplicaStatusInitializing is [insert doc].
+	ReadReplicaStatusInitializing = ReadReplicaStatus("initializing")
+	// ReadReplicaStatusReady is [insert doc].
+	ReadReplicaStatusReady = ReadReplicaStatus("ready")
+	// ReadReplicaStatusDeleting is [insert doc].
+	ReadReplicaStatusDeleting = ReadReplicaStatus("deleting")
+	// ReadReplicaStatusError is [insert doc].
+	ReadReplicaStatusError = ReadReplicaStatus("error")
+	// ReadReplicaStatusLocked is [insert doc].
+	ReadReplicaStatusLocked = ReadReplicaStatus("locked")
+)
+
+func (enum ReadReplicaStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum ReadReplicaStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ReadReplicaStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ReadReplicaStatus(ReadReplicaStatus(tmp).String())
+	return nil
+}
+
 type SnapshotStatus string
 
 const (
@@ -893,14 +935,20 @@ type Endpoint struct {
 	// Name: name of the endpoint
 	Name *string `json:"name"`
 	// PrivateNetwork: private network details
-	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
 	// LoadBalancer: load balancer details
-	// Precisely one of LoadBalancer, PrivateNetwork must be set.
+	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointLoadBalancerDetails `json:"load_balancer,omitempty"`
+	// DirectAccess: direct access details
+	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
+	DirectAccess *EndpointDirectAccessDetails `json:"direct_access,omitempty"`
 	// Hostname: hostname of the endpoint
 	// Precisely one of Hostname, IP must be set.
 	Hostname *string `json:"hostname,omitempty"`
+}
+
+type EndpointDirectAccessDetails struct {
 }
 
 type EndpointLoadBalancerDetails struct {
@@ -1015,8 +1063,6 @@ type Instance struct {
 	BackupSchedule *BackupSchedule `json:"backup_schedule"`
 	// IsHaCluster: whether or not High-Availability is enabled
 	IsHaCluster bool `json:"is_ha_cluster"`
-	// ReadReplicas: read replicas of the instance
-	ReadReplicas []*Endpoint `json:"read_replicas"`
 	// NodeType: node type of the instance
 	NodeType string `json:"node_type"`
 	// InitSettings: list of engine settings to be set at database initialisation
@@ -1306,38 +1352,10 @@ type Volume struct {
 
 // Service API
 
-type GetServiceInfoRequest struct {
-	Region scw.Region `json:"-"`
-}
-
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "",
-		Headers: http.Header{},
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 type ListDatabaseEnginesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1384,6 +1402,9 @@ func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.R
 }
 
 type ListNodeTypesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// IncludeDisabledTypes: whether or not to include disabled types
 	IncludeDisabledTypes bool `json:"-"`
@@ -1433,6 +1454,9 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 }
 
 type ListDatabaseBackupsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: name of the database backups
 	Name *string `json:"-"`
@@ -1496,6 +1520,9 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 }
 
 type CreateDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"instance_id"`
@@ -1545,6 +1572,9 @@ func (s *API) CreateDatabaseBackup(req *CreateDatabaseBackupRequest, opts ...scw
 }
 
 type GetDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: UUID of the database backup
 	DatabaseBackupID string `json:"-"`
@@ -1583,6 +1613,9 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 }
 
 type UpdateDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: UUID of the database backup to update
 	DatabaseBackupID string `json:"-"`
@@ -1630,6 +1663,9 @@ func (s *API) UpdateDatabaseBackup(req *UpdateDatabaseBackupRequest, opts ...scw
 }
 
 type DeleteDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: UUID of the database backup to delete
 	DatabaseBackupID string `json:"-"`
@@ -1668,6 +1704,9 @@ func (s *API) DeleteDatabaseBackup(req *DeleteDatabaseBackupRequest, opts ...scw
 }
 
 type RestoreDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: backup of a logical database
 	DatabaseBackupID string `json:"-"`
@@ -1715,6 +1754,9 @@ func (s *API) RestoreDatabaseBackup(req *RestoreDatabaseBackupRequest, opts ...s
 }
 
 type ExportDatabaseBackupRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: UUID of the database backup you want to export
 	DatabaseBackupID string `json:"-"`
@@ -1758,6 +1800,9 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 }
 
 type UpgradeInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to upgrade
 	InstanceID string `json:"-"`
@@ -1817,6 +1862,9 @@ func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOp
 }
 
 type ListInstancesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Tags: list instance that have a given tags
 	Tags []string `json:"-"`
@@ -1880,6 +1928,9 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 }
 
 type GetInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -1918,6 +1969,9 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Deprecated: OrganizationID: please use `project_id` instead
 	// Precisely one of OrganizationID, ProjectID must be set.
@@ -2003,6 +2057,9 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 }
 
 type UpdateInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance to update
 	InstanceID string `json:"-"`
@@ -2060,6 +2117,9 @@ func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOpti
 }
 
 type DeleteInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance to delete
 	InstanceID string `json:"-"`
@@ -2098,6 +2158,9 @@ func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOpti
 }
 
 type CloneInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to clone
 	InstanceID string `json:"-"`
@@ -2145,6 +2208,9 @@ func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption
 }
 
 type RestartInstanceRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to restart
 	InstanceID string `json:"-"`
@@ -2188,6 +2254,9 @@ func (s *API) RestartInstance(req *RestartInstanceRequest, opts ...scw.RequestOp
 }
 
 type GetInstanceCertificateRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -2226,6 +2295,9 @@ func (s *API) GetInstanceCertificate(req *GetInstanceCertificateRequest, opts ..
 }
 
 type RenewInstanceCertificateRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
@@ -2267,6 +2339,9 @@ func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opt
 }
 
 type GetInstanceMetricsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -2319,6 +2394,9 @@ func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.Req
 }
 
 type PrepareInstanceLogsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
@@ -2368,6 +2446,9 @@ func (s *API) PrepareInstanceLogs(req *PrepareInstanceLogsRequest, opts ...scw.R
 }
 
 type ListInstanceLogsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
@@ -2414,6 +2495,9 @@ func (s *API) ListInstanceLogs(req *ListInstanceLogsRequest, opts ...scw.Request
 }
 
 type GetInstanceLogRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceLogID: UUID of the instance_log you want
 	InstanceLogID string `json:"-"`
@@ -2452,6 +2536,9 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 }
 
 type PurgeInstanceLogsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
@@ -2495,6 +2582,9 @@ func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.Reque
 }
 
 type ListInstanceLogsDetailsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want logs of
 	InstanceID string `json:"-"`
@@ -2533,6 +2623,9 @@ func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts 
 }
 
 type AddInstanceSettingsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to add settings to
 	InstanceID string `json:"-"`
@@ -2578,6 +2671,9 @@ func (s *API) AddInstanceSettings(req *AddInstanceSettingsRequest, opts ...scw.R
 }
 
 type DeleteInstanceSettingsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance to delete settings from
 	InstanceID string `json:"-"`
@@ -2623,6 +2719,9 @@ func (s *API) DeleteInstanceSettings(req *DeleteInstanceSettingsRequest, opts ..
 }
 
 type SetInstanceSettingsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance where the settings has to be set
 	InstanceID string `json:"-"`
@@ -2668,6 +2767,9 @@ func (s *API) SetInstanceSettings(req *SetInstanceSettingsRequest, opts ...scw.R
 }
 
 type ListInstanceACLRulesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -2720,6 +2822,9 @@ func (s *API) ListInstanceACLRules(req *ListInstanceACLRulesRequest, opts ...scw
 }
 
 type AddInstanceACLRulesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to add acl rules to
 	InstanceID string `json:"-"`
@@ -2767,6 +2872,9 @@ func (s *API) AddInstanceACLRules(req *AddInstanceACLRulesRequest, opts ...scw.R
 }
 
 type SetInstanceACLRulesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance where the ACL rules has to be set
 	InstanceID string `json:"-"`
@@ -2814,6 +2922,9 @@ func (s *API) SetInstanceACLRules(req *SetInstanceACLRulesRequest, opts ...scw.R
 }
 
 type DeleteInstanceACLRulesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to delete an ACL rules from
 	InstanceID string `json:"-"`
@@ -2859,6 +2970,9 @@ func (s *API) DeleteInstanceACLRules(req *DeleteInstanceACLRulesRequest, opts ..
 }
 
 type ListUsersRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -2919,6 +3033,9 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 }
 
 type CreateUserRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to create a user in
 	InstanceID string `json:"-"`
@@ -2968,6 +3085,9 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 }
 
 type UpdateUserRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance the user belongs to
 	InstanceID string `json:"-"`
@@ -3021,6 +3141,9 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 }
 
 type DeleteUserRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance to delete a user from
 	InstanceID string `json:"-"`
@@ -3063,6 +3186,9 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 }
 
 type ListDatabasesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance to list database of
 	InstanceID string `json:"-"`
@@ -3129,6 +3255,9 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 }
 
 type CreateDatabaseRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance where to create the database
 	InstanceID string `json:"-"`
@@ -3174,6 +3303,9 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 }
 
 type DeleteDatabaseRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance where to delete the database
 	InstanceID string `json:"-"`
@@ -3216,6 +3348,9 @@ func (s *API) DeleteDatabase(req *DeleteDatabaseRequest, opts ...scw.RequestOpti
 }
 
 type ListPrivilegesRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -3279,6 +3414,9 @@ func (s *API) ListPrivileges(req *ListPrivilegesRequest, opts ...scw.RequestOpti
 }
 
 type SetPrivilegeRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -3330,6 +3468,9 @@ func (s *API) SetPrivilege(req *SetPrivilegeRequest, opts ...scw.RequestOption) 
 }
 
 type ListSnapshotsRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// Name: name of the snapshot
 	Name *string `json:"-"`
@@ -3393,6 +3534,9 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 }
 
 type GetSnapshotRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// SnapshotID: UUID of the snapshot
 	SnapshotID string `json:"-"`
@@ -3431,6 +3575,9 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateSnapshotRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance
 	InstanceID string `json:"-"`
@@ -3482,6 +3629,9 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type UpdateSnapshotRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// SnapshotID: UUID of the snapshot to update
 	SnapshotID string `json:"-"`
@@ -3529,6 +3679,9 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type DeleteSnapshotRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// SnapshotID: UUID of the snapshot to delete
 	SnapshotID string `json:"-"`
@@ -3567,6 +3720,9 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 }
 
 type CreateInstanceFromSnapshotRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// SnapshotID: block snapshot of the instance
 	SnapshotID string `json:"-"`
@@ -3616,6 +3772,9 @@ func (s *API) CreateInstanceFromSnapshot(req *CreateInstanceFromSnapshotRequest,
 }
 
 type CreateEndpointRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// InstanceID: UUID of the instance you want to add endpoint to
 	InstanceID string `json:"-"`
@@ -3661,6 +3820,9 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 }
 
 type DeleteEndpointRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// EndpointID: UUID of the endpoint you want to delete
 	EndpointID string `json:"-"`
@@ -3697,6 +3859,9 @@ func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOpti
 }
 
 type GetEndpointRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// EndpointID: UUID of the endpoint you want to get
 	EndpointID string `json:"-"`
