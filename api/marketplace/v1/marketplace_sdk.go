@@ -55,14 +55,6 @@ type GetImageResponse struct {
 	Image *Image `json:"image"`
 }
 
-type GetServiceInfoResponse struct {
-	API string `json:"api"`
-
-	Description string `json:"description"`
-
-	Version string `json:"version"`
-}
-
 type GetVersionResponse struct {
 	Version *Version `json:"version"`
 }
@@ -140,27 +132,6 @@ type Version struct {
 }
 
 // Service API
-
-type GetServiceInfoRequest struct {
-}
-
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*GetServiceInfoResponse, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/marketplace/v1",
-		Headers: http.Header{},
-	}
-
-	var resp GetServiceInfoResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
 
 type ListImagesRequest struct {
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to display
