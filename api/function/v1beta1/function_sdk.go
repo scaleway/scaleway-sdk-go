@@ -184,6 +184,24 @@ const (
 	FunctionRuntimeNode10 = FunctionRuntime("node10")
 	// FunctionRuntimeNode14 is [insert doc].
 	FunctionRuntimeNode14 = FunctionRuntime("node14")
+	// FunctionRuntimeNode16 is [insert doc].
+	FunctionRuntimeNode16 = FunctionRuntime("node16")
+	// FunctionRuntimeNode17 is [insert doc].
+	FunctionRuntimeNode17 = FunctionRuntime("node17")
+	// FunctionRuntimePython37 is [insert doc].
+	FunctionRuntimePython37 = FunctionRuntime("python37")
+	// FunctionRuntimePython38 is [insert doc].
+	FunctionRuntimePython38 = FunctionRuntime("python38")
+	// FunctionRuntimePython39 is [insert doc].
+	FunctionRuntimePython39 = FunctionRuntime("python39")
+	// FunctionRuntimePython310 is [insert doc].
+	FunctionRuntimePython310 = FunctionRuntime("python310")
+	// FunctionRuntimeGo113 is [insert doc].
+	FunctionRuntimeGo113 = FunctionRuntime("go113")
+	// FunctionRuntimeGo117 is [insert doc].
+	FunctionRuntimeGo117 = FunctionRuntime("go117")
+	// FunctionRuntimeGo118 is [insert doc].
+	FunctionRuntimeGo118 = FunctionRuntime("go118")
 )
 
 func (enum FunctionRuntime) String() string {
