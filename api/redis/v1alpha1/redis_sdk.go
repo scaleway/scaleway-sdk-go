@@ -205,153 +205,162 @@ func (enum *NodeTypeStock) UnmarshalJSON(data []byte) error {
 
 // ACLRule: acl rule
 type ACLRule struct {
+	// ID: ID of the rule
 	ID string `json:"id"`
-
+	// IP: iPv4 network address of the rule
 	IP *scw.IPNet `json:"ip"`
-
+	// Description: description of the rule
 	Description *string `json:"description"`
 }
 
 // ACLRuleSpec: acl rule spec
 type ACLRuleSpec struct {
+	// IP: iPv4 network address of the rule
 	IP scw.IPNet `json:"ip"`
-
+	// Description: description of the rule
 	Description string `json:"description"`
 }
 
 // ACLRulesResponse: acl rules response
 type ACLRulesResponse struct {
+	// ACLRules: ACL Rules enabled on the cluster
 	ACLRules []*ACLRule `json:"acl_rules"`
 }
 
 // AddEndpointsResponse: add endpoints response
 type AddEndpointsResponse struct {
+	// Endpoints: endpoints defined on the cluster
 	Endpoints []*Endpoint `json:"endpoints"`
-
+	// TotalCount: total count of endpoints of the cluster
 	TotalCount uint32 `json:"total_count"`
 }
 
 // AvailableClusterSetting: available cluster setting
 type AvailableClusterSetting struct {
+	// Name: name of the setting
 	Name string `json:"name"`
-
+	// DefaultValue: default value of the setting
 	DefaultValue *string `json:"default_value"`
-	// Type:
+	// Type: type of the setting
 	//
 	// Default value: BOOLEAN
 	Type AvailableClusterSettingPropertyType `json:"type"`
-
+	// Description: description of the setting
 	Description string `json:"description"`
-
+	// MaxValue: optional maximum value of the setting
 	MaxValue *int64 `json:"max_value"`
-
+	// MinValue: optional minimum value of the setting
 	MinValue *int64 `json:"min_value"`
-
+	// Regex: optional validation rule of the setting
 	Regex *string `json:"regex"`
-
+	// Deprecated: whether the setting is deprecated
 	Deprecated bool `json:"deprecated"`
 }
 
 // Cluster: cluster
 type Cluster struct {
+	// ID: UUID of the cluster
 	ID string `json:"id"`
-
+	// Name: name of the cluster
 	Name string `json:"name"`
-
+	// ProjectID: project ID the cluster belongs to
 	ProjectID string `json:"project_id"`
-	// Status:
+	// Status: status of the cluster
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"status"`
-
+	// Version: redis version of the cluster
 	Version string `json:"version"`
-
+	// Endpoints: list of cluster endpoints
 	Endpoints []*Endpoint `json:"endpoints"`
-
+	// Tags: list of tags applied to the cluster
 	Tags []string `json:"tags"`
-
+	// NodeType: node type of the cluster
 	NodeType string `json:"node_type"`
-
+	// CreatedAt: creation date (Format ISO 8601)
 	CreatedAt *time.Time `json:"created_at"`
-
+	// UpdatedAt: update date (Format ISO 8601)
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// TLSEnabled: whether or not TLS is enabled
 	TLSEnabled bool `json:"tls_enabled"`
-
+	// ClusterSettings: list of cluster settings
 	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
-
+	// ACLRules: list of acl rules
 	ACLRules []*ACLRule `json:"acl_rules"`
-
+	// ClusterSize: number of nodes of the cluster
 	ClusterSize int32 `json:"cluster_size"`
-
+	// Zone: zone of the cluster
 	Zone scw.Zone `json:"zone"`
 }
 
 // ClusterMetricsResponse: cluster metrics response
 type ClusterMetricsResponse struct {
+	// Timeseries: time series of metrics of a given cluster
 	Timeseries []*scw.TimeSeries `json:"timeseries"`
 }
 
 // ClusterSetting: cluster setting
 type ClusterSetting struct {
+	// Value: value of the setting
 	Value string `json:"value"`
-
+	// Name: name of the setting
 	Name string `json:"name"`
 }
 
 // ClusterSettingsResponse: cluster settings response
 type ClusterSettingsResponse struct {
+	// Settings: settings configured for a given cluster
 	Settings []*ClusterSetting `json:"settings"`
 }
 
 // ClusterVersion: cluster version
 type ClusterVersion struct {
+	// Version: redis version
 	Version string `json:"version"`
-
+	// EolDate: end of life date
 	EolDate *time.Time `json:"eol_date"`
-
+	// AvailableSettings: cluster settings available to be set
 	AvailableSettings []*AvailableClusterSetting `json:"available_settings"`
-
+	// LogoURL: redis logo url
 	LogoURL string `json:"logo_url"`
-
+	// Zone: zone of the Redis version
 	Zone scw.Zone `json:"zone"`
 }
 
 // Endpoint: endpoint
 type Endpoint struct {
-	// Port: port to connect to redis server
+	// Port: TCP port of the endpoint
 	Port uint32 `json:"port"`
-	// PrivateNetwork: private network details for endpoint
+	// PrivateNetwork: private network details
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PrivateNetwork *PrivateNetwork `json:"private_network,omitempty"`
-	// ID: UUID of current endpoint (Used for delete PN endpoint)
-	ID string `json:"id"`
-	// PublicNetwork: public network details for endpoint
+	// PublicNetwork: public network details
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PublicNetwork *EndpointPublicNetwork `json:"public_network,omitempty"`
-	// IPs: list of ip in current endpoint
+	// IPs: lis of IPv4 address of the endpoint
 	IPs []net.IP `json:"ips"`
+	// ID: UUID of the endpoint
+	ID string `json:"id"`
 }
 
-// EndpointPublicNetwork: endpoint. public network
 type EndpointPublicNetwork struct {
 }
 
 // EndpointSpec: endpoint spec
 type EndpointSpec struct {
-	// PrivateNetwork: private network details for endpoint
+	// PrivateNetwork: private network spec details
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetworkSpec `json:"private_network,omitempty"`
-	// PublicNetwork: public network details for endpoint
+	// PublicNetwork: public network spec details
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PublicNetwork *EndpointSpecPublicNetworkSpec `json:"public_network,omitempty"`
 }
 
 // EndpointSpecPrivateNetworkSpec: endpoint spec. private network spec
 type EndpointSpecPrivateNetworkSpec struct {
-	// ID: put UUID of the endpoint you want to connect cluster
+	// ID: UUID of the private network to be connected to the cluster
 	ID string `json:"id"`
-	// ServiceIPs: put a list of IPv4 in CIDR format to expose the cluster in the private network. You must provide one IPv4 per node
+	// ServiceIPs: endpoint IPv4 adress with a CIDR notation. You must provide at least one IPv4 per node. Check documentation about IP and subnet limitation.
 	ServiceIPs []scw.IPNet `json:"service_ips"`
 }
 
@@ -361,123 +370,104 @@ type EndpointSpecPublicNetworkSpec struct {
 
 // ListClustersResponse: list clusters response
 type ListClustersResponse struct {
+	// Clusters: list all clusters
 	Clusters []*Cluster `json:"clusters"`
-
+	// TotalCount: total count of clusters
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListNodeTypesResponse: list node types response
 type ListNodeTypesResponse struct {
+	// NodeTypes: types of the node
 	NodeTypes []*NodeType `json:"node_types"`
-
+	// TotalCount: total count of node-types available
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListVersionsResponse: list versions response
 type ListVersionsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
+	// Versions: list of the available Redis versions
 	Versions []*ClusterVersion `json:"versions"`
+	// TotalCount: total count of Redis versions available
+	TotalCount uint32 `json:"total_count"`
 }
 
 // NodeType: node type
 type NodeType struct {
+	// Name: node Type name identifier
 	Name string `json:"name"`
-	// StockStatus:
+	// StockStatus: current stock status for the Node Type
 	//
 	// Default value: unknown
 	StockStatus NodeTypeStock `json:"stock_status"`
-
+	// Description: current specs of the offer
 	Description string `json:"description"`
-
+	// Vcpus: number of virtual CPUs
 	Vcpus uint32 `json:"vcpus"`
-
+	// Memory: quantity of RAM
 	Memory scw.Size `json:"memory"`
-
+	// Disabled: the Node Type is currently disabled
 	Disabled bool `json:"disabled"`
-
+	// Beta: the Node Type is currently in beta
 	Beta bool `json:"beta"`
-
+	// Zone: zone the Node Type is in
 	Zone scw.Zone `json:"zone"`
 }
 
 // PrivateNetwork: private network
 type PrivateNetwork struct {
+	// ID: UUID of the private network
 	ID string `json:"id"`
-
+	// ServiceIPs: list of IPv4 CIDR notation addresses of the endpoint
 	ServiceIPs []scw.IPNet `json:"service_ips"`
-
+	// Zone: private network zone
 	Zone scw.Zone `json:"zone"`
 }
 
 // SetEndpointsResponse: set endpoints response
 type SetEndpointsResponse struct {
+	// Endpoints: endpoints defined on the cluster
 	Endpoints []*Endpoint `json:"endpoints"`
-
+	// TotalCount: total count of endpoints of the cluster
 	TotalCount uint32 `json:"total_count"`
 }
 
 // Service API
 
-type GetServiceInfoRequest struct {
-	Zone scw.Zone `json:"-"`
-}
-
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "",
-		Headers: http.Header{},
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 type CreateClusterRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ProjectID: the project ID on which to create the cluster
 	ProjectID string `json:"project_id"`
-
+	// Name: name of the cluster
 	Name string `json:"name"`
-
+	// Version: redis version of the cluster
 	Version string `json:"version"`
-
+	// Tags: tags to apply to the cluster
 	Tags []string `json:"tags"`
-
+	// NodeType: type of node to use for the cluster
 	NodeType string `json:"node_type"`
-
+	// UserName: name of the user created when the cluster is created
 	UserName string `json:"user_name"`
-
+	// Password: password of the user
 	Password string `json:"password"`
-
+	// ClusterSize: number of nodes for the cluster
 	ClusterSize *int32 `json:"cluster_size"`
-
+	// ACLRules: list of ACLRuleSpec used to secure your publicly exposed cluster
 	ACLRules []*ACLRuleSpec `json:"acl_rules"`
-
+	// Endpoints: zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks
+	//
+	// Zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks. If no EndpoindSpec is given the cluster will be publicly exposed by default.
 	Endpoints []*EndpointSpec `json:"endpoints"`
-
+	// TLSEnabled: whether or not TLS is enabled
 	TLSEnabled bool `json:"tls_enabled"`
-
+	// ClusterSettings: list of cluster settings to be set at cluster initialisation
 	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
 }
 
+// CreateCluster: create a cluster
 func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -489,6 +479,10 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("ins")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -516,19 +510,23 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 }
 
 type UpdateClusterRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster to update
 	ClusterID string `json:"-"`
-
+	// Name: name of the cluster
 	Name *string `json:"name"`
-
+	// Tags: tags of a given cluster
 	Tags []string `json:"tags"`
-
+	// UserName: name of the cluster user
 	UserName *string `json:"user_name"`
-
+	// Password: password of the cluster user
 	Password *string `json:"password"`
 }
 
+// UpdateCluster: update a cluster
 func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -566,11 +564,15 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 }
 
 type GetClusterRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster
 	ClusterID string `json:"-"`
 }
 
+// GetCluster: get a cluster
 func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -603,16 +605,19 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 }
 
 type ListClustersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// Tags: tags of the clusters to filter upon
 	Tags []string `json:"-"`
-
+	// Name: name of the clusters to filter upon
 	Name *string `json:"-"`
-	// OrderBy:
+	// OrderBy: criteria to use when ordering cluster listing
 	//
 	// Default value: created_at_asc
 	OrderBy ListClustersRequestOrderBy `json:"-"`
-
+	// ProjectID: project ID to list the cluster of
 	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -620,6 +625,7 @@ type ListClustersRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListClusters: list clusters
 func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) (*ListClustersResponse, error) {
 	var err error
 
@@ -662,20 +668,24 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 }
 
 type MigrateClusterRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster to update
 	ClusterID string `json:"-"`
-
+	// Version: redis version of the cluster
 	// Precisely one of ClusterSize, NodeType, Version must be set.
 	Version *string `json:"version,omitempty"`
-
+	// NodeType: type of node to use for the cluster
 	// Precisely one of ClusterSize, NodeType, Version must be set.
 	NodeType *string `json:"node_type,omitempty"`
-
+	// ClusterSize: number of nodes for the cluster
 	// Precisely one of ClusterSize, NodeType, Version must be set.
 	ClusterSize *uint32 `json:"cluster_size,omitempty"`
 }
 
+// MigrateCluster: migrate a cluster
 func (s *API) MigrateCluster(req *MigrateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -713,11 +723,15 @@ func (s *API) MigrateCluster(req *MigrateClusterRequest, opts ...scw.RequestOpti
 }
 
 type DeleteClusterRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster to delete
 	ClusterID string `json:"-"`
 }
 
+// DeleteCluster: delete a cluster
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -749,9 +763,65 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type ListNodeTypesRequest struct {
+type GetClusterMetricsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
+	// ClusterID: UUID of the cluster
+	ClusterID string `json:"-"`
+	// StartDate: start date to gather metrics from
+	StartDate *time.Time `json:"-"`
+	// EndDate: end date to gather metrics from
+	EndDate *time.Time `json:"-"`
+	// MetricName: name of the metric to gather
+	MetricName *string `json:"-"`
+}
 
+// GetClusterMetrics: get metrics of a cluster
+func (s *API) GetClusterMetrics(req *GetClusterMetricsRequest, opts ...scw.RequestOption) (*ClusterMetricsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "metric_name", req.MetricName)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/metrics",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ClusterMetricsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListNodeTypesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
+	Zone scw.Zone `json:"-"`
+	// IncludeDisabledTypes: whether or not to include disabled types
 	IncludeDisabledTypes bool `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -759,6 +829,7 @@ type ListNodeTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
+// ListNodeTypes: list available node types
 func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
 	var err error
 
@@ -798,21 +869,25 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 }
 
 type ListVersionsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
+	// IncludeDisabled: whether or not to include disabled Redis versions
+	IncludeDisabled bool `json:"-"`
+	// IncludeBeta: whether or not to include beta Redis versions
+	IncludeBeta bool `json:"-"`
+	// IncludeDeprecated: whether or not to include deprecated Redis versions
+	IncludeDeprecated bool `json:"-"`
+	// VersionName: list Redis versions that match a given name pattern
+	VersionName *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	IncludeDisabled bool `json:"-"`
-
-	IncludeBeta bool `json:"-"`
-
-	IncludeDeprecated bool `json:"-"`
-
-	VersionName *string `json:"-"`
 }
 
+// ListVersions: list available Redis versions
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
@@ -827,12 +902,12 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "include_disabled", req.IncludeDisabled)
 	parameter.AddToQuery(query, "include_beta", req.IncludeBeta)
 	parameter.AddToQuery(query, "include_deprecated", req.IncludeDeprecated)
 	parameter.AddToQuery(query, "version_name", req.VersionName)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -855,11 +930,15 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 }
 
 type GetClusterCertificateRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster
 	ClusterID string `json:"-"`
 }
 
+// GetClusterCertificate: get the TLS certificate of a cluster
 func (s *API) GetClusterCertificate(req *GetClusterCertificateRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -892,11 +971,15 @@ func (s *API) GetClusterCertificate(req *GetClusterCertificateRequest, opts ...s
 }
 
 type RenewClusterCertificateRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster
 	ClusterID string `json:"-"`
 }
 
+// RenewClusterCertificate: renew the TLS certificate of a cluster
 func (s *API) RenewClusterCertificate(req *RenewClusterCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -931,63 +1014,18 @@ func (s *API) RenewClusterCertificate(req *RenewClusterCertificateRequest, opts 
 	return nil
 }
 
-type GetClusterMetricsRequest struct {
-	Zone scw.Zone `json:"-"`
-
-	ClusterID string `json:"-"`
-
-	StartDate *time.Time `json:"-"`
-
-	EndDate *time.Time `json:"-"`
-
-	MetricName *string `json:"-"`
-}
-
-func (s *API) GetClusterMetrics(req *GetClusterMetricsRequest, opts ...scw.RequestOption) (*ClusterMetricsResponse, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "start_date", req.StartDate)
-	parameter.AddToQuery(query, "end_date", req.EndDate)
-	parameter.AddToQuery(query, "metric_name", req.MetricName)
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ClusterID) == "" {
-		return nil, errors.New("field ClusterID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/metrics",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ClusterMetricsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 type AddClusterSettingsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster you want to add settings to
 	ClusterID string `json:"-"`
-
+	// Settings: settings to add on the cluster
 	Settings []*ClusterSetting `json:"settings"`
 }
 
+// AddClusterSettings: add cluster settings
 func (s *API) AddClusterSettings(req *AddClusterSettingsRequest, opts ...scw.RequestOption) (*ClusterSettingsResponse, error) {
 	var err error
 
@@ -1025,13 +1063,17 @@ func (s *API) AddClusterSettings(req *AddClusterSettingsRequest, opts ...scw.Req
 }
 
 type DeleteClusterSettingRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster where the settings has to be set
 	ClusterID string `json:"-"`
-
+	// SettingsName: setting name to delete
 	SettingsName string `json:"settings_name"`
 }
 
+// DeleteClusterSetting: delete a cluster setting
 func (s *API) DeleteClusterSetting(req *DeleteClusterSettingRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1067,13 +1109,17 @@ func (s *API) DeleteClusterSetting(req *DeleteClusterSettingRequest, opts ...scw
 }
 
 type SetClusterSettingsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster where the settings has to be set
 	ClusterID string `json:"-"`
-
+	// Settings: settings to define for the cluster
 	Settings []*ClusterSetting `json:"settings"`
 }
 
+// SetClusterSettings: set cluster settings
 func (s *API) SetClusterSettings(req *SetClusterSettingsRequest, opts ...scw.RequestOption) (*ClusterSettingsResponse, error) {
 	var err error
 
@@ -1111,13 +1157,17 @@ func (s *API) SetClusterSettings(req *SetClusterSettingsRequest, opts ...scw.Req
 }
 
 type SetACLRulesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster where the ACL rules has to be set
 	ClusterID string `json:"-"`
-
+	// ACLRules: aCLs rules to define for the cluster
 	ACLRules []*ACLRuleSpec `json:"acl_rules"`
 }
 
+// SetACLRules: set ACL rules for a given cluster
 func (s *API) SetACLRules(req *SetACLRulesRequest, opts ...scw.RequestOption) (*ACLRulesResponse, error) {
 	var err error
 
@@ -1155,13 +1205,17 @@ func (s *API) SetACLRules(req *SetACLRulesRequest, opts ...scw.RequestOption) (*
 }
 
 type AddACLRulesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster you want to add acl rules to
 	ClusterID string `json:"-"`
-
+	// ACLRules: aCLs rules to add to the cluster
 	ACLRules []*ACLRuleSpec `json:"acl_rules"`
 }
 
+// AddACLRules: add ACL rules for a given cluster
 func (s *API) AddACLRules(req *AddACLRulesRequest, opts ...scw.RequestOption) (*ACLRulesResponse, error) {
 	var err error
 
@@ -1199,11 +1253,15 @@ func (s *API) AddACLRules(req *AddACLRulesRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteACLRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ACLID: UUID of the acl rule you want to delete
 	ACLID string `json:"-"`
 }
 
+// DeleteACLRule: delete an ACL rule for a given cluster
 func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1234,11 +1292,15 @@ func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption
 }
 
 type GetACLRuleRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ACLID: UUID of the acl rule you want to get
 	ACLID string `json:"-"`
 }
 
+// GetACLRule: get an ACL rule
 func (s *API) GetACLRule(req *GetACLRuleRequest, opts ...scw.RequestOption) (*ACLRule, error) {
 	var err error
 
@@ -1271,13 +1333,17 @@ func (s *API) GetACLRule(req *GetACLRuleRequest, opts ...scw.RequestOption) (*AC
 }
 
 type SetEndpointsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster where the endpoints has to be set
 	ClusterID string `json:"-"`
-
+	// Endpoints: endpoints to define for the cluster
 	Endpoints []*EndpointSpec `json:"endpoints"`
 }
 
+// SetEndpoints: set endpoints for a given cluster
 func (s *API) SetEndpoints(req *SetEndpointsRequest, opts ...scw.RequestOption) (*SetEndpointsResponse, error) {
 	var err error
 
@@ -1315,13 +1381,17 @@ func (s *API) SetEndpoints(req *SetEndpointsRequest, opts ...scw.RequestOption) 
 }
 
 type AddEndpointsRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ClusterID: UUID of the cluster you want to add endpoints to
 	ClusterID string `json:"-"`
-
+	// Endpoints: endpoints to add to the cluster
 	Endpoints []*EndpointSpec `json:"endpoints"`
 }
 
+// AddEndpoints: add endpoints for a given cluster
 func (s *API) AddEndpoints(req *AddEndpointsRequest, opts ...scw.RequestOption) (*AddEndpointsResponse, error) {
 	var err error
 
@@ -1359,11 +1429,15 @@ func (s *API) AddEndpoints(req *AddEndpointsRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteEndpointRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	EndpointID string `json:"-"`
 }
 
+// DeleteEndpoint: delete an endpoint for a given cluster
 func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1394,11 +1468,15 @@ func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOpti
 }
 
 type GetEndpointRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 
 	EndpointID string `json:"-"`
 }
 
+// GetEndpoint: get an endpoint
 func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 

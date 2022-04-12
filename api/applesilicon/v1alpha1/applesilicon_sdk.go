@@ -286,38 +286,10 @@ type ServerTypeMemory struct {
 
 // Service API
 
-type GetServiceInfoRequest struct {
-	Zone scw.Zone `json:"-"`
-}
-
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "",
-		Headers: http.Header{},
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 type ListServerTypesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 }
 
@@ -352,6 +324,9 @@ func (s *API) ListServerTypes(req *ListServerTypesRequest, opts ...scw.RequestOp
 }
 
 type GetServerTypeRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerType: server type identifier
 	ServerType string `json:"-"`
@@ -392,6 +367,9 @@ func (s *API) GetServerType(req *GetServerTypeRequest, opts ...scw.RequestOption
 }
 
 type CreateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Name: create a server with this given name
 	Name string `json:"name"`
@@ -446,6 +424,9 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 }
 
 type ListServersRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OrderBy: the sort order of the returned servers
 	//
@@ -507,6 +488,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 }
 
 type ListOSRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
@@ -563,6 +547,9 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 }
 
 type GetOSRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// OsID: UUID of the OS you want to get
 	OsID string `json:"-"`
@@ -603,6 +590,9 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 }
 
 type GetServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to get
 	ServerID string `json:"-"`
@@ -643,6 +633,9 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 }
 
 type UpdateServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to update
 	ServerID string `json:"-"`
@@ -690,6 +683,9 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to delete
 	ServerID string `json:"-"`
@@ -728,6 +724,9 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 }
 
 type RebootServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to reboot
 	ServerID string `json:"-"`
@@ -773,6 +772,9 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 }
 
 type ReinstallServerRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
 	// ServerID: UUID of the server you want to reinstall
 	ServerID string `json:"-"`
