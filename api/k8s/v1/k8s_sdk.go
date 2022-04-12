@@ -509,6 +509,40 @@ func (enum *PoolStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PoolVolumeType string
+
+const (
+	// PoolVolumeTypeDefaultVolumeType is [insert doc].
+	PoolVolumeTypeDefaultVolumeType = PoolVolumeType("default_volume_type")
+	// PoolVolumeTypeLSSD is [insert doc].
+	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
+	// PoolVolumeTypeBSSD is [insert doc].
+	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+)
+
+func (enum PoolVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "default_volume_type"
+	}
+	return string(enum)
+}
+
+func (enum PoolVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PoolVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PoolVolumeType(PoolVolumeType(tmp).String())
+	return nil
+}
+
 type Runtime string
 
 const (
@@ -783,6 +817,18 @@ type CreateClusterRequestPoolConfig struct {
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
 	// Zone: the Zone in which the Pool's node will be spawn in
 	Zone scw.Zone `json:"zone"`
+	// RootVolumeType: the system volume disk type
+	//
+	// The system volume disk type, we provide two different types of volume (`volume_type`):
+	//   - `l_ssd` is a local block storage: your system is stored locally on
+	//     the hypervisor of your node.
+	//   - `b_ssd` is a remote block storage: your system is stored on a
+	//     centralised and resilant cluster.
+	//
+	// Default value: default_volume_type
+	RootVolumeType PoolVolumeType `json:"root_volume_type"`
+	// RootVolumeSize: the system volume disk size
+	RootVolumeSize *scw.Size `json:"root_volume_size"`
 }
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request. pool config. upgrade policy
@@ -925,6 +971,18 @@ type Pool struct {
 	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
 	// Zone: the Zone in which the Pool's node will be spawn in
 	Zone scw.Zone `json:"zone"`
+	// RootVolumeType: the system volume disk type
+	//
+	// The system volume disk type, we provide two different types of volume (`volume_type`):
+	//   - `l_ssd` is a local block storage: your system is stored locally on
+	//     the hypervisor of your node.
+	//   - `b_ssd` is a remote block storage: your system is stored on a
+	//     centralised and resilant cluster.
+	//
+	// Default value: default_volume_type
+	RootVolumeType PoolVolumeType `json:"root_volume_type"`
+	// RootVolumeSize: the system volume disk size
+	RootVolumeSize *scw.Size `json:"root_volume_size"`
 	// Region: the cluster region of the pool
 	Region scw.Region `json:"region"`
 }
@@ -1683,6 +1741,18 @@ type CreatePoolRequest struct {
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy"`
 	// Zone: the Zone in which the Pool's node will be spawn in
 	Zone scw.Zone `json:"zone"`
+	// RootVolumeType: the system volume disk type
+	//
+	// The system volume disk type, we provide two different types of volume (`volume_type`):
+	//   - `l_ssd` is a local block storage: your system is stored locally on
+	//     the hypervisor of your node.
+	//   - `b_ssd` is a remote block storage: your system is stored on a
+	//     centralised and resilant cluster.
+	//
+	// Default value: default_volume_type
+	RootVolumeType PoolVolumeType `json:"root_volume_type"`
+	// RootVolumeSize: the system volume disk size
+	RootVolumeSize *scw.Size `json:"root_volume_size"`
 }
 
 // CreatePool: create a new pool in a cluster
