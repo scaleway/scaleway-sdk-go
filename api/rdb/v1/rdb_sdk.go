@@ -691,48 +691,6 @@ func (enum *Permission) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ReadReplicaStatus string
-
-const (
-	// ReadReplicaStatusUnknown is [insert doc].
-	ReadReplicaStatusUnknown = ReadReplicaStatus("unknown")
-	// ReadReplicaStatusProvisioning is [insert doc].
-	ReadReplicaStatusProvisioning = ReadReplicaStatus("provisioning")
-	// ReadReplicaStatusInitializing is [insert doc].
-	ReadReplicaStatusInitializing = ReadReplicaStatus("initializing")
-	// ReadReplicaStatusReady is [insert doc].
-	ReadReplicaStatusReady = ReadReplicaStatus("ready")
-	// ReadReplicaStatusDeleting is [insert doc].
-	ReadReplicaStatusDeleting = ReadReplicaStatus("deleting")
-	// ReadReplicaStatusError is [insert doc].
-	ReadReplicaStatusError = ReadReplicaStatus("error")
-	// ReadReplicaStatusLocked is [insert doc].
-	ReadReplicaStatusLocked = ReadReplicaStatus("locked")
-)
-
-func (enum ReadReplicaStatus) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown"
-	}
-	return string(enum)
-}
-
-func (enum ReadReplicaStatus) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ReadReplicaStatus) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ReadReplicaStatus(ReadReplicaStatus(tmp).String())
-	return nil
-}
-
 type SnapshotStatus string
 
 const (
@@ -940,15 +898,9 @@ type Endpoint struct {
 	// LoadBalancer: load balancer details
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointLoadBalancerDetails `json:"load_balancer,omitempty"`
-	// DirectAccess: direct access details
-	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
-	DirectAccess *EndpointDirectAccessDetails `json:"direct_access,omitempty"`
 	// Hostname: hostname of the endpoint
 	// Precisely one of Hostname, IP must be set.
 	Hostname *string `json:"hostname,omitempty"`
-}
-
-type EndpointDirectAccessDetails struct {
 }
 
 type EndpointLoadBalancerDetails struct {
@@ -1063,6 +1015,8 @@ type Instance struct {
 	BackupSchedule *BackupSchedule `json:"backup_schedule"`
 	// IsHaCluster: whether or not High-Availability is enabled
 	IsHaCluster bool `json:"is_ha_cluster"`
+	// ReadReplicas: read replicas of the instance
+	ReadReplicas []*Endpoint `json:"read_replicas"`
 	// NodeType: node type of the instance
 	NodeType string `json:"node_type"`
 	// InitSettings: list of engine settings to be set at database initialisation

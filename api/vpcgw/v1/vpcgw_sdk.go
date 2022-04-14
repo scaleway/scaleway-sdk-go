@@ -563,8 +563,6 @@ type Gateway struct {
 	BastionEnabled bool `json:"bastion_enabled"`
 	// BastionPort: port of the SSH bastion
 	BastionPort uint32 `json:"bastion_port"`
-	// SMTPEnabled: whether SMTP traffic is allowed to pass through the gateway
-	SMTPEnabled bool `json:"smtp_enabled"`
 	// Zone: zone the gateway is available in
 	Zone scw.Zone `json:"zone"`
 }
@@ -891,8 +889,6 @@ type CreateGatewayRequest struct {
 	UpstreamDNSServers []string `json:"upstream_dns_servers"`
 	// IPID: attach an existing IP to the gateway
 	IPID *string `json:"ip_id"`
-	// EnableSMTP: allow SMTP traffic to pass through the gateway
-	EnableSMTP bool `json:"enable_smtp"`
 }
 
 // CreateGateway: create a VPC Public Gateway
@@ -954,8 +950,6 @@ type UpdateGatewayRequest struct {
 	EnableBastion *bool `json:"enable_bastion"`
 	// BastionPort: port of the SSH bastion
 	BastionPort *uint32 `json:"bastion_port"`
-	// EnableSMTP: allow SMTP traffic to pass through the gateway
-	EnableSMTP *bool `json:"enable_smtp"`
 }
 
 // UpdateGateway: update a VPC Public Gateway
