@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
@@ -11,6 +12,13 @@ import (
 const (
 	defaultRetryInterval = 15 * time.Second
 	defaultTimeout       = 2 * time.Hour
+)
+
+const (
+	// ErrCodeNoSuchDNSZone for service response error code
+	//
+	// The specified dns zone does not exist.
+	ErrCodeNoSuchDNSZone = "NoSuchDNSZone"
 )
 
 // WaitForDNSZoneRequest is used by WaitForDNSZone method.
@@ -49,6 +57,10 @@ func (s *API) WaitForDNSZone(
 
 			if err != nil {
 				return nil, false, err
+			}
+
+			if len(DNSZones.DNSZones) == 0 {
+				return nil, true, fmt.Errorf(ErrCodeNoSuchDNSZone)
 			}
 
 			Dns := DNSZones.DNSZones[0]
