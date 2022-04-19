@@ -11,7 +11,7 @@ import (
 
 const (
 	defaultRetryInterval = 15 * time.Second
-	defaultTimeout       = 2 * time.Hour
+	defaultTimeout       = 5 * time.Minute
 )
 
 const (
