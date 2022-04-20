@@ -4565,40 +4565,6 @@ func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw
 
 // Service ZonedAPI
 
-type ZonedAPIGetServiceInfoRequest struct {
-	// Zone:
-	//
-	// Zone to target. If none is passed will use default zone from the config
-	Zone scw.Zone `json:"-"`
-}
-
-func (s *ZonedAPI) GetServiceInfo(req *ZonedAPIGetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "",
-		Headers: http.Header{},
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 type ZonedAPIListLBsRequest struct {
 	// Zone:
 	//
