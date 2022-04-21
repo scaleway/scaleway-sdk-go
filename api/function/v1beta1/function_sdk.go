@@ -1231,6 +1231,10 @@ type UpdateFunctionRequest struct {
 	MinScale *uint32 `json:"min_scale"`
 
 	MaxScale *uint32 `json:"max_scale"`
+	// Runtime:
+	//
+	// Default value: unknown_runtime
+	Runtime FunctionRuntime `json:"runtime"`
 
 	MemoryLimit *uint32 `json:"memory_limit"`
 
