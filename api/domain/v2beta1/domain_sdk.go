@@ -67,6 +67,40 @@ func NewRegistrarAPI(client *scw.Client) *RegistrarAPI {
 	}
 }
 
+type ContactCivility string
+
+const (
+	// ContactCivilityCivilityUnknown is [insert doc].
+	ContactCivilityCivilityUnknown = ContactCivility("civility_unknown")
+	// ContactCivilityMr is [insert doc].
+	ContactCivilityMr = ContactCivility("mr")
+	// ContactCivilityMrs is [insert doc].
+	ContactCivilityMrs = ContactCivility("mrs")
+)
+
+func (enum ContactCivility) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "civility_unknown"
+	}
+	return string(enum)
+}
+
+func (enum ContactCivility) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContactCivility) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContactCivility(ContactCivility(tmp).String())
+	return nil
+}
+
 type ContactEmailStatus string
 
 const (
@@ -1012,6 +1046,10 @@ type Contact struct {
 	//
 	// Default value: legal_form_unknown
 	LegalForm ContactLegalForm `json:"legal_form"`
+	// Civility:
+	//
+	// Default value: civility_unknown
+	Civility ContactCivility `json:"civility"`
 
 	Firstname string `json:"firstname"`
 
@@ -1448,6 +1486,10 @@ type NewContact struct {
 	//
 	// Default value: legal_form_unknown
 	LegalForm ContactLegalForm `json:"legal_form"`
+	// Civility:
+	//
+	// Default value: civility_unknown
+	Civility ContactCivility `json:"civility"`
 
 	Firstname string `json:"firstname"`
 
