@@ -1738,6 +1738,8 @@ type Tld struct {
 	IdnSupport bool `json:"idn_support"`
 
 	Offers map[string]*TldOffer `json:"offers"`
+
+	Specifications map[string]string `json:"specifications"`
 }
 
 type TldOffer struct {
