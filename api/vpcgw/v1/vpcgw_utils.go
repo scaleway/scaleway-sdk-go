@@ -38,7 +38,6 @@ func (s *API) WaitForGateway(req *WaitForGatewayRequest, opts ...scw.RequestOpti
 		GatewayStatusDeleted: {},
 		GatewayStatusUnknown: {},
 		GatewayStatusFailed:  {},
-		GatewayStatusStopped: {},
 	}
 
 	gateway, err := async.WaitSync(&async.WaitSyncConfig{
