@@ -534,7 +534,7 @@ type Container struct {
 	Port uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
@@ -1080,7 +1080,7 @@ type CreateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
@@ -1165,7 +1165,7 @@ type UpdateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
