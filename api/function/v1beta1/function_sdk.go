@@ -630,7 +630,7 @@ type Function struct {
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
@@ -1172,7 +1172,7 @@ type CreateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
@@ -1251,7 +1251,7 @@ type UpdateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled
+	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
