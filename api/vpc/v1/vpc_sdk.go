@@ -111,6 +111,8 @@ type PrivateNetwork struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the last private network modification date
 	UpdatedAt *time.Time `json:"updated_at"`
+	// Subnets: private network subnets CIDR
+	Subnets []scw.IPNet `json:"subnets"`
 }
 
 // Service API
@@ -192,6 +194,8 @@ type CreatePrivateNetworkRequest struct {
 	ProjectID string `json:"project_id"`
 	// Tags: the private networks tags
 	Tags []string `json:"tags"`
+	// Subnets: private network subnets CIDR
+	Subnets []scw.IPNet `json:"subnets"`
 }
 
 // CreatePrivateNetwork: create a private network
@@ -288,6 +292,8 @@ type UpdatePrivateNetworkRequest struct {
 	Name *string `json:"name"`
 	// Tags: the private networks tags
 	Tags *[]string `json:"tags"`
+	// Subnets: private network subnets CIDR
+	Subnets *[]string `json:"subnets"`
 }
 
 // UpdatePrivateNetwork: update private network
