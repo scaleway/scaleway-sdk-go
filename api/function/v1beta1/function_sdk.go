@@ -739,6 +739,8 @@ type Runtime struct {
 	StatusMessage string `json:"status_message"`
 
 	Extension string `json:"extension"`
+
+	Implementation string `json:"implementation"`
 }
 
 type Secret struct {
