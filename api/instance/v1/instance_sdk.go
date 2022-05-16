@@ -1577,12 +1577,6 @@ type VolumeServerTemplate struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
-	// BaseSnapshot: the ID of the snapshot on which this volume will be based
-	BaseSnapshot string `json:"base_snapshot,omitempty"`
-	// Organization: organization ID of the volume
-	Organization string `json:"organization,omitempty"`
-	// Project: project ID of the volume
-	Project string `json:"project,omitempty"`
 }
 
 type VolumeSummary struct {
@@ -1942,26 +1936,6 @@ type CreateServerRequest struct {
 }
 
 // createServer: create a server
-//
-// The `volumes` key is a dictionary composed of the volume position as key and the volume parameters as value.
-// Depending of the volume parameters, you can achieve different behaviours :
-//
-// Create a volume from a snapshot of an image :
-// Optional : `volume_type`, `size`, `boot`.
-// If the `size` parameter is not set, the size of the volume will equal the size of the corresponding snapshot of the image.
-//
-// Attach an existing volume :
-// Required : `id`, `name`.
-// Optional : `boot`.
-//
-// Create an empty volume :
-// Required : `name`, `volume_type`, `size`.
-// Optional : `organization`, `project`, `boot`.
-//
-// Create a volume from a snapshot :
-// Required : `base_snapshot`, `name`, `volume_type`.
-// Optional : `organization`, `project`, `boot`.
-//
 func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
