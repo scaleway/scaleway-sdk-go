@@ -751,7 +751,7 @@ type Option struct {
 	ID string `json:"id"`
 	// Name: name of the option
 	Name string `json:"name"`
-	// Manageable: is false if the option could not be remove
+	// Manageable: is false if the option could not be added or removed
 	Manageable bool `json:"manageable"`
 }
 
@@ -851,16 +851,20 @@ type ServerInstall struct {
 	ServiceURL string `json:"service_url"`
 }
 
+// ServerOption: server. option
 type ServerOption struct {
+	// ID: ID of the option
 	ID string `json:"id"`
-
+	// Name: name of the option
 	Name string `json:"name"`
-	// Status:
+	// Status: status of the option
 	//
 	// Default value: option_status_unknown
 	Status ServerOptionOptionStatus `json:"status"`
-
+	// Manageable: is false if the option could not be added or removed
 	Manageable bool `json:"manageable"`
+	// ExpiresAt: auto expiration date for compatible options
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // ServerRescueServer: server. rescue server
@@ -1693,6 +1697,8 @@ type AddOptionServerRequest struct {
 	ServerID string `json:"-"`
 	// OptionID: ID of the option to add
 	OptionID string `json:"-"`
+	// ExpiresAt: auto expire the option after this date
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // AddOptionServer: add server option
