@@ -533,21 +533,19 @@ type CPU struct {
 	Frequency uint32 `json:"frequency"`
 }
 
-// CreateServerRequestInstall: create server request. install
 type CreateServerRequestInstall struct {
-	// OsID: ID of the OS to install on the server
 	OsID string `json:"os_id"`
-	// Hostname: hostname of the server
+
 	Hostname string `json:"hostname"`
-	// SSHKeyIDs: SSH key IDs authorized on the server
+
 	SSHKeyIDs []string `json:"ssh_key_ids"`
-	// User: user used for the installation
+
 	User *string `json:"user"`
-	// Password: password used for the installation
+
 	Password *string `json:"password"`
-	// ServiceUser: user used for the service to install
+
 	ServiceUser *string `json:"service_user"`
-	// ServicePassword: password used for the service to install
+
 	ServicePassword *string `json:"service_password"`
 }
 
@@ -635,13 +633,12 @@ type ListSettingsResponse struct {
 
 // Memory: memory
 type Memory struct {
-	// Capacity: capacity of the memory in bytes
 	Capacity scw.Size `json:"capacity"`
-	// Type: type of the memory
+
 	Type string `json:"type"`
-	// Frequency: frequency of the memory in MHz
+
 	Frequency uint32 `json:"frequency"`
-	// IsEcc: true if the memory is an error-correcting code memory
+
 	IsEcc bool `json:"is_ecc"`
 }
 
@@ -723,25 +720,21 @@ type Offer struct {
 	Options []*OfferOptionOffer `json:"options"`
 }
 
-// OfferOptionOffer: offer. option offer
 type OfferOptionOffer struct {
-	// ID: ID of the option
 	ID string `json:"id"`
-	// Name: name of the option
+
 	Name string `json:"name"`
-	// Enabled: if true the option is enabled and included by default in the offer
-	// If false the option is available for the offer but not included by default
-	//
+
+	Price *scw.Money `json:"price"`
+
 	Enabled bool `json:"enabled"`
-	// SubscriptionPeriod: period of subscription for the offer
+	// SubscriptionPeriod:
 	//
 	// Default value: unknown_subscription_period
 	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
-	// Price: price of the option
-	Price *scw.Money `json:"price"`
-	// Manageable: boolean to know if option could be managed
+
 	Manageable bool `json:"manageable"`
-	// OsID: ID of the OS linked to the option
+
 	OsID *string `json:"os_id"`
 }
 
@@ -751,17 +744,15 @@ type Option struct {
 	ID string `json:"id"`
 	// Name: name of the option
 	Name string `json:"name"`
-	// Manageable: is false if the option could not be added or removed
+	// Manageable: is false if the option could not be remove
 	Manageable bool `json:"manageable"`
 }
 
-// PersistentMemory: persistent memory
 type PersistentMemory struct {
-	// Capacity: capacity of the memory in bytes
 	Capacity scw.Size `json:"capacity"`
-	// Type: type of the memory
+
 	Type string `json:"type"`
-	// Frequency: frequency of the memory in MHz
+
 	Frequency uint32 `json:"frequency"`
 }
 
@@ -831,47 +822,39 @@ type ServerEvent struct {
 	CreatedAt *time.Time `json:"created_at"`
 }
 
-// ServerInstall: server. install
 type ServerInstall struct {
-	// OsID: ID of the OS
 	OsID string `json:"os_id"`
-	// Hostname: host defined in the server install
+
 	Hostname string `json:"hostname"`
-	// SSHKeyIDs: SSH public key IDs defined in the server install
+
 	SSHKeyIDs []string `json:"ssh_key_ids"`
-	// Status: status of the server install
+	// Status:
 	//
 	// Default value: unknown
 	Status ServerInstallStatus `json:"status"`
-	// User: user defined in the server install or the default one if none were specified
+
 	User string `json:"user"`
-	// ServiceUser: service user defined in the server install or the default one if none were specified
+
 	ServiceUser string `json:"service_user"`
-	// ServiceURL: the address of the installed service
+
 	ServiceURL string `json:"service_url"`
 }
 
-// ServerOption: server. option
 type ServerOption struct {
-	// ID: ID of the option
 	ID string `json:"id"`
-	// Name: name of the option
+
 	Name string `json:"name"`
-	// Status: status of the option
+	// Status:
 	//
 	// Default value: option_status_unknown
 	Status ServerOptionOptionStatus `json:"status"`
-	// Manageable: is false if the option could not be added or removed
+
 	Manageable bool `json:"manageable"`
-	// ExpiresAt: auto expiration date for compatible options
-	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// ServerRescueServer: server. rescue server
 type ServerRescueServer struct {
-	// User: rescue user name
 	User string `json:"user"`
-	// Password: rescue password
+
 	Password string `json:"password"`
 }
 
@@ -1027,7 +1010,7 @@ type CreateServerRequest struct {
 	Description string `json:"description"`
 	// Tags: tags to associate to the server
 	Tags []string `json:"tags"`
-	// Install: configuration of installation
+
 	Install *CreateServerRequestInstall `json:"install"`
 	// OptionIDs: iDs of options to enable on server
 	OptionIDs []string `json:"option_ids"`
@@ -1697,8 +1680,6 @@ type AddOptionServerRequest struct {
 	ServerID string `json:"-"`
 	// OptionID: ID of the option to add
 	OptionID string `json:"-"`
-	// ExpiresAt: auto expire the option after this date
-	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // AddOptionServer: add server option
