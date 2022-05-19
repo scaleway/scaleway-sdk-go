@@ -893,6 +893,10 @@ type CreateGatewayRequest struct {
 	IPID *string `json:"ip_id"`
 	// EnableSMTP: allow SMTP traffic to pass through the gateway
 	EnableSMTP bool `json:"enable_smtp"`
+	// EnableBastion: enable SSH bastion on the gateway
+	EnableBastion bool `json:"enable_bastion"`
+	// BastionPort: port of the SSH bastion
+	BastionPort *uint32 `json:"bastion_port"`
 }
 
 // CreateGateway: create a VPC Public Gateway
