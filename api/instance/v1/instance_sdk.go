@@ -760,6 +760,8 @@ const (
 	VolumeVolumeTypeLSSD = VolumeVolumeType("l_ssd")
 	// VolumeVolumeTypeBSSD is [insert doc].
 	VolumeVolumeTypeBSSD = VolumeVolumeType("b_ssd")
+	// VolumeVolumeTypeUnified is [insert doc].
+	VolumeVolumeTypeUnified = VolumeVolumeType("unified")
 )
 
 func (enum VolumeVolumeType) String() string {
@@ -1169,7 +1171,7 @@ type SecurityGroup struct {
 	// Tags: the security group tags
 	Tags []string `json:"tags"`
 	// Deprecated: OrganizationDefault: true if it is your default security group for this organization ID
-	OrganizationDefault bool `json:"organization_default"`
+	OrganizationDefault *bool `json:"organization_default,omitempty"`
 	// ProjectDefault: true if it is your default security group for this project ID
 	ProjectDefault bool `json:"project_default"`
 	// CreationDate: the security group creation date
@@ -1296,6 +1298,13 @@ type Server struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+type ServerActionRequestVolumeBackupTemplate struct {
+	// VolumeType:
+	//
+	// Default value: l_ssd
+	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
+}
+
 type ServerActionResponse struct {
 	Task *Task `json:"task"`
 }
@@ -1344,7 +1353,7 @@ type ServerSummary struct {
 // ServerType: server type
 type ServerType struct {
 	// Deprecated: MonthlyPrice: estimated monthly price, for a 30 days month, in Euro
-	MonthlyPrice float32 `json:"monthly_price"`
+	MonthlyPrice *float32 `json:"monthly_price,omitempty"`
 	// HourlyPrice: hourly price in Euro
 	HourlyPrice float32 `json:"hourly_price"`
 	// AltNames: alternative instance name if any
@@ -2337,6 +2346,12 @@ type ServerActionRequest struct {
 	// This field should only be specified when performing a backup action.
 	//
 	Name *string `json:"name,omitempty"`
+	// Volumes: for each volume UUID, the snapshot parameters of the volume
+	//
+	// For each volume UUID, the snapshot parameters of the volume.
+	// This field should only be specified when performing a backup action.
+	//
+	Volumes map[string]*ServerActionRequestVolumeBackupTemplate `json:"volumes,omitempty"`
 }
 
 // ServerAction: perform action
@@ -2863,6 +2878,10 @@ type CreateSnapshotRequest struct {
 	// Project: project ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
+	// VolumeType: the volume type of the snapshot
+	//
+	// Default value: l_ssd
+	VolumeType VolumeVolumeType `json:"volume_type"`
 }
 
 // CreateSnapshot: create a snapshot from a given volume
@@ -3636,7 +3655,7 @@ type setSecurityGroupRequest struct {
 	// Project: the security group project ID
 	Project string `json:"project"`
 	// Deprecated: OrganizationDefault: please use project_default instead
-	OrganizationDefault bool `json:"organization_default"`
+	OrganizationDefault *bool `json:"organization_default"`
 	// ProjectDefault: true use this security group for future instances created in this project
 	ProjectDefault bool `json:"project_default"`
 	// Servers: the servers attached to this security group
