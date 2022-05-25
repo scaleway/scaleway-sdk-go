@@ -1302,7 +1302,7 @@ type ServerActionRequestVolumeBackupTemplate struct {
 	// VolumeType:
 	//
 	// Default value: l_ssd
-	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
+	VolumeType *VolumeVolumeType `json:"volume_type,omitempty"`
 }
 
 type ServerActionResponse struct {
@@ -2881,7 +2881,7 @@ type CreateSnapshotRequest struct {
 	// VolumeType: the volume type of the snapshot
 	//
 	// Default value: l_ssd
-	VolumeType VolumeVolumeType `json:"volume_type"`
+	VolumeType *VolumeVolumeType `json:"volume_type"`
 }
 
 // CreateSnapshot: create a snapshot from a given volume
