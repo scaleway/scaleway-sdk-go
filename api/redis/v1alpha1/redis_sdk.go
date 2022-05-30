@@ -290,7 +290,7 @@ type Cluster struct {
 	// ACLRules: list of acl rules
 	ACLRules []*ACLRule `json:"acl_rules"`
 	// ClusterSize: number of nodes of the cluster
-	ClusterSize int32 `json:"cluster_size"`
+	ClusterSize uint32 `json:"cluster_size"`
 	// Zone: zone of the cluster
 	Zone scw.Zone `json:"zone"`
 }
@@ -521,7 +521,7 @@ type UpdateClusterRequest struct {
 	// Name: name of the cluster
 	Name *string `json:"name"`
 	// Tags: tags of a given cluster
-	Tags []string `json:"tags"`
+	Tags *[]string `json:"tags"`
 	// UserName: name of the cluster user
 	UserName *string `json:"user_name"`
 	// Password: password of the cluster user
