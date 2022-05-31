@@ -290,7 +290,7 @@ type Cluster struct {
 	// ACLRules: list of acl rules
 	ACLRules []*ACLRule `json:"acl_rules"`
 	// ClusterSize: number of nodes of the cluster
-	ClusterSize int32 `json:"cluster_size"`
+	ClusterSize uint32 `json:"cluster_size"`
 	// Zone: zone of the cluster
 	Zone scw.Zone `json:"zone"`
 }
@@ -521,7 +521,7 @@ type UpdateClusterRequest struct {
 	// Name: name of the cluster
 	Name *string `json:"name"`
 	// Tags: tags of a given cluster
-	Tags []string `json:"tags"`
+	Tags *[]string `json:"tags"`
 	// UserName: name of the cluster user
 	UserName *string `json:"user_name"`
 	// Password: password of the cluster user
@@ -1499,6 +1499,53 @@ func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*
 		Method:  "GET",
 		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
 		Headers: http.Header{},
+	}
+
+	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateEndpointRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
+	Zone scw.Zone `json:"-"`
+
+	EndpointID string `json:"-"`
+
+	Endpoint *EndpointSpec `json:"endpoint"`
+}
+
+func (s *API) UpdateEndpoint(req *UpdateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return nil, errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/redis/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Endpoint
