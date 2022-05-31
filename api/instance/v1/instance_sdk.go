@@ -599,6 +599,42 @@ func (enum *SnapshotState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SnapshotVolumeType string
+
+const (
+	// SnapshotVolumeTypeUnknownVolumeType is [insert doc].
+	SnapshotVolumeTypeUnknownVolumeType = SnapshotVolumeType("unknown_volume_type")
+	// SnapshotVolumeTypeLSSD is [insert doc].
+	SnapshotVolumeTypeLSSD = SnapshotVolumeType("l_ssd")
+	// SnapshotVolumeTypeBSSD is [insert doc].
+	SnapshotVolumeTypeBSSD = SnapshotVolumeType("b_ssd")
+	// SnapshotVolumeTypeUnified is [insert doc].
+	SnapshotVolumeTypeUnified = SnapshotVolumeType("unified")
+)
+
+func (enum SnapshotVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_volume_type"
+	}
+	return string(enum)
+}
+
+func (enum SnapshotVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SnapshotVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SnapshotVolumeType(SnapshotVolumeType(tmp).String())
+	return nil
+}
+
 type TaskStatus string
 
 const (
@@ -1298,11 +1334,15 @@ type Server struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+// ServerActionRequestVolumeBackupTemplate: server action request. volume backup template
 type ServerActionRequestVolumeBackupTemplate struct {
-	// VolumeType:
+	// VolumeType: the snapshot's volume type
 	//
-	// Default value: l_ssd
-	VolumeType *VolumeVolumeType `json:"volume_type,omitempty"`
+	// Overrides the volume_type of the snapshot for this volume.
+	// If omitted, the volume type of the original volume will be used.
+	//
+	// Default value: unknown_volume_type
+	VolumeType SnapshotVolumeType `json:"volume_type,omitempty"`
 }
 
 type ServerActionResponse struct {
@@ -2880,8 +2920,11 @@ type CreateSnapshotRequest struct {
 	Project *string `json:"project,omitempty"`
 	// VolumeType: the volume type of the snapshot
 	//
-	// Default value: l_ssd
-	VolumeType *VolumeVolumeType `json:"volume_type"`
+	// Overrides the volume_type of the snapshot.
+	// If omitted, the volume type of the original volume will be used.
+	//
+	// Default value: unknown_volume_type
+	VolumeType SnapshotVolumeType `json:"volume_type"`
 }
 
 // CreateSnapshot: create a snapshot from a given volume
