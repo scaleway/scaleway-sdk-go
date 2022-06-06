@@ -599,6 +599,42 @@ func (enum *SnapshotState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SnapshotVolumeType string
+
+const (
+	// SnapshotVolumeTypeUnknownVolumeType is [insert doc].
+	SnapshotVolumeTypeUnknownVolumeType = SnapshotVolumeType("unknown_volume_type")
+	// SnapshotVolumeTypeLSSD is [insert doc].
+	SnapshotVolumeTypeLSSD = SnapshotVolumeType("l_ssd")
+	// SnapshotVolumeTypeBSSD is [insert doc].
+	SnapshotVolumeTypeBSSD = SnapshotVolumeType("b_ssd")
+	// SnapshotVolumeTypeUnified is [insert doc].
+	SnapshotVolumeTypeUnified = SnapshotVolumeType("unified")
+)
+
+func (enum SnapshotVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_volume_type"
+	}
+	return string(enum)
+}
+
+func (enum SnapshotVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SnapshotVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SnapshotVolumeType(SnapshotVolumeType(tmp).String())
+	return nil
+}
+
 type TaskStatus string
 
 const (
@@ -760,6 +796,8 @@ const (
 	VolumeVolumeTypeLSSD = VolumeVolumeType("l_ssd")
 	// VolumeVolumeTypeBSSD is [insert doc].
 	VolumeVolumeTypeBSSD = VolumeVolumeType("b_ssd")
+	// VolumeVolumeTypeUnified is [insert doc].
+	VolumeVolumeTypeUnified = VolumeVolumeType("unified")
 )
 
 func (enum VolumeVolumeType) String() string {
@@ -1030,7 +1068,7 @@ type ListPrivateNICsResponse struct {
 type ListSecurityGroupRulesResponse struct {
 	// TotalCount: total number of security groups
 	TotalCount uint32 `json:"total_count"`
-	// Rules: list of security groups
+	// Rules: list of security rules
 	Rules []*SecurityGroupRule `json:"rules"`
 }
 
@@ -1296,6 +1334,17 @@ type Server struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+// ServerActionRequestVolumeBackupTemplate: server action request. volume backup template
+type ServerActionRequestVolumeBackupTemplate struct {
+	// VolumeType: the snapshot's volume type
+	//
+	// Overrides the volume_type of the snapshot for this volume.
+	// If omitted, the volume type of the original volume will be used.
+	//
+	// Default value: unknown_volume_type
+	VolumeType SnapshotVolumeType `json:"volume_type,omitempty"`
+}
+
 type ServerActionResponse struct {
 	Task *Task `json:"task"`
 }
@@ -1409,6 +1458,40 @@ type SetPlacementGroupResponse struct {
 
 type SetPlacementGroupServersResponse struct {
 	Servers []*PlacementGroupServer `json:"servers"`
+}
+
+// SetSecurityGroupRulesRequestRule: set security group rules request. rule
+type SetSecurityGroupRulesRequestRule struct {
+	// ID: UUID of the security rule to update. If no value is provided, a new rule will be created
+	ID *string `json:"id"`
+	// Action: action to apply when the rule matches a packet
+	//
+	// Default value: accept
+	Action SecurityGroupRuleAction `json:"action"`
+	// Protocol: protocol family this rule applies to
+	//
+	// Default value: TCP
+	Protocol SecurityGroupRuleProtocol `json:"protocol"`
+	// Direction: direction the rule applies to
+	//
+	// Default value: inbound
+	Direction SecurityGroupRuleDirection `json:"direction"`
+	// IPRange: the range of IP address this rules applies to
+	IPRange scw.IPNet `json:"ip_range"`
+	// DestPortFrom: beginning of the range of ports this rule applies to (inclusive). This value will be set to null if protocol is ICMP or ANY
+	DestPortFrom *uint32 `json:"dest_port_from"`
+	// DestPortTo: end of the range of ports this rule applies to (inclusive). This value will be set to null if protocol is ICMP or ANY, or if it is equal to dest_port_from
+	DestPortTo *uint32 `json:"dest_port_to"`
+	// Position: position of this rule in the security group rules list. If several rules are passed with the same position, the resulting order is undefined
+	Position uint32 `json:"position"`
+	// Editable: indicates if this rule is editable. Rules with the value false will be ignored
+	Editable *bool `json:"editable"`
+	// Zone: zone of the rule. This field is ignored
+	Zone scw.Zone `json:"zone"`
+}
+
+type SetSecurityGroupRulesResponse struct {
+	Rules []*SecurityGroupRule `json:"rules"`
 }
 
 // Snapshot: snapshot
@@ -2288,7 +2371,7 @@ type ListServerActionsRequest struct {
 
 // ListServerActions: list server actions
 //
-// Liste all actions that can currently be performed on a server.
+// List all actions that can currently be performed on a server.
 func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.RequestOption) (*ListServerActionsResponse, error) {
 	var err error
 
@@ -2337,6 +2420,12 @@ type ServerActionRequest struct {
 	// This field should only be specified when performing a backup action.
 	//
 	Name *string `json:"name,omitempty"`
+	// Volumes: for each volume UUID, the snapshot parameters of the volume
+	//
+	// For each volume UUID, the snapshot parameters of the volume.
+	// This field should only be specified when performing a backup action.
+	//
+	Volumes map[string]*ServerActionRequestVolumeBackupTemplate `json:"volumes,omitempty"`
 }
 
 // ServerAction: perform action
@@ -2863,6 +2952,13 @@ type CreateSnapshotRequest struct {
 	// Project: project ID of the snapshot
 	// Precisely one of Organization, Project must be set.
 	Project *string `json:"project,omitempty"`
+	// VolumeType: the volume type of the snapshot
+	//
+	// Overrides the volume_type of the snapshot.
+	// If omitted, the volume type of the original volume will be used.
+	//
+	// Default value: unknown_volume_type
+	VolumeType SnapshotVolumeType `json:"volume_type"`
 }
 
 // CreateSnapshot: create a snapshot from a given volume
@@ -3378,6 +3474,8 @@ type ListSecurityGroupsRequest struct {
 	Project *string `json:"-"`
 	// Tags: list security groups with these exact tags (to filter with several tags, use commas to separate them)
 	Tags []string `json:"-"`
+	// ProjectDefault: filter security groups with this value for project_default
+	ProjectDefault *bool `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
 	//
 	// Default value: 50
@@ -3409,6 +3507,7 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	if len(req.Tags) != 0 {
 		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
 	}
+	parameter.AddToQuery(query, "project_default", req.ProjectDefault)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 
@@ -3694,6 +3793,43 @@ func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+type ListDefaultSecurityGroupRulesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
+	Zone scw.Zone `json:"-"`
+}
+
+// ListDefaultSecurityGroupRules: get default rules
+//
+// Lists the default rules applied to all the security groups.
+func (s *API) ListDefaultSecurityGroupRules(req *ListDefaultSecurityGroupRulesRequest, opts ...scw.RequestOption) (*ListSecurityGroupRulesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/default/rules",
+		Headers: http.Header{},
+	}
+
+	var resp ListSecurityGroupRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type ListSecurityGroupRulesRequest struct {
 	// Zone:
 	//
@@ -3772,13 +3908,13 @@ type CreateSecurityGroupRuleRequest struct {
 	Action SecurityGroupRuleAction `json:"action"`
 
 	IPRange scw.IPNet `json:"ip_range,omitempty"`
-
+	// DestPortFrom: the beginning of the range of ports to apply this rule to (inclusive)
 	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
-
+	// DestPortTo: the end of the range of ports to apply this rule to (inclusive)
 	DestPortTo *uint32 `json:"dest_port_to,omitempty"`
-
+	// Position: the position of this rule in the security group rules list
 	Position uint32 `json:"position,omitempty"`
-
+	// Editable: indicates if this rule is editable (will be ignored)
 	Editable bool `json:"editable,omitempty"`
 }
 
@@ -3811,6 +3947,56 @@ func (s *API) CreateSecurityGroupRule(req *CreateSecurityGroupRuleRequest, opts 
 	}
 
 	var resp CreateSecurityGroupRuleResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetSecurityGroupRulesRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
+	Zone scw.Zone `json:"-"`
+	// SecurityGroupID: UUID of the security group to update the rules on
+	SecurityGroupID string `json:"-"`
+	// Rules: list of rules to update in the security group
+	Rules []*SetSecurityGroupRulesRequestRule `json:"rules"`
+}
+
+// SetSecurityGroupRules: update all the rules of a security group
+//
+// Replaces the rules of the security group with the rules provided. This endpoint supports the update of existing rules, creation of new rules and deletion of existing rules when they are not passed in the request.
+func (s *API) SetSecurityGroupRules(req *SetSecurityGroupRulesRequest, opts ...scw.RequestOption) (*SetSecurityGroupRulesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetSecurityGroupRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
