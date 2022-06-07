@@ -38,6 +38,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 		ClusterStatusLocked:    {},
 		ClusterStatusError:     {},
 		ClusterStatusSuspended: {},
+		ClusterStatusDestroyed: {},
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
