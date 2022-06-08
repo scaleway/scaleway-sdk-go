@@ -417,6 +417,38 @@ func (enum *ListNamespacesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListTokensRequestOrderBy string
+
+const (
+	// ListTokensRequestOrderByCreatedAtAsc is [insert doc].
+	ListTokensRequestOrderByCreatedAtAsc = ListTokensRequestOrderBy("created_at_asc")
+	// ListTokensRequestOrderByCreatedAtDesc is [insert doc].
+	ListTokensRequestOrderByCreatedAtDesc = ListTokensRequestOrderBy("created_at_desc")
+)
+
+func (enum ListTokensRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListTokensRequestOrderBy(ListTokensRequestOrderBy(tmp).String())
+	return nil
+}
+
 type NamespaceStatus string
 
 const (
@@ -486,6 +518,44 @@ func (enum *NullValue) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = NullValue(NullValue(tmp).String())
+	return nil
+}
+
+type TokenStatus string
+
+const (
+	// TokenStatusUnknown is [insert doc].
+	TokenStatusUnknown = TokenStatus("unknown")
+	// TokenStatusReady is [insert doc].
+	TokenStatusReady = TokenStatus("ready")
+	// TokenStatusDeleting is [insert doc].
+	TokenStatusDeleting = TokenStatus("deleting")
+	// TokenStatusError is [insert doc].
+	TokenStatusError = TokenStatus("error")
+	// TokenStatusCreating is [insert doc].
+	TokenStatusCreating = TokenStatus("creating")
+)
+
+func (enum TokenStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum TokenStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = TokenStatus(TokenStatus(tmp).String())
 	return nil
 }
 
@@ -612,6 +682,12 @@ type ListNamespacesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+type ListTokensResponse struct {
+	Tokens []*Token `json:"tokens"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
 // Log: log
 type Log struct {
 	Message string `json:"message"`
@@ -664,8 +740,22 @@ type SecretHashedValue struct {
 
 type Token struct {
 	Token string `json:"token"`
-
+	// Deprecated
 	PublicKey string `json:"public_key"`
+
+	// Precisely one of ContainerID, NamespaceID must be set.
+	ContainerID *string `json:"container_id,omitempty"`
+
+	// Precisely one of ContainerID, NamespaceID must be set.
+	NamespaceID *string `json:"namespace_id,omitempty"`
+
+	ID string `json:"id"`
+	// Status:
+	//
+	// Default value: unknown
+	Status TokenStatus `json:"status"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // Service API
@@ -1799,6 +1889,7 @@ type IssueJWTRequest struct {
 	ExpiresAt *time.Time `json:"-"`
 }
 
+// Deprecated
 func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -1820,6 +1911,192 @@ func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token,
 		Method:  "GET",
 		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/issue-jwt",
 		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp Token
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateTokenRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+
+	// Precisely one of ContainerID, NamespaceID must be set.
+	ContainerID *string `json:"container_id,omitempty"`
+
+	// Precisely one of ContainerID, NamespaceID must be set.
+	NamespaceID *string `json:"namespace_id,omitempty"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
+}
+
+func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Token
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetTokenRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+
+	TokenID string `json:"-"`
+}
+
+func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return nil, errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Token
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListTokensRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy:
+	//
+	// Default value: created_at_asc
+	OrderBy ListTokensRequestOrderBy `json:"-"`
+
+	ContainerID *string `json:"-"`
+
+	NamespaceID *string `json:"-"`
+}
+
+func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "container_id", req.ContainerID)
+	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListTokensResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteTokenRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+
+	TokenID string `json:"-"`
+}
+
+func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return nil, errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1925,4 +2202,23 @@ func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Domains = append(r.Domains, results.Domains...)
 	r.TotalCount += uint32(len(results.Domains))
 	return uint32(len(results.Domains)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTokensResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tokens = append(r.Tokens, results.Tokens...)
+	r.TotalCount += uint32(len(results.Tokens))
+	return uint32(len(results.Tokens)), nil
 }
