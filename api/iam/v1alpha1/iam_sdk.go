@@ -58,6 +58,18 @@ const (
 	ListAPIKeysRequestOrderByCreatedAtAsc = ListAPIKeysRequestOrderBy("created_at_asc")
 	// ListAPIKeysRequestOrderByCreatedAtDesc is [insert doc].
 	ListAPIKeysRequestOrderByCreatedAtDesc = ListAPIKeysRequestOrderBy("created_at_desc")
+	// ListAPIKeysRequestOrderByUpdatedAtAsc is [insert doc].
+	ListAPIKeysRequestOrderByUpdatedAtAsc = ListAPIKeysRequestOrderBy("updated_at_asc")
+	// ListAPIKeysRequestOrderByUpdatedAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByUpdatedAtDesc = ListAPIKeysRequestOrderBy("updated_at_desc")
+	// ListAPIKeysRequestOrderByExpiredAtAsc is [insert doc].
+	ListAPIKeysRequestOrderByExpiredAtAsc = ListAPIKeysRequestOrderBy("expired_at_asc")
+	// ListAPIKeysRequestOrderByExpiredAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByExpiredAtDesc = ListAPIKeysRequestOrderBy("expired_at_desc")
+	// ListAPIKeysRequestOrderByAccessKeyAsc is [insert doc].
+	ListAPIKeysRequestOrderByAccessKeyAsc = ListAPIKeysRequestOrderBy("access_key_asc")
+	// ListAPIKeysRequestOrderByAccessKeyDesc is [insert doc].
+	ListAPIKeysRequestOrderByAccessKeyDesc = ListAPIKeysRequestOrderBy("access_key_desc")
 )
 
 func (enum ListAPIKeysRequestOrderBy) String() string {
@@ -290,6 +302,10 @@ const (
 	ListUsersRequestOrderByEmailAsc = ListUsersRequestOrderBy("email_asc")
 	// ListUsersRequestOrderByEmailDesc is [insert doc].
 	ListUsersRequestOrderByEmailDesc = ListUsersRequestOrderBy("email_desc")
+	// ListUsersRequestOrderByLastLoginAsc is [insert doc].
+	ListUsersRequestOrderByLastLoginAsc = ListUsersRequestOrderBy("last_login_asc")
+	// ListUsersRequestOrderByLastLoginDesc is [insert doc].
+	ListUsersRequestOrderByLastLoginDesc = ListUsersRequestOrderBy("last_login_desc")
 )
 
 func (enum ListUsersRequestOrderBy) String() string {
@@ -557,7 +573,7 @@ type PermissionSet struct {
 	ID string `json:"id"`
 	// Name: name of permission set
 	Name string `json:"name"`
-	// ScopeType: scope of permission set. Possible values are unknown_scope_type, project, organization and account_root_user
+	// ScopeType: scope of permission set
 	//
 	// Default value: unknown_scope_type
 	ScopeType PermissionSetScopeType `json:"scope_type"`
@@ -871,7 +887,7 @@ func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) 
 }
 
 type ListUsersRequest struct {
-	// OrderBy: criteria for sorting results. Possible values are created_at_asc, created_at_desc, updated_at_asc, updated_at_desc, email_asc and email_desc
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListUsersRequestOrderBy `json:"-"`
@@ -1005,7 +1021,7 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 }
 
 type ListApplicationsRequest struct {
-	// OrderBy: criteria for sorting results. Possible values are created_at_asc, created_at_desc, updated_at_asc, updated_at_desc, name_asc and name_desc
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListApplicationsRequestOrderBy `json:"-"`
@@ -1481,7 +1497,7 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) er
 }
 
 type ListPoliciesRequest struct {
-	// OrderBy: criteria for sorting results. Possible values are created_at_asc, created_at_desc, policy_name_asc and policy_name_desc
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: policy_name_asc
 	OrderBy ListPoliciesRequestOrderBy `json:"-"`
@@ -1768,7 +1784,7 @@ func (s *API) ListRules(req *ListRulesRequest, opts ...scw.RequestOption) (*List
 }
 
 type ListPermissionSetsRequest struct {
-	// OrderBy: criteria for sorting results. Possible values are created_at_asc, created_at_desc, name_asc and name_desc
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: name_asc
 	OrderBy ListPermissionSetsRequestOrderBy `json:"-"`
@@ -1817,7 +1833,7 @@ func (s *API) ListPermissionSets(req *ListPermissionSetsRequest, opts ...scw.Req
 }
 
 type ListAPIKeysRequest struct {
-	// OrderBy: criteria for sorting results. Possible values are created_at_asc and created_at_desc
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListAPIKeysRequestOrderBy `json:"-"`
