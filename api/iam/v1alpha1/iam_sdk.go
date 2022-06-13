@@ -62,10 +62,10 @@ const (
 	ListAPIKeysRequestOrderByUpdatedAtAsc = ListAPIKeysRequestOrderBy("updated_at_asc")
 	// ListAPIKeysRequestOrderByUpdatedAtDesc is [insert doc].
 	ListAPIKeysRequestOrderByUpdatedAtDesc = ListAPIKeysRequestOrderBy("updated_at_desc")
-	// ListAPIKeysRequestOrderByExpiredAtAsc is [insert doc].
-	ListAPIKeysRequestOrderByExpiredAtAsc = ListAPIKeysRequestOrderBy("expired_at_asc")
-	// ListAPIKeysRequestOrderByExpiredAtDesc is [insert doc].
-	ListAPIKeysRequestOrderByExpiredAtDesc = ListAPIKeysRequestOrderBy("expired_at_desc")
+	// ListAPIKeysRequestOrderByExpiresAtAsc is [insert doc].
+	ListAPIKeysRequestOrderByExpiresAtAsc = ListAPIKeysRequestOrderBy("expires_at_asc")
+	// ListAPIKeysRequestOrderByExpiresAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByExpiresAtDesc = ListAPIKeysRequestOrderBy("expires_at_desc")
 	// ListAPIKeysRequestOrderByAccessKeyAsc is [insert doc].
 	ListAPIKeysRequestOrderByAccessKeyAsc = ListAPIKeysRequestOrderBy("access_key_asc")
 	// ListAPIKeysRequestOrderByAccessKeyDesc is [insert doc].
