@@ -1192,6 +1192,8 @@ type DSRecordDigest struct {
 	Type DSRecordDigestType `json:"type"`
 
 	Digest string `json:"digest"`
+
+	PublicKey *DSRecordPublicKey `json:"public_key"`
 }
 
 type DSRecordPublicKey struct {
