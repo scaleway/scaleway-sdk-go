@@ -574,6 +574,8 @@ const (
 	SnapshotStateSnapshotting = SnapshotState("snapshotting")
 	// SnapshotStateError is [insert doc].
 	SnapshotStateError = SnapshotState("error")
+	// SnapshotStateInvalidData is [insert doc].
+	SnapshotStateInvalidData = SnapshotState("invalid_data")
 )
 
 func (enum SnapshotState) String() string {
@@ -887,6 +889,8 @@ type CreateServerResponse struct {
 
 type CreateSnapshotResponse struct {
 	Snapshot *Snapshot `json:"snapshot"`
+
+	Task *Task `json:"task"`
 }
 
 type CreateVolumeResponse struct {
