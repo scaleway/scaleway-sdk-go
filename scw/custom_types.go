@@ -5,8 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/scaleway/scaleway-sdk-go/scw"
 	"io"
 	"net"
 	"strconv"

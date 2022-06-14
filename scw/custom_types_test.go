@@ -618,12 +618,10 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			ts := &JSONObject{}
-			err := json.Unmarshal([]byte(c.json), ts)
-
+			ts, err := DecodeJSONObject(c.json, NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
-				testhelpers.Equals(t, c.want, ts)
+				testhelpers.Equals(t, *c.want, ts)
 			}
 		})
 	}
@@ -661,8 +659,8 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got, err := json.Marshal(c.jsonValue)
-
+			//got, err := json.Marshal(c.jsonValue)
+			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
 				testhelpers.Equals(t, c.want, string(got))
