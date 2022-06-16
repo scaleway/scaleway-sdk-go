@@ -708,7 +708,7 @@ type Function struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 
 	RuntimeMessage string `json:"runtime_message"`
 }
@@ -836,7 +836,7 @@ type SecretHashedValue struct {
 type Token struct {
 	Token string `json:"token"`
 	// Deprecated
-	PublicKey string `json:"public_key"`
+	PublicKey *string `json:"public_key,omitempty"`
 
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
@@ -1272,7 +1272,7 @@ type CreateFunctionRequest struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 }
 
 // CreateFunction: create a new function
@@ -1351,7 +1351,7 @@ type UpdateFunctionRequest struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 }
 
 // UpdateFunction: update an existing function
