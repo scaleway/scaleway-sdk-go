@@ -618,11 +618,11 @@ type Cluster struct {
 	// AutoscalerConfig: the autoscaler config for the cluster
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 	// Deprecated: DashboardEnabled: the enablement of the Kubernetes Dashboard in the cluster
-	DashboardEnabled bool `json:"dashboard_enabled"`
+	DashboardEnabled *bool `json:"dashboard_enabled,omitempty"`
 	// Deprecated: Ingress: the ingress controller used in the cluster
 	//
 	// Default value: unknown_ingress
-	Ingress Ingress `json:"ingress"`
+	Ingress *Ingress `json:"ingress,omitempty"`
 	// AutoUpgrade: the auo upgrade configuration of the cluster
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
 	// UpgradeAvailable: true if a new Kubernetes version is available
@@ -1193,11 +1193,11 @@ type CreateClusterRequest struct {
 	// Default value: unknown_cni
 	Cni CNI `json:"cni"`
 	// Deprecated: EnableDashboard: the enablement of the Kubernetes Dashboard in the cluster
-	EnableDashboard bool `json:"enable_dashboard"`
+	EnableDashboard *bool `json:"enable_dashboard,omitempty"`
 	// Deprecated: Ingress: the Ingress Controller that will run in the cluster
 	//
 	// Default value: unknown_ingress
-	Ingress Ingress `json:"ingress"`
+	Ingress *Ingress `json:"ingress,omitempty"`
 	// Pools: the pools to be created along with the cluster
 	Pools []*CreateClusterRequestPoolConfig `json:"pools"`
 	// AutoscalerConfig: the autoscaler config for the cluster
@@ -1332,11 +1332,11 @@ type UpdateClusterRequest struct {
 	// This field allows to update some configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
 	// Deprecated: EnableDashboard: the new value of the Kubernetes Dashboard enablement
-	EnableDashboard *bool `json:"enable_dashboard"`
+	EnableDashboard *bool `json:"enable_dashboard,omitempty"`
 	// Deprecated: Ingress: the new Ingress Controller for the cluster
 	//
 	// Default value: unknown_ingress
-	Ingress Ingress `json:"ingress"`
+	Ingress *Ingress `json:"ingress,omitempty"`
 	// AutoUpgrade: the new auo upgrade configuration of the cluster
 	//
 	// The new auo upgrade configuration of the cluster. Note that all the fields needs to be set.

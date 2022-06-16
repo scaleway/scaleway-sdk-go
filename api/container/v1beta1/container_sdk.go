@@ -610,7 +610,7 @@ type Container struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 
 	Region scw.Region `json:"region"`
 }
@@ -741,7 +741,7 @@ type SecretHashedValue struct {
 type Token struct {
 	Token string `json:"token"`
 	// Deprecated
-	PublicKey string `json:"public_key"`
+	PublicKey *string `json:"public_key,omitempty"`
 
 	// Precisely one of ContainerID, NamespaceID must be set.
 	ContainerID *string `json:"container_id,omitempty"`
@@ -1176,7 +1176,7 @@ type CreateContainerRequest struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 }
 
 // CreateContainer: create a new container
@@ -1261,7 +1261,7 @@ type UpdateContainerRequest struct {
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option"`
+	HTTPOption *string `json:"http_option,omitempty"`
 }
 
 // UpdateContainer: update an existing container

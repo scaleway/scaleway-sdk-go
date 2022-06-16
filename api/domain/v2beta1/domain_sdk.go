@@ -2274,13 +2274,13 @@ type ImportRawDNSZoneRequest struct {
 	// DNSZone: the DNS zone to import
 	DNSZone string `json:"-"`
 	// Deprecated
-	Content string `json:"content"`
+	Content *string `json:"content,omitempty"`
 
 	ProjectID string `json:"project_id"`
 	// Deprecated: Format:
 	//
 	// Default value: unknown_raw_format
-	Format RawFormat `json:"format"`
+	Format *RawFormat `json:"format,omitempty"`
 	// BindSource: import a bind file format
 	// Precisely one of AxfrSource, BindSource must be set.
 	BindSource *ImportRawDNSZoneRequestBindSource `json:"bind_source,omitempty"`

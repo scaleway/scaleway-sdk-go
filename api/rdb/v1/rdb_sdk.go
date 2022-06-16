@@ -1056,7 +1056,7 @@ type Instance struct {
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...)
 	Engine string `json:"engine"`
 	// Deprecated: Endpoint: endpoint of the instance
-	Endpoint *Endpoint `json:"endpoint"`
+	Endpoint *Endpoint `json:"endpoint,omitempty"`
 	// Tags: list of tags applied to the instance
 	Tags []string `json:"tags"`
 	// Settings: advanced settings of the instance
@@ -1240,9 +1240,9 @@ type NodeType struct {
 	// Memory: quantity of RAM
 	Memory scw.Size `json:"memory"`
 	// Deprecated: VolumeConstraint: [deprecated] Node Type volume constraints
-	VolumeConstraint *NodeTypeVolumeConstraintSizes `json:"volume_constraint"`
+	VolumeConstraint *NodeTypeVolumeConstraintSizes `json:"volume_constraint,omitempty"`
 	// Deprecated: IsBssdCompatible: the Node Type is compliant with Block Storage
-	IsBssdCompatible bool `json:"is_bssd_compatible"`
+	IsBssdCompatible *bool `json:"is_bssd_compatible,omitempty"`
 	// Disabled: the Node Type is currently disabled
 	Disabled bool `json:"disabled"`
 	// Beta: the Node Type is currently in beta

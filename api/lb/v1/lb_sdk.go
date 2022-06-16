@@ -1022,7 +1022,7 @@ type Backend struct {
 
 	LB *LB `json:"lb"`
 	// Deprecated
-	SendProxyV2 bool `json:"send_proxy_v2"`
+	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
 
@@ -1165,7 +1165,7 @@ type Frontend struct {
 
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// Deprecated
-	Certificate *Certificate `json:"certificate"`
+	Certificate *Certificate `json:"certificate,omitempty"`
 
 	CertificateIDs []string `json:"certificate_ids"`
 
@@ -1324,7 +1324,7 @@ type IP struct {
 
 	ProjectID string `json:"project_id"`
 	// Deprecated
-	Region scw.Region `json:"region"`
+	Region *scw.Region `json:"region,omitempty"`
 
 	Zone scw.Zone `json:"zone"`
 }
@@ -1342,7 +1342,7 @@ type Instance struct {
 
 	UpdatedAt *time.Time `json:"updated_at"`
 	// Deprecated
-	Region scw.Region `json:"region"`
+	Region *scw.Region `json:"region,omitempty"`
 
 	Zone scw.Zone `json:"zone"`
 }
@@ -1389,7 +1389,7 @@ type LB struct {
 
 	RouteCount int32 `json:"route_count"`
 	// Deprecated
-	Region scw.Region `json:"region"`
+	Region *scw.Region `json:"region,omitempty"`
 
 	Zone scw.Zone `json:"zone"`
 }
@@ -1409,7 +1409,7 @@ type LBType struct {
 
 	Description string `json:"description"`
 	// Deprecated
-	Region scw.Region `json:"region"`
+	Region *scw.Region `json:"region,omitempty"`
 
 	Zone scw.Zone `json:"zone"`
 }
@@ -2258,7 +2258,7 @@ type CreateBackendRequest struct {
 	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
 	ServerIP []string `json:"server_ip"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
-	SendProxyV2 bool `json:"send_proxy_v2"`
+	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
 	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect: maximum initical server connection establishment time
@@ -2436,7 +2436,7 @@ type UpdateBackendRequest struct {
 
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// Deprecated
-	SendProxyV2 bool `json:"send_proxy_v2"`
+	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
 
@@ -2907,7 +2907,7 @@ type CreateFrontendRequest struct {
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// Deprecated: CertificateID: certificate ID, deprecated in favor of certificate_ids array !
-	CertificateID *string `json:"certificate_id"`
+	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
 }
@@ -3042,7 +3042,7 @@ type UpdateFrontendRequest struct {
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// Deprecated: CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
-	CertificateID *string `json:"certificate_id"`
+	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
 }
@@ -5239,7 +5239,7 @@ type ZonedAPICreateBackendRequest struct {
 	// ServerIP: backend server IP addresses list (IPv4 or IPv6)
 	ServerIP []string `json:"server_ip"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
-	SendProxyV2 bool `json:"send_proxy_v2"`
+	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
 	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect: maximum initical server connection establishment time
@@ -5417,7 +5417,7 @@ type ZonedAPIUpdateBackendRequest struct {
 
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// Deprecated
-	SendProxyV2 bool `json:"send_proxy_v2"`
+	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
 
 	TimeoutServer *time.Duration `json:"timeout_server"`
 
@@ -5888,7 +5888,7 @@ type ZonedAPICreateFrontendRequest struct {
 	// TimeoutClient: set the maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// Deprecated: CertificateID: certificate ID, deprecated in favor of certificate_ids array !
-	CertificateID *string `json:"certificate_id"`
+	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
 }
@@ -6023,7 +6023,7 @@ type ZonedAPIUpdateFrontendRequest struct {
 	// TimeoutClient: client session maximum inactivity time
 	TimeoutClient *time.Duration `json:"timeout_client"`
 	// Deprecated: CertificateID: certificate ID, deprecated in favor of `certificate_ids` array!
-	CertificateID *string `json:"certificate_id"`
+	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
 }
