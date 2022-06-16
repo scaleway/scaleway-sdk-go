@@ -2224,7 +2224,7 @@ type DeleteNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) error {
+func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2233,11 +2233,11 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) erro
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.NodeID) == "" {
-		return errors.New("field NodeID cannot be empty in request")
+		return nil, errors.New("field NodeID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2246,11 +2246,13 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) erro
 		Headers: http.Header{},
 	}
 
-	err = s.client.Do(scwReq, nil, opts...)
+	var resp Node
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &resp, nil
 }
 
 type ListVersionsRequest struct {
