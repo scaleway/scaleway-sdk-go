@@ -659,7 +659,6 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			//got, err := json.Marshal(c.jsonValue)
 			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
