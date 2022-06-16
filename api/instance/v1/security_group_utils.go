@@ -87,7 +87,7 @@ func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.R
 		setRequest.Stateful = *req.Stateful
 	}
 	if req.OrganizationDefault != nil {
-		setRequest.OrganizationDefault = *req.OrganizationDefault
+		setRequest.OrganizationDefault = req.OrganizationDefault
 	}
 	if req.ProjectDefault != nil {
 		setRequest.ProjectDefault = *req.ProjectDefault
