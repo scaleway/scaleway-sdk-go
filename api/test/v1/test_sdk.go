@@ -523,7 +523,7 @@ func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human,
 
 type SmokeHumanRequest struct {
 	// Deprecated: HumanID: UUID of the human you want to make smoking
-	HumanID string `json:"-"`
+	HumanID *string `json:"-"`
 }
 
 // Deprecated: SmokeHuman: make a human smoke
