@@ -570,3 +570,100 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestJSONObject_UnmarshalJSON(t *testing.T) {
+	cases := []struct {
+		name string
+		json string
+		want *JSONObject
+		err  error
+	}{
+		{
+			name: "basic",
+			json: `
+				{
+					"test": "scw"
+				}
+			`,
+			want: &JSONObject{
+				"test": "scw",
+			},
+		},
+		{
+			name: "multi-types",
+			json: `
+			{
+				"firstName": "John",
+				"lastName": "Smith",
+				"isAlive": true,
+				"age": 23,
+				"address": {
+					"city": "Paris",
+					"country": "FR"
+				}
+			}
+			`,
+			want: &JSONObject{
+				"firstName": "John",
+				"lastName":  "Smith",
+				"isAlive":   true,
+				"age":       float64(23),
+				"address": map[string]interface{}{
+					"city":    "Paris",
+					"country": "FR",
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			ts, err := DecodeJSONObject(c.json, NoEscape)
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, *c.want, ts)
+			}
+		})
+	}
+}
+
+func TestJSONObject_MarshalJSON(t *testing.T) {
+	cases := []struct {
+		name      string
+		jsonValue *JSONObject
+		want      string
+		err       error
+	}{
+		{
+			name: "basic",
+			jsonValue: &JSONObject{
+				"test": "scw",
+			},
+			want: `{"test":"scw"}`,
+		},
+		{
+			name: "multi-types",
+			want: `{"address":{"city":"Paris","country":"FR"},"age":23,"firstName":"John","isAlive":true,"lastName":"Smith"}`,
+			jsonValue: &JSONObject{
+				"firstName": "John",
+				"lastName":  "Smith",
+				"isAlive":   true,
+				"age":       float64(23),
+				"address": map[string]interface{}{
+					"city":    "Paris",
+					"country": "FR",
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, c.want, string(got))
+			}
+		})
+	}
+}
