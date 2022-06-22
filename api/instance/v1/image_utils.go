@@ -57,15 +57,15 @@ func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) 
 }
 
 type UpdateImageRequest struct {
-	Zone                scw.Zone
-	ImageID             string
-	Name                *string   `json:"name,omitempty"`
-	RootVolumeID        string    `json:"root_volume_id,omitempty"`
-	Arch                Arch      `json:"architecture,omitempty"`
-	DefaultBootscriptID string    `json:"default_bootscript_id,omitempty"`
-	ExtraVolumesIDs     []string  `json:"additional_volume_ids,omitempty"`
-	Public              bool      `json:"public,omitempty"`
-	Tags                *[]string `json:"tags,omitempty"`
+	Zone              scw.Zone
+	ImageID           string
+	Name              *string            `json:"name,omitempty"`
+	RootVolume        *VolumeSummary     `json:"root_volume,omitempty"`
+	Arch              Arch               `json:"arch,omitempty"`
+	DefaultBootscript *Bootscript        `json:"default_bootscript,omitempty"`
+	ExtraVolumes      map[string]*Volume `json:"extra_volumes,omitempty"`
+	Public            bool               `json:"public,omitempty"`
+	Tags              *[]string          `json:"tags,omitempty"`
 }
 
 type UpdateImageResponse struct {
@@ -117,17 +117,17 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 	if req.Tags != nil {
 		setRequest.Tags = req.Tags
 	}
-	if req.RootVolumeID != "" {
-		setRequest.RootVolume = req.RootVolumeID
+	if req.RootVolume != nil {
+		setRequest.RootVolume = req.RootVolume
 	}
 	if req.Arch != "" {
 		setRequest.Arch = req.Arch
 	}
-	if req.DefaultBootscriptID != "" {
-		setRequest.DefaultBootscript = req.DefaultBootscriptID
+	if req.DefaultBootscript != nil {
+		setRequest.DefaultBootscript = req.DefaultBootscript
 	}
-	if req.ExtraVolumesIDs != nil {
-		setRequest.ExtraVolumes = req.ExtraVolumesIDs
+	if req.ExtraVolumes != nil {
+		setRequest.ExtraVolumes = req.ExtraVolumes
 	}
 	if req.Public != setRequest.Public {
 		setRequest.Public = req.Public
