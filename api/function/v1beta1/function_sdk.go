@@ -631,7 +631,7 @@ type Cron struct {
 
 	Schedule string `json:"schedule"`
 
-	Args []byte `json:"args"`
+	Args *scw.JSONObject `json:"args"`
 	// Status:
 	//
 	// Default value: unknown
@@ -1723,7 +1723,7 @@ type CreateCronRequest struct {
 
 	Schedule string `json:"schedule"`
 
-	Args []byte `json:"args"`
+	Args *scw.JSONObject `json:"args"`
 }
 
 // CreateCron: create a new cron
@@ -1771,7 +1771,7 @@ type UpdateCronRequest struct {
 
 	Schedule *string `json:"schedule"`
 
-	Args []byte `json:"args"`
+	Args *scw.JSONObject `json:"args"`
 }
 
 // UpdateCron: update an existing cron

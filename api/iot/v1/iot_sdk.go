@@ -966,7 +966,7 @@ type TwinDocument struct {
 	// Version: document's new version
 	Version uint32 `json:"version"`
 	// Data: document's new data
-	Data []byte `json:"data"`
+	Data *scw.JSONObject `json:"data"`
 }
 
 type UpdateRouteRequestDatabaseConfig struct {
@@ -2582,7 +2582,7 @@ type PutTwinDocumentRequest struct {
 	// Data: new document data
 	//
 	// The new data that will replace the contents of the document.
-	Data []byte `json:"data"`
+	Data *scw.JSONObject `json:"data"`
 }
 
 // PutTwinDocument: bETA - Update a Cloud Twin Document
@@ -2648,7 +2648,7 @@ type PatchTwinDocumentRequest struct {
 	// * If the patch object property is a value (number, strings, bool, arrays), it is replaced.
 	// * If the patch object property is an object, the previous rules will be applied recursively on it.
 	//
-	Data []byte `json:"data"`
+	Data *scw.JSONObject `json:"data"`
 }
 
 // PatchTwinDocument: bETA - Patch a Cloud Twin Document
