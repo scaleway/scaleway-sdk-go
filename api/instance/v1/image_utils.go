@@ -2,6 +2,7 @@ package instance
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
@@ -57,14 +58,20 @@ func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) 
 }
 
 type UpdateImageRequest struct {
-	Zone              scw.Zone
-	ImageID           string
+	Zone              scw.Zone           `json:"zone"`
+	ImageID           string             `json:"id"`
 	Name              *string            `json:"name,omitempty"`
-	RootVolume        *VolumeSummary     `json:"root_volume,omitempty"`
 	Arch              Arch               `json:"arch,omitempty"`
+	CreationDate      *time.Time         `json:"creation_date"`
+	ModificationDate  *time.Time         `json:"modification_date"`
 	DefaultBootscript *Bootscript        `json:"default_bootscript,omitempty"`
-	ExtraVolumes      map[string]*Volume `json:"extra_volumes,omitempty"`
-	Public            bool               `json:"public,omitempty"`
+	ExtraVolumes      map[string]*Volume `json:"extra_volumes"`
+	FromServer        string             `json:"from_server,omitempty"`
+	Organization      string             `json:"organization"`
+	Public            bool               `json:"public"`
+	RootVolume        *VolumeSummary     `json:"root_volume,omitempty"`
+	State             ImageState         `json:"state"`
+	Project           string             `json:"project"`
 	Tags              *[]string          `json:"tags,omitempty"`
 }
 
@@ -92,53 +99,74 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 
-	setRequest := &SetImageRequest{
-		Zone:              getImageResponse.Image.Zone,
-		ID:                getImageResponse.Image.ID,
-		Name:              getImageResponse.Image.Name,
-		Arch:              getImageResponse.Image.Arch,
-		CreationDate:      getImageResponse.Image.CreationDate,
-		ModificationDate:  getImageResponse.Image.ModificationDate,
-		DefaultBootscript: getImageResponse.Image.DefaultBootscript,
-		ExtraVolumes:      getImageResponse.Image.ExtraVolumes,
-		FromServer:        getImageResponse.Image.FromServer,
-		Organization:      getImageResponse.Image.Organization,
-		Public:            getImageResponse.Image.Public,
-		RootVolume:        getImageResponse.Image.RootVolume,
-		State:             getImageResponse.Image.State,
-		Project:           getImageResponse.Image.Project,
-		Tags:              &getImageResponse.Image.Tags,
+	// Fill in computed fields
+	req.FromServer = getImageResponse.Image.FromServer
+	req.Organization = getImageResponse.Image.Organization
+	req.State = getImageResponse.Image.State
+	req.Project = getImageResponse.Image.Project
+	req.CreationDate = getImageResponse.Image.CreationDate
+	req.ModificationDate = getImageResponse.Image.ModificationDate
+
+	// Ensure that no field is empty in request
+	if req.Name == nil {
+		req.Name = &getImageResponse.Image.Name
+	}
+	if req.Tags == nil {
+		req.Tags = &getImageResponse.Image.Tags
+	}
+	if req.RootVolume == nil {
+		req.RootVolume = getImageResponse.Image.RootVolume
+	}
+	if req.Arch == "" {
+		req.Arch = getImageResponse.Image.Arch
+	}
+	if req.DefaultBootscript == nil {
+		req.DefaultBootscript = getImageResponse.Image.DefaultBootscript
+	}
+	if req.ExtraVolumes == nil {
+		req.ExtraVolumes = getImageResponse.Image.ExtraVolumes
 	}
 
-	// Override the values that need to be updated
-	if req.Name != nil {
-		setRequest.Name = *req.Name
+	// Here starts the equivalent of the private setImage function that is not usable because the json tags and types
+	// are not compatible with what the instance API expects
+
+	if req.Project == "" {
+		defaultProject, _ := s.client.GetDefaultProjectID()
+		req.Project = defaultProject
 	}
-	if req.Tags != nil {
-		setRequest.Tags = req.Tags
+	if req.Organization == "" {
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
 	}
-	if req.RootVolume != nil {
-		setRequest.RootVolume = req.RootVolume
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
 	}
-	if req.Arch != "" {
-		setRequest.Arch = req.Arch
-	}
-	if req.DefaultBootscript != nil {
-		setRequest.DefaultBootscript = req.DefaultBootscript
-	}
-	if req.ExtraVolumes != nil {
-		setRequest.ExtraVolumes = req.ExtraVolumes
-	}
-	if req.Public != setRequest.Public {
-		setRequest.Public = req.Public
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	setRes, err := s.setImage(setRequest, opts...)
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, errors.New("field ID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PUT",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.ImageID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
 
-	return &UpdateImageResponse{
-		Image: setRes.Image,
-	}, nil
+	var resp UpdateImageResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }
