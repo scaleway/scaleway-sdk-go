@@ -441,10 +441,10 @@ type APIKey struct {
 	AccessKey string `json:"access_key"`
 	// SecretKey: secret key of API Key
 	SecretKey *string `json:"secret_key"`
-	// ApplicationID: ID of application principal
+	// ApplicationID: ID of application bearer
 	// Precisely one of ApplicationID, UserID must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
-	// UserID: ID of user principal
+	// UserID: ID of user bearer
 	// Precisely one of ApplicationID, UserID must be set.
 	UserID *string `json:"user_id,omitempty"`
 	// Description: description of API key
@@ -453,8 +453,8 @@ type APIKey struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last update date and time of API key
 	UpdatedAt *time.Time `json:"updated_at"`
-	// ExpiredAt: expiration date and time of API key
-	ExpiredAt *time.Time `json:"expired_at"`
+	// ExpiresAt: expiration date and time of API key
+	ExpiresAt *time.Time `json:"expires_at"`
 	// DefaultProjectID: the default project ID specified for this API key
 	DefaultProjectID string `json:"default_project_id"`
 	// Editable: whether or not the API key is editable
@@ -1361,7 +1361,7 @@ func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type SetGroupPrincipalsRequest struct {
+type SetGroupMembersRequest struct {
 	GroupID string `json:"-"`
 
 	UserIDs []string `json:"user_ids"`
@@ -1369,8 +1369,8 @@ type SetGroupPrincipalsRequest struct {
 	ApplicationIDs []string `json:"application_ids"`
 }
 
-// SetGroupPrincipals: set group principals
-func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.RequestOption) (*Group, error) {
+// SetGroupMembers: overwrite users and applications of a group
+func (s *API) SetGroupMembers(req *SetGroupMembersRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
@@ -1379,7 +1379,7 @@ func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/members",
 		Headers: http.Header{},
 	}
 
@@ -1397,28 +1397,28 @@ func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-type AddPrincipalToGroupRequest struct {
+type AddGroupMemberRequest struct {
 	// GroupID: ID of group
 	GroupID string `json:"-"`
-	// PrincipalID: ID of principal to add
-	PrincipalID string `json:"-"`
+	// UserID: ID of the user to add
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+	// ApplicationID: ID of the application to add
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// AddPrincipalToGroup: add principal to group
-func (s *API) AddPrincipalToGroup(req *AddPrincipalToGroupRequest, opts ...scw.RequestOption) (*Group, error) {
+// AddGroupMember: add a user of an application to a group
+func (s *API) AddGroupMember(req *AddGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
 		return nil, errors.New("field GroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrincipalID) == "" {
-		return nil, errors.New("field PrincipalID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals/" + fmt.Sprint(req.PrincipalID) + "",
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/add-member",
 		Headers: http.Header{},
 	}
 
@@ -1436,29 +1436,34 @@ func (s *API) AddPrincipalToGroup(req *AddPrincipalToGroupRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type DeletePrincipalFromGroupRequest struct {
+type RemoveGroupMemberRequest struct {
 	// GroupID: ID of group
 	GroupID string `json:"-"`
-	// PrincipalID: ID of principal to remove
-	PrincipalID string `json:"-"`
+	// UserID: ID of the user to remove
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+	// ApplicationID: ID of the application to remove
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// DeletePrincipalFromGroup: remove principal from group
-func (s *API) DeletePrincipalFromGroup(req *DeletePrincipalFromGroupRequest, opts ...scw.RequestOption) (*Group, error) {
+// RemoveGroupMember: remove a user or an application from a group
+func (s *API) RemoveGroupMember(req *RemoveGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
 		return nil, errors.New("field GroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrincipalID) == "" {
-		return nil, errors.New("field PrincipalID cannot be empty in request")
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/remove-member",
+		Headers: http.Header{},
 	}
 
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals/" + fmt.Sprint(req.PrincipalID) + "",
-		Headers: http.Header{},
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Group
@@ -1843,9 +1848,9 @@ type ListAPIKeysRequest struct {
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: ID of organization
 	OrganizationID *string `json:"-"`
-	// ApplicationID: ID of application principal
+	// ApplicationID: ID of an application bearer
 	ApplicationID *string `json:"-"`
-	// UserID: ID of user principal
+	// UserID: ID of a user bearer
 	UserID *string `json:"-"`
 	// Editable: filter out editable API keys or not
 	Editable *bool `json:"-"`
