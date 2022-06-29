@@ -619,6 +619,8 @@ type ListClustersRequest struct {
 	OrderBy ListClustersRequestOrderBy `json:"-"`
 	// ProjectID: project ID to list the cluster of
 	ProjectID *string `json:"-"`
+	// OrganizationID: organization ID to list the cluster of
+	OrganizationID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -644,6 +646,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
