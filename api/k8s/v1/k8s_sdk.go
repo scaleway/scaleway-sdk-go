@@ -899,6 +899,10 @@ type Node struct {
 	PoolID string `json:"pool_id"`
 	// ClusterID: the cluster ID of the node
 	ClusterID string `json:"cluster_id"`
+	// ProviderID: the underlying instance ID
+	//
+	// It is prefixed by instance type and location information (see https://pkg.go.dev/k8s.io/api/core/v1#NodeSpec.ProviderID).
+	ProviderID string `json:"provider_id"`
 	// Region: the cluster region of the node
 	Region scw.Region `json:"region"`
 	// Name: the name of the node
