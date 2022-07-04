@@ -970,7 +970,6 @@ type UpdateUserRequest struct {
 	UserID string `json:"-"`
 }
 
-// UpdateUser: update an existing user
 func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -1003,7 +1002,6 @@ type DeleteUserRequest struct {
 	UserID string `json:"-"`
 }
 
-// DeleteUser: remove a user
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
