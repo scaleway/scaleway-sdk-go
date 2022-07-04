@@ -1762,7 +1762,7 @@ type GetServerTypesAvailabilityRequest struct {
 
 // GetServerTypesAvailability: get availability
 //
-// Get availibility for all server types.
+// Get availability for all server types.
 func (s *API) GetServerTypesAvailability(req *GetServerTypesAvailabilityRequest, opts ...scw.RequestOption) (*GetServerTypesAvailabilityResponse, error) {
 	var err error
 
