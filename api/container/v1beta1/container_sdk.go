@@ -449,6 +449,40 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LogStream string
+
+const (
+	// LogStreamUnknown is [insert doc].
+	LogStreamUnknown = LogStream("unknown")
+	// LogStreamStdout is [insert doc].
+	LogStreamStdout = LogStream("stdout")
+	// LogStreamStderr is [insert doc].
+	LogStreamStderr = LogStream("stderr")
+)
+
+func (enum LogStream) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum LogStream) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LogStream) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LogStream(LogStream(tmp).String())
+	return nil
+}
+
 type NamespaceStatus string
 
 const (
@@ -695,6 +729,14 @@ type Log struct {
 	Timestamp *time.Time `json:"timestamp"`
 
 	ID string `json:"id"`
+	// Level: contains the severity of the log (info, debug, error, ...)
+	Level string `json:"level"`
+	// Source: source of the log (core runtime or user code)
+	Source string `json:"source"`
+	// Stream: can be stdout or stderr
+	//
+	// Default value: unknown
+	Stream LogStream `json:"stream"`
 }
 
 // Namespace: namespace
