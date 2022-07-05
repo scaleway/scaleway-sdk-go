@@ -1756,6 +1756,7 @@ type ListDomainsRequest struct {
 	ContainerID string `json:"-"`
 }
 
+// ListDomains: list all domain name bindings
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -1804,6 +1805,7 @@ type GetDomainRequest struct {
 	DomainID string `json:"-"`
 }
 
+// GetDomain: get a domain name binding
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -1846,6 +1848,7 @@ type CreateDomainRequest struct {
 	ContainerID string `json:"container_id"`
 }
 
+// CreateDomain: create a domain name binding
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -1887,6 +1890,7 @@ type DeleteDomainRequest struct {
 	DomainID string `json:"-"`
 }
 
+// DeleteDomain: delete a domain name binding
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
