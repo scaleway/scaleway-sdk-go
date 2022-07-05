@@ -803,7 +803,7 @@ type CreateClusterRequestPoolConfig struct {
 	MaxSize *uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
-	// The customization of the container runtime is available for each pool. Note that `docker` is the only supporter runtime at the moment. Others are to be considered experimental.
+	// The customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	//
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
@@ -823,7 +823,7 @@ type CreateClusterRequestPoolConfig struct {
 	//   - `l_ssd` is a local block storage: your system is stored locally on
 	//     the hypervisor of your node.
 	//   - `b_ssd` is a remote block storage: your system is stored on a
-	//     centralised and resilant cluster.
+	//     centralised and resilient cluster.
 	//
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
@@ -959,7 +959,7 @@ type Pool struct {
 	MaxSize uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
-	// The customization of the container runtime is available for each pool. Note that `docker` is the only supporter runtime at the moment. Others are to be considered experimental.
+	// The customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	//
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
@@ -981,7 +981,7 @@ type Pool struct {
 	//   - `l_ssd` is a local block storage: your system is stored locally on
 	//     the hypervisor of your node.
 	//   - `b_ssd` is a remote block storage: your system is stored on a
-	//     centralised and resilant cluster.
+	//     centralised and resilient cluster.
 	//
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
@@ -1731,7 +1731,7 @@ type CreatePoolRequest struct {
 	MaxSize *uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
-	// The customization of the container runtime is available for each pool. Note that `docker` is the only supporter runtime at the moment. Others are to be considered experimental.
+	// The customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	//
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
@@ -1751,7 +1751,7 @@ type CreatePoolRequest struct {
 	//   - `l_ssd` is a local block storage: your system is stored locally on
 	//     the hypervisor of your node.
 	//   - `b_ssd` is a remote block storage: your system is stored on a
-	//     centralised and resilant cluster.
+	//     centralised and resilient cluster.
 	//
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
