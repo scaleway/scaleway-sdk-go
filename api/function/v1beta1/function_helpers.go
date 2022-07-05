@@ -11,6 +11,7 @@ import (
 const (
 	waitForNamespaceDefaultTimeout = 15 * time.Minute
 	waitForCronDefaultTimeout      = 15 * time.Minute
+	waitForDomainDefaultTimeout    = 15 * time.Minute
 	waitForFunctionDefaultTimeout  = 15 * time.Minute
 	defaultRetryInterval           = 5 * time.Second
 )
@@ -158,4 +159,51 @@ func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*
 	}
 
 	return cron.(*Cron), nil
+}
+
+// WaitForDomainRequest waits for the Domain to be in a ready state before returning.
+type WaitForDomainRequest struct {
+	DomainID      string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to be in a ready state before returning.
+func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := waitForDomainDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[DomainStatus]struct{}{
+		DomainStatusError: {},
+		DomainStatusReady: {},
+	}
+
+	domain, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			domain, err := s.GetDomain(&GetDomainRequest{
+				DomainID: req.DomainID,
+				Region:   req.Region,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTerminal := terminalStatus[domain.Status]
+			return domain, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return domain.(*Domain), nil
 }
