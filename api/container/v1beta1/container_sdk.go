@@ -1202,8 +1202,6 @@ type CreateContainerRequest struct {
 	RegistryImage *string `json:"registry_image"`
 
 	MaxConcurrency *uint32 `json:"max_concurrency"`
-
-	DomainName *string `json:"domain_name"`
 	// Protocol:
 	//
 	// Default value: unknown_protocol
@@ -1287,8 +1285,6 @@ type UpdateContainerRequest struct {
 	RegistryImage *string `json:"registry_image"`
 
 	MaxConcurrency *uint32 `json:"max_concurrency"`
-
-	DomainName *string `json:"domain_name"`
 	// Protocol:
 	//
 	// Default value: unknown_protocol
