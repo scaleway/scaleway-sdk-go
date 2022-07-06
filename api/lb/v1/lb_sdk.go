@@ -1135,6 +1135,8 @@ type Certificate struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: date at which the certificate was last updated
 	UpdatedAt *time.Time `json:"updated_at"`
+	// StatusDetails: additional information on the status (e.g. in case of certificate generation failure)
+	StatusDetails *string `json:"status_details"`
 }
 
 // CreateCertificateRequestCustomCertificate: import a custom SSL certificate

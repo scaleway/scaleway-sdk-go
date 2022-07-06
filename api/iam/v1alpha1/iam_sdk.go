@@ -441,10 +441,10 @@ type APIKey struct {
 	AccessKey string `json:"access_key"`
 	// SecretKey: secret key of API Key
 	SecretKey *string `json:"secret_key"`
-	// ApplicationID: ID of application principal
+	// ApplicationID: ID of application bearer
 	// Precisely one of ApplicationID, UserID must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
-	// UserID: ID of user principal
+	// UserID: ID of user bearer
 	// Precisely one of ApplicationID, UserID must be set.
 	UserID *string `json:"user_id,omitempty"`
 	// Description: description of API key
@@ -453,8 +453,8 @@ type APIKey struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last update date and time of API key
 	UpdatedAt *time.Time `json:"updated_at"`
-	// ExpiredAt: expiration date and time of API key
-	ExpiredAt *time.Time `json:"expired_at"`
+	// ExpiresAt: expiration date and time of API key
+	ExpiresAt *time.Time `json:"expires_at"`
 	// DefaultProjectID: the default project ID specified for this API key
 	DefaultProjectID string `json:"default_project_id"`
 	// Editable: whether or not the API key is editable
@@ -625,6 +625,10 @@ type Rule struct {
 	ID string `json:"id"`
 	// PermissionSetNames: names of permission sets bound to the rule
 	PermissionSetNames *[]string `json:"permission_set_names"`
+	// PermissionSetsScopeType: permission_set_names have the same scope_type
+	//
+	// Default value: unknown_scope_type
+	PermissionSetsScopeType PermissionSetScopeType `json:"permission_sets_scope_type"`
 	// ProjectIDs: list of project IDs scoped to the rule
 	// Precisely one of AccountRootUserID, OrganizationID, ProjectIDs must be set.
 	ProjectIDs *[]string `json:"project_ids,omitempty"`
@@ -711,9 +715,13 @@ type ListSSHKeysRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
-	// Page: requested page number
+	// Page: requested page number. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
-	// PageSize: number of items per page
+	// PageSize: number of items per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID *string `json:"-"`
@@ -760,9 +768,9 @@ func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateSSHKeyRequest struct {
-	// Name: the name of the SSH key
+	// Name: the name of the SSH key. Max length is 1000
 	Name string `json:"name"`
-	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
+	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported. Max length is 65000
 	PublicKey string `json:"public_key"`
 	// ProjectID: project owning the resource
 	ProjectID string `json:"project_id"`
@@ -827,7 +835,7 @@ func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHK
 
 type UpdateSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
-	// Name: name of the SSH key
+	// Name: name of the SSH key. Max length is 1000
 	Name *string `json:"name"`
 	// Disabled: enable or disable the SSH key
 	Disabled *bool `json:"disabled"`
@@ -891,9 +899,13 @@ type ListUsersRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListUsersRequestOrderBy `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: ID of organization to filter
 	OrganizationID *string `json:"-"`
@@ -961,73 +973,18 @@ func (s *API) GetUser(req *GetUserRequest, opts ...scw.RequestOption) (*User, er
 	return &resp, nil
 }
 
-type UpdateUserRequest struct {
-	// UserID: ID of user to update
-	UserID string `json:"-"`
-}
-
-// UpdateUser: update an existing user
-func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*User, error) {
-	var err error
-
-	if fmt.Sprint(req.UserID) == "" {
-		return nil, errors.New("field UserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp User
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteUserRequest struct {
-	// UserID: ID of user to delete
-	UserID string `json:"-"`
-}
-
-// DeleteUser: remove a user
-func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.UserID) == "" {
-		return errors.New("field UserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "",
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 type ListApplicationsRequest struct {
 	// OrderBy: criteria for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListApplicationsRequestOrderBy `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// Name: name of application to filter
 	Name *string `json:"-"`
@@ -1074,11 +1031,11 @@ func (s *API) ListApplications(req *ListApplicationsRequest, opts ...scw.Request
 }
 
 type CreateApplicationRequest struct {
-	// Name: name of application to create
+	// Name: name of application to create (max length is 64 chars)
 	Name string `json:"name"`
 	// OrganizationID: ID of organization
 	OrganizationID string `json:"organization_id"`
-	// Description: description of application
+	// Description: description of application (max length is 200 chars)
 	Description string `json:"description"`
 }
 
@@ -1142,9 +1099,9 @@ func (s *API) GetApplication(req *GetApplicationRequest, opts ...scw.RequestOpti
 type UpdateApplicationRequest struct {
 	// ApplicationID: ID of application to update
 	ApplicationID string `json:"-"`
-	// Name: new name of application
+	// Name: new name of application (max length is 64 chars)
 	Name *string `json:"name"`
-	// Description: new description of application
+	// Description: new description of application (max length is 200 chars)
 	Description *string `json:"description"`
 }
 
@@ -1207,9 +1164,13 @@ type ListGroupsRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListGroupsRequestOrderBy `json:"-"`
-	// Page: requested page number
+	// Page: requested page number. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
-	// PageSize: number of items per page
+	// PageSize: number of items per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID *string `json:"-"`
@@ -1261,9 +1222,9 @@ func (s *API) ListGroups(req *ListGroupsRequest, opts ...scw.RequestOption) (*Li
 type CreateGroupRequest struct {
 	// OrganizationID: ID of organization linked to the group
 	OrganizationID string `json:"organization_id"`
-	// Name: name of the group to create. MUST be unique inside an organization
+	// Name: name of the group to create (max length is 64 chars). MUST be unique inside an organization
 	Name string `json:"name"`
-	// Description: description of the group to create
+	// Description: description of the group to create (max length is 200 chars)
 	Description string `json:"description"`
 }
 
@@ -1327,9 +1288,9 @@ func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group,
 type UpdateGroupRequest struct {
 	// GroupID: ID of group to update
 	GroupID string `json:"-"`
-	// Name: new name for the group. MUST be unique inside an organization
+	// Name: new name for the group (max length is 64 chars). MUST be unique inside an organization
 	Name *string `json:"name"`
-	// Description: new description for the group
+	// Description: new description for the group (max length is 200 chars)
 	Description *string `json:"description"`
 }
 
@@ -1361,7 +1322,7 @@ func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type SetGroupPrincipalsRequest struct {
+type SetGroupMembersRequest struct {
 	GroupID string `json:"-"`
 
 	UserIDs []string `json:"user_ids"`
@@ -1369,8 +1330,8 @@ type SetGroupPrincipalsRequest struct {
 	ApplicationIDs []string `json:"application_ids"`
 }
 
-// SetGroupPrincipals: set group principals
-func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.RequestOption) (*Group, error) {
+// SetGroupMembers: overwrite users and applications of a group
+func (s *API) SetGroupMembers(req *SetGroupMembersRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
@@ -1379,7 +1340,7 @@ func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PUT",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/members",
 		Headers: http.Header{},
 	}
 
@@ -1397,28 +1358,28 @@ func (s *API) SetGroupPrincipals(req *SetGroupPrincipalsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-type AddPrincipalToGroupRequest struct {
+type AddGroupMemberRequest struct {
 	// GroupID: ID of group
 	GroupID string `json:"-"`
-	// PrincipalID: ID of principal to add
-	PrincipalID string `json:"-"`
+	// UserID: ID of the user to add
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+	// ApplicationID: ID of the application to add
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// AddPrincipalToGroup: add principal to group
-func (s *API) AddPrincipalToGroup(req *AddPrincipalToGroupRequest, opts ...scw.RequestOption) (*Group, error) {
+// AddGroupMember: add a user of an application to a group
+func (s *API) AddGroupMember(req *AddGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
 		return nil, errors.New("field GroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrincipalID) == "" {
-		return nil, errors.New("field PrincipalID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals/" + fmt.Sprint(req.PrincipalID) + "",
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/add-member",
 		Headers: http.Header{},
 	}
 
@@ -1436,29 +1397,34 @@ func (s *API) AddPrincipalToGroup(req *AddPrincipalToGroupRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type DeletePrincipalFromGroupRequest struct {
+type RemoveGroupMemberRequest struct {
 	// GroupID: ID of group
 	GroupID string `json:"-"`
-	// PrincipalID: ID of principal to remove
-	PrincipalID string `json:"-"`
+	// UserID: ID of the user to remove
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+	// ApplicationID: ID of the application to remove
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// DeletePrincipalFromGroup: remove principal from group
-func (s *API) DeletePrincipalFromGroup(req *DeletePrincipalFromGroupRequest, opts ...scw.RequestOption) (*Group, error) {
+// RemoveGroupMember: remove a user or an application from a group
+func (s *API) RemoveGroupMember(req *RemoveGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if fmt.Sprint(req.GroupID) == "" {
 		return nil, errors.New("field GroupID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrincipalID) == "" {
-		return nil, errors.New("field PrincipalID cannot be empty in request")
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/remove-member",
+		Headers: http.Header{},
 	}
 
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/principals/" + fmt.Sprint(req.PrincipalID) + "",
-		Headers: http.Header{},
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Group
@@ -1499,11 +1465,15 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) er
 type ListPoliciesRequest struct {
 	// OrderBy: criteria for sorting results
 	//
-	// Default value: policy_name_asc
+	// Default value: created_at_asc
 	OrderBy ListPoliciesRequestOrderBy `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: ID of organization to filter
 	OrganizationID *string `json:"-"`
@@ -1559,9 +1529,9 @@ func (s *API) ListPolicies(req *ListPoliciesRequest, opts ...scw.RequestOption) 
 }
 
 type CreatePolicyRequest struct {
-	// Name: name of policy to create
+	// Name: name of policy to create (max length is 64 chars)
 	Name string `json:"name"`
-	// Description: description of policy to create
+	// Description: description of policy to create (max length is 200 chars)
 	Description string `json:"description"`
 	// OrganizationID: ID of organization
 	OrganizationID string `json:"organization_id"`
@@ -1641,9 +1611,9 @@ func (s *API) GetPolicy(req *GetPolicyRequest, opts ...scw.RequestOption) (*Poli
 type UpdatePolicyRequest struct {
 	// PolicyID: id of policy to update
 	PolicyID string `json:"-"`
-	// Name: new name of policy
+	// Name: new name of policy (max length is 64 chars)
 	Name *string `json:"name"`
-	// Description: new description of policy
+	// Description: new description of policy (max length is 200 chars)
 	Description *string `json:"description"`
 	// UserID: new ID of user, owner of the policy
 	// Precisely one of ApplicationID, GroupID, NoPrincipal, UserID must be set.
@@ -1747,9 +1717,13 @@ func (s *API) SetRules(req *SetRulesRequest, opts ...scw.RequestOption) (*SetRul
 type ListRulesRequest struct {
 	// PolicyID: id of policy to search
 	PolicyID *string `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 }
 
@@ -1786,11 +1760,15 @@ func (s *API) ListRules(req *ListRulesRequest, opts ...scw.RequestOption) (*List
 type ListPermissionSetsRequest struct {
 	// OrderBy: criteria for sorting results
 	//
-	// Default value: name_asc
+	// Default value: created_at_asc
 	OrderBy ListPermissionSetsRequestOrderBy `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID string `json:"-"`
@@ -1837,15 +1815,19 @@ type ListAPIKeysRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListAPIKeysRequestOrderBy `json:"-"`
-	// Page: number of page
+	// Page: number of page. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
-	// PageSize: number of results per page
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: ID of organization
 	OrganizationID *string `json:"-"`
-	// ApplicationID: ID of application principal
+	// ApplicationID: ID of an application bearer
 	ApplicationID *string `json:"-"`
-	// UserID: ID of user principal
+	// UserID: ID of a user bearer
 	UserID *string `json:"-"`
 	// Editable: filter out editable API keys or not
 	Editable *bool `json:"-"`
@@ -1896,7 +1878,7 @@ type CreateAPIKeyRequest struct {
 	ExpiresAt *time.Time `json:"expires_at"`
 	// DefaultProjectID: the default project ID to use with object storage
 	DefaultProjectID *string `json:"default_project_id"`
-	// Description: the description of the API key
+	// Description: the description of the API key (max length is 200 chars)
 	Description string `json:"description"`
 }
 

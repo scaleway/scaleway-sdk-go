@@ -477,6 +477,40 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LogStream string
+
+const (
+	// LogStreamUnknown is [insert doc].
+	LogStreamUnknown = LogStream("unknown")
+	// LogStreamStdout is [insert doc].
+	LogStreamStdout = LogStream("stdout")
+	// LogStreamStderr is [insert doc].
+	LogStreamStderr = LogStream("stderr")
+)
+
+func (enum LogStream) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum LogStream) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LogStream) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LogStream(LogStream(tmp).String())
+	return nil
+}
+
 type NamespaceStatus string
 
 const (
@@ -699,6 +733,8 @@ type Function struct {
 
 	Description *string `json:"description"`
 
+	DomainName string `json:"domain_name"`
+
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
@@ -768,6 +804,14 @@ type Log struct {
 	Timestamp *time.Time `json:"timestamp"`
 
 	ID string `json:"id"`
+	// Level: contains the severity of the log (info, debug, error, ...)
+	Level string `json:"level"`
+	// Source: source of the log (core runtime or user code)
+	Source string `json:"source"`
+	// Stream: can be stdout or stderr
+	//
+	// Default value: unknown
+	Stream LogStream `json:"stream"`
 }
 
 // Namespace: namespace
@@ -1933,6 +1977,7 @@ type ListDomainsRequest struct {
 	FunctionID string `json:"-"`
 }
 
+// ListDomains: list all domain name bindings
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -1981,6 +2026,7 @@ type GetDomainRequest struct {
 	DomainID string `json:"-"`
 }
 
+// GetDomain: get a domain name binding
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2023,6 +2069,7 @@ type CreateDomainRequest struct {
 	FunctionID string `json:"function_id"`
 }
 
+// CreateDomain: create a domain name binding
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2064,6 +2111,7 @@ type DeleteDomainRequest struct {
 	DomainID string `json:"-"`
 }
 
+// DeleteDomain: delete a domain name binding
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
