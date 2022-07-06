@@ -58,21 +58,20 @@ func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) 
 }
 
 type UpdateImageRequest struct {
-	Zone              scw.Zone           `json:"zone"`
-	ImageID           string             `json:"id"`
-	Name              *string            `json:"name,omitempty"`
-	Arch              Arch               `json:"arch,omitempty"`
-	CreationDate      *time.Time         `json:"creation_date"`
-	ModificationDate  *time.Time         `json:"modification_date"`
-	DefaultBootscript *Bootscript        `json:"default_bootscript,omitempty"`
-	ExtraVolumes      map[string]*Volume `json:"extra_volumes"`
-	FromServer        string             `json:"from_server,omitempty"`
-	Organization      string             `json:"organization"`
-	Public            bool               `json:"public"`
-	RootVolume        *VolumeSummary     `json:"root_volume,omitempty"`
-	State             ImageState         `json:"state"`
-	Project           string             `json:"project"`
-	Tags              *[]string          `json:"tags,omitempty"`
+	Zone             scw.Zone           `json:"zone"`
+	ImageID          string             `json:"id"`
+	Name             *string            `json:"name,omitempty"`
+	Arch             Arch               `json:"arch,omitempty"`
+	CreationDate     *time.Time         `json:"creation_date"`
+	ModificationDate *time.Time         `json:"modification_date"`
+	ExtraVolumes     map[string]*Volume `json:"extra_volumes"`
+	FromServer       string             `json:"from_server,omitempty"`
+	Organization     string             `json:"organization"`
+	Public           bool               `json:"public"`
+	RootVolume       *VolumeSummary     `json:"root_volume,omitempty"`
+	State            ImageState         `json:"state"`
+	Project          string             `json:"project"`
+	Tags             *[]string          `json:"tags,omitempty"`
 }
 
 type UpdateImageResponse struct {
@@ -101,9 +100,6 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 
 	// Fill in computed fields
 	req.FromServer = getImageResponse.Image.FromServer
-	req.Organization = getImageResponse.Image.Organization
-	req.State = getImageResponse.Image.State
-	req.Project = getImageResponse.Image.Project
 	req.CreationDate = getImageResponse.Image.CreationDate
 	req.ModificationDate = getImageResponse.Image.ModificationDate
 
@@ -111,17 +107,11 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 	if req.Name == nil {
 		req.Name = &getImageResponse.Image.Name
 	}
-	if req.Tags == nil {
-		req.Tags = &getImageResponse.Image.Tags
-	}
 	if req.RootVolume == nil {
 		req.RootVolume = getImageResponse.Image.RootVolume
 	}
 	if req.Arch == "" {
 		req.Arch = getImageResponse.Image.Arch
-	}
-	if req.DefaultBootscript == nil {
-		req.DefaultBootscript = getImageResponse.Image.DefaultBootscript
 	}
 	if req.ExtraVolumes == nil {
 		req.ExtraVolumes = getImageResponse.Image.ExtraVolumes
