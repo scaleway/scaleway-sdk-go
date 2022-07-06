@@ -716,8 +716,12 @@ type ListSSHKeysRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
 	// Page: requested page number. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// PageSize: number of items per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID *string `json:"-"`
@@ -896,8 +900,12 @@ type ListUsersRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListUsersRequestOrderBy `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// Page: number of page. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: ID of organization to filter
 	OrganizationID *string `json:"-"`
@@ -965,71 +973,18 @@ func (s *API) GetUser(req *GetUserRequest, opts ...scw.RequestOption) (*User, er
 	return &resp, nil
 }
 
-type UpdateUserRequest struct {
-	// UserID: ID of user to update
-	UserID string `json:"-"`
-}
-
-func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*User, error) {
-	var err error
-
-	if fmt.Sprint(req.UserID) == "" {
-		return nil, errors.New("field UserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp User
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteUserRequest struct {
-	// UserID: ID of user to delete
-	UserID string `json:"-"`
-}
-
-func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.UserID) == "" {
-		return errors.New("field UserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "",
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 type ListApplicationsRequest struct {
 	// OrderBy: criteria for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListApplicationsRequestOrderBy `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// Name: name of application to filter
 	Name *string `json:"-"`
@@ -1210,8 +1165,12 @@ type ListGroupsRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListGroupsRequestOrderBy `json:"-"`
 	// Page: requested page number. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// PageSize: number of items per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID *string `json:"-"`
@@ -1506,11 +1465,15 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) er
 type ListPoliciesRequest struct {
 	// OrderBy: criteria for sorting results
 	//
-	// Default value: policy_name_asc
+	// Default value: created_at_asc
 	OrderBy ListPoliciesRequestOrderBy `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: ID of organization to filter
 	OrganizationID *string `json:"-"`
@@ -1755,8 +1718,12 @@ type ListRulesRequest struct {
 	// PolicyID: id of policy to search
 	PolicyID *string `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 }
 
@@ -1793,11 +1760,15 @@ func (s *API) ListRules(req *ListRulesRequest, opts ...scw.RequestOption) (*List
 type ListPermissionSetsRequest struct {
 	// OrderBy: criteria for sorting results
 	//
-	// Default value: name_asc
+	// Default value: created_at_asc
 	OrderBy ListPermissionSetsRequestOrderBy `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// OrganizationID: filter by organization ID
 	OrganizationID string `json:"-"`
@@ -1845,8 +1816,12 @@ type ListAPIKeysRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListAPIKeysRequestOrderBy `json:"-"`
 	// Page: number of page. Value must be greater or equals to 1
+	//
+	// Default value: 1
 	Page *int32 `json:"-"`
 	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: ID of organization
 	OrganizationID *string `json:"-"`
