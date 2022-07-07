@@ -694,12 +694,16 @@ type DeviceMessageFilters struct {
 	Subscribe *DeviceMessageFiltersRule `json:"subscribe"`
 }
 
+// DeviceMessageFiltersRule: device. message filters. rule
 type DeviceMessageFiltersRule struct {
-	// Policy:
+	// Policy: how to use the topic list
+	//
+	// If accept, the set will accept all topics in the topics list, but no other.
+	// If reject, the set will deny all topics in the topics list, but all others will be allowed.
 	//
 	// Default value: unknown
 	Policy DeviceMessageFiltersRulePolicy `json:"policy"`
-
+	// Topics: list of topics to accept or reject. It must be valid MQTT topics and up to 65535 characters
 	Topics *[]string `json:"topics"`
 }
 
