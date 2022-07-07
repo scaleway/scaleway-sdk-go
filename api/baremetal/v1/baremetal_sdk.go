@@ -529,7 +529,7 @@ type CPU struct {
 	CoreCount uint32 `json:"core_count"`
 	// ThreadCount: number of threads of the CPU
 	ThreadCount uint32 `json:"thread_count"`
-
+	// Frequency: frequency of the CPU in MHz
 	Frequency uint32 `json:"frequency"`
 }
 
