@@ -4688,8 +4688,12 @@ type ListIPsRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
+	// Project: the project ID the IPs are reserved in
+	Project *string `json:"-"`
 	// Organization: the organization ID the IPs are reserved in
 	Organization *string `json:"-"`
+	// Tags: filter IPs with these exact tags (to filter with several tags, use commas to separate them)
+	Tags []string `json:"-"`
 	// Name: filter on the IP address (Works as a LIKE operation on the IP address)
 	Name *string `json:"-"`
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
@@ -4698,10 +4702,6 @@ type ListIPsRequest struct {
 	PerPage *uint32 `json:"-"`
 	// Page: a positive integer to choose the page to return
 	Page *int32 `json:"-"`
-	// Project: the project ID the IPs are reserved in
-	Project *string `json:"-"`
-	// Tags: filter IPs with these exact tags (to filter with several tags, use commas to separate them)
-	Tags []string `json:"-"`
 }
 
 // ListIPs: list all flexible IPs
@@ -4719,14 +4719,14 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "organization", req.Organization)
-	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "per_page", req.PerPage)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "project", req.Project)
+	parameter.AddToQuery(query, "organization", req.Organization)
 	if len(req.Tags) != 0 {
 		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
 	}
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")

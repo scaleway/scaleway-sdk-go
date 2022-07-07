@@ -1208,9 +1208,9 @@ type CreateClusterRequest struct {
 	//
 	// This field allows to specify some configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
 	AutoscalerConfig *CreateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
-	// AutoUpgrade: the auo upgrade configuration of the cluster
+	// AutoUpgrade: the auto upgrade configuration of the cluster
 	//
-	// This configuratiom enables to set a speicific 2-hour time window in which the cluster can be automatically updated to the latest patch version in the current minor one.
+	// This configuration enables to set a specific 2-hour time window in which the cluster can be automatically updated to the latest patch version in the current minor one.
 	AutoUpgrade *CreateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 	// FeatureGates: list of feature gates to enable
 	FeatureGates []string `json:"feature_gates"`
@@ -1341,9 +1341,9 @@ type UpdateClusterRequest struct {
 	//
 	// Default value: unknown_ingress
 	Ingress *Ingress `json:"ingress,omitempty"`
-	// AutoUpgrade: the new auo upgrade configuration of the cluster
+	// AutoUpgrade: the new auto upgrade configuration of the cluster
 	//
-	// The new auo upgrade configuration of the cluster. Note that all the fields needs to be set.
+	// The new auto upgrade configuration of the cluster. Note that all fields need to be set.
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 	// FeatureGates: list of feature gates to enable
 	FeatureGates *[]string `json:"feature_gates"`
