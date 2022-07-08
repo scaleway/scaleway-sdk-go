@@ -1436,7 +1436,7 @@ type DeleteEndpointRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// EndpointID: UUID of the endpoint you want to delete
 	EndpointID string `json:"-"`
 }
 
@@ -1475,7 +1475,7 @@ type GetEndpointRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// EndpointID: UUID of the endpoint you want to get
 	EndpointID string `json:"-"`
 }
 
