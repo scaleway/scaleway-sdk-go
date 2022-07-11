@@ -2417,43 +2417,55 @@ type UpdateBackendRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// BackendID: backend ID to update
 	BackendID string `json:"-"`
-
+	// Name: resource name
 	Name string `json:"name"`
-	// ForwardProtocol:
+	// ForwardProtocol: backend protocol. TCP or HTTP
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
-
+	// ForwardPort: user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm:
+	// ForwardPortAlgorithm: load balancing algorithm
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions:
+	// StickySessions: enable cookie-based session persistence
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-
+	// StickySessionsCookieName: cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-	// Deprecated
+	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field!
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-
+	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
-
+	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-
+	// TimeoutTunnel: maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction:
+	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol:
+	// ProxyProtocol: pROXY protocol, forward client's address (must be supported by backend servers software)
+	//
+	// The PROXY protocol informs the other end about the incoming connection, so that it can know the client's address or the public address it accessed to, whatever the upper layer protocol is.
+	//
+	// * `proxy_protocol_none` Disable proxy protocol.
+	// * `proxy_protocol_v1` Version one (text format).
+	// * `proxy_protocol_v2` Version two (binary format).
+	// * `proxy_protocol_v2_ssl` Version two with SSL connection.
+	// * `proxy_protocol_v2_ssl_cn` Version two with SSL connection and common name information.
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-
+	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
+	//
+	// Only the host part of the Scaleway S3 bucket website is expected.
+	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
+	//
 	FailoverHost *string `json:"failover_host"`
 }
 
@@ -5398,43 +5410,55 @@ type ZonedAPIUpdateBackendRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// BackendID: backend ID to update
 	BackendID string `json:"-"`
-
+	// Name: resource name
 	Name string `json:"name"`
-	// ForwardProtocol:
+	// ForwardProtocol: backend protocol. TCP or HTTP
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
-
+	// ForwardPort: user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm:
+	// ForwardPortAlgorithm: load balancing algorithm
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions:
+	// StickySessions: enable cookie-based session persistence
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-
+	// StickySessionsCookieName: cookie name for for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-	// Deprecated
+	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field!
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-
+	// TimeoutServer: maximum server connection inactivity time
 	TimeoutServer *time.Duration `json:"timeout_server"`
-
+	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-
+	// TimeoutTunnel: maximum tunnel inactivity time
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction:
+	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol:
+	// ProxyProtocol: pROXY protocol, forward client's address (must be supported by backend servers software)
+	//
+	// The PROXY protocol informs the other end about the incoming connection, so that it can know the client's address or the public address it accessed to, whatever the upper layer protocol is.
+	//
+	// * `proxy_protocol_none` Disable proxy protocol.
+	// * `proxy_protocol_v1` Version one (text format).
+	// * `proxy_protocol_v2` Version two (binary format).
+	// * `proxy_protocol_v2_ssl` Version two with SSL connection.
+	// * `proxy_protocol_v2_ssl_cn` Version two with SSL connection and common name information.
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-
+	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
+	//
+	// Only the host part of the Scaleway S3 bucket website is expected.
+	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
+	//
 	FailoverHost *string `json:"failover_host"`
 }
 
