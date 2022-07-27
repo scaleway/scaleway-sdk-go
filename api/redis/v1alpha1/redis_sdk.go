@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: database Redis API
+// API: managed Database for Redis™ API
 type API struct {
 	client *scw.Client
 }
@@ -269,7 +269,7 @@ type Cluster struct {
 	//
 	// Default value: unknown
 	Status ClusterStatus `json:"status"`
-	// Version: redis version of the cluster
+	// Version: redis™ engine version of the cluster
 	Version string `json:"version"`
 	// Endpoints: list of cluster endpoints
 	Endpoints []*Endpoint `json:"endpoints"`
@@ -315,15 +315,15 @@ type ClusterSettingsResponse struct {
 
 // ClusterVersion: cluster version
 type ClusterVersion struct {
-	// Version: redis version
+	// Version: redis™ engine version
 	Version string `json:"version"`
 	// EolDate: end of life date
 	EolDate *time.Time `json:"eol_date"`
 	// AvailableSettings: cluster settings available to be set
 	AvailableSettings []*AvailableClusterSetting `json:"available_settings"`
-	// LogoURL: redis logo url
+	// LogoURL: redis™ logo url
 	LogoURL string `json:"logo_url"`
-	// Zone: zone of the Redis version
+	// Zone: zone of the Managed Database for Redis™
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -386,9 +386,9 @@ type ListNodeTypesResponse struct {
 
 // ListVersionsResponse: list versions response
 type ListVersionsResponse struct {
-	// Versions: list of the available Redis versions
+	// Versions: list of the available Redis™ engine versions
 	Versions []*ClusterVersion `json:"versions"`
-	// TotalCount: total count of Redis versions available
+	// TotalCount: total count of available Redis™ engine versions
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -443,7 +443,7 @@ type CreateClusterRequest struct {
 	ProjectID string `json:"project_id"`
 	// Name: name of the cluster
 	Name string `json:"name"`
-	// Version: redis version of the cluster
+	// Version: redis™ engine version of the cluster
 	Version string `json:"version"`
 	// Tags: tags to apply to the cluster
 	Tags []string `json:"tags"`
@@ -677,7 +677,7 @@ type MigrateClusterRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ClusterID: UUID of the cluster to update
 	ClusterID string `json:"-"`
-	// Version: redis version of the cluster
+	// Version: redis™ engine version of the cluster
 	// Precisely one of ClusterSize, NodeType, Version must be set.
 	Version *string `json:"version,omitempty"`
 	// NodeType: type of node to use for the cluster
@@ -876,13 +876,13 @@ type ListVersionsRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-	// IncludeDisabled: whether or not to include disabled Redis versions
+	// IncludeDisabled: whether or not to include disabled Redis™ engine versions
 	IncludeDisabled bool `json:"-"`
-	// IncludeBeta: whether or not to include beta Redis versions
+	// IncludeBeta: whether or not to include beta Redis™ engine versions
 	IncludeBeta bool `json:"-"`
-	// IncludeDeprecated: whether or not to include deprecated Redis versions
+	// IncludeDeprecated: whether or not to include deprecated Redis™ engine versions
 	IncludeDeprecated bool `json:"-"`
-	// VersionName: list Redis versions that match a given name pattern
+	// VersionName: list Redis™ engine versions that match a given name pattern
 	VersionName *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -890,7 +890,7 @@ type ListVersionsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListVersions: list available Redis versions
+// ListVersions: list available Redis™ versions
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
