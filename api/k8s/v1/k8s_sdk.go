@@ -440,6 +440,8 @@ const (
 	NodeStatusCreationError = NodeStatus("creation_error")
 	// NodeStatusUpgrading is [insert doc].
 	NodeStatusUpgrading = NodeStatus("upgrading")
+	// NodeStatusStarting is [insert doc].
+	NodeStatusStarting = NodeStatus("starting")
 )
 
 func (enum NodeStatus) String() string {
@@ -911,14 +913,16 @@ type Node struct {
 	PublicIPV4 *net.IP `json:"public_ip_v4"`
 	// PublicIPV6: the public IPv6 address of the node
 	PublicIPV6 *net.IP `json:"public_ip_v6"`
-	// Conditions: the conditions of the node
+	// Deprecated: Conditions: the conditions of the node
 	//
 	// These conditions contains the Node Problem Detector conditions, as well as some in house conditions.
-	Conditions map[string]string `json:"conditions"`
+	Conditions *map[string]string `json:"conditions,omitempty"`
 	// Status: the status of the node
 	//
 	// Default value: unknown
 	Status NodeStatus `json:"status"`
+	// ErrorMessage: details of the error, if any occured when managing the node
+	ErrorMessage *string `json:"error_message"`
 	// CreatedAt: the date at which the node was created
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: the date at which the node was last updated
@@ -2132,7 +2136,7 @@ type ReplaceNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// ReplaceNode: replace a node in a cluster
+// Deprecated: ReplaceNode: replace a node in a cluster
 //
 // This method allows to replace a specific node. The node will be set cordoned, meaning that scheduling will be disabled. Then the existing pods on the node will be drained and reschedule onto another schedulable node. Then the node will be deleted, and a new one will be created after the deletion. Note that when there is not enough space to reschedule all the pods (in a one node cluster for instance), you may experience some disruption of your applications.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
@@ -2228,6 +2232,9 @@ type DeleteNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
+// DeleteNode: delete a node in a cluster
+//
+// This method allows to delete a specific node. Note that when there is not enough space to reschedule all the pods (in a one node cluster for instance), you may experience some disruption of your applications.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 

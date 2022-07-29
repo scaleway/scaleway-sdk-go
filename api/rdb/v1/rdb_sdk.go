@@ -1065,6 +1065,8 @@ type Instance struct {
 	BackupSchedule *BackupSchedule `json:"backup_schedule"`
 	// IsHaCluster: whether or not High-Availability is enabled
 	IsHaCluster bool `json:"is_ha_cluster"`
+	// ReadReplicas: read replicas of the instance
+	ReadReplicas []*ReadReplica `json:"read_replicas"`
 	// NodeType: node type of the instance
 	NodeType string `json:"node_type"`
 	// InitSettings: list of engine settings to be set at database initialisation
@@ -1293,6 +1295,41 @@ type Privilege struct {
 	DatabaseName string `json:"database_name"`
 	// UserName: name of the user
 	UserName string `json:"user_name"`
+}
+
+// ReadReplica: read replica
+type ReadReplica struct {
+	// ID: UUID of the read replica
+	ID string `json:"id"`
+	// Endpoints: display read replica connection information
+	Endpoints []*Endpoint `json:"endpoints"`
+	// Status: read replica status
+	//
+	// Default value: unknown
+	Status ReadReplicaStatus `json:"status"`
+	// Region: region the read replica is in
+	Region scw.Region `json:"region"`
+}
+
+// ReadReplicaEndpointSpec: read replica endpoint spec
+type ReadReplicaEndpointSpec struct {
+	// DirectAccess: direct access endpoint specifications
+	// Precisely one of DirectAccess, PrivateNetwork must be set.
+	DirectAccess *ReadReplicaEndpointSpecDirectAccess `json:"direct_access,omitempty"`
+	// PrivateNetwork: private network endpoint specifications
+	// Precisely one of DirectAccess, PrivateNetwork must be set.
+	PrivateNetwork *ReadReplicaEndpointSpecPrivateNetwork `json:"private_network,omitempty"`
+}
+
+type ReadReplicaEndpointSpecDirectAccess struct {
+}
+
+// ReadReplicaEndpointSpecPrivateNetwork: read replica endpoint spec. private network
+type ReadReplicaEndpointSpecPrivateNetwork struct {
+	// PrivateNetworkID: UUID of the private network to be connected to the read replica
+	PrivateNetworkID string `json:"private_network_id"`
+	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitations.
+	ServiceIP scw.IPNet `json:"service_ip"`
 }
 
 // SetInstanceACLRulesResponse: set instance acl rules response
@@ -2387,6 +2424,226 @@ func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.Req
 	}
 
 	var resp InstanceMetrics
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateReadReplicaRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// InstanceID: UUID of the instance you want a read replica of
+	InstanceID string `json:"instance_id"`
+	// EndpointSpec: specification of the endpoint you want to create
+	EndpointSpec []*ReadReplicaEndpointSpec `json:"endpoint_spec"`
+}
+
+// CreateReadReplica: create a read replica
+func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ReadReplica
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetReadReplicaRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// ReadReplicaID: UUID of the read replica
+	ReadReplicaID string `json:"-"`
+}
+
+// GetReadReplica: get a read replica
+func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ReadReplicaID) == "" {
+		return nil, errors.New("field ReadReplicaID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas/" + fmt.Sprint(req.ReadReplicaID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp ReadReplica
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteReadReplicaRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// ReadReplicaID: UUID of the read replica
+	ReadReplicaID string `json:"-"`
+}
+
+// DeleteReadReplica: delete a read replica
+func (s *API) DeleteReadReplica(req *DeleteReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ReadReplicaID) == "" {
+		return nil, errors.New("field ReadReplicaID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas/" + fmt.Sprint(req.ReadReplicaID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp ReadReplica
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ResetReadReplicaRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// ReadReplicaID: UUID of the read replica
+	ReadReplicaID string `json:"-"`
+}
+
+// ResetReadReplica: reset a read replica
+func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ReadReplicaID) == "" {
+		return nil, errors.New("field ReadReplicaID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas/" + fmt.Sprint(req.ReadReplicaID) + "/reset",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ReadReplica
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateReadReplicaEndpointRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// ReadReplicaID: UUID of the read replica
+	ReadReplicaID string `json:"-"`
+	// EndpointSpec: specification of the endpoint you want to create
+	EndpointSpec []*ReadReplicaEndpointSpec `json:"endpoint_spec"`
+}
+
+// CreateReadReplicaEndpoint: create a new endpoint for a given read replica
+func (s *API) CreateReadReplicaEndpoint(req *CreateReadReplicaEndpointRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ReadReplicaID) == "" {
+		return nil, errors.New("field ReadReplicaID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas/" + fmt.Sprint(req.ReadReplicaID) + "/endpoints",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ReadReplica
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
