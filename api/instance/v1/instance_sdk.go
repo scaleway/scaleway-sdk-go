@@ -1658,7 +1658,7 @@ type VolumeServerTemplate struct {
 	Boot bool `json:"boot,omitempty"`
 	// Name: name of the volume
 	Name string `json:"name,omitempty"`
-	// Size: disk size of the volume
+	// Size: disk size of the volume, must be a multiple of 512
 	Size scw.Size `json:"size,omitempty"`
 	// VolumeType: type of the volume
 	//
@@ -1690,7 +1690,7 @@ type VolumeTemplate struct {
 	ID string `json:"id,omitempty"`
 	// Name: name of the volume
 	Name string `json:"name,omitempty"`
-	// Size: disk size of the volume
+	// Size: disk size of the volume, must be a multiple of 512
 	Size scw.Size `json:"size,omitempty"`
 	// VolumeType: type of the volume
 	//
@@ -3269,7 +3269,7 @@ type CreateVolumeRequest struct {
 	//
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type"`
-	// Size: the volume disk size
+	// Size: the volume disk size, must be a multiple of 512
 	// Precisely one of BaseSnapshot, BaseVolume, Size must be set.
 	Size *scw.Size `json:"size,omitempty"`
 	// BaseVolume: the ID of the volume on which this volume will be based
@@ -3381,7 +3381,7 @@ type UpdateVolumeRequest struct {
 	Name *string `json:"name,omitempty"`
 	// Tags: the tags of the volume
 	Tags *[]string `json:"tags,omitempty"`
-	// Size: the volume disk size
+	// Size: the volume disk size, must be a multiple of 512
 	Size *scw.Size `json:"size,omitempty"`
 }
 
