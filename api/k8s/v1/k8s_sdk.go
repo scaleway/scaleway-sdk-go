@@ -442,6 +442,8 @@ const (
 	NodeStatusUpgrading = NodeStatus("upgrading")
 	// NodeStatusStarting is [insert doc].
 	NodeStatusStarting = NodeStatus("starting")
+	// NodeStatusRegistering is [insert doc].
+	NodeStatusRegistering = NodeStatus("registering")
 )
 
 func (enum NodeStatus) String() string {
@@ -2228,8 +2230,12 @@ type DeleteNodeRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// NodeID: the ID of the node to replace
 	NodeID string `json:"-"`
+	// SkipDrain: skip draining node from its workload
+	SkipDrain bool `json:"-"`
+	// Replace: add a new node after the deletion of this node
+	Replace bool `json:"-"`
 }
 
 // DeleteNode: delete a node in a cluster
@@ -2243,6 +2249,10 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 		req.Region = defaultRegion
 	}
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "skip_drain", req.SkipDrain)
+	parameter.AddToQuery(query, "replace", req.Replace)
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -2254,6 +2264,7 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/nodes/" + fmt.Sprint(req.NodeID) + "",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
