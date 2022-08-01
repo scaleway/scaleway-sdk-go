@@ -442,6 +442,8 @@ const (
 	NodeStatusUpgrading = NodeStatus("upgrading")
 	// NodeStatusStarting is [insert doc].
 	NodeStatusStarting = NodeStatus("starting")
+	// NodeStatusRegistering is [insert doc].
+	NodeStatusRegistering = NodeStatus("registering")
 )
 
 func (enum NodeStatus) String() string {
