@@ -1588,8 +1588,8 @@ type Volume struct {
 	ID string `json:"id"`
 	// Name: the volume name
 	Name string `json:"name"`
-	// ExportURI: show the volume NBD export URI
-	ExportURI string `json:"export_uri"`
+	// Deprecated: ExportURI: show the volume NBD export URI
+	ExportURI *string `json:"export_uri"`
 	// Size: the volume disk size
 	Size scw.Size `json:"size"`
 	// VolumeType: the volume type
