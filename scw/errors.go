@@ -525,7 +525,7 @@ func (r DeniedAuthenticationError) IsScwSdkError() {}
 
 // PreconditionFailedError implements the SdkError interface
 type PreconditionFailedError struct {
-	Precondition string `json:"method"`
+	Precondition string `json:"precondition"`
 	HelpMessage  string `json:"help_message"`
 
 	RawBody json.RawMessage `json:"-"`
