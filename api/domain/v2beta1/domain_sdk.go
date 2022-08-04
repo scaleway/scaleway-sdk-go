@@ -1046,8 +1046,8 @@ type Contact struct {
 	Lang LanguageCode `json:"lang"`
 
 	Resale bool `json:"resale"`
-
-	Questions []*ContactQuestion `json:"questions"`
+	// Deprecated
+	Questions *[]*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -1484,8 +1484,8 @@ type NewContact struct {
 	Lang LanguageCode `json:"lang"`
 
 	Resale bool `json:"resale"`
-
-	Questions []*ContactQuestion `json:"questions"`
+	// Deprecated
+	Questions *[]*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -3154,8 +3154,8 @@ type RegistrarAPIUpdateContactRequest struct {
 	Lang LanguageCode `json:"lang"`
 
 	Resale *bool `json:"resale"`
-
-	Questions []*UpdateContactRequestQuestion `json:"questions"`
+	// Deprecated
+	Questions *[]*UpdateContactRequestQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
