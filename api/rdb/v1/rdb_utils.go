@@ -165,7 +165,7 @@ type WaitForReadReplicaRequest struct {
 
 // WaitForReadReplica waits for the read replica to be in a "terminal state" before returning.
 // This function can be used to wait for a read replica to be ready for example.
-func (s *API) WaitForReadReplica(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -183,7 +183,7 @@ func (s *API) WaitForReadReplica(req *WaitForInstanceRequest, opts ...scw.Reques
 	readReplica, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetReadReplica(&GetReadReplicaRequest{
-				ReadReplicaID: req.InstanceID,
+				ReadReplicaID: req.ReadReplicaID,
 				Region:        req.Region,
 			}, opts...)
 
