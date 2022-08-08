@@ -789,7 +789,7 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 type CreateClusterRequestPoolConfig struct {
 	// Name: the name of the pool
 	Name string `json:"name"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
@@ -949,7 +949,7 @@ type Pool struct {
 	Status PoolStatus `json:"status"`
 	// Version: the version of the pool
 	Version string `json:"version"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
 	NodeType string `json:"node_type"`
 	// Autoscaling: the enablement of the autoscaling feature for the pool
 	Autoscaling bool `json:"autoscaling"`
@@ -1719,7 +1719,7 @@ type CreatePoolRequest struct {
 	ClusterID string `json:"-"`
 	// Name: the name of the pool
 	Name string `json:"name"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
