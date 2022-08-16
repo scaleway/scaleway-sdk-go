@@ -1001,6 +1001,23 @@ type AvailableDomain struct {
 	Tld *Tld `json:"tld"`
 }
 
+// CheckContactsCompatibilityResponse: check contacts compatibility response
+type CheckContactsCompatibilityResponse struct {
+	Compatible bool `json:"compatible"`
+
+	OwnerCheckResult *CheckContactsCompatibilityResponseContactCheckResult `json:"owner_check_result"`
+
+	AdministrativeCheckResult *CheckContactsCompatibilityResponseContactCheckResult `json:"administrative_check_result"`
+
+	TechnicalCheckResult *CheckContactsCompatibilityResponseContactCheckResult `json:"technical_check_result"`
+}
+
+type CheckContactsCompatibilityResponseContactCheckResult struct {
+	Compatible bool `json:"compatible"`
+
+	ErrorMessage *string `json:"error_message"`
+}
+
 // ClearDNSZoneRecordsResponse: clear dns zone records response
 type ClearDNSZoneRecordsResponse struct {
 }
@@ -3039,6 +3056,61 @@ func (s *RegistrarAPI) DeleteExternalDomain(req *RegistrarAPIDeleteExternalDomai
 	}
 
 	var resp DeleteExternalDomainResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RegistrarAPICheckContactsCompatibilityRequest struct {
+
+	// Precisely one of Domain, Tld must be set.
+	Domain *string `json:"domain,omitempty"`
+
+	// Precisely one of Domain, Tld must be set.
+	Tld *string `json:"tld,omitempty"`
+
+	// Precisely one of OwnerContact, OwnerContactID must be set.
+	OwnerContactID *string `json:"owner_contact_id,omitempty"`
+
+	// Precisely one of OwnerContact, OwnerContactID must be set.
+	OwnerContact *NewContact `json:"owner_contact,omitempty"`
+
+	// Precisely one of AdministrativeContact, AdministrativeContactID must be set.
+	AdministrativeContactID *string `json:"administrative_contact_id,omitempty"`
+
+	// Precisely one of AdministrativeContact, AdministrativeContactID must be set.
+	AdministrativeContact *NewContact `json:"administrative_contact,omitempty"`
+
+	// Precisely one of TechnicalContact, TechnicalContactID must be set.
+	TechnicalContactID *string `json:"technical_contact_id,omitempty"`
+
+	// Precisely one of TechnicalContact, TechnicalContactID must be set.
+	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
+}
+
+// CheckContactsCompatibility: check if contacts are compatible against a domain or a tld
+//
+// Check if contacts are compatible against a domain or a tld.
+// If not, it will return the information requiring a correction.
+//
+func (s *RegistrarAPI) CheckContactsCompatibility(req *RegistrarAPICheckContactsCompatibilityRequest, opts ...scw.RequestOption) (*CheckContactsCompatibilityResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/domain/v2beta1/check-contacts-compatibility",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckContactsCompatibilityResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

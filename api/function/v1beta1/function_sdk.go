@@ -594,6 +594,10 @@ const (
 	RuntimeStatusAvailable = RuntimeStatus("available")
 	// RuntimeStatusDeprecated is [insert doc].
 	RuntimeStatusDeprecated = RuntimeStatus("deprecated")
+	// RuntimeStatusEndOfSupport is [insert doc].
+	RuntimeStatusEndOfSupport = RuntimeStatus("end_of_support")
+	// RuntimeStatusEndOfLife is [insert doc].
+	RuntimeStatusEndOfLife = RuntimeStatus("end_of_life")
 )
 
 func (enum RuntimeStatus) String() string {
