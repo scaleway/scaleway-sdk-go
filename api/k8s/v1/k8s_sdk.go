@@ -789,7 +789,9 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 type CreateClusterRequestPoolConfig struct {
 	// Name: the name of the pool
 	Name string `json:"name"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	//
+	// The node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
@@ -797,13 +799,13 @@ type CreateClusterRequestPoolConfig struct {
 	Autoscaling bool `json:"autoscaling"`
 	// Size: the size (number of nodes) of the pool
 	Size uint32 `json:"size"`
-	// MinSize: the minimun size of the pool
+	// MinSize: the minimum size of the pool
 	//
-	// The minimun size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize *uint32 `json:"min_size"`
 	// MaxSize: the maximum size of the pool
 	//
-	// The maximum size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize *uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
@@ -949,19 +951,21 @@ type Pool struct {
 	Status PoolStatus `json:"status"`
 	// Version: the version of the pool
 	Version string `json:"version"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	//
+	// The node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// Autoscaling: the enablement of the autoscaling feature for the pool
 	Autoscaling bool `json:"autoscaling"`
 	// Size: the size (number of nodes) of the pool
 	Size uint32 `json:"size"`
-	// MinSize: the minimun size of the pool
+	// MinSize: the minimum size of the pool
 	//
-	// The minimun size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize uint32 `json:"min_size"`
 	// MaxSize: the maximum size of the pool
 	//
-	// The maximum size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
@@ -1719,7 +1723,9 @@ type CreatePoolRequest struct {
 	ClusterID string `json:"-"`
 	// Name: the name of the pool
 	Name string `json:"name"`
-	// NodeType: the node type is the type of Scaleway Instance wanted for the pool, nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST)
+	// NodeType: the node type is the type of Scaleway Instance wanted for the pool
+	//
+	// The node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: the placement group ID in which all the nodes of the pool will be created
 	PlacementGroupID *string `json:"placement_group_id"`
@@ -1727,13 +1733,13 @@ type CreatePoolRequest struct {
 	Autoscaling bool `json:"autoscaling"`
 	// Size: the size (number of nodes) of the pool
 	Size uint32 `json:"size"`
-	// MinSize: the minimun size of the pool
+	// MinSize: the minimum size of the pool
 	//
-	// The minimun size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize *uint32 `json:"min_size"`
 	// MaxSize: the maximum size of the pool
 	//
-	// The maximum size of the pool. Note that this fields will be used only when autoscaling is enabled.
+	// The maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize *uint32 `json:"max_size"`
 	// ContainerRuntime: the container runtime for the nodes of the pool
 	//
