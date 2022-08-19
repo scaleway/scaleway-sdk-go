@@ -1094,8 +1094,8 @@ type Version struct {
 	Region scw.Region `json:"region"`
 	// AvailableCnis: the supported Container Network Interface (CNI) plugins for this version
 	AvailableCnis []CNI `json:"available_cnis"`
-	// AvailableIngresses: the supported Ingress Controllers for this version
-	AvailableIngresses []Ingress `json:"available_ingresses"`
+	// Deprecated: AvailableIngresses: the supported Ingress Controllers for this version
+	AvailableIngresses *[]Ingress `json:"available_ingresses,omitempty"`
 	// AvailableContainerRuntimes: the supported container runtimes for this version
 	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes"`
 	// AvailableFeatureGates: the supported feature gates for this version
