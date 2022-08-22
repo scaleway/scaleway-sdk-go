@@ -776,7 +776,7 @@ type CreateSSHKeyRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// CreateSSHKey: add an SSH key
+// CreateSSHKey: create an SSH key
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -873,7 +873,7 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: remove an SSH key
+// DeleteSSHKey: delete an SSH key
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1228,7 +1228,7 @@ type CreateGroupRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateGroup: add a new group
+// CreateGroup: create a new group
 func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1882,7 +1882,7 @@ type CreateAPIKeyRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateAPIKey: add an API key
+// CreateAPIKey: create an API key
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -1976,7 +1976,7 @@ type DeleteAPIKeyRequest struct {
 	AccessKey string `json:"-"`
 }
 
-// DeleteAPIKey: remove an API key
+// DeleteAPIKey: delete an API key
 func (s *API) DeleteAPIKey(req *DeleteAPIKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
