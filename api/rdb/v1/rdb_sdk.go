@@ -2444,6 +2444,8 @@ type CreateReadReplicaRequest struct {
 }
 
 // CreateReadReplica: create a read replica
+//
+// You can only create a maximum of 3 read replicas for one instance.
 func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2568,6 +2570,10 @@ type ResetReadReplicaRequest struct {
 }
 
 // ResetReadReplica: reset a read replica
+//
+// Resetting a read replica resyncs data from the leader node. This operation can take some time, depending on the database's size.
+// During this operation, the read replica will not be available. Endpoints will not change.
+//
 func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2616,6 +2622,8 @@ type CreateReadReplicaEndpointRequest struct {
 }
 
 // CreateReadReplicaEndpoint: create a new endpoint for a given read replica
+//
+// A read replica can have at most one direct access and one private network endpoint.
 func (s *API) CreateReadReplicaEndpoint(req *CreateReadReplicaEndpointRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -4084,6 +4092,8 @@ type DeleteEndpointRequest struct {
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
 	// EndpointID: UUID of the endpoint you want to delete
+	//
+	// This endpoint can also be used to delete a read replica endpoint.
 	EndpointID string `json:"-"`
 }
 
