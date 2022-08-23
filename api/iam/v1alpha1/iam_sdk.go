@@ -776,13 +776,17 @@ type CreateSSHKeyRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// CreateSSHKey: add an SSH key
+// CreateSSHKey: create an SSH key
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("key")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -873,7 +877,7 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: remove an SSH key
+// DeleteSSHKey: delete an SSH key
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1046,6 +1050,10 @@ func (s *API) CreateApplication(req *CreateApplicationRequest, opts ...scw.Reque
 	if req.OrganizationID == "" {
 		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
 		req.OrganizationID = defaultOrganizationID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("app")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1228,13 +1236,17 @@ type CreateGroupRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateGroup: add a new group
+// CreateGroup: create a new group
 func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
 	if req.OrganizationID == "" {
 		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
 		req.OrganizationID = defaultOrganizationID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("grp")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1560,6 +1572,10 @@ func (s *API) CreatePolicy(req *CreatePolicyRequest, opts ...scw.RequestOption) 
 		req.OrganizationID = defaultOrganizationID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("pol")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/iam/v1alpha1/policies",
@@ -1882,7 +1898,7 @@ type CreateAPIKeyRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateAPIKey: add an API key
+// CreateAPIKey: create an API key
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -1976,7 +1992,7 @@ type DeleteAPIKeyRequest struct {
 	AccessKey string `json:"-"`
 }
 
-// DeleteAPIKey: remove an API key
+// DeleteAPIKey: delete an API key
 func (s *API) DeleteAPIKey(req *DeleteAPIKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
