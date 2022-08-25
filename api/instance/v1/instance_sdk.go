@@ -917,6 +917,18 @@ type Dashboard struct {
 	SecurityGroupsCount uint32 `json:"security_groups_count"`
 
 	IPsUnused uint32 `json:"ips_unused"`
+
+	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
+
+	VolumesBSSDCount uint32 `json:"volumes_b_ssd_count"`
+
+	VolumesLSSDTotalSize uint32 `json:"volumes_l_ssd_total_size"`
+
+	VolumesBSSDTotalSize uint32 `json:"volumes_b_ssd_total_size"`
+
+	PrivateNicsCount uint32 `json:"private_nics_count"`
+
+	PlacementGroupsCount uint32 `json:"placement_groups_count"`
 }
 
 type ExportSnapshotResponse struct {
