@@ -688,7 +688,9 @@ type MigrateClusterRequest struct {
 	ClusterSize *uint32 `json:"cluster_size,omitempty"`
 }
 
-// MigrateCluster: migrate a cluster
+// MigrateCluster: migrate your cluster architecture
+//
+// Upgrade your Database for Redis® cluster to a new version or scale it vertically / horizontally. Please note: scaling horizontally your Database for Redis® cluster will renew its TLS certificate.
 func (s *API) MigrateCluster(req *MigrateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
