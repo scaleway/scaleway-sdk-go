@@ -2569,10 +2569,11 @@ type ResetReadReplicaRequest struct {
 	ReadReplicaID string `json:"-"`
 }
 
-// ResetReadReplica: reset a read replica
+// ResetReadReplica: resync a read replica
 //
-// Resetting a read replica resyncs data from the leader node. This operation can take some time, depending on the database's size.
-// During this operation, the read replica will not be available. Endpoints will not change.
+// When you resync a read replica, first it is reset, and then its data is resynchronized from the primary node.
+// Your read replica will be unavailable during the resync process. The duration of this process is proportional to your Database Instance size.
+// The configured endpoints will not change.
 //
 func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
