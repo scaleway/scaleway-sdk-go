@@ -115,8 +115,8 @@ func (s *API) WaitForGatewayNetwork(req *WaitForGatewayNetworkRequest, opts ...s
 	return gatewayNetwork.(*GatewayNetwork), nil
 }
 
-// WaitForDHCPEntryRequest is used by WaitForDHCPEntry method
-type WaitForDHCPEntryRequest struct {
+// WaitForDHCPEntriesRequest is used by WaitForDHCPEntries method
+type WaitForDHCPEntriesRequest struct {
 	GatewayNetworkID *string
 	MacAddress       string
 
@@ -127,7 +127,7 @@ type WaitForDHCPEntryRequest struct {
 
 // WaitForDHCPEntries waits for at least one dhcp entry with the correct mac address.
 // This function can be used to wait for an instance to use dhcp
-func (s *API) WaitForDHCPEntries(req *WaitForDHCPEntryRequest, opts ...scw.RequestOption) (*ListDHCPEntriesResponse, error) {
+func (s *API) WaitForDHCPEntries(req *WaitForDHCPEntriesRequest, opts ...scw.RequestOption) (*ListDHCPEntriesResponse, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
