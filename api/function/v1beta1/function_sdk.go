@@ -899,6 +899,8 @@ type Token struct {
 	Status TokenStatus `json:"status"`
 
 	ExpiresAt *time.Time `json:"expires_at"`
+
+	Description *string `json:"description"`
 }
 
 // UploadURL: upload url
@@ -2207,6 +2209,8 @@ type CreateTokenRequest struct {
 	NamespaceID *string `json:"namespace_id,omitempty"`
 
 	ExpiresAt *time.Time `json:"expires_at"`
+
+	Description *string `json:"description"`
 }
 
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
