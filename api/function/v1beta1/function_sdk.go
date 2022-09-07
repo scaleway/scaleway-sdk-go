@@ -881,26 +881,27 @@ type SecretHashedValue struct {
 	HashedValue string `json:"hashed_value"`
 }
 
+// Token: token
 type Token struct {
+	ID string `json:"id"`
+
 	Token string `json:"token"`
-	// Deprecated
-	PublicKey *string `json:"public_key,omitempty"`
 
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
 
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
-
-	ID string `json:"id"`
+	// Deprecated
+	PublicKey *string `json:"public_key,omitempty"`
 	// Status:
 	//
 	// Default value: unknown
 	Status TokenStatus `json:"status"`
 
-	ExpiresAt *time.Time `json:"expires_at"`
-
 	Description *string `json:"description"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // UploadURL: upload url
@@ -2208,11 +2209,12 @@ type CreateTokenRequest struct {
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
 
-	ExpiresAt *time.Time `json:"expires_at"`
-
 	Description *string `json:"description"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
+// CreateToken: create a new revocable token
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2254,6 +2256,7 @@ type GetTokenRequest struct {
 	TokenID string `json:"-"`
 }
 
+// GetToken: get a token
 func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2304,6 +2307,7 @@ type ListTokensRequest struct {
 	NamespaceID *string `json:"-"`
 }
 
+// ListTokens: list all tokens
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -2353,6 +2357,7 @@ type DeleteTokenRequest struct {
 	TokenID string `json:"-"`
 }
 
+// DeleteToken: delete a token
 func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
