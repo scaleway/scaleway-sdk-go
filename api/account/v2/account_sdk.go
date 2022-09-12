@@ -166,6 +166,8 @@ type ListProjectsRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListProjectsRequestOrderBy `json:"-"`
+	// ProjectIDs: filter out by a list of project ID
+	ProjectIDs []string `json:"-"`
 }
 
 // ListProjects: list projects
@@ -188,6 +190,7 @@ func (s *API) ListProjects(req *ListProjectsRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_ids", req.ProjectIDs)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
