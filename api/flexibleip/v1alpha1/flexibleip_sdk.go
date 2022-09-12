@@ -245,7 +245,7 @@ type FlexibleIP struct {
 	// Default value: unknown
 	Status FlexibleIPStatus `json:"status"`
 	// IPAddress: IP of the Flexible IP
-	IPAddress net.IP `json:"ip_address"`
+	IPAddress scw.IPNet `json:"ip_address"`
 	// MacAddress: mAC address of the Flexible IP
 	MacAddress *MACAddress `json:"mac_address"`
 	// ServerID: ID of the server linked to the Flexible IP
