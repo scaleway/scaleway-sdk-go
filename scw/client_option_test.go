@@ -135,7 +135,7 @@ func TestClientOptions(t *testing.T) {
 				s.token = auth.NewToken(testAccessKey, testSecretKey)
 				s.defaultZone = &v
 			},
-			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, pl-waw-1",
+			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, pl-waw-1, pl-waw-2",
 		},
 	}
 
