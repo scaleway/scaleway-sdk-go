@@ -49,6 +49,7 @@ func TestAllStrCases(t *testing.T) {
 		{"ip-id", "IPID", "ipID", "ip-id"},
 		{"lb-id", "LBID", "lbID", "lb-id"},
 		{"acl-id", "ACLID", "aclID", "acl-id"},
+		{"dhcp-id", "DHCPID", "dhcpID", "dhcp-id"},
 	}
 	for _, test := range tests {
 		got := ToPublicGoName(test.name)
