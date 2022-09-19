@@ -1436,6 +1436,16 @@ type ServerType struct {
 	Baremetal bool `json:"baremetal"`
 	// Network: network available for the instance
 	Network *ServerTypeNetwork `json:"network"`
+	// Capabilities: capabilities
+	Capabilities *ServerTypeCapabilities `json:"capabilities"`
+}
+
+// ServerTypeCapabilities: server type. capabilities
+type ServerTypeCapabilities struct {
+	// BlockStorage: true if server supports block storage
+	BlockStorage *bool `json:"block_storage"`
+	// BootTypes: list of supported boot types
+	BootTypes []BootType `json:"boot_types"`
 }
 
 // ServerTypeNetwork: server type. network
