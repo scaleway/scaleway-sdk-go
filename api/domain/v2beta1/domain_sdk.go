@@ -3290,6 +3290,8 @@ type RegistrarAPIListDomainsRequest struct {
 	OrganizationID *string `json:"-"`
 
 	IsExternal *bool `json:"-"`
+
+	Domain *string `json:"-"`
 }
 
 // ListDomains: list domains
@@ -3312,6 +3314,7 @@ func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "is_external", req.IsExternal)
+	parameter.AddToQuery(query, "domain", req.Domain)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
