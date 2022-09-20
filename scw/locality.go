@@ -31,6 +31,9 @@ const (
 	ZonePlWaw1 = Zone("pl-waw-1")
 	// ZonePlWaw2 represents the pl-waw-2 zone
 	ZonePlWaw2 = Zone("pl-waw-2")
+
+	// ZoneSweeper represents a zone sweeper, it should repeat action across all zones
+	ZoneSweeper = Zone("zone-sweeper")
 )
 
 var (

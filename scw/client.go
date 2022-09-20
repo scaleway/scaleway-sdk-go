@@ -10,12 +10,15 @@ import (
 	"net/http/httputil"
 	"reflect"
 	"strconv"
+	"strings"
 	"sync/atomic"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
+
+	goerrors "errors"
 )
 
 // Client is the Scaleway client which performs API requests.
@@ -162,6 +165,10 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 
 	if req.auth == nil {
 		req.auth = c.auth
+	}
+
+	if strings.Contains(req.Path, string(ZoneSweeper)) {
+		return c.doListAllZones(req, res)
 	}
 
 	if req.allPages {
@@ -332,6 +339,31 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 			if pageCount == maxPageCount {
 				totalCount := nextPage.(lister).UnsafeGetTotalCount()
 				pageCount = (totalCount + pageSize - 1) / pageSize
+			}
+		}
+		return nil
+	}
+
+	return errors.New("%T does not support pagination", res)
+}
+
+func (c *Client) doListAllZones(req *ScalewayRequest, res interface{}) (err error) {
+	if response, isLister := res.(lister); isLister {
+		path := req.Path
+		for _, zone := range AllZones {
+			req.Path = strings.ReplaceAll(path, string(ZoneSweeper), string(zone))
+
+			nextZone := newVariableFromType(response)
+			err := c.doListAll(req, nextZone)
+			if err != nil {
+				responseError := &ResponseError{}
+				if !goerrors.As(err, &responseError) || responseError.StatusCode != 404 {
+					return err
+				}
+			}
+			_, err = response.UnsafeAppend(nextZone)
+			if err != nil {
+				return err
 			}
 		}
 		return nil
