@@ -167,8 +167,8 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 		req.auth = c.auth
 	}
 
-	if req.allZones {
-		return c.doListAllZones(req, res)
+	if req.zones != nil {
+		return c.doListAllZones(req, res, req.zones)
 	}
 
 	if req.allPages {
@@ -347,7 +347,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	return errors.New("%T does not support pagination", res)
 }
 
-func (c *Client) doListAllZones(req *ScalewayRequest, res interface{}) (err error) {
+func (c *Client) doListAllZones(req *ScalewayRequest, res interface{}, zones []Zone) (err error) {
 	if response, isLister := res.(lister); isLister {
 		path := req.Path
 		for _, zone := range AllZones {
@@ -355,7 +355,7 @@ func (c *Client) doListAllZones(req *ScalewayRequest, res interface{}) (err erro
 				path = strings.ReplaceAll(req.Path, string(zone), "%zone%")
 			}
 		}
-		for _, zone := range AllZones {
+		for _, zone := range zones {
 			req.Path = strings.ReplaceAll(path, "%zone%", string(zone))
 
 			nextZone := newVariableFromType(response)
