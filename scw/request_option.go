@@ -30,3 +30,11 @@ func WithAuthRequest(accessKey, secretKey string) RequestOption {
 		s.auth = auth.NewToken(accessKey, secretKey)
 	}
 }
+
+// WithAllZones aggregate results from all zones in the response of a List request.
+// Will error when pagination is not supported on the request.
+func WithAllZones() RequestOption {
+	return func(s *ScalewayRequest) {
+		s.allZones = true
+	}
+}

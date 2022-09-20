@@ -24,6 +24,7 @@ type ScalewayRequest struct {
 	ctx      context.Context
 	auth     auth.Auth
 	allPages bool
+	allZones bool
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.
