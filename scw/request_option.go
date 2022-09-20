@@ -35,6 +35,6 @@ func WithAuthRequest(accessKey, secretKey string) RequestOption {
 // Will error when pagination is not supported on the request.
 func WithZones(zones ...Zone) RequestOption {
 	return func(s *ScalewayRequest) {
-		s.zones = zones
+		s.zones = append(s.zones, zones...)
 	}
 }
