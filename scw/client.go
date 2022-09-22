@@ -428,6 +428,13 @@ func sortSliceByZone(list interface{}) {
 
 // sortResponseByZone find first field that is a slice in a struct and sort it by zone
 func sortResponseByZone(res interface{}) {
+	// res may be ListServersResponse
+	//
+	// type ListServersResponse struct {
+	//	TotalCount uint32 `json:"total_count"`
+	//	Servers []*Server `json:"servers"`
+	// }
+	// We iterate over fields searching for the slice one to sort it
 	resType := reflect.TypeOf(res).Elem()
 	fields := reflect.VisibleFields(resType)
 	for _, field := range fields {
