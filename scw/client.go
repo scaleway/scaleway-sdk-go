@@ -3,6 +3,7 @@ package scw
 import (
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math"
 	"net"
@@ -347,6 +348,8 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	return errors.New("%T does not support pagination", res)
 }
 
+// doListZones collects all zones using multiple list requests and aggregate all results on a single response.
+// result is sorted by zone
 func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone) (err error) {
 	if response, isLister := res.(lister); isLister {
 		// Prepare request with %zone% that can be replaced with actual zone
@@ -354,7 +357,11 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 		for _, zone := range AllZones {
 			if strings.Contains(req.Path, string(zone)) {
 				path = strings.ReplaceAll(req.Path, string(zone), "%zone%")
+				break
 			}
+		}
+		if !strings.Contains(path, "%zone%") {
+			return fmt.Errorf("request is not a valid zoned request")
 		}
 
 		// Requests are parallelized
@@ -366,11 +373,15 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 		for _, zone := range zones {
 			go func(zone Zone) {
 				defer requestGroup.Done()
+				// Request is cloned as doListAll will change header
+				// We remove zones as it would recurse in the same function
 				req := req.clone()
+				req.zones = []Zone(nil)
 				req.Path = strings.ReplaceAll(path, "%zone%", string(zone))
 
+				// We create a new response that we append to main response
 				zoneResponse := newVariableFromType(response)
-				err := c.doListAll(req, zoneResponse)
+				err := c.Do(req, zoneResponse)
 				if err != nil {
 					errChan <- err
 				}
@@ -384,7 +395,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 		}
 		requestGroup.Wait()
 
-	L:
+	L: // We gather potential errors and return them all together
 		for {
 			select {
 			case newErr := <-errChan:
@@ -405,6 +416,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 	return errors.New("%T does not support pagination", res)
 }
 
+// sortSliceByZone sorts a slice of struct using a Zone field that should exist
 func sortSliceByZone(list interface{}) {
 	listValue := reflect.ValueOf(list)
 	sort.Slice(list, func(i, j int) bool {
@@ -414,6 +426,7 @@ func sortSliceByZone(list interface{}) {
 	})
 }
 
+// sortResponseByZone find first field that is a slice in a struct and sort it by zone
 func sortResponseByZone(res interface{}) {
 	resType := reflect.TypeOf(res).Elem()
 	fields := reflect.VisibleFields(resType)
