@@ -106,6 +106,8 @@ const (
 	ClusterStatusLocked = ClusterStatus("locked")
 	// ClusterStatusSuspended is [insert doc].
 	ClusterStatusSuspended = ClusterStatus("suspended")
+	// ClusterStatusInitializing is [insert doc].
+	ClusterStatusInitializing = ClusterStatus("initializing")
 )
 
 func (enum ClusterStatus) String() string {
