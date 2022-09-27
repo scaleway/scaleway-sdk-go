@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"reflect"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -19,6 +18,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/generic"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
@@ -469,21 +469,15 @@ func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []
 
 // sortSliceByZone sorts a slice of struct using a Zone field that should exist
 func sortSliceByZone(list interface{}) {
-	listValue := reflect.ValueOf(list)
-	sort.SliceStable(list, func(i, j int) bool {
-		zone1 := listValue.Index(i).Elem().FieldByName("Zone").Interface().(Zone)
-		zone2 := listValue.Index(j).Elem().FieldByName("Zone").Interface().(Zone)
-		return zone1 < zone2
+	generic.SortSliceByField(list, "Zone", func(i interface{}, i2 interface{}) bool {
+		return i.(string) < i2.(string)
 	})
 }
 
 // sortSliceByRegion sorts a slice of struct using a Region field that should exist
 func sortSliceByRegion(list interface{}) {
-	listValue := reflect.ValueOf(list)
-	sort.SliceStable(list, func(i, j int) bool {
-		region1 := listValue.Index(i).Elem().FieldByName("Region").Interface().(Region)
-		region2 := listValue.Index(j).Elem().FieldByName("Region").Interface().(Region)
-		return region1 < region2
+	generic.SortSliceByField(list, "Region", func(i interface{}, i2 interface{}) bool {
+		return i.(string) < i2.(string)
 	})
 }
 
