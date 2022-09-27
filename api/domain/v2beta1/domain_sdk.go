@@ -513,6 +513,42 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type HostStatus string
+
+const (
+	// HostStatusUnknownStatus is [insert doc].
+	HostStatusUnknownStatus = HostStatus("unknown_status")
+	// HostStatusActive is [insert doc].
+	HostStatusActive = HostStatus("active")
+	// HostStatusUpdating is [insert doc].
+	HostStatusUpdating = HostStatus("updating")
+	// HostStatusDeleting is [insert doc].
+	HostStatusDeleting = HostStatus("deleting")
+)
+
+func (enum HostStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum HostStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *HostStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = HostStatus(HostStatus(tmp).String())
+	return nil
+}
+
 type LanguageCode string
 
 const (
@@ -968,6 +1004,12 @@ const (
 	TaskTypeDeleteDomainExpired = TaskType("delete_domain_expired")
 	// TaskTypeDeleteExternalDomain is [insert doc].
 	TaskTypeDeleteExternalDomain = TaskType("delete_external_domain")
+	// TaskTypeCreateHost is [insert doc].
+	TaskTypeCreateHost = TaskType("create_host")
+	// TaskTypeUpdateHost is [insert doc].
+	TaskTypeUpdateHost = TaskType("update_host")
+	// TaskTypeDeleteHost is [insert doc].
+	TaskTypeDeleteHost = TaskType("delete_host")
 )
 
 func (enum TaskType) String() string {
@@ -1351,6 +1393,18 @@ type GetDomainAuthCodeResponse struct {
 	AuthCode string `json:"auth_code"`
 }
 
+type Host struct {
+	Domain string `json:"domain"`
+
+	Name string `json:"name"`
+
+	IPs []net.IP `json:"ips"`
+	// Status:
+	//
+	// Default value: unknown_status
+	Status HostStatus `json:"status"`
+}
+
 type ImportProviderDNSZoneRequestOnlineV1 struct {
 	Token string `json:"token"`
 }
@@ -1426,6 +1480,13 @@ type ListDNSZonesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 	// DNSZones: the paginated returned DNS zones
 	DNSZones []*DNSZone `json:"dns_zones"`
+}
+
+// ListDomainHostsResponse: list domain hosts response
+type ListDomainHostsResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	Hosts []*Host `json:"hosts"`
 }
 
 // ListDomainsResponse: list domains response
@@ -3751,6 +3812,156 @@ func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDo
 	return &resp, nil
 }
 
+type RegistrarAPICreateDomainHostRequest struct {
+	Domain string `json:"-"`
+
+	Name string `json:"name"`
+
+	IPs []net.IP `json:"ips"`
+}
+
+// CreateDomainHost: create domain hostname with glue IPs
+func (s *RegistrarAPI) CreateDomainHost(req *RegistrarAPICreateDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
+	var err error
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/domain/v2beta1/domains/" + fmt.Sprint(req.Domain) + "/hosts",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Host
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RegistrarAPIListDomainHostsRequest struct {
+	Domain string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDomainHosts: list domain hostnames with they glue IPs
+func (s *RegistrarAPI) ListDomainHosts(req *RegistrarAPIListDomainHostsRequest, opts ...scw.RequestOption) (*ListDomainHostsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/domain/v2beta1/domains/" + fmt.Sprint(req.Domain) + "/hosts",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListDomainHostsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RegistrarAPIUpdateDomainHostRequest struct {
+	Domain string `json:"-"`
+
+	Name string `json:"-"`
+
+	IPs *[]string `json:"ips"`
+}
+
+// UpdateDomainHost: update domain hostname with glue IPs
+func (s *RegistrarAPI) UpdateDomainHost(req *RegistrarAPIUpdateDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
+	var err error
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Name) == "" {
+		return nil, errors.New("field Name cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/domain/v2beta1/domains/" + fmt.Sprint(req.Domain) + "/hosts/" + fmt.Sprint(req.Name) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Host
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RegistrarAPIDeleteDomainHostRequest struct {
+	Domain string `json:"-"`
+
+	Name string `json:"-"`
+}
+
+// DeleteDomainHost: delete domain hostname
+func (s *RegistrarAPI) DeleteDomainHost(req *RegistrarAPIDeleteDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
+	var err error
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Name) == "" {
+		return nil, errors.New("field Name cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/domain/v2beta1/domains/" + fmt.Sprint(req.Domain) + "/hosts/" + fmt.Sprint(req.Name) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Host
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDNSZonesResponse) UnsafeGetTotalCount() uint32 {
@@ -3920,4 +4131,23 @@ func (r *ListRenewableDomainsResponse) UnsafeAppend(res interface{}) (uint32, er
 	r.Domains = append(r.Domains, results.Domains...)
 	r.TotalCount += uint32(len(results.Domains))
 	return uint32(len(results.Domains)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDomainHostsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDomainHostsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDomainHostsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Hosts = append(r.Hosts, results.Hosts...)
+	r.TotalCount += uint32(len(results.Hosts))
+	return uint32(len(results.Hosts)), nil
 }
