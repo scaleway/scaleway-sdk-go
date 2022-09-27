@@ -171,6 +171,9 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 	if req.zones != nil {
 		return c.doListZones(req, res, req.zones)
 	}
+	if req.regions != nil {
+		return c.doListRegions(req, res, req.regions)
+	}
 
 	if req.allPages {
 		return c.doListAll(req, res)
@@ -348,68 +351,116 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	return errors.New("%T does not support pagination", res)
 }
 
+// doListLocalities collects all localities using mutliple list requests and aggregate all results on a lister response
+// results is sorted by locality
+func (c *Client) doListLocalities(req *ScalewayRequest, res lister, localities []string) (err error) {
+	path := req.Path
+	if !strings.Contains(path, "%locality%") {
+		return fmt.Errorf("request is not a valid locality request")
+	}
+	// Requests are parallelized
+	responseMutex := sync.Mutex{}
+	requestGroup := sync.WaitGroup{}
+	errChan := make(chan error, len(localities))
+
+	requestGroup.Add(len(localities))
+	for _, locality := range localities {
+		go func(locality string) {
+			defer requestGroup.Done()
+			// Request is cloned as doListAll will change header
+			// We remove zones as it would recurse in the same function
+			req := req.clone()
+			req.zones = []Zone(nil)
+			req.Path = strings.ReplaceAll(path, "%locality%", locality)
+
+			// We create a new response that we append to main response
+			zoneResponse := newVariableFromType(res)
+			err := c.Do(req, zoneResponse)
+			if err != nil {
+				errChan <- err
+			}
+			responseMutex.Lock()
+			_, err = res.UnsafeAppend(zoneResponse)
+			responseMutex.Unlock()
+			if err != nil {
+				errChan <- err
+			}
+		}(locality)
+	}
+	requestGroup.Wait()
+
+L: // We gather potential errors and return them all together
+	for {
+		select {
+		case newErr := <-errChan:
+			err = errors.Wrap(err, newErr.Error())
+		default:
+			break L
+		}
+	}
+	close(errChan)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // doListZones collects all zones using multiple list requests and aggregate all results on a single response.
 // result is sorted by zone
 func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone) (err error) {
 	if response, isLister := res.(lister); isLister {
 		// Prepare request with %zone% that can be replaced with actual zone
-		path := req.Path
 		for _, zone := range AllZones {
 			if strings.Contains(req.Path, string(zone)) {
-				path = strings.ReplaceAll(req.Path, string(zone), "%zone%")
+				req.Path = strings.ReplaceAll(req.Path, string(zone), "%locality%")
 				break
 			}
 		}
-		if !strings.Contains(path, "%zone%") {
+		if !strings.Contains(req.Path, "%locality%") {
 			return fmt.Errorf("request is not a valid zoned request")
 		}
-
-		// Requests are parallelized
-		responseMutex := sync.Mutex{}
-		requestGroup := sync.WaitGroup{}
-		errChan := make(chan error, len(zones))
-
-		requestGroup.Add(len(zones))
+		localities := make([]string, 0, len(zones))
 		for _, zone := range zones {
-			go func(zone Zone) {
-				defer requestGroup.Done()
-				// Request is cloned as doListAll will change header
-				// We remove zones as it would recurse in the same function
-				req := req.clone()
-				req.zones = []Zone(nil)
-				req.Path = strings.ReplaceAll(path, "%zone%", string(zone))
-
-				// We create a new response that we append to main response
-				zoneResponse := newVariableFromType(response)
-				err := c.Do(req, zoneResponse)
-				if err != nil {
-					errChan <- err
-				}
-				responseMutex.Lock()
-				_, err = response.UnsafeAppend(zoneResponse)
-				responseMutex.Unlock()
-				if err != nil {
-					errChan <- err
-				}
-			}(zone)
+			localities = append(localities, string(zone))
 		}
-		requestGroup.Wait()
 
-	L: // We gather potential errors and return them all together
-		for {
-			select {
-			case newErr := <-errChan:
-				err = errors.Wrap(err, newErr.Error())
-			default:
-				break L
-			}
-		}
-		close(errChan)
+		err := c.doListLocalities(req, response, localities)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to list localities: %w", err)
 		}
 
 		sortResponseByZone(res)
+		return nil
+	}
+
+	return errors.New("%T does not support pagination", res)
+}
+
+// doListRegions collects all regions using multiple list requests and aggregate all results on a single response.
+// result is sorted by region
+func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []Region) (err error) {
+	if response, isLister := res.(lister); isLister {
+		// Prepare request with %locality% that can be replaced with actual region
+		for _, region := range AllRegions {
+			if strings.Contains(req.Path, string(region)) {
+				req.Path = strings.ReplaceAll(req.Path, string(region), "%locality%")
+				break
+			}
+		}
+		if !strings.Contains(req.Path, "%locality%") {
+			return fmt.Errorf("request is not a valid zoned request")
+		}
+		localities := make([]string, 0, len(regions))
+		for _, region := range regions {
+			localities = append(localities, string(region))
+		}
+
+		err := c.doListLocalities(req, response, localities)
+		if err != nil {
+			return fmt.Errorf("failed to list localities: %w", err)
+		}
+
+		sortResponseByRegion(res)
 		return nil
 	}
 
@@ -423,6 +474,16 @@ func sortSliceByZone(list interface{}) {
 		zone1 := listValue.Index(i).Elem().FieldByName("Zone").Interface().(Zone)
 		zone2 := listValue.Index(j).Elem().FieldByName("Zone").Interface().(Zone)
 		return zone1 < zone2
+	})
+}
+
+// sortSliceByRegion sorts a slice of struct using a Region field that should exist
+func sortSliceByRegion(list interface{}) {
+	listValue := reflect.ValueOf(list)
+	sort.SliceStable(list, func(i, j int) bool {
+		region1 := listValue.Index(i).Elem().FieldByName("Region").Interface().(Region)
+		region2 := listValue.Index(j).Elem().FieldByName("Region").Interface().(Region)
+		return region1 < region2
 	})
 }
 
@@ -440,6 +501,25 @@ func sortResponseByZone(res interface{}) {
 	for _, field := range fields {
 		if field.Type.Kind() == reflect.Slice {
 			sortSliceByZone(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface())
+			return
+		}
+	}
+}
+
+// sortResponseByRegion find first field that is a slice in a struct and sort it by region
+func sortResponseByRegion(res interface{}) {
+	// res may be ListServersResponse
+	//
+	// type ListServersResponse struct {
+	//	TotalCount uint32 `json:"total_count"`
+	//	Servers []*Server `json:"servers"`
+	// }
+	// We iterate over fields searching for the slice one to sort it
+	resType := reflect.TypeOf(res).Elem()
+	fields := reflect.VisibleFields(resType)
+	for _, field := range fields {
+		if field.Type.Kind() == reflect.Slice {
+			sortSliceByRegion(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface())
 			return
 		}
 	}

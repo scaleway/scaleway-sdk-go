@@ -25,6 +25,7 @@ type ScalewayRequest struct {
 	auth     auth.Auth
 	allPages bool
 	zones    []Zone
+	regions  []Region
 }
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.

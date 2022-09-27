@@ -38,3 +38,11 @@ func WithZones(zones ...Zone) RequestOption {
 		s.zones = append(s.zones, zones...)
 	}
 }
+
+// WithRegions aggregate results from requested regions in the response of a List request.
+// Will error when pagination is not supported on the request.
+func WithRegions(regions ...Region) RequestOption {
+	return func(s *ScalewayRequest) {
+		s.regions = append(s.regions, regions...)
+	}
+}
