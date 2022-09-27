@@ -1043,6 +1043,8 @@ type Backend struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	FailoverHost *string `json:"failover_host"`
+
+	SslBridging *bool `json:"ssl_bridging"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -2285,9 +2287,12 @@ type CreateBackendRequest struct {
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
 	//
-	// Only the host part of the Scaleway S3 bucket website is expected e.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
+	// Only the host part of the Scaleway S3 bucket website is expected.
+	// E.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
 	//
 	FailoverHost *string `json:"failover_host"`
+	// SslBridging: enable SSL between load balancer and backend servers
+	SslBridging *bool `json:"ssl_bridging"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2467,6 +2472,8 @@ type UpdateBackendRequest struct {
 	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
 	//
 	FailoverHost *string `json:"failover_host"`
+	// SslBridging: enable SSL between load balancer and backend servers
+	SslBridging *bool `json:"ssl_bridging"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5278,9 +5285,12 @@ type ZonedAPICreateBackendRequest struct {
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
 	//
-	// Only the host part of the Scaleway S3 bucket website is expected e.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
+	// Only the host part of the Scaleway S3 bucket website is expected.
+	// E.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
 	//
 	FailoverHost *string `json:"failover_host"`
+	// SslBridging: enable SSL between load balancer and backend servers
+	SslBridging *bool `json:"ssl_bridging"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5460,6 +5470,8 @@ type ZonedAPIUpdateBackendRequest struct {
 	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
 	//
 	FailoverHost *string `json:"failover_host"`
+	// SslBridging: enable SSL between load balancer and backend servers
+	SslBridging *bool `json:"ssl_bridging"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
