@@ -419,7 +419,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 // sortSliceByZone sorts a slice of struct using a Zone field that should exist
 func sortSliceByZone(list interface{}) {
 	listValue := reflect.ValueOf(list)
-	sort.Slice(list, func(i, j int) bool {
+	sort.SliceStable(list, func(i, j int) bool {
 		zone1 := listValue.Index(i).Elem().FieldByName("Zone").Interface().(Zone)
 		zone2 := listValue.Index(j).Elem().FieldByName("Zone").Interface().(Zone)
 		return zone1 < zone2
