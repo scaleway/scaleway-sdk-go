@@ -977,6 +977,32 @@ func (s *API) GetUser(req *GetUserRequest, opts ...scw.RequestOption) (*User, er
 	return &resp, nil
 }
 
+type DeleteUserRequest struct {
+	// UserID: ID of user to delete
+	UserID string `json:"-"`
+}
+
+// DeleteUser: delete a user
+func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type ListApplicationsRequest struct {
 	// OrderBy: criteria for sorting results
 	//
