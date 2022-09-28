@@ -429,7 +429,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 			return fmt.Errorf("failed to list localities: %w", err)
 		}
 
-		sortResponseByZone(res)
+		sortResponseByZones(res, zones)
 		return nil
 	}
 
@@ -460,29 +460,37 @@ func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []
 			return fmt.Errorf("failed to list localities: %w", err)
 		}
 
-		sortResponseByRegion(res)
+		sortResponseByRegions(res, regions)
 		return nil
 	}
 
 	return errors.New("%T does not support pagination", res)
 }
 
-// sortSliceByZone sorts a slice of struct using a Zone field that should exist
-func sortSliceByZone(list interface{}) {
+// sortSliceByZones sorts a slice of struct using a Zone field that should exist
+func sortSliceByZones(list interface{}, zones []Zone) {
+	zoneMap := map[Zone]int{}
+	for i, zone := range zones {
+		zoneMap[zone] = i
+	}
 	generic.SortSliceByField(list, "Zone", func(i interface{}, i2 interface{}) bool {
-		return i.(string) < i2.(string)
+		return zoneMap[i.(Zone)] < zoneMap[i2.(Zone)]
 	})
 }
 
-// sortSliceByRegion sorts a slice of struct using a Region field that should exist
-func sortSliceByRegion(list interface{}) {
+// sortSliceByRegions sorts a slice of struct using a Region field that should exist
+func sortSliceByRegions(list interface{}, regions []Region) {
+	regionMap := map[Region]int{}
+	for i, region := range regions {
+		regionMap[region] = i
+	}
 	generic.SortSliceByField(list, "Region", func(i interface{}, i2 interface{}) bool {
-		return i.(string) < i2.(string)
+		return regionMap[i.(Region)] < regionMap[i2.(Region)]
 	})
 }
 
-// sortResponseByZone find first field that is a slice in a struct and sort it by zone
-func sortResponseByZone(res interface{}) {
+// sortResponseByZones find first field that is a slice in a struct and sort it by zone
+func sortResponseByZones(res interface{}, zones []Zone) {
 	// res may be ListServersResponse
 	//
 	// type ListServersResponse struct {
@@ -494,14 +502,14 @@ func sortResponseByZone(res interface{}) {
 	fields := reflect.VisibleFields(resType)
 	for _, field := range fields {
 		if field.Type.Kind() == reflect.Slice {
-			sortSliceByZone(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface())
+			sortSliceByZones(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface(), zones)
 			return
 		}
 	}
 }
 
-// sortResponseByRegion find first field that is a slice in a struct and sort it by region
-func sortResponseByRegion(res interface{}) {
+// sortResponseByRegions find first field that is a slice in a struct and sort it by region
+func sortResponseByRegions(res interface{}, regions []Region) {
 	// res may be ListServersResponse
 	//
 	// type ListServersResponse struct {
@@ -513,7 +521,7 @@ func sortResponseByRegion(res interface{}) {
 	fields := reflect.VisibleFields(resType)
 	for _, field := range fields {
 		if field.Type.Kind() == reflect.Slice {
-			sortSliceByRegion(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface())
+			sortSliceByRegions(reflect.ValueOf(res).Elem().FieldByName(field.Name).Interface(), regions)
 			return
 		}
 	}
