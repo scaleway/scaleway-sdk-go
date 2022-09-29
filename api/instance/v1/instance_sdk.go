@@ -2975,7 +2975,7 @@ type CreateSnapshotRequest struct {
 	// Name: name of the snapshot
 	Name string `json:"name,omitempty"`
 	// VolumeID: UUID of the volume
-	VolumeID string `json:"volume_id,omitempty"`
+	VolumeID *string `json:"volume_id,omitempty"`
 	// Tags: the tags of the snapshot
 	Tags []string `json:"tags,omitempty"`
 	// Deprecated: Organization: organization ID of the snapshot
