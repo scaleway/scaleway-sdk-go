@@ -576,6 +576,10 @@ const (
 	SnapshotStateError = SnapshotState("error")
 	// SnapshotStateInvalidData is [insert doc].
 	SnapshotStateInvalidData = SnapshotState("invalid_data")
+	// SnapshotStateImporting is [insert doc].
+	SnapshotStateImporting = SnapshotState("importing")
+	// SnapshotStateExporting is [insert doc].
+	SnapshotStateExporting = SnapshotState("exporting")
 )
 
 func (enum SnapshotState) String() string {
@@ -2975,7 +2979,7 @@ type CreateSnapshotRequest struct {
 	// Name: name of the snapshot
 	Name string `json:"name,omitempty"`
 	// VolumeID: UUID of the volume
-	VolumeID string `json:"volume_id,omitempty"`
+	VolumeID *string `json:"volume_id,omitempty"`
 	// Tags: the tags of the snapshot
 	Tags []string `json:"tags,omitempty"`
 	// Deprecated: Organization: organization ID of the snapshot
