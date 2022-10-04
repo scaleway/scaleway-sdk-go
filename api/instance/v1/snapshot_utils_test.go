@@ -42,7 +42,7 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 	// Backup will create a snapshot for each volume + an image base on all snapshots.
 	snapshot, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
 		Name:     snapshotName,
-		VolumeID: serverRes.Server.Volumes["0"].ID,
+		VolumeID: &serverRes.Server.Volumes["0"].ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -88,7 +88,7 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 
 	createResponse, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
 		Name:     "name",
-		VolumeID: createVolume.Volume.ID,
+		VolumeID: &createVolume.Volume.ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
