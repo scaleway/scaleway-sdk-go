@@ -452,6 +452,8 @@ const (
 	ServerStatusOutOfStock = ServerStatus("out_of_stock")
 	// ServerStatusOrdered is [insert doc].
 	ServerStatusOrdered = ServerStatus("ordered")
+	// ServerStatusResetting is [insert doc].
+	ServerStatusResetting = ServerStatus("resetting")
 )
 
 func (enum ServerStatus) String() string {
