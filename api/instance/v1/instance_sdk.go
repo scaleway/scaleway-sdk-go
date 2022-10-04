@@ -576,6 +576,10 @@ const (
 	SnapshotStateError = SnapshotState("error")
 	// SnapshotStateInvalidData is [insert doc].
 	SnapshotStateInvalidData = SnapshotState("invalid_data")
+	// SnapshotStateImporting is [insert doc].
+	SnapshotStateImporting = SnapshotState("importing")
+	// SnapshotStateExporting is [insert doc].
+	SnapshotStateExporting = SnapshotState("exporting")
 )
 
 func (enum SnapshotState) String() string {
