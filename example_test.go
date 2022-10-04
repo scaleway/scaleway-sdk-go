@@ -80,6 +80,30 @@ func Example_listServers() {
 	fmt.Println(response)
 }
 
+func Example_listServersWithZones() {
+	// Create a Scaleway client
+	client, err := scw.NewClient(
+		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"), // Get your credentials at https://console.scaleway.com/project/credentials
+	)
+	if err != nil {
+		// handle error
+	}
+
+	// Create SDK objects for Scaleway Instance product
+	instanceAPI := instance.NewAPI(client)
+
+	// Call the ListServers method on the Instance SDK
+	response, err := instanceAPI.ListServers(&instance.ListServersRequest{},
+		// Add WithZones option to list servers from multiple zones
+		scw.WithZones(scw.ZoneFrPar1, scw.ZoneNlAms1, scw.ZonePlWaw1))
+	if err != nil {
+		// handle error
+	}
+
+	// Do something with the response...
+	fmt.Println(response)
+}
+
 func Example_createServer() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
