@@ -926,9 +926,9 @@ type Dashboard struct {
 
 	VolumesBSSDCount uint32 `json:"volumes_b_ssd_count"`
 
-	VolumesLSSDTotalSize uint32 `json:"volumes_l_ssd_total_size"`
+	VolumesLSSDTotalSize scw.Size `json:"volumes_l_ssd_total_size"`
 
-	VolumesBSSDTotalSize uint32 `json:"volumes_b_ssd_total_size"`
+	VolumesBSSDTotalSize scw.Size `json:"volumes_b_ssd_total_size"`
 
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
