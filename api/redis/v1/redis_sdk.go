@@ -297,6 +297,8 @@ type Cluster struct {
 	ClusterSize uint32 `json:"cluster_size"`
 	// Zone: zone of the cluster
 	Zone scw.Zone `json:"zone"`
+	// UserName: name of the user associated to the cluster
+	UserName string `json:"user_name"`
 }
 
 // ClusterMetricsResponse: cluster metrics response
