@@ -1396,6 +1396,10 @@ type ListDatabaseEnginesRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
+	// Name: name of the Database Engine
+	Name *string `json:"-"`
+	// Version: version of the Database Engine
+	Version *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1417,6 +1421,8 @@ func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.R
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "version", req.Version)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
