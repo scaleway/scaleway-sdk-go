@@ -861,14 +861,10 @@ type Bootscript struct {
 
 type CreateIPResponse struct {
 	IP *IP `json:"ip"`
-
-	Location string `json:"Location"`
 }
 
 type CreateImageResponse struct {
 	Image *Image `json:"image"`
-
-	Location string `json:"Location"`
 }
 
 type CreatePlacementGroupResponse struct {
@@ -899,8 +895,6 @@ type CreateSnapshotResponse struct {
 
 type CreateVolumeResponse struct {
 	Volume *Volume `json:"volume"`
-
-	Location string `json:"Location"`
 }
 
 type Dashboard struct {
@@ -1096,10 +1090,12 @@ type ListSecurityGroupRulesResponse struct {
 	Rules []*SecurityGroupRule `json:"rules"`
 }
 
+// ListSecurityGroupsResponse: list security groups response
 type ListSecurityGroupsResponse struct {
-	SecurityGroups []*SecurityGroup `json:"security_groups"`
-
+	// TotalCount: total number of security groups
 	TotalCount uint32 `json:"total_count"`
+	// SecurityGroups: list of security groups
+	SecurityGroups []*SecurityGroup `json:"security_groups"`
 }
 
 type ListServerActionsResponse struct {

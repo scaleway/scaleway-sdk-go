@@ -719,6 +719,8 @@ type ListDomainsRequest struct {
 	Status []DomainStatus `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	Name *string `json:"-"`
 }
 
 // ListDomains: list domains in a project and/or in an organization
@@ -741,6 +743,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
