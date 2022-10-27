@@ -17,7 +17,7 @@ type WaitForDomainRequest struct {
 }
 
 // WaitForDomain wait for the domain to be in a "terminal state" before returning.
-// This function can be used to wait for a domain to be ready for example.
+// This function can be used to wait for a domain to be checked for example.
 func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
