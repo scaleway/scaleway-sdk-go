@@ -171,114 +171,136 @@ func (enum *NamespaceProtocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Credential: credential
 type Credential struct {
+	// ID: credential ID
 	ID string `json:"id"`
-
+	// Name: credential name
 	Name string `json:"name"`
-
+	// NamespaceID: namespace containing the Credential
 	NamespaceID string `json:"namespace_id"`
-	// Protocol:
+	// Protocol: protocol associated to the Credential
 	//
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-
+	// NatsCredentials: credentials file used to connect to the NATS service
 	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
 	NatsCredentials *CredentialNATSCredsFile `json:"nats_credentials,omitempty"`
-
+	// SqsSnsCredentials: credential used to connect to the SQS/SNS service
 	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
-
+	// AmqpCredentials: credential used to connect to the AMQP service
 	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
 	AmqpCredentials *CredentialAMQPCreds `json:"amqp_credentials,omitempty"`
 }
 
+// CredentialAMQPCreds: credential.amqp creds
 type CredentialAMQPCreds struct {
+	// Username: username used to connect to the AMQP service
 	Username string `json:"username"`
-
+	// Password: password used to connect to the AMQP service
 	Password *string `json:"password"`
-
+	// Permissions: list of permissions associated to this Credential
 	Permissions *Permissions `json:"permissions"`
 }
 
+// CredentialNATSCredsFile: credential.nats creds file
 type CredentialNATSCredsFile struct {
+	// Content: raw content of the NATS credentials file
 	Content string `json:"content"`
 }
 
+// CredentialSQSSNSCreds: credential.sqssns creds
 type CredentialSQSSNSCreds struct {
+	// AccessKey: ID of the key
 	AccessKey string `json:"access_key"`
-
+	// SecretKey: secret value of the key
 	SecretKey *string `json:"secret_key"`
-
+	// Permissions: list of permissions associated to this Credential
 	Permissions *Permissions `json:"permissions"`
 }
 
+// CredentialSummary: credential summary
 type CredentialSummary struct {
+	// ID: credential ID
 	ID string `json:"id"`
-
+	// Name: credential name
 	Name string `json:"name"`
-
+	// NamespaceID: namespace containing the Credential
 	NamespaceID string `json:"namespace_id"`
-	// Protocol:
+	// Protocol: protocol associated to the Credential
 	//
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-
+	// SqsSnsCredentials: credential used to connect to the SQS/SNS service
 	// Precisely one of AmqpCredentials, SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSummarySQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
-
+	// AmqpCredentials: credential used to connect to the AMQP service
 	// Precisely one of AmqpCredentials, SqsSnsCredentials must be set.
 	AmqpCredentials *CredentialSummaryAMQPCreds `json:"amqp_credentials,omitempty"`
 }
 
+// CredentialSummaryAMQPCreds: credential summary.amqp creds
 type CredentialSummaryAMQPCreds struct {
+	// Username: username used to connect to the AMQP service
 	Username string `json:"username"`
-
+	// Permissions: list of permissions associated to this Credential
 	Permissions *Permissions `json:"permissions"`
 }
 
+// CredentialSummarySQSSNSCreds: credential summary.sqssns creds
 type CredentialSummarySQSSNSCreds struct {
+	// AccessKey: ID of the key
 	AccessKey string `json:"access_key"`
-
+	// Permissions: list of permissions associated to this Credential
 	Permissions *Permissions `json:"permissions"`
 }
 
+// ListCredentialsResponse: list credentials response
 type ListCredentialsResponse struct {
+	// TotalCount: total number of existing Credentials
 	TotalCount uint32 `json:"total_count"`
-
+	// Credentials: a page of Credentials
 	Credentials []*CredentialSummary `json:"credentials"`
 }
 
+// ListNamespacesResponse: list namespaces response
 type ListNamespacesResponse struct {
+	// TotalCount: total number of existing Namespaces
 	TotalCount uint32 `json:"total_count"`
-
+	// Namespaces: a page of Namespaces
 	Namespaces []*Namespace `json:"namespaces"`
 }
 
+// Namespace: namespace
 type Namespace struct {
+	// ID: namespace ID
 	ID string `json:"id"`
-
-	ProjectID string `json:"project_id"`
-
+	// Name: namespace name
 	Name string `json:"name"`
-
+	// Endpoint: endpoint of the service matching the Namespace protocol
 	Endpoint string `json:"endpoint"`
-	// Protocol:
+	// Protocol: namespace protocol
 	//
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
+	// ProjectID: project containing the Namespace
+	ProjectID string `json:"project_id"`
+	// Region: region where the Namespace is deployed
 	Region scw.Region `json:"region"`
+	// CreatedAt: namespace creation date
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: namespace last modification date
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// Permissions: permissions
 type Permissions struct {
+	// CanPublish: defines if user can publish messages to the service
 	CanPublish *bool `json:"can_publish"`
-
+	// CanReceive: defines if user can receive messages from the service
 	CanReceive *bool `json:"can_receive"`
-
+	// CanManage: defines if user can manage the associated resource(s)
 	CanManage *bool `json:"can_manage"`
 }
 
@@ -289,18 +311,18 @@ type ListNamespacesRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// OrganizationID: will list only the Namespaces owned by the specified organization
+	OrganizationID *string `json:"-"`
+	// ProjectID: will list only the Namespaces contained into the specified project
 	ProjectID *string `json:"-"`
-
+	// Page: indicate the page number of results to be returned
 	Page *int32 `json:"-"`
-
+	// PageSize: maximum number of results returned by page
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
+	// OrderBy: field used for sorting results
 	//
 	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
-
-	OrganizationID *string `json:"-"`
 }
 
 // ListNamespaces: list namespaces
@@ -318,11 +340,11 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -349,14 +371,14 @@ type CreateNamespaceRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// Name: namespace name
 	Name string `json:"name"`
-
-	ProjectID string `json:"project_id"`
-	// Protocol:
+	// Protocol: namespace protocol
 	//
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
+	// ProjectID: project containing the Namespace
+	ProjectID string `json:"project_id"`
 }
 
 // CreateNamespace: create a namespace
@@ -371,6 +393,10 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("mnq")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -402,9 +428,9 @@ type UpdateNamespaceRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: ID of the Namespace to update
 	NamespaceID string `json:"namespace_id"`
-
+	// Name: namespace name
 	Name *string `json:"name"`
 }
 
@@ -446,7 +472,7 @@ type GetNamespaceRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: ID of the Namespace to get
 	NamespaceID string `json:"-"`
 }
 
@@ -487,7 +513,7 @@ type DeleteNamespaceRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: ID of the Namespace to delete
 	NamespaceID string `json:"-"`
 }
 
@@ -526,11 +552,11 @@ type CreateCredentialRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
-	Name string `json:"name"`
-
+	// NamespaceID: namespace containing the Credential
 	NamespaceID string `json:"namespace_id"`
-
+	// Name: credential name
+	Name string `json:"name"`
+	// Permissions: list of permissions associated to this Credential
 	// Precisely one of Permissions must be set.
 	Permissions *Permissions `json:"permissions,omitempty"`
 }
@@ -544,6 +570,10 @@ func (s *API) CreateCredential(req *CreateCredentialRequest, opts ...scw.Request
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("mnq")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -575,7 +605,7 @@ type DeleteCredentialRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// CredentialID: ID of the Credential to delete
 	CredentialID string `json:"-"`
 }
 
@@ -614,13 +644,13 @@ type ListCredentialsRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: namespace containing the Credential
 	NamespaceID *string `json:"-"`
-
+	// Page: indicate the page number of results to be returned
 	Page *int32 `json:"-"`
-
+	// PageSize: maximum number of results returned by page
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
+	// OrderBy: field used for sorting results
 	//
 	// Default value: id_asc
 	OrderBy ListCredentialsRequestOrderBy `json:"-"`
@@ -671,11 +701,11 @@ type UpdateCredentialRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// CredentialID: ID of the Credential to update
 	CredentialID string `json:"-"`
-
+	// Name: credential name
 	Name *string `json:"name"`
-
+	// Permissions: list of permissions associated to this Credential
 	// Precisely one of Permissions must be set.
 	Permissions *Permissions `json:"permissions,omitempty"`
 }
@@ -724,7 +754,7 @@ type GetCredentialRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// CredentialID: ID of the Credential to get
 	CredentialID string `json:"-"`
 }
 
