@@ -913,10 +913,10 @@ type Node struct {
 	Region scw.Region `json:"region"`
 	// Name: the name of the node
 	Name string `json:"name"`
-	// PublicIPV4: the public IPv4 address of the node
-	PublicIPV4 *net.IP `json:"public_ip_v4"`
-	// PublicIPV6: the public IPv6 address of the node
-	PublicIPV6 *net.IP `json:"public_ip_v6"`
+	// Deprecated: PublicIPV4: the public IPv4 address of the node
+	PublicIPV4 *net.IP `json:"public_ip_v4,omitempty"`
+	// Deprecated: PublicIPV6: the public IPv6 address of the node
+	PublicIPV6 *net.IP `json:"public_ip_v6,omitempty"`
 	// Deprecated: Conditions: the conditions of the node
 	//
 	// These conditions contains the Node Problem Detector conditions, as well as some in house conditions.
