@@ -1725,6 +1725,37 @@ func (s *API) DeletePolicy(req *DeletePolicyRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
+type ClonePolicyRequest struct {
+	PolicyID string `json:"-"`
+}
+
+func (s *API) ClonePolicy(req *ClonePolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
+	var err error
+
+	if fmt.Sprint(req.PolicyID) == "" {
+		return nil, errors.New("field PolicyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/policies/" + fmt.Sprint(req.PolicyID) + "/clone",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Policy
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type SetRulesRequest struct {
 	// PolicyID: id of policy to update
 	PolicyID string `json:"policy_id"`
