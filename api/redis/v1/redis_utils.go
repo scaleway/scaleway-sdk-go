@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
@@ -51,7 +52,9 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 			}
 
 			_, isTerminal := terminalStatus[res.Status]
-
+			if res.Status == ClusterStatusError {
+				return nil, true, fmt.Errorf("cluster on error state. Please contact support")
+			}
 			return res, isTerminal, nil
 		},
 		Timeout:          timeout,
