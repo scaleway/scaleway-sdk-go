@@ -1055,6 +1055,8 @@ type Instance struct {
 	Status InstanceStatus `json:"status"`
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...)
 	Engine string `json:"engine"`
+	// UpgradableVersion: available database engine versions for upgrade
+	UpgradableVersion []*UpgradableVersion `json:"upgradable_version"`
 	// Deprecated: Endpoint: endpoint of the instance
 	Endpoint *Endpoint `json:"endpoint,omitempty"`
 	// Tags: list of tags applied to the instance
@@ -1370,6 +1372,16 @@ type Snapshot struct {
 	NodeType string `json:"node_type"`
 	// Region: region of this snapshot
 	Region scw.Region `json:"region"`
+}
+
+type UpgradableVersion struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Version string `json:"version"`
+
+	MinorVersion string `json:"minor_version"`
 }
 
 // User: user
@@ -1852,24 +1864,29 @@ type UpgradeInstanceRequest struct {
 	// InstanceID: UUID of the instance you want to upgrade
 	InstanceID string `json:"-"`
 	// NodeType: node type of the instance you want to upgrade to
-	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
+	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	NodeType *string `json:"node_type,omitempty"`
 	// EnableHa: set to true to enable high availability on your instance
-	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
+	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 	// VolumeSize: increase your block storage volume size
-	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
+	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
 	// VolumeType: change your instance storage type
 	//
 	// Default value: lssd
-	// Precisely one of EnableHa, NodeType, VolumeSize, VolumeType must be set.
+	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	VolumeType *VolumeType `json:"volume_type,omitempty"`
+	// UpgradableVersionID: update your instance database engine to a newer version
+	//
+	// This will create a new Database Instance with same instance specification as the current one and perform a Database Engine upgrade.
+	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
+	UpgradableVersionID *string `json:"upgradable_version_id,omitempty"`
 }
 
-// UpgradeInstance: upgrade an instance to an higher instance type
+// UpgradeInstance: upgrade an instance
 //
-// Upgrade your current `node_type` or enable high availability on your standalone database instance.
+// Upgrade your current instance specifications like node type, high availability, volume, or db engine version.
 func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
