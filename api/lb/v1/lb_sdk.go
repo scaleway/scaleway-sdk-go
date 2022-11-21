@@ -1045,6 +1045,8 @@ type Backend struct {
 	FailoverHost *string `json:"failover_host"`
 
 	SslBridging *bool `json:"ssl_bridging"`
+
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -2293,6 +2295,8 @@ type CreateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2474,6 +2478,8 @@ type UpdateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5291,6 +5297,8 @@ type ZonedAPICreateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5472,6 +5480,8 @@ type ZonedAPIUpdateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
