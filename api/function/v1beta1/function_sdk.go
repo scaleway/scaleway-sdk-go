@@ -897,6 +897,8 @@ type Cron struct {
 	//
 	// Default value: unknown
 	Status CronStatus `json:"status"`
+
+	Name string `json:"name"`
 }
 
 // Domain: domain
@@ -2113,6 +2115,8 @@ type CreateCronRequest struct {
 	Schedule string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // CreateCron: create a new cron
@@ -2161,6 +2165,8 @@ type UpdateCronRequest struct {
 	Schedule *string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // UpdateCron: update an existing cron
