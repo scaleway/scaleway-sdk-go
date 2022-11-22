@@ -1178,6 +1178,8 @@ type Frontend struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1283,20 +1285,30 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// HealthCheckHTTPConfig: health check. http config
 type HealthCheckHTTPConfig struct {
+	// URI: HTTP uri used with the request
 	URI string `json:"uri"`
-
+	// Method: HTTP method used with the request
 	Method string `json:"method"`
-
+	// Code: a health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
+	// HostHeader: HTTP host header used with the request
+	HostHeader string `json:"host_header"`
 }
 
+// HealthCheckHTTPSConfig: health check. https config
 type HealthCheckHTTPSConfig struct {
+	// URI: HTTP uri used with the request
 	URI string `json:"uri"`
-
+	// Method: HTTP method used with the request
 	Method string `json:"method"`
-
+	// Code: a health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
+	// HostHeader: HTTP host header used with the request
+	HostHeader string `json:"host_header"`
+	// Sni: specifies the SNI to use to do health checks over SSL
+	Sni string `json:"sni"`
 }
 
 type HealthCheckLdapConfig struct {
@@ -2937,6 +2949,8 @@ type CreateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3072,6 +3086,8 @@ type UpdateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -5939,6 +5955,8 @@ type ZonedAPICreateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *ZonedAPICreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -6074,6 +6092,8 @@ type ZonedAPIUpdateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *ZonedAPIUpdateFrontendRequest) UnmarshalJSON(b []byte) error {
