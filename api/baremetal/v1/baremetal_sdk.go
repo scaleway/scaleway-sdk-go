@@ -763,6 +763,8 @@ type OS struct {
 	ServicePassword *OSOSField `json:"service_password"`
 	// Enabled: state of OS
 	Enabled bool `json:"enabled"`
+	// LicenseRequired: license required (check server options for pricing details)
+	LicenseRequired bool `json:"license_required"`
 }
 
 type OSOSField struct {
