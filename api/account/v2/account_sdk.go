@@ -53,6 +53,38 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type ListMFAOTPsRequestOrderBy string
+
+const (
+	// ListMFAOTPsRequestOrderByCreatedAtAsc is [insert doc].
+	ListMFAOTPsRequestOrderByCreatedAtAsc = ListMFAOTPsRequestOrderBy("created_at_asc")
+	// ListMFAOTPsRequestOrderByCreatedAtDesc is [insert doc].
+	ListMFAOTPsRequestOrderByCreatedAtDesc = ListMFAOTPsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListMFAOTPsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListMFAOTPsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListMFAOTPsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListMFAOTPsRequestOrderBy(ListMFAOTPsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListProjectsRequestOrderBy string
 
 const (
@@ -89,12 +121,26 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ListMFAOTPsResponse: list mfaot ps response
+type ListMFAOTPsResponse struct {
+	// TotalCount: the total number of MFA OTPs
+	TotalCount uint32 `json:"total_count"`
+	// MfaOtps: the paginated returned MFA OTPs
+	MfaOtps []*MFAOTP `json:"mfa_otps"`
+}
+
 // ListProjectsResponse: list projects response
 type ListProjectsResponse struct {
 	// TotalCount: the total number of projects
 	TotalCount uint32 `json:"total_count"`
 	// Projects: the paginated returned projects
 	Projects []*Project `json:"projects"`
+}
+
+// MFAOTP: mfaotp
+type MFAOTP struct {
+	// ID: the ID of the MFA OTP
+	ID string `json:"id"`
 }
 
 // Project: project
@@ -111,6 +157,12 @@ type Project struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// Description: the description of the project
 	Description string `json:"description"`
+}
+
+// ValidateMFAOTPResponse: validate mfaotp response
+type ValidateMFAOTPResponse struct {
+	// BackupCodes: the backup codes of the MFA OTP
+	BackupCodes []string `json:"backup_codes"`
 }
 
 // Service API
@@ -314,6 +366,140 @@ func (s *API) UpdateProject(req *UpdateProjectRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
+type ListMFAOTPsRequest struct {
+	// Page: the page number for the returned MFA OTPs
+	Page *int32 `json:"-"`
+	// PageSize: the maximum number of MFA OTP per page
+	PageSize *uint32 `json:"-"`
+	// OrderBy: the sort order of the returned MFA OTPs
+	//
+	// Default value: created_at_asc
+	OrderBy ListMFAOTPsRequestOrderBy `json:"-"`
+	// AccountRootUserID: filter out by a account root user ID
+	AccountRootUserID string `json:"-"`
+}
+
+// ListMFAOTPs: list MFA OTPs
+func (s *API) ListMFAOTPs(req *ListMFAOTPsRequest, opts ...scw.RequestOption) (*ListMFAOTPsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "account_root_user_id", req.AccountRootUserID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/account/v2/mfa/otps",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListMFAOTPsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateMFAOTPRequest struct {
+	// AccountRootUserID: the account root user ID of the MFA OTP
+	AccountRootUserID string `json:"account_root_user_id"`
+}
+
+// CreateMFAOTP: create MFA OTP
+func (s *API) CreateMFAOTP(req *CreateMFAOTPRequest, opts ...scw.RequestOption) (*MFAOTP, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/account/v2/mfa/otps",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp MFAOTP
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ValidateMFAOTPRequest struct {
+	// MfaOtpID: the MFA OTP ID
+	MfaOtpID string `json:"-"`
+	// Otp: the code of the MFA OTP
+	Otp string `json:"otp"`
+}
+
+// ValidateMFAOTP: validate MFA OTP
+func (s *API) ValidateMFAOTP(req *ValidateMFAOTPRequest, opts ...scw.RequestOption) (*ValidateMFAOTPResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.MfaOtpID) == "" {
+		return nil, errors.New("field MfaOtpID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/account/v2/mfa/otps/" + fmt.Sprint(req.MfaOtpID) + "/validate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ValidateMFAOTPResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteMFAOTPRequest struct {
+	// MfaOtpID: the MFA OTP ID
+	MfaOtpID string `json:"-"`
+}
+
+// DeleteMFAOTP: delete MFA OTP
+func (s *API) DeleteMFAOTP(req *DeleteMFAOTPRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.MfaOtpID) == "" {
+		return errors.New("field MfaOtpID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/account/v2/mfa/otps/" + fmt.Sprint(req.MfaOtpID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListProjectsResponse) UnsafeGetTotalCount() uint32 {
@@ -331,4 +517,23 @@ func (r *ListProjectsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Projects = append(r.Projects, results.Projects...)
 	r.TotalCount += uint32(len(results.Projects))
 	return uint32(len(results.Projects)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListMFAOTPsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListMFAOTPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListMFAOTPsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.MfaOtps = append(r.MfaOtps, results.MfaOtps...)
+	r.TotalCount += uint32(len(results.MfaOtps))
+	return uint32(len(results.MfaOtps)), nil
 }
