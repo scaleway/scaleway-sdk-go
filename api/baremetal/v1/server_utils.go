@@ -190,12 +190,13 @@ func (s *API) WaitForServerOptions(req *WaitForServerOptionsRequest, opts ...scw
 				return nil, false, err
 			}
 
-			var isTerminal bool
 			for i := range res.Options {
-				_, isTerminal = terminalStatus[res.Options[i].Status]
+				_, isTerminal := terminalStatus[res.Options[i].Status]
+				if !isTerminal {
+					return res, isTerminal, nil
+				}
 			}
-			return res, isTerminal, err
-
+			return res, true, err
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
