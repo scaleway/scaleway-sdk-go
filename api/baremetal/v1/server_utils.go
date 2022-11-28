@@ -153,3 +153,56 @@ func (s *API) GetOfferByName(req *GetOfferByNameRequest) (*Offer, error) {
 
 	return nil, errors.New("could not find the offer ID from name %s", req.OfferName)
 }
+
+// WaitForServerOptionsRequest is used by WaitForServerOptions method.
+type WaitForServerOptionsRequest struct {
+	ServerID      string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServerOptions wait for all server options to be in a "terminal state" before returning.
+// This function can be used to wait for all server options to be set.
+func (s *API) WaitForServerOptions(req *WaitForServerOptionsRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ServerOptionOptionStatus]struct{}{
+		ServerOptionOptionStatusOptionStatusEnable:  {},
+		ServerOptionOptionStatusOptionStatusError:   {},
+		ServerOptionOptionStatusOptionStatusUnknown: {},
+	}
+
+	server, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				ServerID: req.ServerID,
+				Zone:     req.Zone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			var isTerminal bool
+			for i := range res.Options {
+				_, isTerminal = terminalStatus[res.Options[i].Status]
+			}
+			return res, isTerminal, err
+
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for server options failed")
+	}
+
+	return server.(*Server), nil
+}
