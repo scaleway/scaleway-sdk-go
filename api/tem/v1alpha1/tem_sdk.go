@@ -458,6 +458,8 @@ type ListEmailsRequest struct {
 	ProjectID *string `json:"-"`
 	// DomainID: optional ID of the domain for which to list the emails
 	DomainID *string `json:"-"`
+	// MessageID: optional ID of the message for which to list the emails
+	MessageID *string `json:"-"`
 	// Since: optional, list emails created after this date
 	Since *time.Time `json:"-"`
 	// Until: optional, list emails created before this date
@@ -489,6 +491,7 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "domain_id", req.DomainID)
+	parameter.AddToQuery(query, "message_id", req.MessageID)
 	parameter.AddToQuery(query, "since", req.Since)
 	parameter.AddToQuery(query, "until", req.Until)
 	parameter.AddToQuery(query, "mail_from", req.MailFrom)
