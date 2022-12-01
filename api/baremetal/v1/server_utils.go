@@ -218,7 +218,7 @@ type WaitForServerPrivateNetworksRequest struct {
 
 // WaitForServerPrivateNetworks wait for all server private networks to be in a "terminal state" before returning.
 // This function can be used to wait for all server private networks to be set.
-func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPrivateNetworksRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPrivateNetworksRequest, opts ...scw.RequestOption) ([]*ServerPrivateNetwork, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -260,5 +260,5 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPriva
 		return nil, errors.Wrap(err, "waiting for server private networks failed")
 	}
 
-	return serverPrivateNetwork.(*ServerPrivateNetwork), nil
+	return serverPrivateNetwork.([]*ServerPrivateNetwork), nil
 }
