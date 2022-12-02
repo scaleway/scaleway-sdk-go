@@ -26,9 +26,9 @@ type WaitForClusterRequest struct {
 
 // WaitForCluster waits for the cluster to be in a "terminal state" before returning.
 func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForClusterDefaultTimeout
+	timeout := waitForClusterDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := defaultRetryInterval
 	if req.RetryInterval != nil {
@@ -75,9 +75,9 @@ type WaitForPoolRequest struct {
 
 // WaitForPool waits for a pool to be ready
 func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*Pool, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForPoolDefaultTimeout
+	timeout := waitForPoolDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := defaultRetryInterval
 	if req.RetryInterval != nil {
@@ -170,11 +170,11 @@ type WaitForClusterPoolRequest struct {
 	RetryInterval *time.Duration
 }
 
-// WaitForClusterPool waits for the pool be associated with a cluster as a "terminal state" before returning.
+// WaitForClusterPool waits for the pool associated with a cluster to be in a "terminal state" before returning.
 func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
-	timeout := *req.Timeout
-	if timeout == 0 {
-		timeout = waitForClusterDefaultTimeout
+	timeout := waitForClusterDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
 	}
 	retryInterval := defaultRetryInterval
 	if req.RetryInterval != nil {
