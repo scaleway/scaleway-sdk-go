@@ -248,10 +248,10 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPriva
 			for i := range res.ServerPrivateNetworks {
 				_, isTerminal := terminalStatus[res.ServerPrivateNetworks[i].Status]
 				if !isTerminal {
-					return res, isTerminal, nil
+					return res.ServerPrivateNetworks, isTerminal, nil
 				}
 			}
-			return res, true, err
+			return res.ServerPrivateNetworks, true, err
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
