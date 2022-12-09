@@ -621,6 +621,8 @@ type CPU struct {
 	ThreadCount uint32 `json:"thread_count"`
 	// Frequency: frequency of the CPU in MHz
 	Frequency uint32 `json:"frequency"`
+	// Benchmark: benchmark of the CPU
+	Benchmark string `json:"benchmark"`
 }
 
 // CreateServerRequestInstall: create server request. install
