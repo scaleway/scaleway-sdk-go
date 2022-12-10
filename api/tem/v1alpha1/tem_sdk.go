@@ -222,9 +222,19 @@ type Domain struct {
 	// DkimConfig: dKIM public key, as should be recorded in the DNS zone
 	DkimConfig string `json:"dkim_config"`
 	// Statistics: domain's statistics
-	Statistics *Statistics `json:"statistics"`
+	Statistics *DomainStatistics `json:"statistics"`
 
 	Region scw.Region `json:"region"`
+}
+
+type DomainStatistics struct {
+	TotalCount uint32 `json:"total_count"`
+
+	SentCount uint32 `json:"sent_count"`
+
+	FailedCount uint32 `json:"failed_count"`
+
+	CanceledCount uint32 `json:"canceled_count"`
 }
 
 // Email: email
