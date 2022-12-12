@@ -315,6 +315,11 @@ type Statistics struct {
 
 // Service API
 
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar}
+}
+
 type GetServiceInfoRequest struct {
 	// Region:
 	//

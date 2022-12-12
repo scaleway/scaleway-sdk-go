@@ -1602,6 +1602,11 @@ type SubscriberWebhookConfig struct {
 
 // Service API
 
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
 type ListLBsRequest struct {
 	// Region:
 	//
@@ -4607,6 +4612,11 @@ func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw
 }
 
 // Service ZonedAPI
+
+// Zones list localities the api is available in
+func (s *ZonedAPI) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw1, scw.ZonePlWaw2}
+}
 
 type ZonedAPIListLBsRequest struct {
 	// Zone:
