@@ -558,6 +558,8 @@ const (
 	LanguageCodeEnUS = LanguageCode("en_US")
 	// LanguageCodeFrFR is [insert doc].
 	LanguageCodeFrFR = LanguageCode("fr_FR")
+	// LanguageCodeDeDE is [insert doc].
+	LanguageCodeDeDE = LanguageCode("de_DE")
 )
 
 func (enum LanguageCode) String() string {

@@ -446,6 +446,11 @@ type SetEndpointsResponse struct {
 
 // Service API
 
+// Zones list localities the api is available in
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw1, scw.ZonePlWaw2}
+}
+
 type CreateClusterRequest struct {
 	// Zone:
 	//

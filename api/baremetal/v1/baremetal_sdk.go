@@ -51,6 +51,18 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+// PrivateNetworkAPI: elastic Metal Private Network API
+type PrivateNetworkAPI struct {
+	client *scw.Client
+}
+
+// NewPrivateNetworkAPI returns a PrivateNetworkAPI object from a Scaleway client.
+func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
+	return &PrivateNetworkAPI{
+		client: client,
+	}
+}
+
 type IPReverseStatus string
 
 const (
@@ -609,6 +621,8 @@ type CPU struct {
 	ThreadCount uint32 `json:"thread_count"`
 	// Frequency: frequency of the CPU in MHz
 	Frequency uint32 `json:"frequency"`
+	// Benchmark: benchmark of the CPU
+	Benchmark string `json:"benchmark"`
 }
 
 // CreateServerRequestInstall: create server request. install
@@ -751,6 +765,8 @@ type OS struct {
 	ServicePassword *OSOSField `json:"service_password"`
 	// Enabled: state of OS
 	Enabled bool `json:"enabled"`
+	// LicenseRequired: license required (check server options for pricing details)
+	LicenseRequired bool `json:"license_required"`
 }
 
 type OSOSField struct {
@@ -1000,6 +1016,11 @@ type Setting struct {
 }
 
 // Service API
+
+// Zones list localities the api is available in
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1}
+}
 
 type ListServersRequest struct {
 	// Zone:
@@ -2308,7 +2329,14 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	return &resp, nil
 }
 
-type AddServerPrivateNetworkRequest struct {
+// Service PrivateNetworkAPI
+
+// Zones list localities the api is available in
+func (s *PrivateNetworkAPI) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar2}
+}
+
+type PrivateNetworkAPIAddServerPrivateNetworkRequest struct {
 	// Zone:
 	//
 	// Zone to target. If none is passed will use default zone from the config
@@ -2320,7 +2348,7 @@ type AddServerPrivateNetworkRequest struct {
 }
 
 // AddServerPrivateNetwork: add a server to a private network
-func (s *API) AddServerPrivateNetwork(req *AddServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+func (s *PrivateNetworkAPI) AddServerPrivateNetwork(req *PrivateNetworkAPIAddServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2356,7 +2384,7 @@ func (s *API) AddServerPrivateNetwork(req *AddServerPrivateNetworkRequest, opts 
 	return &resp, nil
 }
 
-type SetServerPrivateNetworksRequest struct {
+type PrivateNetworkAPISetServerPrivateNetworksRequest struct {
 	// Zone:
 	//
 	// Zone to target. If none is passed will use default zone from the config
@@ -2368,7 +2396,7 @@ type SetServerPrivateNetworksRequest struct {
 }
 
 // SetServerPrivateNetworks: set multiple private networks on a server
-func (s *API) SetServerPrivateNetworks(req *SetServerPrivateNetworksRequest, opts ...scw.RequestOption) (*SetServerPrivateNetworksResponse, error) {
+func (s *PrivateNetworkAPI) SetServerPrivateNetworks(req *PrivateNetworkAPISetServerPrivateNetworksRequest, opts ...scw.RequestOption) (*SetServerPrivateNetworksResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2404,7 +2432,7 @@ func (s *API) SetServerPrivateNetworks(req *SetServerPrivateNetworksRequest, opt
 	return &resp, nil
 }
 
-type ListServerPrivateNetworksRequest struct {
+type PrivateNetworkAPIListServerPrivateNetworksRequest struct {
 	// Zone:
 	//
 	// Zone to target. If none is passed will use default zone from the config
@@ -2428,7 +2456,7 @@ type ListServerPrivateNetworksRequest struct {
 }
 
 // ListServerPrivateNetworks: list the private networks of a server
-func (s *API) ListServerPrivateNetworks(req *ListServerPrivateNetworksRequest, opts ...scw.RequestOption) (*ListServerPrivateNetworksResponse, error) {
+func (s *PrivateNetworkAPI) ListServerPrivateNetworks(req *PrivateNetworkAPIListServerPrivateNetworksRequest, opts ...scw.RequestOption) (*ListServerPrivateNetworksResponse, error) {
 	var err error
 
 	if req.Zone == "" {
@@ -2470,7 +2498,7 @@ func (s *API) ListServerPrivateNetworks(req *ListServerPrivateNetworksRequest, o
 	return &resp, nil
 }
 
-type DeleteServerPrivateNetworkRequest struct {
+type PrivateNetworkAPIDeleteServerPrivateNetworkRequest struct {
 	// Zone:
 	//
 	// Zone to target. If none is passed will use default zone from the config
@@ -2482,7 +2510,7 @@ type DeleteServerPrivateNetworkRequest struct {
 }
 
 // DeleteServerPrivateNetwork: delete a private network
-func (s *API) DeleteServerPrivateNetwork(req *DeleteServerPrivateNetworkRequest, opts ...scw.RequestOption) error {
+func (s *PrivateNetworkAPI) DeleteServerPrivateNetwork(req *PrivateNetworkAPIDeleteServerPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {

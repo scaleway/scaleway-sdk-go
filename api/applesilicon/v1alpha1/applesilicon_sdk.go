@@ -286,6 +286,11 @@ type ServerTypeMemory struct {
 
 // Service API
 
+// Zones list localities the api is available in
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar3}
+}
+
 type ListServerTypesRequest struct {
 	// Zone:
 	//

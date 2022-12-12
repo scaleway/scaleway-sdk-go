@@ -51,6 +51,40 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type ContainerHTTPOption string
+
+const (
+	// ContainerHTTPOptionUnknownHTTPOption is [insert doc].
+	ContainerHTTPOptionUnknownHTTPOption = ContainerHTTPOption("unknown_http_option")
+	// ContainerHTTPOptionEnabled is [insert doc].
+	ContainerHTTPOptionEnabled = ContainerHTTPOption("enabled")
+	// ContainerHTTPOptionRedirected is [insert doc].
+	ContainerHTTPOptionRedirected = ContainerHTTPOption("redirected")
+)
+
+func (enum ContainerHTTPOption) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_http_option"
+	}
+	return string(enum)
+}
+
+func (enum ContainerHTTPOption) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContainerHTTPOption) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContainerHTTPOption(ContainerHTTPOption(tmp).String())
+	return nil
+}
+
 type ContainerPrivacy string
 
 const (
@@ -638,13 +672,14 @@ type Container struct {
 	Port uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption ContainerHTTPOption `json:"http_option"`
 
 	Region scw.Region `json:"region"`
 }
@@ -662,6 +697,8 @@ type Cron struct {
 	//
 	// Default value: unknown
 	Status CronStatus `json:"status"`
+
+	Name string `json:"name"`
 }
 
 // Domain: domain
@@ -804,6 +841,11 @@ type Token struct {
 }
 
 // Service API
+
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar}
+}
 
 type ListNamespacesRequest struct {
 	// Region:
@@ -1213,13 +1255,14 @@ type CreateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption ContainerHTTPOption `json:"http_option"`
 }
 
 // CreateContainer: create a new container
@@ -1296,13 +1339,14 @@ type UpdateContainerRequest struct {
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption ContainerHTTPOption `json:"http_option"`
 }
 
 // UpdateContainer: update an existing container
@@ -1546,6 +1590,8 @@ type CreateCronRequest struct {
 	Schedule string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // CreateCron: create a new cron
@@ -1594,6 +1640,8 @@ type UpdateCronRequest struct {
 	Schedule *string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // UpdateCron: update an existing cron

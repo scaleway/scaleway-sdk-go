@@ -1045,6 +1045,8 @@ type Backend struct {
 	FailoverHost *string `json:"failover_host"`
 
 	SslBridging *bool `json:"ssl_bridging"`
+
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -1176,6 +1178,8 @@ type Frontend struct {
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1281,20 +1285,30 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// HealthCheckHTTPConfig: health check. http config
 type HealthCheckHTTPConfig struct {
+	// URI: HTTP uri used with the request
 	URI string `json:"uri"`
-
+	// Method: HTTP method used with the request
 	Method string `json:"method"`
-
+	// Code: a health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
+	// HostHeader: HTTP host header used with the request
+	HostHeader string `json:"host_header"`
 }
 
+// HealthCheckHTTPSConfig: health check. https config
 type HealthCheckHTTPSConfig struct {
+	// URI: HTTP uri used with the request
 	URI string `json:"uri"`
-
+	// Method: HTTP method used with the request
 	Method string `json:"method"`
-
+	// Code: a health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
+	// HostHeader: HTTP host header used with the request
+	HostHeader string `json:"host_header"`
+	// Sni: specifies the SNI to use to do health checks over SSL
+	Sni string `json:"sni"`
 }
 
 type HealthCheckLdapConfig struct {
@@ -1587,6 +1601,11 @@ type SubscriberWebhookConfig struct {
 }
 
 // Service API
+
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
 
 type ListLBsRequest struct {
 	// Region:
@@ -2293,6 +2312,8 @@ type CreateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2474,6 +2495,8 @@ type UpdateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2931,6 +2954,8 @@ type CreateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3066,6 +3091,8 @@ type UpdateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -4586,6 +4613,11 @@ func (s *API) DetachPrivateNetwork(req *DetachPrivateNetworkRequest, opts ...scw
 
 // Service ZonedAPI
 
+// Zones list localities the api is available in
+func (s *ZonedAPI) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw1, scw.ZonePlWaw2}
+}
+
 type ZonedAPIListLBsRequest struct {
 	// Zone:
 	//
@@ -5291,6 +5323,8 @@ type ZonedAPICreateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5472,6 +5506,8 @@ type ZonedAPIUpdateBackendRequest struct {
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
+	// IgnoreSslServerVerify: set to true to ignore server certificate verification
+	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5929,6 +5965,8 @@ type ZonedAPICreateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *ZonedAPICreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -6064,6 +6102,8 @@ type ZonedAPIUpdateFrontendRequest struct {
 	CertificateID *string `json:"certificate_id,omitempty"`
 	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs *[]string `json:"certificate_ids"`
+	// EnableHTTP3: activate HTTP 3 protocol (beta)
+	EnableHTTP3 bool `json:"enable_http3"`
 }
 
 func (m *ZonedAPIUpdateFrontendRequest) UnmarshalJSON(b []byte) error {

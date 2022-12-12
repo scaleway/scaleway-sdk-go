@@ -222,9 +222,19 @@ type Domain struct {
 	// DkimConfig: dKIM public key, as should be recorded in the DNS zone
 	DkimConfig string `json:"dkim_config"`
 	// Statistics: domain's statistics
-	Statistics *Statistics `json:"statistics"`
+	Statistics *DomainStatistics `json:"statistics"`
 
 	Region scw.Region `json:"region"`
+}
+
+type DomainStatistics struct {
+	TotalCount uint32 `json:"total_count"`
+
+	SentCount uint32 `json:"sent_count"`
+
+	FailedCount uint32 `json:"failed_count"`
+
+	CanceledCount uint32 `json:"canceled_count"`
 }
 
 // Email: email
@@ -304,6 +314,11 @@ type Statistics struct {
 }
 
 // Service API
+
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar}
+}
 
 type GetServiceInfoRequest struct {
 	// Region:
@@ -458,6 +473,8 @@ type ListEmailsRequest struct {
 	ProjectID *string `json:"-"`
 	// DomainID: optional ID of the domain for which to list the emails
 	DomainID *string `json:"-"`
+	// MessageID: optional ID of the message for which to list the emails
+	MessageID *string `json:"-"`
 	// Since: optional, list emails created after this date
 	Since *time.Time `json:"-"`
 	// Until: optional, list emails created before this date
@@ -489,6 +506,7 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "domain_id", req.DomainID)
+	parameter.AddToQuery(query, "message_id", req.MessageID)
 	parameter.AddToQuery(query, "since", req.Since)
 	parameter.AddToQuery(query, "until", req.Until)
 	parameter.AddToQuery(query, "mail_from", req.MailFrom)

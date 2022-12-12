@@ -133,6 +133,40 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type FunctionHTTPOption string
+
+const (
+	// FunctionHTTPOptionUnknownHTTPOption is [insert doc].
+	FunctionHTTPOptionUnknownHTTPOption = FunctionHTTPOption("unknown_http_option")
+	// FunctionHTTPOptionEnabled is [insert doc].
+	FunctionHTTPOptionEnabled = FunctionHTTPOption("enabled")
+	// FunctionHTTPOptionRedirected is [insert doc].
+	FunctionHTTPOptionRedirected = FunctionHTTPOption("redirected")
+)
+
+func (enum FunctionHTTPOption) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_http_option"
+	}
+	return string(enum)
+}
+
+func (enum FunctionHTTPOption) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *FunctionHTTPOption) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = FunctionHTTPOption(FunctionHTTPOption(tmp).String())
+	return nil
+}
+
 type FunctionPrivacy string
 
 const (
@@ -204,6 +238,12 @@ const (
 	FunctionRuntimeGo118 = FunctionRuntime("go118")
 	// FunctionRuntimeNode18 is [insert doc].
 	FunctionRuntimeNode18 = FunctionRuntime("node18")
+	// FunctionRuntimeRust165 is [insert doc].
+	FunctionRuntimeRust165 = FunctionRuntime("rust165")
+	// FunctionRuntimeGo119 is [insert doc].
+	FunctionRuntimeGo119 = FunctionRuntime("go119")
+	// FunctionRuntimePython311 is [insert doc].
+	FunctionRuntimePython311 = FunctionRuntime("python311")
 )
 
 func (enum FunctionRuntime) String() string {
@@ -891,6 +931,8 @@ type Cron struct {
 	//
 	// Default value: unknown
 	Status CronStatus `json:"status"`
+
+	Name string `json:"name"`
 }
 
 // Domain: domain
@@ -959,13 +1001,14 @@ type Function struct {
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
 
 	RuntimeMessage string `json:"runtime_message"`
 }
@@ -1244,6 +1287,11 @@ type UploadURL struct {
 }
 
 // Service API
+
+// Regions list localities the api is available in
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar}
+}
 
 type ListNamespacesRequest struct {
 	// Region:
@@ -1649,13 +1697,14 @@ type CreateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
 }
 
 // CreateFunction: create a new function
@@ -1728,13 +1777,14 @@ type UpdateFunctionRequest struct {
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// Deprecated: HTTPOption: configure how HTTP and HTTPS requests are handled
+	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
 	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	HTTPOption *string `json:"http_option,omitempty"`
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
 }
 
 // UpdateFunction: update an existing function
@@ -2107,6 +2157,8 @@ type CreateCronRequest struct {
 	Schedule string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // CreateCron: create a new cron
@@ -2155,6 +2207,8 @@ type UpdateCronRequest struct {
 	Schedule *string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
+
+	Name *string `json:"name"`
 }
 
 // UpdateCron: update an existing cron
