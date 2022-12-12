@@ -34,10 +34,12 @@ func (s *API) WaitForGateway(req *WaitForGatewayRequest, opts ...scw.RequestOpti
 	}
 
 	terminalStatus := map[GatewayStatus]struct{}{
-		GatewayStatusRunning: {},
-		GatewayStatusDeleted: {},
 		GatewayStatusUnknown: {},
+		GatewayStatusStopped: {},
+		GatewayStatusRunning: {},
 		GatewayStatusFailed:  {},
+		GatewayStatusDeleted: {},
+		GatewayStatusLocked:  {},
 	}
 
 	gateway, err := async.WaitSync(&async.WaitSyncConfig{
