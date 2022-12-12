@@ -117,6 +117,11 @@ type PrivateNetwork struct {
 
 // Service API
 
+// Zones list localities the api is available in
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneNlAms1}
+}
+
 type ListPrivateNetworksRequest struct {
 	// Zone:
 	//

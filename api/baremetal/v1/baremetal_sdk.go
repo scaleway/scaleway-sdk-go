@@ -1017,6 +1017,11 @@ type Setting struct {
 
 // Service API
 
+// Zones list localities the api is available in
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1}
+}
+
 type ListServersRequest struct {
 	// Zone:
 	//
@@ -2325,6 +2330,11 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 }
 
 // Service PrivateNetworkAPI
+
+// Zones list localities the api is available in
+func (s *PrivateNetworkAPI) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar2}
+}
 
 type PrivateNetworkAPIAddServerPrivateNetworkRequest struct {
 	// Zone:
