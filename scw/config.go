@@ -2,15 +2,18 @@ package scw
 
 import (
 	"bytes"
+	goerrors "errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -185,7 +188,22 @@ func MustLoadConfig() *Config {
 
 // LoadConfig read the config from the default path.
 func LoadConfig() (*Config, error) {
-	return LoadConfigFromPath(GetConfigPath())
+	configPath := GetConfigPath()
+	cfg, err := LoadConfigFromPath(configPath)
+
+	var configNotFoundError *ConfigFileNotFoundError
+	if err != nil && goerrors.As(err, &configNotFoundError) {
+		if strings.HasSuffix(configPath, ".yaml") {
+			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
+		}
+		cfgYml, errYml := LoadConfigFromPath(configPath)
+		// If .yml config is not found, return first error when reading .yaml
+		if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
+			return cfgYml, errYml
+		}
+	}
+	return cfg, err
+
 }
 
 // LoadConfigFromPath read the config from the given path.
