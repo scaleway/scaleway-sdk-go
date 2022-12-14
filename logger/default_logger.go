@@ -22,6 +22,7 @@ type loggerT struct {
 // Not mutex-protected, should be called before any scaleway-sdk-go functions.
 func (g *loggerT) Init(w io.Writer, level LogLevel) {
 	g.m = newLogger(w, level).m
+	g.v = level
 }
 
 // Debugf logs to the DEBUG log. Arguments are handled in the manner of fmt.Printf.
