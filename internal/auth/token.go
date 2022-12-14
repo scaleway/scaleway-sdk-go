@@ -25,7 +25,7 @@ func (t *Token) Headers() http.Header {
 	return headers
 }
 
-func AnonymizeHeaders(headers http.Header) http.Header {
+func AnonymizeTokenHeaders(headers http.Header) http.Header {
 	key := headers.Get(XAuthTokenHeader)
 	if key != "" {
 		headers.Set(XAuthTokenHeader, HideSecretKey(key))
@@ -36,7 +36,7 @@ func AnonymizeHeaders(headers http.Header) http.Header {
 // AnonymizedHeaders returns an anonymized version of Headers()
 // This method could be use for logging purpose.
 func (t *Token) AnonymizedHeaders() http.Header {
-	return AnonymizeHeaders(t.Headers())
+	return AnonymizeTokenHeaders(t.Headers())
 }
 
 func HideSecretKey(k string) string {
