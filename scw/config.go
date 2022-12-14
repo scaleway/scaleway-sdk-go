@@ -191,17 +191,21 @@ func LoadConfig() (*Config, error) {
 	configPath := GetConfigPath()
 	cfg, err := LoadConfigFromPath(configPath)
 
-	var configNotFoundError *ConfigFileNotFoundError
-	if err != nil && goerrors.As(err, &configNotFoundError) && strings.HasSuffix(configPath, ".yaml") {
-		configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
-		cfgYml, errYml := LoadConfigFromPath(configPath)
-		// If .yml config is not found, return first error when reading .yaml
-		if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
-			return cfgYml, errYml
+	// Special case if using default config path
+	// if config.yaml does not exist, we should try to read config.yml
+	if os.Getenv(ScwConfigPathEnv) == "" {
+		var configNotFoundError *ConfigFileNotFoundError
+		if err != nil && goerrors.As(err, &configNotFoundError) && strings.HasSuffix(configPath, ".yaml") {
+			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
+			cfgYml, errYml := LoadConfigFromPath(configPath)
+			// If .yml config is not found, return first error when reading .yaml
+			if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
+				return cfgYml, errYml
+			}
 		}
 	}
-	return cfg, err
 
+	return cfg, err
 }
 
 // LoadConfigFromPath read the config from the given path.
