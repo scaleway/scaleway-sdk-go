@@ -447,6 +447,22 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			expectedError: "scaleway-sdk-go: content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
 		},
+
+		// Config file config.yaml and config.yml
+		{
+			name: "Read config.yml",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+		},
 	}
 
 	// create home dir
