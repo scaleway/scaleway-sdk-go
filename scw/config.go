@@ -192,10 +192,8 @@ func LoadConfig() (*Config, error) {
 	cfg, err := LoadConfigFromPath(configPath)
 
 	var configNotFoundError *ConfigFileNotFoundError
-	if err != nil && goerrors.As(err, &configNotFoundError) {
-		if strings.HasSuffix(configPath, ".yaml") {
-			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
-		}
+	if err != nil && goerrors.As(err, &configNotFoundError) && strings.HasSuffix(configPath, ".yaml") {
+		configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
 		cfgYml, errYml := LoadConfigFromPath(configPath)
 		// If .yml config is not found, return first error when reading .yaml
 		if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
