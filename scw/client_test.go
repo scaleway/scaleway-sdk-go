@@ -124,6 +124,9 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
 		clientTransport, ok := client.httpClient.(*http.Client).Transport.(*http.Transport)
+		if loggerTransport, isLogger := client.httpClient.(*http.Client).Transport.(*requestLoggerTransport); !ok && isLogger {
+			clientTransport, ok = loggerTransport.rt.(*http.Transport)
+		}
 		testhelpers.Assert(t, ok, "clientTransport must be not nil")
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
