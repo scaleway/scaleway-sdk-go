@@ -126,11 +126,6 @@ default_region: ` + v2ValidDefaultRegion + `
 
 	v2SimpleInvalidConfigFile            = `insecure: "bool""`
 	v2SimpleConfigFileWithInvalidProfile = `active_profile: flantier`
-
-	v2FromV1ConfigFile = `secret_key: ` + v1ValidToken + `
-default_organization_id: ` + v1ValidOrganizationID + `
-default_project_id: ` + v1ValidOrganizationID + `
-`
 )
 
 // TestSaveConfig tests config write the correct values in the config file
@@ -261,10 +256,9 @@ func TestSaveConfig(t *testing.T) {
 // TestLoadConfig tests config getters return correct values
 func TestLoadProfileAndActiveProfile(t *testing.T) {
 	tests := []struct {
-		name       string
-		env        map[string]string
-		files      map[string]string
-		isMigrated bool
+		name  string
+		env   map[string]string
+		files map[string]string
 
 		expectedError                 string
 		expectedAccessKey             *string
@@ -319,34 +313,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
-			},
-			expectedAccessKey:             s(v2ValidAccessKey),
-			expectedSecretKey:             s(v2ValidSecretKey),
-			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
-			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
-			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-		},
-		{
-			name: "Simple config with valid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".scwrc": v1ValidConfigFile,
-			},
-			isMigrated:                    true,
-			expectedSecretKey:             s(v1ValidToken),
-			expectedDefaultOrganizationID: s(v1ValidOrganizationID),
-			expectedDefaultProjectID:      s(v1ValidOrganizationID),
-		},
-		{
-			name: "Simple config with valid V2 and valid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".config/scw/config.yaml": v2SimpleValidConfigFile,
-				".scwrc":                  v1ValidConfigFile,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
@@ -426,28 +392,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 		},
 
-		// Valid V1 is not allowed
-		{
-			name: "Err: custom-path config with valid V1",
-			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid2/test.conf",
-			},
-			files: map[string]string{
-				"valid2/test.conf": v1ValidConfigFile,
-			},
-			expectedError: "scaleway-sdk-go: found legacy config in {HOME}/valid2/test.conf: legacy config is not allowed, please switch to the new config file format: " + documentationLink,
-		},
-		{
-			name: "Err: default config with invalid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".scwrc": v1InvalidConfigFile,
-			},
-			expectedError: "scaleway-sdk-go: content of config file {HOME}/.scwrc is invalid json: invalid character ':' after top-level value",
-		},
-
 		// Config file config.yaml and config.yml
 		{
 			name: "Read config.yml",
@@ -480,16 +424,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
-			// load config
-			isMigrated, err := MigrateLegacyConfig()
-
-			if test.expectedError != "" && err != nil {
-				testhelpers.Equals(t, test.expectedError, err.Error())
-				return
-			}
-			testhelpers.AssertNoError(t, err)
-
-			testhelpers.Equals(t, test.isMigrated, isMigrated)
 			config, err := LoadConfig()
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)

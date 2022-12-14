@@ -223,12 +223,6 @@ func LoadConfigFromPath(path string) (*Config, error) {
 		return nil, errors.Wrap(err, "cannot read config file")
 	}
 
-	_, err = unmarshalConfV1(file)
-	if err == nil {
-		// reject V1 config
-		return nil, errors.New("found legacy config in %s: legacy config is not allowed, please switch to the new config file format: %s", path, documentationLink)
-	}
-
 	confV2, err := unmarshalConfV2(file)
 	if err != nil {
 		return nil, errors.Wrap(err, "content of config file %s is invalid", path)
