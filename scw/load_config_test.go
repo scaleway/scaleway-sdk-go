@@ -12,9 +12,7 @@ import (
 
 // TestLoad tests all valid configuration files:
 // - v2 config
-// - v1 to v2 config migration
 // - custom-path with v2 config
-// - custom-path with v1 config
 // - XDG config path with v2 config
 func TestLoad(t *testing.T) {
 	tests := []struct {
@@ -53,20 +51,6 @@ func TestLoad(t *testing.T) {
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
-			},
-			expected: v2SimpleValidConfig,
-			expectedFiles: map[string]string{
-				".config/scw/config.yaml": v2SimpleValidConfigFile,
-			},
-		},
-		{
-			name: "Default config with valid V2 and valid V1",
-			env: map[string]string{
-				"HOME": "{HOME}",
-			},
-			files: map[string]string{
-				".config/scw/config.yaml": v2SimpleValidConfigFile,
-				".scwrc":                  v1ValidConfigFile,
 			},
 			expected: v2SimpleValidConfig,
 			expectedFiles: map[string]string{
