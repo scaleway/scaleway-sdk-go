@@ -51,7 +51,7 @@ func (g *loggerT) Errorf(format string, args ...interface{}) {
 // ShouldLog reports whether verbosity level l is at least the requested verbose level.
 func ShouldLog(level LogLevel) bool { return logger.ShouldLog(level) }
 func (g *loggerT) ShouldLog(level LogLevel) bool {
-	return level <= g.v
+	return level >= g.v
 }
 
 func isEnabled(envKey string) bool {
