@@ -1253,6 +1253,8 @@ type NodeType struct {
 	Beta bool `json:"beta"`
 	// AvailableVolumeTypes: available storage options for the Node Type
 	AvailableVolumeTypes []*NodeTypeVolumeType `json:"available_volume_types"`
+	// IsHaRequired: the Node Type can be used only with high availability option
+	IsHaRequired bool `json:"is_ha_required"`
 	// Region: region the Node Type is in
 	Region scw.Region `json:"region"`
 }
