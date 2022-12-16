@@ -530,5 +530,11 @@ func setRequestLogging(c httpClient) {
 		logger.Warningf("client: cannot use request logger with HTTP client of type %T", c)
 		return
 	}
-	standardHTTPClient.Transport = &requestLoggerTransport{rt: standardHTTPClient.Transport}
+	// Do not wrap transport if it is already a logger
+	// As client is a pointer, changing transport will change given client
+	// If the same httpClient is used in multiple scwClient, it would add multiple logger transports
+	_, isLogger := standardHTTPClient.Transport.(*requestLoggerTransport)
+	if !isLogger {
+		standardHTTPClient.Transport = &requestLoggerTransport{rt: standardHTTPClient.Transport}
+	}
 }

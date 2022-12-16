@@ -40,6 +40,27 @@ func TestNewClientWithNoAuth(t *testing.T) {
 	})
 }
 
+func TestNewClientMultipleClients(t *testing.T) {
+	t.Run("Basic", func(t *testing.T) {
+		logger.EnableDebugMode()
+		httpClient := &http.Client{}
+		_, err := NewClient(WithHTTPClient(httpClient))
+		testhelpers.AssertNoError(t, err)
+
+		_, isLogger := httpClient.Transport.(*requestLoggerTransport)
+		testhelpers.Assert(t, isLogger, "transport should be a request logger")
+
+		_, err = NewClient(WithHTTPClient(httpClient))
+		testhelpers.AssertNoError(t, err)
+
+		transport, isLogger := httpClient.Transport.(*requestLoggerTransport)
+		testhelpers.Assert(t, isLogger, "transport should be a request logger")
+		_, isLogger = transport.rt.(*requestLoggerTransport)
+		testhelpers.Assert(t, !isLogger, "nested transport should not be a request logger")
+
+	})
+}
+
 func TestNewClientWithDefaults(t *testing.T) {
 	options := []ClientOption{
 		WithInsecure(),
