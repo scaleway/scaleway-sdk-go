@@ -244,6 +244,8 @@ const (
 	FunctionRuntimeGo119 = FunctionRuntime("go119")
 	// FunctionRuntimePython311 is [insert doc].
 	FunctionRuntimePython311 = FunctionRuntime("python311")
+	// FunctionRuntimePhp82 is [insert doc].
+	FunctionRuntimePhp82 = FunctionRuntime("php82")
 )
 
 func (enum FunctionRuntime) String() string {
