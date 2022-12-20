@@ -936,13 +936,13 @@ type Endpoint struct {
 	Port uint32 `json:"port"`
 	// Name: name of the endpoint
 	Name *string `json:"name"`
-	// PrivateNetwork: private network details
+	// PrivateNetwork: private network details. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated)
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
-	// LoadBalancer: load balancer details
+	// LoadBalancer: load balancer details. Public endpoint for RDB instances which is systematically present. One per RDB instance
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointLoadBalancerDetails `json:"load_balancer,omitempty"`
-	// DirectAccess: direct access details
+	// DirectAccess: direct access details. Public endpoint reserved for read replicas. One per read replica
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	DirectAccess *EndpointDirectAccessDetails `json:"direct_access,omitempty"`
 	// Hostname: hostname of the endpoint
@@ -968,10 +968,10 @@ type EndpointPrivateNetworkDetails struct {
 
 // EndpointSpec: endpoint spec
 type EndpointSpec struct {
-	// LoadBalancer: load balancer endpoint specifications
+	// LoadBalancer: load balancer endpoint specifications. Public endpoint for RDB instances which is systematically present. One per RDB instance
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointSpecLoadBalancer `json:"load_balancer,omitempty"`
-	// PrivateNetwork: private network endpoint specifications
+	// PrivateNetwork: private network endpoint specifications. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated)
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 }
@@ -1317,10 +1317,10 @@ type ReadReplica struct {
 
 // ReadReplicaEndpointSpec: read replica endpoint spec
 type ReadReplicaEndpointSpec struct {
-	// DirectAccess: direct access endpoint specifications
+	// DirectAccess: direct access endpoint specifications. Public endpoint reserved for read replicas. One per read replica
 	// Precisely one of DirectAccess, PrivateNetwork must be set.
 	DirectAccess *ReadReplicaEndpointSpecDirectAccess `json:"direct_access,omitempty"`
-	// PrivateNetwork: private network endpoint specifications
+	// PrivateNetwork: private network endpoint specifications. One at the most per read replica. Cannot be updated (has to be deleted and recreated)
 	// Precisely one of DirectAccess, PrivateNetwork must be set.
 	PrivateNetwork *ReadReplicaEndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 }
@@ -2072,7 +2072,7 @@ type CreateInstanceRequest struct {
 	VolumeType VolumeType `json:"volume_type"`
 	// VolumeSize: volume size when volume_type is not lssd
 	VolumeSize scw.Size `json:"volume_size"`
-	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance
+	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance. A load_balancer public endpoint is systematically created
 	InitEndpoints []*EndpointSpec `json:"init_endpoints"`
 	// BackupSameRegion: store logical backups in the same region as the database instance
 	BackupSameRegion bool `json:"backup_same_region"`
