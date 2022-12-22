@@ -996,56 +996,57 @@ type ACLSpec struct {
 
 // Backend: backend
 type Backend struct {
+	// ID: load balancer Backend ID
 	ID string `json:"id"`
-
+	// Name: load balancer Backend name
 	Name string `json:"name"`
-	// ForwardProtocol:
+	// ForwardProtocol: type of backend protocol
 	//
 	// Default value: tcp
 	ForwardProtocol Protocol `json:"forward_protocol"`
-
+	// ForwardPort: user sessions will be forwarded to this port of backend servers
 	ForwardPort int32 `json:"forward_port"`
-	// ForwardPortAlgorithm:
+	// ForwardPortAlgorithm: load balancer algorithm used to select the backend server
 	//
 	// Default value: roundrobin
 	ForwardPortAlgorithm ForwardPortAlgorithm `json:"forward_port_algorithm"`
-	// StickySessions:
+	// StickySessions: enables cookie-based session persistence
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-
+	// StickySessionsCookieName: cookie name for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
-
+	// HealthCheck: health Check used to verify backend servers status
 	HealthCheck *HealthCheck `json:"health_check"`
-
+	// Pool: servers IP addresses attached to the backend
 	Pool []string `json:"pool"`
-
+	// LB: load balancer the backend is attached to
 	LB *LB `json:"lb"`
-	// Deprecated
+	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-
+	// TimeoutServer: maximum server connection inactivity time (allowed time the server has to process the request)
 	TimeoutServer *time.Duration `json:"timeout_server"`
-
+	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-
+	// TimeoutTunnel: maximum tunnel inactivity time after Websocket is established (take precedence over client and server timeout)
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction:
+	// OnMarkedDownAction: defines what occurs when a backend server is marked down
 	//
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol:
+	// ProxyProtocol: pROXY protocol, forward client's address (must be supported by backend servers software)
 	//
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-
+	// CreatedAt: date at which the backend was created
 	CreatedAt *time.Time `json:"created_at"`
-
+	// UpdatedAt: date at which the backend was updated
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// FailoverHost: scaleway S3 bucket website to be served in case all backend servers are down
 	FailoverHost *string `json:"failover_host"`
-
+	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
-
+	// IgnoreSslServerVerify: whether or not the server certificate should be verified
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
 }
 
@@ -1089,9 +1090,9 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// BackendServerStats: state and statistics of your backend server like last healthcheck status, server uptime, result state of your backend server
+// BackendServerStats: state and statistics of your backend server like last health check status, server uptime, result state of your backend server
 type BackendServerStats struct {
-	// InstanceID: ID of your loadbalancer cluster server
+	// InstanceID: ID of your Load balancer cluster server
 	InstanceID string `json:"instance_id"`
 	// BackendID: ID of your Backend
 	BackendID string `json:"backend_id"`
@@ -1159,26 +1160,27 @@ type CreateCertificateRequestLetsencryptConfig struct {
 
 // Frontend: frontend
 type Frontend struct {
+	// ID: load balancer Frontend ID
 	ID string `json:"id"`
-
+	// Name: load balancer Frontend name
 	Name string `json:"name"`
-
+	// InboundPort: TCP port to listen on the front side
 	InboundPort int32 `json:"inbound_port"`
-
+	// Backend: backend resource the Frontend is attached to
 	Backend *Backend `json:"backend"`
-
+	// LB: load balancer the frontend is attached to
 	LB *LB `json:"lb"`
-
+	// TimeoutClient: maximum inactivity time on the client side
 	TimeoutClient *time.Duration `json:"timeout_client"`
-	// Deprecated
+	// Deprecated: Certificate: certificate, deprecated in favor of certificate_ids array
 	Certificate *Certificate `json:"certificate,omitempty"`
-
+	// CertificateIDs: list of certificate IDs to bind on the frontend
 	CertificateIDs []string `json:"certificate_ids"`
-
+	// CreatedAt: date at which the frontend was created
 	CreatedAt *time.Time `json:"created_at"`
-
+	// UpdatedAt: date at which the frontend was updated
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// EnableHTTP3: whether or not HTTP3 protocol is enabled
 	EnableHTTP3 bool `json:"enable_http3"`
 }
 
@@ -1225,27 +1227,27 @@ type HealthCheck struct {
 	// RedisConfig: the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-
+	// CheckMaxRetries: number of consecutive unsuccessful health checks, after which the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries"`
-
+	// TCPConfig: basic TCP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-
+	// PgsqlConfig: postgreSQL health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-
+	// HTTPConfig: HTTP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
-
+	// HTTPSConfig: HTTPS health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
-
+	// Port: TCP port to use for the backend server health check
 	Port int32 `json:"port"`
-
+	// CheckTimeout: maximum time a backend server has to reply to the health check
 	CheckTimeout *time.Duration `json:"check_timeout"`
-
+	// CheckDelay: time between two consecutive health checks
 	CheckDelay *time.Duration `json:"check_delay"`
-	// CheckSendProxy: it defines whether the healthcheck should be done considering the proxy protocol
+	// CheckSendProxy: it defines whether the health check should be done considering the proxy protocol
 	CheckSendProxy bool `json:"check_send_proxy"`
 }
 
@@ -1288,10 +1290,16 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 // HealthCheckHTTPConfig: health check. http config
 type HealthCheckHTTPConfig struct {
 	// URI: HTTP uri used with the request
+	//
+	// HTTP uri used for Healthcheck to the backend servers
 	URI string `json:"uri"`
 	// Method: HTTP method used with the request
+	//
+	// HTTP method used for Healthcheck to the backend servers
 	Method string `json:"method"`
-	// Code: a health check response will be considered as valid if the response's status code match
+	// Code: HTTP response code so the Healthcheck is considered successfull
+	//
+	// A health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
 	// HostHeader: HTTP host header used with the request
 	HostHeader string `json:"host_header"`
@@ -1300,14 +1308,22 @@ type HealthCheckHTTPConfig struct {
 // HealthCheckHTTPSConfig: health check. https config
 type HealthCheckHTTPSConfig struct {
 	// URI: HTTP uri used with the request
+	//
+	// HTTP uri used for Healthcheck to the backend servers
 	URI string `json:"uri"`
 	// Method: HTTP method used with the request
+	//
+	// HTTP method used for Healthcheck to the backend servers
 	Method string `json:"method"`
-	// Code: a health check response will be considered as valid if the response's status code match
+	// Code: HTTP response code so the Healthcheck is considered successfull
+	//
+	// A health check response will be considered as valid if the response's status code match
 	Code *int32 `json:"code"`
 	// HostHeader: HTTP host header used with the request
 	HostHeader string `json:"host_header"`
 	// Sni: specifies the SNI to use to do health checks over SSL
+	//
+	// Specifies the SNI to use to do health checks over SSL
 	Sni string `json:"sni"`
 }
 
@@ -1330,91 +1346,95 @@ type HealthCheckTCPConfig struct {
 
 // IP: ip
 type IP struct {
+	// ID: flexible IP ID
 	ID string `json:"id"`
-
+	// IPAddress: IP address
 	IPAddress string `json:"ip_address"`
-
+	// OrganizationID: organization ID
 	OrganizationID string `json:"organization_id"`
-
-	LBID *string `json:"lb_id"`
-
-	Reverse string `json:"reverse"`
-
+	// ProjectID: project ID
 	ProjectID string `json:"project_id"`
-	// Deprecated
+	// LBID: load balancer ID
+	LBID *string `json:"lb_id"`
+	// Reverse: reverse FQDN
+	Reverse string `json:"reverse"`
+	// Deprecated: Region: the region the Flexible IP is in
 	Region *scw.Region `json:"region,omitempty"`
-
+	// Zone: the zone the Flexible IP is in
 	Zone scw.Zone `json:"zone"`
 }
 
+// Instance: instance
 type Instance struct {
+	// ID: underlying Instance ID
 	ID string `json:"id"`
-	// Status:
+	// Status: instance status
 	//
 	// Default value: unknown
 	Status InstanceStatus `json:"status"`
-
+	// IPAddress: instance IP address
 	IPAddress string `json:"ip_address"`
-
+	// CreatedAt: date at which the Instance was created
 	CreatedAt *time.Time `json:"created_at"`
-
+	// UpdatedAt: date at which the Instance was updated
 	UpdatedAt *time.Time `json:"updated_at"`
-	// Deprecated
+	// Deprecated: Region: the region the instance is in
 	Region *scw.Region `json:"region,omitempty"`
-
+	// Zone: the zone the instance is in
 	Zone scw.Zone `json:"zone"`
 }
 
 // LB: lb
 type LB struct {
+	// ID: underlying Instance ID
 	ID string `json:"id"`
-
+	// Name: load balancer name
 	Name string `json:"name"`
-
+	// Description: load balancer description
 	Description string `json:"description"`
-	// Status:
+	// Status: load balancer status
 	//
 	// Default value: unknown
 	Status LBStatus `json:"status"`
-
+	// Instances: list of underlying instances
 	Instances []*Instance `json:"instances"`
-
+	// OrganizationID: organization ID
 	OrganizationID string `json:"organization_id"`
-
+	// ProjectID: project ID
+	ProjectID string `json:"project_id"`
+	// IP: list of IPs attached to the Load balancer
 	IP []*IP `json:"ip"`
-
+	// Tags: load balancer tags
 	Tags []string `json:"tags"`
-
+	// FrontendCount: number of frontends the Load balancer has
 	FrontendCount int32 `json:"frontend_count"`
-
+	// BackendCount: number of backends the Load balancer has
 	BackendCount int32 `json:"backend_count"`
-
+	// Type: load balancer offer type
 	Type string `json:"type"`
-
+	// Subscriber: subscriber information
 	Subscriber *Subscriber `json:"subscriber"`
-	// SslCompatibilityLevel:
+	// SslCompatibilityLevel: determines the minimal SSL version which needs to be supported on client side
 	//
 	// Default value: ssl_compatibility_level_unknown
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
-
-	ProjectID string `json:"project_id"`
-
+	// CreatedAt: date at which the Load balancer was created
 	CreatedAt *time.Time `json:"created_at"`
-
+	// UpdatedAt: date at which the Load balancer was updated
 	UpdatedAt *time.Time `json:"updated_at"`
-
+	// PrivateNetworkCount: number of private networks attached to the Load balancer
 	PrivateNetworkCount int32 `json:"private_network_count"`
-
+	// RouteCount: number of routes the Load balancer has
 	RouteCount int32 `json:"route_count"`
-	// Deprecated
+	// Deprecated: Region: the region the Load balancer is in
 	Region *scw.Region `json:"region,omitempty"`
-
+	// Zone: the zone the Load balancer is in
 	Zone scw.Zone `json:"zone"`
 }
 
 // LBStats: lb stats
 type LBStats struct {
-	// BackendServersStats: list stats object of your loadbalancer
+	// BackendServersStats: list stats object of your Load balancer
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 }
 
@@ -1442,7 +1462,7 @@ type ListACLResponse struct {
 
 // ListBackendStatsResponse: list backend stats response
 type ListBackendStatsResponse struct {
-	// BackendServersStats: list backend stats object of your loadbalancer
+	// BackendServersStats: list backend stats object of your Load balancer
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
@@ -1456,15 +1476,17 @@ type ListBackendsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListCertificatesResponse: list certificates response
 type ListCertificatesResponse struct {
+	// Certificates: list of certificates
 	Certificates []*Certificate `json:"certificates"`
-
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListFrontendsResponse: list frontends response
 type ListFrontendsResponse struct {
-	// Frontends: list frontends object of your loadbalancer
+	// Frontends: list frontends object of your Load balancer
 	Frontends []*Frontend `json:"frontends"`
 	// TotalCount: total count, wihtout pagination
 	TotalCount uint32 `json:"total_count"`
@@ -1478,22 +1500,27 @@ type ListIPsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListLBPrivateNetworksResponse: list lb private networks response
 type ListLBPrivateNetworksResponse struct {
+	// PrivateNetwork: private networks of a given load balancer
 	PrivateNetwork []*PrivateNetwork `json:"private_network"`
-
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListLBTypesResponse: list lb types response
 type ListLBTypesResponse struct {
+	// LBTypes: different types of LB
 	LBTypes []*LBType `json:"lb_types"`
-
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
-// ListLBsResponse: list lbs response
+// ListLBsResponse: get list of Load balancers
 type ListLBsResponse struct {
+	// LBs: list of Load balancer
 	LBs []*LB `json:"lbs"`
-
+	// TotalCount: the total number of items
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1614,13 +1641,13 @@ type ListLBsRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListLBsRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 	// OrganizationID: filter LBs by organization ID
 	OrganizationID *string `json:"-"`
@@ -2197,13 +2224,13 @@ type ListBackendsRequest struct {
 	LBID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy: choose order of response
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListBackendsRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: the number of items to returns
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
@@ -2274,7 +2301,7 @@ type CreateBackendRequest struct {
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName: cookie name for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// HealthCheck: see the Healthcheck object description
 	HealthCheck *HealthCheck `json:"health_check"`
@@ -2282,11 +2309,11 @@ type CreateBackendRequest struct {
 	ServerIP []string `json:"server_ip"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer: maximum server connection inactivity time (allowed time the server has to process the request)
 	TimeoutServer *time.Duration `json:"timeout_server"`
-	// TimeoutConnect: maximum initical server connection establishment time
+	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel: maximum tunnel inactivity time after Websocket is established (take precedence over client and server timeout)
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
@@ -2461,15 +2488,15 @@ type UpdateBackendRequest struct {
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName: cookie name for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field!
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer: maximum server connection inactivity time (allowed time the server has to process the request)
 	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel: maximum tunnel inactivity time after Websocket is established (take precedence over client and server timeout)
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
@@ -2770,9 +2797,9 @@ type UpdateHealthCheckRequest struct {
 	Port int32 `json:"port"`
 	// CheckDelay: time between two consecutive health checks
 	CheckDelay *time.Duration `json:"check_delay"`
-	// CheckTimeout: additional check timeout, after the connection has been already established
+	// CheckTimeout: maximum time a backend server has to reply to the health check
 	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
+	// CheckMaxRetries: number of consecutive unsuccessful health checks, after which the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
@@ -2783,19 +2810,19 @@ type UpdateHealthCheckRequest struct {
 	// RedisConfig: the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-
+	// PgsqlConfig: postgreSQL health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-
+	// TCPConfig: basic TCP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-
+	// HTTPConfig: HTTP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
-
+	// HTTPSConfig: HTTPS health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
-	// CheckSendProxy: it defines whether the healthcheck should be done considering the proxy protocol
+	// CheckSendProxy: it defines whether the health check should be done considering the proxy protocol
 	CheckSendProxy bool `json:"check_send_proxy"`
 }
 
@@ -2835,7 +2862,7 @@ func (m UpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// UpdateHealthCheck: update an healthcheck for a given backend
+// UpdateHealthCheck: update an health check for a given backend
 func (s *API) UpdateHealthCheck(req *UpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
@@ -2887,7 +2914,7 @@ type ListFrontendsRequest struct {
 	OrderBy ListFrontendsRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: the number of items to returns
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
@@ -3208,13 +3235,13 @@ type ListRoutesRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListRoutesRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 
 	FrontendID *string `json:"-"`
@@ -3538,7 +3565,7 @@ type ListACLsRequest struct {
 	Region scw.Region `json:"-"`
 	// FrontendID: ID of your frontend
 	FrontendID string `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListACLRequestOrderBy `json:"-"`
@@ -3860,7 +3887,7 @@ type ListCertificatesRequest struct {
 	Region scw.Region `json:"-"`
 	// LBID: load balancer ID
 	LBID string `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListCertificatesRequestOrderBy `json:"-"`
@@ -4203,7 +4230,7 @@ type ListSubscriberRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListSubscriberRequestOrderBy `json:"-"`
@@ -4448,15 +4475,15 @@ type ListLBPrivateNetworksRequest struct {
 	//
 	// Region to target. If none is passed will use default region from the config
 	Region scw.Region `json:"-"`
-
+	// LBID: load balancer ID
 	LBID string `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListPrivateNetworksRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 }
 
@@ -4625,13 +4652,13 @@ type ZonedAPIListLBsRequest struct {
 	Zone scw.Zone `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListLBsRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 	// OrganizationID: filter LBs by organization ID
 	OrganizationID *string `json:"-"`
@@ -5208,13 +5235,13 @@ type ZonedAPIListBackendsRequest struct {
 	LBID string `json:"-"`
 	// Name: use this to search by name
 	Name *string `json:"-"`
-	// OrderBy: choose order of response
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListBackendsRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: the number of items to returns
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
@@ -5285,7 +5312,7 @@ type ZonedAPICreateBackendRequest struct {
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName: cookie name for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// HealthCheck: see the Healthcheck object description
 	HealthCheck *HealthCheck `json:"health_check"`
@@ -5293,11 +5320,11 @@ type ZonedAPICreateBackendRequest struct {
 	ServerIP []string `json:"server_ip"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field !
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer: maximum server connection inactivity time (allowed time the server has to process the request)
 	TimeoutServer *time.Duration `json:"timeout_server"`
-	// TimeoutConnect: maximum initical server connection establishment time
+	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel: maximum tunnel inactivity time after Websocket is established (take precedence over client and server timeout)
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
@@ -5472,15 +5499,15 @@ type ZonedAPIUpdateBackendRequest struct {
 	//
 	// Default value: none
 	StickySessions StickySessionsType `json:"sticky_sessions"`
-	// StickySessionsCookieName: cookie name for for sticky sessions
+	// StickySessionsCookieName: cookie name for sticky sessions
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field!
 	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
-	// TimeoutServer: maximum server connection inactivity time
+	// TimeoutServer: maximum server connection inactivity time (allowed time the server has to process the request)
 	TimeoutServer *time.Duration `json:"timeout_server"`
 	// TimeoutConnect: maximum initial server connection establishment time
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
-	// TimeoutTunnel: maximum tunnel inactivity time
+	// TimeoutTunnel: maximum tunnel inactivity time after Websocket is established (take precedence over client and server timeout)
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
 	// OnMarkedDownAction: modify what occurs when a backend server is marked down
 	//
@@ -5781,9 +5808,9 @@ type ZonedAPIUpdateHealthCheckRequest struct {
 	Port int32 `json:"port"`
 	// CheckDelay: time between two consecutive health checks
 	CheckDelay *time.Duration `json:"check_delay"`
-	// CheckTimeout: additional check timeout, after the connection has been already established
+	// CheckTimeout: maximum time a backend server has to reply to the health check
 	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks, after wich the server will be considered dead
+	// CheckMaxRetries: number of consecutive unsuccessful health checks, after which the server will be considered dead
 	CheckMaxRetries int32 `json:"check_max_retries"`
 	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
@@ -5794,19 +5821,19 @@ type ZonedAPIUpdateHealthCheckRequest struct {
 	// RedisConfig: the response is analyzed to find the +PONG response message
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-
+	// PgsqlConfig: postgreSQL health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-
+	// TCPConfig: basic TCP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-
+	// HTTPConfig: HTTP health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
-
+	// HTTPSConfig: HTTPS health check
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
-	// CheckSendProxy: it defines whether the healthcheck should be done considering the proxy protocol
+	// CheckSendProxy: it defines whether the health check should be done considering the proxy protocol
 	CheckSendProxy bool `json:"check_send_proxy"`
 }
 
@@ -5898,7 +5925,7 @@ type ZonedAPIListFrontendsRequest struct {
 	OrderBy ListFrontendsRequestOrderBy `json:"-"`
 	// Page: page number
 	Page *int32 `json:"-"`
-	// PageSize: the number of items to returns
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
 }
 
@@ -6219,13 +6246,13 @@ type ZonedAPIListRoutesRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListRoutesRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 
 	FrontendID *string `json:"-"`
@@ -6549,7 +6576,7 @@ type ZonedAPIListACLsRequest struct {
 	Zone scw.Zone `json:"-"`
 	// FrontendID: ID of your frontend
 	FrontendID string `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListACLRequestOrderBy `json:"-"`
@@ -6919,7 +6946,7 @@ type ZonedAPIListCertificatesRequest struct {
 	Zone scw.Zone `json:"-"`
 	// LBID: load balancer ID
 	LBID string `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListCertificatesRequestOrderBy `json:"-"`
@@ -7262,7 +7289,7 @@ type ZonedAPIListSubscriberRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-	// OrderBy: you can order the response by created_at asc/desc or name asc/desc
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListSubscriberRequestOrderBy `json:"-"`
@@ -7507,15 +7534,15 @@ type ZonedAPIListLBPrivateNetworksRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// LBID: load balancer ID
 	LBID string `json:"-"`
-	// OrderBy:
+	// OrderBy: response order
 	//
 	// Default value: created_at_asc
 	OrderBy ListPrivateNetworksRequestOrderBy `json:"-"`
-
+	// PageSize: the number of items to return
 	PageSize *uint32 `json:"-"`
-
+	// Page: page number
 	Page *int32 `json:"-"`
 }
 
