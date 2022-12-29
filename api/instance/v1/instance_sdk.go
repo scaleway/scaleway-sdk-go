@@ -5040,7 +5040,7 @@ type ListPrivateNICsRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: the server the private NIC is attached to
 	ServerID string `json:"-"`
 }
 
@@ -5083,9 +5083,9 @@ type CreatePrivateNICRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: UUID of the server the private NIC will be attached to
 	ServerID string `json:"-"`
-
+	// PrivateNetworkID: UUID of the private network where the private NIC will be attached
 	PrivateNetworkID string `json:"private_network_id,omitempty"`
 }
 
@@ -5133,9 +5133,9 @@ type GetPrivateNICRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: the server the private NIC is attached to
 	ServerID string `json:"-"`
-
+	// PrivateNicID: the private NIC unique ID
 	PrivateNicID string `json:"-"`
 }
 
@@ -5182,9 +5182,9 @@ type DeletePrivateNICRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// ServerID: the server the private NIC is attached to
 	ServerID string `json:"-"`
-
+	// PrivateNicID: the private NIC unique ID
 	PrivateNicID string `json:"-"`
 }
 
