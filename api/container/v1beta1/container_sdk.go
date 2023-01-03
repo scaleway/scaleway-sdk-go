@@ -844,7 +844,7 @@ type Token struct {
 
 // Regions list localities the api is available in
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 type ListNamespacesRequest struct {
