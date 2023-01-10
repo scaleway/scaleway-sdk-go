@@ -144,8 +144,6 @@ const (
 	NamespaceProtocolNats = NamespaceProtocol("nats")
 	// NamespaceProtocolSqsSns is [insert doc].
 	NamespaceProtocolSqsSns = NamespaceProtocol("sqs_sns")
-	// NamespaceProtocolAmqp is [insert doc].
-	NamespaceProtocolAmqp = NamespaceProtocol("amqp")
 )
 
 func (enum NamespaceProtocol) String() string {
@@ -184,24 +182,11 @@ type Credential struct {
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
 	// NatsCredentials: credentials file used to connect to the NATS service
-	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
+	// Precisely one of NatsCredentials, SqsSnsCredentials must be set.
 	NatsCredentials *CredentialNATSCredsFile `json:"nats_credentials,omitempty"`
 	// SqsSnsCredentials: credential used to connect to the SQS/SNS service
-	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
+	// Precisely one of NatsCredentials, SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
-	// AmqpCredentials: credential used to connect to the AMQP service
-	// Precisely one of AmqpCredentials, NatsCredentials, SqsSnsCredentials must be set.
-	AmqpCredentials *CredentialAMQPCreds `json:"amqp_credentials,omitempty"`
-}
-
-// CredentialAMQPCreds: credential.amqp creds
-type CredentialAMQPCreds struct {
-	// Username: username used to connect to the AMQP service
-	Username string `json:"username"`
-	// Password: password used to connect to the AMQP service
-	Password *string `json:"password"`
-	// Permissions: list of permissions associated to this Credential
-	Permissions *Permissions `json:"permissions"`
 }
 
 // CredentialNATSCredsFile: credential.nats creds file
@@ -233,19 +218,8 @@ type CredentialSummary struct {
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
 	// SqsSnsCredentials: credential used to connect to the SQS/SNS service
-	// Precisely one of AmqpCredentials, SqsSnsCredentials must be set.
+	// Precisely one of SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSummarySQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
-	// AmqpCredentials: credential used to connect to the AMQP service
-	// Precisely one of AmqpCredentials, SqsSnsCredentials must be set.
-	AmqpCredentials *CredentialSummaryAMQPCreds `json:"amqp_credentials,omitempty"`
-}
-
-// CredentialSummaryAMQPCreds: credential summary.amqp creds
-type CredentialSummaryAMQPCreds struct {
-	// Username: username used to connect to the AMQP service
-	Username string `json:"username"`
-	// Permissions: list of permissions associated to this Credential
-	Permissions *Permissions `json:"permissions"`
 }
 
 // CredentialSummarySQSSNSCreds: credential summary.sqssns creds
