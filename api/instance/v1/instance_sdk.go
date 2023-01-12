@@ -2720,7 +2720,7 @@ type CreateImageRequest struct {
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
 	// DefaultBootscript: default bootscript of the image
-	DefaultBootscript string `json:"default_bootscript,omitempty"`
+	DefaultBootscript *string `json:"default_bootscript,omitempty"`
 	// ExtraVolumes: additional volumes of the image
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
 	// Deprecated: Organization: organization ID of the image
@@ -2732,7 +2732,7 @@ type CreateImageRequest struct {
 	// Tags: the tags of the image
 	Tags []string `json:"tags,omitempty"`
 	// Public: true to create a public image
-	Public bool `json:"public,omitempty"`
+	Public *bool `json:"public,omitempty"`
 }
 
 // CreateImage: create an instance image
