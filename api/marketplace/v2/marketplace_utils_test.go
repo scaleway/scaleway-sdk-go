@@ -19,7 +19,7 @@ func TestGetImageByLabel(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageIDByLabelRequest{
+		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
 			ImageLabel:     "ubuntu_focal",
@@ -34,7 +34,7 @@ func TestGetImageByLabel(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageIDByLabelRequest{
+		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "dev1-s",
 			ImageLabel:     "ubuntu_focal",
@@ -49,7 +49,7 @@ func TestGetImageByLabel(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
 		marketplaceAPI := NewAPI(client)
 
-		_, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageIDByLabelRequest{
+		_, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
 			ImageLabel:     "foo-bar-image",
