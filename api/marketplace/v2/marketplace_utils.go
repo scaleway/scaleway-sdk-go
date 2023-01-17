@@ -41,14 +41,14 @@ func (s *API) GetImageByLabel(req *GetImageByLabelRequest, opts ...scw.RequestOp
 	return image, nil
 }
 
-type GetLocalImageIDByLabelRequest struct {
+type GetLocalImageByLabelRequest struct {
 	ImageLabel     string
 	Zone           scw.Zone
 	CommercialType string
 }
 
 // GetLocalImageByLabel returns the local image for the given image label in the given zone and compatible with given commercial type
-func (s *API) GetLocalImageByLabel(req *GetLocalImageIDByLabelRequest, opts ...scw.RequestOption) (*LocalImage, error) {
+func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw.RequestOption) (*LocalImage, error) {
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
