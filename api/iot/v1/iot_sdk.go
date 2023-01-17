@@ -1398,7 +1398,7 @@ type GetHubMetricsRequest struct {
 	StartDate *time.Time `json:"-"`
 }
 
-// GetHubMetrics: get a hub's metrics
+// Deprecated: GetHubMetrics: get a hub's metrics
 func (s *API) GetHubMetrics(req *GetHubMetricsRequest, opts ...scw.RequestOption) (*GetHubMetricsResponse, error) {
 	var err error
 
@@ -2025,7 +2025,7 @@ type GetDeviceMetricsRequest struct {
 	StartDate *time.Time `json:"-"`
 }
 
-// GetDeviceMetrics: get a device's metrics
+// Deprecated: GetDeviceMetrics: get a device's metrics
 func (s *API) GetDeviceMetrics(req *GetDeviceMetricsRequest, opts ...scw.RequestOption) (*GetDeviceMetricsResponse, error) {
 	var err error
 
