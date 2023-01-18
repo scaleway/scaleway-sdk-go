@@ -33,7 +33,9 @@ func (s *API) GetImageByLabel(req *GetImageByLabelRequest, opts ...scw.RequestOp
 		return nil, err
 	}
 
-	image := listImagesResponse.FindByLabel(req.Label)
+	label := strings.Replace(req.Label, "-", "_", -1)
+
+	image := listImagesResponse.FindByLabel(label)
 	if image == nil {
 		return nil, errors.New("couldn't find a matching image for the given label (%s)", req.Label)
 	}
@@ -53,6 +55,7 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
 	}
+
 	req.CommercialType = strings.ToUpper(req.CommercialType)
 
 	image, err := s.GetImageByLabel(&GetImageByLabelRequest{
@@ -61,12 +64,14 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+
 	resp, err := s.ListLocalImages(&ListLocalImagesRequest{
 		ImageID: &image.ID,
 	}, append(opts, scw.WithAllPages())...)
 	if err != nil {
 		return nil, err
 	}
+
 	for _, localImage := range resp.LocalImages {
 		if localImage.Zone == req.Zone && localImage.IsCompatible(req.CommercialType) {
 			return localImage, nil
