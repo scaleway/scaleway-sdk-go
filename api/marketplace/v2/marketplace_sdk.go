@@ -403,6 +403,7 @@ type ListLocalImagesRequest struct {
 	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
 }
 
+// ListLocalImages: list local images from a specific image or version
 func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOption) (*ListLocalImagesResponse, error) {
 	var err error
 
