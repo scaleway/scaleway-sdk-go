@@ -299,6 +299,8 @@ type Cluster struct {
 	Zone scw.Zone `json:"zone"`
 	// UserName: name of the user associated to the cluster
 	UserName string `json:"user_name"`
+	// UpgradableVersions: list of versions the cluster can be migrated to
+	UpgradableVersions []string `json:"upgradable_versions"`
 }
 
 // ClusterMetricsResponse: cluster metrics response
