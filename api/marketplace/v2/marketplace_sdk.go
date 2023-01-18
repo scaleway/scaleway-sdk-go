@@ -225,6 +225,8 @@ type LocalImage struct {
 	Arch string `json:"arch"`
 	// Zone: availability Zone where this local image is available
 	Zone scw.Zone `json:"zone"`
+	// Label: image label this image belongs to
+	Label string `json:"label"`
 }
 
 // Version: version
@@ -401,11 +403,20 @@ type ListLocalImagesRequest struct {
 	//
 	// Default value: created_at_asc
 	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
+
+	ImageLabel *string `json:"-"`
+
+	Zone scw.Zone `json:"-"`
 }
 
 // ListLocalImages: list local images from a specific image or version
 func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOption) (*ListLocalImagesResponse, error) {
 	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
 
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
@@ -418,6 +429,8 @@ func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "image_label", req.ImageLabel)
+	parameter.AddToQuery(query, "zone", req.Zone)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
