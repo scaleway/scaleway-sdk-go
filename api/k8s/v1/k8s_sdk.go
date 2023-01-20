@@ -1198,6 +1198,8 @@ type CreateClusterRequest struct {
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 	// Type: the type of the cluster
+	//
+	// The type of the cluster (possible values are kapsule, multicloud).
 	Type string `json:"type"`
 	// Name: the name of the cluster
 	Name string `json:"name"`
