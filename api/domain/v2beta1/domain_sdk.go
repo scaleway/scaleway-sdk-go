@@ -3783,6 +3783,8 @@ type RegistrarAPISearchAvailableDomainsRequest struct {
 	Domains []string `json:"-"`
 	// Tlds: array of tlds to search on
 	Tlds []string `json:"-"`
+	// StrictSearch: search exact match
+	StrictSearch bool `json:"-"`
 }
 
 // SearchAvailableDomains: search available domains
@@ -3797,6 +3799,7 @@ func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDo
 	query := url.Values{}
 	parameter.AddToQuery(query, "domains", req.Domains)
 	parameter.AddToQuery(query, "tlds", req.Tlds)
+	parameter.AddToQuery(query, "strict_search", req.StrictSearch)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",

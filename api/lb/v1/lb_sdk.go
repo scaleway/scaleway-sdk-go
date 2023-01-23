@@ -1594,7 +1594,13 @@ type RouteMatch struct {
 	// Sni: server Name Indication TLS extension (SNI)
 	//
 	// Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer
-	Sni *string `json:"sni"`
+	// Precisely one of HostHeader, Sni must be set.
+	Sni *string `json:"sni,omitempty"`
+	// HostHeader: HTTP host header to match
+	//
+	// The Host request header specifies the host of the server to which the request is being sent
+	// Precisely one of HostHeader, Sni must be set.
+	HostHeader *string `json:"host_header,omitempty"`
 }
 
 // SetACLsResponse: set acls response
