@@ -1754,6 +1754,12 @@ type RenewableDomain struct {
 	RenewableDurationInYears *int32 `json:"renewable_duration_in_years"`
 
 	ExpiredAt *time.Time `json:"expired_at"`
+
+	LimitRenewAt *time.Time `json:"limit_renew_at"`
+
+	LimitRedemptionAt *time.Time `json:"limit_redemption_at"`
+
+	EstimatedDeleteAt *time.Time `json:"estimated_delete_at"`
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response
