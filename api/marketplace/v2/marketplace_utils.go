@@ -55,20 +55,15 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 	}
 	req.CommercialType = strings.ToUpper(req.CommercialType)
 
-	image, err := s.GetImageByLabel(&GetImageByLabelRequest{
-		Label: req.ImageLabel,
-	}, opts...)
-	if err != nil {
-		return nil, err
-	}
 	resp, err := s.ListLocalImages(&ListLocalImagesRequest{
-		ImageID: &image.ID,
-	}, append(opts, scw.WithAllPages())...)
+		ImageLabel: scw.StringPtr(req.ImageLabel),
+		Zone:       req.Zone,
+	})
 	if err != nil {
 		return nil, err
 	}
 	for _, localImage := range resp.LocalImages {
-		if localImage.Zone == req.Zone && localImage.IsCompatible(req.CommercialType) {
+		if localImage.IsCompatible(req.CommercialType) {
 			return localImage, nil
 		}
 	}
