@@ -1006,10 +1006,10 @@ type Function struct {
 	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	// Default value: unknown_http_option
+	// Default value: enabled
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 
 	RuntimeMessage string `json:"runtime_message"`
@@ -1702,10 +1702,10 @@ type CreateFunctionRequest struct {
 	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	// Default value: unknown_http_option
+	// Default value: enabled
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 }
 
@@ -1782,10 +1782,10 @@ type UpdateFunctionRequest struct {
 	// HTTPOption: configure how HTTP and HTTPS requests are handled
 	//
 	// possible values:
-	//  - redirected: Responds to HTTP request with a 302 redirect to ask the clients to use HTTPS.
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	//
-	// Default value: unknown_http_option
+	// Default value: enabled
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 }
 
