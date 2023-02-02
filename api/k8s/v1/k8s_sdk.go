@@ -627,7 +627,7 @@ type Cluster struct {
 	//
 	// Default value: unknown_ingress
 	Ingress *Ingress `json:"ingress,omitempty"`
-	// AutoUpgrade: the auo upgrade configuration of the cluster
+	// AutoUpgrade: the auto upgrade configuration of the cluster
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
 	// UpgradeAvailable: true if a new Kubernetes version is available
 	UpgradeAvailable bool `json:"upgrade_available"`
