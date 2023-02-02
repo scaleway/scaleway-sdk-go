@@ -1314,6 +1314,8 @@ type Domain struct {
 
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
+
+	Tld *Tld `json:"tld"`
 }
 
 type DomainDNSSEC struct {
@@ -1760,6 +1762,8 @@ type RenewableDomain struct {
 	LimitRedemptionAt *time.Time `json:"limit_redemption_at"`
 
 	EstimatedDeleteAt *time.Time `json:"estimated_delete_at"`
+
+	Tld *Tld `json:"tld"`
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response
