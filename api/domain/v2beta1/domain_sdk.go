@@ -717,6 +717,50 @@ func (enum *ListRenewableDomainsRequestOrderBy) UnmarshalJSON(data []byte) error
 	return nil
 }
 
+type ListTasksRequestOrderBy string
+
+const (
+	// ListTasksRequestOrderByDomainDesc is [insert doc].
+	ListTasksRequestOrderByDomainDesc = ListTasksRequestOrderBy("domain_desc")
+	// ListTasksRequestOrderByDomainAsc is [insert doc].
+	ListTasksRequestOrderByDomainAsc = ListTasksRequestOrderBy("domain_asc")
+	// ListTasksRequestOrderByTypeAsc is [insert doc].
+	ListTasksRequestOrderByTypeAsc = ListTasksRequestOrderBy("type_asc")
+	// ListTasksRequestOrderByTypeDesc is [insert doc].
+	ListTasksRequestOrderByTypeDesc = ListTasksRequestOrderBy("type_desc")
+	// ListTasksRequestOrderByStatusAsc is [insert doc].
+	ListTasksRequestOrderByStatusAsc = ListTasksRequestOrderBy("status_asc")
+	// ListTasksRequestOrderByStatusDesc is [insert doc].
+	ListTasksRequestOrderByStatusDesc = ListTasksRequestOrderBy("status_desc")
+	// ListTasksRequestOrderByUpdatedAtAsc is [insert doc].
+	ListTasksRequestOrderByUpdatedAtAsc = ListTasksRequestOrderBy("updated_at_asc")
+	// ListTasksRequestOrderByUpdatedAtDesc is [insert doc].
+	ListTasksRequestOrderByUpdatedAtDesc = ListTasksRequestOrderBy("updated_at_desc")
+)
+
+func (enum ListTasksRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "domain_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListTasksRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListTasksRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListTasksRequestOrderBy(ListTasksRequestOrderBy(tmp).String())
+	return nil
+}
+
 type RawFormat string
 
 const (
@@ -2830,11 +2874,19 @@ type RegistrarAPIListTasksRequest struct {
 
 	PageSize *uint32 `json:"-"`
 
-	Domain string `json:"-"`
-
 	ProjectID *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	Domain *string `json:"-"`
+
+	Types []TaskType `json:"-"`
+
+	Statuses []TaskStatus `json:"-"`
+	// OrderBy:
+	//
+	// Default value: domain_desc
+	OrderBy ListTasksRequestOrderBy `json:"-"`
 }
 
 // ListTasks: list tasks
@@ -2853,9 +2905,12 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "types", req.Types)
+	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
