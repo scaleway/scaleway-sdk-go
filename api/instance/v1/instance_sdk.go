@@ -1022,7 +1022,7 @@ type Image struct {
 	CreationDate *time.Time `json:"creation_date"`
 
 	ModificationDate *time.Time `json:"modification_date"`
-
+	// Deprecated
 	DefaultBootscript *Bootscript `json:"default_bootscript"`
 
 	ExtraVolumes map[string]*Volume `json:"extra_volumes"`
@@ -1328,8 +1328,8 @@ type Server struct {
 	Location *ServerLocation `json:"location"`
 	// IPv6: the server IPv6 address
 	IPv6 *ServerIPv6 `json:"ipv6"`
-	// Bootscript: the server bootscript
-	Bootscript *Bootscript `json:"bootscript"`
+	// Deprecated: Bootscript: the server bootscript
+	Bootscript *Bootscript `json:"bootscript,omitempty"`
 	// BootType: the server boot type
 	//
 	// Default value: local
@@ -2046,7 +2046,7 @@ type CreateServerRequest struct {
 	//
 	// Default value: local
 	BootType *BootType `json:"boot_type,omitempty"`
-	// Bootscript: the bootscript ID to use when `boot_type` is set to `bootscript`
+	// Deprecated: Bootscript: the bootscript ID to use when `boot_type` is set to `bootscript`
 	Bootscript *string `json:"bootscript,omitempty"`
 	// Deprecated: Organization: the server organization ID
 	// Precisely one of Organization, Project must be set.
@@ -2258,7 +2258,7 @@ type setServerRequest struct {
 	Location *ServerLocation `json:"location"`
 	// IPv6: the server IPv6 address
 	IPv6 *ServerIPv6 `json:"ipv6"`
-	// Bootscript: the server bootscript
+	// Deprecated: Bootscript: the server bootscript
 	Bootscript *Bootscript `json:"bootscript"`
 	// BootType: the server boot type
 	//
@@ -2345,7 +2345,7 @@ type UpdateServerRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	Volumes *map[string]*VolumeServerTemplate `json:"volumes,omitempty"`
-
+	// Deprecated
 	Bootscript *string `json:"bootscript,omitempty"`
 
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
@@ -2720,7 +2720,7 @@ type CreateImageRequest struct {
 	//
 	// Default value: x86_64
 	Arch Arch `json:"arch"`
-	// DefaultBootscript: default bootscript of the image
+	// Deprecated: DefaultBootscript: default bootscript of the image
 	DefaultBootscript *string `json:"default_bootscript,omitempty"`
 	// ExtraVolumes: additional volumes of the image
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
@@ -2800,7 +2800,7 @@ type SetImageRequest struct {
 	CreationDate *time.Time `json:"creation_date"`
 
 	ModificationDate *time.Time `json:"modification_date"`
-
+	// Deprecated
 	DefaultBootscript *Bootscript `json:"default_bootscript"`
 
 	ExtraVolumes map[string]*Volume `json:"extra_volumes"`
@@ -5244,7 +5244,7 @@ type ListBootscriptsRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListBootscripts: list bootscripts
+// Deprecated: ListBootscripts: list bootscripts
 func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOption) (*ListBootscriptsResponse, error) {
 	var err error
 
@@ -5295,7 +5295,7 @@ type GetBootscriptRequest struct {
 	BootscriptID string `json:"-"`
 }
 
-// GetBootscript: get bootscripts
+// Deprecated: GetBootscript: get bootscripts
 //
 // Get details of a bootscript with the given ID.
 func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption) (*GetBootscriptResponse, error) {
