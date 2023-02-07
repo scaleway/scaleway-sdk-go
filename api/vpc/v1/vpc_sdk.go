@@ -300,8 +300,8 @@ type UpdatePrivateNetworkRequest struct {
 	Name *string `json:"name"`
 	// Tags: the private networks tags
 	Tags *[]string `json:"tags"`
-	// Subnets: private network subnets CIDR
-	Subnets *[]string `json:"subnets"`
+	// Deprecated: Subnets: private network subnets CIDR (deprecated)
+	Subnets *[]string `json:"subnets,omitempty"`
 }
 
 // UpdatePrivateNetwork: update private network
