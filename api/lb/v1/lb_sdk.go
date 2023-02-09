@@ -1626,6 +1626,9 @@ type PrivateNetwork struct {
 type PrivateNetworkDHCPConfig struct {
 }
 
+type PrivateNetworkIpamConfig struct {
+}
+
 type PrivateNetworkStaticConfig struct {
 	IPAddress []string `json:"ip_address"`
 }
