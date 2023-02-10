@@ -3193,12 +3193,9 @@ func (s *RegistrarAPI) DeleteExternalDomain(req *RegistrarAPIDeleteExternalDomai
 }
 
 type RegistrarAPICheckContactsCompatibilityRequest struct {
+	Domains []string `json:"domains"`
 
-	// Precisely one of Domain, Tld must be set.
-	Domain *string `json:"domain,omitempty"`
-
-	// Precisely one of Domain, Tld must be set.
-	Tld *string `json:"tld,omitempty"`
+	Tlds []string `json:"tlds"`
 
 	// Precisely one of OwnerContact, OwnerContactID must be set.
 	OwnerContactID *string `json:"owner_contact_id,omitempty"`
