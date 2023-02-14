@@ -90,7 +90,6 @@ func (s *API) WaitForGatewayNetwork(req *WaitForGatewayNetworkRequest, opts ...s
 		GatewayNetworkStatusReady:   {},
 		GatewayNetworkStatusUnknown: {},
 		GatewayNetworkStatusDeleted: {},
-		GatewayNetworkStatusCreated: {},
 	}
 
 	gatewayNetwork, err := async.WaitSync(&async.WaitSyncConfig{
