@@ -54,20 +54,13 @@ func NewAPI(client *scw.Client) *API {
 type DomainStatus string
 
 const (
-	// DomainStatusUnknown is [insert doc].
-	DomainStatusUnknown = DomainStatus("unknown")
-	// DomainStatusChecked is [insert doc].
-	DomainStatusChecked = DomainStatus("checked")
-	// DomainStatusUnchecked is [insert doc].
+	DomainStatusUnknown   = DomainStatus("unknown")
+	DomainStatusChecked   = DomainStatus("checked")
 	DomainStatusUnchecked = DomainStatus("unchecked")
-	// DomainStatusInvalid is [insert doc].
-	DomainStatusInvalid = DomainStatus("invalid")
-	// DomainStatusLocked is [insert doc].
-	DomainStatusLocked = DomainStatus("locked")
-	// DomainStatusRevoked is [insert doc].
-	DomainStatusRevoked = DomainStatus("revoked")
-	// DomainStatusPending is [insert doc].
-	DomainStatusPending = DomainStatus("pending")
+	DomainStatusInvalid   = DomainStatus("invalid")
+	DomainStatusLocked    = DomainStatus("locked")
+	DomainStatusRevoked   = DomainStatus("revoked")
+	DomainStatusPending   = DomainStatus("pending")
 )
 
 func (enum DomainStatus) String() string {
@@ -96,14 +89,10 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type EmailRcptType string
 
 const (
-	// EmailRcptTypeUnknownRcptType is [insert doc].
 	EmailRcptTypeUnknownRcptType = EmailRcptType("unknown_rcpt_type")
-	// EmailRcptTypeTo is [insert doc].
-	EmailRcptTypeTo = EmailRcptType("to")
-	// EmailRcptTypeCc is [insert doc].
-	EmailRcptTypeCc = EmailRcptType("cc")
-	// EmailRcptTypeBcc is [insert doc].
-	EmailRcptTypeBcc = EmailRcptType("bcc")
+	EmailRcptTypeTo              = EmailRcptType("to")
+	EmailRcptTypeCc              = EmailRcptType("cc")
+	EmailRcptTypeBcc             = EmailRcptType("bcc")
 )
 
 func (enum EmailRcptType) String() string {
@@ -132,17 +121,11 @@ func (enum *EmailRcptType) UnmarshalJSON(data []byte) error {
 type EmailStatus string
 
 const (
-	// EmailStatusUnknown is [insert doc].
-	EmailStatusUnknown = EmailStatus("unknown")
-	// EmailStatusNew is [insert doc].
-	EmailStatusNew = EmailStatus("new")
-	// EmailStatusSending is [insert doc].
-	EmailStatusSending = EmailStatus("sending")
-	// EmailStatusSent is [insert doc].
-	EmailStatusSent = EmailStatus("sent")
-	// EmailStatusFailed is [insert doc].
-	EmailStatusFailed = EmailStatus("failed")
-	// EmailStatusCanceled is [insert doc].
+	EmailStatusUnknown  = EmailStatus("unknown")
+	EmailStatusNew      = EmailStatus("new")
+	EmailStatusSending  = EmailStatus("sending")
+	EmailStatusSent     = EmailStatus("sent")
+	EmailStatusFailed   = EmailStatus("failed")
 	EmailStatusCanceled = EmailStatus("canceled")
 )
 

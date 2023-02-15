@@ -54,12 +54,9 @@ func NewAPI(client *scw.Client) *API {
 type DHCPEntryType string
 
 const (
-	// DHCPEntryTypeUnknown is [insert doc].
-	DHCPEntryTypeUnknown = DHCPEntryType("unknown")
-	// DHCPEntryTypeReservation is [insert doc].
+	DHCPEntryTypeUnknown     = DHCPEntryType("unknown")
 	DHCPEntryTypeReservation = DHCPEntryType("reservation")
-	// DHCPEntryTypeLease is [insert doc].
-	DHCPEntryTypeLease = DHCPEntryType("lease")
+	DHCPEntryTypeLease       = DHCPEntryType("lease")
 )
 
 func (enum DHCPEntryType) String() string {
@@ -88,20 +85,13 @@ func (enum *DHCPEntryType) UnmarshalJSON(data []byte) error {
 type GatewayNetworkStatus string
 
 const (
-	// GatewayNetworkStatusUnknown is [insert doc].
-	GatewayNetworkStatusUnknown = GatewayNetworkStatus("unknown")
-	// GatewayNetworkStatusCreated is [insert doc].
-	GatewayNetworkStatusCreated = GatewayNetworkStatus("created")
-	// GatewayNetworkStatusAttaching is [insert doc].
-	GatewayNetworkStatusAttaching = GatewayNetworkStatus("attaching")
-	// GatewayNetworkStatusConfiguring is [insert doc].
+	GatewayNetworkStatusUnknown     = GatewayNetworkStatus("unknown")
+	GatewayNetworkStatusCreated     = GatewayNetworkStatus("created")
+	GatewayNetworkStatusAttaching   = GatewayNetworkStatus("attaching")
 	GatewayNetworkStatusConfiguring = GatewayNetworkStatus("configuring")
-	// GatewayNetworkStatusReady is [insert doc].
-	GatewayNetworkStatusReady = GatewayNetworkStatus("ready")
-	// GatewayNetworkStatusDetaching is [insert doc].
-	GatewayNetworkStatusDetaching = GatewayNetworkStatus("detaching")
-	// GatewayNetworkStatusDeleted is [insert doc].
-	GatewayNetworkStatusDeleted = GatewayNetworkStatus("deleted")
+	GatewayNetworkStatusReady       = GatewayNetworkStatus("ready")
+	GatewayNetworkStatusDetaching   = GatewayNetworkStatus("detaching")
+	GatewayNetworkStatusDeleted     = GatewayNetworkStatus("deleted")
 )
 
 func (enum GatewayNetworkStatus) String() string {
@@ -130,26 +120,16 @@ func (enum *GatewayNetworkStatus) UnmarshalJSON(data []byte) error {
 type GatewayStatus string
 
 const (
-	// GatewayStatusUnknown is [insert doc].
-	GatewayStatusUnknown = GatewayStatus("unknown")
-	// GatewayStatusStopped is [insert doc].
-	GatewayStatusStopped = GatewayStatus("stopped")
-	// GatewayStatusAllocating is [insert doc].
-	GatewayStatusAllocating = GatewayStatus("allocating")
-	// GatewayStatusConfiguring is [insert doc].
+	GatewayStatusUnknown     = GatewayStatus("unknown")
+	GatewayStatusStopped     = GatewayStatus("stopped")
+	GatewayStatusAllocating  = GatewayStatus("allocating")
 	GatewayStatusConfiguring = GatewayStatus("configuring")
-	// GatewayStatusRunning is [insert doc].
-	GatewayStatusRunning = GatewayStatus("running")
-	// GatewayStatusStopping is [insert doc].
-	GatewayStatusStopping = GatewayStatus("stopping")
-	// GatewayStatusFailed is [insert doc].
-	GatewayStatusFailed = GatewayStatus("failed")
-	// GatewayStatusDeleting is [insert doc].
-	GatewayStatusDeleting = GatewayStatus("deleting")
-	// GatewayStatusDeleted is [insert doc].
-	GatewayStatusDeleted = GatewayStatus("deleted")
-	// GatewayStatusLocked is [insert doc].
-	GatewayStatusLocked = GatewayStatus("locked")
+	GatewayStatusRunning     = GatewayStatus("running")
+	GatewayStatusStopping    = GatewayStatus("stopping")
+	GatewayStatusFailed      = GatewayStatus("failed")
+	GatewayStatusDeleting    = GatewayStatus("deleting")
+	GatewayStatusDeleted     = GatewayStatus("deleted")
+	GatewayStatusLocked      = GatewayStatus("locked")
 )
 
 func (enum GatewayStatus) String() string {
@@ -178,18 +158,12 @@ func (enum *GatewayStatus) UnmarshalJSON(data []byte) error {
 type ListDHCPEntriesRequestOrderBy string
 
 const (
-	// ListDHCPEntriesRequestOrderByCreatedAtAsc is [insert doc].
-	ListDHCPEntriesRequestOrderByCreatedAtAsc = ListDHCPEntriesRequestOrderBy("created_at_asc")
-	// ListDHCPEntriesRequestOrderByCreatedAtDesc is [insert doc].
+	ListDHCPEntriesRequestOrderByCreatedAtAsc  = ListDHCPEntriesRequestOrderBy("created_at_asc")
 	ListDHCPEntriesRequestOrderByCreatedAtDesc = ListDHCPEntriesRequestOrderBy("created_at_desc")
-	// ListDHCPEntriesRequestOrderByIPAddressAsc is [insert doc].
-	ListDHCPEntriesRequestOrderByIPAddressAsc = ListDHCPEntriesRequestOrderBy("ip_address_asc")
-	// ListDHCPEntriesRequestOrderByIPAddressDesc is [insert doc].
+	ListDHCPEntriesRequestOrderByIPAddressAsc  = ListDHCPEntriesRequestOrderBy("ip_address_asc")
 	ListDHCPEntriesRequestOrderByIPAddressDesc = ListDHCPEntriesRequestOrderBy("ip_address_desc")
-	// ListDHCPEntriesRequestOrderByHostnameAsc is [insert doc].
-	ListDHCPEntriesRequestOrderByHostnameAsc = ListDHCPEntriesRequestOrderBy("hostname_asc")
-	// ListDHCPEntriesRequestOrderByHostnameDesc is [insert doc].
-	ListDHCPEntriesRequestOrderByHostnameDesc = ListDHCPEntriesRequestOrderBy("hostname_desc")
+	ListDHCPEntriesRequestOrderByHostnameAsc   = ListDHCPEntriesRequestOrderBy("hostname_asc")
+	ListDHCPEntriesRequestOrderByHostnameDesc  = ListDHCPEntriesRequestOrderBy("hostname_desc")
 )
 
 func (enum ListDHCPEntriesRequestOrderBy) String() string {
@@ -218,14 +192,10 @@ func (enum *ListDHCPEntriesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListDHCPsRequestOrderBy string
 
 const (
-	// ListDHCPsRequestOrderByCreatedAtAsc is [insert doc].
-	ListDHCPsRequestOrderByCreatedAtAsc = ListDHCPsRequestOrderBy("created_at_asc")
-	// ListDHCPsRequestOrderByCreatedAtDesc is [insert doc].
+	ListDHCPsRequestOrderByCreatedAtAsc  = ListDHCPsRequestOrderBy("created_at_asc")
 	ListDHCPsRequestOrderByCreatedAtDesc = ListDHCPsRequestOrderBy("created_at_desc")
-	// ListDHCPsRequestOrderBySubnetAsc is [insert doc].
-	ListDHCPsRequestOrderBySubnetAsc = ListDHCPsRequestOrderBy("subnet_asc")
-	// ListDHCPsRequestOrderBySubnetDesc is [insert doc].
-	ListDHCPsRequestOrderBySubnetDesc = ListDHCPsRequestOrderBy("subnet_desc")
+	ListDHCPsRequestOrderBySubnetAsc     = ListDHCPsRequestOrderBy("subnet_asc")
+	ListDHCPsRequestOrderBySubnetDesc    = ListDHCPsRequestOrderBy("subnet_desc")
 )
 
 func (enum ListDHCPsRequestOrderBy) String() string {
@@ -254,14 +224,10 @@ func (enum *ListDHCPsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListGatewayNetworksRequestOrderBy string
 
 const (
-	// ListGatewayNetworksRequestOrderByCreatedAtAsc is [insert doc].
-	ListGatewayNetworksRequestOrderByCreatedAtAsc = ListGatewayNetworksRequestOrderBy("created_at_asc")
-	// ListGatewayNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListGatewayNetworksRequestOrderByCreatedAtAsc  = ListGatewayNetworksRequestOrderBy("created_at_asc")
 	ListGatewayNetworksRequestOrderByCreatedAtDesc = ListGatewayNetworksRequestOrderBy("created_at_desc")
-	// ListGatewayNetworksRequestOrderByStatusAsc is [insert doc].
-	ListGatewayNetworksRequestOrderByStatusAsc = ListGatewayNetworksRequestOrderBy("status_asc")
-	// ListGatewayNetworksRequestOrderByStatusDesc is [insert doc].
-	ListGatewayNetworksRequestOrderByStatusDesc = ListGatewayNetworksRequestOrderBy("status_desc")
+	ListGatewayNetworksRequestOrderByStatusAsc     = ListGatewayNetworksRequestOrderBy("status_asc")
+	ListGatewayNetworksRequestOrderByStatusDesc    = ListGatewayNetworksRequestOrderBy("status_desc")
 )
 
 func (enum ListGatewayNetworksRequestOrderBy) String() string {
@@ -290,22 +256,14 @@ func (enum *ListGatewayNetworksRequestOrderBy) UnmarshalJSON(data []byte) error 
 type ListGatewaysRequestOrderBy string
 
 const (
-	// ListGatewaysRequestOrderByCreatedAtAsc is [insert doc].
-	ListGatewaysRequestOrderByCreatedAtAsc = ListGatewaysRequestOrderBy("created_at_asc")
-	// ListGatewaysRequestOrderByCreatedAtDesc is [insert doc].
+	ListGatewaysRequestOrderByCreatedAtAsc  = ListGatewaysRequestOrderBy("created_at_asc")
 	ListGatewaysRequestOrderByCreatedAtDesc = ListGatewaysRequestOrderBy("created_at_desc")
-	// ListGatewaysRequestOrderByNameAsc is [insert doc].
-	ListGatewaysRequestOrderByNameAsc = ListGatewaysRequestOrderBy("name_asc")
-	// ListGatewaysRequestOrderByNameDesc is [insert doc].
-	ListGatewaysRequestOrderByNameDesc = ListGatewaysRequestOrderBy("name_desc")
-	// ListGatewaysRequestOrderByTypeAsc is [insert doc].
-	ListGatewaysRequestOrderByTypeAsc = ListGatewaysRequestOrderBy("type_asc")
-	// ListGatewaysRequestOrderByTypeDesc is [insert doc].
-	ListGatewaysRequestOrderByTypeDesc = ListGatewaysRequestOrderBy("type_desc")
-	// ListGatewaysRequestOrderByStatusAsc is [insert doc].
-	ListGatewaysRequestOrderByStatusAsc = ListGatewaysRequestOrderBy("status_asc")
-	// ListGatewaysRequestOrderByStatusDesc is [insert doc].
-	ListGatewaysRequestOrderByStatusDesc = ListGatewaysRequestOrderBy("status_desc")
+	ListGatewaysRequestOrderByNameAsc       = ListGatewaysRequestOrderBy("name_asc")
+	ListGatewaysRequestOrderByNameDesc      = ListGatewaysRequestOrderBy("name_desc")
+	ListGatewaysRequestOrderByTypeAsc       = ListGatewaysRequestOrderBy("type_asc")
+	ListGatewaysRequestOrderByTypeDesc      = ListGatewaysRequestOrderBy("type_desc")
+	ListGatewaysRequestOrderByStatusAsc     = ListGatewaysRequestOrderBy("status_asc")
+	ListGatewaysRequestOrderByStatusDesc    = ListGatewaysRequestOrderBy("status_desc")
 )
 
 func (enum ListGatewaysRequestOrderBy) String() string {
@@ -334,18 +292,12 @@ func (enum *ListGatewaysRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListIPsRequestOrderBy string
 
 const (
-	// ListIPsRequestOrderByCreatedAtAsc is [insert doc].
-	ListIPsRequestOrderByCreatedAtAsc = ListIPsRequestOrderBy("created_at_asc")
-	// ListIPsRequestOrderByCreatedAtDesc is [insert doc].
+	ListIPsRequestOrderByCreatedAtAsc  = ListIPsRequestOrderBy("created_at_asc")
 	ListIPsRequestOrderByCreatedAtDesc = ListIPsRequestOrderBy("created_at_desc")
-	// ListIPsRequestOrderByIPAsc is [insert doc].
-	ListIPsRequestOrderByIPAsc = ListIPsRequestOrderBy("ip_asc")
-	// ListIPsRequestOrderByIPDesc is [insert doc].
-	ListIPsRequestOrderByIPDesc = ListIPsRequestOrderBy("ip_desc")
-	// ListIPsRequestOrderByReverseAsc is [insert doc].
-	ListIPsRequestOrderByReverseAsc = ListIPsRequestOrderBy("reverse_asc")
-	// ListIPsRequestOrderByReverseDesc is [insert doc].
-	ListIPsRequestOrderByReverseDesc = ListIPsRequestOrderBy("reverse_desc")
+	ListIPsRequestOrderByIPAsc         = ListIPsRequestOrderBy("ip_asc")
+	ListIPsRequestOrderByIPDesc        = ListIPsRequestOrderBy("ip_desc")
+	ListIPsRequestOrderByReverseAsc    = ListIPsRequestOrderBy("reverse_asc")
+	ListIPsRequestOrderByReverseDesc   = ListIPsRequestOrderBy("reverse_desc")
 )
 
 func (enum ListIPsRequestOrderBy) String() string {
@@ -374,13 +326,9 @@ func (enum *ListIPsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPATRulesRequestOrderBy string
 
 const (
-	// ListPATRulesRequestOrderByCreatedAtAsc is [insert doc].
-	ListPATRulesRequestOrderByCreatedAtAsc = ListPATRulesRequestOrderBy("created_at_asc")
-	// ListPATRulesRequestOrderByCreatedAtDesc is [insert doc].
-	ListPATRulesRequestOrderByCreatedAtDesc = ListPATRulesRequestOrderBy("created_at_desc")
-	// ListPATRulesRequestOrderByPublicPortAsc is [insert doc].
-	ListPATRulesRequestOrderByPublicPortAsc = ListPATRulesRequestOrderBy("public_port_asc")
-	// ListPATRulesRequestOrderByPublicPortDesc is [insert doc].
+	ListPATRulesRequestOrderByCreatedAtAsc   = ListPATRulesRequestOrderBy("created_at_asc")
+	ListPATRulesRequestOrderByCreatedAtDesc  = ListPATRulesRequestOrderBy("created_at_desc")
+	ListPATRulesRequestOrderByPublicPortAsc  = ListPATRulesRequestOrderBy("public_port_asc")
 	ListPATRulesRequestOrderByPublicPortDesc = ListPATRulesRequestOrderBy("public_port_desc")
 )
 
@@ -410,14 +358,10 @@ func (enum *ListPATRulesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type PATRuleProtocol string
 
 const (
-	// PATRuleProtocolUnknown is [insert doc].
 	PATRuleProtocolUnknown = PATRuleProtocol("unknown")
-	// PATRuleProtocolBoth is [insert doc].
-	PATRuleProtocolBoth = PATRuleProtocol("both")
-	// PATRuleProtocolTCP is [insert doc].
-	PATRuleProtocolTCP = PATRuleProtocol("tcp")
-	// PATRuleProtocolUDP is [insert doc].
-	PATRuleProtocolUDP = PATRuleProtocol("udp")
+	PATRuleProtocolBoth    = PATRuleProtocol("both")
+	PATRuleProtocolTCP     = PATRuleProtocol("tcp")
+	PATRuleProtocolUDP     = PATRuleProtocol("udp")
 )
 
 func (enum PATRuleProtocol) String() string {
@@ -460,7 +404,6 @@ type DHCP struct {
 	// Address: address of the DHCP server
 	//
 	// Address of the DHCP server. This will be the gateway's address in the private network. It must be part of config's subnet.
-	//
 	Address net.IP `json:"address"`
 	// PoolLow: low IP (included) of the dynamic address pool. Must be in the config's subnet
 	PoolLow net.IP `json:"pool_low"`
@@ -469,26 +412,22 @@ type DHCP struct {
 	// EnableDynamic: whether to enable dynamic pooling of IPs
 	//
 	// Whether to enable dynamic pooling of IPs. By turning the dynamic pool off, only pre-existing DHCP reservations will be handed out.
-	//
 	EnableDynamic bool `json:"enable_dynamic"`
 	// ValidLifetime: how long, in seconds, DHCP entries will be valid for
 	ValidLifetime *scw.Duration `json:"valid_lifetime"`
 	// RenewTimer: after how long a renew will be attempted
 	//
 	// After how long, in seconds, a renew will be attempted. Must be 30s lower than `rebind_timer`.
-	//
 	RenewTimer *scw.Duration `json:"renew_timer"`
 	// RebindTimer: after how long a DHCP client will query for a new lease if previous renews fail
 	//
 	// After how long, in seconds, a DHCP client will query for a new lease if previous renews fail. Must be 30s lower than `valid_lifetime`.
-	//
 	RebindTimer *scw.Duration `json:"rebind_timer"`
 	// PushDefaultRoute: whether the gateway should push a default route to DHCP clients or only hand out IPs
 	PushDefaultRoute bool `json:"push_default_route"`
 	// PushDNSServer: whether the gateway should push custom DNS servers to clients
 	//
 	// Whether the gateway should push custom DNS servers to clients. This allows for instance hostname -> IP resolution.
-	//
 	PushDNSServer bool `json:"push_dns_server"`
 	// DNSServersOverride: override the DNS server list pushed to DHCP clients, instead of the gateway itself
 	DNSServersOverride []string `json:"dns_servers_override"`
@@ -497,7 +436,6 @@ type DHCP struct {
 	// DNSLocalName: tLD given to hostnames in the Private Networks
 	//
 	// TLD given to hostnames in the Private Network. If an instance with hostname `foo` gets a lease, and this is set to `bar`, `foo.bar` will resolve.
-	//
 	DNSLocalName string `json:"dns_local_name"`
 	// Zone: zone this configuration is available in
 	Zone scw.Zone `json:"zone"`
@@ -606,7 +544,6 @@ type GatewayType struct {
 	// Bandwidth: bandwidth, in bps, the gateway has
 	//
 	// Bandwidth, in bps, the gateway has. This is the public bandwidth to the outer internet, and the internal bandwidth to each connected Private Networks.
-	//
 	Bandwidth uint64 `json:"bandwidth"`
 	// Zone: zone the type is available in
 	Zone scw.Zone `json:"zone"`
@@ -719,7 +656,6 @@ type SetDHCPEntriesRequestEntry struct {
 	// MacAddress: mAC address to give a static entry to
 	//
 	// MAC address to give a static entry to. A matching entry will be upgraded to a reservation, and a matching reservation will be updated.
-	//
 	MacAddress string `json:"mac_address"`
 	// IPAddress: IP address to give to the machine
 	IPAddress net.IP `json:"ip_address"`
@@ -736,7 +672,6 @@ type SetPATRulesRequestRule struct {
 	// PublicPort: public port to listen on
 	//
 	// Public port to listen on. Uniquely identifies the rule, and a matching rule will be updated with the new parameters.
-	//
 	PublicPort uint32 `json:"public_port"`
 	// PrivateIP: private IP to forward data to
 	PrivateIP net.IP `json:"private_ip"`
@@ -1014,7 +949,6 @@ type DeleteGatewayRequest struct {
 	// CleanupDHCP: whether to cleanup attached DHCP configurations
 	//
 	// Whether to cleanup attached DHCP configurations (if any, and if not attached to another Gateway Network).
-	//
 	CleanupDHCP bool `json:"-"`
 }
 
@@ -1230,7 +1164,6 @@ type CreateGatewayNetworkRequest struct {
 	// EnableDHCP: whether to enable DHCP on this Private Network
 	//
 	// Whether to enable DHCP on this Private Network. Defaults to `true` if either `dhcp_id` or `dhcp` short: are present. If set to `true`, requires that either `dhcp_id` or `dhcp` to be present.
-	//
 	EnableDHCP *bool `json:"enable_dhcp"`
 }
 
@@ -1333,7 +1266,6 @@ type DeleteGatewayNetworkRequest struct {
 	// CleanupDHCP: whether to cleanup the attached DHCP configuration
 	//
 	// Whether to cleanup the attached DHCP configuration (if any, and if not attached to another gateway_network).
-	//
 	CleanupDHCP bool `json:"-"`
 }
 
@@ -1500,7 +1432,6 @@ type CreateDHCPRequest struct {
 	// EnableDynamic: whether to enable dynamic pooling of IPs
 	//
 	// Whether to enable dynamic pooling of IPs. By turning the dynamic pool off, only pre-existing DHCP reservations will be handed out. Defaults to true.
-	//
 	EnableDynamic *bool `json:"enable_dynamic"`
 	// ValidLifetime: for how long will DHCP entries will be valid
 	//
@@ -1509,19 +1440,16 @@ type CreateDHCPRequest struct {
 	// RenewTimer: after how long a renew will be attempted
 	//
 	// After how long, in seconds, a renew will be attempted. Must be 30s lower than `rebind_timer`. Defaults to 50m (3000s).
-	//
 	RenewTimer *scw.Duration `json:"renew_timer"`
 	// RebindTimer: after how long a DHCP client will query for a new lease if previous renews fail
 	//
 	// After how long, in seconds, a DHCP client will query for a new lease if previous renews fail. Must be 30s lower than `valid_lifetime`. Defaults to 51m (3060s).
-	//
 	RebindTimer *scw.Duration `json:"rebind_timer"`
 	// PushDefaultRoute: whether the gateway should push a default route to DHCP clients or only hand out IPs. Defaults to true
 	PushDefaultRoute *bool `json:"push_default_route"`
 	// PushDNSServer: whether the gateway should push custom DNS servers to clients
 	//
 	// Whether the gateway should push custom DNS servers to clients. This allows for instance hostname -> IP resolution. Defaults to true.
-	//
 	PushDNSServer *bool `json:"push_dns_server"`
 	// DNSServersOverride: override the DNS server list pushed to DHCP clients, instead of the gateway itself
 	DNSServersOverride *[]string `json:"dns_servers_override"`
@@ -1530,7 +1458,6 @@ type CreateDHCPRequest struct {
 	// DNSLocalName: tLD given to hosts in the Private Network
 	//
 	// TLD given to hostnames in the Private Network. Allowed characters are `a-z0-9-.`. Defaults to the slugified Private Network name if created along a GatewayNetwork, or else to `priv`.
-	//
 	DNSLocalName *string `json:"dns_local_name"`
 }
 
@@ -1590,7 +1517,6 @@ type UpdateDHCPRequest struct {
 	// EnableDynamic: whether to enable dynamic pooling of IPs
 	//
 	// Whether to enable dynamic pooling of IPs. By turning the dynamic pool off, only pre-existing DHCP reservations will be handed out. Defaults to true.
-	//
 	EnableDynamic *bool `json:"enable_dynamic"`
 	// ValidLifetime: how long, in seconds, DHCP entries will be valid for
 	ValidLifetime *scw.Duration `json:"valid_lifetime"`
@@ -1601,14 +1527,12 @@ type UpdateDHCPRequest struct {
 	// RebindTimer: after how long a DHCP client will query for a new lease if previous renews fail
 	//
 	// After how long, in seconds, a DHCP client will query for a new lease if previous renews fail. Must be 30s lower than `valid_lifetime`.
-	//
 	RebindTimer *scw.Duration `json:"rebind_timer"`
 	// PushDefaultRoute: whether the gateway should push a default route to DHCP clients or only hand out IPs
 	PushDefaultRoute *bool `json:"push_default_route"`
 	// PushDNSServer: whether the gateway should push custom DNS servers to clients
 	//
 	// Whether the gateway should push custom DNS servers to clients. This allows for instance hostname -> IP resolution.
-	//
 	PushDNSServer *bool `json:"push_dns_server"`
 	// DNSServersOverride: override the DNS server list pushed to DHCP clients, instead of the gateway itself
 	DNSServersOverride *[]string `json:"dns_servers_override"`
@@ -1916,7 +1840,6 @@ type SetDHCPEntriesRequest struct {
 // SetDHCPEntries: set all DHCP reservations on a Gateway Network
 //
 // Set the list of DHCP reservations attached to a Gateway Network. Reservations are identified by their MAC address, and will sync the current DHCP entry list to the given list, creating, updating or deleting DHCP entries.
-//
 func (s *API) SetDHCPEntries(req *SetDHCPEntriesRequest, opts ...scw.RequestOption) (*SetDHCPEntriesResponse, error) {
 	var err error
 
@@ -2216,7 +2139,6 @@ type SetPATRulesRequest struct {
 // SetPATRules: set all PAT rules on a Gateway
 //
 // Set the list of PAT rules attached to a Gateway. Rules are identified by their public port and protocol. This will sync the current PAT rule list with the givent list, creating, updating or deleting PAT rules.
-//
 func (s *API) SetPATRules(req *SetPATRulesRequest, opts ...scw.RequestOption) (*SetPATRulesResponse, error) {
 	var err error
 

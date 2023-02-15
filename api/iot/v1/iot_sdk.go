@@ -54,12 +54,9 @@ func NewAPI(client *scw.Client) *API {
 type DeviceMessageFiltersRulePolicy string
 
 const (
-	// DeviceMessageFiltersRulePolicyUnknown is [insert doc].
 	DeviceMessageFiltersRulePolicyUnknown = DeviceMessageFiltersRulePolicy("unknown")
-	// DeviceMessageFiltersRulePolicyAccept is [insert doc].
-	DeviceMessageFiltersRulePolicyAccept = DeviceMessageFiltersRulePolicy("accept")
-	// DeviceMessageFiltersRulePolicyReject is [insert doc].
-	DeviceMessageFiltersRulePolicyReject = DeviceMessageFiltersRulePolicy("reject")
+	DeviceMessageFiltersRulePolicyAccept  = DeviceMessageFiltersRulePolicy("accept")
+	DeviceMessageFiltersRulePolicyReject  = DeviceMessageFiltersRulePolicy("reject")
 )
 
 func (enum DeviceMessageFiltersRulePolicy) String() string {
@@ -88,13 +85,9 @@ func (enum *DeviceMessageFiltersRulePolicy) UnmarshalJSON(data []byte) error {
 type DeviceStatus string
 
 const (
-	// DeviceStatusUnknown is [insert doc].
-	DeviceStatusUnknown = DeviceStatus("unknown")
-	// DeviceStatusError is [insert doc].
-	DeviceStatusError = DeviceStatus("error")
-	// DeviceStatusEnabled is [insert doc].
-	DeviceStatusEnabled = DeviceStatus("enabled")
-	// DeviceStatusDisabled is [insert doc].
+	DeviceStatusUnknown  = DeviceStatus("unknown")
+	DeviceStatusError    = DeviceStatus("error")
+	DeviceStatusEnabled  = DeviceStatus("enabled")
 	DeviceStatusDisabled = DeviceStatus("disabled")
 )
 
@@ -124,14 +117,10 @@ func (enum *DeviceStatus) UnmarshalJSON(data []byte) error {
 type HubProductPlan string
 
 const (
-	// HubProductPlanPlanUnknown is [insert doc].
-	HubProductPlanPlanUnknown = HubProductPlan("plan_unknown")
-	// HubProductPlanPlanShared is [insert doc].
-	HubProductPlanPlanShared = HubProductPlan("plan_shared")
-	// HubProductPlanPlanDedicated is [insert doc].
+	HubProductPlanPlanUnknown   = HubProductPlan("plan_unknown")
+	HubProductPlanPlanShared    = HubProductPlan("plan_shared")
 	HubProductPlanPlanDedicated = HubProductPlan("plan_dedicated")
-	// HubProductPlanPlanHa is [insert doc].
-	HubProductPlanPlanHa = HubProductPlan("plan_ha")
+	HubProductPlanPlanHa        = HubProductPlan("plan_ha")
 )
 
 func (enum HubProductPlan) String() string {
@@ -160,18 +149,12 @@ func (enum *HubProductPlan) UnmarshalJSON(data []byte) error {
 type HubStatus string
 
 const (
-	// HubStatusUnknown is [insert doc].
-	HubStatusUnknown = HubStatus("unknown")
-	// HubStatusError is [insert doc].
-	HubStatusError = HubStatus("error")
-	// HubStatusEnabling is [insert doc].
-	HubStatusEnabling = HubStatus("enabling")
-	// HubStatusReady is [insert doc].
-	HubStatusReady = HubStatus("ready")
-	// HubStatusDisabling is [insert doc].
+	HubStatusUnknown   = HubStatus("unknown")
+	HubStatusError     = HubStatus("error")
+	HubStatusEnabling  = HubStatus("enabling")
+	HubStatusReady     = HubStatus("ready")
 	HubStatusDisabling = HubStatus("disabling")
-	// HubStatusDisabled is [insert doc].
-	HubStatusDisabled = HubStatus("disabled")
+	HubStatusDisabled  = HubStatus("disabled")
 )
 
 func (enum HubStatus) String() string {
@@ -200,29 +183,17 @@ func (enum *HubStatus) UnmarshalJSON(data []byte) error {
 type ListDevicesRequestOrderBy string
 
 const (
-	// ListDevicesRequestOrderByNameAsc is [insert doc].
-	ListDevicesRequestOrderByNameAsc = ListDevicesRequestOrderBy("name_asc")
-	// ListDevicesRequestOrderByNameDesc is [insert doc].
-	ListDevicesRequestOrderByNameDesc = ListDevicesRequestOrderBy("name_desc")
-	// ListDevicesRequestOrderByStatusAsc is [insert doc].
-	ListDevicesRequestOrderByStatusAsc = ListDevicesRequestOrderBy("status_asc")
-	// ListDevicesRequestOrderByStatusDesc is [insert doc].
-	ListDevicesRequestOrderByStatusDesc = ListDevicesRequestOrderBy("status_desc")
-	// ListDevicesRequestOrderByHubIDAsc is [insert doc].
-	ListDevicesRequestOrderByHubIDAsc = ListDevicesRequestOrderBy("hub_id_asc")
-	// ListDevicesRequestOrderByHubIDDesc is [insert doc].
-	ListDevicesRequestOrderByHubIDDesc = ListDevicesRequestOrderBy("hub_id_desc")
-	// ListDevicesRequestOrderByCreatedAtAsc is [insert doc].
-	ListDevicesRequestOrderByCreatedAtAsc = ListDevicesRequestOrderBy("created_at_asc")
-	// ListDevicesRequestOrderByCreatedAtDesc is [insert doc].
-	ListDevicesRequestOrderByCreatedAtDesc = ListDevicesRequestOrderBy("created_at_desc")
-	// ListDevicesRequestOrderByUpdatedAtAsc is [insert doc].
-	ListDevicesRequestOrderByUpdatedAtAsc = ListDevicesRequestOrderBy("updated_at_asc")
-	// ListDevicesRequestOrderByUpdatedAtDesc is [insert doc].
-	ListDevicesRequestOrderByUpdatedAtDesc = ListDevicesRequestOrderBy("updated_at_desc")
-	// ListDevicesRequestOrderByAllowInsecureAsc is [insert doc].
-	ListDevicesRequestOrderByAllowInsecureAsc = ListDevicesRequestOrderBy("allow_insecure_asc")
-	// ListDevicesRequestOrderByAllowInsecureDesc is [insert doc].
+	ListDevicesRequestOrderByNameAsc           = ListDevicesRequestOrderBy("name_asc")
+	ListDevicesRequestOrderByNameDesc          = ListDevicesRequestOrderBy("name_desc")
+	ListDevicesRequestOrderByStatusAsc         = ListDevicesRequestOrderBy("status_asc")
+	ListDevicesRequestOrderByStatusDesc        = ListDevicesRequestOrderBy("status_desc")
+	ListDevicesRequestOrderByHubIDAsc          = ListDevicesRequestOrderBy("hub_id_asc")
+	ListDevicesRequestOrderByHubIDDesc         = ListDevicesRequestOrderBy("hub_id_desc")
+	ListDevicesRequestOrderByCreatedAtAsc      = ListDevicesRequestOrderBy("created_at_asc")
+	ListDevicesRequestOrderByCreatedAtDesc     = ListDevicesRequestOrderBy("created_at_desc")
+	ListDevicesRequestOrderByUpdatedAtAsc      = ListDevicesRequestOrderBy("updated_at_asc")
+	ListDevicesRequestOrderByUpdatedAtDesc     = ListDevicesRequestOrderBy("updated_at_desc")
+	ListDevicesRequestOrderByAllowInsecureAsc  = ListDevicesRequestOrderBy("allow_insecure_asc")
 	ListDevicesRequestOrderByAllowInsecureDesc = ListDevicesRequestOrderBy("allow_insecure_desc")
 )
 
@@ -252,26 +223,16 @@ func (enum *ListDevicesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListHubsRequestOrderBy string
 
 const (
-	// ListHubsRequestOrderByNameAsc is [insert doc].
-	ListHubsRequestOrderByNameAsc = ListHubsRequestOrderBy("name_asc")
-	// ListHubsRequestOrderByNameDesc is [insert doc].
-	ListHubsRequestOrderByNameDesc = ListHubsRequestOrderBy("name_desc")
-	// ListHubsRequestOrderByStatusAsc is [insert doc].
-	ListHubsRequestOrderByStatusAsc = ListHubsRequestOrderBy("status_asc")
-	// ListHubsRequestOrderByStatusDesc is [insert doc].
-	ListHubsRequestOrderByStatusDesc = ListHubsRequestOrderBy("status_desc")
-	// ListHubsRequestOrderByProductPlanAsc is [insert doc].
-	ListHubsRequestOrderByProductPlanAsc = ListHubsRequestOrderBy("product_plan_asc")
-	// ListHubsRequestOrderByProductPlanDesc is [insert doc].
+	ListHubsRequestOrderByNameAsc         = ListHubsRequestOrderBy("name_asc")
+	ListHubsRequestOrderByNameDesc        = ListHubsRequestOrderBy("name_desc")
+	ListHubsRequestOrderByStatusAsc       = ListHubsRequestOrderBy("status_asc")
+	ListHubsRequestOrderByStatusDesc      = ListHubsRequestOrderBy("status_desc")
+	ListHubsRequestOrderByProductPlanAsc  = ListHubsRequestOrderBy("product_plan_asc")
 	ListHubsRequestOrderByProductPlanDesc = ListHubsRequestOrderBy("product_plan_desc")
-	// ListHubsRequestOrderByCreatedAtAsc is [insert doc].
-	ListHubsRequestOrderByCreatedAtAsc = ListHubsRequestOrderBy("created_at_asc")
-	// ListHubsRequestOrderByCreatedAtDesc is [insert doc].
-	ListHubsRequestOrderByCreatedAtDesc = ListHubsRequestOrderBy("created_at_desc")
-	// ListHubsRequestOrderByUpdatedAtAsc is [insert doc].
-	ListHubsRequestOrderByUpdatedAtAsc = ListHubsRequestOrderBy("updated_at_asc")
-	// ListHubsRequestOrderByUpdatedAtDesc is [insert doc].
-	ListHubsRequestOrderByUpdatedAtDesc = ListHubsRequestOrderBy("updated_at_desc")
+	ListHubsRequestOrderByCreatedAtAsc    = ListHubsRequestOrderBy("created_at_asc")
+	ListHubsRequestOrderByCreatedAtDesc   = ListHubsRequestOrderBy("created_at_desc")
+	ListHubsRequestOrderByUpdatedAtAsc    = ListHubsRequestOrderBy("updated_at_asc")
+	ListHubsRequestOrderByUpdatedAtDesc   = ListHubsRequestOrderBy("updated_at_desc")
 )
 
 func (enum ListHubsRequestOrderBy) String() string {
@@ -300,17 +261,11 @@ func (enum *ListHubsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNetworksRequestOrderBy string
 
 const (
-	// ListNetworksRequestOrderByNameAsc is [insert doc].
-	ListNetworksRequestOrderByNameAsc = ListNetworksRequestOrderBy("name_asc")
-	// ListNetworksRequestOrderByNameDesc is [insert doc].
-	ListNetworksRequestOrderByNameDesc = ListNetworksRequestOrderBy("name_desc")
-	// ListNetworksRequestOrderByTypeAsc is [insert doc].
-	ListNetworksRequestOrderByTypeAsc = ListNetworksRequestOrderBy("type_asc")
-	// ListNetworksRequestOrderByTypeDesc is [insert doc].
-	ListNetworksRequestOrderByTypeDesc = ListNetworksRequestOrderBy("type_desc")
-	// ListNetworksRequestOrderByCreatedAtAsc is [insert doc].
-	ListNetworksRequestOrderByCreatedAtAsc = ListNetworksRequestOrderBy("created_at_asc")
-	// ListNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListNetworksRequestOrderByNameAsc       = ListNetworksRequestOrderBy("name_asc")
+	ListNetworksRequestOrderByNameDesc      = ListNetworksRequestOrderBy("name_desc")
+	ListNetworksRequestOrderByTypeAsc       = ListNetworksRequestOrderBy("type_asc")
+	ListNetworksRequestOrderByTypeDesc      = ListNetworksRequestOrderBy("type_desc")
+	ListNetworksRequestOrderByCreatedAtAsc  = ListNetworksRequestOrderBy("created_at_asc")
 	ListNetworksRequestOrderByCreatedAtDesc = ListNetworksRequestOrderBy("created_at_desc")
 )
 
@@ -340,21 +295,13 @@ func (enum *ListNetworksRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListRoutesRequestOrderBy string
 
 const (
-	// ListRoutesRequestOrderByNameAsc is [insert doc].
-	ListRoutesRequestOrderByNameAsc = ListRoutesRequestOrderBy("name_asc")
-	// ListRoutesRequestOrderByNameDesc is [insert doc].
-	ListRoutesRequestOrderByNameDesc = ListRoutesRequestOrderBy("name_desc")
-	// ListRoutesRequestOrderByHubIDAsc is [insert doc].
-	ListRoutesRequestOrderByHubIDAsc = ListRoutesRequestOrderBy("hub_id_asc")
-	// ListRoutesRequestOrderByHubIDDesc is [insert doc].
-	ListRoutesRequestOrderByHubIDDesc = ListRoutesRequestOrderBy("hub_id_desc")
-	// ListRoutesRequestOrderByTypeAsc is [insert doc].
-	ListRoutesRequestOrderByTypeAsc = ListRoutesRequestOrderBy("type_asc")
-	// ListRoutesRequestOrderByTypeDesc is [insert doc].
-	ListRoutesRequestOrderByTypeDesc = ListRoutesRequestOrderBy("type_desc")
-	// ListRoutesRequestOrderByCreatedAtAsc is [insert doc].
-	ListRoutesRequestOrderByCreatedAtAsc = ListRoutesRequestOrderBy("created_at_asc")
-	// ListRoutesRequestOrderByCreatedAtDesc is [insert doc].
+	ListRoutesRequestOrderByNameAsc       = ListRoutesRequestOrderBy("name_asc")
+	ListRoutesRequestOrderByNameDesc      = ListRoutesRequestOrderBy("name_desc")
+	ListRoutesRequestOrderByHubIDAsc      = ListRoutesRequestOrderBy("hub_id_asc")
+	ListRoutesRequestOrderByHubIDDesc     = ListRoutesRequestOrderBy("hub_id_desc")
+	ListRoutesRequestOrderByTypeAsc       = ListRoutesRequestOrderBy("type_asc")
+	ListRoutesRequestOrderByTypeDesc      = ListRoutesRequestOrderBy("type_desc")
+	ListRoutesRequestOrderByCreatedAtAsc  = ListRoutesRequestOrderBy("created_at_asc")
 	ListRoutesRequestOrderByCreatedAtDesc = ListRoutesRequestOrderBy("created_at_desc")
 )
 
@@ -384,12 +331,9 @@ func (enum *ListRoutesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type NetworkNetworkType string
 
 const (
-	// NetworkNetworkTypeUnknown is [insert doc].
 	NetworkNetworkTypeUnknown = NetworkNetworkType("unknown")
-	// NetworkNetworkTypeSigfox is [insert doc].
-	NetworkNetworkTypeSigfox = NetworkNetworkType("sigfox")
-	// NetworkNetworkTypeRest is [insert doc].
-	NetworkNetworkTypeRest = NetworkNetworkType("rest")
+	NetworkNetworkTypeSigfox  = NetworkNetworkType("sigfox")
+	NetworkNetworkTypeRest    = NetworkNetworkType("rest")
 )
 
 func (enum NetworkNetworkType) String() string {
@@ -418,7 +362,6 @@ func (enum *NetworkNetworkType) UnmarshalJSON(data []byte) error {
 type NullValue string
 
 const (
-	// NullValueNULLVALUE is [insert doc].
 	NullValueNULLVALUE = NullValue("NULL_VALUE")
 )
 
@@ -448,12 +391,9 @@ func (enum *NullValue) UnmarshalJSON(data []byte) error {
 type RouteDatabaseConfigEngine string
 
 const (
-	// RouteDatabaseConfigEngineUnknown is [insert doc].
-	RouteDatabaseConfigEngineUnknown = RouteDatabaseConfigEngine("unknown")
-	// RouteDatabaseConfigEnginePostgresql is [insert doc].
+	RouteDatabaseConfigEngineUnknown    = RouteDatabaseConfigEngine("unknown")
 	RouteDatabaseConfigEnginePostgresql = RouteDatabaseConfigEngine("postgresql")
-	// RouteDatabaseConfigEngineMysql is [insert doc].
-	RouteDatabaseConfigEngineMysql = RouteDatabaseConfigEngine("mysql")
+	RouteDatabaseConfigEngineMysql      = RouteDatabaseConfigEngine("mysql")
 )
 
 func (enum RouteDatabaseConfigEngine) String() string {
@@ -482,18 +422,12 @@ func (enum *RouteDatabaseConfigEngine) UnmarshalJSON(data []byte) error {
 type RouteRestConfigHTTPVerb string
 
 const (
-	// RouteRestConfigHTTPVerbUnknown is [insert doc].
 	RouteRestConfigHTTPVerbUnknown = RouteRestConfigHTTPVerb("unknown")
-	// RouteRestConfigHTTPVerbGet is [insert doc].
-	RouteRestConfigHTTPVerbGet = RouteRestConfigHTTPVerb("get")
-	// RouteRestConfigHTTPVerbPost is [insert doc].
-	RouteRestConfigHTTPVerbPost = RouteRestConfigHTTPVerb("post")
-	// RouteRestConfigHTTPVerbPut is [insert doc].
-	RouteRestConfigHTTPVerbPut = RouteRestConfigHTTPVerb("put")
-	// RouteRestConfigHTTPVerbPatch is [insert doc].
-	RouteRestConfigHTTPVerbPatch = RouteRestConfigHTTPVerb("patch")
-	// RouteRestConfigHTTPVerbDelete is [insert doc].
-	RouteRestConfigHTTPVerbDelete = RouteRestConfigHTTPVerb("delete")
+	RouteRestConfigHTTPVerbGet     = RouteRestConfigHTTPVerb("get")
+	RouteRestConfigHTTPVerbPost    = RouteRestConfigHTTPVerb("post")
+	RouteRestConfigHTTPVerbPut     = RouteRestConfigHTTPVerb("put")
+	RouteRestConfigHTTPVerbPatch   = RouteRestConfigHTTPVerb("patch")
+	RouteRestConfigHTTPVerbDelete  = RouteRestConfigHTTPVerb("delete")
 )
 
 func (enum RouteRestConfigHTTPVerb) String() string {
@@ -522,14 +456,10 @@ func (enum *RouteRestConfigHTTPVerb) UnmarshalJSON(data []byte) error {
 type RouteRouteType string
 
 const (
-	// RouteRouteTypeUnknown is [insert doc].
-	RouteRouteTypeUnknown = RouteRouteType("unknown")
-	// RouteRouteTypeS3 is [insert doc].
-	RouteRouteTypeS3 = RouteRouteType("s3")
-	// RouteRouteTypeDatabase is [insert doc].
+	RouteRouteTypeUnknown  = RouteRouteType("unknown")
+	RouteRouteTypeS3       = RouteRouteType("s3")
 	RouteRouteTypeDatabase = RouteRouteType("database")
-	// RouteRouteTypeRest is [insert doc].
-	RouteRouteTypeRest = RouteRouteType("rest")
+	RouteRouteTypeRest     = RouteRouteType("rest")
 )
 
 func (enum RouteRouteType) String() string {
@@ -558,11 +488,8 @@ func (enum *RouteRouteType) UnmarshalJSON(data []byte) error {
 type RouteS3ConfigS3Strategy string
 
 const (
-	// RouteS3ConfigS3StrategyUnknown is [insert doc].
-	RouteS3ConfigS3StrategyUnknown = RouteS3ConfigS3Strategy("unknown")
-	// RouteS3ConfigS3StrategyPerTopic is [insert doc].
-	RouteS3ConfigS3StrategyPerTopic = RouteS3ConfigS3Strategy("per_topic")
-	// RouteS3ConfigS3StrategyPerMessage is [insert doc].
+	RouteS3ConfigS3StrategyUnknown    = RouteS3ConfigS3Strategy("unknown")
+	RouteS3ConfigS3StrategyPerTopic   = RouteS3ConfigS3Strategy("per_topic")
 	RouteS3ConfigS3StrategyPerMessage = RouteS3ConfigS3Strategy("per_message")
 )
 
@@ -2155,7 +2082,6 @@ type CreateRouteRequest struct {
 //   Create a route that will put subscribed MQTT messages into an S3 bucket.
 //   You need to create the bucket yourself and grant us write access.
 //   The grant can be done with s3cmd (`s3cmd setacl s3://<my-bucket> --acl-grant=write:555c69c3-87d0-4bf8-80f1-99a2f757d031:555c69c3-87d0-4bf8-80f1-99a2f757d031`).
-//
 func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
 	var err error
 
@@ -2656,7 +2582,6 @@ type PatchTwinDocumentRequest struct {
 	// * If the patch object property is null, then it is removed from the final object.
 	// * If the patch object property is a value (number, strings, bool, arrays), it is replaced.
 	// * If the patch object property is an object, the previous rules will be applied recursively on it.
-	//
 	Data *scw.JSONObject `json:"data"`
 }
 

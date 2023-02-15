@@ -52,7 +52,6 @@ var (
 // Mac mini and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions.
 // IOS is a trademark or registered trademark of Cisco in the U.S. and other countries and is used by Apple under license.
 // Scaleway is not affiliated with Apple Inc.
-//
 type API struct {
 	client *scw.Client
 }
@@ -67,9 +66,7 @@ func NewAPI(client *scw.Client) *API {
 type ListServersRequestOrderBy string
 
 const (
-	// ListServersRequestOrderByCreatedAtAsc is [insert doc].
-	ListServersRequestOrderByCreatedAtAsc = ListServersRequestOrderBy("created_at_asc")
-	// ListServersRequestOrderByCreatedAtDesc is [insert doc].
+	ListServersRequestOrderByCreatedAtAsc  = ListServersRequestOrderBy("created_at_asc")
 	ListServersRequestOrderByCreatedAtDesc = ListServersRequestOrderBy("created_at_desc")
 )
 
@@ -99,26 +96,16 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ServerStatus string
 
 const (
-	// ServerStatusUnknownStatus is [insert doc].
 	ServerStatusUnknownStatus = ServerStatus("unknown_status")
-	// ServerStatusStarting is [insert doc].
-	ServerStatusStarting = ServerStatus("starting")
-	// ServerStatusReady is [insert doc].
-	ServerStatusReady = ServerStatus("ready")
-	// ServerStatusError is [insert doc].
-	ServerStatusError = ServerStatus("error")
-	// ServerStatusRebooting is [insert doc].
-	ServerStatusRebooting = ServerStatus("rebooting")
-	// ServerStatusUpdating is [insert doc].
-	ServerStatusUpdating = ServerStatus("updating")
-	// ServerStatusLocking is [insert doc].
-	ServerStatusLocking = ServerStatus("locking")
-	// ServerStatusLocked is [insert doc].
-	ServerStatusLocked = ServerStatus("locked")
-	// ServerStatusUnlocking is [insert doc].
-	ServerStatusUnlocking = ServerStatus("unlocking")
-	// ServerStatusReinstalling is [insert doc].
-	ServerStatusReinstalling = ServerStatus("reinstalling")
+	ServerStatusStarting      = ServerStatus("starting")
+	ServerStatusReady         = ServerStatus("ready")
+	ServerStatusError         = ServerStatus("error")
+	ServerStatusRebooting     = ServerStatus("rebooting")
+	ServerStatusUpdating      = ServerStatus("updating")
+	ServerStatusLocking       = ServerStatus("locking")
+	ServerStatusLocked        = ServerStatus("locked")
+	ServerStatusUnlocking     = ServerStatus("unlocking")
+	ServerStatusReinstalling  = ServerStatus("reinstalling")
 )
 
 func (enum ServerStatus) String() string {
@@ -147,14 +134,10 @@ func (enum *ServerStatus) UnmarshalJSON(data []byte) error {
 type ServerTypeStock string
 
 const (
-	// ServerTypeStockUnknownStock is [insert doc].
 	ServerTypeStockUnknownStock = ServerTypeStock("unknown_stock")
-	// ServerTypeStockNoStock is [insert doc].
-	ServerTypeStockNoStock = ServerTypeStock("no_stock")
-	// ServerTypeStockLowStock is [insert doc].
-	ServerTypeStockLowStock = ServerTypeStock("low_stock")
-	// ServerTypeStockHighStock is [insert doc].
-	ServerTypeStockHighStock = ServerTypeStock("high_stock")
+	ServerTypeStockNoStock      = ServerTypeStock("no_stock")
+	ServerTypeStockLowStock     = ServerTypeStock("low_stock")
+	ServerTypeStockHighStock    = ServerTypeStock("high_stock")
 )
 
 func (enum ServerTypeStock) String() string {

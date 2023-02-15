@@ -54,17 +54,11 @@ func NewAPI(client *scw.Client) *API {
 type ListSecretsRequestOrderBy string
 
 const (
-	// ListSecretsRequestOrderByNameAsc is [insert doc].
-	ListSecretsRequestOrderByNameAsc = ListSecretsRequestOrderBy("name_asc")
-	// ListSecretsRequestOrderByNameDesc is [insert doc].
-	ListSecretsRequestOrderByNameDesc = ListSecretsRequestOrderBy("name_desc")
-	// ListSecretsRequestOrderByCreatedAtAsc is [insert doc].
-	ListSecretsRequestOrderByCreatedAtAsc = ListSecretsRequestOrderBy("created_at_asc")
-	// ListSecretsRequestOrderByCreatedAtDesc is [insert doc].
+	ListSecretsRequestOrderByNameAsc       = ListSecretsRequestOrderBy("name_asc")
+	ListSecretsRequestOrderByNameDesc      = ListSecretsRequestOrderBy("name_desc")
+	ListSecretsRequestOrderByCreatedAtAsc  = ListSecretsRequestOrderBy("created_at_asc")
 	ListSecretsRequestOrderByCreatedAtDesc = ListSecretsRequestOrderBy("created_at_desc")
-	// ListSecretsRequestOrderByUpdatedAtAsc is [insert doc].
-	ListSecretsRequestOrderByUpdatedAtAsc = ListSecretsRequestOrderBy("updated_at_asc")
-	// ListSecretsRequestOrderByUpdatedAtDesc is [insert doc].
+	ListSecretsRequestOrderByUpdatedAtAsc  = ListSecretsRequestOrderBy("updated_at_asc")
 	ListSecretsRequestOrderByUpdatedAtDesc = ListSecretsRequestOrderBy("updated_at_desc")
 )
 
@@ -94,9 +88,7 @@ func (enum *ListSecretsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type SecretStatus string
 
 const (
-	// SecretStatusReady is [insert doc].
-	SecretStatusReady = SecretStatus("ready")
-	// SecretStatusLocked is [insert doc].
+	SecretStatusReady  = SecretStatus("ready")
 	SecretStatusLocked = SecretStatus("locked")
 )
 
@@ -126,13 +118,9 @@ func (enum *SecretStatus) UnmarshalJSON(data []byte) error {
 type SecretVersionStatus string
 
 const (
-	// SecretVersionStatusUnknown is [insert doc].
-	SecretVersionStatusUnknown = SecretVersionStatus("unknown")
-	// SecretVersionStatusEnabled is [insert doc].
-	SecretVersionStatusEnabled = SecretVersionStatus("enabled")
-	// SecretVersionStatusDisabled is [insert doc].
-	SecretVersionStatusDisabled = SecretVersionStatus("disabled")
-	// SecretVersionStatusDestroyed is [insert doc].
+	SecretVersionStatusUnknown   = SecretVersionStatus("unknown")
+	SecretVersionStatusEnabled   = SecretVersionStatus("enabled")
+	SecretVersionStatusDisabled  = SecretVersionStatus("disabled")
 	SecretVersionStatusDestroyed = SecretVersionStatus("destroyed")
 )
 

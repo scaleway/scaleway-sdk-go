@@ -54,10 +54,8 @@ func NewAPI(client *scw.Client) *API {
 type Arch string
 
 const (
-	// ArchX86_64 is [insert doc].
 	ArchX86_64 = Arch("x86_64")
-	// ArchArm is [insert doc].
-	ArchArm = Arch("arm")
+	ArchArm    = Arch("arm")
 )
 
 func (enum Arch) String() string {
@@ -86,12 +84,9 @@ func (enum *Arch) UnmarshalJSON(data []byte) error {
 type BootType string
 
 const (
-	// BootTypeLocal is [insert doc].
-	BootTypeLocal = BootType("local")
-	// BootTypeBootscript is [insert doc].
+	BootTypeLocal      = BootType("local")
 	BootTypeBootscript = BootType("bootscript")
-	// BootTypeRescue is [insert doc].
-	BootTypeRescue = BootType("rescue")
+	BootTypeRescue     = BootType("rescue")
 )
 
 func (enum BootType) String() string {
@@ -120,12 +115,9 @@ func (enum *BootType) UnmarshalJSON(data []byte) error {
 type ImageState string
 
 const (
-	// ImageStateAvailable is [insert doc].
 	ImageStateAvailable = ImageState("available")
-	// ImageStateCreating is [insert doc].
-	ImageStateCreating = ImageState("creating")
-	// ImageStateError is [insert doc].
-	ImageStateError = ImageState("error")
+	ImageStateCreating  = ImageState("creating")
+	ImageStateError     = ImageState("error")
 )
 
 func (enum ImageState) String() string {
@@ -154,14 +146,10 @@ func (enum *ImageState) UnmarshalJSON(data []byte) error {
 type ListServersRequestOrder string
 
 const (
-	// ListServersRequestOrderCreationDateDesc is [insert doc].
-	ListServersRequestOrderCreationDateDesc = ListServersRequestOrder("creation_date_desc")
-	// ListServersRequestOrderCreationDateAsc is [insert doc].
-	ListServersRequestOrderCreationDateAsc = ListServersRequestOrder("creation_date_asc")
-	// ListServersRequestOrderModificationDateDesc is [insert doc].
+	ListServersRequestOrderCreationDateDesc     = ListServersRequestOrder("creation_date_desc")
+	ListServersRequestOrderCreationDateAsc      = ListServersRequestOrder("creation_date_asc")
 	ListServersRequestOrderModificationDateDesc = ListServersRequestOrder("modification_date_desc")
-	// ListServersRequestOrderModificationDateAsc is [insert doc].
-	ListServersRequestOrderModificationDateAsc = ListServersRequestOrder("modification_date_asc")
+	ListServersRequestOrderModificationDateAsc  = ListServersRequestOrder("modification_date_asc")
 )
 
 func (enum ListServersRequestOrder) String() string {
@@ -190,9 +178,7 @@ func (enum *ListServersRequestOrder) UnmarshalJSON(data []byte) error {
 type PlacementGroupPolicyMode string
 
 const (
-	// PlacementGroupPolicyModeOptional is [insert doc].
 	PlacementGroupPolicyModeOptional = PlacementGroupPolicyMode("optional")
-	// PlacementGroupPolicyModeEnforced is [insert doc].
 	PlacementGroupPolicyModeEnforced = PlacementGroupPolicyMode("enforced")
 )
 
@@ -222,10 +208,8 @@ func (enum *PlacementGroupPolicyMode) UnmarshalJSON(data []byte) error {
 type PlacementGroupPolicyType string
 
 const (
-	// PlacementGroupPolicyTypeMaxAvailability is [insert doc].
 	PlacementGroupPolicyTypeMaxAvailability = PlacementGroupPolicyType("max_availability")
-	// PlacementGroupPolicyTypeLowLatency is [insert doc].
-	PlacementGroupPolicyTypeLowLatency = PlacementGroupPolicyType("low_latency")
+	PlacementGroupPolicyTypeLowLatency      = PlacementGroupPolicyType("low_latency")
 )
 
 func (enum PlacementGroupPolicyType) String() string {
@@ -254,11 +238,8 @@ func (enum *PlacementGroupPolicyType) UnmarshalJSON(data []byte) error {
 type PrivateNICState string
 
 const (
-	// PrivateNICStateAvailable is [insert doc].
-	PrivateNICStateAvailable = PrivateNICState("available")
-	// PrivateNICStateSyncing is [insert doc].
-	PrivateNICStateSyncing = PrivateNICState("syncing")
-	// PrivateNICStateSyncingError is [insert doc].
+	PrivateNICStateAvailable    = PrivateNICState("available")
+	PrivateNICStateSyncing      = PrivateNICState("syncing")
 	PrivateNICStateSyncingError = PrivateNICState("syncing_error")
 )
 
@@ -288,10 +269,8 @@ func (enum *PrivateNICState) UnmarshalJSON(data []byte) error {
 type SecurityGroupPolicy string
 
 const (
-	// SecurityGroupPolicyAccept is [insert doc].
 	SecurityGroupPolicyAccept = SecurityGroupPolicy("accept")
-	// SecurityGroupPolicyDrop is [insert doc].
-	SecurityGroupPolicyDrop = SecurityGroupPolicy("drop")
+	SecurityGroupPolicyDrop   = SecurityGroupPolicy("drop")
 )
 
 func (enum SecurityGroupPolicy) String() string {
@@ -320,10 +299,8 @@ func (enum *SecurityGroupPolicy) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleAction string
 
 const (
-	// SecurityGroupRuleActionAccept is [insert doc].
 	SecurityGroupRuleActionAccept = SecurityGroupRuleAction("accept")
-	// SecurityGroupRuleActionDrop is [insert doc].
-	SecurityGroupRuleActionDrop = SecurityGroupRuleAction("drop")
+	SecurityGroupRuleActionDrop   = SecurityGroupRuleAction("drop")
 )
 
 func (enum SecurityGroupRuleAction) String() string {
@@ -352,9 +329,7 @@ func (enum *SecurityGroupRuleAction) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleDirection string
 
 const (
-	// SecurityGroupRuleDirectionInbound is [insert doc].
-	SecurityGroupRuleDirectionInbound = SecurityGroupRuleDirection("inbound")
-	// SecurityGroupRuleDirectionOutbound is [insert doc].
+	SecurityGroupRuleDirectionInbound  = SecurityGroupRuleDirection("inbound")
 	SecurityGroupRuleDirectionOutbound = SecurityGroupRuleDirection("outbound")
 )
 
@@ -384,14 +359,10 @@ func (enum *SecurityGroupRuleDirection) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleProtocol string
 
 const (
-	// SecurityGroupRuleProtocolTCP is [insert doc].
-	SecurityGroupRuleProtocolTCP = SecurityGroupRuleProtocol("TCP")
-	// SecurityGroupRuleProtocolUDP is [insert doc].
-	SecurityGroupRuleProtocolUDP = SecurityGroupRuleProtocol("UDP")
-	// SecurityGroupRuleProtocolICMP is [insert doc].
+	SecurityGroupRuleProtocolTCP  = SecurityGroupRuleProtocol("TCP")
+	SecurityGroupRuleProtocolUDP  = SecurityGroupRuleProtocol("UDP")
 	SecurityGroupRuleProtocolICMP = SecurityGroupRuleProtocol("ICMP")
-	// SecurityGroupRuleProtocolANY is [insert doc].
-	SecurityGroupRuleProtocolANY = SecurityGroupRuleProtocol("ANY")
+	SecurityGroupRuleProtocolANY  = SecurityGroupRuleProtocol("ANY")
 )
 
 func (enum SecurityGroupRuleProtocol) String() string {
@@ -420,11 +391,8 @@ func (enum *SecurityGroupRuleProtocol) UnmarshalJSON(data []byte) error {
 type SecurityGroupState string
 
 const (
-	// SecurityGroupStateAvailable is [insert doc].
-	SecurityGroupStateAvailable = SecurityGroupState("available")
-	// SecurityGroupStateSyncing is [insert doc].
-	SecurityGroupStateSyncing = SecurityGroupState("syncing")
-	// SecurityGroupStateSyncingError is [insert doc].
+	SecurityGroupStateAvailable    = SecurityGroupState("available")
+	SecurityGroupStateSyncing      = SecurityGroupState("syncing")
 	SecurityGroupStateSyncingError = SecurityGroupState("syncing_error")
 )
 
@@ -454,18 +422,12 @@ func (enum *SecurityGroupState) UnmarshalJSON(data []byte) error {
 type ServerAction string
 
 const (
-	// ServerActionPoweron is [insert doc].
-	ServerActionPoweron = ServerAction("poweron")
-	// ServerActionBackup is [insert doc].
-	ServerActionBackup = ServerAction("backup")
-	// ServerActionStopInPlace is [insert doc].
+	ServerActionPoweron     = ServerAction("poweron")
+	ServerActionBackup      = ServerAction("backup")
 	ServerActionStopInPlace = ServerAction("stop_in_place")
-	// ServerActionPoweroff is [insert doc].
-	ServerActionPoweroff = ServerAction("poweroff")
-	// ServerActionTerminate is [insert doc].
-	ServerActionTerminate = ServerAction("terminate")
-	// ServerActionReboot is [insert doc].
-	ServerActionReboot = ServerAction("reboot")
+	ServerActionPoweroff    = ServerAction("poweroff")
+	ServerActionTerminate   = ServerAction("terminate")
+	ServerActionReboot      = ServerAction("reboot")
 )
 
 func (enum ServerAction) String() string {
@@ -494,18 +456,12 @@ func (enum *ServerAction) UnmarshalJSON(data []byte) error {
 type ServerState string
 
 const (
-	// ServerStateRunning is [insert doc].
-	ServerStateRunning = ServerState("running")
-	// ServerStateStopped is [insert doc].
-	ServerStateStopped = ServerState("stopped")
-	// ServerStateStoppedInPlace is [insert doc].
+	ServerStateRunning        = ServerState("running")
+	ServerStateStopped        = ServerState("stopped")
 	ServerStateStoppedInPlace = ServerState("stopped in place")
-	// ServerStateStarting is [insert doc].
-	ServerStateStarting = ServerState("starting")
-	// ServerStateStopping is [insert doc].
-	ServerStateStopping = ServerState("stopping")
-	// ServerStateLocked is [insert doc].
-	ServerStateLocked = ServerState("locked")
+	ServerStateStarting       = ServerState("starting")
+	ServerStateStopping       = ServerState("stopping")
+	ServerStateLocked         = ServerState("locked")
 )
 
 func (enum ServerState) String() string {
@@ -534,12 +490,9 @@ func (enum *ServerState) UnmarshalJSON(data []byte) error {
 type ServerTypesAvailability string
 
 const (
-	// ServerTypesAvailabilityAvailable is [insert doc].
 	ServerTypesAvailabilityAvailable = ServerTypesAvailability("available")
-	// ServerTypesAvailabilityScarce is [insert doc].
-	ServerTypesAvailabilityScarce = ServerTypesAvailability("scarce")
-	// ServerTypesAvailabilityShortage is [insert doc].
-	ServerTypesAvailabilityShortage = ServerTypesAvailability("shortage")
+	ServerTypesAvailabilityScarce    = ServerTypesAvailability("scarce")
+	ServerTypesAvailabilityShortage  = ServerTypesAvailability("shortage")
 )
 
 func (enum ServerTypesAvailability) String() string {
@@ -568,18 +521,12 @@ func (enum *ServerTypesAvailability) UnmarshalJSON(data []byte) error {
 type SnapshotState string
 
 const (
-	// SnapshotStateAvailable is [insert doc].
-	SnapshotStateAvailable = SnapshotState("available")
-	// SnapshotStateSnapshotting is [insert doc].
+	SnapshotStateAvailable    = SnapshotState("available")
 	SnapshotStateSnapshotting = SnapshotState("snapshotting")
-	// SnapshotStateError is [insert doc].
-	SnapshotStateError = SnapshotState("error")
-	// SnapshotStateInvalidData is [insert doc].
-	SnapshotStateInvalidData = SnapshotState("invalid_data")
-	// SnapshotStateImporting is [insert doc].
-	SnapshotStateImporting = SnapshotState("importing")
-	// SnapshotStateExporting is [insert doc].
-	SnapshotStateExporting = SnapshotState("exporting")
+	SnapshotStateError        = SnapshotState("error")
+	SnapshotStateInvalidData  = SnapshotState("invalid_data")
+	SnapshotStateImporting    = SnapshotState("importing")
+	SnapshotStateExporting    = SnapshotState("exporting")
 )
 
 func (enum SnapshotState) String() string {
@@ -608,14 +555,10 @@ func (enum *SnapshotState) UnmarshalJSON(data []byte) error {
 type SnapshotVolumeType string
 
 const (
-	// SnapshotVolumeTypeUnknownVolumeType is [insert doc].
 	SnapshotVolumeTypeUnknownVolumeType = SnapshotVolumeType("unknown_volume_type")
-	// SnapshotVolumeTypeLSSD is [insert doc].
-	SnapshotVolumeTypeLSSD = SnapshotVolumeType("l_ssd")
-	// SnapshotVolumeTypeBSSD is [insert doc].
-	SnapshotVolumeTypeBSSD = SnapshotVolumeType("b_ssd")
-	// SnapshotVolumeTypeUnified is [insert doc].
-	SnapshotVolumeTypeUnified = SnapshotVolumeType("unified")
+	SnapshotVolumeTypeLSSD              = SnapshotVolumeType("l_ssd")
+	SnapshotVolumeTypeBSSD              = SnapshotVolumeType("b_ssd")
+	SnapshotVolumeTypeUnified           = SnapshotVolumeType("unified")
 )
 
 func (enum SnapshotVolumeType) String() string {
@@ -644,16 +587,11 @@ func (enum *SnapshotVolumeType) UnmarshalJSON(data []byte) error {
 type TaskStatus string
 
 const (
-	// TaskStatusPending is [insert doc].
 	TaskStatusPending = TaskStatus("pending")
-	// TaskStatusStarted is [insert doc].
 	TaskStatusStarted = TaskStatus("started")
-	// TaskStatusSuccess is [insert doc].
 	TaskStatusSuccess = TaskStatus("success")
-	// TaskStatusFailure is [insert doc].
 	TaskStatusFailure = TaskStatus("failure")
-	// TaskStatusRetry is [insert doc].
-	TaskStatusRetry = TaskStatus("retry")
+	TaskStatusRetry   = TaskStatus("retry")
 )
 
 func (enum TaskStatus) String() string {
@@ -682,20 +620,13 @@ func (enum *TaskStatus) UnmarshalJSON(data []byte) error {
 type VolumeServerState string
 
 const (
-	// VolumeServerStateAvailable is [insert doc].
-	VolumeServerStateAvailable = VolumeServerState("available")
-	// VolumeServerStateSnapshotting is [insert doc].
+	VolumeServerStateAvailable    = VolumeServerState("available")
 	VolumeServerStateSnapshotting = VolumeServerState("snapshotting")
-	// VolumeServerStateError is [insert doc].
-	VolumeServerStateError = VolumeServerState("error")
-	// VolumeServerStateFetching is [insert doc].
-	VolumeServerStateFetching = VolumeServerState("fetching")
-	// VolumeServerStateResizing is [insert doc].
-	VolumeServerStateResizing = VolumeServerState("resizing")
-	// VolumeServerStateSaving is [insert doc].
-	VolumeServerStateSaving = VolumeServerState("saving")
-	// VolumeServerStateHotsyncing is [insert doc].
-	VolumeServerStateHotsyncing = VolumeServerState("hotsyncing")
+	VolumeServerStateError        = VolumeServerState("error")
+	VolumeServerStateFetching     = VolumeServerState("fetching")
+	VolumeServerStateResizing     = VolumeServerState("resizing")
+	VolumeServerStateSaving       = VolumeServerState("saving")
+	VolumeServerStateHotsyncing   = VolumeServerState("hotsyncing")
 )
 
 func (enum VolumeServerState) String() string {
@@ -724,9 +655,7 @@ func (enum *VolumeServerState) UnmarshalJSON(data []byte) error {
 type VolumeServerVolumeType string
 
 const (
-	// VolumeServerVolumeTypeLSSD is [insert doc].
 	VolumeServerVolumeTypeLSSD = VolumeServerVolumeType("l_ssd")
-	// VolumeServerVolumeTypeBSSD is [insert doc].
 	VolumeServerVolumeTypeBSSD = VolumeServerVolumeType("b_ssd")
 )
 
@@ -756,20 +685,13 @@ func (enum *VolumeServerVolumeType) UnmarshalJSON(data []byte) error {
 type VolumeState string
 
 const (
-	// VolumeStateAvailable is [insert doc].
-	VolumeStateAvailable = VolumeState("available")
-	// VolumeStateSnapshotting is [insert doc].
+	VolumeStateAvailable    = VolumeState("available")
 	VolumeStateSnapshotting = VolumeState("snapshotting")
-	// VolumeStateError is [insert doc].
-	VolumeStateError = VolumeState("error")
-	// VolumeStateFetching is [insert doc].
-	VolumeStateFetching = VolumeState("fetching")
-	// VolumeStateResizing is [insert doc].
-	VolumeStateResizing = VolumeState("resizing")
-	// VolumeStateSaving is [insert doc].
-	VolumeStateSaving = VolumeState("saving")
-	// VolumeStateHotsyncing is [insert doc].
-	VolumeStateHotsyncing = VolumeState("hotsyncing")
+	VolumeStateError        = VolumeState("error")
+	VolumeStateFetching     = VolumeState("fetching")
+	VolumeStateResizing     = VolumeState("resizing")
+	VolumeStateSaving       = VolumeState("saving")
+	VolumeStateHotsyncing   = VolumeState("hotsyncing")
 )
 
 func (enum VolumeState) String() string {
@@ -798,11 +720,8 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 type VolumeVolumeType string
 
 const (
-	// VolumeVolumeTypeLSSD is [insert doc].
-	VolumeVolumeTypeLSSD = VolumeVolumeType("l_ssd")
-	// VolumeVolumeTypeBSSD is [insert doc].
-	VolumeVolumeTypeBSSD = VolumeVolumeType("b_ssd")
-	// VolumeVolumeTypeUnified is [insert doc].
+	VolumeVolumeTypeLSSD    = VolumeVolumeType("l_ssd")
+	VolumeVolumeTypeBSSD    = VolumeVolumeType("b_ssd")
 	VolumeVolumeTypeUnified = VolumeVolumeType("unified")
 )
 
@@ -2082,7 +2001,6 @@ type CreateServerRequest struct {
 // Create a volume from a snapshot :
 // Required : `base_snapshot`, `name`, `volume_type`.
 // Optional : `organization`, `project`, `boot`.
-//
 func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
@@ -2456,13 +2374,11 @@ type ServerActionRequest struct {
 	//
 	// The name of the backup you want to create.
 	// This field should only be specified when performing a backup action.
-	//
 	Name *string `json:"name,omitempty"`
 	// Volumes: for each volume UUID, the snapshot parameters of the volume
 	//
 	// For each volume UUID, the snapshot parameters of the volume.
 	// This field should only be specified when performing a backup action.
-	//
 	Volumes map[string]*ServerActionRequestVolumeBackupTemplate `json:"volumes,omitempty"`
 }
 
