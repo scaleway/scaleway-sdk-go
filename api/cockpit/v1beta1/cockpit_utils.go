@@ -56,7 +56,7 @@ func (s *API) WaitForCockpit(
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for DNS failed")
+		return nil, errors.Wrap(err, "waiting for Cockpit failed")
 	}
 
 	return res.(*Cockpit), nil
