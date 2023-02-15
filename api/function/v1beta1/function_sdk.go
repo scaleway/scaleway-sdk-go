@@ -54,20 +54,13 @@ func NewAPI(client *scw.Client) *API {
 type CronStatus string
 
 const (
-	// CronStatusUnknown is [insert doc].
-	CronStatusUnknown = CronStatus("unknown")
-	// CronStatusReady is [insert doc].
-	CronStatusReady = CronStatus("ready")
-	// CronStatusDeleting is [insert doc].
+	CronStatusUnknown  = CronStatus("unknown")
+	CronStatusReady    = CronStatus("ready")
 	CronStatusDeleting = CronStatus("deleting")
-	// CronStatusError is [insert doc].
-	CronStatusError = CronStatus("error")
-	// CronStatusLocked is [insert doc].
-	CronStatusLocked = CronStatus("locked")
-	// CronStatusCreating is [insert doc].
+	CronStatusError    = CronStatus("error")
+	CronStatusLocked   = CronStatus("locked")
 	CronStatusCreating = CronStatus("creating")
-	// CronStatusPending is [insert doc].
-	CronStatusPending = CronStatus("pending")
+	CronStatusPending  = CronStatus("pending")
 )
 
 func (enum CronStatus) String() string {
@@ -96,18 +89,12 @@ func (enum *CronStatus) UnmarshalJSON(data []byte) error {
 type DomainStatus string
 
 const (
-	// DomainStatusUnknown is [insert doc].
-	DomainStatusUnknown = DomainStatus("unknown")
-	// DomainStatusReady is [insert doc].
-	DomainStatusReady = DomainStatus("ready")
-	// DomainStatusDeleting is [insert doc].
+	DomainStatusUnknown  = DomainStatus("unknown")
+	DomainStatusReady    = DomainStatus("ready")
 	DomainStatusDeleting = DomainStatus("deleting")
-	// DomainStatusError is [insert doc].
-	DomainStatusError = DomainStatus("error")
-	// DomainStatusCreating is [insert doc].
+	DomainStatusError    = DomainStatus("error")
 	DomainStatusCreating = DomainStatus("creating")
-	// DomainStatusPending is [insert doc].
-	DomainStatusPending = DomainStatus("pending")
+	DomainStatusPending  = DomainStatus("pending")
 )
 
 func (enum DomainStatus) String() string {
@@ -136,12 +123,9 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type FunctionHTTPOption string
 
 const (
-	// FunctionHTTPOptionUnknownHTTPOption is [insert doc].
 	FunctionHTTPOptionUnknownHTTPOption = FunctionHTTPOption("unknown_http_option")
-	// FunctionHTTPOptionEnabled is [insert doc].
-	FunctionHTTPOptionEnabled = FunctionHTTPOption("enabled")
-	// FunctionHTTPOptionRedirected is [insert doc].
-	FunctionHTTPOptionRedirected = FunctionHTTPOption("redirected")
+	FunctionHTTPOptionEnabled           = FunctionHTTPOption("enabled")
+	FunctionHTTPOptionRedirected        = FunctionHTTPOption("redirected")
 )
 
 func (enum FunctionHTTPOption) String() string {
@@ -170,12 +154,9 @@ func (enum *FunctionHTTPOption) UnmarshalJSON(data []byte) error {
 type FunctionPrivacy string
 
 const (
-	// FunctionPrivacyUnknownPrivacy is [insert doc].
 	FunctionPrivacyUnknownPrivacy = FunctionPrivacy("unknown_privacy")
-	// FunctionPrivacyPublic is [insert doc].
-	FunctionPrivacyPublic = FunctionPrivacy("public")
-	// FunctionPrivacyPrivate is [insert doc].
-	FunctionPrivacyPrivate = FunctionPrivacy("private")
+	FunctionPrivacyPublic         = FunctionPrivacy("public")
+	FunctionPrivacyPrivate        = FunctionPrivacy("private")
 )
 
 func (enum FunctionPrivacy) String() string {
@@ -204,50 +185,28 @@ func (enum *FunctionPrivacy) UnmarshalJSON(data []byte) error {
 type FunctionRuntime string
 
 const (
-	// FunctionRuntimeUnknownRuntime is [insert doc].
 	FunctionRuntimeUnknownRuntime = FunctionRuntime("unknown_runtime")
-	// FunctionRuntimeGolang is [insert doc].
-	FunctionRuntimeGolang = FunctionRuntime("golang")
-	// FunctionRuntimePython is [insert doc].
-	FunctionRuntimePython = FunctionRuntime("python")
-	// FunctionRuntimePython3 is [insert doc].
-	FunctionRuntimePython3 = FunctionRuntime("python3")
-	// FunctionRuntimeNode8 is [insert doc].
-	FunctionRuntimeNode8 = FunctionRuntime("node8")
-	// FunctionRuntimeNode10 is [insert doc].
-	FunctionRuntimeNode10 = FunctionRuntime("node10")
-	// FunctionRuntimeNode14 is [insert doc].
-	FunctionRuntimeNode14 = FunctionRuntime("node14")
-	// FunctionRuntimeNode16 is [insert doc].
-	FunctionRuntimeNode16 = FunctionRuntime("node16")
-	// FunctionRuntimeNode17 is [insert doc].
-	FunctionRuntimeNode17 = FunctionRuntime("node17")
-	// FunctionRuntimePython37 is [insert doc].
-	FunctionRuntimePython37 = FunctionRuntime("python37")
-	// FunctionRuntimePython38 is [insert doc].
-	FunctionRuntimePython38 = FunctionRuntime("python38")
-	// FunctionRuntimePython39 is [insert doc].
-	FunctionRuntimePython39 = FunctionRuntime("python39")
-	// FunctionRuntimePython310 is [insert doc].
-	FunctionRuntimePython310 = FunctionRuntime("python310")
-	// FunctionRuntimeGo113 is [insert doc].
-	FunctionRuntimeGo113 = FunctionRuntime("go113")
-	// FunctionRuntimeGo117 is [insert doc].
-	FunctionRuntimeGo117 = FunctionRuntime("go117")
-	// FunctionRuntimeGo118 is [insert doc].
-	FunctionRuntimeGo118 = FunctionRuntime("go118")
-	// FunctionRuntimeNode18 is [insert doc].
-	FunctionRuntimeNode18 = FunctionRuntime("node18")
-	// FunctionRuntimeRust165 is [insert doc].
-	FunctionRuntimeRust165 = FunctionRuntime("rust165")
-	// FunctionRuntimeGo119 is [insert doc].
-	FunctionRuntimeGo119 = FunctionRuntime("go119")
-	// FunctionRuntimePython311 is [insert doc].
-	FunctionRuntimePython311 = FunctionRuntime("python311")
-	// FunctionRuntimePhp82 is [insert doc].
-	FunctionRuntimePhp82 = FunctionRuntime("php82")
-	// FunctionRuntimeNode19 is [insert doc].
-	FunctionRuntimeNode19 = FunctionRuntime("node19")
+	FunctionRuntimeGolang         = FunctionRuntime("golang")
+	FunctionRuntimePython         = FunctionRuntime("python")
+	FunctionRuntimePython3        = FunctionRuntime("python3")
+	FunctionRuntimeNode8          = FunctionRuntime("node8")
+	FunctionRuntimeNode10         = FunctionRuntime("node10")
+	FunctionRuntimeNode14         = FunctionRuntime("node14")
+	FunctionRuntimeNode16         = FunctionRuntime("node16")
+	FunctionRuntimeNode17         = FunctionRuntime("node17")
+	FunctionRuntimePython37       = FunctionRuntime("python37")
+	FunctionRuntimePython38       = FunctionRuntime("python38")
+	FunctionRuntimePython39       = FunctionRuntime("python39")
+	FunctionRuntimePython310      = FunctionRuntime("python310")
+	FunctionRuntimeGo113          = FunctionRuntime("go113")
+	FunctionRuntimeGo117          = FunctionRuntime("go117")
+	FunctionRuntimeGo118          = FunctionRuntime("go118")
+	FunctionRuntimeNode18         = FunctionRuntime("node18")
+	FunctionRuntimeRust165        = FunctionRuntime("rust165")
+	FunctionRuntimeGo119          = FunctionRuntime("go119")
+	FunctionRuntimePython311      = FunctionRuntime("python311")
+	FunctionRuntimePhp82          = FunctionRuntime("php82")
+	FunctionRuntimeNode19         = FunctionRuntime("node19")
 )
 
 func (enum FunctionRuntime) String() string {
@@ -276,22 +235,14 @@ func (enum *FunctionRuntime) UnmarshalJSON(data []byte) error {
 type FunctionStatus string
 
 const (
-	// FunctionStatusUnknown is [insert doc].
-	FunctionStatusUnknown = FunctionStatus("unknown")
-	// FunctionStatusReady is [insert doc].
-	FunctionStatusReady = FunctionStatus("ready")
-	// FunctionStatusDeleting is [insert doc].
+	FunctionStatusUnknown  = FunctionStatus("unknown")
+	FunctionStatusReady    = FunctionStatus("ready")
 	FunctionStatusDeleting = FunctionStatus("deleting")
-	// FunctionStatusError is [insert doc].
-	FunctionStatusError = FunctionStatus("error")
-	// FunctionStatusLocked is [insert doc].
-	FunctionStatusLocked = FunctionStatus("locked")
-	// FunctionStatusCreating is [insert doc].
+	FunctionStatusError    = FunctionStatus("error")
+	FunctionStatusLocked   = FunctionStatus("locked")
 	FunctionStatusCreating = FunctionStatus("creating")
-	// FunctionStatusPending is [insert doc].
-	FunctionStatusPending = FunctionStatus("pending")
-	// FunctionStatusCreated is [insert doc].
-	FunctionStatusCreated = FunctionStatus("created")
+	FunctionStatusPending  = FunctionStatus("pending")
+	FunctionStatusCreated  = FunctionStatus("created")
 )
 
 func (enum FunctionStatus) String() string {
@@ -320,9 +271,7 @@ func (enum *FunctionStatus) UnmarshalJSON(data []byte) error {
 type ListCronsRequestOrderBy string
 
 const (
-	// ListCronsRequestOrderByCreatedAtAsc is [insert doc].
-	ListCronsRequestOrderByCreatedAtAsc = ListCronsRequestOrderBy("created_at_asc")
-	// ListCronsRequestOrderByCreatedAtDesc is [insert doc].
+	ListCronsRequestOrderByCreatedAtAsc  = ListCronsRequestOrderBy("created_at_asc")
 	ListCronsRequestOrderByCreatedAtDesc = ListCronsRequestOrderBy("created_at_desc")
 )
 
@@ -352,14 +301,10 @@ func (enum *ListCronsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListDomainsRequestOrderBy string
 
 const (
-	// ListDomainsRequestOrderByCreatedAtAsc is [insert doc].
-	ListDomainsRequestOrderByCreatedAtAsc = ListDomainsRequestOrderBy("created_at_asc")
-	// ListDomainsRequestOrderByCreatedAtDesc is [insert doc].
+	ListDomainsRequestOrderByCreatedAtAsc  = ListDomainsRequestOrderBy("created_at_asc")
 	ListDomainsRequestOrderByCreatedAtDesc = ListDomainsRequestOrderBy("created_at_desc")
-	// ListDomainsRequestOrderByHostnameAsc is [insert doc].
-	ListDomainsRequestOrderByHostnameAsc = ListDomainsRequestOrderBy("hostname_asc")
-	// ListDomainsRequestOrderByHostnameDesc is [insert doc].
-	ListDomainsRequestOrderByHostnameDesc = ListDomainsRequestOrderBy("hostname_desc")
+	ListDomainsRequestOrderByHostnameAsc   = ListDomainsRequestOrderBy("hostname_asc")
+	ListDomainsRequestOrderByHostnameDesc  = ListDomainsRequestOrderBy("hostname_desc")
 )
 
 func (enum ListDomainsRequestOrderBy) String() string {
@@ -388,14 +333,10 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListFunctionsRequestOrderBy string
 
 const (
-	// ListFunctionsRequestOrderByCreatedAtAsc is [insert doc].
-	ListFunctionsRequestOrderByCreatedAtAsc = ListFunctionsRequestOrderBy("created_at_asc")
-	// ListFunctionsRequestOrderByCreatedAtDesc is [insert doc].
+	ListFunctionsRequestOrderByCreatedAtAsc  = ListFunctionsRequestOrderBy("created_at_asc")
 	ListFunctionsRequestOrderByCreatedAtDesc = ListFunctionsRequestOrderBy("created_at_desc")
-	// ListFunctionsRequestOrderByNameAsc is [insert doc].
-	ListFunctionsRequestOrderByNameAsc = ListFunctionsRequestOrderBy("name_asc")
-	// ListFunctionsRequestOrderByNameDesc is [insert doc].
-	ListFunctionsRequestOrderByNameDesc = ListFunctionsRequestOrderBy("name_desc")
+	ListFunctionsRequestOrderByNameAsc       = ListFunctionsRequestOrderBy("name_asc")
+	ListFunctionsRequestOrderByNameDesc      = ListFunctionsRequestOrderBy("name_desc")
 )
 
 func (enum ListFunctionsRequestOrderBy) String() string {
@@ -424,10 +365,8 @@ func (enum *ListFunctionsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListLogsRequestOrderBy string
 
 const (
-	// ListLogsRequestOrderByTimestampDesc is [insert doc].
 	ListLogsRequestOrderByTimestampDesc = ListLogsRequestOrderBy("timestamp_desc")
-	// ListLogsRequestOrderByTimestampAsc is [insert doc].
-	ListLogsRequestOrderByTimestampAsc = ListLogsRequestOrderBy("timestamp_asc")
+	ListLogsRequestOrderByTimestampAsc  = ListLogsRequestOrderBy("timestamp_asc")
 )
 
 func (enum ListLogsRequestOrderBy) String() string {
@@ -456,14 +395,10 @@ func (enum *ListLogsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNamespacesRequestOrderBy string
 
 const (
-	// ListNamespacesRequestOrderByCreatedAtAsc is [insert doc].
-	ListNamespacesRequestOrderByCreatedAtAsc = ListNamespacesRequestOrderBy("created_at_asc")
-	// ListNamespacesRequestOrderByCreatedAtDesc is [insert doc].
+	ListNamespacesRequestOrderByCreatedAtAsc  = ListNamespacesRequestOrderBy("created_at_asc")
 	ListNamespacesRequestOrderByCreatedAtDesc = ListNamespacesRequestOrderBy("created_at_desc")
-	// ListNamespacesRequestOrderByNameAsc is [insert doc].
-	ListNamespacesRequestOrderByNameAsc = ListNamespacesRequestOrderBy("name_asc")
-	// ListNamespacesRequestOrderByNameDesc is [insert doc].
-	ListNamespacesRequestOrderByNameDesc = ListNamespacesRequestOrderBy("name_desc")
+	ListNamespacesRequestOrderByNameAsc       = ListNamespacesRequestOrderBy("name_asc")
+	ListNamespacesRequestOrderByNameDesc      = ListNamespacesRequestOrderBy("name_desc")
 )
 
 func (enum ListNamespacesRequestOrderBy) String() string {
@@ -492,9 +427,7 @@ func (enum *ListNamespacesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTokensRequestOrderBy string
 
 const (
-	// ListTokensRequestOrderByCreatedAtAsc is [insert doc].
-	ListTokensRequestOrderByCreatedAtAsc = ListTokensRequestOrderBy("created_at_asc")
-	// ListTokensRequestOrderByCreatedAtDesc is [insert doc].
+	ListTokensRequestOrderByCreatedAtAsc  = ListTokensRequestOrderBy("created_at_asc")
 	ListTokensRequestOrderByCreatedAtDesc = ListTokensRequestOrderBy("created_at_desc")
 )
 
@@ -524,9 +457,7 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTriggerInputsRequestOrderBy string
 
 const (
-	// ListTriggerInputsRequestOrderByCreatedAtAsc is [insert doc].
-	ListTriggerInputsRequestOrderByCreatedAtAsc = ListTriggerInputsRequestOrderBy("created_at_asc")
-	// ListTriggerInputsRequestOrderByCreatedAtDesc is [insert doc].
+	ListTriggerInputsRequestOrderByCreatedAtAsc  = ListTriggerInputsRequestOrderBy("created_at_asc")
 	ListTriggerInputsRequestOrderByCreatedAtDesc = ListTriggerInputsRequestOrderBy("created_at_desc")
 )
 
@@ -556,9 +487,7 @@ func (enum *ListTriggerInputsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTriggersRequestOrderBy string
 
 const (
-	// ListTriggersRequestOrderByCreatedAtAsc is [insert doc].
-	ListTriggersRequestOrderByCreatedAtAsc = ListTriggersRequestOrderBy("created_at_asc")
-	// ListTriggersRequestOrderByCreatedAtDesc is [insert doc].
+	ListTriggersRequestOrderByCreatedAtAsc  = ListTriggersRequestOrderBy("created_at_asc")
 	ListTriggersRequestOrderByCreatedAtDesc = ListTriggersRequestOrderBy("created_at_desc")
 )
 
@@ -588,12 +517,9 @@ func (enum *ListTriggersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type LogStream string
 
 const (
-	// LogStreamUnknown is [insert doc].
 	LogStreamUnknown = LogStream("unknown")
-	// LogStreamStdout is [insert doc].
-	LogStreamStdout = LogStream("stdout")
-	// LogStreamStderr is [insert doc].
-	LogStreamStderr = LogStream("stderr")
+	LogStreamStdout  = LogStream("stdout")
+	LogStreamStderr  = LogStream("stderr")
 )
 
 func (enum LogStream) String() string {
@@ -622,20 +548,13 @@ func (enum *LogStream) UnmarshalJSON(data []byte) error {
 type NamespaceStatus string
 
 const (
-	// NamespaceStatusUnknown is [insert doc].
-	NamespaceStatusUnknown = NamespaceStatus("unknown")
-	// NamespaceStatusReady is [insert doc].
-	NamespaceStatusReady = NamespaceStatus("ready")
-	// NamespaceStatusDeleting is [insert doc].
+	NamespaceStatusUnknown  = NamespaceStatus("unknown")
+	NamespaceStatusReady    = NamespaceStatus("ready")
 	NamespaceStatusDeleting = NamespaceStatus("deleting")
-	// NamespaceStatusError is [insert doc].
-	NamespaceStatusError = NamespaceStatus("error")
-	// NamespaceStatusLocked is [insert doc].
-	NamespaceStatusLocked = NamespaceStatus("locked")
-	// NamespaceStatusCreating is [insert doc].
+	NamespaceStatusError    = NamespaceStatus("error")
+	NamespaceStatusLocked   = NamespaceStatus("locked")
 	NamespaceStatusCreating = NamespaceStatus("creating")
-	// NamespaceStatusPending is [insert doc].
-	NamespaceStatusPending = NamespaceStatus("pending")
+	NamespaceStatusPending  = NamespaceStatus("pending")
 )
 
 func (enum NamespaceStatus) String() string {
@@ -664,7 +583,6 @@ func (enum *NamespaceStatus) UnmarshalJSON(data []byte) error {
 type NullValue string
 
 const (
-	// NullValueNULLVALUE is [insert doc].
 	NullValueNULLVALUE = NullValue("NULL_VALUE")
 )
 
@@ -694,18 +612,12 @@ func (enum *NullValue) UnmarshalJSON(data []byte) error {
 type RuntimeStatus string
 
 const (
-	// RuntimeStatusUnknownStatus is [insert doc].
 	RuntimeStatusUnknownStatus = RuntimeStatus("unknown_status")
-	// RuntimeStatusBeta is [insert doc].
-	RuntimeStatusBeta = RuntimeStatus("beta")
-	// RuntimeStatusAvailable is [insert doc].
-	RuntimeStatusAvailable = RuntimeStatus("available")
-	// RuntimeStatusDeprecated is [insert doc].
-	RuntimeStatusDeprecated = RuntimeStatus("deprecated")
-	// RuntimeStatusEndOfSupport is [insert doc].
-	RuntimeStatusEndOfSupport = RuntimeStatus("end_of_support")
-	// RuntimeStatusEndOfLife is [insert doc].
-	RuntimeStatusEndOfLife = RuntimeStatus("end_of_life")
+	RuntimeStatusBeta          = RuntimeStatus("beta")
+	RuntimeStatusAvailable     = RuntimeStatus("available")
+	RuntimeStatusDeprecated    = RuntimeStatus("deprecated")
+	RuntimeStatusEndOfSupport  = RuntimeStatus("end_of_support")
+	RuntimeStatusEndOfLife     = RuntimeStatus("end_of_life")
 )
 
 func (enum RuntimeStatus) String() string {
@@ -734,15 +646,10 @@ func (enum *RuntimeStatus) UnmarshalJSON(data []byte) error {
 type TokenStatus string
 
 const (
-	// TokenStatusUnknown is [insert doc].
-	TokenStatusUnknown = TokenStatus("unknown")
-	// TokenStatusReady is [insert doc].
-	TokenStatusReady = TokenStatus("ready")
-	// TokenStatusDeleting is [insert doc].
+	TokenStatusUnknown  = TokenStatus("unknown")
+	TokenStatusReady    = TokenStatus("ready")
 	TokenStatusDeleting = TokenStatus("deleting")
-	// TokenStatusError is [insert doc].
-	TokenStatusError = TokenStatus("error")
-	// TokenStatusCreating is [insert doc].
+	TokenStatusError    = TokenStatus("error")
 	TokenStatusCreating = TokenStatus("creating")
 )
 
@@ -772,18 +679,12 @@ func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
 type TriggerInputStatus string
 
 const (
-	// TriggerInputStatusUnknown is [insert doc].
-	TriggerInputStatusUnknown = TriggerInputStatus("unknown")
-	// TriggerInputStatusReady is [insert doc].
-	TriggerInputStatusReady = TriggerInputStatus("ready")
-	// TriggerInputStatusDeleting is [insert doc].
+	TriggerInputStatusUnknown  = TriggerInputStatus("unknown")
+	TriggerInputStatusReady    = TriggerInputStatus("ready")
 	TriggerInputStatusDeleting = TriggerInputStatus("deleting")
-	// TriggerInputStatusError is [insert doc].
-	TriggerInputStatusError = TriggerInputStatus("error")
-	// TriggerInputStatusCreating is [insert doc].
+	TriggerInputStatusError    = TriggerInputStatus("error")
 	TriggerInputStatusCreating = TriggerInputStatus("creating")
-	// TriggerInputStatusPending is [insert doc].
-	TriggerInputStatusPending = TriggerInputStatus("pending")
+	TriggerInputStatusPending  = TriggerInputStatus("pending")
 )
 
 func (enum TriggerInputStatus) String() string {
@@ -812,18 +713,12 @@ func (enum *TriggerInputStatus) UnmarshalJSON(data []byte) error {
 type TriggerStatus string
 
 const (
-	// TriggerStatusUnknownStatus is [insert doc].
 	TriggerStatusUnknownStatus = TriggerStatus("unknown_status")
-	// TriggerStatusReady is [insert doc].
-	TriggerStatusReady = TriggerStatus("ready")
-	// TriggerStatusDeleting is [insert doc].
-	TriggerStatusDeleting = TriggerStatus("deleting")
-	// TriggerStatusError is [insert doc].
-	TriggerStatusError = TriggerStatus("error")
-	// TriggerStatusCreating is [insert doc].
-	TriggerStatusCreating = TriggerStatus("creating")
-	// TriggerStatusPending is [insert doc].
-	TriggerStatusPending = TriggerStatus("pending")
+	TriggerStatusReady         = TriggerStatus("ready")
+	TriggerStatusDeleting      = TriggerStatus("deleting")
+	TriggerStatusError         = TriggerStatus("error")
+	TriggerStatusCreating      = TriggerStatus("creating")
+	TriggerStatusPending       = TriggerStatus("pending")
 )
 
 func (enum TriggerStatus) String() string {
@@ -852,12 +747,9 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 type TriggerType string
 
 const (
-	// TriggerTypeUnknownTriggerType is [insert doc].
 	TriggerTypeUnknownTriggerType = TriggerType("unknown_trigger_type")
-	// TriggerTypeNats is [insert doc].
-	TriggerTypeNats = TriggerType("nats")
-	// TriggerTypeSqs is [insert doc].
-	TriggerTypeSqs = TriggerType("sqs")
+	TriggerTypeNats               = TriggerType("nats")
+	TriggerTypeSqs                = TriggerType("sqs")
 )
 
 func (enum TriggerType) String() string {
