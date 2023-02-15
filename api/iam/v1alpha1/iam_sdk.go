@@ -51,6 +51,40 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type ListAPIKeysRequestBearerType string
+
+const (
+	// ListAPIKeysRequestBearerTypeUnknownBearerType is [insert doc].
+	ListAPIKeysRequestBearerTypeUnknownBearerType = ListAPIKeysRequestBearerType("unknown_bearer_type")
+	// ListAPIKeysRequestBearerTypeUser is [insert doc].
+	ListAPIKeysRequestBearerTypeUser = ListAPIKeysRequestBearerType("user")
+	// ListAPIKeysRequestBearerTypeApplication is [insert doc].
+	ListAPIKeysRequestBearerTypeApplication = ListAPIKeysRequestBearerType("application")
+)
+
+func (enum ListAPIKeysRequestBearerType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_bearer_type"
+	}
+	return string(enum)
+}
+
+func (enum ListAPIKeysRequestBearerType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAPIKeysRequestBearerType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAPIKeysRequestBearerType(ListAPIKeysRequestBearerType(tmp).String())
+	return nil
+}
+
 type ListAPIKeysRequestOrderBy string
 
 const (
@@ -1898,12 +1932,24 @@ type ListAPIKeysRequest struct {
 	PageSize *uint32 `json:"-"`
 	// OrganizationID: ID of organization
 	OrganizationID *string `json:"-"`
-	// ApplicationID: ID of an application bearer
+	// Deprecated: ApplicationID: ID of an application bearer
 	ApplicationID *string `json:"-"`
-	// UserID: ID of a user bearer
+	// Deprecated: UserID: ID of a user bearer
 	UserID *string `json:"-"`
 	// Editable: filter out editable API keys or not
 	Editable *bool `json:"-"`
+	// Expirable: filter out expirable API keys or not
+	Expirable *bool `json:"-"`
+	// AccessKey: filter out by access key
+	AccessKey *string `json:"-"`
+	// Description: filter out by description
+	Description *string `json:"-"`
+	// BearerID: filter out by bearer ID
+	BearerID *string `json:"-"`
+	// BearerType: filter out by type of bearer
+	//
+	// Default value: unknown_bearer_type
+	BearerType ListAPIKeysRequestBearerType `json:"-"`
 }
 
 // ListAPIKeys: list API keys
@@ -1923,6 +1969,11 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
 	parameter.AddToQuery(query, "user_id", req.UserID)
 	parameter.AddToQuery(query, "editable", req.Editable)
+	parameter.AddToQuery(query, "expirable", req.Expirable)
+	parameter.AddToQuery(query, "access_key", req.AccessKey)
+	parameter.AddToQuery(query, "description", req.Description)
+	parameter.AddToQuery(query, "bearer_id", req.BearerID)
+	parameter.AddToQuery(query, "bearer_type", req.BearerType)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
