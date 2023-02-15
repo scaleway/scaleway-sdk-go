@@ -34,9 +34,8 @@ func (s *API) WaitForCockpit(
 	}
 
 	terminalStatus := map[CockpitStatus]struct{}{
-		CockpitStatusCreating: {},
-		CockpitStatusDeleting: {},
-		CockpitStatusUpdating: {},
+		CockpitStatusReady: {},
+		CockpitStatusError: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
