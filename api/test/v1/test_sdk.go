@@ -48,7 +48,6 @@ var (
 //
 // First, you need to register a user with `scw test human register` to get an access-key.
 // Then, you can use other test commands by setting the SCW_SECRET_KEY env variable.
-//
 type API struct {
 	client *scw.Client
 }
@@ -63,24 +62,15 @@ func NewAPI(client *scw.Client) *API {
 type EyeColors string
 
 const (
-	// EyeColorsUnknown is [insert doc].
 	EyeColorsUnknown = EyeColors("unknown")
-	// EyeColorsAmber is [insert doc].
-	EyeColorsAmber = EyeColors("amber")
-	// EyeColorsBlue is [insert doc].
-	EyeColorsBlue = EyeColors("blue")
-	// EyeColorsBrown is [insert doc].
-	EyeColorsBrown = EyeColors("brown")
-	// EyeColorsGray is [insert doc].
-	EyeColorsGray = EyeColors("gray")
-	// EyeColorsGreen is [insert doc].
-	EyeColorsGreen = EyeColors("green")
-	// EyeColorsHazel is [insert doc].
-	EyeColorsHazel = EyeColors("hazel")
-	// EyeColorsRed is [insert doc].
-	EyeColorsRed = EyeColors("red")
-	// EyeColorsViolet is [insert doc].
-	EyeColorsViolet = EyeColors("violet")
+	EyeColorsAmber   = EyeColors("amber")
+	EyeColorsBlue    = EyeColors("blue")
+	EyeColorsBrown   = EyeColors("brown")
+	EyeColorsGray    = EyeColors("gray")
+	EyeColorsGreen   = EyeColors("green")
+	EyeColorsHazel   = EyeColors("hazel")
+	EyeColorsRed     = EyeColors("red")
+	EyeColorsViolet  = EyeColors("violet")
 )
 
 func (enum EyeColors) String() string {
@@ -109,11 +99,8 @@ func (enum *EyeColors) UnmarshalJSON(data []byte) error {
 type HumanStatus string
 
 const (
-	// HumanStatusUnknown is [insert doc].
 	HumanStatusUnknown = HumanStatus("unknown")
-	// HumanStatusStopped is [insert doc].
 	HumanStatusStopped = HumanStatus("stopped")
-	// HumanStatusRunning is [insert doc].
 	HumanStatusRunning = HumanStatus("running")
 )
 
@@ -143,18 +130,12 @@ func (enum *HumanStatus) UnmarshalJSON(data []byte) error {
 type ListHumansRequestOrderBy string
 
 const (
-	// ListHumansRequestOrderByCreatedAtAsc is [insert doc].
-	ListHumansRequestOrderByCreatedAtAsc = ListHumansRequestOrderBy("created_at_asc")
-	// ListHumansRequestOrderByCreatedAtDesc is [insert doc].
+	ListHumansRequestOrderByCreatedAtAsc  = ListHumansRequestOrderBy("created_at_asc")
 	ListHumansRequestOrderByCreatedAtDesc = ListHumansRequestOrderBy("created_at_desc")
-	// ListHumansRequestOrderByUpdatedAtAsc is [insert doc].
-	ListHumansRequestOrderByUpdatedAtAsc = ListHumansRequestOrderBy("updated_at_asc")
-	// ListHumansRequestOrderByUpdatedAtDesc is [insert doc].
+	ListHumansRequestOrderByUpdatedAtAsc  = ListHumansRequestOrderBy("updated_at_asc")
 	ListHumansRequestOrderByUpdatedAtDesc = ListHumansRequestOrderBy("updated_at_desc")
-	// ListHumansRequestOrderByHeightAsc is [insert doc].
-	ListHumansRequestOrderByHeightAsc = ListHumansRequestOrderBy("height_asc")
-	// ListHumansRequestOrderByHeightDesc is [insert doc].
-	ListHumansRequestOrderByHeightDesc = ListHumansRequestOrderBy("height_desc")
+	ListHumansRequestOrderByHeightAsc     = ListHumansRequestOrderBy("height_asc")
+	ListHumansRequestOrderByHeightDesc    = ListHumansRequestOrderBy("height_desc")
 )
 
 func (enum ListHumansRequestOrderBy) String() string {
@@ -239,7 +220,6 @@ type RegisterRequest struct {
 // Register a human and return a access-key and a secret-key that must be used in all other commands.
 //
 // Hint: you can use other test commands by setting the SCW_SECRET_KEY env variable.
-//
 func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*RegisterResponse, error) {
 	var err error
 

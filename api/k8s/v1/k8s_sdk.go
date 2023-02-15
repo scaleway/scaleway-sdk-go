@@ -54,10 +54,8 @@ func NewAPI(client *scw.Client) *API {
 type AutoscalerEstimator string
 
 const (
-	// AutoscalerEstimatorUnknownEstimator is [insert doc].
 	AutoscalerEstimatorUnknownEstimator = AutoscalerEstimator("unknown_estimator")
-	// AutoscalerEstimatorBinpacking is [insert doc].
-	AutoscalerEstimatorBinpacking = AutoscalerEstimator("binpacking")
+	AutoscalerEstimatorBinpacking       = AutoscalerEstimator("binpacking")
 )
 
 func (enum AutoscalerEstimator) String() string {
@@ -86,18 +84,12 @@ func (enum *AutoscalerEstimator) UnmarshalJSON(data []byte) error {
 type AutoscalerExpander string
 
 const (
-	// AutoscalerExpanderUnknownExpander is [insert doc].
 	AutoscalerExpanderUnknownExpander = AutoscalerExpander("unknown_expander")
-	// AutoscalerExpanderRandom is [insert doc].
-	AutoscalerExpanderRandom = AutoscalerExpander("random")
-	// AutoscalerExpanderMostPods is [insert doc].
-	AutoscalerExpanderMostPods = AutoscalerExpander("most_pods")
-	// AutoscalerExpanderLeastWaste is [insert doc].
-	AutoscalerExpanderLeastWaste = AutoscalerExpander("least_waste")
-	// AutoscalerExpanderPriority is [insert doc].
-	AutoscalerExpanderPriority = AutoscalerExpander("priority")
-	// AutoscalerExpanderPrice is [insert doc].
-	AutoscalerExpanderPrice = AutoscalerExpander("price")
+	AutoscalerExpanderRandom          = AutoscalerExpander("random")
+	AutoscalerExpanderMostPods        = AutoscalerExpander("most_pods")
+	AutoscalerExpanderLeastWaste      = AutoscalerExpander("least_waste")
+	AutoscalerExpanderPriority        = AutoscalerExpander("priority")
+	AutoscalerExpanderPrice           = AutoscalerExpander("price")
 )
 
 func (enum AutoscalerExpander) String() string {
@@ -126,18 +118,12 @@ func (enum *AutoscalerExpander) UnmarshalJSON(data []byte) error {
 type CNI string
 
 const (
-	// CNIUnknownCni is [insert doc].
 	CNIUnknownCni = CNI("unknown_cni")
-	// CNICilium is [insert doc].
-	CNICilium = CNI("cilium")
-	// CNICalico is [insert doc].
-	CNICalico = CNI("calico")
-	// CNIWeave is [insert doc].
-	CNIWeave = CNI("weave")
-	// CNIFlannel is [insert doc].
-	CNIFlannel = CNI("flannel")
-	// CNIKilo is [insert doc].
-	CNIKilo = CNI("kilo")
+	CNICilium     = CNI("cilium")
+	CNICalico     = CNI("calico")
+	CNIWeave      = CNI("weave")
+	CNIFlannel    = CNI("flannel")
+	CNIKilo       = CNI("kilo")
 )
 
 func (enum CNI) String() string {
@@ -166,21 +152,13 @@ func (enum *CNI) UnmarshalJSON(data []byte) error {
 type ClusterStatus string
 
 const (
-	// ClusterStatusUnknown is [insert doc].
-	ClusterStatusUnknown = ClusterStatus("unknown")
-	// ClusterStatusCreating is [insert doc].
-	ClusterStatusCreating = ClusterStatus("creating")
-	// ClusterStatusReady is [insert doc].
-	ClusterStatusReady = ClusterStatus("ready")
-	// ClusterStatusDeleting is [insert doc].
-	ClusterStatusDeleting = ClusterStatus("deleting")
-	// ClusterStatusDeleted is [insert doc].
-	ClusterStatusDeleted = ClusterStatus("deleted")
-	// ClusterStatusUpdating is [insert doc].
-	ClusterStatusUpdating = ClusterStatus("updating")
-	// ClusterStatusLocked is [insert doc].
-	ClusterStatusLocked = ClusterStatus("locked")
-	// ClusterStatusPoolRequired is [insert doc].
+	ClusterStatusUnknown      = ClusterStatus("unknown")
+	ClusterStatusCreating     = ClusterStatus("creating")
+	ClusterStatusReady        = ClusterStatus("ready")
+	ClusterStatusDeleting     = ClusterStatus("deleting")
+	ClusterStatusDeleted      = ClusterStatus("deleted")
+	ClusterStatusUpdating     = ClusterStatus("updating")
+	ClusterStatusLocked       = ClusterStatus("locked")
 	ClusterStatusPoolRequired = ClusterStatus("pool_required")
 )
 
@@ -210,16 +188,11 @@ func (enum *ClusterStatus) UnmarshalJSON(data []byte) error {
 type Ingress string
 
 const (
-	// IngressUnknownIngress is [insert doc].
 	IngressUnknownIngress = Ingress("unknown_ingress")
-	// IngressNone is [insert doc].
-	IngressNone = Ingress("none")
-	// IngressNginx is [insert doc].
-	IngressNginx = Ingress("nginx")
-	// IngressTraefik is [insert doc].
-	IngressTraefik = Ingress("traefik")
-	// IngressTraefik2 is [insert doc].
-	IngressTraefik2 = Ingress("traefik2")
+	IngressNone           = Ingress("none")
+	IngressNginx          = Ingress("nginx")
+	IngressTraefik        = Ingress("traefik")
+	IngressTraefik2       = Ingress("traefik2")
 )
 
 func (enum Ingress) String() string {
@@ -248,26 +221,16 @@ func (enum *Ingress) UnmarshalJSON(data []byte) error {
 type ListClustersRequestOrderBy string
 
 const (
-	// ListClustersRequestOrderByCreatedAtAsc is [insert doc].
-	ListClustersRequestOrderByCreatedAtAsc = ListClustersRequestOrderBy("created_at_asc")
-	// ListClustersRequestOrderByCreatedAtDesc is [insert doc].
+	ListClustersRequestOrderByCreatedAtAsc  = ListClustersRequestOrderBy("created_at_asc")
 	ListClustersRequestOrderByCreatedAtDesc = ListClustersRequestOrderBy("created_at_desc")
-	// ListClustersRequestOrderByUpdatedAtAsc is [insert doc].
-	ListClustersRequestOrderByUpdatedAtAsc = ListClustersRequestOrderBy("updated_at_asc")
-	// ListClustersRequestOrderByUpdatedAtDesc is [insert doc].
+	ListClustersRequestOrderByUpdatedAtAsc  = ListClustersRequestOrderBy("updated_at_asc")
 	ListClustersRequestOrderByUpdatedAtDesc = ListClustersRequestOrderBy("updated_at_desc")
-	// ListClustersRequestOrderByNameAsc is [insert doc].
-	ListClustersRequestOrderByNameAsc = ListClustersRequestOrderBy("name_asc")
-	// ListClustersRequestOrderByNameDesc is [insert doc].
-	ListClustersRequestOrderByNameDesc = ListClustersRequestOrderBy("name_desc")
-	// ListClustersRequestOrderByStatusAsc is [insert doc].
-	ListClustersRequestOrderByStatusAsc = ListClustersRequestOrderBy("status_asc")
-	// ListClustersRequestOrderByStatusDesc is [insert doc].
-	ListClustersRequestOrderByStatusDesc = ListClustersRequestOrderBy("status_desc")
-	// ListClustersRequestOrderByVersionAsc is [insert doc].
-	ListClustersRequestOrderByVersionAsc = ListClustersRequestOrderBy("version_asc")
-	// ListClustersRequestOrderByVersionDesc is [insert doc].
-	ListClustersRequestOrderByVersionDesc = ListClustersRequestOrderBy("version_desc")
+	ListClustersRequestOrderByNameAsc       = ListClustersRequestOrderBy("name_asc")
+	ListClustersRequestOrderByNameDesc      = ListClustersRequestOrderBy("name_desc")
+	ListClustersRequestOrderByStatusAsc     = ListClustersRequestOrderBy("status_asc")
+	ListClustersRequestOrderByStatusDesc    = ListClustersRequestOrderBy("status_desc")
+	ListClustersRequestOrderByVersionAsc    = ListClustersRequestOrderBy("version_asc")
+	ListClustersRequestOrderByVersionDesc   = ListClustersRequestOrderBy("version_desc")
 )
 
 func (enum ListClustersRequestOrderBy) String() string {
@@ -296,9 +259,7 @@ func (enum *ListClustersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNodesRequestOrderBy string
 
 const (
-	// ListNodesRequestOrderByCreatedAtAsc is [insert doc].
-	ListNodesRequestOrderByCreatedAtAsc = ListNodesRequestOrderBy("created_at_asc")
-	// ListNodesRequestOrderByCreatedAtDesc is [insert doc].
+	ListNodesRequestOrderByCreatedAtAsc  = ListNodesRequestOrderBy("created_at_asc")
 	ListNodesRequestOrderByCreatedAtDesc = ListNodesRequestOrderBy("created_at_desc")
 )
 
@@ -328,26 +289,16 @@ func (enum *ListNodesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPoolsRequestOrderBy string
 
 const (
-	// ListPoolsRequestOrderByCreatedAtAsc is [insert doc].
-	ListPoolsRequestOrderByCreatedAtAsc = ListPoolsRequestOrderBy("created_at_asc")
-	// ListPoolsRequestOrderByCreatedAtDesc is [insert doc].
+	ListPoolsRequestOrderByCreatedAtAsc  = ListPoolsRequestOrderBy("created_at_asc")
 	ListPoolsRequestOrderByCreatedAtDesc = ListPoolsRequestOrderBy("created_at_desc")
-	// ListPoolsRequestOrderByUpdatedAtAsc is [insert doc].
-	ListPoolsRequestOrderByUpdatedAtAsc = ListPoolsRequestOrderBy("updated_at_asc")
-	// ListPoolsRequestOrderByUpdatedAtDesc is [insert doc].
+	ListPoolsRequestOrderByUpdatedAtAsc  = ListPoolsRequestOrderBy("updated_at_asc")
 	ListPoolsRequestOrderByUpdatedAtDesc = ListPoolsRequestOrderBy("updated_at_desc")
-	// ListPoolsRequestOrderByNameAsc is [insert doc].
-	ListPoolsRequestOrderByNameAsc = ListPoolsRequestOrderBy("name_asc")
-	// ListPoolsRequestOrderByNameDesc is [insert doc].
-	ListPoolsRequestOrderByNameDesc = ListPoolsRequestOrderBy("name_desc")
-	// ListPoolsRequestOrderByStatusAsc is [insert doc].
-	ListPoolsRequestOrderByStatusAsc = ListPoolsRequestOrderBy("status_asc")
-	// ListPoolsRequestOrderByStatusDesc is [insert doc].
-	ListPoolsRequestOrderByStatusDesc = ListPoolsRequestOrderBy("status_desc")
-	// ListPoolsRequestOrderByVersionAsc is [insert doc].
-	ListPoolsRequestOrderByVersionAsc = ListPoolsRequestOrderBy("version_asc")
-	// ListPoolsRequestOrderByVersionDesc is [insert doc].
-	ListPoolsRequestOrderByVersionDesc = ListPoolsRequestOrderBy("version_desc")
+	ListPoolsRequestOrderByNameAsc       = ListPoolsRequestOrderBy("name_asc")
+	ListPoolsRequestOrderByNameDesc      = ListPoolsRequestOrderBy("name_desc")
+	ListPoolsRequestOrderByStatusAsc     = ListPoolsRequestOrderBy("status_asc")
+	ListPoolsRequestOrderByStatusDesc    = ListPoolsRequestOrderBy("status_desc")
+	ListPoolsRequestOrderByVersionAsc    = ListPoolsRequestOrderBy("version_asc")
+	ListPoolsRequestOrderByVersionDesc   = ListPoolsRequestOrderBy("version_desc")
 )
 
 func (enum ListPoolsRequestOrderBy) String() string {
@@ -376,22 +327,14 @@ func (enum *ListPoolsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type MaintenanceWindowDayOfTheWeek string
 
 const (
-	// MaintenanceWindowDayOfTheWeekAny is [insert doc].
-	MaintenanceWindowDayOfTheWeekAny = MaintenanceWindowDayOfTheWeek("any")
-	// MaintenanceWindowDayOfTheWeekMonday is [insert doc].
-	MaintenanceWindowDayOfTheWeekMonday = MaintenanceWindowDayOfTheWeek("monday")
-	// MaintenanceWindowDayOfTheWeekTuesday is [insert doc].
-	MaintenanceWindowDayOfTheWeekTuesday = MaintenanceWindowDayOfTheWeek("tuesday")
-	// MaintenanceWindowDayOfTheWeekWednesday is [insert doc].
+	MaintenanceWindowDayOfTheWeekAny       = MaintenanceWindowDayOfTheWeek("any")
+	MaintenanceWindowDayOfTheWeekMonday    = MaintenanceWindowDayOfTheWeek("monday")
+	MaintenanceWindowDayOfTheWeekTuesday   = MaintenanceWindowDayOfTheWeek("tuesday")
 	MaintenanceWindowDayOfTheWeekWednesday = MaintenanceWindowDayOfTheWeek("wednesday")
-	// MaintenanceWindowDayOfTheWeekThursday is [insert doc].
-	MaintenanceWindowDayOfTheWeekThursday = MaintenanceWindowDayOfTheWeek("thursday")
-	// MaintenanceWindowDayOfTheWeekFriday is [insert doc].
-	MaintenanceWindowDayOfTheWeekFriday = MaintenanceWindowDayOfTheWeek("friday")
-	// MaintenanceWindowDayOfTheWeekSaturday is [insert doc].
-	MaintenanceWindowDayOfTheWeekSaturday = MaintenanceWindowDayOfTheWeek("saturday")
-	// MaintenanceWindowDayOfTheWeekSunday is [insert doc].
-	MaintenanceWindowDayOfTheWeekSunday = MaintenanceWindowDayOfTheWeek("sunday")
+	MaintenanceWindowDayOfTheWeekThursday  = MaintenanceWindowDayOfTheWeek("thursday")
+	MaintenanceWindowDayOfTheWeekFriday    = MaintenanceWindowDayOfTheWeek("friday")
+	MaintenanceWindowDayOfTheWeekSaturday  = MaintenanceWindowDayOfTheWeek("saturday")
+	MaintenanceWindowDayOfTheWeekSunday    = MaintenanceWindowDayOfTheWeek("sunday")
 )
 
 func (enum MaintenanceWindowDayOfTheWeek) String() string {
@@ -420,30 +363,18 @@ func (enum *MaintenanceWindowDayOfTheWeek) UnmarshalJSON(data []byte) error {
 type NodeStatus string
 
 const (
-	// NodeStatusUnknown is [insert doc].
-	NodeStatusUnknown = NodeStatus("unknown")
-	// NodeStatusCreating is [insert doc].
-	NodeStatusCreating = NodeStatus("creating")
-	// NodeStatusNotReady is [insert doc].
-	NodeStatusNotReady = NodeStatus("not_ready")
-	// NodeStatusReady is [insert doc].
-	NodeStatusReady = NodeStatus("ready")
-	// NodeStatusDeleting is [insert doc].
-	NodeStatusDeleting = NodeStatus("deleting")
-	// NodeStatusDeleted is [insert doc].
-	NodeStatusDeleted = NodeStatus("deleted")
-	// NodeStatusLocked is [insert doc].
-	NodeStatusLocked = NodeStatus("locked")
-	// NodeStatusRebooting is [insert doc].
-	NodeStatusRebooting = NodeStatus("rebooting")
-	// NodeStatusCreationError is [insert doc].
+	NodeStatusUnknown       = NodeStatus("unknown")
+	NodeStatusCreating      = NodeStatus("creating")
+	NodeStatusNotReady      = NodeStatus("not_ready")
+	NodeStatusReady         = NodeStatus("ready")
+	NodeStatusDeleting      = NodeStatus("deleting")
+	NodeStatusDeleted       = NodeStatus("deleted")
+	NodeStatusLocked        = NodeStatus("locked")
+	NodeStatusRebooting     = NodeStatus("rebooting")
 	NodeStatusCreationError = NodeStatus("creation_error")
-	// NodeStatusUpgrading is [insert doc].
-	NodeStatusUpgrading = NodeStatus("upgrading")
-	// NodeStatusStarting is [insert doc].
-	NodeStatusStarting = NodeStatus("starting")
-	// NodeStatusRegistering is [insert doc].
-	NodeStatusRegistering = NodeStatus("registering")
+	NodeStatusUpgrading     = NodeStatus("upgrading")
+	NodeStatusStarting      = NodeStatus("starting")
+	NodeStatusRegistering   = NodeStatus("registering")
 )
 
 func (enum NodeStatus) String() string {
@@ -472,21 +403,13 @@ func (enum *NodeStatus) UnmarshalJSON(data []byte) error {
 type PoolStatus string
 
 const (
-	// PoolStatusUnknown is [insert doc].
-	PoolStatusUnknown = PoolStatus("unknown")
-	// PoolStatusReady is [insert doc].
-	PoolStatusReady = PoolStatus("ready")
-	// PoolStatusDeleting is [insert doc].
-	PoolStatusDeleting = PoolStatus("deleting")
-	// PoolStatusDeleted is [insert doc].
-	PoolStatusDeleted = PoolStatus("deleted")
-	// PoolStatusScaling is [insert doc].
-	PoolStatusScaling = PoolStatus("scaling")
-	// PoolStatusWarning is [insert doc].
-	PoolStatusWarning = PoolStatus("warning")
-	// PoolStatusLocked is [insert doc].
-	PoolStatusLocked = PoolStatus("locked")
-	// PoolStatusUpgrading is [insert doc].
+	PoolStatusUnknown   = PoolStatus("unknown")
+	PoolStatusReady     = PoolStatus("ready")
+	PoolStatusDeleting  = PoolStatus("deleting")
+	PoolStatusDeleted   = PoolStatus("deleted")
+	PoolStatusScaling   = PoolStatus("scaling")
+	PoolStatusWarning   = PoolStatus("warning")
+	PoolStatusLocked    = PoolStatus("locked")
 	PoolStatusUpgrading = PoolStatus("upgrading")
 )
 
@@ -516,12 +439,9 @@ func (enum *PoolStatus) UnmarshalJSON(data []byte) error {
 type PoolVolumeType string
 
 const (
-	// PoolVolumeTypeDefaultVolumeType is [insert doc].
 	PoolVolumeTypeDefaultVolumeType = PoolVolumeType("default_volume_type")
-	// PoolVolumeTypeLSSD is [insert doc].
-	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
-	// PoolVolumeTypeBSSD is [insert doc].
-	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+	PoolVolumeTypeLSSD              = PoolVolumeType("l_ssd")
+	PoolVolumeTypeBSSD              = PoolVolumeType("b_ssd")
 )
 
 func (enum PoolVolumeType) String() string {
@@ -550,14 +470,10 @@ func (enum *PoolVolumeType) UnmarshalJSON(data []byte) error {
 type Runtime string
 
 const (
-	// RuntimeUnknownRuntime is [insert doc].
 	RuntimeUnknownRuntime = Runtime("unknown_runtime")
-	// RuntimeDocker is [insert doc].
-	RuntimeDocker = Runtime("docker")
-	// RuntimeContainerd is [insert doc].
-	RuntimeContainerd = Runtime("containerd")
-	// RuntimeCrio is [insert doc].
-	RuntimeCrio = Runtime("crio")
+	RuntimeDocker         = Runtime("docker")
+	RuntimeContainerd     = Runtime("containerd")
+	RuntimeCrio           = Runtime("crio")
 )
 
 func (enum Runtime) String() string {
@@ -686,31 +602,26 @@ type ClusterOpenIDConnectConfig struct {
 	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
 	//
 	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
-	//
 	IssuerURL string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for
 	ClientID string `json:"client_id"`
 	// UsernameClaim: jWT claim to use as the user name
 	//
 	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
-	//
 	UsernameClaim string `json:"username_claim"`
 	// UsernamePrefix: prefix prepended to username
 	//
 	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
-	//
 	UsernamePrefix string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group
 	GroupsClaim []string `json:"groups_claim"`
 	// GroupsPrefix: prefix prepended to group claims
 	//
 	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
-	//
 	GroupsPrefix string `json:"groups_prefix"`
 	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
 	//
 	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
-	//
 	RequiredClaim []string `json:"required_claim"`
 }
 
@@ -757,31 +668,26 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
 	//
 	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
-	//
 	IssuerURL string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for
 	ClientID string `json:"client_id"`
 	// UsernameClaim: jWT claim to use as the user name
 	//
 	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
-	//
 	UsernameClaim *string `json:"username_claim"`
 	// UsernamePrefix: prefix prepended to username
 	//
 	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
-	//
 	UsernamePrefix *string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group
 	GroupsClaim *[]string `json:"groups_claim"`
 	// GroupsPrefix: prefix prepended to group claims
 	//
 	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
-	//
 	GroupsPrefix *string `json:"groups_prefix"`
 	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
 	//
 	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
-	//
 	RequiredClaim *[]string `json:"required_claim"`
 }
 
@@ -1050,31 +956,26 @@ type UpdateClusterRequestOpenIDConnectConfig struct {
 	// IssuerURL: URL of the provider which allows the API server to discover public signing keys
 	//
 	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
-	//
 	IssuerURL *string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for
 	ClientID *string `json:"client_id"`
 	// UsernameClaim: jWT claim to use as the user name
 	//
 	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
-	//
 	UsernameClaim *string `json:"username_claim"`
 	// UsernamePrefix: prefix prepended to username
 	//
 	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
-	//
 	UsernamePrefix *string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group
 	GroupsClaim *[]string `json:"groups_claim"`
 	// GroupsPrefix: prefix prepended to group claims
 	//
 	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
-	//
 	GroupsPrefix *string `json:"groups_prefix"`
 	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID Token
 	//
 	// Multiple key=value pairs that describes a required claim in the ID Token. If set, the claims are verified to be present in the ID Token with a matching value.
-	//
 	RequiredClaim *[]string `json:"required_claim"`
 }
 
@@ -1573,7 +1474,6 @@ type GetClusterKubeConfigRequest struct {
 // getClusterKubeConfig: download the kubeconfig for a cluster
 //
 // This method allows to download the Kubernetes cluster config file (AKA kubeconfig) for a specific cluster in order to use it with, for instance, `kubectl`. Tips: add `?dl=1` at the end of the URL to directly get the base64 decoded kubeconfig. If not, the kubeconfig will be base64 encoded.
-//
 func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 

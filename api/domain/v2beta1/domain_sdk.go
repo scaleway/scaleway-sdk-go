@@ -70,14 +70,10 @@ func NewRegistrarAPI(client *scw.Client) *RegistrarAPI {
 type ContactEmailStatus string
 
 const (
-	// ContactEmailStatusEmailStatusUnknown is [insert doc].
 	ContactEmailStatusEmailStatusUnknown = ContactEmailStatus("email_status_unknown")
-	// ContactEmailStatusValidated is [insert doc].
-	ContactEmailStatusValidated = ContactEmailStatus("validated")
-	// ContactEmailStatusNotValidated is [insert doc].
-	ContactEmailStatusNotValidated = ContactEmailStatus("not_validated")
-	// ContactEmailStatusInvalidEmail is [insert doc].
-	ContactEmailStatusInvalidEmail = ContactEmailStatus("invalid_email")
+	ContactEmailStatusValidated          = ContactEmailStatus("validated")
+	ContactEmailStatusNotValidated       = ContactEmailStatus("not_validated")
+	ContactEmailStatusInvalidEmail       = ContactEmailStatus("invalid_email")
 )
 
 func (enum ContactEmailStatus) String() string {
@@ -106,22 +102,14 @@ func (enum *ContactEmailStatus) UnmarshalJSON(data []byte) error {
 type ContactExtensionFRMode string
 
 const (
-	// ContactExtensionFRModeModeUnknown is [insert doc].
-	ContactExtensionFRModeModeUnknown = ContactExtensionFRMode("mode_unknown")
-	// ContactExtensionFRModeIndividual is [insert doc].
-	ContactExtensionFRModeIndividual = ContactExtensionFRMode("individual")
-	// ContactExtensionFRModeCompanyIdentificationCode is [insert doc].
+	ContactExtensionFRModeModeUnknown               = ContactExtensionFRMode("mode_unknown")
+	ContactExtensionFRModeIndividual                = ContactExtensionFRMode("individual")
 	ContactExtensionFRModeCompanyIdentificationCode = ContactExtensionFRMode("company_identification_code")
-	// ContactExtensionFRModeDuns is [insert doc].
-	ContactExtensionFRModeDuns = ContactExtensionFRMode("duns")
-	// ContactExtensionFRModeLocal is [insert doc].
-	ContactExtensionFRModeLocal = ContactExtensionFRMode("local")
-	// ContactExtensionFRModeAssociation is [insert doc].
-	ContactExtensionFRModeAssociation = ContactExtensionFRMode("association")
-	// ContactExtensionFRModeTrademark is [insert doc].
-	ContactExtensionFRModeTrademark = ContactExtensionFRMode("trademark")
-	// ContactExtensionFRModeCodeAuthAfnic is [insert doc].
-	ContactExtensionFRModeCodeAuthAfnic = ContactExtensionFRMode("code_auth_afnic")
+	ContactExtensionFRModeDuns                      = ContactExtensionFRMode("duns")
+	ContactExtensionFRModeLocal                     = ContactExtensionFRMode("local")
+	ContactExtensionFRModeAssociation               = ContactExtensionFRMode("association")
+	ContactExtensionFRModeTrademark                 = ContactExtensionFRMode("trademark")
+	ContactExtensionFRModeCodeAuthAfnic             = ContactExtensionFRMode("code_auth_afnic")
 )
 
 func (enum ContactExtensionFRMode) String() string {
@@ -150,44 +138,25 @@ func (enum *ContactExtensionFRMode) UnmarshalJSON(data []byte) error {
 type ContactExtensionNLLegalForm string
 
 const (
-	// ContactExtensionNLLegalFormLegalFormUnknown is [insert doc].
-	ContactExtensionNLLegalFormLegalFormUnknown = ContactExtensionNLLegalForm("legal_form_unknown")
-	// ContactExtensionNLLegalFormOther is [insert doc].
-	ContactExtensionNLLegalFormOther = ContactExtensionNLLegalForm("other")
-	// ContactExtensionNLLegalFormNonDutchEuCompany is [insert doc].
-	ContactExtensionNLLegalFormNonDutchEuCompany = ContactExtensionNLLegalForm("non_dutch_eu_company")
-	// ContactExtensionNLLegalFormNonDutchLegalFormEnterpriseSubsidiary is [insert doc].
+	ContactExtensionNLLegalFormLegalFormUnknown                      = ContactExtensionNLLegalForm("legal_form_unknown")
+	ContactExtensionNLLegalFormOther                                 = ContactExtensionNLLegalForm("other")
+	ContactExtensionNLLegalFormNonDutchEuCompany                     = ContactExtensionNLLegalForm("non_dutch_eu_company")
 	ContactExtensionNLLegalFormNonDutchLegalFormEnterpriseSubsidiary = ContactExtensionNLLegalForm("non_dutch_legal_form_enterprise_subsidiary")
-	// ContactExtensionNLLegalFormLimitedCompany is [insert doc].
-	ContactExtensionNLLegalFormLimitedCompany = ContactExtensionNLLegalForm("limited_company")
-	// ContactExtensionNLLegalFormLimitedCompanyInFormation is [insert doc].
-	ContactExtensionNLLegalFormLimitedCompanyInFormation = ContactExtensionNLLegalForm("limited_company_in_formation")
-	// ContactExtensionNLLegalFormCooperative is [insert doc].
-	ContactExtensionNLLegalFormCooperative = ContactExtensionNLLegalForm("cooperative")
-	// ContactExtensionNLLegalFormLimitedPartnership is [insert doc].
-	ContactExtensionNLLegalFormLimitedPartnership = ContactExtensionNLLegalForm("limited_partnership")
-	// ContactExtensionNLLegalFormSoleCompany is [insert doc].
-	ContactExtensionNLLegalFormSoleCompany = ContactExtensionNLLegalForm("sole_company")
-	// ContactExtensionNLLegalFormEuropeanEconomicInterestGroup is [insert doc].
-	ContactExtensionNLLegalFormEuropeanEconomicInterestGroup = ContactExtensionNLLegalForm("european_economic_interest_group")
-	// ContactExtensionNLLegalFormReligiousEntity is [insert doc].
-	ContactExtensionNLLegalFormReligiousEntity = ContactExtensionNLLegalForm("religious_entity")
-	// ContactExtensionNLLegalFormPartnership is [insert doc].
-	ContactExtensionNLLegalFormPartnership = ContactExtensionNLLegalForm("partnership")
-	// ContactExtensionNLLegalFormPublicCompany is [insert doc].
-	ContactExtensionNLLegalFormPublicCompany = ContactExtensionNLLegalForm("public_company")
-	// ContactExtensionNLLegalFormMutualBenefitCompany is [insert doc].
-	ContactExtensionNLLegalFormMutualBenefitCompany = ContactExtensionNLLegalForm("mutual_benefit_company")
-	// ContactExtensionNLLegalFormResidential is [insert doc].
-	ContactExtensionNLLegalFormResidential = ContactExtensionNLLegalForm("residential")
-	// ContactExtensionNLLegalFormShippingCompany is [insert doc].
-	ContactExtensionNLLegalFormShippingCompany = ContactExtensionNLLegalForm("shipping_company")
-	// ContactExtensionNLLegalFormFoundation is [insert doc].
-	ContactExtensionNLLegalFormFoundation = ContactExtensionNLLegalForm("foundation")
-	// ContactExtensionNLLegalFormAssociation is [insert doc].
-	ContactExtensionNLLegalFormAssociation = ContactExtensionNLLegalForm("association")
-	// ContactExtensionNLLegalFormTradingPartnership is [insert doc].
-	ContactExtensionNLLegalFormTradingPartnership = ContactExtensionNLLegalForm("trading_partnership")
+	ContactExtensionNLLegalFormLimitedCompany                        = ContactExtensionNLLegalForm("limited_company")
+	ContactExtensionNLLegalFormLimitedCompanyInFormation             = ContactExtensionNLLegalForm("limited_company_in_formation")
+	ContactExtensionNLLegalFormCooperative                           = ContactExtensionNLLegalForm("cooperative")
+	ContactExtensionNLLegalFormLimitedPartnership                    = ContactExtensionNLLegalForm("limited_partnership")
+	ContactExtensionNLLegalFormSoleCompany                           = ContactExtensionNLLegalForm("sole_company")
+	ContactExtensionNLLegalFormEuropeanEconomicInterestGroup         = ContactExtensionNLLegalForm("european_economic_interest_group")
+	ContactExtensionNLLegalFormReligiousEntity                       = ContactExtensionNLLegalForm("religious_entity")
+	ContactExtensionNLLegalFormPartnership                           = ContactExtensionNLLegalForm("partnership")
+	ContactExtensionNLLegalFormPublicCompany                         = ContactExtensionNLLegalForm("public_company")
+	ContactExtensionNLLegalFormMutualBenefitCompany                  = ContactExtensionNLLegalForm("mutual_benefit_company")
+	ContactExtensionNLLegalFormResidential                           = ContactExtensionNLLegalForm("residential")
+	ContactExtensionNLLegalFormShippingCompany                       = ContactExtensionNLLegalForm("shipping_company")
+	ContactExtensionNLLegalFormFoundation                            = ContactExtensionNLLegalForm("foundation")
+	ContactExtensionNLLegalFormAssociation                           = ContactExtensionNLLegalForm("association")
+	ContactExtensionNLLegalFormTradingPartnership                    = ContactExtensionNLLegalForm("trading_partnership")
 )
 
 func (enum ContactExtensionNLLegalForm) String() string {
@@ -216,16 +185,11 @@ func (enum *ContactExtensionNLLegalForm) UnmarshalJSON(data []byte) error {
 type ContactLegalForm string
 
 const (
-	// ContactLegalFormLegalFormUnknown is [insert doc].
 	ContactLegalFormLegalFormUnknown = ContactLegalForm("legal_form_unknown")
-	// ContactLegalFormIndividual is [insert doc].
-	ContactLegalFormIndividual = ContactLegalForm("individual")
-	// ContactLegalFormCorporate is [insert doc].
-	ContactLegalFormCorporate = ContactLegalForm("corporate")
-	// ContactLegalFormAssociation is [insert doc].
-	ContactLegalFormAssociation = ContactLegalForm("association")
-	// ContactLegalFormOther is [insert doc].
-	ContactLegalFormOther = ContactLegalForm("other")
+	ContactLegalFormIndividual       = ContactLegalForm("individual")
+	ContactLegalFormCorporate        = ContactLegalForm("corporate")
+	ContactLegalFormAssociation      = ContactLegalForm("association")
+	ContactLegalFormOther            = ContactLegalForm("other")
 )
 
 func (enum ContactLegalForm) String() string {
@@ -254,16 +218,11 @@ func (enum *ContactLegalForm) UnmarshalJSON(data []byte) error {
 type DNSZoneStatus string
 
 const (
-	// DNSZoneStatusUnknown is [insert doc].
 	DNSZoneStatusUnknown = DNSZoneStatus("unknown")
-	// DNSZoneStatusActive is [insert doc].
-	DNSZoneStatusActive = DNSZoneStatus("active")
-	// DNSZoneStatusPending is [insert doc].
+	DNSZoneStatusActive  = DNSZoneStatus("active")
 	DNSZoneStatusPending = DNSZoneStatus("pending")
-	// DNSZoneStatusError is [insert doc].
-	DNSZoneStatusError = DNSZoneStatus("error")
-	// DNSZoneStatusLocked is [insert doc].
-	DNSZoneStatusLocked = DNSZoneStatus("locked")
+	DNSZoneStatusError   = DNSZoneStatus("error")
+	DNSZoneStatusLocked  = DNSZoneStatus("locked")
 )
 
 func (enum DNSZoneStatus) String() string {
@@ -292,32 +251,19 @@ func (enum *DNSZoneStatus) UnmarshalJSON(data []byte) error {
 type DSRecordAlgorithm string
 
 const (
-	// DSRecordAlgorithmRsamd5 is [insert doc].
-	DSRecordAlgorithmRsamd5 = DSRecordAlgorithm("rsamd5")
-	// DSRecordAlgorithmDh is [insert doc].
-	DSRecordAlgorithmDh = DSRecordAlgorithm("dh")
-	// DSRecordAlgorithmDsa is [insert doc].
-	DSRecordAlgorithmDsa = DSRecordAlgorithm("dsa")
-	// DSRecordAlgorithmRsasha1 is [insert doc].
-	DSRecordAlgorithmRsasha1 = DSRecordAlgorithm("rsasha1")
-	// DSRecordAlgorithmDsaNsec3Sha1 is [insert doc].
-	DSRecordAlgorithmDsaNsec3Sha1 = DSRecordAlgorithm("dsa_nsec3_sha1")
-	// DSRecordAlgorithmRsasha1Nsec3Sha1 is [insert doc].
+	DSRecordAlgorithmRsamd5           = DSRecordAlgorithm("rsamd5")
+	DSRecordAlgorithmDh               = DSRecordAlgorithm("dh")
+	DSRecordAlgorithmDsa              = DSRecordAlgorithm("dsa")
+	DSRecordAlgorithmRsasha1          = DSRecordAlgorithm("rsasha1")
+	DSRecordAlgorithmDsaNsec3Sha1     = DSRecordAlgorithm("dsa_nsec3_sha1")
 	DSRecordAlgorithmRsasha1Nsec3Sha1 = DSRecordAlgorithm("rsasha1_nsec3_sha1")
-	// DSRecordAlgorithmRsasha256 is [insert doc].
-	DSRecordAlgorithmRsasha256 = DSRecordAlgorithm("rsasha256")
-	// DSRecordAlgorithmRsasha512 is [insert doc].
-	DSRecordAlgorithmRsasha512 = DSRecordAlgorithm("rsasha512")
-	// DSRecordAlgorithmEccGost is [insert doc].
-	DSRecordAlgorithmEccGost = DSRecordAlgorithm("ecc_gost")
-	// DSRecordAlgorithmEcdsap256sha256 is [insert doc].
-	DSRecordAlgorithmEcdsap256sha256 = DSRecordAlgorithm("ecdsap256sha256")
-	// DSRecordAlgorithmEcdsap384sha384 is [insert doc].
-	DSRecordAlgorithmEcdsap384sha384 = DSRecordAlgorithm("ecdsap384sha384")
-	// DSRecordAlgorithmEd25519 is [insert doc].
-	DSRecordAlgorithmEd25519 = DSRecordAlgorithm("ed25519")
-	// DSRecordAlgorithmEd448 is [insert doc].
-	DSRecordAlgorithmEd448 = DSRecordAlgorithm("ed448")
+	DSRecordAlgorithmRsasha256        = DSRecordAlgorithm("rsasha256")
+	DSRecordAlgorithmRsasha512        = DSRecordAlgorithm("rsasha512")
+	DSRecordAlgorithmEccGost          = DSRecordAlgorithm("ecc_gost")
+	DSRecordAlgorithmEcdsap256sha256  = DSRecordAlgorithm("ecdsap256sha256")
+	DSRecordAlgorithmEcdsap384sha384  = DSRecordAlgorithm("ecdsap384sha384")
+	DSRecordAlgorithmEd25519          = DSRecordAlgorithm("ed25519")
+	DSRecordAlgorithmEd448            = DSRecordAlgorithm("ed448")
 )
 
 func (enum DSRecordAlgorithm) String() string {
@@ -346,14 +292,10 @@ func (enum *DSRecordAlgorithm) UnmarshalJSON(data []byte) error {
 type DSRecordDigestType string
 
 const (
-	// DSRecordDigestTypeSha1 is [insert doc].
-	DSRecordDigestTypeSha1 = DSRecordDigestType("sha_1")
-	// DSRecordDigestTypeSha256 is [insert doc].
-	DSRecordDigestTypeSha256 = DSRecordDigestType("sha_256")
-	// DSRecordDigestTypeGostR34_11_94 is [insert doc].
+	DSRecordDigestTypeSha1          = DSRecordDigestType("sha_1")
+	DSRecordDigestTypeSha256        = DSRecordDigestType("sha_256")
 	DSRecordDigestTypeGostR34_11_94 = DSRecordDigestType("gost_r_34_11_94")
-	// DSRecordDigestTypeSha384 is [insert doc].
-	DSRecordDigestTypeSha384 = DSRecordDigestType("sha_384")
+	DSRecordDigestTypeSha384        = DSRecordDigestType("sha_384")
 )
 
 func (enum DSRecordDigestType) String() string {
@@ -382,16 +324,11 @@ func (enum *DSRecordDigestType) UnmarshalJSON(data []byte) error {
 type DomainFeatureStatus string
 
 const (
-	// DomainFeatureStatusFeatureStatusUnknown is [insert doc].
 	DomainFeatureStatusFeatureStatusUnknown = DomainFeatureStatus("feature_status_unknown")
-	// DomainFeatureStatusEnabling is [insert doc].
-	DomainFeatureStatusEnabling = DomainFeatureStatus("enabling")
-	// DomainFeatureStatusEnabled is [insert doc].
-	DomainFeatureStatusEnabled = DomainFeatureStatus("enabled")
-	// DomainFeatureStatusDisabling is [insert doc].
-	DomainFeatureStatusDisabling = DomainFeatureStatus("disabling")
-	// DomainFeatureStatusDisabled is [insert doc].
-	DomainFeatureStatusDisabled = DomainFeatureStatus("disabled")
+	DomainFeatureStatusEnabling             = DomainFeatureStatus("enabling")
+	DomainFeatureStatusEnabled              = DomainFeatureStatus("enabled")
+	DomainFeatureStatusDisabling            = DomainFeatureStatus("disabling")
+	DomainFeatureStatusDisabled             = DomainFeatureStatus("disabled")
 )
 
 func (enum DomainFeatureStatus) String() string {
@@ -420,18 +357,12 @@ func (enum *DomainFeatureStatus) UnmarshalJSON(data []byte) error {
 type DomainRegistrationStatusTransferStatus string
 
 const (
-	// DomainRegistrationStatusTransferStatusStatusUnknown is [insert doc].
 	DomainRegistrationStatusTransferStatusStatusUnknown = DomainRegistrationStatusTransferStatus("status_unknown")
-	// DomainRegistrationStatusTransferStatusPending is [insert doc].
-	DomainRegistrationStatusTransferStatusPending = DomainRegistrationStatusTransferStatus("pending")
-	// DomainRegistrationStatusTransferStatusWaitingVote is [insert doc].
-	DomainRegistrationStatusTransferStatusWaitingVote = DomainRegistrationStatusTransferStatus("waiting_vote")
-	// DomainRegistrationStatusTransferStatusRejected is [insert doc].
-	DomainRegistrationStatusTransferStatusRejected = DomainRegistrationStatusTransferStatus("rejected")
-	// DomainRegistrationStatusTransferStatusProcessing is [insert doc].
-	DomainRegistrationStatusTransferStatusProcessing = DomainRegistrationStatusTransferStatus("processing")
-	// DomainRegistrationStatusTransferStatusDone is [insert doc].
-	DomainRegistrationStatusTransferStatusDone = DomainRegistrationStatusTransferStatus("done")
+	DomainRegistrationStatusTransferStatusPending       = DomainRegistrationStatusTransferStatus("pending")
+	DomainRegistrationStatusTransferStatusWaitingVote   = DomainRegistrationStatusTransferStatus("waiting_vote")
+	DomainRegistrationStatusTransferStatusRejected      = DomainRegistrationStatusTransferStatus("rejected")
+	DomainRegistrationStatusTransferStatusProcessing    = DomainRegistrationStatusTransferStatus("processing")
+	DomainRegistrationStatusTransferStatusDone          = DomainRegistrationStatusTransferStatus("done")
 )
 
 func (enum DomainRegistrationStatusTransferStatus) String() string {
@@ -460,34 +391,20 @@ func (enum *DomainRegistrationStatusTransferStatus) UnmarshalJSON(data []byte) e
 type DomainStatus string
 
 const (
-	// DomainStatusStatusUnknown is [insert doc].
 	DomainStatusStatusUnknown = DomainStatus("status_unknown")
-	// DomainStatusActive is [insert doc].
-	DomainStatusActive = DomainStatus("active")
-	// DomainStatusCreating is [insert doc].
-	DomainStatusCreating = DomainStatus("creating")
-	// DomainStatusCreateError is [insert doc].
-	DomainStatusCreateError = DomainStatus("create_error")
-	// DomainStatusRenewing is [insert doc].
-	DomainStatusRenewing = DomainStatus("renewing")
-	// DomainStatusRenewError is [insert doc].
-	DomainStatusRenewError = DomainStatus("renew_error")
-	// DomainStatusXfering is [insert doc].
-	DomainStatusXfering = DomainStatus("xfering")
-	// DomainStatusXferError is [insert doc].
-	DomainStatusXferError = DomainStatus("xfer_error")
-	// DomainStatusExpired is [insert doc].
-	DomainStatusExpired = DomainStatus("expired")
-	// DomainStatusExpiring is [insert doc].
-	DomainStatusExpiring = DomainStatus("expiring")
-	// DomainStatusUpdating is [insert doc].
-	DomainStatusUpdating = DomainStatus("updating")
-	// DomainStatusChecking is [insert doc].
-	DomainStatusChecking = DomainStatus("checking")
-	// DomainStatusLocked is [insert doc].
-	DomainStatusLocked = DomainStatus("locked")
-	// DomainStatusDeleting is [insert doc].
-	DomainStatusDeleting = DomainStatus("deleting")
+	DomainStatusActive        = DomainStatus("active")
+	DomainStatusCreating      = DomainStatus("creating")
+	DomainStatusCreateError   = DomainStatus("create_error")
+	DomainStatusRenewing      = DomainStatus("renewing")
+	DomainStatusRenewError    = DomainStatus("renew_error")
+	DomainStatusXfering       = DomainStatus("xfering")
+	DomainStatusXferError     = DomainStatus("xfer_error")
+	DomainStatusExpired       = DomainStatus("expired")
+	DomainStatusExpiring      = DomainStatus("expiring")
+	DomainStatusUpdating      = DomainStatus("updating")
+	DomainStatusChecking      = DomainStatus("checking")
+	DomainStatusLocked        = DomainStatus("locked")
+	DomainStatusDeleting      = DomainStatus("deleting")
 )
 
 func (enum DomainStatus) String() string {
@@ -516,14 +433,10 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type HostStatus string
 
 const (
-	// HostStatusUnknownStatus is [insert doc].
 	HostStatusUnknownStatus = HostStatus("unknown_status")
-	// HostStatusActive is [insert doc].
-	HostStatusActive = HostStatus("active")
-	// HostStatusUpdating is [insert doc].
-	HostStatusUpdating = HostStatus("updating")
-	// HostStatusDeleting is [insert doc].
-	HostStatusDeleting = HostStatus("deleting")
+	HostStatusActive        = HostStatus("active")
+	HostStatusUpdating      = HostStatus("updating")
+	HostStatusDeleting      = HostStatus("deleting")
 )
 
 func (enum HostStatus) String() string {
@@ -552,14 +465,10 @@ func (enum *HostStatus) UnmarshalJSON(data []byte) error {
 type LanguageCode string
 
 const (
-	// LanguageCodeUnknownLanguageCode is [insert doc].
 	LanguageCodeUnknownLanguageCode = LanguageCode("unknown_language_code")
-	// LanguageCodeEnUS is [insert doc].
-	LanguageCodeEnUS = LanguageCode("en_US")
-	// LanguageCodeFrFR is [insert doc].
-	LanguageCodeFrFR = LanguageCode("fr_FR")
-	// LanguageCodeDeDE is [insert doc].
-	LanguageCodeDeDE = LanguageCode("de_DE")
+	LanguageCodeEnUS                = LanguageCode("en_US")
+	LanguageCodeFrFR                = LanguageCode("fr_FR")
+	LanguageCodeDeDE                = LanguageCode("de_DE")
 )
 
 func (enum LanguageCode) String() string {
@@ -588,9 +497,7 @@ func (enum *LanguageCode) UnmarshalJSON(data []byte) error {
 type ListDNSZoneRecordsRequestOrderBy string
 
 const (
-	// ListDNSZoneRecordsRequestOrderByNameAsc is [insert doc].
-	ListDNSZoneRecordsRequestOrderByNameAsc = ListDNSZoneRecordsRequestOrderBy("name_asc")
-	// ListDNSZoneRecordsRequestOrderByNameDesc is [insert doc].
+	ListDNSZoneRecordsRequestOrderByNameAsc  = ListDNSZoneRecordsRequestOrderBy("name_asc")
 	ListDNSZoneRecordsRequestOrderByNameDesc = ListDNSZoneRecordsRequestOrderBy("name_desc")
 )
 
@@ -620,13 +527,9 @@ func (enum *ListDNSZoneRecordsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListDNSZonesRequestOrderBy string
 
 const (
-	// ListDNSZonesRequestOrderByDomainAsc is [insert doc].
-	ListDNSZonesRequestOrderByDomainAsc = ListDNSZonesRequestOrderBy("domain_asc")
-	// ListDNSZonesRequestOrderByDomainDesc is [insert doc].
-	ListDNSZonesRequestOrderByDomainDesc = ListDNSZonesRequestOrderBy("domain_desc")
-	// ListDNSZonesRequestOrderBySubdomainAsc is [insert doc].
-	ListDNSZonesRequestOrderBySubdomainAsc = ListDNSZonesRequestOrderBy("subdomain_asc")
-	// ListDNSZonesRequestOrderBySubdomainDesc is [insert doc].
+	ListDNSZonesRequestOrderByDomainAsc     = ListDNSZonesRequestOrderBy("domain_asc")
+	ListDNSZonesRequestOrderByDomainDesc    = ListDNSZonesRequestOrderBy("domain_desc")
+	ListDNSZonesRequestOrderBySubdomainAsc  = ListDNSZonesRequestOrderBy("subdomain_asc")
 	ListDNSZonesRequestOrderBySubdomainDesc = ListDNSZonesRequestOrderBy("subdomain_desc")
 )
 
@@ -656,9 +559,7 @@ func (enum *ListDNSZonesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListDomainsRequestOrderBy string
 
 const (
-	// ListDomainsRequestOrderByDomainAsc is [insert doc].
-	ListDomainsRequestOrderByDomainAsc = ListDomainsRequestOrderBy("domain_asc")
-	// ListDomainsRequestOrderByDomainDesc is [insert doc].
+	ListDomainsRequestOrderByDomainAsc  = ListDomainsRequestOrderBy("domain_asc")
 	ListDomainsRequestOrderByDomainDesc = ListDomainsRequestOrderBy("domain_desc")
 )
 
@@ -688,9 +589,7 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListRenewableDomainsRequestOrderBy string
 
 const (
-	// ListRenewableDomainsRequestOrderByDomainAsc is [insert doc].
-	ListRenewableDomainsRequestOrderByDomainAsc = ListRenewableDomainsRequestOrderBy("domain_asc")
-	// ListRenewableDomainsRequestOrderByDomainDesc is [insert doc].
+	ListRenewableDomainsRequestOrderByDomainAsc  = ListRenewableDomainsRequestOrderBy("domain_asc")
 	ListRenewableDomainsRequestOrderByDomainDesc = ListRenewableDomainsRequestOrderBy("domain_desc")
 )
 
@@ -720,21 +619,13 @@ func (enum *ListRenewableDomainsRequestOrderBy) UnmarshalJSON(data []byte) error
 type ListTasksRequestOrderBy string
 
 const (
-	// ListTasksRequestOrderByDomainDesc is [insert doc].
-	ListTasksRequestOrderByDomainDesc = ListTasksRequestOrderBy("domain_desc")
-	// ListTasksRequestOrderByDomainAsc is [insert doc].
-	ListTasksRequestOrderByDomainAsc = ListTasksRequestOrderBy("domain_asc")
-	// ListTasksRequestOrderByTypeAsc is [insert doc].
-	ListTasksRequestOrderByTypeAsc = ListTasksRequestOrderBy("type_asc")
-	// ListTasksRequestOrderByTypeDesc is [insert doc].
-	ListTasksRequestOrderByTypeDesc = ListTasksRequestOrderBy("type_desc")
-	// ListTasksRequestOrderByStatusAsc is [insert doc].
-	ListTasksRequestOrderByStatusAsc = ListTasksRequestOrderBy("status_asc")
-	// ListTasksRequestOrderByStatusDesc is [insert doc].
-	ListTasksRequestOrderByStatusDesc = ListTasksRequestOrderBy("status_desc")
-	// ListTasksRequestOrderByUpdatedAtAsc is [insert doc].
-	ListTasksRequestOrderByUpdatedAtAsc = ListTasksRequestOrderBy("updated_at_asc")
-	// ListTasksRequestOrderByUpdatedAtDesc is [insert doc].
+	ListTasksRequestOrderByDomainDesc    = ListTasksRequestOrderBy("domain_desc")
+	ListTasksRequestOrderByDomainAsc     = ListTasksRequestOrderBy("domain_asc")
+	ListTasksRequestOrderByTypeAsc       = ListTasksRequestOrderBy("type_asc")
+	ListTasksRequestOrderByTypeDesc      = ListTasksRequestOrderBy("type_desc")
+	ListTasksRequestOrderByStatusAsc     = ListTasksRequestOrderBy("status_asc")
+	ListTasksRequestOrderByStatusDesc    = ListTasksRequestOrderBy("status_desc")
+	ListTasksRequestOrderByUpdatedAtAsc  = ListTasksRequestOrderBy("updated_at_asc")
 	ListTasksRequestOrderByUpdatedAtDesc = ListTasksRequestOrderBy("updated_at_desc")
 )
 
@@ -764,10 +655,8 @@ func (enum *ListTasksRequestOrderBy) UnmarshalJSON(data []byte) error {
 type RawFormat string
 
 const (
-	// RawFormatUnknownRawFormat is [insert doc].
 	RawFormatUnknownRawFormat = RawFormat("unknown_raw_format")
-	// RawFormatBind is [insert doc].
-	RawFormatBind = RawFormat("bind")
+	RawFormatBind             = RawFormat("bind")
 )
 
 func (enum RawFormat) String() string {
@@ -796,12 +685,9 @@ func (enum *RawFormat) UnmarshalJSON(data []byte) error {
 type RecordHTTPServiceConfigStrategy string
 
 const (
-	// RecordHTTPServiceConfigStrategyRandom is [insert doc].
 	RecordHTTPServiceConfigStrategyRandom = RecordHTTPServiceConfigStrategy("random")
-	// RecordHTTPServiceConfigStrategyHashed is [insert doc].
 	RecordHTTPServiceConfigStrategyHashed = RecordHTTPServiceConfigStrategy("hashed")
-	// RecordHTTPServiceConfigStrategyAll is [insert doc].
-	RecordHTTPServiceConfigStrategyAll = RecordHTTPServiceConfigStrategy("all")
+	RecordHTTPServiceConfigStrategyAll    = RecordHTTPServiceConfigStrategy("all")
 )
 
 func (enum RecordHTTPServiceConfigStrategy) String() string {
@@ -830,46 +716,26 @@ func (enum *RecordHTTPServiceConfigStrategy) UnmarshalJSON(data []byte) error {
 type RecordType string
 
 const (
-	// RecordTypeUnknown is [insert doc].
 	RecordTypeUnknown = RecordType("unknown")
-	// RecordTypeA is [insert doc].
-	RecordTypeA = RecordType("A")
-	// RecordTypeAAAA is [insert doc].
-	RecordTypeAAAA = RecordType("AAAA")
-	// RecordTypeCNAME is [insert doc].
-	RecordTypeCNAME = RecordType("CNAME")
-	// RecordTypeTXT is [insert doc].
-	RecordTypeTXT = RecordType("TXT")
-	// RecordTypeSRV is [insert doc].
-	RecordTypeSRV = RecordType("SRV")
-	// RecordTypeTLSA is [insert doc].
-	RecordTypeTLSA = RecordType("TLSA")
-	// RecordTypeMX is [insert doc].
-	RecordTypeMX = RecordType("MX")
-	// RecordTypeNS is [insert doc].
-	RecordTypeNS = RecordType("NS")
-	// RecordTypePTR is [insert doc].
-	RecordTypePTR = RecordType("PTR")
-	// RecordTypeCAA is [insert doc].
-	RecordTypeCAA = RecordType("CAA")
-	// RecordTypeALIAS is [insert doc].
-	RecordTypeALIAS = RecordType("ALIAS")
-	// RecordTypeLOC is [insert doc].
-	RecordTypeLOC = RecordType("LOC")
-	// RecordTypeSSHFP is [insert doc].
-	RecordTypeSSHFP = RecordType("SSHFP")
-	// RecordTypeHINFO is [insert doc].
-	RecordTypeHINFO = RecordType("HINFO")
-	// RecordTypeRP is [insert doc].
-	RecordTypeRP = RecordType("RP")
-	// RecordTypeURI is [insert doc].
-	RecordTypeURI = RecordType("URI")
-	// RecordTypeDS is [insert doc].
-	RecordTypeDS = RecordType("DS")
-	// RecordTypeNAPTR is [insert doc].
-	RecordTypeNAPTR = RecordType("NAPTR")
-	// RecordTypeDNAME is [insert doc].
-	RecordTypeDNAME = RecordType("DNAME")
+	RecordTypeA       = RecordType("A")
+	RecordTypeAAAA    = RecordType("AAAA")
+	RecordTypeCNAME   = RecordType("CNAME")
+	RecordTypeTXT     = RecordType("TXT")
+	RecordTypeSRV     = RecordType("SRV")
+	RecordTypeTLSA    = RecordType("TLSA")
+	RecordTypeMX      = RecordType("MX")
+	RecordTypeNS      = RecordType("NS")
+	RecordTypePTR     = RecordType("PTR")
+	RecordTypeCAA     = RecordType("CAA")
+	RecordTypeALIAS   = RecordType("ALIAS")
+	RecordTypeLOC     = RecordType("LOC")
+	RecordTypeSSHFP   = RecordType("SSHFP")
+	RecordTypeHINFO   = RecordType("HINFO")
+	RecordTypeRP      = RecordType("RP")
+	RecordTypeURI     = RecordType("URI")
+	RecordTypeDS      = RecordType("DS")
+	RecordTypeNAPTR   = RecordType("NAPTR")
+	RecordTypeDNAME   = RecordType("DNAME")
 )
 
 func (enum RecordType) String() string {
@@ -898,14 +764,10 @@ func (enum *RecordType) UnmarshalJSON(data []byte) error {
 type RenewableDomainStatus string
 
 const (
-	// RenewableDomainStatusUnknown is [insert doc].
-	RenewableDomainStatusUnknown = RenewableDomainStatus("unknown")
-	// RenewableDomainStatusRenewable is [insert doc].
-	RenewableDomainStatusRenewable = RenewableDomainStatus("renewable")
-	// RenewableDomainStatusLateReneweable is [insert doc].
+	RenewableDomainStatusUnknown        = RenewableDomainStatus("unknown")
+	RenewableDomainStatusRenewable      = RenewableDomainStatus("renewable")
 	RenewableDomainStatusLateReneweable = RenewableDomainStatus("late_reneweable")
-	// RenewableDomainStatusNotRenewable is [insert doc].
-	RenewableDomainStatusNotRenewable = RenewableDomainStatus("not_renewable")
+	RenewableDomainStatusNotRenewable   = RenewableDomainStatus("not_renewable")
 )
 
 func (enum RenewableDomainStatus) String() string {
@@ -934,16 +796,11 @@ func (enum *RenewableDomainStatus) UnmarshalJSON(data []byte) error {
 type SSLCertificateStatus string
 
 const (
-	// SSLCertificateStatusUnknown is [insert doc].
 	SSLCertificateStatusUnknown = SSLCertificateStatus("unknown")
-	// SSLCertificateStatusNew is [insert doc].
-	SSLCertificateStatusNew = SSLCertificateStatus("new")
-	// SSLCertificateStatusPending is [insert doc].
+	SSLCertificateStatusNew     = SSLCertificateStatus("new")
 	SSLCertificateStatusPending = SSLCertificateStatus("pending")
-	// SSLCertificateStatusSuccess is [insert doc].
 	SSLCertificateStatusSuccess = SSLCertificateStatus("success")
-	// SSLCertificateStatusError is [insert doc].
-	SSLCertificateStatusError = SSLCertificateStatus("error")
+	SSLCertificateStatusError   = SSLCertificateStatus("error")
 )
 
 func (enum SSLCertificateStatus) String() string {
@@ -972,18 +829,12 @@ func (enum *SSLCertificateStatus) UnmarshalJSON(data []byte) error {
 type TaskStatus string
 
 const (
-	// TaskStatusUnavailable is [insert doc].
-	TaskStatusUnavailable = TaskStatus("unavailable")
-	// TaskStatusNew is [insert doc].
-	TaskStatusNew = TaskStatus("new")
-	// TaskStatusWaitingPayment is [insert doc].
+	TaskStatusUnavailable    = TaskStatus("unavailable")
+	TaskStatusNew            = TaskStatus("new")
 	TaskStatusWaitingPayment = TaskStatus("waiting_payment")
-	// TaskStatusPending is [insert doc].
-	TaskStatusPending = TaskStatus("pending")
-	// TaskStatusSuccess is [insert doc].
-	TaskStatusSuccess = TaskStatus("success")
-	// TaskStatusError is [insert doc].
-	TaskStatusError = TaskStatus("error")
+	TaskStatusPending        = TaskStatus("pending")
+	TaskStatusSuccess        = TaskStatus("success")
+	TaskStatusError          = TaskStatus("error")
 )
 
 func (enum TaskStatus) String() string {
@@ -1012,50 +863,28 @@ func (enum *TaskStatus) UnmarshalJSON(data []byte) error {
 type TaskType string
 
 const (
-	// TaskTypeUnknown is [insert doc].
-	TaskTypeUnknown = TaskType("unknown")
-	// TaskTypeCreateDomain is [insert doc].
-	TaskTypeCreateDomain = TaskType("create_domain")
-	// TaskTypeCreateExternalDomain is [insert doc].
-	TaskTypeCreateExternalDomain = TaskType("create_external_domain")
-	// TaskTypeRenewDomain is [insert doc].
-	TaskTypeRenewDomain = TaskType("renew_domain")
-	// TaskTypeTransferDomain is [insert doc].
-	TaskTypeTransferDomain = TaskType("transfer_domain")
-	// TaskTypeTradeDomain is [insert doc].
-	TaskTypeTradeDomain = TaskType("trade_domain")
-	// TaskTypeLockDomainTransfer is [insert doc].
-	TaskTypeLockDomainTransfer = TaskType("lock_domain_transfer")
-	// TaskTypeUnlockDomainTransfer is [insert doc].
-	TaskTypeUnlockDomainTransfer = TaskType("unlock_domain_transfer")
-	// TaskTypeEnableDnssec is [insert doc].
-	TaskTypeEnableDnssec = TaskType("enable_dnssec")
-	// TaskTypeDisableDnssec is [insert doc].
-	TaskTypeDisableDnssec = TaskType("disable_dnssec")
-	// TaskTypeUpdateDomain is [insert doc].
-	TaskTypeUpdateDomain = TaskType("update_domain")
-	// TaskTypeUpdateContact is [insert doc].
-	TaskTypeUpdateContact = TaskType("update_contact")
-	// TaskTypeDeleteDomain is [insert doc].
-	TaskTypeDeleteDomain = TaskType("delete_domain")
-	// TaskTypeCancelTask is [insert doc].
-	TaskTypeCancelTask = TaskType("cancel_task")
-	// TaskTypeGenerateSslCertificate is [insert doc].
+	TaskTypeUnknown                = TaskType("unknown")
+	TaskTypeCreateDomain           = TaskType("create_domain")
+	TaskTypeCreateExternalDomain   = TaskType("create_external_domain")
+	TaskTypeRenewDomain            = TaskType("renew_domain")
+	TaskTypeTransferDomain         = TaskType("transfer_domain")
+	TaskTypeTradeDomain            = TaskType("trade_domain")
+	TaskTypeLockDomainTransfer     = TaskType("lock_domain_transfer")
+	TaskTypeUnlockDomainTransfer   = TaskType("unlock_domain_transfer")
+	TaskTypeEnableDnssec           = TaskType("enable_dnssec")
+	TaskTypeDisableDnssec          = TaskType("disable_dnssec")
+	TaskTypeUpdateDomain           = TaskType("update_domain")
+	TaskTypeUpdateContact          = TaskType("update_contact")
+	TaskTypeDeleteDomain           = TaskType("delete_domain")
+	TaskTypeCancelTask             = TaskType("cancel_task")
 	TaskTypeGenerateSslCertificate = TaskType("generate_ssl_certificate")
-	// TaskTypeRenewSslCertificate is [insert doc].
-	TaskTypeRenewSslCertificate = TaskType("renew_ssl_certificate")
-	// TaskTypeSendMessage is [insert doc].
-	TaskTypeSendMessage = TaskType("send_message")
-	// TaskTypeDeleteDomainExpired is [insert doc].
-	TaskTypeDeleteDomainExpired = TaskType("delete_domain_expired")
-	// TaskTypeDeleteExternalDomain is [insert doc].
-	TaskTypeDeleteExternalDomain = TaskType("delete_external_domain")
-	// TaskTypeCreateHost is [insert doc].
-	TaskTypeCreateHost = TaskType("create_host")
-	// TaskTypeUpdateHost is [insert doc].
-	TaskTypeUpdateHost = TaskType("update_host")
-	// TaskTypeDeleteHost is [insert doc].
-	TaskTypeDeleteHost = TaskType("delete_host")
+	TaskTypeRenewSslCertificate    = TaskType("renew_ssl_certificate")
+	TaskTypeSendMessage            = TaskType("send_message")
+	TaskTypeDeleteDomainExpired    = TaskType("delete_domain_expired")
+	TaskTypeDeleteExternalDomain   = TaskType("delete_external_domain")
+	TaskTypeCreateHost             = TaskType("create_host")
+	TaskTypeUpdateHost             = TaskType("update_host")
+	TaskTypeDeleteHost             = TaskType("delete_host")
 )
 
 func (enum TaskType) String() string {
@@ -1935,7 +1764,6 @@ type ListDNSZonesRequest struct {
 //
 // Returns a list of manageable DNS zones.
 // You can filter the DNS zones by domain name.
-//
 func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) (*ListDNSZonesResponse, error) {
 	var err error
 
@@ -2162,7 +1990,6 @@ type ListDNSZoneRecordsRequest struct {
 //
 // Returns a list of DNS records of a DNS zone with default NS.
 // You can filter the records by type and name.
-//
 func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneRecordsResponse, error) {
 	var err error
 
@@ -2232,7 +2059,6 @@ type UpdateDNSZoneRecordsRequest struct {
 //   - Delete all records from a DNS zone
 //
 // All edits will be versioned.
-//
 func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw.RequestOption) (*UpdateDNSZoneRecordsResponse, error) {
 	var err error
 
@@ -2343,7 +2169,6 @@ type ClearDNSZoneRecordsRequest struct {
 // Only available with default NS.<br/>
 // Delete all the records from a DNS zone.
 // All edits will be versioned.
-//
 func (s *API) ClearDNSZoneRecords(req *ClearDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ClearDNSZoneRecordsResponse, error) {
 	var err error
 
@@ -2508,7 +2333,6 @@ type RefreshDNSZoneRequest struct {
 //
 // Refresh SOA DNS zone.
 // You can recreate the given DNS zone and its sub DNS zone if needed.
-//
 func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOption) (*RefreshDNSZoneResponse, error) {
 	var err error
 
@@ -2549,7 +2373,6 @@ type ListDNSZoneVersionsRequest struct {
 // Get a list of DNS zone versions.<br/>
 // The maximum version count is 100.<br/>
 // If the count reaches this limit, the oldest version will be deleted after each new modification.
-//
 func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionsResponse, error) {
 	var err error
 
@@ -2893,7 +2716,6 @@ type RegistrarAPIListTasksRequest struct {
 //
 // List all account tasks.
 // You can filter the list by domain name.
-//
 func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.RequestOption) (*ListTasksResponse, error) {
 	var err error
 
@@ -2958,7 +2780,6 @@ type RegistrarAPIBuyDomainsRequest struct {
 //
 // Request the registration of domain names.
 // You can provide an already existing domain's contact or a new contact.
-//
 func (s *RegistrarAPI) BuyDomains(req *RegistrarAPIBuyDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -2998,7 +2819,6 @@ type RegistrarAPIRenewDomainsRequest struct {
 // RenewDomains: renew one or more domains
 //
 // Request the renewal of domain names.
-//
 func (s *RegistrarAPI) RenewDomains(req *RegistrarAPIRenewDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -3049,7 +2869,6 @@ type RegistrarAPITransferInDomainRequest struct {
 // TransferInDomain: transfer a domain
 //
 // Request the transfer from another registrar domain to Scaleway.
-//
 func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -3096,7 +2915,6 @@ type RegistrarAPITradeDomainRequest struct {
 // If an `organization_id` is given, the change is from the current Scaleway account to another Scaleway account.<br/>
 // If no contact is given, the first contact of the other Scaleway account is taken.<br/>
 // If the other Scaleway account has no contact. An error occurs.
-//
 func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -3133,7 +2951,6 @@ type RegistrarAPIRegisterExternalDomainRequest struct {
 // RegisterExternalDomain: register an external domain
 //
 // Request the registration of an external domain name.
-//
 func (s *RegistrarAPI) RegisterExternalDomain(req *RegistrarAPIRegisterExternalDomainRequest, opts ...scw.RequestOption) (*RegisterExternalDomainResponse, error) {
 	var err error
 
@@ -3169,7 +2986,6 @@ type RegistrarAPIDeleteExternalDomainRequest struct {
 // DeleteExternalDomain: delete an external domain
 //
 // Delete an external domain name.
-//
 func (s *RegistrarAPI) DeleteExternalDomain(req *RegistrarAPIDeleteExternalDomainRequest, opts ...scw.RequestOption) (*DeleteExternalDomainResponse, error) {
 	var err error
 
@@ -3193,12 +3009,9 @@ func (s *RegistrarAPI) DeleteExternalDomain(req *RegistrarAPIDeleteExternalDomai
 }
 
 type RegistrarAPICheckContactsCompatibilityRequest struct {
+	Domains []string `json:"domains"`
 
-	// Precisely one of Domain, Tld must be set.
-	Domain *string `json:"domain,omitempty"`
-
-	// Precisely one of Domain, Tld must be set.
-	Tld *string `json:"tld,omitempty"`
+	Tlds []string `json:"tlds"`
 
 	// Precisely one of OwnerContact, OwnerContactID must be set.
 	OwnerContactID *string `json:"owner_contact_id,omitempty"`
@@ -3223,7 +3036,6 @@ type RegistrarAPICheckContactsCompatibilityRequest struct {
 //
 // Check if contacts are compatible against a domain or a tld.
 // If not, it will return the information requiring a correction.
-//
 func (s *RegistrarAPI) CheckContactsCompatibility(req *RegistrarAPICheckContactsCompatibilityRequest, opts ...scw.RequestOption) (*CheckContactsCompatibilityResponse, error) {
 	var err error
 
@@ -3263,7 +3075,6 @@ type RegistrarAPIListContactsRequest struct {
 //
 // Return a list of contacts with their domains and roles.
 // You can filter the list by domain name.
-//
 func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts ...scw.RequestOption) (*ListContactsResponse, error) {
 	var err error
 
@@ -3563,7 +3374,6 @@ type RegistrarAPIUpdateDomainRequest struct {
 //
 // Update the domain contacts or create a new one.<br/>
 // If you add the same contact for multiple roles. Only one ID will be created and used for all of them.
-//
 func (s *RegistrarAPI) UpdateDomain(req *RegistrarAPIUpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3598,7 +3408,6 @@ type RegistrarAPILockDomainTransferRequest struct {
 // LockDomainTransfer: lock domain transfer
 //
 // Lock domain transfer. A locked domain transfer can't be transferred and the auth code can't be requested.
-//
 func (s *RegistrarAPI) LockDomainTransfer(req *RegistrarAPILockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3633,7 +3442,6 @@ type RegistrarAPIUnlockDomainTransferRequest struct {
 // UnlockDomainTransfer: unlock domain transfer
 //
 // Unlock domain transfer. An unlocked domain can be transferred and the auth code can be requested for this.
-//
 func (s *RegistrarAPI) UnlockDomainTransfer(req *RegistrarAPIUnlockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3733,7 +3541,6 @@ type RegistrarAPIGetDomainAuthCodeRequest struct {
 //
 // If possible, return the auth code for an unlocked domain transfer, or an error if the domain is locked.
 // Some TLD may have a different procedure to retrieve the auth code, in that case, the information is given in the message field.
-//
 func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeRequest, opts ...scw.RequestOption) (*GetDomainAuthCodeResponse, error) {
 	var err error
 
@@ -3783,7 +3590,6 @@ type RegistrarAPIEnableDomainDNSSECRequest struct {
 //   - 2: SHA_256
 //   - 3: GOST_R_34_11_94
 //   - 4: SHA_384
-//
 func (s *RegistrarAPI) EnableDomainDNSSEC(req *RegistrarAPIEnableDomainDNSSECRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3857,7 +3663,6 @@ type RegistrarAPISearchAvailableDomainsRequest struct {
 // Search a domain (or at maximum, 10 domains).
 //
 // If the TLD list is empty or not set the search returns the results from the most popular TLDs.
-//
 func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDomainsRequest, opts ...scw.RequestOption) (*SearchAvailableDomainsResponse, error) {
 	var err error
 

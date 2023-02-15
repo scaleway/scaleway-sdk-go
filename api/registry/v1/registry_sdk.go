@@ -54,16 +54,11 @@ func NewAPI(client *scw.Client) *API {
 type ImageStatus string
 
 const (
-	// ImageStatusUnknown is [insert doc].
-	ImageStatusUnknown = ImageStatus("unknown")
-	// ImageStatusReady is [insert doc].
-	ImageStatusReady = ImageStatus("ready")
-	// ImageStatusDeleting is [insert doc].
+	ImageStatusUnknown  = ImageStatus("unknown")
+	ImageStatusReady    = ImageStatus("ready")
 	ImageStatusDeleting = ImageStatus("deleting")
-	// ImageStatusError is [insert doc].
-	ImageStatusError = ImageStatus("error")
-	// ImageStatusLocked is [insert doc].
-	ImageStatusLocked = ImageStatus("locked")
+	ImageStatusError    = ImageStatus("error")
+	ImageStatusLocked   = ImageStatus("locked")
 )
 
 func (enum ImageStatus) String() string {
@@ -92,14 +87,10 @@ func (enum *ImageStatus) UnmarshalJSON(data []byte) error {
 type ImageVisibility string
 
 const (
-	// ImageVisibilityVisibilityUnknown is [insert doc].
 	ImageVisibilityVisibilityUnknown = ImageVisibility("visibility_unknown")
-	// ImageVisibilityInherit is [insert doc].
-	ImageVisibilityInherit = ImageVisibility("inherit")
-	// ImageVisibilityPublic is [insert doc].
-	ImageVisibilityPublic = ImageVisibility("public")
-	// ImageVisibilityPrivate is [insert doc].
-	ImageVisibilityPrivate = ImageVisibility("private")
+	ImageVisibilityInherit           = ImageVisibility("inherit")
+	ImageVisibilityPublic            = ImageVisibility("public")
+	ImageVisibilityPrivate           = ImageVisibility("private")
 )
 
 func (enum ImageVisibility) String() string {
@@ -128,14 +119,10 @@ func (enum *ImageVisibility) UnmarshalJSON(data []byte) error {
 type ListImagesRequestOrderBy string
 
 const (
-	// ListImagesRequestOrderByCreatedAtAsc is [insert doc].
-	ListImagesRequestOrderByCreatedAtAsc = ListImagesRequestOrderBy("created_at_asc")
-	// ListImagesRequestOrderByCreatedAtDesc is [insert doc].
+	ListImagesRequestOrderByCreatedAtAsc  = ListImagesRequestOrderBy("created_at_asc")
 	ListImagesRequestOrderByCreatedAtDesc = ListImagesRequestOrderBy("created_at_desc")
-	// ListImagesRequestOrderByNameAsc is [insert doc].
-	ListImagesRequestOrderByNameAsc = ListImagesRequestOrderBy("name_asc")
-	// ListImagesRequestOrderByNameDesc is [insert doc].
-	ListImagesRequestOrderByNameDesc = ListImagesRequestOrderBy("name_desc")
+	ListImagesRequestOrderByNameAsc       = ListImagesRequestOrderBy("name_asc")
+	ListImagesRequestOrderByNameDesc      = ListImagesRequestOrderBy("name_desc")
 )
 
 func (enum ListImagesRequestOrderBy) String() string {
@@ -164,18 +151,12 @@ func (enum *ListImagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNamespacesRequestOrderBy string
 
 const (
-	// ListNamespacesRequestOrderByCreatedAtAsc is [insert doc].
-	ListNamespacesRequestOrderByCreatedAtAsc = ListNamespacesRequestOrderBy("created_at_asc")
-	// ListNamespacesRequestOrderByCreatedAtDesc is [insert doc].
-	ListNamespacesRequestOrderByCreatedAtDesc = ListNamespacesRequestOrderBy("created_at_desc")
-	// ListNamespacesRequestOrderByDescriptionAsc is [insert doc].
-	ListNamespacesRequestOrderByDescriptionAsc = ListNamespacesRequestOrderBy("description_asc")
-	// ListNamespacesRequestOrderByDescriptionDesc is [insert doc].
+	ListNamespacesRequestOrderByCreatedAtAsc    = ListNamespacesRequestOrderBy("created_at_asc")
+	ListNamespacesRequestOrderByCreatedAtDesc   = ListNamespacesRequestOrderBy("created_at_desc")
+	ListNamespacesRequestOrderByDescriptionAsc  = ListNamespacesRequestOrderBy("description_asc")
 	ListNamespacesRequestOrderByDescriptionDesc = ListNamespacesRequestOrderBy("description_desc")
-	// ListNamespacesRequestOrderByNameAsc is [insert doc].
-	ListNamespacesRequestOrderByNameAsc = ListNamespacesRequestOrderBy("name_asc")
-	// ListNamespacesRequestOrderByNameDesc is [insert doc].
-	ListNamespacesRequestOrderByNameDesc = ListNamespacesRequestOrderBy("name_desc")
+	ListNamespacesRequestOrderByNameAsc         = ListNamespacesRequestOrderBy("name_asc")
+	ListNamespacesRequestOrderByNameDesc        = ListNamespacesRequestOrderBy("name_desc")
 )
 
 func (enum ListNamespacesRequestOrderBy) String() string {
@@ -204,14 +185,10 @@ func (enum *ListNamespacesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTagsRequestOrderBy string
 
 const (
-	// ListTagsRequestOrderByCreatedAtAsc is [insert doc].
-	ListTagsRequestOrderByCreatedAtAsc = ListTagsRequestOrderBy("created_at_asc")
-	// ListTagsRequestOrderByCreatedAtDesc is [insert doc].
+	ListTagsRequestOrderByCreatedAtAsc  = ListTagsRequestOrderBy("created_at_asc")
 	ListTagsRequestOrderByCreatedAtDesc = ListTagsRequestOrderBy("created_at_desc")
-	// ListTagsRequestOrderByNameAsc is [insert doc].
-	ListTagsRequestOrderByNameAsc = ListTagsRequestOrderBy("name_asc")
-	// ListTagsRequestOrderByNameDesc is [insert doc].
-	ListTagsRequestOrderByNameDesc = ListTagsRequestOrderBy("name_desc")
+	ListTagsRequestOrderByNameAsc       = ListTagsRequestOrderBy("name_asc")
+	ListTagsRequestOrderByNameDesc      = ListTagsRequestOrderBy("name_desc")
 )
 
 func (enum ListTagsRequestOrderBy) String() string {
@@ -240,16 +217,11 @@ func (enum *ListTagsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type NamespaceStatus string
 
 const (
-	// NamespaceStatusUnknown is [insert doc].
-	NamespaceStatusUnknown = NamespaceStatus("unknown")
-	// NamespaceStatusReady is [insert doc].
-	NamespaceStatusReady = NamespaceStatus("ready")
-	// NamespaceStatusDeleting is [insert doc].
+	NamespaceStatusUnknown  = NamespaceStatus("unknown")
+	NamespaceStatusReady    = NamespaceStatus("ready")
 	NamespaceStatusDeleting = NamespaceStatus("deleting")
-	// NamespaceStatusError is [insert doc].
-	NamespaceStatusError = NamespaceStatus("error")
-	// NamespaceStatusLocked is [insert doc].
-	NamespaceStatusLocked = NamespaceStatus("locked")
+	NamespaceStatusError    = NamespaceStatus("error")
+	NamespaceStatusLocked   = NamespaceStatus("locked")
 )
 
 func (enum NamespaceStatus) String() string {
@@ -278,16 +250,11 @@ func (enum *NamespaceStatus) UnmarshalJSON(data []byte) error {
 type TagStatus string
 
 const (
-	// TagStatusUnknown is [insert doc].
-	TagStatusUnknown = TagStatus("unknown")
-	// TagStatusReady is [insert doc].
-	TagStatusReady = TagStatus("ready")
-	// TagStatusDeleting is [insert doc].
+	TagStatusUnknown  = TagStatus("unknown")
+	TagStatusReady    = TagStatus("ready")
 	TagStatusDeleting = TagStatus("deleting")
-	// TagStatusError is [insert doc].
-	TagStatusError = TagStatus("error")
-	// TagStatusLocked is [insert doc].
-	TagStatusLocked = TagStatus("locked")
+	TagStatusError    = TagStatus("error")
+	TagStatusLocked   = TagStatus("locked")
 )
 
 func (enum TagStatus) String() string {

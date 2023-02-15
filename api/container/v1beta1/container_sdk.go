@@ -54,12 +54,9 @@ func NewAPI(client *scw.Client) *API {
 type ContainerHTTPOption string
 
 const (
-	// ContainerHTTPOptionUnknownHTTPOption is [insert doc].
 	ContainerHTTPOptionUnknownHTTPOption = ContainerHTTPOption("unknown_http_option")
-	// ContainerHTTPOptionEnabled is [insert doc].
-	ContainerHTTPOptionEnabled = ContainerHTTPOption("enabled")
-	// ContainerHTTPOptionRedirected is [insert doc].
-	ContainerHTTPOptionRedirected = ContainerHTTPOption("redirected")
+	ContainerHTTPOptionEnabled           = ContainerHTTPOption("enabled")
+	ContainerHTTPOptionRedirected        = ContainerHTTPOption("redirected")
 )
 
 func (enum ContainerHTTPOption) String() string {
@@ -88,12 +85,9 @@ func (enum *ContainerHTTPOption) UnmarshalJSON(data []byte) error {
 type ContainerPrivacy string
 
 const (
-	// ContainerPrivacyUnknownPrivacy is [insert doc].
 	ContainerPrivacyUnknownPrivacy = ContainerPrivacy("unknown_privacy")
-	// ContainerPrivacyPublic is [insert doc].
-	ContainerPrivacyPublic = ContainerPrivacy("public")
-	// ContainerPrivacyPrivate is [insert doc].
-	ContainerPrivacyPrivate = ContainerPrivacy("private")
+	ContainerPrivacyPublic         = ContainerPrivacy("public")
+	ContainerPrivacyPrivate        = ContainerPrivacy("private")
 )
 
 func (enum ContainerPrivacy) String() string {
@@ -122,12 +116,9 @@ func (enum *ContainerPrivacy) UnmarshalJSON(data []byte) error {
 type ContainerProtocol string
 
 const (
-	// ContainerProtocolUnknownProtocol is [insert doc].
 	ContainerProtocolUnknownProtocol = ContainerProtocol("unknown_protocol")
-	// ContainerProtocolHTTP1 is [insert doc].
-	ContainerProtocolHTTP1 = ContainerProtocol("http1")
-	// ContainerProtocolH2c is [insert doc].
-	ContainerProtocolH2c = ContainerProtocol("h2c")
+	ContainerProtocolHTTP1           = ContainerProtocol("http1")
+	ContainerProtocolH2c             = ContainerProtocol("h2c")
 )
 
 func (enum ContainerProtocol) String() string {
@@ -156,22 +147,14 @@ func (enum *ContainerProtocol) UnmarshalJSON(data []byte) error {
 type ContainerStatus string
 
 const (
-	// ContainerStatusUnknown is [insert doc].
-	ContainerStatusUnknown = ContainerStatus("unknown")
-	// ContainerStatusReady is [insert doc].
-	ContainerStatusReady = ContainerStatus("ready")
-	// ContainerStatusDeleting is [insert doc].
+	ContainerStatusUnknown  = ContainerStatus("unknown")
+	ContainerStatusReady    = ContainerStatus("ready")
 	ContainerStatusDeleting = ContainerStatus("deleting")
-	// ContainerStatusError is [insert doc].
-	ContainerStatusError = ContainerStatus("error")
-	// ContainerStatusLocked is [insert doc].
-	ContainerStatusLocked = ContainerStatus("locked")
-	// ContainerStatusCreating is [insert doc].
+	ContainerStatusError    = ContainerStatus("error")
+	ContainerStatusLocked   = ContainerStatus("locked")
 	ContainerStatusCreating = ContainerStatus("creating")
-	// ContainerStatusPending is [insert doc].
-	ContainerStatusPending = ContainerStatus("pending")
-	// ContainerStatusCreated is [insert doc].
-	ContainerStatusCreated = ContainerStatus("created")
+	ContainerStatusPending  = ContainerStatus("pending")
+	ContainerStatusCreated  = ContainerStatus("created")
 )
 
 func (enum ContainerStatus) String() string {
@@ -200,20 +183,13 @@ func (enum *ContainerStatus) UnmarshalJSON(data []byte) error {
 type CronStatus string
 
 const (
-	// CronStatusUnknown is [insert doc].
-	CronStatusUnknown = CronStatus("unknown")
-	// CronStatusReady is [insert doc].
-	CronStatusReady = CronStatus("ready")
-	// CronStatusDeleting is [insert doc].
+	CronStatusUnknown  = CronStatus("unknown")
+	CronStatusReady    = CronStatus("ready")
 	CronStatusDeleting = CronStatus("deleting")
-	// CronStatusError is [insert doc].
-	CronStatusError = CronStatus("error")
-	// CronStatusLocked is [insert doc].
-	CronStatusLocked = CronStatus("locked")
-	// CronStatusCreating is [insert doc].
+	CronStatusError    = CronStatus("error")
+	CronStatusLocked   = CronStatus("locked")
 	CronStatusCreating = CronStatus("creating")
-	// CronStatusPending is [insert doc].
-	CronStatusPending = CronStatus("pending")
+	CronStatusPending  = CronStatus("pending")
 )
 
 func (enum CronStatus) String() string {
@@ -242,18 +218,12 @@ func (enum *CronStatus) UnmarshalJSON(data []byte) error {
 type DomainStatus string
 
 const (
-	// DomainStatusUnknown is [insert doc].
-	DomainStatusUnknown = DomainStatus("unknown")
-	// DomainStatusReady is [insert doc].
-	DomainStatusReady = DomainStatus("ready")
-	// DomainStatusDeleting is [insert doc].
+	DomainStatusUnknown  = DomainStatus("unknown")
+	DomainStatusReady    = DomainStatus("ready")
 	DomainStatusDeleting = DomainStatus("deleting")
-	// DomainStatusError is [insert doc].
-	DomainStatusError = DomainStatus("error")
-	// DomainStatusCreating is [insert doc].
+	DomainStatusError    = DomainStatus("error")
 	DomainStatusCreating = DomainStatus("creating")
-	// DomainStatusPending is [insert doc].
-	DomainStatusPending = DomainStatus("pending")
+	DomainStatusPending  = DomainStatus("pending")
 )
 
 func (enum DomainStatus) String() string {
@@ -282,14 +252,10 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type ListContainersRequestOrderBy string
 
 const (
-	// ListContainersRequestOrderByCreatedAtAsc is [insert doc].
-	ListContainersRequestOrderByCreatedAtAsc = ListContainersRequestOrderBy("created_at_asc")
-	// ListContainersRequestOrderByCreatedAtDesc is [insert doc].
+	ListContainersRequestOrderByCreatedAtAsc  = ListContainersRequestOrderBy("created_at_asc")
 	ListContainersRequestOrderByCreatedAtDesc = ListContainersRequestOrderBy("created_at_desc")
-	// ListContainersRequestOrderByNameAsc is [insert doc].
-	ListContainersRequestOrderByNameAsc = ListContainersRequestOrderBy("name_asc")
-	// ListContainersRequestOrderByNameDesc is [insert doc].
-	ListContainersRequestOrderByNameDesc = ListContainersRequestOrderBy("name_desc")
+	ListContainersRequestOrderByNameAsc       = ListContainersRequestOrderBy("name_asc")
+	ListContainersRequestOrderByNameDesc      = ListContainersRequestOrderBy("name_desc")
 )
 
 func (enum ListContainersRequestOrderBy) String() string {
@@ -318,9 +284,7 @@ func (enum *ListContainersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListCronsRequestOrderBy string
 
 const (
-	// ListCronsRequestOrderByCreatedAtAsc is [insert doc].
-	ListCronsRequestOrderByCreatedAtAsc = ListCronsRequestOrderBy("created_at_asc")
-	// ListCronsRequestOrderByCreatedAtDesc is [insert doc].
+	ListCronsRequestOrderByCreatedAtAsc  = ListCronsRequestOrderBy("created_at_asc")
 	ListCronsRequestOrderByCreatedAtDesc = ListCronsRequestOrderBy("created_at_desc")
 )
 
@@ -350,14 +314,10 @@ func (enum *ListCronsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListDomainsRequestOrderBy string
 
 const (
-	// ListDomainsRequestOrderByCreatedAtAsc is [insert doc].
-	ListDomainsRequestOrderByCreatedAtAsc = ListDomainsRequestOrderBy("created_at_asc")
-	// ListDomainsRequestOrderByCreatedAtDesc is [insert doc].
+	ListDomainsRequestOrderByCreatedAtAsc  = ListDomainsRequestOrderBy("created_at_asc")
 	ListDomainsRequestOrderByCreatedAtDesc = ListDomainsRequestOrderBy("created_at_desc")
-	// ListDomainsRequestOrderByHostnameAsc is [insert doc].
-	ListDomainsRequestOrderByHostnameAsc = ListDomainsRequestOrderBy("hostname_asc")
-	// ListDomainsRequestOrderByHostnameDesc is [insert doc].
-	ListDomainsRequestOrderByHostnameDesc = ListDomainsRequestOrderBy("hostname_desc")
+	ListDomainsRequestOrderByHostnameAsc   = ListDomainsRequestOrderBy("hostname_asc")
+	ListDomainsRequestOrderByHostnameDesc  = ListDomainsRequestOrderBy("hostname_desc")
 )
 
 func (enum ListDomainsRequestOrderBy) String() string {
@@ -386,10 +346,8 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListLogsRequestOrderBy string
 
 const (
-	// ListLogsRequestOrderByTimestampDesc is [insert doc].
 	ListLogsRequestOrderByTimestampDesc = ListLogsRequestOrderBy("timestamp_desc")
-	// ListLogsRequestOrderByTimestampAsc is [insert doc].
-	ListLogsRequestOrderByTimestampAsc = ListLogsRequestOrderBy("timestamp_asc")
+	ListLogsRequestOrderByTimestampAsc  = ListLogsRequestOrderBy("timestamp_asc")
 )
 
 func (enum ListLogsRequestOrderBy) String() string {
@@ -418,14 +376,10 @@ func (enum *ListLogsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNamespacesRequestOrderBy string
 
 const (
-	// ListNamespacesRequestOrderByCreatedAtAsc is [insert doc].
-	ListNamespacesRequestOrderByCreatedAtAsc = ListNamespacesRequestOrderBy("created_at_asc")
-	// ListNamespacesRequestOrderByCreatedAtDesc is [insert doc].
+	ListNamespacesRequestOrderByCreatedAtAsc  = ListNamespacesRequestOrderBy("created_at_asc")
 	ListNamespacesRequestOrderByCreatedAtDesc = ListNamespacesRequestOrderBy("created_at_desc")
-	// ListNamespacesRequestOrderByNameAsc is [insert doc].
-	ListNamespacesRequestOrderByNameAsc = ListNamespacesRequestOrderBy("name_asc")
-	// ListNamespacesRequestOrderByNameDesc is [insert doc].
-	ListNamespacesRequestOrderByNameDesc = ListNamespacesRequestOrderBy("name_desc")
+	ListNamespacesRequestOrderByNameAsc       = ListNamespacesRequestOrderBy("name_asc")
+	ListNamespacesRequestOrderByNameDesc      = ListNamespacesRequestOrderBy("name_desc")
 )
 
 func (enum ListNamespacesRequestOrderBy) String() string {
@@ -454,9 +408,7 @@ func (enum *ListNamespacesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTokensRequestOrderBy string
 
 const (
-	// ListTokensRequestOrderByCreatedAtAsc is [insert doc].
-	ListTokensRequestOrderByCreatedAtAsc = ListTokensRequestOrderBy("created_at_asc")
-	// ListTokensRequestOrderByCreatedAtDesc is [insert doc].
+	ListTokensRequestOrderByCreatedAtAsc  = ListTokensRequestOrderBy("created_at_asc")
 	ListTokensRequestOrderByCreatedAtDesc = ListTokensRequestOrderBy("created_at_desc")
 )
 
@@ -486,12 +438,9 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 type LogStream string
 
 const (
-	// LogStreamUnknown is [insert doc].
 	LogStreamUnknown = LogStream("unknown")
-	// LogStreamStdout is [insert doc].
-	LogStreamStdout = LogStream("stdout")
-	// LogStreamStderr is [insert doc].
-	LogStreamStderr = LogStream("stderr")
+	LogStreamStdout  = LogStream("stdout")
+	LogStreamStderr  = LogStream("stderr")
 )
 
 func (enum LogStream) String() string {
@@ -520,20 +469,13 @@ func (enum *LogStream) UnmarshalJSON(data []byte) error {
 type NamespaceStatus string
 
 const (
-	// NamespaceStatusUnknown is [insert doc].
-	NamespaceStatusUnknown = NamespaceStatus("unknown")
-	// NamespaceStatusReady is [insert doc].
-	NamespaceStatusReady = NamespaceStatus("ready")
-	// NamespaceStatusDeleting is [insert doc].
+	NamespaceStatusUnknown  = NamespaceStatus("unknown")
+	NamespaceStatusReady    = NamespaceStatus("ready")
 	NamespaceStatusDeleting = NamespaceStatus("deleting")
-	// NamespaceStatusError is [insert doc].
-	NamespaceStatusError = NamespaceStatus("error")
-	// NamespaceStatusLocked is [insert doc].
-	NamespaceStatusLocked = NamespaceStatus("locked")
-	// NamespaceStatusCreating is [insert doc].
+	NamespaceStatusError    = NamespaceStatus("error")
+	NamespaceStatusLocked   = NamespaceStatus("locked")
 	NamespaceStatusCreating = NamespaceStatus("creating")
-	// NamespaceStatusPending is [insert doc].
-	NamespaceStatusPending = NamespaceStatus("pending")
+	NamespaceStatusPending  = NamespaceStatus("pending")
 )
 
 func (enum NamespaceStatus) String() string {
@@ -562,7 +504,6 @@ func (enum *NamespaceStatus) UnmarshalJSON(data []byte) error {
 type NullValue string
 
 const (
-	// NullValueNULLVALUE is [insert doc].
 	NullValueNULLVALUE = NullValue("NULL_VALUE")
 )
 
@@ -592,15 +533,10 @@ func (enum *NullValue) UnmarshalJSON(data []byte) error {
 type TokenStatus string
 
 const (
-	// TokenStatusUnknown is [insert doc].
-	TokenStatusUnknown = TokenStatus("unknown")
-	// TokenStatusReady is [insert doc].
-	TokenStatusReady = TokenStatus("ready")
-	// TokenStatusDeleting is [insert doc].
+	TokenStatusUnknown  = TokenStatus("unknown")
+	TokenStatusReady    = TokenStatus("ready")
 	TokenStatusDeleting = TokenStatus("deleting")
-	// TokenStatusError is [insert doc].
-	TokenStatusError = TokenStatus("error")
-	// TokenStatusCreating is [insert doc].
+	TokenStatusError    = TokenStatus("error")
 	TokenStatusCreating = TokenStatus("creating")
 )
 

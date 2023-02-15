@@ -54,14 +54,10 @@ func NewAPI(client *scw.Client) *API {
 type ListPrivateNetworksRequestOrderBy string
 
 const (
-	// ListPrivateNetworksRequestOrderByCreatedAtAsc is [insert doc].
-	ListPrivateNetworksRequestOrderByCreatedAtAsc = ListPrivateNetworksRequestOrderBy("created_at_asc")
-	// ListPrivateNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListPrivateNetworksRequestOrderByCreatedAtAsc  = ListPrivateNetworksRequestOrderBy("created_at_asc")
 	ListPrivateNetworksRequestOrderByCreatedAtDesc = ListPrivateNetworksRequestOrderBy("created_at_desc")
-	// ListPrivateNetworksRequestOrderByNameAsc is [insert doc].
-	ListPrivateNetworksRequestOrderByNameAsc = ListPrivateNetworksRequestOrderBy("name_asc")
-	// ListPrivateNetworksRequestOrderByNameDesc is [insert doc].
-	ListPrivateNetworksRequestOrderByNameDesc = ListPrivateNetworksRequestOrderBy("name_desc")
+	ListPrivateNetworksRequestOrderByNameAsc       = ListPrivateNetworksRequestOrderBy("name_asc")
+	ListPrivateNetworksRequestOrderByNameDesc      = ListPrivateNetworksRequestOrderBy("name_desc")
 )
 
 func (enum ListPrivateNetworksRequestOrderBy) String() string {

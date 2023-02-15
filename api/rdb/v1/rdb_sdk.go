@@ -54,10 +54,8 @@ func NewAPI(client *scw.Client) *API {
 type ACLRuleAction string
 
 const (
-	// ACLRuleActionAllow is [insert doc].
 	ACLRuleActionAllow = ACLRuleAction("allow")
-	// ACLRuleActionDeny is [insert doc].
-	ACLRuleActionDeny = ACLRuleAction("deny")
+	ACLRuleActionDeny  = ACLRuleAction("deny")
 )
 
 func (enum ACLRuleAction) String() string {
@@ -86,9 +84,7 @@ func (enum *ACLRuleAction) UnmarshalJSON(data []byte) error {
 type ACLRuleDirection string
 
 const (
-	// ACLRuleDirectionInbound is [insert doc].
-	ACLRuleDirectionInbound = ACLRuleDirection("inbound")
-	// ACLRuleDirectionOutbound is [insert doc].
+	ACLRuleDirectionInbound  = ACLRuleDirection("inbound")
 	ACLRuleDirectionOutbound = ACLRuleDirection("outbound")
 )
 
@@ -118,11 +114,8 @@ func (enum *ACLRuleDirection) UnmarshalJSON(data []byte) error {
 type ACLRuleProtocol string
 
 const (
-	// ACLRuleProtocolTCP is [insert doc].
-	ACLRuleProtocolTCP = ACLRuleProtocol("tcp")
-	// ACLRuleProtocolUDP is [insert doc].
-	ACLRuleProtocolUDP = ACLRuleProtocol("udp")
-	// ACLRuleProtocolIcmp is [insert doc].
+	ACLRuleProtocolTCP  = ACLRuleProtocol("tcp")
+	ACLRuleProtocolUDP  = ACLRuleProtocol("udp")
 	ACLRuleProtocolIcmp = ACLRuleProtocol("icmp")
 )
 
@@ -152,22 +145,14 @@ func (enum *ACLRuleProtocol) UnmarshalJSON(data []byte) error {
 type DatabaseBackupStatus string
 
 const (
-	// DatabaseBackupStatusUnknown is [insert doc].
-	DatabaseBackupStatusUnknown = DatabaseBackupStatus("unknown")
-	// DatabaseBackupStatusCreating is [insert doc].
-	DatabaseBackupStatusCreating = DatabaseBackupStatus("creating")
-	// DatabaseBackupStatusReady is [insert doc].
-	DatabaseBackupStatusReady = DatabaseBackupStatus("ready")
-	// DatabaseBackupStatusRestoring is [insert doc].
+	DatabaseBackupStatusUnknown   = DatabaseBackupStatus("unknown")
+	DatabaseBackupStatusCreating  = DatabaseBackupStatus("creating")
+	DatabaseBackupStatusReady     = DatabaseBackupStatus("ready")
 	DatabaseBackupStatusRestoring = DatabaseBackupStatus("restoring")
-	// DatabaseBackupStatusDeleting is [insert doc].
-	DatabaseBackupStatusDeleting = DatabaseBackupStatus("deleting")
-	// DatabaseBackupStatusError is [insert doc].
-	DatabaseBackupStatusError = DatabaseBackupStatus("error")
-	// DatabaseBackupStatusExporting is [insert doc].
+	DatabaseBackupStatusDeleting  = DatabaseBackupStatus("deleting")
+	DatabaseBackupStatusError     = DatabaseBackupStatus("error")
 	DatabaseBackupStatusExporting = DatabaseBackupStatus("exporting")
-	// DatabaseBackupStatusLocked is [insert doc].
-	DatabaseBackupStatusLocked = DatabaseBackupStatus("locked")
+	DatabaseBackupStatusLocked    = DatabaseBackupStatus("locked")
 )
 
 func (enum DatabaseBackupStatus) String() string {
@@ -196,14 +181,10 @@ func (enum *DatabaseBackupStatus) UnmarshalJSON(data []byte) error {
 type EngineSettingPropertyType string
 
 const (
-	// EngineSettingPropertyTypeBOOLEAN is [insert doc].
 	EngineSettingPropertyTypeBOOLEAN = EngineSettingPropertyType("BOOLEAN")
-	// EngineSettingPropertyTypeINT is [insert doc].
-	EngineSettingPropertyTypeINT = EngineSettingPropertyType("INT")
-	// EngineSettingPropertyTypeSTRING is [insert doc].
-	EngineSettingPropertyTypeSTRING = EngineSettingPropertyType("STRING")
-	// EngineSettingPropertyTypeFLOAT is [insert doc].
-	EngineSettingPropertyTypeFLOAT = EngineSettingPropertyType("FLOAT")
+	EngineSettingPropertyTypeINT     = EngineSettingPropertyType("INT")
+	EngineSettingPropertyTypeSTRING  = EngineSettingPropertyType("STRING")
+	EngineSettingPropertyTypeFLOAT   = EngineSettingPropertyType("FLOAT")
 )
 
 func (enum EngineSettingPropertyType) String() string {
@@ -232,14 +213,10 @@ func (enum *EngineSettingPropertyType) UnmarshalJSON(data []byte) error {
 type InstanceLogStatus string
 
 const (
-	// InstanceLogStatusUnknown is [insert doc].
-	InstanceLogStatusUnknown = InstanceLogStatus("unknown")
-	// InstanceLogStatusReady is [insert doc].
-	InstanceLogStatusReady = InstanceLogStatus("ready")
-	// InstanceLogStatusCreating is [insert doc].
+	InstanceLogStatusUnknown  = InstanceLogStatus("unknown")
+	InstanceLogStatusReady    = InstanceLogStatus("ready")
 	InstanceLogStatusCreating = InstanceLogStatus("creating")
-	// InstanceLogStatusError is [insert doc].
-	InstanceLogStatusError = InstanceLogStatus("error")
+	InstanceLogStatusError    = InstanceLogStatus("error")
 )
 
 func (enum InstanceLogStatus) String() string {
@@ -268,32 +245,19 @@ func (enum *InstanceLogStatus) UnmarshalJSON(data []byte) error {
 type InstanceStatus string
 
 const (
-	// InstanceStatusUnknown is [insert doc].
-	InstanceStatusUnknown = InstanceStatus("unknown")
-	// InstanceStatusReady is [insert doc].
-	InstanceStatusReady = InstanceStatus("ready")
-	// InstanceStatusProvisioning is [insert doc].
+	InstanceStatusUnknown      = InstanceStatus("unknown")
+	InstanceStatusReady        = InstanceStatus("ready")
 	InstanceStatusProvisioning = InstanceStatus("provisioning")
-	// InstanceStatusConfiguring is [insert doc].
-	InstanceStatusConfiguring = InstanceStatus("configuring")
-	// InstanceStatusDeleting is [insert doc].
-	InstanceStatusDeleting = InstanceStatus("deleting")
-	// InstanceStatusError is [insert doc].
-	InstanceStatusError = InstanceStatus("error")
-	// InstanceStatusAutohealing is [insert doc].
-	InstanceStatusAutohealing = InstanceStatus("autohealing")
-	// InstanceStatusLocked is [insert doc].
-	InstanceStatusLocked = InstanceStatus("locked")
-	// InstanceStatusInitializing is [insert doc].
+	InstanceStatusConfiguring  = InstanceStatus("configuring")
+	InstanceStatusDeleting     = InstanceStatus("deleting")
+	InstanceStatusError        = InstanceStatus("error")
+	InstanceStatusAutohealing  = InstanceStatus("autohealing")
+	InstanceStatusLocked       = InstanceStatus("locked")
 	InstanceStatusInitializing = InstanceStatus("initializing")
-	// InstanceStatusDiskFull is [insert doc].
-	InstanceStatusDiskFull = InstanceStatus("disk_full")
-	// InstanceStatusBackuping is [insert doc].
-	InstanceStatusBackuping = InstanceStatus("backuping")
-	// InstanceStatusSnapshotting is [insert doc].
+	InstanceStatusDiskFull     = InstanceStatus("disk_full")
+	InstanceStatusBackuping    = InstanceStatus("backuping")
 	InstanceStatusSnapshotting = InstanceStatus("snapshotting")
-	// InstanceStatusRestarting is [insert doc].
-	InstanceStatusRestarting = InstanceStatus("restarting")
+	InstanceStatusRestarting   = InstanceStatus("restarting")
 )
 
 func (enum InstanceStatus) String() string {
@@ -322,18 +286,12 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 type ListDatabaseBackupsRequestOrderBy string
 
 const (
-	// ListDatabaseBackupsRequestOrderByCreatedAtAsc is [insert doc].
-	ListDatabaseBackupsRequestOrderByCreatedAtAsc = ListDatabaseBackupsRequestOrderBy("created_at_asc")
-	// ListDatabaseBackupsRequestOrderByCreatedAtDesc is [insert doc].
+	ListDatabaseBackupsRequestOrderByCreatedAtAsc  = ListDatabaseBackupsRequestOrderBy("created_at_asc")
 	ListDatabaseBackupsRequestOrderByCreatedAtDesc = ListDatabaseBackupsRequestOrderBy("created_at_desc")
-	// ListDatabaseBackupsRequestOrderByNameAsc is [insert doc].
-	ListDatabaseBackupsRequestOrderByNameAsc = ListDatabaseBackupsRequestOrderBy("name_asc")
-	// ListDatabaseBackupsRequestOrderByNameDesc is [insert doc].
-	ListDatabaseBackupsRequestOrderByNameDesc = ListDatabaseBackupsRequestOrderBy("name_desc")
-	// ListDatabaseBackupsRequestOrderByStatusAsc is [insert doc].
-	ListDatabaseBackupsRequestOrderByStatusAsc = ListDatabaseBackupsRequestOrderBy("status_asc")
-	// ListDatabaseBackupsRequestOrderByStatusDesc is [insert doc].
-	ListDatabaseBackupsRequestOrderByStatusDesc = ListDatabaseBackupsRequestOrderBy("status_desc")
+	ListDatabaseBackupsRequestOrderByNameAsc       = ListDatabaseBackupsRequestOrderBy("name_asc")
+	ListDatabaseBackupsRequestOrderByNameDesc      = ListDatabaseBackupsRequestOrderBy("name_desc")
+	ListDatabaseBackupsRequestOrderByStatusAsc     = ListDatabaseBackupsRequestOrderBy("status_asc")
+	ListDatabaseBackupsRequestOrderByStatusDesc    = ListDatabaseBackupsRequestOrderBy("status_desc")
 )
 
 func (enum ListDatabaseBackupsRequestOrderBy) String() string {
@@ -362,13 +320,9 @@ func (enum *ListDatabaseBackupsRequestOrderBy) UnmarshalJSON(data []byte) error 
 type ListDatabasesRequestOrderBy string
 
 const (
-	// ListDatabasesRequestOrderByNameAsc is [insert doc].
-	ListDatabasesRequestOrderByNameAsc = ListDatabasesRequestOrderBy("name_asc")
-	// ListDatabasesRequestOrderByNameDesc is [insert doc].
+	ListDatabasesRequestOrderByNameAsc  = ListDatabasesRequestOrderBy("name_asc")
 	ListDatabasesRequestOrderByNameDesc = ListDatabasesRequestOrderBy("name_desc")
-	// ListDatabasesRequestOrderBySizeAsc is [insert doc].
-	ListDatabasesRequestOrderBySizeAsc = ListDatabasesRequestOrderBy("size_asc")
-	// ListDatabasesRequestOrderBySizeDesc is [insert doc].
+	ListDatabasesRequestOrderBySizeAsc  = ListDatabasesRequestOrderBy("size_asc")
 	ListDatabasesRequestOrderBySizeDesc = ListDatabasesRequestOrderBy("size_desc")
 )
 
@@ -398,9 +352,7 @@ func (enum *ListDatabasesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListInstanceLogsRequestOrderBy string
 
 const (
-	// ListInstanceLogsRequestOrderByCreatedAtAsc is [insert doc].
-	ListInstanceLogsRequestOrderByCreatedAtAsc = ListInstanceLogsRequestOrderBy("created_at_asc")
-	// ListInstanceLogsRequestOrderByCreatedAtDesc is [insert doc].
+	ListInstanceLogsRequestOrderByCreatedAtAsc  = ListInstanceLogsRequestOrderBy("created_at_asc")
 	ListInstanceLogsRequestOrderByCreatedAtDesc = ListInstanceLogsRequestOrderBy("created_at_desc")
 )
 
@@ -430,20 +382,13 @@ func (enum *ListInstanceLogsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListInstancesRequestOrderBy string
 
 const (
-	// ListInstancesRequestOrderByCreatedAtAsc is [insert doc].
-	ListInstancesRequestOrderByCreatedAtAsc = ListInstancesRequestOrderBy("created_at_asc")
-	// ListInstancesRequestOrderByCreatedAtDesc is [insert doc].
+	ListInstancesRequestOrderByCreatedAtAsc  = ListInstancesRequestOrderBy("created_at_asc")
 	ListInstancesRequestOrderByCreatedAtDesc = ListInstancesRequestOrderBy("created_at_desc")
-	// ListInstancesRequestOrderByNameAsc is [insert doc].
-	ListInstancesRequestOrderByNameAsc = ListInstancesRequestOrderBy("name_asc")
-	// ListInstancesRequestOrderByNameDesc is [insert doc].
-	ListInstancesRequestOrderByNameDesc = ListInstancesRequestOrderBy("name_desc")
-	// ListInstancesRequestOrderByRegion is [insert doc].
-	ListInstancesRequestOrderByRegion = ListInstancesRequestOrderBy("region")
-	// ListInstancesRequestOrderByStatusAsc is [insert doc].
-	ListInstancesRequestOrderByStatusAsc = ListInstancesRequestOrderBy("status_asc")
-	// ListInstancesRequestOrderByStatusDesc is [insert doc].
-	ListInstancesRequestOrderByStatusDesc = ListInstancesRequestOrderBy("status_desc")
+	ListInstancesRequestOrderByNameAsc       = ListInstancesRequestOrderBy("name_asc")
+	ListInstancesRequestOrderByNameDesc      = ListInstancesRequestOrderBy("name_desc")
+	ListInstancesRequestOrderByRegion        = ListInstancesRequestOrderBy("region")
+	ListInstancesRequestOrderByStatusAsc     = ListInstancesRequestOrderBy("status_asc")
+	ListInstancesRequestOrderByStatusDesc    = ListInstancesRequestOrderBy("status_desc")
 )
 
 func (enum ListInstancesRequestOrderBy) String() string {
@@ -472,13 +417,9 @@ func (enum *ListInstancesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPrivilegesRequestOrderBy string
 
 const (
-	// ListPrivilegesRequestOrderByUserNameAsc is [insert doc].
-	ListPrivilegesRequestOrderByUserNameAsc = ListPrivilegesRequestOrderBy("user_name_asc")
-	// ListPrivilegesRequestOrderByUserNameDesc is [insert doc].
-	ListPrivilegesRequestOrderByUserNameDesc = ListPrivilegesRequestOrderBy("user_name_desc")
-	// ListPrivilegesRequestOrderByDatabaseNameAsc is [insert doc].
-	ListPrivilegesRequestOrderByDatabaseNameAsc = ListPrivilegesRequestOrderBy("database_name_asc")
-	// ListPrivilegesRequestOrderByDatabaseNameDesc is [insert doc].
+	ListPrivilegesRequestOrderByUserNameAsc      = ListPrivilegesRequestOrderBy("user_name_asc")
+	ListPrivilegesRequestOrderByUserNameDesc     = ListPrivilegesRequestOrderBy("user_name_desc")
+	ListPrivilegesRequestOrderByDatabaseNameAsc  = ListPrivilegesRequestOrderBy("database_name_asc")
 	ListPrivilegesRequestOrderByDatabaseNameDesc = ListPrivilegesRequestOrderBy("database_name_desc")
 )
 
@@ -508,17 +449,11 @@ func (enum *ListPrivilegesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListSnapshotsRequestOrderBy string
 
 const (
-	// ListSnapshotsRequestOrderByCreatedAtAsc is [insert doc].
-	ListSnapshotsRequestOrderByCreatedAtAsc = ListSnapshotsRequestOrderBy("created_at_asc")
-	// ListSnapshotsRequestOrderByCreatedAtDesc is [insert doc].
+	ListSnapshotsRequestOrderByCreatedAtAsc  = ListSnapshotsRequestOrderBy("created_at_asc")
 	ListSnapshotsRequestOrderByCreatedAtDesc = ListSnapshotsRequestOrderBy("created_at_desc")
-	// ListSnapshotsRequestOrderByNameAsc is [insert doc].
-	ListSnapshotsRequestOrderByNameAsc = ListSnapshotsRequestOrderBy("name_asc")
-	// ListSnapshotsRequestOrderByNameDesc is [insert doc].
-	ListSnapshotsRequestOrderByNameDesc = ListSnapshotsRequestOrderBy("name_desc")
-	// ListSnapshotsRequestOrderByExpiresAtAsc is [insert doc].
-	ListSnapshotsRequestOrderByExpiresAtAsc = ListSnapshotsRequestOrderBy("expires_at_asc")
-	// ListSnapshotsRequestOrderByExpiresAtDesc is [insert doc].
+	ListSnapshotsRequestOrderByNameAsc       = ListSnapshotsRequestOrderBy("name_asc")
+	ListSnapshotsRequestOrderByNameDesc      = ListSnapshotsRequestOrderBy("name_desc")
+	ListSnapshotsRequestOrderByExpiresAtAsc  = ListSnapshotsRequestOrderBy("expires_at_asc")
 	ListSnapshotsRequestOrderByExpiresAtDesc = ListSnapshotsRequestOrderBy("expires_at_desc")
 )
 
@@ -548,13 +483,9 @@ func (enum *ListSnapshotsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListUsersRequestOrderBy string
 
 const (
-	// ListUsersRequestOrderByNameAsc is [insert doc].
-	ListUsersRequestOrderByNameAsc = ListUsersRequestOrderBy("name_asc")
-	// ListUsersRequestOrderByNameDesc is [insert doc].
-	ListUsersRequestOrderByNameDesc = ListUsersRequestOrderBy("name_desc")
-	// ListUsersRequestOrderByIsAdminAsc is [insert doc].
-	ListUsersRequestOrderByIsAdminAsc = ListUsersRequestOrderBy("is_admin_asc")
-	// ListUsersRequestOrderByIsAdminDesc is [insert doc].
+	ListUsersRequestOrderByNameAsc     = ListUsersRequestOrderBy("name_asc")
+	ListUsersRequestOrderByNameDesc    = ListUsersRequestOrderBy("name_desc")
+	ListUsersRequestOrderByIsAdminAsc  = ListUsersRequestOrderBy("is_admin_asc")
 	ListUsersRequestOrderByIsAdminDesc = ListUsersRequestOrderBy("is_admin_desc")
 )
 
@@ -584,13 +515,9 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type MaintenanceStatus string
 
 const (
-	// MaintenanceStatusUnknown is [insert doc].
-	MaintenanceStatusUnknown = MaintenanceStatus("unknown")
-	// MaintenanceStatusPending is [insert doc].
-	MaintenanceStatusPending = MaintenanceStatus("pending")
-	// MaintenanceStatusDone is [insert doc].
-	MaintenanceStatusDone = MaintenanceStatus("done")
-	// MaintenanceStatusCanceled is [insert doc].
+	MaintenanceStatusUnknown  = MaintenanceStatus("unknown")
+	MaintenanceStatusPending  = MaintenanceStatus("pending")
+	MaintenanceStatusDone     = MaintenanceStatus("done")
 	MaintenanceStatusCanceled = MaintenanceStatus("canceled")
 )
 
@@ -620,14 +547,10 @@ func (enum *MaintenanceStatus) UnmarshalJSON(data []byte) error {
 type NodeTypeStock string
 
 const (
-	// NodeTypeStockUnknown is [insert doc].
-	NodeTypeStockUnknown = NodeTypeStock("unknown")
-	// NodeTypeStockLowStock is [insert doc].
-	NodeTypeStockLowStock = NodeTypeStock("low_stock")
-	// NodeTypeStockOutOfStock is [insert doc].
+	NodeTypeStockUnknown    = NodeTypeStock("unknown")
+	NodeTypeStockLowStock   = NodeTypeStock("low_stock")
 	NodeTypeStockOutOfStock = NodeTypeStock("out_of_stock")
-	// NodeTypeStockAvailable is [insert doc].
-	NodeTypeStockAvailable = NodeTypeStock("available")
+	NodeTypeStockAvailable  = NodeTypeStock("available")
 )
 
 func (enum NodeTypeStock) String() string {
@@ -656,16 +579,11 @@ func (enum *NodeTypeStock) UnmarshalJSON(data []byte) error {
 type Permission string
 
 const (
-	// PermissionReadonly is [insert doc].
-	PermissionReadonly = Permission("readonly")
-	// PermissionReadwrite is [insert doc].
+	PermissionReadonly  = Permission("readonly")
 	PermissionReadwrite = Permission("readwrite")
-	// PermissionAll is [insert doc].
-	PermissionAll = Permission("all")
-	// PermissionCustom is [insert doc].
-	PermissionCustom = Permission("custom")
-	// PermissionNone is [insert doc].
-	PermissionNone = Permission("none")
+	PermissionAll       = Permission("all")
+	PermissionCustom    = Permission("custom")
+	PermissionNone      = Permission("none")
 )
 
 func (enum Permission) String() string {
@@ -694,22 +612,14 @@ func (enum *Permission) UnmarshalJSON(data []byte) error {
 type ReadReplicaStatus string
 
 const (
-	// ReadReplicaStatusUnknown is [insert doc].
-	ReadReplicaStatusUnknown = ReadReplicaStatus("unknown")
-	// ReadReplicaStatusProvisioning is [insert doc].
+	ReadReplicaStatusUnknown      = ReadReplicaStatus("unknown")
 	ReadReplicaStatusProvisioning = ReadReplicaStatus("provisioning")
-	// ReadReplicaStatusInitializing is [insert doc].
 	ReadReplicaStatusInitializing = ReadReplicaStatus("initializing")
-	// ReadReplicaStatusReady is [insert doc].
-	ReadReplicaStatusReady = ReadReplicaStatus("ready")
-	// ReadReplicaStatusDeleting is [insert doc].
-	ReadReplicaStatusDeleting = ReadReplicaStatus("deleting")
-	// ReadReplicaStatusError is [insert doc].
-	ReadReplicaStatusError = ReadReplicaStatus("error")
-	// ReadReplicaStatusLocked is [insert doc].
-	ReadReplicaStatusLocked = ReadReplicaStatus("locked")
-	// ReadReplicaStatusConfiguring is [insert doc].
-	ReadReplicaStatusConfiguring = ReadReplicaStatus("configuring")
+	ReadReplicaStatusReady        = ReadReplicaStatus("ready")
+	ReadReplicaStatusDeleting     = ReadReplicaStatus("deleting")
+	ReadReplicaStatusError        = ReadReplicaStatus("error")
+	ReadReplicaStatusLocked       = ReadReplicaStatus("locked")
+	ReadReplicaStatusConfiguring  = ReadReplicaStatus("configuring")
 )
 
 func (enum ReadReplicaStatus) String() string {
@@ -738,20 +648,13 @@ func (enum *ReadReplicaStatus) UnmarshalJSON(data []byte) error {
 type SnapshotStatus string
 
 const (
-	// SnapshotStatusUnknown is [insert doc].
-	SnapshotStatusUnknown = SnapshotStatus("unknown")
-	// SnapshotStatusCreating is [insert doc].
-	SnapshotStatusCreating = SnapshotStatus("creating")
-	// SnapshotStatusReady is [insert doc].
-	SnapshotStatusReady = SnapshotStatus("ready")
-	// SnapshotStatusRestoring is [insert doc].
+	SnapshotStatusUnknown   = SnapshotStatus("unknown")
+	SnapshotStatusCreating  = SnapshotStatus("creating")
+	SnapshotStatusReady     = SnapshotStatus("ready")
 	SnapshotStatusRestoring = SnapshotStatus("restoring")
-	// SnapshotStatusDeleting is [insert doc].
-	SnapshotStatusDeleting = SnapshotStatus("deleting")
-	// SnapshotStatusError is [insert doc].
-	SnapshotStatusError = SnapshotStatus("error")
-	// SnapshotStatusLocked is [insert doc].
-	SnapshotStatusLocked = SnapshotStatus("locked")
+	SnapshotStatusDeleting  = SnapshotStatus("deleting")
+	SnapshotStatusError     = SnapshotStatus("error")
+	SnapshotStatusLocked    = SnapshotStatus("locked")
 )
 
 func (enum SnapshotStatus) String() string {
@@ -780,9 +683,7 @@ func (enum *SnapshotStatus) UnmarshalJSON(data []byte) error {
 type VolumeType string
 
 const (
-	// VolumeTypeLssd is [insert doc].
 	VolumeTypeLssd = VolumeType("lssd")
-	// VolumeTypeBssd is [insert doc].
 	VolumeTypeBssd = VolumeType("bssd")
 )
 
@@ -2604,7 +2505,6 @@ type ResetReadReplicaRequest struct {
 // When you resync a read replica, first it is reset, and then its data is resynchronized from the primary node.
 // Your read replica will be unavailable during the resync process. The duration of this process is proportional to your Database Instance size.
 // The configured endpoints will not change.
-//
 func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 

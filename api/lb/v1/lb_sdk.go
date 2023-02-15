@@ -66,10 +66,8 @@ func NewAPI(client *scw.Client) *API {
 type ACLActionRedirectRedirectType string
 
 const (
-	// ACLActionRedirectRedirectTypeLocation is [insert doc].
 	ACLActionRedirectRedirectTypeLocation = ACLActionRedirectRedirectType("location")
-	// ACLActionRedirectRedirectTypeScheme is [insert doc].
-	ACLActionRedirectRedirectTypeScheme = ACLActionRedirectRedirectType("scheme")
+	ACLActionRedirectRedirectTypeScheme   = ACLActionRedirectRedirectType("scheme")
 )
 
 func (enum ACLActionRedirectRedirectType) String() string {
@@ -98,11 +96,8 @@ func (enum *ACLActionRedirectRedirectType) UnmarshalJSON(data []byte) error {
 type ACLActionType string
 
 const (
-	// ACLActionTypeAllow is [insert doc].
-	ACLActionTypeAllow = ACLActionType("allow")
-	// ACLActionTypeDeny is [insert doc].
-	ACLActionTypeDeny = ACLActionType("deny")
-	// ACLActionTypeRedirect is [insert doc].
+	ACLActionTypeAllow    = ACLActionType("allow")
+	ACLActionTypeDeny     = ACLActionType("deny")
 	ACLActionTypeRedirect = ACLActionType("redirect")
 )
 
@@ -132,16 +127,11 @@ func (enum *ACLActionType) UnmarshalJSON(data []byte) error {
 type ACLHTTPFilter string
 
 const (
-	// ACLHTTPFilterACLHTTPFilterNone is [insert doc].
 	ACLHTTPFilterACLHTTPFilterNone = ACLHTTPFilter("acl_http_filter_none")
-	// ACLHTTPFilterPathBegin is [insert doc].
-	ACLHTTPFilterPathBegin = ACLHTTPFilter("path_begin")
-	// ACLHTTPFilterPathEnd is [insert doc].
-	ACLHTTPFilterPathEnd = ACLHTTPFilter("path_end")
-	// ACLHTTPFilterRegex is [insert doc].
-	ACLHTTPFilterRegex = ACLHTTPFilter("regex")
-	// ACLHTTPFilterHTTPHeaderMatch is [insert doc].
-	ACLHTTPFilterHTTPHeaderMatch = ACLHTTPFilter("http_header_match")
+	ACLHTTPFilterPathBegin         = ACLHTTPFilter("path_begin")
+	ACLHTTPFilterPathEnd           = ACLHTTPFilter("path_end")
+	ACLHTTPFilterRegex             = ACLHTTPFilter("regex")
+	ACLHTTPFilterHTTPHeaderMatch   = ACLHTTPFilter("http_header_match")
 )
 
 func (enum ACLHTTPFilter) String() string {
@@ -170,15 +160,10 @@ func (enum *ACLHTTPFilter) UnmarshalJSON(data []byte) error {
 type BackendServerStatsHealthCheckStatus string
 
 const (
-	// BackendServerStatsHealthCheckStatusUnknown is [insert doc].
-	BackendServerStatsHealthCheckStatusUnknown = BackendServerStatsHealthCheckStatus("unknown")
-	// BackendServerStatsHealthCheckStatusNeutral is [insert doc].
-	BackendServerStatsHealthCheckStatusNeutral = BackendServerStatsHealthCheckStatus("neutral")
-	// BackendServerStatsHealthCheckStatusFailed is [insert doc].
-	BackendServerStatsHealthCheckStatusFailed = BackendServerStatsHealthCheckStatus("failed")
-	// BackendServerStatsHealthCheckStatusPassed is [insert doc].
-	BackendServerStatsHealthCheckStatusPassed = BackendServerStatsHealthCheckStatus("passed")
-	// BackendServerStatsHealthCheckStatusCondpass is [insert doc].
+	BackendServerStatsHealthCheckStatusUnknown  = BackendServerStatsHealthCheckStatus("unknown")
+	BackendServerStatsHealthCheckStatusNeutral  = BackendServerStatsHealthCheckStatus("neutral")
+	BackendServerStatsHealthCheckStatusFailed   = BackendServerStatsHealthCheckStatus("failed")
+	BackendServerStatsHealthCheckStatusPassed   = BackendServerStatsHealthCheckStatus("passed")
 	BackendServerStatsHealthCheckStatusCondpass = BackendServerStatsHealthCheckStatus("condpass")
 )
 
@@ -208,13 +193,9 @@ func (enum *BackendServerStatsHealthCheckStatus) UnmarshalJSON(data []byte) erro
 type BackendServerStatsServerState string
 
 const (
-	// BackendServerStatsServerStateStopped is [insert doc].
-	BackendServerStatsServerStateStopped = BackendServerStatsServerState("stopped")
-	// BackendServerStatsServerStateStarting is [insert doc].
+	BackendServerStatsServerStateStopped  = BackendServerStatsServerState("stopped")
 	BackendServerStatsServerStateStarting = BackendServerStatsServerState("starting")
-	// BackendServerStatsServerStateRunning is [insert doc].
-	BackendServerStatsServerStateRunning = BackendServerStatsServerState("running")
-	// BackendServerStatsServerStateStopping is [insert doc].
+	BackendServerStatsServerStateRunning  = BackendServerStatsServerState("running")
 	BackendServerStatsServerStateStopping = BackendServerStatsServerState("stopping")
 )
 
@@ -244,12 +225,9 @@ func (enum *BackendServerStatsServerState) UnmarshalJSON(data []byte) error {
 type CertificateStatus string
 
 const (
-	// CertificateStatusPending is [insert doc].
 	CertificateStatusPending = CertificateStatus("pending")
-	// CertificateStatusReady is [insert doc].
-	CertificateStatusReady = CertificateStatus("ready")
-	// CertificateStatusError is [insert doc].
-	CertificateStatusError = CertificateStatus("error")
+	CertificateStatusReady   = CertificateStatus("ready")
+	CertificateStatusError   = CertificateStatus("error")
 )
 
 func (enum CertificateStatus) String() string {
@@ -278,10 +256,8 @@ func (enum *CertificateStatus) UnmarshalJSON(data []byte) error {
 type CertificateType string
 
 const (
-	// CertificateTypeLetsencryt is [insert doc].
 	CertificateTypeLetsencryt = CertificateType("letsencryt")
-	// CertificateTypeCustom is [insert doc].
-	CertificateTypeCustom = CertificateType("custom")
+	CertificateTypeCustom     = CertificateType("custom")
 )
 
 func (enum CertificateType) String() string {
@@ -310,12 +286,9 @@ func (enum *CertificateType) UnmarshalJSON(data []byte) error {
 type ForwardPortAlgorithm string
 
 const (
-	// ForwardPortAlgorithmRoundrobin is [insert doc].
 	ForwardPortAlgorithmRoundrobin = ForwardPortAlgorithm("roundrobin")
-	// ForwardPortAlgorithmLeastconn is [insert doc].
-	ForwardPortAlgorithmLeastconn = ForwardPortAlgorithm("leastconn")
-	// ForwardPortAlgorithmFirst is [insert doc].
-	ForwardPortAlgorithmFirst = ForwardPortAlgorithm("first")
+	ForwardPortAlgorithmLeastconn  = ForwardPortAlgorithm("leastconn")
+	ForwardPortAlgorithmFirst      = ForwardPortAlgorithm("first")
 )
 
 func (enum ForwardPortAlgorithm) String() string {
@@ -344,19 +317,12 @@ func (enum *ForwardPortAlgorithm) UnmarshalJSON(data []byte) error {
 type InstanceStatus string
 
 const (
-	// InstanceStatusUnknown is [insert doc].
-	InstanceStatusUnknown = InstanceStatus("unknown")
-	// InstanceStatusReady is [insert doc].
-	InstanceStatusReady = InstanceStatus("ready")
-	// InstanceStatusPending is [insert doc].
-	InstanceStatusPending = InstanceStatus("pending")
-	// InstanceStatusStopped is [insert doc].
-	InstanceStatusStopped = InstanceStatus("stopped")
-	// InstanceStatusError is [insert doc].
-	InstanceStatusError = InstanceStatus("error")
-	// InstanceStatusLocked is [insert doc].
-	InstanceStatusLocked = InstanceStatus("locked")
-	// InstanceStatusMigrating is [insert doc].
+	InstanceStatusUnknown   = InstanceStatus("unknown")
+	InstanceStatusReady     = InstanceStatus("ready")
+	InstanceStatusPending   = InstanceStatus("pending")
+	InstanceStatusStopped   = InstanceStatus("stopped")
+	InstanceStatusError     = InstanceStatus("error")
+	InstanceStatusLocked    = InstanceStatus("locked")
 	InstanceStatusMigrating = InstanceStatus("migrating")
 )
 
@@ -386,28 +352,17 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 type LBStatus string
 
 const (
-	// LBStatusUnknown is [insert doc].
-	LBStatusUnknown = LBStatus("unknown")
-	// LBStatusReady is [insert doc].
-	LBStatusReady = LBStatus("ready")
-	// LBStatusPending is [insert doc].
-	LBStatusPending = LBStatus("pending")
-	// LBStatusStopped is [insert doc].
-	LBStatusStopped = LBStatus("stopped")
-	// LBStatusError is [insert doc].
-	LBStatusError = LBStatus("error")
-	// LBStatusLocked is [insert doc].
-	LBStatusLocked = LBStatus("locked")
-	// LBStatusMigrating is [insert doc].
+	LBStatusUnknown   = LBStatus("unknown")
+	LBStatusReady     = LBStatus("ready")
+	LBStatusPending   = LBStatus("pending")
+	LBStatusStopped   = LBStatus("stopped")
+	LBStatusError     = LBStatus("error")
+	LBStatusLocked    = LBStatus("locked")
 	LBStatusMigrating = LBStatus("migrating")
-	// LBStatusToCreate is [insert doc].
-	LBStatusToCreate = LBStatus("to_create")
-	// LBStatusCreating is [insert doc].
-	LBStatusCreating = LBStatus("creating")
-	// LBStatusToDelete is [insert doc].
-	LBStatusToDelete = LBStatus("to_delete")
-	// LBStatusDeleting is [insert doc].
-	LBStatusDeleting = LBStatus("deleting")
+	LBStatusToCreate  = LBStatus("to_create")
+	LBStatusCreating  = LBStatus("creating")
+	LBStatusToDelete  = LBStatus("to_delete")
+	LBStatusDeleting  = LBStatus("deleting")
 )
 
 func (enum LBStatus) String() string {
@@ -436,14 +391,10 @@ func (enum *LBStatus) UnmarshalJSON(data []byte) error {
 type LBTypeStock string
 
 const (
-	// LBTypeStockUnknown is [insert doc].
-	LBTypeStockUnknown = LBTypeStock("unknown")
-	// LBTypeStockLowStock is [insert doc].
-	LBTypeStockLowStock = LBTypeStock("low_stock")
-	// LBTypeStockOutOfStock is [insert doc].
+	LBTypeStockUnknown    = LBTypeStock("unknown")
+	LBTypeStockLowStock   = LBTypeStock("low_stock")
 	LBTypeStockOutOfStock = LBTypeStock("out_of_stock")
-	// LBTypeStockAvailable is [insert doc].
-	LBTypeStockAvailable = LBTypeStock("available")
+	LBTypeStockAvailable  = LBTypeStock("available")
 )
 
 func (enum LBTypeStock) String() string {
@@ -472,14 +423,10 @@ func (enum *LBTypeStock) UnmarshalJSON(data []byte) error {
 type ListACLRequestOrderBy string
 
 const (
-	// ListACLRequestOrderByCreatedAtAsc is [insert doc].
-	ListACLRequestOrderByCreatedAtAsc = ListACLRequestOrderBy("created_at_asc")
-	// ListACLRequestOrderByCreatedAtDesc is [insert doc].
+	ListACLRequestOrderByCreatedAtAsc  = ListACLRequestOrderBy("created_at_asc")
 	ListACLRequestOrderByCreatedAtDesc = ListACLRequestOrderBy("created_at_desc")
-	// ListACLRequestOrderByNameAsc is [insert doc].
-	ListACLRequestOrderByNameAsc = ListACLRequestOrderBy("name_asc")
-	// ListACLRequestOrderByNameDesc is [insert doc].
-	ListACLRequestOrderByNameDesc = ListACLRequestOrderBy("name_desc")
+	ListACLRequestOrderByNameAsc       = ListACLRequestOrderBy("name_asc")
+	ListACLRequestOrderByNameDesc      = ListACLRequestOrderBy("name_desc")
 )
 
 func (enum ListACLRequestOrderBy) String() string {
@@ -508,14 +455,10 @@ func (enum *ListACLRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListBackendsRequestOrderBy string
 
 const (
-	// ListBackendsRequestOrderByCreatedAtAsc is [insert doc].
-	ListBackendsRequestOrderByCreatedAtAsc = ListBackendsRequestOrderBy("created_at_asc")
-	// ListBackendsRequestOrderByCreatedAtDesc is [insert doc].
+	ListBackendsRequestOrderByCreatedAtAsc  = ListBackendsRequestOrderBy("created_at_asc")
 	ListBackendsRequestOrderByCreatedAtDesc = ListBackendsRequestOrderBy("created_at_desc")
-	// ListBackendsRequestOrderByNameAsc is [insert doc].
-	ListBackendsRequestOrderByNameAsc = ListBackendsRequestOrderBy("name_asc")
-	// ListBackendsRequestOrderByNameDesc is [insert doc].
-	ListBackendsRequestOrderByNameDesc = ListBackendsRequestOrderBy("name_desc")
+	ListBackendsRequestOrderByNameAsc       = ListBackendsRequestOrderBy("name_asc")
+	ListBackendsRequestOrderByNameDesc      = ListBackendsRequestOrderBy("name_desc")
 )
 
 func (enum ListBackendsRequestOrderBy) String() string {
@@ -544,14 +487,10 @@ func (enum *ListBackendsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListCertificatesRequestOrderBy string
 
 const (
-	// ListCertificatesRequestOrderByCreatedAtAsc is [insert doc].
-	ListCertificatesRequestOrderByCreatedAtAsc = ListCertificatesRequestOrderBy("created_at_asc")
-	// ListCertificatesRequestOrderByCreatedAtDesc is [insert doc].
+	ListCertificatesRequestOrderByCreatedAtAsc  = ListCertificatesRequestOrderBy("created_at_asc")
 	ListCertificatesRequestOrderByCreatedAtDesc = ListCertificatesRequestOrderBy("created_at_desc")
-	// ListCertificatesRequestOrderByNameAsc is [insert doc].
-	ListCertificatesRequestOrderByNameAsc = ListCertificatesRequestOrderBy("name_asc")
-	// ListCertificatesRequestOrderByNameDesc is [insert doc].
-	ListCertificatesRequestOrderByNameDesc = ListCertificatesRequestOrderBy("name_desc")
+	ListCertificatesRequestOrderByNameAsc       = ListCertificatesRequestOrderBy("name_asc")
+	ListCertificatesRequestOrderByNameDesc      = ListCertificatesRequestOrderBy("name_desc")
 )
 
 func (enum ListCertificatesRequestOrderBy) String() string {
@@ -580,14 +519,10 @@ func (enum *ListCertificatesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListFrontendsRequestOrderBy string
 
 const (
-	// ListFrontendsRequestOrderByCreatedAtAsc is [insert doc].
-	ListFrontendsRequestOrderByCreatedAtAsc = ListFrontendsRequestOrderBy("created_at_asc")
-	// ListFrontendsRequestOrderByCreatedAtDesc is [insert doc].
+	ListFrontendsRequestOrderByCreatedAtAsc  = ListFrontendsRequestOrderBy("created_at_asc")
 	ListFrontendsRequestOrderByCreatedAtDesc = ListFrontendsRequestOrderBy("created_at_desc")
-	// ListFrontendsRequestOrderByNameAsc is [insert doc].
-	ListFrontendsRequestOrderByNameAsc = ListFrontendsRequestOrderBy("name_asc")
-	// ListFrontendsRequestOrderByNameDesc is [insert doc].
-	ListFrontendsRequestOrderByNameDesc = ListFrontendsRequestOrderBy("name_desc")
+	ListFrontendsRequestOrderByNameAsc       = ListFrontendsRequestOrderBy("name_asc")
+	ListFrontendsRequestOrderByNameDesc      = ListFrontendsRequestOrderBy("name_desc")
 )
 
 func (enum ListFrontendsRequestOrderBy) String() string {
@@ -616,14 +551,10 @@ func (enum *ListFrontendsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListLBsRequestOrderBy string
 
 const (
-	// ListLBsRequestOrderByCreatedAtAsc is [insert doc].
-	ListLBsRequestOrderByCreatedAtAsc = ListLBsRequestOrderBy("created_at_asc")
-	// ListLBsRequestOrderByCreatedAtDesc is [insert doc].
+	ListLBsRequestOrderByCreatedAtAsc  = ListLBsRequestOrderBy("created_at_asc")
 	ListLBsRequestOrderByCreatedAtDesc = ListLBsRequestOrderBy("created_at_desc")
-	// ListLBsRequestOrderByNameAsc is [insert doc].
-	ListLBsRequestOrderByNameAsc = ListLBsRequestOrderBy("name_asc")
-	// ListLBsRequestOrderByNameDesc is [insert doc].
-	ListLBsRequestOrderByNameDesc = ListLBsRequestOrderBy("name_desc")
+	ListLBsRequestOrderByNameAsc       = ListLBsRequestOrderBy("name_asc")
+	ListLBsRequestOrderByNameDesc      = ListLBsRequestOrderBy("name_desc")
 )
 
 func (enum ListLBsRequestOrderBy) String() string {
@@ -652,9 +583,7 @@ func (enum *ListLBsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPrivateNetworksRequestOrderBy string
 
 const (
-	// ListPrivateNetworksRequestOrderByCreatedAtAsc is [insert doc].
-	ListPrivateNetworksRequestOrderByCreatedAtAsc = ListPrivateNetworksRequestOrderBy("created_at_asc")
-	// ListPrivateNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListPrivateNetworksRequestOrderByCreatedAtAsc  = ListPrivateNetworksRequestOrderBy("created_at_asc")
 	ListPrivateNetworksRequestOrderByCreatedAtDesc = ListPrivateNetworksRequestOrderBy("created_at_desc")
 )
 
@@ -684,9 +613,7 @@ func (enum *ListPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error 
 type ListRoutesRequestOrderBy string
 
 const (
-	// ListRoutesRequestOrderByCreatedAtAsc is [insert doc].
-	ListRoutesRequestOrderByCreatedAtAsc = ListRoutesRequestOrderBy("created_at_asc")
-	// ListRoutesRequestOrderByCreatedAtDesc is [insert doc].
+	ListRoutesRequestOrderByCreatedAtAsc  = ListRoutesRequestOrderBy("created_at_asc")
 	ListRoutesRequestOrderByCreatedAtDesc = ListRoutesRequestOrderBy("created_at_desc")
 )
 
@@ -716,14 +643,10 @@ func (enum *ListRoutesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListSubscriberRequestOrderBy string
 
 const (
-	// ListSubscriberRequestOrderByCreatedAtAsc is [insert doc].
-	ListSubscriberRequestOrderByCreatedAtAsc = ListSubscriberRequestOrderBy("created_at_asc")
-	// ListSubscriberRequestOrderByCreatedAtDesc is [insert doc].
+	ListSubscriberRequestOrderByCreatedAtAsc  = ListSubscriberRequestOrderBy("created_at_asc")
 	ListSubscriberRequestOrderByCreatedAtDesc = ListSubscriberRequestOrderBy("created_at_desc")
-	// ListSubscriberRequestOrderByNameAsc is [insert doc].
-	ListSubscriberRequestOrderByNameAsc = ListSubscriberRequestOrderBy("name_asc")
-	// ListSubscriberRequestOrderByNameDesc is [insert doc].
-	ListSubscriberRequestOrderByNameDesc = ListSubscriberRequestOrderBy("name_desc")
+	ListSubscriberRequestOrderByNameAsc       = ListSubscriberRequestOrderBy("name_asc")
+	ListSubscriberRequestOrderByNameDesc      = ListSubscriberRequestOrderBy("name_desc")
 )
 
 func (enum ListSubscriberRequestOrderBy) String() string {
@@ -752,10 +675,8 @@ func (enum *ListSubscriberRequestOrderBy) UnmarshalJSON(data []byte) error {
 type OnMarkedDownAction string
 
 const (
-	// OnMarkedDownActionOnMarkedDownActionNone is [insert doc].
 	OnMarkedDownActionOnMarkedDownActionNone = OnMarkedDownAction("on_marked_down_action_none")
-	// OnMarkedDownActionShutdownSessions is [insert doc].
-	OnMarkedDownActionShutdownSessions = OnMarkedDownAction("shutdown_sessions")
+	OnMarkedDownActionShutdownSessions       = OnMarkedDownAction("shutdown_sessions")
 )
 
 func (enum OnMarkedDownAction) String() string {
@@ -784,14 +705,10 @@ func (enum *OnMarkedDownAction) UnmarshalJSON(data []byte) error {
 type PrivateNetworkStatus string
 
 const (
-	// PrivateNetworkStatusUnknown is [insert doc].
 	PrivateNetworkStatusUnknown = PrivateNetworkStatus("unknown")
-	// PrivateNetworkStatusReady is [insert doc].
-	PrivateNetworkStatusReady = PrivateNetworkStatus("ready")
-	// PrivateNetworkStatusPending is [insert doc].
+	PrivateNetworkStatusReady   = PrivateNetworkStatus("ready")
 	PrivateNetworkStatusPending = PrivateNetworkStatus("pending")
-	// PrivateNetworkStatusError is [insert doc].
-	PrivateNetworkStatusError = PrivateNetworkStatus("error")
+	PrivateNetworkStatusError   = PrivateNetworkStatus("error")
 )
 
 func (enum PrivateNetworkStatus) String() string {
@@ -820,9 +737,7 @@ func (enum *PrivateNetworkStatus) UnmarshalJSON(data []byte) error {
 type Protocol string
 
 const (
-	// ProtocolTCP is [insert doc].
-	ProtocolTCP = Protocol("tcp")
-	// ProtocolHTTP is [insert doc].
+	ProtocolTCP  = Protocol("tcp")
 	ProtocolHTTP = Protocol("http")
 )
 
@@ -858,21 +773,14 @@ func (enum *Protocol) UnmarshalJSON(data []byte) error {
 // * `proxy_protocol_v2` Version two (binary format).
 // * `proxy_protocol_v2_ssl` Version two with SSL connection.
 // * `proxy_protocol_v2_ssl_cn` Version two with SSL connection and common name information.
-//
 type ProxyProtocol string
 
 const (
-	// ProxyProtocolProxyProtocolUnknown is [insert doc].
 	ProxyProtocolProxyProtocolUnknown = ProxyProtocol("proxy_protocol_unknown")
-	// ProxyProtocolProxyProtocolNone is [insert doc].
-	ProxyProtocolProxyProtocolNone = ProxyProtocol("proxy_protocol_none")
-	// ProxyProtocolProxyProtocolV1 is [insert doc].
-	ProxyProtocolProxyProtocolV1 = ProxyProtocol("proxy_protocol_v1")
-	// ProxyProtocolProxyProtocolV2 is [insert doc].
-	ProxyProtocolProxyProtocolV2 = ProxyProtocol("proxy_protocol_v2")
-	// ProxyProtocolProxyProtocolV2Ssl is [insert doc].
-	ProxyProtocolProxyProtocolV2Ssl = ProxyProtocol("proxy_protocol_v2_ssl")
-	// ProxyProtocolProxyProtocolV2SslCn is [insert doc].
+	ProxyProtocolProxyProtocolNone    = ProxyProtocol("proxy_protocol_none")
+	ProxyProtocolProxyProtocolV1      = ProxyProtocol("proxy_protocol_v1")
+	ProxyProtocolProxyProtocolV2      = ProxyProtocol("proxy_protocol_v2")
+	ProxyProtocolProxyProtocolV2Ssl   = ProxyProtocol("proxy_protocol_v2_ssl")
 	ProxyProtocolProxyProtocolV2SslCn = ProxyProtocol("proxy_protocol_v2_ssl_cn")
 )
 
@@ -902,14 +810,10 @@ func (enum *ProxyProtocol) UnmarshalJSON(data []byte) error {
 type SSLCompatibilityLevel string
 
 const (
-	// SSLCompatibilityLevelSslCompatibilityLevelUnknown is [insert doc].
-	SSLCompatibilityLevelSslCompatibilityLevelUnknown = SSLCompatibilityLevel("ssl_compatibility_level_unknown")
-	// SSLCompatibilityLevelSslCompatibilityLevelIntermediate is [insert doc].
+	SSLCompatibilityLevelSslCompatibilityLevelUnknown      = SSLCompatibilityLevel("ssl_compatibility_level_unknown")
 	SSLCompatibilityLevelSslCompatibilityLevelIntermediate = SSLCompatibilityLevel("ssl_compatibility_level_intermediate")
-	// SSLCompatibilityLevelSslCompatibilityLevelModern is [insert doc].
-	SSLCompatibilityLevelSslCompatibilityLevelModern = SSLCompatibilityLevel("ssl_compatibility_level_modern")
-	// SSLCompatibilityLevelSslCompatibilityLevelOld is [insert doc].
-	SSLCompatibilityLevelSslCompatibilityLevelOld = SSLCompatibilityLevel("ssl_compatibility_level_old")
+	SSLCompatibilityLevelSslCompatibilityLevelModern       = SSLCompatibilityLevel("ssl_compatibility_level_modern")
+	SSLCompatibilityLevelSslCompatibilityLevelOld          = SSLCompatibilityLevel("ssl_compatibility_level_old")
 )
 
 func (enum SSLCompatibilityLevel) String() string {
@@ -938,12 +842,9 @@ func (enum *SSLCompatibilityLevel) UnmarshalJSON(data []byte) error {
 type StickySessionsType string
 
 const (
-	// StickySessionsTypeNone is [insert doc].
-	StickySessionsTypeNone = StickySessionsType("none")
-	// StickySessionsTypeCookie is [insert doc].
+	StickySessionsTypeNone   = StickySessionsType("none")
 	StickySessionsTypeCookie = StickySessionsType("cookie")
-	// StickySessionsTypeTable is [insert doc].
-	StickySessionsTypeTable = StickySessionsType("table")
+	StickySessionsTypeTable  = StickySessionsType("table")
 )
 
 func (enum StickySessionsType) String() string {
@@ -1016,7 +917,6 @@ type ACLActionRedirect struct {
 	// - `{{ query }}` for the current request's query string
 	// - `{{ path }}` for the current request's URL path
 	// - `{{ scheme }}` for the current request's scheme
-	//
 	Target string `json:"target"`
 	// Code: HTTP redirect code to use. Valid values are 301, 302, 303, 307 and 308. Default value is 302
 	Code *int32 `json:"code"`
@@ -2405,7 +2305,6 @@ type ZonedAPICreateBackendRequest struct {
 	//
 	// Only the host part of the Scaleway S3 bucket website is expected.
 	// E.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
@@ -2588,7 +2487,6 @@ type ZonedAPIUpdateBackendRequest struct {
 	//
 	// Only the host part of the Scaleway S3 bucket website is expected.
 	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
@@ -3709,7 +3607,6 @@ type ZonedAPICreateACLRequest struct {
 	//   - `ip_subnet` is defined
 	//   - `http_filter` and `http_filter_value` are defined
 	//   - `ip_subnet`, `http_filter` and `http_filter_value` are defined
-	//
 	Match *ACLMatch `json:"match"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`
@@ -5468,7 +5365,6 @@ type CreateBackendRequest struct {
 	//
 	// Only the host part of the Scaleway S3 bucket website is expected.
 	// E.g. `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
@@ -5651,7 +5547,6 @@ type UpdateBackendRequest struct {
 	//
 	// Only the host part of the Scaleway S3 bucket website is expected.
 	// Example: `failover-website.s3-website.fr-par.scw.cloud` if your bucket website URL is `https://failover-website.s3-website.fr-par.scw.cloud/`.
-	//
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: enable SSL between load balancer and backend servers
 	SslBridging *bool `json:"ssl_bridging"`
@@ -6772,7 +6667,6 @@ type CreateACLRequest struct {
 	//   - `ip_subnet` is defined
 	//   - `http_filter` and `http_filter_value` are defined
 	//   - `ip_subnet`, `http_filter` and `http_filter_value` are defined
-	//
 	Match *ACLMatch `json:"match"`
 	// Index: order between your Acls (ascending order, 0 is first acl executed)
 	Index int32 `json:"index"`

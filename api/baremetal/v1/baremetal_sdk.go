@@ -66,14 +66,10 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 type IPReverseStatus string
 
 const (
-	// IPReverseStatusUnknown is [insert doc].
 	IPReverseStatusUnknown = IPReverseStatus("unknown")
-	// IPReverseStatusPending is [insert doc].
 	IPReverseStatusPending = IPReverseStatus("pending")
-	// IPReverseStatusActive is [insert doc].
-	IPReverseStatusActive = IPReverseStatus("active")
-	// IPReverseStatusError is [insert doc].
-	IPReverseStatusError = IPReverseStatus("error")
+	IPReverseStatusActive  = IPReverseStatus("active")
+	IPReverseStatusError   = IPReverseStatus("error")
 )
 
 func (enum IPReverseStatus) String() string {
@@ -102,9 +98,7 @@ func (enum *IPReverseStatus) UnmarshalJSON(data []byte) error {
 type IPVersion string
 
 const (
-	// IPVersionIPv4 is [insert doc].
 	IPVersionIPv4 = IPVersion("IPv4")
-	// IPVersionIPv6 is [insert doc].
 	IPVersionIPv6 = IPVersion("IPv6")
 )
 
@@ -134,9 +128,7 @@ func (enum *IPVersion) UnmarshalJSON(data []byte) error {
 type ListServerEventsRequestOrderBy string
 
 const (
-	// ListServerEventsRequestOrderByCreatedAtAsc is [insert doc].
-	ListServerEventsRequestOrderByCreatedAtAsc = ListServerEventsRequestOrderBy("created_at_asc")
-	// ListServerEventsRequestOrderByCreatedAtDesc is [insert doc].
+	ListServerEventsRequestOrderByCreatedAtAsc  = ListServerEventsRequestOrderBy("created_at_asc")
 	ListServerEventsRequestOrderByCreatedAtDesc = ListServerEventsRequestOrderBy("created_at_desc")
 )
 
@@ -166,13 +158,9 @@ func (enum *ListServerEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListServerPrivateNetworksRequestOrderBy string
 
 const (
-	// ListServerPrivateNetworksRequestOrderByCreatedAtAsc is [insert doc].
-	ListServerPrivateNetworksRequestOrderByCreatedAtAsc = ListServerPrivateNetworksRequestOrderBy("created_at_asc")
-	// ListServerPrivateNetworksRequestOrderByCreatedAtDesc is [insert doc].
+	ListServerPrivateNetworksRequestOrderByCreatedAtAsc  = ListServerPrivateNetworksRequestOrderBy("created_at_asc")
 	ListServerPrivateNetworksRequestOrderByCreatedAtDesc = ListServerPrivateNetworksRequestOrderBy("created_at_desc")
-	// ListServerPrivateNetworksRequestOrderByUpdatedAtAsc is [insert doc].
-	ListServerPrivateNetworksRequestOrderByUpdatedAtAsc = ListServerPrivateNetworksRequestOrderBy("updated_at_asc")
-	// ListServerPrivateNetworksRequestOrderByUpdatedAtDesc is [insert doc].
+	ListServerPrivateNetworksRequestOrderByUpdatedAtAsc  = ListServerPrivateNetworksRequestOrderBy("updated_at_asc")
 	ListServerPrivateNetworksRequestOrderByUpdatedAtDesc = ListServerPrivateNetworksRequestOrderBy("updated_at_desc")
 )
 
@@ -202,9 +190,7 @@ func (enum *ListServerPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) 
 type ListServersRequestOrderBy string
 
 const (
-	// ListServersRequestOrderByCreatedAtAsc is [insert doc].
-	ListServersRequestOrderByCreatedAtAsc = ListServersRequestOrderBy("created_at_asc")
-	// ListServersRequestOrderByCreatedAtDesc is [insert doc].
+	ListServersRequestOrderByCreatedAtAsc  = ListServersRequestOrderBy("created_at_asc")
 	ListServersRequestOrderByCreatedAtDesc = ListServersRequestOrderBy("created_at_desc")
 )
 
@@ -234,9 +220,7 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListSettingsRequestOrderBy string
 
 const (
-	// ListSettingsRequestOrderByCreatedAtAsc is [insert doc].
-	ListSettingsRequestOrderByCreatedAtAsc = ListSettingsRequestOrderBy("created_at_asc")
-	// ListSettingsRequestOrderByCreatedAtDesc is [insert doc].
+	ListSettingsRequestOrderByCreatedAtAsc  = ListSettingsRequestOrderBy("created_at_asc")
 	ListSettingsRequestOrderByCreatedAtDesc = ListSettingsRequestOrderBy("created_at_desc")
 )
 
@@ -266,11 +250,8 @@ func (enum *ListSettingsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type OfferStock string
 
 const (
-	// OfferStockEmpty is [insert doc].
-	OfferStockEmpty = OfferStock("empty")
-	// OfferStockLow is [insert doc].
-	OfferStockLow = OfferStock("low")
-	// OfferStockAvailable is [insert doc].
+	OfferStockEmpty     = OfferStock("empty")
+	OfferStockLow       = OfferStock("low")
 	OfferStockAvailable = OfferStock("available")
 )
 
@@ -300,12 +281,9 @@ func (enum *OfferStock) UnmarshalJSON(data []byte) error {
 type OfferSubscriptionPeriod string
 
 const (
-	// OfferSubscriptionPeriodUnknownSubscriptionPeriod is [insert doc].
 	OfferSubscriptionPeriodUnknownSubscriptionPeriod = OfferSubscriptionPeriod("unknown_subscription_period")
-	// OfferSubscriptionPeriodHourly is [insert doc].
-	OfferSubscriptionPeriodHourly = OfferSubscriptionPeriod("hourly")
-	// OfferSubscriptionPeriodMonthly is [insert doc].
-	OfferSubscriptionPeriodMonthly = OfferSubscriptionPeriod("monthly")
+	OfferSubscriptionPeriodHourly                    = OfferSubscriptionPeriod("hourly")
+	OfferSubscriptionPeriodMonthly                   = OfferSubscriptionPeriod("monthly")
 )
 
 func (enum OfferSubscriptionPeriod) String() string {
@@ -334,12 +312,9 @@ func (enum *OfferSubscriptionPeriod) UnmarshalJSON(data []byte) error {
 type ServerBootType string
 
 const (
-	// ServerBootTypeUnknownBootType is [insert doc].
 	ServerBootTypeUnknownBootType = ServerBootType("unknown_boot_type")
-	// ServerBootTypeNormal is [insert doc].
-	ServerBootTypeNormal = ServerBootType("normal")
-	// ServerBootTypeRescue is [insert doc].
-	ServerBootTypeRescue = ServerBootType("rescue")
+	ServerBootTypeNormal          = ServerBootType("normal")
+	ServerBootTypeRescue          = ServerBootType("rescue")
 )
 
 func (enum ServerBootType) String() string {
@@ -368,16 +343,11 @@ func (enum *ServerBootType) UnmarshalJSON(data []byte) error {
 type ServerInstallStatus string
 
 const (
-	// ServerInstallStatusUnknown is [insert doc].
-	ServerInstallStatusUnknown = ServerInstallStatus("unknown")
-	// ServerInstallStatusToInstall is [insert doc].
-	ServerInstallStatusToInstall = ServerInstallStatus("to_install")
-	// ServerInstallStatusInstalling is [insert doc].
+	ServerInstallStatusUnknown    = ServerInstallStatus("unknown")
+	ServerInstallStatusToInstall  = ServerInstallStatus("to_install")
 	ServerInstallStatusInstalling = ServerInstallStatus("installing")
-	// ServerInstallStatusCompleted is [insert doc].
-	ServerInstallStatusCompleted = ServerInstallStatus("completed")
-	// ServerInstallStatusError is [insert doc].
-	ServerInstallStatusError = ServerInstallStatus("error")
+	ServerInstallStatusCompleted  = ServerInstallStatus("completed")
+	ServerInstallStatusError      = ServerInstallStatus("error")
 )
 
 func (enum ServerInstallStatus) String() string {
@@ -406,16 +376,11 @@ func (enum *ServerInstallStatus) UnmarshalJSON(data []byte) error {
 type ServerOptionOptionStatus string
 
 const (
-	// ServerOptionOptionStatusOptionStatusUnknown is [insert doc].
-	ServerOptionOptionStatusOptionStatusUnknown = ServerOptionOptionStatus("option_status_unknown")
-	// ServerOptionOptionStatusOptionStatusEnable is [insert doc].
-	ServerOptionOptionStatusOptionStatusEnable = ServerOptionOptionStatus("option_status_enable")
-	// ServerOptionOptionStatusOptionStatusEnabling is [insert doc].
-	ServerOptionOptionStatusOptionStatusEnabling = ServerOptionOptionStatus("option_status_enabling")
-	// ServerOptionOptionStatusOptionStatusDisabling is [insert doc].
+	ServerOptionOptionStatusOptionStatusUnknown   = ServerOptionOptionStatus("option_status_unknown")
+	ServerOptionOptionStatusOptionStatusEnable    = ServerOptionOptionStatus("option_status_enable")
+	ServerOptionOptionStatusOptionStatusEnabling  = ServerOptionOptionStatus("option_status_enabling")
 	ServerOptionOptionStatusOptionStatusDisabling = ServerOptionOptionStatus("option_status_disabling")
-	// ServerOptionOptionStatusOptionStatusError is [insert doc].
-	ServerOptionOptionStatusOptionStatusError = ServerOptionOptionStatus("option_status_error")
+	ServerOptionOptionStatusOptionStatusError     = ServerOptionOptionStatus("option_status_error")
 )
 
 func (enum ServerOptionOptionStatus) String() string {
@@ -444,12 +409,9 @@ func (enum *ServerOptionOptionStatus) UnmarshalJSON(data []byte) error {
 type ServerPingStatus string
 
 const (
-	// ServerPingStatusPingStatusUnknown is [insert doc].
 	ServerPingStatusPingStatusUnknown = ServerPingStatus("ping_status_unknown")
-	// ServerPingStatusPingStatusUp is [insert doc].
-	ServerPingStatusPingStatusUp = ServerPingStatus("ping_status_up")
-	// ServerPingStatusPingStatusDown is [insert doc].
-	ServerPingStatusPingStatusDown = ServerPingStatus("ping_status_down")
+	ServerPingStatusPingStatusUp      = ServerPingStatus("ping_status_up")
+	ServerPingStatusPingStatusDown    = ServerPingStatus("ping_status_down")
 )
 
 func (enum ServerPingStatus) String() string {
@@ -478,18 +440,12 @@ func (enum *ServerPingStatus) UnmarshalJSON(data []byte) error {
 type ServerPrivateNetworkStatus string
 
 const (
-	// ServerPrivateNetworkStatusUnknown is [insert doc].
-	ServerPrivateNetworkStatusUnknown = ServerPrivateNetworkStatus("unknown")
-	// ServerPrivateNetworkStatusAttaching is [insert doc].
+	ServerPrivateNetworkStatusUnknown   = ServerPrivateNetworkStatus("unknown")
 	ServerPrivateNetworkStatusAttaching = ServerPrivateNetworkStatus("attaching")
-	// ServerPrivateNetworkStatusAttached is [insert doc].
-	ServerPrivateNetworkStatusAttached = ServerPrivateNetworkStatus("attached")
-	// ServerPrivateNetworkStatusError is [insert doc].
-	ServerPrivateNetworkStatusError = ServerPrivateNetworkStatus("error")
-	// ServerPrivateNetworkStatusDetaching is [insert doc].
+	ServerPrivateNetworkStatusAttached  = ServerPrivateNetworkStatus("attached")
+	ServerPrivateNetworkStatusError     = ServerPrivateNetworkStatus("error")
 	ServerPrivateNetworkStatusDetaching = ServerPrivateNetworkStatus("detaching")
-	// ServerPrivateNetworkStatusLocked is [insert doc].
-	ServerPrivateNetworkStatusLocked = ServerPrivateNetworkStatus("locked")
+	ServerPrivateNetworkStatusLocked    = ServerPrivateNetworkStatus("locked")
 )
 
 func (enum ServerPrivateNetworkStatus) String() string {
@@ -518,30 +474,18 @@ func (enum *ServerPrivateNetworkStatus) UnmarshalJSON(data []byte) error {
 type ServerStatus string
 
 const (
-	// ServerStatusUnknown is [insert doc].
-	ServerStatusUnknown = ServerStatus("unknown")
-	// ServerStatusDelivering is [insert doc].
+	ServerStatusUnknown    = ServerStatus("unknown")
 	ServerStatusDelivering = ServerStatus("delivering")
-	// ServerStatusReady is [insert doc].
-	ServerStatusReady = ServerStatus("ready")
-	// ServerStatusStopping is [insert doc].
-	ServerStatusStopping = ServerStatus("stopping")
-	// ServerStatusStopped is [insert doc].
-	ServerStatusStopped = ServerStatus("stopped")
-	// ServerStatusStarting is [insert doc].
-	ServerStatusStarting = ServerStatus("starting")
-	// ServerStatusError is [insert doc].
-	ServerStatusError = ServerStatus("error")
-	// ServerStatusDeleting is [insert doc].
-	ServerStatusDeleting = ServerStatus("deleting")
-	// ServerStatusLocked is [insert doc].
-	ServerStatusLocked = ServerStatus("locked")
-	// ServerStatusOutOfStock is [insert doc].
+	ServerStatusReady      = ServerStatus("ready")
+	ServerStatusStopping   = ServerStatus("stopping")
+	ServerStatusStopped    = ServerStatus("stopped")
+	ServerStatusStarting   = ServerStatus("starting")
+	ServerStatusError      = ServerStatus("error")
+	ServerStatusDeleting   = ServerStatus("deleting")
+	ServerStatusLocked     = ServerStatus("locked")
 	ServerStatusOutOfStock = ServerStatus("out_of_stock")
-	// ServerStatusOrdered is [insert doc].
-	ServerStatusOrdered = ServerStatus("ordered")
-	// ServerStatusResetting is [insert doc].
-	ServerStatusResetting = ServerStatus("resetting")
+	ServerStatusOrdered    = ServerStatus("ordered")
+	ServerStatusResetting  = ServerStatus("resetting")
 )
 
 func (enum ServerStatus) String() string {
@@ -570,10 +514,8 @@ func (enum *ServerStatus) UnmarshalJSON(data []byte) error {
 type SettingType string
 
 const (
-	// SettingTypeUnknown is [insert doc].
 	SettingTypeUnknown = SettingType("unknown")
-	// SettingTypeSMTP is [insert doc].
-	SettingTypeSMTP = SettingType("smtp")
+	SettingTypeSMTP    = SettingType("smtp")
 )
 
 func (enum SettingType) String() string {
@@ -831,7 +773,6 @@ type OfferOptionOffer struct {
 	Name string `json:"name"`
 	// Enabled: if true the option is enabled and included by default in the offer
 	// If false the option is available for the offer but not included by default
-	//
 	Enabled bool `json:"enabled"`
 	// SubscriptionPeriod: period of subscription for the offer
 	//
@@ -1642,7 +1583,6 @@ type StartBMCAccessRequest struct {
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
 // You need first to create an option Remote Access. You will find the ID and the price with a call to listOffers (https://developers.scaleway.com/en/products/baremetal/api/#get-78db92). Then you can add the option https://developers.scaleway.com/en/products/baremetal/api/#post-b14abd. Do not forget to delete the Option.
 //  After start BMC, you need to Get Remote Access to get the login/password https://developers.scaleway.com/en/products/baremetal/api/#get-cefc0f.
-//
 func (s *API) StartBMCAccess(req *StartBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
 	var err error
 

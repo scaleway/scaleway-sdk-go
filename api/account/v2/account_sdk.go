@@ -56,14 +56,10 @@ func NewAPI(client *scw.Client) *API {
 type ListProjectsRequestOrderBy string
 
 const (
-	// ListProjectsRequestOrderByCreatedAtAsc is [insert doc].
-	ListProjectsRequestOrderByCreatedAtAsc = ListProjectsRequestOrderBy("created_at_asc")
-	// ListProjectsRequestOrderByCreatedAtDesc is [insert doc].
+	ListProjectsRequestOrderByCreatedAtAsc  = ListProjectsRequestOrderBy("created_at_asc")
 	ListProjectsRequestOrderByCreatedAtDesc = ListProjectsRequestOrderBy("created_at_desc")
-	// ListProjectsRequestOrderByNameAsc is [insert doc].
-	ListProjectsRequestOrderByNameAsc = ListProjectsRequestOrderBy("name_asc")
-	// ListProjectsRequestOrderByNameDesc is [insert doc].
-	ListProjectsRequestOrderByNameDesc = ListProjectsRequestOrderBy("name_desc")
+	ListProjectsRequestOrderByNameAsc       = ListProjectsRequestOrderBy("name_asc")
+	ListProjectsRequestOrderByNameDesc      = ListProjectsRequestOrderBy("name_desc")
 )
 
 func (enum ListProjectsRequestOrderBy) String() string {
