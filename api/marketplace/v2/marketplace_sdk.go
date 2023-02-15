@@ -54,17 +54,11 @@ func NewAPI(client *scw.Client) *API {
 type ListImagesRequestOrderBy string
 
 const (
-	// ListImagesRequestOrderByNameAsc is [insert doc].
-	ListImagesRequestOrderByNameAsc = ListImagesRequestOrderBy("name_asc")
-	// ListImagesRequestOrderByNameDesc is [insert doc].
-	ListImagesRequestOrderByNameDesc = ListImagesRequestOrderBy("name_desc")
-	// ListImagesRequestOrderByCreatedAtAsc is [insert doc].
-	ListImagesRequestOrderByCreatedAtAsc = ListImagesRequestOrderBy("created_at_asc")
-	// ListImagesRequestOrderByCreatedAtDesc is [insert doc].
+	ListImagesRequestOrderByNameAsc       = ListImagesRequestOrderBy("name_asc")
+	ListImagesRequestOrderByNameDesc      = ListImagesRequestOrderBy("name_desc")
+	ListImagesRequestOrderByCreatedAtAsc  = ListImagesRequestOrderBy("created_at_asc")
 	ListImagesRequestOrderByCreatedAtDesc = ListImagesRequestOrderBy("created_at_desc")
-	// ListImagesRequestOrderByUpdatedAtAsc is [insert doc].
-	ListImagesRequestOrderByUpdatedAtAsc = ListImagesRequestOrderBy("updated_at_asc")
-	// ListImagesRequestOrderByUpdatedAtDesc is [insert doc].
+	ListImagesRequestOrderByUpdatedAtAsc  = ListImagesRequestOrderBy("updated_at_asc")
 	ListImagesRequestOrderByUpdatedAtDesc = ListImagesRequestOrderBy("updated_at_desc")
 )
 
@@ -94,9 +88,7 @@ func (enum *ListImagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListLocalImagesRequestOrderBy string
 
 const (
-	// ListLocalImagesRequestOrderByCreatedAtAsc is [insert doc].
-	ListLocalImagesRequestOrderByCreatedAtAsc = ListLocalImagesRequestOrderBy("created_at_asc")
-	// ListLocalImagesRequestOrderByCreatedAtDesc is [insert doc].
+	ListLocalImagesRequestOrderByCreatedAtAsc  = ListLocalImagesRequestOrderBy("created_at_asc")
 	ListLocalImagesRequestOrderByCreatedAtDesc = ListLocalImagesRequestOrderBy("created_at_desc")
 )
 
@@ -126,9 +118,7 @@ func (enum *ListLocalImagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListVersionsRequestOrderBy string
 
 const (
-	// ListVersionsRequestOrderByCreatedAtAsc is [insert doc].
-	ListVersionsRequestOrderByCreatedAtAsc = ListVersionsRequestOrderBy("created_at_asc")
-	// ListVersionsRequestOrderByCreatedAtDesc is [insert doc].
+	ListVersionsRequestOrderByCreatedAtAsc  = ListVersionsRequestOrderBy("created_at_asc")
 	ListVersionsRequestOrderByCreatedAtDesc = ListVersionsRequestOrderBy("created_at_desc")
 )
 
@@ -184,7 +174,6 @@ type Image struct {
 	// Label: label of this image
 	//
 	// Typically an identifier for a distribution (ex. "ubuntu_focal").
-	//
 	Label string `json:"label"`
 }
 
@@ -217,7 +206,6 @@ type LocalImage struct {
 	// ID: UUID of this local image
 	//
 	// Version you will typically use to define an image in an API call.
-	//
 	ID string `json:"id"`
 	// CompatibleCommercialTypes: list of all commercial types that are compatible with this local image
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`

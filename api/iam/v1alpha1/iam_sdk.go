@@ -54,12 +54,9 @@ func NewAPI(client *scw.Client) *API {
 type ListAPIKeysRequestBearerType string
 
 const (
-	// ListAPIKeysRequestBearerTypeUnknownBearerType is [insert doc].
 	ListAPIKeysRequestBearerTypeUnknownBearerType = ListAPIKeysRequestBearerType("unknown_bearer_type")
-	// ListAPIKeysRequestBearerTypeUser is [insert doc].
-	ListAPIKeysRequestBearerTypeUser = ListAPIKeysRequestBearerType("user")
-	// ListAPIKeysRequestBearerTypeApplication is [insert doc].
-	ListAPIKeysRequestBearerTypeApplication = ListAPIKeysRequestBearerType("application")
+	ListAPIKeysRequestBearerTypeUser              = ListAPIKeysRequestBearerType("user")
+	ListAPIKeysRequestBearerTypeApplication       = ListAPIKeysRequestBearerType("application")
 )
 
 func (enum ListAPIKeysRequestBearerType) String() string {
@@ -88,21 +85,13 @@ func (enum *ListAPIKeysRequestBearerType) UnmarshalJSON(data []byte) error {
 type ListAPIKeysRequestOrderBy string
 
 const (
-	// ListAPIKeysRequestOrderByCreatedAtAsc is [insert doc].
-	ListAPIKeysRequestOrderByCreatedAtAsc = ListAPIKeysRequestOrderBy("created_at_asc")
-	// ListAPIKeysRequestOrderByCreatedAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByCreatedAtAsc  = ListAPIKeysRequestOrderBy("created_at_asc")
 	ListAPIKeysRequestOrderByCreatedAtDesc = ListAPIKeysRequestOrderBy("created_at_desc")
-	// ListAPIKeysRequestOrderByUpdatedAtAsc is [insert doc].
-	ListAPIKeysRequestOrderByUpdatedAtAsc = ListAPIKeysRequestOrderBy("updated_at_asc")
-	// ListAPIKeysRequestOrderByUpdatedAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByUpdatedAtAsc  = ListAPIKeysRequestOrderBy("updated_at_asc")
 	ListAPIKeysRequestOrderByUpdatedAtDesc = ListAPIKeysRequestOrderBy("updated_at_desc")
-	// ListAPIKeysRequestOrderByExpiresAtAsc is [insert doc].
-	ListAPIKeysRequestOrderByExpiresAtAsc = ListAPIKeysRequestOrderBy("expires_at_asc")
-	// ListAPIKeysRequestOrderByExpiresAtDesc is [insert doc].
+	ListAPIKeysRequestOrderByExpiresAtAsc  = ListAPIKeysRequestOrderBy("expires_at_asc")
 	ListAPIKeysRequestOrderByExpiresAtDesc = ListAPIKeysRequestOrderBy("expires_at_desc")
-	// ListAPIKeysRequestOrderByAccessKeyAsc is [insert doc].
-	ListAPIKeysRequestOrderByAccessKeyAsc = ListAPIKeysRequestOrderBy("access_key_asc")
-	// ListAPIKeysRequestOrderByAccessKeyDesc is [insert doc].
+	ListAPIKeysRequestOrderByAccessKeyAsc  = ListAPIKeysRequestOrderBy("access_key_asc")
 	ListAPIKeysRequestOrderByAccessKeyDesc = ListAPIKeysRequestOrderBy("access_key_desc")
 )
 
@@ -132,18 +121,12 @@ func (enum *ListAPIKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListApplicationsRequestOrderBy string
 
 const (
-	// ListApplicationsRequestOrderByCreatedAtAsc is [insert doc].
-	ListApplicationsRequestOrderByCreatedAtAsc = ListApplicationsRequestOrderBy("created_at_asc")
-	// ListApplicationsRequestOrderByCreatedAtDesc is [insert doc].
+	ListApplicationsRequestOrderByCreatedAtAsc  = ListApplicationsRequestOrderBy("created_at_asc")
 	ListApplicationsRequestOrderByCreatedAtDesc = ListApplicationsRequestOrderBy("created_at_desc")
-	// ListApplicationsRequestOrderByUpdatedAtAsc is [insert doc].
-	ListApplicationsRequestOrderByUpdatedAtAsc = ListApplicationsRequestOrderBy("updated_at_asc")
-	// ListApplicationsRequestOrderByUpdatedAtDesc is [insert doc].
+	ListApplicationsRequestOrderByUpdatedAtAsc  = ListApplicationsRequestOrderBy("updated_at_asc")
 	ListApplicationsRequestOrderByUpdatedAtDesc = ListApplicationsRequestOrderBy("updated_at_desc")
-	// ListApplicationsRequestOrderByNameAsc is [insert doc].
-	ListApplicationsRequestOrderByNameAsc = ListApplicationsRequestOrderBy("name_asc")
-	// ListApplicationsRequestOrderByNameDesc is [insert doc].
-	ListApplicationsRequestOrderByNameDesc = ListApplicationsRequestOrderBy("name_desc")
+	ListApplicationsRequestOrderByNameAsc       = ListApplicationsRequestOrderBy("name_asc")
+	ListApplicationsRequestOrderByNameDesc      = ListApplicationsRequestOrderBy("name_desc")
 )
 
 func (enum ListApplicationsRequestOrderBy) String() string {
@@ -172,18 +155,12 @@ func (enum *ListApplicationsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListGroupsRequestOrderBy string
 
 const (
-	// ListGroupsRequestOrderByCreatedAtAsc is [insert doc].
-	ListGroupsRequestOrderByCreatedAtAsc = ListGroupsRequestOrderBy("created_at_asc")
-	// ListGroupsRequestOrderByCreatedAtDesc is [insert doc].
+	ListGroupsRequestOrderByCreatedAtAsc  = ListGroupsRequestOrderBy("created_at_asc")
 	ListGroupsRequestOrderByCreatedAtDesc = ListGroupsRequestOrderBy("created_at_desc")
-	// ListGroupsRequestOrderByUpdatedAtAsc is [insert doc].
-	ListGroupsRequestOrderByUpdatedAtAsc = ListGroupsRequestOrderBy("updated_at_asc")
-	// ListGroupsRequestOrderByUpdatedAtDesc is [insert doc].
+	ListGroupsRequestOrderByUpdatedAtAsc  = ListGroupsRequestOrderBy("updated_at_asc")
 	ListGroupsRequestOrderByUpdatedAtDesc = ListGroupsRequestOrderBy("updated_at_desc")
-	// ListGroupsRequestOrderByNameAsc is [insert doc].
-	ListGroupsRequestOrderByNameAsc = ListGroupsRequestOrderBy("name_asc")
-	// ListGroupsRequestOrderByNameDesc is [insert doc].
-	ListGroupsRequestOrderByNameDesc = ListGroupsRequestOrderBy("name_desc")
+	ListGroupsRequestOrderByNameAsc       = ListGroupsRequestOrderBy("name_asc")
+	ListGroupsRequestOrderByNameDesc      = ListGroupsRequestOrderBy("name_desc")
 )
 
 func (enum ListGroupsRequestOrderBy) String() string {
@@ -212,13 +189,9 @@ func (enum *ListGroupsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPermissionSetsRequestOrderBy string
 
 const (
-	// ListPermissionSetsRequestOrderByNameAsc is [insert doc].
-	ListPermissionSetsRequestOrderByNameAsc = ListPermissionSetsRequestOrderBy("name_asc")
-	// ListPermissionSetsRequestOrderByNameDesc is [insert doc].
-	ListPermissionSetsRequestOrderByNameDesc = ListPermissionSetsRequestOrderBy("name_desc")
-	// ListPermissionSetsRequestOrderByCreatedAtAsc is [insert doc].
-	ListPermissionSetsRequestOrderByCreatedAtAsc = ListPermissionSetsRequestOrderBy("created_at_asc")
-	// ListPermissionSetsRequestOrderByCreatedAtDesc is [insert doc].
+	ListPermissionSetsRequestOrderByNameAsc       = ListPermissionSetsRequestOrderBy("name_asc")
+	ListPermissionSetsRequestOrderByNameDesc      = ListPermissionSetsRequestOrderBy("name_desc")
+	ListPermissionSetsRequestOrderByCreatedAtAsc  = ListPermissionSetsRequestOrderBy("created_at_asc")
 	ListPermissionSetsRequestOrderByCreatedAtDesc = ListPermissionSetsRequestOrderBy("created_at_desc")
 )
 
@@ -248,14 +221,10 @@ func (enum *ListPermissionSetsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPoliciesRequestOrderBy string
 
 const (
-	// ListPoliciesRequestOrderByPolicyNameAsc is [insert doc].
-	ListPoliciesRequestOrderByPolicyNameAsc = ListPoliciesRequestOrderBy("policy_name_asc")
-	// ListPoliciesRequestOrderByPolicyNameDesc is [insert doc].
+	ListPoliciesRequestOrderByPolicyNameAsc  = ListPoliciesRequestOrderBy("policy_name_asc")
 	ListPoliciesRequestOrderByPolicyNameDesc = ListPoliciesRequestOrderBy("policy_name_desc")
-	// ListPoliciesRequestOrderByCreatedAtAsc is [insert doc].
-	ListPoliciesRequestOrderByCreatedAtAsc = ListPoliciesRequestOrderBy("created_at_asc")
-	// ListPoliciesRequestOrderByCreatedAtDesc is [insert doc].
-	ListPoliciesRequestOrderByCreatedAtDesc = ListPoliciesRequestOrderBy("created_at_desc")
+	ListPoliciesRequestOrderByCreatedAtAsc   = ListPoliciesRequestOrderBy("created_at_asc")
+	ListPoliciesRequestOrderByCreatedAtDesc  = ListPoliciesRequestOrderBy("created_at_desc")
 )
 
 func (enum ListPoliciesRequestOrderBy) String() string {
@@ -284,18 +253,12 @@ func (enum *ListPoliciesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListSSHKeysRequestOrderBy string
 
 const (
-	// ListSSHKeysRequestOrderByCreatedAtAsc is [insert doc].
-	ListSSHKeysRequestOrderByCreatedAtAsc = ListSSHKeysRequestOrderBy("created_at_asc")
-	// ListSSHKeysRequestOrderByCreatedAtDesc is [insert doc].
+	ListSSHKeysRequestOrderByCreatedAtAsc  = ListSSHKeysRequestOrderBy("created_at_asc")
 	ListSSHKeysRequestOrderByCreatedAtDesc = ListSSHKeysRequestOrderBy("created_at_desc")
-	// ListSSHKeysRequestOrderByUpdatedAtAsc is [insert doc].
-	ListSSHKeysRequestOrderByUpdatedAtAsc = ListSSHKeysRequestOrderBy("updated_at_asc")
-	// ListSSHKeysRequestOrderByUpdatedAtDesc is [insert doc].
+	ListSSHKeysRequestOrderByUpdatedAtAsc  = ListSSHKeysRequestOrderBy("updated_at_asc")
 	ListSSHKeysRequestOrderByUpdatedAtDesc = ListSSHKeysRequestOrderBy("updated_at_desc")
-	// ListSSHKeysRequestOrderByNameAsc is [insert doc].
-	ListSSHKeysRequestOrderByNameAsc = ListSSHKeysRequestOrderBy("name_asc")
-	// ListSSHKeysRequestOrderByNameDesc is [insert doc].
-	ListSSHKeysRequestOrderByNameDesc = ListSSHKeysRequestOrderBy("name_desc")
+	ListSSHKeysRequestOrderByNameAsc       = ListSSHKeysRequestOrderBy("name_asc")
+	ListSSHKeysRequestOrderByNameDesc      = ListSSHKeysRequestOrderBy("name_desc")
 )
 
 func (enum ListSSHKeysRequestOrderBy) String() string {
@@ -324,21 +287,13 @@ func (enum *ListSSHKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListUsersRequestOrderBy string
 
 const (
-	// ListUsersRequestOrderByCreatedAtAsc is [insert doc].
-	ListUsersRequestOrderByCreatedAtAsc = ListUsersRequestOrderBy("created_at_asc")
-	// ListUsersRequestOrderByCreatedAtDesc is [insert doc].
+	ListUsersRequestOrderByCreatedAtAsc  = ListUsersRequestOrderBy("created_at_asc")
 	ListUsersRequestOrderByCreatedAtDesc = ListUsersRequestOrderBy("created_at_desc")
-	// ListUsersRequestOrderByUpdatedAtAsc is [insert doc].
-	ListUsersRequestOrderByUpdatedAtAsc = ListUsersRequestOrderBy("updated_at_asc")
-	// ListUsersRequestOrderByUpdatedAtDesc is [insert doc].
+	ListUsersRequestOrderByUpdatedAtAsc  = ListUsersRequestOrderBy("updated_at_asc")
 	ListUsersRequestOrderByUpdatedAtDesc = ListUsersRequestOrderBy("updated_at_desc")
-	// ListUsersRequestOrderByEmailAsc is [insert doc].
-	ListUsersRequestOrderByEmailAsc = ListUsersRequestOrderBy("email_asc")
-	// ListUsersRequestOrderByEmailDesc is [insert doc].
-	ListUsersRequestOrderByEmailDesc = ListUsersRequestOrderBy("email_desc")
-	// ListUsersRequestOrderByLastLoginAsc is [insert doc].
-	ListUsersRequestOrderByLastLoginAsc = ListUsersRequestOrderBy("last_login_asc")
-	// ListUsersRequestOrderByLastLoginDesc is [insert doc].
+	ListUsersRequestOrderByEmailAsc      = ListUsersRequestOrderBy("email_asc")
+	ListUsersRequestOrderByEmailDesc     = ListUsersRequestOrderBy("email_desc")
+	ListUsersRequestOrderByLastLoginAsc  = ListUsersRequestOrderBy("last_login_asc")
 	ListUsersRequestOrderByLastLoginDesc = ListUsersRequestOrderBy("last_login_desc")
 )
 
@@ -368,14 +323,10 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type PermissionSetScopeType string
 
 const (
-	// PermissionSetScopeTypeUnknownScopeType is [insert doc].
 	PermissionSetScopeTypeUnknownScopeType = PermissionSetScopeType("unknown_scope_type")
-	// PermissionSetScopeTypeProjects is [insert doc].
-	PermissionSetScopeTypeProjects = PermissionSetScopeType("projects")
-	// PermissionSetScopeTypeOrganization is [insert doc].
-	PermissionSetScopeTypeOrganization = PermissionSetScopeType("organization")
-	// PermissionSetScopeTypeAccountRootUser is [insert doc].
-	PermissionSetScopeTypeAccountRootUser = PermissionSetScopeType("account_root_user")
+	PermissionSetScopeTypeProjects         = PermissionSetScopeType("projects")
+	PermissionSetScopeTypeOrganization     = PermissionSetScopeType("organization")
+	PermissionSetScopeTypeAccountRootUser  = PermissionSetScopeType("account_root_user")
 )
 
 func (enum PermissionSetScopeType) String() string {
@@ -404,12 +355,9 @@ func (enum *PermissionSetScopeType) UnmarshalJSON(data []byte) error {
 type UserStatus string
 
 const (
-	// UserStatusUnknownStatus is [insert doc].
-	UserStatusUnknownStatus = UserStatus("unknown_status")
-	// UserStatusInvitationPending is [insert doc].
+	UserStatusUnknownStatus     = UserStatus("unknown_status")
 	UserStatusInvitationPending = UserStatus("invitation_pending")
-	// UserStatusActivated is [insert doc].
-	UserStatusActivated = UserStatus("activated")
+	UserStatusActivated         = UserStatus("activated")
 )
 
 func (enum UserStatus) String() string {
@@ -438,12 +386,9 @@ func (enum *UserStatus) UnmarshalJSON(data []byte) error {
 type UserType string
 
 const (
-	// UserTypeUnknownType is [insert doc].
 	UserTypeUnknownType = UserType("unknown_type")
-	// UserTypeGuest is [insert doc].
-	UserTypeGuest = UserType("guest")
-	// UserTypeOwner is [insert doc].
-	UserTypeOwner = UserType("owner")
+	UserTypeGuest       = UserType("guest")
+	UserTypeOwner       = UserType("owner")
 )
 
 func (enum UserType) String() string {

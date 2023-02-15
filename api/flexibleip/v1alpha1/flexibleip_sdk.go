@@ -54,20 +54,13 @@ func NewAPI(client *scw.Client) *API {
 type FlexibleIPStatus string
 
 const (
-	// FlexibleIPStatusUnknown is [insert doc].
-	FlexibleIPStatusUnknown = FlexibleIPStatus("unknown")
-	// FlexibleIPStatusReady is [insert doc].
-	FlexibleIPStatusReady = FlexibleIPStatus("ready")
-	// FlexibleIPStatusUpdating is [insert doc].
-	FlexibleIPStatusUpdating = FlexibleIPStatus("updating")
-	// FlexibleIPStatusAttached is [insert doc].
-	FlexibleIPStatusAttached = FlexibleIPStatus("attached")
-	// FlexibleIPStatusError is [insert doc].
-	FlexibleIPStatusError = FlexibleIPStatus("error")
-	// FlexibleIPStatusDetaching is [insert doc].
+	FlexibleIPStatusUnknown   = FlexibleIPStatus("unknown")
+	FlexibleIPStatusReady     = FlexibleIPStatus("ready")
+	FlexibleIPStatusUpdating  = FlexibleIPStatus("updating")
+	FlexibleIPStatusAttached  = FlexibleIPStatus("attached")
+	FlexibleIPStatusError     = FlexibleIPStatus("error")
 	FlexibleIPStatusDetaching = FlexibleIPStatus("detaching")
-	// FlexibleIPStatusLocked is [insert doc].
-	FlexibleIPStatusLocked = FlexibleIPStatus("locked")
+	FlexibleIPStatusLocked    = FlexibleIPStatus("locked")
 )
 
 func (enum FlexibleIPStatus) String() string {
@@ -96,9 +89,7 @@ func (enum *FlexibleIPStatus) UnmarshalJSON(data []byte) error {
 type ListFlexibleIPsRequestOrderBy string
 
 const (
-	// ListFlexibleIPsRequestOrderByCreatedAtAsc is [insert doc].
-	ListFlexibleIPsRequestOrderByCreatedAtAsc = ListFlexibleIPsRequestOrderBy("created_at_asc")
-	// ListFlexibleIPsRequestOrderByCreatedAtDesc is [insert doc].
+	ListFlexibleIPsRequestOrderByCreatedAtAsc  = ListFlexibleIPsRequestOrderBy("created_at_asc")
 	ListFlexibleIPsRequestOrderByCreatedAtDesc = ListFlexibleIPsRequestOrderBy("created_at_desc")
 )
 
@@ -128,17 +119,11 @@ func (enum *ListFlexibleIPsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type MACAddressStatus string
 
 const (
-	// MACAddressStatusUnknown is [insert doc].
-	MACAddressStatusUnknown = MACAddressStatus("unknown")
-	// MACAddressStatusReady is [insert doc].
-	MACAddressStatusReady = MACAddressStatus("ready")
-	// MACAddressStatusUpdating is [insert doc].
+	MACAddressStatusUnknown  = MACAddressStatus("unknown")
+	MACAddressStatusReady    = MACAddressStatus("ready")
 	MACAddressStatusUpdating = MACAddressStatus("updating")
-	// MACAddressStatusUsed is [insert doc].
-	MACAddressStatusUsed = MACAddressStatus("used")
-	// MACAddressStatusError is [insert doc].
-	MACAddressStatusError = MACAddressStatus("error")
-	// MACAddressStatusDeleting is [insert doc].
+	MACAddressStatusUsed     = MACAddressStatus("used")
+	MACAddressStatusError    = MACAddressStatus("error")
 	MACAddressStatusDeleting = MACAddressStatus("deleting")
 )
 
@@ -168,14 +153,10 @@ func (enum *MACAddressStatus) UnmarshalJSON(data []byte) error {
 type MACAddressType string
 
 const (
-	// MACAddressTypeUnknownType is [insert doc].
 	MACAddressTypeUnknownType = MACAddressType("unknown_type")
-	// MACAddressTypeVmware is [insert doc].
-	MACAddressTypeVmware = MACAddressType("vmware")
-	// MACAddressTypeXen is [insert doc].
-	MACAddressTypeXen = MACAddressType("xen")
-	// MACAddressTypeKvm is [insert doc].
-	MACAddressTypeKvm = MACAddressType("kvm")
+	MACAddressTypeVmware      = MACAddressType("vmware")
+	MACAddressTypeXen         = MACAddressType("xen")
+	MACAddressTypeKvm         = MACAddressType("kvm")
 )
 
 func (enum MACAddressType) String() string {

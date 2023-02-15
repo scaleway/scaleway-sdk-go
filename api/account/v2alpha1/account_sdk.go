@@ -54,18 +54,12 @@ func NewAPI(client *scw.Client) *API {
 type ListSSHKeysRequestOrderBy string
 
 const (
-	// ListSSHKeysRequestOrderByCreatedAtAsc is [insert doc].
-	ListSSHKeysRequestOrderByCreatedAtAsc = ListSSHKeysRequestOrderBy("created_at_asc")
-	// ListSSHKeysRequestOrderByCreatedAtDesc is [insert doc].
+	ListSSHKeysRequestOrderByCreatedAtAsc  = ListSSHKeysRequestOrderBy("created_at_asc")
 	ListSSHKeysRequestOrderByCreatedAtDesc = ListSSHKeysRequestOrderBy("created_at_desc")
-	// ListSSHKeysRequestOrderByUpdatedAtAsc is [insert doc].
-	ListSSHKeysRequestOrderByUpdatedAtAsc = ListSSHKeysRequestOrderBy("updated_at_asc")
-	// ListSSHKeysRequestOrderByUpdatedAtDesc is [insert doc].
+	ListSSHKeysRequestOrderByUpdatedAtAsc  = ListSSHKeysRequestOrderBy("updated_at_asc")
 	ListSSHKeysRequestOrderByUpdatedAtDesc = ListSSHKeysRequestOrderBy("updated_at_desc")
-	// ListSSHKeysRequestOrderByNameAsc is [insert doc].
-	ListSSHKeysRequestOrderByNameAsc = ListSSHKeysRequestOrderBy("name_asc")
-	// ListSSHKeysRequestOrderByNameDesc is [insert doc].
-	ListSSHKeysRequestOrderByNameDesc = ListSSHKeysRequestOrderBy("name_desc")
+	ListSSHKeysRequestOrderByNameAsc       = ListSSHKeysRequestOrderBy("name_asc")
+	ListSSHKeysRequestOrderByNameDesc      = ListSSHKeysRequestOrderBy("name_desc")
 )
 
 func (enum ListSSHKeysRequestOrderBy) String() string {

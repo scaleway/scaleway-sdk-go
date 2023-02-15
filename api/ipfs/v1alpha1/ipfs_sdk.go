@@ -54,9 +54,7 @@ func NewAPI(client *scw.Client) *API {
 type ListPinsRequestOrderBy string
 
 const (
-	// ListPinsRequestOrderByCreatedAtAsc is [insert doc].
-	ListPinsRequestOrderByCreatedAtAsc = ListPinsRequestOrderBy("created_at_asc")
-	// ListPinsRequestOrderByCreatedAtDesc is [insert doc].
+	ListPinsRequestOrderByCreatedAtAsc  = ListPinsRequestOrderBy("created_at_asc")
 	ListPinsRequestOrderByCreatedAtDesc = ListPinsRequestOrderBy("created_at_desc")
 )
 
@@ -86,9 +84,7 @@ func (enum *ListPinsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListVolumesRequestOrderBy string
 
 const (
-	// ListVolumesRequestOrderByCreatedAtAsc is [insert doc].
-	ListVolumesRequestOrderByCreatedAtAsc = ListVolumesRequestOrderBy("created_at_asc")
-	// ListVolumesRequestOrderByCreatedAtDesc is [insert doc].
+	ListVolumesRequestOrderByCreatedAtAsc  = ListVolumesRequestOrderBy("created_at_asc")
 	ListVolumesRequestOrderByCreatedAtDesc = ListVolumesRequestOrderBy("created_at_desc")
 )
 
@@ -118,16 +114,11 @@ func (enum *ListVolumesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type PinStatus string
 
 const (
-	// PinStatusUnknownStatus is [insert doc].
 	PinStatusUnknownStatus = PinStatus("unknown_status")
-	// PinStatusQueued is [insert doc].
-	PinStatusQueued = PinStatus("queued")
-	// PinStatusPinning is [insert doc].
-	PinStatusPinning = PinStatus("pinning")
-	// PinStatusFailed is [insert doc].
-	PinStatusFailed = PinStatus("failed")
-	// PinStatusPinned is [insert doc].
-	PinStatusPinned = PinStatus("pinned")
+	PinStatusQueued        = PinStatus("queued")
+	PinStatusPinning       = PinStatus("pinning")
+	PinStatusFailed        = PinStatus("failed")
+	PinStatusPinned        = PinStatus("pinned")
 )
 
 func (enum PinStatus) String() string {

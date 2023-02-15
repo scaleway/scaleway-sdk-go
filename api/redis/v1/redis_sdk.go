@@ -54,14 +54,10 @@ func NewAPI(client *scw.Client) *API {
 type AvailableClusterSettingPropertyType string
 
 const (
-	// AvailableClusterSettingPropertyTypeUNKNOWN is [insert doc].
 	AvailableClusterSettingPropertyTypeUNKNOWN = AvailableClusterSettingPropertyType("UNKNOWN")
-	// AvailableClusterSettingPropertyTypeBOOLEAN is [insert doc].
 	AvailableClusterSettingPropertyTypeBOOLEAN = AvailableClusterSettingPropertyType("BOOLEAN")
-	// AvailableClusterSettingPropertyTypeINT is [insert doc].
-	AvailableClusterSettingPropertyTypeINT = AvailableClusterSettingPropertyType("INT")
-	// AvailableClusterSettingPropertyTypeSTRING is [insert doc].
-	AvailableClusterSettingPropertyTypeSTRING = AvailableClusterSettingPropertyType("STRING")
+	AvailableClusterSettingPropertyTypeINT     = AvailableClusterSettingPropertyType("INT")
+	AvailableClusterSettingPropertyTypeSTRING  = AvailableClusterSettingPropertyType("STRING")
 )
 
 func (enum AvailableClusterSettingPropertyType) String() string {
@@ -90,25 +86,15 @@ func (enum *AvailableClusterSettingPropertyType) UnmarshalJSON(data []byte) erro
 type ClusterStatus string
 
 const (
-	// ClusterStatusUnknown is [insert doc].
-	ClusterStatusUnknown = ClusterStatus("unknown")
-	// ClusterStatusReady is [insert doc].
-	ClusterStatusReady = ClusterStatus("ready")
-	// ClusterStatusProvisioning is [insert doc].
+	ClusterStatusUnknown      = ClusterStatus("unknown")
+	ClusterStatusReady        = ClusterStatus("ready")
 	ClusterStatusProvisioning = ClusterStatus("provisioning")
-	// ClusterStatusConfiguring is [insert doc].
-	ClusterStatusConfiguring = ClusterStatus("configuring")
-	// ClusterStatusDeleting is [insert doc].
-	ClusterStatusDeleting = ClusterStatus("deleting")
-	// ClusterStatusError is [insert doc].
-	ClusterStatusError = ClusterStatus("error")
-	// ClusterStatusAutohealing is [insert doc].
-	ClusterStatusAutohealing = ClusterStatus("autohealing")
-	// ClusterStatusLocked is [insert doc].
-	ClusterStatusLocked = ClusterStatus("locked")
-	// ClusterStatusSuspended is [insert doc].
-	ClusterStatusSuspended = ClusterStatus("suspended")
-	// ClusterStatusInitializing is [insert doc].
+	ClusterStatusConfiguring  = ClusterStatus("configuring")
+	ClusterStatusDeleting     = ClusterStatus("deleting")
+	ClusterStatusError        = ClusterStatus("error")
+	ClusterStatusAutohealing  = ClusterStatus("autohealing")
+	ClusterStatusLocked       = ClusterStatus("locked")
+	ClusterStatusSuspended    = ClusterStatus("suspended")
 	ClusterStatusInitializing = ClusterStatus("initializing")
 )
 
@@ -138,14 +124,10 @@ func (enum *ClusterStatus) UnmarshalJSON(data []byte) error {
 type ListClustersRequestOrderBy string
 
 const (
-	// ListClustersRequestOrderByCreatedAtAsc is [insert doc].
-	ListClustersRequestOrderByCreatedAtAsc = ListClustersRequestOrderBy("created_at_asc")
-	// ListClustersRequestOrderByCreatedAtDesc is [insert doc].
+	ListClustersRequestOrderByCreatedAtAsc  = ListClustersRequestOrderBy("created_at_asc")
 	ListClustersRequestOrderByCreatedAtDesc = ListClustersRequestOrderBy("created_at_desc")
-	// ListClustersRequestOrderByNameAsc is [insert doc].
-	ListClustersRequestOrderByNameAsc = ListClustersRequestOrderBy("name_asc")
-	// ListClustersRequestOrderByNameDesc is [insert doc].
-	ListClustersRequestOrderByNameDesc = ListClustersRequestOrderBy("name_desc")
+	ListClustersRequestOrderByNameAsc       = ListClustersRequestOrderBy("name_asc")
+	ListClustersRequestOrderByNameDesc      = ListClustersRequestOrderBy("name_desc")
 )
 
 func (enum ListClustersRequestOrderBy) String() string {
@@ -174,14 +156,10 @@ func (enum *ListClustersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type NodeTypeStock string
 
 const (
-	// NodeTypeStockUnknown is [insert doc].
-	NodeTypeStockUnknown = NodeTypeStock("unknown")
-	// NodeTypeStockLowStock is [insert doc].
-	NodeTypeStockLowStock = NodeTypeStock("low_stock")
-	// NodeTypeStockOutOfStock is [insert doc].
+	NodeTypeStockUnknown    = NodeTypeStock("unknown")
+	NodeTypeStockLowStock   = NodeTypeStock("low_stock")
 	NodeTypeStockOutOfStock = NodeTypeStock("out_of_stock")
-	// NodeTypeStockAvailable is [insert doc].
-	NodeTypeStockAvailable = NodeTypeStock("available")
+	NodeTypeStockAvailable  = NodeTypeStock("available")
 )
 
 func (enum NodeTypeStock) String() string {
