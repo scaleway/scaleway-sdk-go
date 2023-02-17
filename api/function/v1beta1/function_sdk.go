@@ -454,36 +454,6 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListTriggerInputsRequestOrderBy string
-
-const (
-	ListTriggerInputsRequestOrderByCreatedAtAsc  = ListTriggerInputsRequestOrderBy("created_at_asc")
-	ListTriggerInputsRequestOrderByCreatedAtDesc = ListTriggerInputsRequestOrderBy("created_at_desc")
-)
-
-func (enum ListTriggerInputsRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "created_at_asc"
-	}
-	return string(enum)
-}
-
-func (enum ListTriggerInputsRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListTriggerInputsRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListTriggerInputsRequestOrderBy(ListTriggerInputsRequestOrderBy(tmp).String())
-	return nil
-}
-
 type ListTriggersRequestOrderBy string
 
 const (
@@ -676,37 +646,36 @@ func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type TriggerInputStatus string
+type TriggerInputType string
 
 const (
-	TriggerInputStatusUnknown  = TriggerInputStatus("unknown")
-	TriggerInputStatusReady    = TriggerInputStatus("ready")
-	TriggerInputStatusDeleting = TriggerInputStatus("deleting")
-	TriggerInputStatusError    = TriggerInputStatus("error")
-	TriggerInputStatusCreating = TriggerInputStatus("creating")
-	TriggerInputStatusPending  = TriggerInputStatus("pending")
+	TriggerInputTypeUnknownInputType = TriggerInputType("unknown_input_type")
+	TriggerInputTypeSqs              = TriggerInputType("sqs")
+	TriggerInputTypeScwSqs           = TriggerInputType("scw_sqs")
+	TriggerInputTypeNats             = TriggerInputType("nats")
+	TriggerInputTypeScwNats          = TriggerInputType("scw_nats")
 )
 
-func (enum TriggerInputStatus) String() string {
+func (enum TriggerInputType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return "unknown_input_type"
 	}
 	return string(enum)
 }
 
-func (enum TriggerInputStatus) MarshalJSON() ([]byte, error) {
+func (enum TriggerInputType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *TriggerInputStatus) UnmarshalJSON(data []byte) error {
+func (enum *TriggerInputType) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = TriggerInputStatus(TriggerInputStatus(tmp).String())
+	*enum = TriggerInputType(TriggerInputType(tmp).String())
 	return nil
 }
 
@@ -744,74 +713,26 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type TriggerType string
+type CreateTriggerRequestMnqNatsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
 
-const (
-	TriggerTypeUnknownTriggerType = TriggerType("unknown_trigger_type")
-	TriggerTypeNats               = TriggerType("nats")
-	TriggerTypeSqs                = TriggerType("sqs")
-)
-
-func (enum TriggerType) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_trigger_type"
-	}
-	return string(enum)
-}
-
-func (enum TriggerType) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *TriggerType) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = TriggerType(TriggerType(tmp).String())
-	return nil
-}
-
-type CreateTriggerInputRequestNatsClientConfigSpec struct {
 	Subject string `json:"subject"`
 }
 
-type CreateTriggerInputRequestSqsClientConfigSpec struct {
+type CreateTriggerRequestMnqSqsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
 	Queue string `json:"queue"`
 }
 
-type CreateTriggerRequestNatsFailureHandlingPolicy struct {
-	RetryPolicy *CreateTriggerRequestNatsFailureHandlingPolicyRetryPolicy `json:"retry_policy"`
+type CreateTriggerRequestSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
 
-	// Precisely one of NatsDeadLetter, SqsDeadLetter must be set.
-	NatsDeadLetter *CreateTriggerRequestNatsFailureHandlingPolicyNatsDeadLetter `json:"nats_dead_letter,omitempty"`
+	QueueURL string `json:"queue_url"`
 
-	// Precisely one of NatsDeadLetter, SqsDeadLetter must be set.
-	SqsDeadLetter *CreateTriggerRequestNatsFailureHandlingPolicySqsDeadLetter `json:"sqs_dead_letter,omitempty"`
-}
+	AccessKey string `json:"access_key"`
 
-type CreateTriggerRequestNatsFailureHandlingPolicyNatsDeadLetter struct {
-	MnqNamespaceID *string `json:"mnq_namespace_id"`
-
-	Subject *string `json:"subject"`
-}
-
-type CreateTriggerRequestNatsFailureHandlingPolicyRetryPolicy struct {
-	MaxRetries *uint32 `json:"max_retries"`
-
-	RetryPeriod *scw.Duration `json:"retry_period"`
-}
-
-type CreateTriggerRequestNatsFailureHandlingPolicySqsDeadLetter struct {
-	MnqNamespaceID *string `json:"mnq_namespace_id"`
-
-	Queue *string `json:"queue"`
-}
-
-type CreateTriggerRequestSqsFailureHandlingPolicy struct {
+	SecretKey string `json:"secret_key"`
 }
 
 // Cron: cron
@@ -957,12 +878,6 @@ type ListTokensResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
-type ListTriggerInputsResponse struct {
-	Inputs []*TriggerInput `json:"inputs"`
-
-	TotalCount uint32 `json:"total_count"`
-}
-
 type ListTriggersResponse struct {
 	Triggers []*Trigger `json:"triggers"`
 
@@ -1049,18 +964,6 @@ type SecretHashedValue struct {
 	HashedValue string `json:"hashed_value"`
 }
 
-type SetTriggerInputsRequestNatsConfigs struct {
-	Configs []*CreateTriggerInputRequestNatsClientConfigSpec `json:"configs"`
-}
-
-type SetTriggerInputsRequestSqsConfigs struct {
-	Configs []*CreateTriggerInputRequestSqsClientConfigSpec `json:"configs"`
-}
-
-type SetTriggerInputsResponse struct {
-	TriggerInputs []*TriggerInput `json:"trigger_inputs"`
-}
-
 // Token: token
 type Token struct {
 	ID string `json:"id"`
@@ -1090,10 +993,10 @@ type Trigger struct {
 	Name string `json:"name"`
 
 	Description string `json:"description"`
-	// Type:
+	// InputType:
 	//
-	// Default value: unknown_trigger_type
-	Type TriggerType `json:"type"`
+	// Default value: unknown_input_type
+	InputType TriggerInputType `json:"input_type"`
 	// Status:
 	//
 	// Default value: unknown_status
@@ -1103,76 +1006,58 @@ type Trigger struct {
 
 	FunctionID string `json:"function_id"`
 
-	// Precisely one of NatsFailureHandlingPolicy, SqsFailureHandlingPolicy must be set.
-	NatsFailureHandlingPolicy *TriggerNatsFailureHandlingPolicy `json:"nats_failure_handling_policy,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwSqsConfig *TriggerMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
 
-	// Precisely one of NatsFailureHandlingPolicy, SqsFailureHandlingPolicy must be set.
-	SqsFailureHandlingPolicy *TriggerSqsFailureHandlingPolicy `json:"sqs_failure_handling_policy,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *TriggerSqsClientConfig `json:"sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwNatsConfig *TriggerMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 }
 
-type TriggerInput struct {
-	ID string `json:"id"`
-
-	MnqNamespaceID *string `json:"mnq_namespace_id"`
-	// Status:
-	//
-	// Default value: unknown
-	Status TriggerInputStatus `json:"status"`
-
-	ErrorMessage *string `json:"error_message"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	NatsConfig *TriggerInputNatsClientConfig `json:"nats_config,omitempty"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	SqsConfig *TriggerInputSqsClientConfig `json:"sqs_config,omitempty"`
-}
-
-type TriggerInputNatsClientConfig struct {
-	Subject string `json:"subject"`
-}
-
-type TriggerInputSqsClientConfig struct {
-	Queue string `json:"queue"`
-}
-
-type TriggerNatsDeadLetter struct {
+type TriggerMnqNatsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Subject string `json:"subject"`
 }
 
-type TriggerNatsFailureHandlingPolicy struct {
-	RetryPolicy *TriggerRetryPolicy `json:"retry_policy"`
-
-	// Precisely one of NatsDeadLetter, SqsDeadLetter must be set.
-	NatsDeadLetter *TriggerNatsDeadLetter `json:"nats_dead_letter,omitempty"`
-
-	// Precisely one of NatsDeadLetter, SqsDeadLetter must be set.
-	SqsDeadLetter *TriggerSqsDeadLetter `json:"sqs_dead_letter,omitempty"`
-}
-
-type TriggerRetryPolicy struct {
-	MaxRetries uint32 `json:"max_retries"`
-
-	RetryPeriod *scw.Duration `json:"retry_period"`
-}
-
-type TriggerSqsDeadLetter struct {
+type TriggerMnqSqsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Queue string `json:"queue"`
 }
 
-type TriggerSqsFailureHandlingPolicy struct {
+type TriggerSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
+
+	QueueURL string `json:"queue_url"`
+
+	AccessKey string `json:"access_key"`
+
+	SecretKey string `json:"secret_key"`
 }
 
-type UpdateTriggerInputRequestNatsClientConfigSpec struct {
-	Subject *string `json:"subject"`
+type UpdateTriggerRequestMnqNatsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Subject string `json:"subject"`
 }
 
-type UpdateTriggerInputRequestSqsClientConfigSpec struct {
-	Queue *string `json:"queue"`
+type UpdateTriggerRequestMnqSqsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Queue string `json:"queue"`
+}
+
+type UpdateTriggerRequestSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
+
+	QueueURL string `json:"queue_url"`
+
+	AccessKey string `json:"access_key"`
+
+	SecretKey string `json:"secret_key"`
 }
 
 // UploadURL: upload url
@@ -2682,16 +2567,15 @@ type CreateTriggerRequest struct {
 	Description string `json:"description"`
 
 	FunctionID string `json:"function_id"`
-	// Type:
-	//
-	// Default value: unknown_trigger_type
-	Type TriggerType `json:"type"`
 
-	// Precisely one of NatsFailureHandlingPolicy, SqsFailureHandlingPolicy must be set.
-	NatsFailureHandlingPolicy *CreateTriggerRequestNatsFailureHandlingPolicy `json:"nats_failure_handling_policy,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
 
-	// Precisely one of NatsFailureHandlingPolicy, SqsFailureHandlingPolicy must be set.
-	SqsFailureHandlingPolicy *CreateTriggerRequestSqsFailureHandlingPolicy `json:"sqs_failure_handling_policy,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 }
 
 func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
@@ -2780,7 +2664,11 @@ type ListTriggersRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListTriggersRequestOrderBy `json:"-"`
 
-	FunctionID string `json:"-"`
+	FunctionID *string `json:"-"`
+
+	NamespaceID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
 func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
@@ -2801,6 +2689,8 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "function_id", req.FunctionID)
+	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2834,11 +2724,14 @@ type UpdateTriggerRequest struct {
 
 	Description *string `json:"description"`
 
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	NatsConfig *CreateTriggerRequestNatsFailureHandlingPolicy `json:"nats_config,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwSqsConfig *UpdateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
 
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	SqsConfig *CreateTriggerRequestSqsFailureHandlingPolicy `json:"sqs_config,omitempty"`
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwNatsConfig *UpdateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 }
 
 func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
@@ -2909,289 +2802,6 @@ func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption
 	}
 
 	var resp Trigger
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type CreateTriggerInputRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	TriggerID string `json:"trigger_id"`
-
-	MnqNamespaceID *string `json:"mnq_namespace_id"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	NatsConfig *CreateTriggerInputRequestNatsClientConfigSpec `json:"nats_config,omitempty"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	SqsConfig *CreateTriggerInputRequestSqsClientConfigSpec `json:"sqs_config,omitempty"`
-}
-
-func (s *API) CreateTriggerInput(req *CreateTriggerInputRequest, opts ...scw.RequestOption) (*TriggerInput, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp TriggerInput
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetTriggerInputRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	TriggerInputID string `json:"-"`
-}
-
-func (s *API) GetTriggerInput(req *GetTriggerInputRequest, opts ...scw.RequestOption) (*TriggerInput, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.TriggerInputID) == "" {
-		return nil, errors.New("field TriggerInputID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs/" + fmt.Sprint(req.TriggerInputID) + "",
-		Headers: http.Header{},
-	}
-
-	var resp TriggerInput
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListTriggerInputsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	//
-	// Default value: created_at_asc
-	OrderBy ListTriggerInputsRequestOrderBy `json:"-"`
-
-	TriggerID string `json:"-"`
-}
-
-func (s *API) ListTriggerInputs(req *ListTriggerInputsRequest, opts ...scw.RequestOption) (*ListTriggerInputsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "trigger_id", req.TriggerID)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListTriggerInputsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type SetTriggerInputsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	TriggerInputID string `json:"trigger_input_id"`
-
-	// Precisely one of Nats, Sqs must be set.
-	Sqs *SetTriggerInputsRequestSqsConfigs `json:"sqs,omitempty"`
-
-	// Precisely one of Nats, Sqs must be set.
-	Nats *SetTriggerInputsRequestNatsConfigs `json:"nats,omitempty"`
-}
-
-func (s *API) SetTriggerInputs(req *SetTriggerInputsRequest, opts ...scw.RequestOption) (*SetTriggerInputsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PUT",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp SetTriggerInputsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type UpdateTriggerInputRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	TriggerInputID string `json:"-"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	NatsConfig *UpdateTriggerInputRequestNatsClientConfigSpec `json:"nats_config,omitempty"`
-
-	// Precisely one of NatsConfig, SqsConfig must be set.
-	SqsConfig *UpdateTriggerInputRequestSqsClientConfigSpec `json:"sqs_config,omitempty"`
-}
-
-func (s *API) UpdateTriggerInput(req *UpdateTriggerInputRequest, opts ...scw.RequestOption) (*TriggerInput, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.TriggerInputID) == "" {
-		return nil, errors.New("field TriggerInputID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs/" + fmt.Sprint(req.TriggerInputID) + "",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp TriggerInput
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteTriggerInputRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
-	Region scw.Region `json:"-"`
-
-	TriggerInputID string `json:"-"`
-}
-
-func (s *API) DeleteTriggerInput(req *DeleteTriggerInputRequest, opts ...scw.RequestOption) (*TriggerInput, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.TriggerInputID) == "" {
-		return nil, errors.New("field TriggerInputID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/trigger-inputs/" + fmt.Sprint(req.TriggerInputID) + "",
-		Headers: http.Header{},
-	}
-
-	var resp TriggerInput
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3331,23 +2941,4 @@ func (r *ListTriggersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Triggers = append(r.Triggers, results.Triggers...)
 	r.TotalCount += uint32(len(results.Triggers))
 	return uint32(len(results.Triggers)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTriggerInputsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTriggerInputsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTriggerInputsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Inputs = append(r.Inputs, results.Inputs...)
-	r.TotalCount += uint32(len(results.Inputs))
-	return uint32(len(results.Inputs)), nil
 }
