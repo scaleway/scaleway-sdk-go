@@ -33,9 +33,10 @@ func (s *API) WaitForCockpit(
 		retryInterval = *req.RetryInterval
 	}
 
-	terminalStatus := map[CockpitStatus]struct{}{
-		CockpitStatusReady: {},
-		CockpitStatusError: {},
+	transientStatus := map[CockpitStatus]struct{}{
+		CockpitStatusCreating: {},
+		CockpitStatusUpdating: {},
+		CockpitStatusDeleting: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -47,8 +48,8 @@ func (s *API) WaitForCockpit(
 				return nil, false, err
 			}
 
-			_, isTerminal := terminalStatus[namespace.Status]
-			return namespace, isTerminal, nil
+			_, isTransient := transientStatus[namespace.Status]
+			return namespace, !isTransient, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
