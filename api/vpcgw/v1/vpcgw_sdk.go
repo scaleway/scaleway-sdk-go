@@ -2500,10 +2500,11 @@ type RefreshSSHKeysRequest struct {
 	//
 	// Zone to target. If none is passed will use default zone from the config
 	Zone scw.Zone `json:"-"`
-
+	// GatewayID: ID of the gateway that needs fresh ssh keys
 	GatewayID string `json:"-"`
 }
 
+// RefreshSSHKeys: refresh SSH keys of a VPC Public Gateway
 func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
