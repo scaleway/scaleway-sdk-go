@@ -1883,8 +1883,8 @@ type ListAPIKeysRequest struct {
 	UserID *string `json:"-"`
 	// Editable: filter out editable API keys or not
 	Editable *bool `json:"-"`
-	// Expirable: filter out expirable API keys or not
-	Expirable *bool `json:"-"`
+	// Expired: filter out expired API keys or not
+	Expired *bool `json:"-"`
 	// AccessKey: filter out by access key
 	AccessKey *string `json:"-"`
 	// Description: filter out by description
@@ -1914,7 +1914,7 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
 	parameter.AddToQuery(query, "user_id", req.UserID)
 	parameter.AddToQuery(query, "editable", req.Editable)
-	parameter.AddToQuery(query, "expirable", req.Expirable)
+	parameter.AddToQuery(query, "expired", req.Expired)
 	parameter.AddToQuery(query, "access_key", req.AccessKey)
 	parameter.AddToQuery(query, "description", req.Description)
 	parameter.AddToQuery(query, "bearer_id", req.BearerID)
