@@ -51,15 +51,15 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-type ListAPIKeysRequestBearerType string
+type BearerType string
 
 const (
-	ListAPIKeysRequestBearerTypeUnknownBearerType = ListAPIKeysRequestBearerType("unknown_bearer_type")
-	ListAPIKeysRequestBearerTypeUser              = ListAPIKeysRequestBearerType("user")
-	ListAPIKeysRequestBearerTypeApplication       = ListAPIKeysRequestBearerType("application")
+	BearerTypeUnknownBearerType = BearerType("unknown_bearer_type")
+	BearerTypeUser              = BearerType("user")
+	BearerTypeApplication       = BearerType("application")
 )
 
-func (enum ListAPIKeysRequestBearerType) String() string {
+func (enum BearerType) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown_bearer_type"
@@ -67,18 +67,18 @@ func (enum ListAPIKeysRequestBearerType) String() string {
 	return string(enum)
 }
 
-func (enum ListAPIKeysRequestBearerType) MarshalJSON() ([]byte, error) {
+func (enum BearerType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *ListAPIKeysRequestBearerType) UnmarshalJSON(data []byte) error {
+func (enum *BearerType) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = ListAPIKeysRequestBearerType(ListAPIKeysRequestBearerType(tmp).String())
+	*enum = BearerType(BearerType(tmp).String())
 	return nil
 }
 
@@ -1894,7 +1894,7 @@ type ListAPIKeysRequest struct {
 	// BearerType: filter out by type of bearer
 	//
 	// Default value: unknown_bearer_type
-	BearerType ListAPIKeysRequestBearerType `json:"-"`
+	BearerType BearerType `json:"-"`
 }
 
 // ListAPIKeys: list API keys
