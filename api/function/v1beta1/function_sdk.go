@@ -207,6 +207,7 @@ const (
 	FunctionRuntimePython311      = FunctionRuntime("python311")
 	FunctionRuntimePhp82          = FunctionRuntime("php82")
 	FunctionRuntimeNode19         = FunctionRuntime("node19")
+	FunctionRuntimeGo120          = FunctionRuntime("go120")
 )
 
 func (enum FunctionRuntime) String() string {
