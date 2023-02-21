@@ -544,6 +544,37 @@ func (enum *MaintenanceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type NodeTypeGeneration string
+
+const (
+	NodeTypeGenerationUnknownGeneration = NodeTypeGeneration("unknown_generation")
+	NodeTypeGenerationGenerationV1      = NodeTypeGeneration("generation_v1")
+	NodeTypeGenerationGenerationV2      = NodeTypeGeneration("generation_v2")
+)
+
+func (enum NodeTypeGeneration) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_generation"
+	}
+	return string(enum)
+}
+
+func (enum NodeTypeGeneration) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *NodeTypeGeneration) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = NodeTypeGeneration(NodeTypeGeneration(tmp).String())
+	return nil
+}
+
 type NodeTypeStock string
 
 const (
@@ -1156,6 +1187,10 @@ type NodeType struct {
 	AvailableVolumeTypes []*NodeTypeVolumeType `json:"available_volume_types"`
 	// IsHaRequired: the Node Type can be used only with high availability option
 	IsHaRequired bool `json:"is_ha_required"`
+	// Generation: generation associated the NodeType offer
+	//
+	// Default value: unknown_generation
+	Generation NodeTypeGeneration `json:"generation"`
 	// Region: region the Node Type is in
 	Region scw.Region `json:"region"`
 }
