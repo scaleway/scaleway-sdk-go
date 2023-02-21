@@ -757,6 +757,22 @@ type CreatePoolRequestUpgradePolicy struct {
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
+type ExternalNode struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	ClusterURL string `json:"cluster_url"`
+
+	ClusterVersion string `json:"cluster_version"`
+
+	ClusterCa string `json:"cluster_ca"`
+
+	KubeToken string `json:"kube_token"`
+
+	KubeletConfig string `json:"kubelet_config"`
+}
+
 // ListClusterAvailableVersionsResponse: list cluster available versions response
 type ListClusterAvailableVersionsResponse struct {
 	// Versions: the available Kubernetes version for the cluster
@@ -1918,6 +1934,54 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	}
 
 	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateExternalNodeRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+
+	PoolID string `json:"-"`
+}
+
+// CreateExternalNode: create a Kosmos node
+//
+// This method returns metadata about a Kosmos node, it is not intended to be directly called by end users, rather by kapsule-node-agent.
+func (s *API) CreateExternalNode(req *CreateExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNode, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/external-nodes",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ExternalNode
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
