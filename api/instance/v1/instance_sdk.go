@@ -999,6 +999,8 @@ type ListPlacementGroupsResponse struct {
 
 type ListPrivateNICsResponse struct {
 	PrivateNics []*PrivateNIC `json:"private_nics"`
+
+	TotalCount uint64 `json:"total_count"`
 }
 
 // ListSecurityGroupRulesResponse: list security group rules response
@@ -1119,6 +1121,8 @@ type PrivateNIC struct {
 	//
 	// Default value: available
 	State PrivateNICState `json:"state,omitempty"`
+	// Tags: the private NIC tags
+	Tags []string `json:"tags,omitempty"`
 }
 
 // SecurityGroup: security group
@@ -4959,6 +4963,14 @@ type ListPrivateNICsRequest struct {
 	Zone scw.Zone `json:"-"`
 	// ServerID: the server the private NIC is attached to
 	ServerID string `json:"-"`
+	// Tags: the private NIC tags
+	Tags []string `json:"-"`
+	// PerPage: a positive integer lower or equal to 100 to select the number of items to return
+	//
+	// Default value: 50
+	PerPage *uint32 `json:"-"`
+	// Page: a positive integer to choose the page to return
+	Page *int32 `json:"-"`
 }
 
 // ListPrivateNICs: list all private NICs
@@ -4972,6 +4984,18 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 		req.Zone = defaultZone
 	}
 
+	defaultPerPage, exist := s.client.GetDefaultPageSize()
+	if (req.PerPage == nil || *req.PerPage == 0) && exist {
+		req.PerPage = &defaultPerPage
+	}
+
+	query := url.Values{}
+	if len(req.Tags) != 0 {
+		parameter.AddToQuery(query, "tags", strings.Join(req.Tags, ","))
+	}
+	parameter.AddToQuery(query, "per_page", req.PerPage)
+	parameter.AddToQuery(query, "page", req.Page)
+
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
@@ -4983,6 +5007,7 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -5004,6 +5029,8 @@ type CreatePrivateNICRequest struct {
 	ServerID string `json:"-"`
 	// PrivateNetworkID: UUID of the private network where the private NIC will be attached
 	PrivateNetworkID string `json:"private_network_id,omitempty"`
+	// Tags: the private NIC tags
+	Tags []string `json:"tags,omitempty"`
 }
 
 // CreatePrivateNIC: create a private NIC connecting a server to a private network
@@ -5086,6 +5113,62 @@ func (s *API) GetPrivateNIC(req *GetPrivateNICRequest, opts ...scw.RequestOption
 	}
 
 	var resp GetPrivateNICResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdatePrivateNICRequest struct {
+	// Zone:
+	//
+	// Zone to target. If none is passed will use default zone from the config
+	Zone scw.Zone `json:"-"`
+	// ServerID: UUID of the server the private NIC will be attached to
+	ServerID string `json:"-"`
+	// PrivateNicID: the private NIC unique ID
+	PrivateNicID string `json:"-"`
+	// Tags: tags used to select private NIC/s
+	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdatePrivateNIC: update a private NIC
+//
+// Update one or more parameter/s to a given private NIC.
+func (s *API) UpdatePrivateNIC(req *UpdatePrivateNICRequest, opts ...scw.RequestOption) (*PrivateNIC, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNicID) == "" {
+		return nil, errors.New("field PrivateNicID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private_nics/" + fmt.Sprint(req.PrivateNicID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNIC
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -5438,6 +5521,25 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.IPs = append(r.IPs, results.IPs...)
 	r.TotalCount += uint32(len(results.IPs))
 	return uint32(len(results.IPs)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPrivateNICsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPrivateNICsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPrivateNICsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.PrivateNics = append(r.PrivateNics, results.PrivateNics...)
+	r.TotalCount += uint64(len(results.PrivateNics))
+	return uint64(len(results.PrivateNics)), nil
 }
 
 // UnsafeGetTotalCount should not be used
