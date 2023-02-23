@@ -743,8 +743,8 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 
 type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
-
-	Port uint32 `json:"port"`
+	// Deprecated
+	Port *uint32 `json:"port,omitempty"`
 	// Protocol:
 	//
 	// Default value: tcp
