@@ -265,6 +265,13 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
 }
 
 type lister interface {
+	UnsafeGetTotalCount() uint64
+	UnsafeAppend(interface{}) (uint64, error)
+}
+
+// Old lister for uint32
+// Used for retro-compatibility with response that use uint32
+type lister32 interface {
 	UnsafeGetTotalCount() uint32
 	UnsafeAppend(interface{}) (uint32, error)
 }
@@ -273,19 +280,38 @@ type legacyLister interface {
 	UnsafeSetTotalCount(totalCount int)
 }
 
-const maxPageCount uint32 = math.MaxUint32
+// Wrap a lister32 to use it as a lister
+type lister32Wrapper struct {
+	lister32
+}
+
+func (l lister32Wrapper) UnsafeGetTotalCount() uint64 {
+	return uint64(l.lister32.UnsafeGetTotalCount())
+}
+
+func (l lister32Wrapper) UnsafeAppend(i interface{}) (uint64, error) {
+	total, err := l.lister32.UnsafeAppend(i)
+	return uint64(total), err
+}
+
+const maxPageCount uint64 = math.MaxUint32
 
 // doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
+	response := res
+	if l32, isLister32 := response.(lister32); isLister32 {
+		response = lister32Wrapper{l32}
+	}
+
 	// check for lister interface
-	if response, isLister := res.(lister); isLister {
+	if response, isLister := response.(lister); isLister {
 		pageCount := maxPageCount
-		for page := uint32(1); page <= pageCount; page++ {
+		for page := uint64(1); page <= pageCount; page++ {
 			// set current page
-			req.Query.Set("page", strconv.FormatUint(uint64(page), 10))
+			req.Query.Set("page", strconv.FormatUint(page, 10))
 
 			// request the next page
-			nextPage := newVariableFromType(response)
+			nextPage := newVariableFromType(getListerResponse(response))
 			err := c.do(req, nextPage)
 			if err != nil {
 				return err
@@ -303,7 +329,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 			// set total count on first request
 			if pageCount == maxPageCount {
-				totalCount := nextPage.(lister).UnsafeGetTotalCount()
+				totalCount := getResponseLister(nextPage).UnsafeGetTotalCount()
 				pageCount = (totalCount + pageSize - 1) / pageSize
 			}
 		}
@@ -493,6 +519,24 @@ func sortResponseByRegions(res interface{}, regions []Region) {
 func newVariableFromType(t interface{}) interface{} {
 	// reflect.New always create a pointer, that's why we use reflect.Indirect before
 	return reflect.New(reflect.Indirect(reflect.ValueOf(t)).Type()).Interface()
+}
+
+// getListerResponse return the response from a lister
+// used as a wrapper lister32 is not a valid response
+func getListerResponse(l interface{}) interface{} {
+	if wrappedLister, isWrapped := l.(lister32Wrapper); isWrapped {
+		return wrappedLister.lister32
+	}
+	return l
+}
+
+// getResponseLister return the lister from a response
+// used as a lister32 must be wrapped
+func getResponseLister(l interface{}) lister {
+	if l32, isLister32 := l.(lister32); isLister32 {
+		return lister32Wrapper{l32}
+	}
+	return l.(lister)
 }
 
 func newHTTPClient() *http.Client {
