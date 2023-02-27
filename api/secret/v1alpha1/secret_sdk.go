@@ -326,6 +326,47 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	return &resp, nil
 }
 
+type GetSecretByNameRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// SecretName: name of the Secret
+	SecretName string `json:"-"`
+}
+
+// GetSecretByName: get metadata of a Secret
+func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretName) == "" {
+		return nil, errors.New("field SecretName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type UpdateSecretRequest struct {
 	// Region:
 	//
@@ -387,6 +428,8 @@ type ListSecretsRequest struct {
 	OrganizationID *string `json:"-"`
 	// ProjectID: ID of a project to filter on (optional)
 	ProjectID *string `json:"-"`
+	// Name: secret name to filter on (optional)
+	Name *string `json:"-"`
 	// Tags: list of tags to filter on (optional)
 	Tags []string `json:"-"`
 	// OrderBy:
@@ -416,6 +459,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -577,6 +621,53 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+type GetSecretVersionByNameRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// SecretName: name of the Secret
+	SecretName string `json:"-"`
+	// Revision: revision of the SecretVersion (may be a number or "latest")
+	Revision string `json:"-"`
+}
+
+// GetSecretVersionByName: get metadata of a SecretVersion
+func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretName) == "" {
+		return nil, errors.New("field SecretName cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Revision) == "" {
+		return nil, errors.New("field Revision cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "",
+		Headers: http.Header{},
+	}
+
+	var resp SecretVersion
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type UpdateSecretVersionRequest struct {
 	// Region:
 	//
@@ -676,6 +767,64 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListSecretVersionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListSecretVersionsByNameRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// SecretName: name of the Secret
+	SecretName string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// Status: filter results by status
+	Status []SecretVersionStatus `json:"-"`
+}
+
+// ListSecretVersionsByName: list versions of a secret, not returning any sensitive data
+func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "status", req.Status)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretName) == "" {
+		return nil, errors.New("field SecretName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions",
 		Query:   query,
 		Headers: http.Header{},
 	}
@@ -880,6 +1029,53 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
+		Headers: http.Header{},
+	}
+
+	var resp AccessSecretVersionResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type AccessSecretVersionByNameRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// SecretName: name of the Secret
+	SecretName string `json:"-"`
+	// Revision: revision of the SecretVersion (may be a number or "latest")
+	Revision string `json:"-"`
+}
+
+// AccessSecretVersionByName: access a SecretVersion, returning the sensitive data
+func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretName) == "" {
+		return nil, errors.New("field SecretName cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Revision) == "" {
+		return nil, errors.New("field Revision cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
 		Headers: http.Header{},
 	}
 
