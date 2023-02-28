@@ -1506,11 +1506,14 @@ type PrivateNetwork struct {
 	// LB: loadBalancer object
 	LB *LB `json:"lb"`
 	// StaticConfig: local ip address of load balancer instance
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
 	// DHCPConfig: value set to true if load balancer instance use a DHCP
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
+	// IpamConfig: value set to true if load balancer instance use a DHCP
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
+	IpamConfig *PrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 	// PrivateNetworkID: instance private network id
 	PrivateNetworkID string `json:"private_network_id"`
 	// Status: status (running, to create...) of private network connection
@@ -4559,11 +4562,14 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	// PrivateNetworkID: set your instance private network id
 	PrivateNetworkID string `json:"-"`
 	// StaticConfig: define two local ip address of your choice for each load balancer instance
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
 	// DHCPConfig: set to true if you want to let DHCP assign IP addresses
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
+	// IpamConfig: for internal use only
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
+	IpamConfig *PrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 }
 
 // AttachPrivateNetwork: add load balancer on instance private network
@@ -7571,11 +7577,14 @@ type AttachPrivateNetworkRequest struct {
 	// PrivateNetworkID: set your instance private network id
 	PrivateNetworkID string `json:"-"`
 	// StaticConfig: define two local ip address of your choice for each load balancer instance
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
 	// DHCPConfig: set to true if you want to let DHCP assign IP addresses
-	// Precisely one of DHCPConfig, StaticConfig must be set.
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
+	// IpamConfig: for internal use only
+	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
+	IpamConfig *PrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 }
 
 // AttachPrivateNetwork: add load balancer on instance private network
