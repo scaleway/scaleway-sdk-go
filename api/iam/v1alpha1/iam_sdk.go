@@ -250,6 +250,36 @@ func (enum *ListPoliciesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListQuotaRequestOrderBy string
+
+const (
+	ListQuotaRequestOrderByNameAsc  = ListQuotaRequestOrderBy("name_asc")
+	ListQuotaRequestOrderByNameDesc = ListQuotaRequestOrderBy("name_desc")
+)
+
+func (enum ListQuotaRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListQuotaRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListQuotaRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListQuotaRequestOrderBy(ListQuotaRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListSSHKeysRequestOrderBy string
 
 const (
@@ -522,6 +552,12 @@ type ListPoliciesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+type ListQuotaResponse struct {
+	Quota []*Quotum `json:"quota"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
 // ListRulesResponse: list rules response
 type ListRulesResponse struct {
 	// Rules: rules of the policy
@@ -596,6 +632,16 @@ type Policy struct {
 	// NoPrincipal: true when the policy do not belong to any principal
 	// Precisely one of ApplicationID, GroupID, NoPrincipal, UserID must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
+}
+
+type Quotum struct {
+	Name string `json:"name"`
+
+	// Precisely one of Limit, Unlimited must be set.
+	Limit *uint64 `json:"limit,omitempty"`
+
+	// Precisely one of Limit, Unlimited must be set.
+	Unlimited *bool `json:"unlimited,omitempty"`
 }
 
 // Rule: rule
@@ -2066,6 +2112,91 @@ func (s *API) DeleteAPIKey(req *DeleteAPIKeyRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
+type ListQuotaRequest struct {
+	// OrderBy:
+	//
+	// Default value: name_asc
+	OrderBy ListQuotaRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	OrganizationID string `json:"-"`
+}
+
+func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*ListQuotaResponse, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iam/v1alpha1/quota",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListQuotaResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetQuotumRequest struct {
+	QuotumName string `json:"-"`
+
+	OrganizationID string `json:"-"`
+}
+
+func (s *API) GetQuotum(req *GetQuotumRequest, opts ...scw.RequestOption) (*Quotum, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.QuotumName) == "" {
+		return nil, errors.New("field QuotumName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iam/v1alpha1/quota/" + fmt.Sprint(req.QuotumName) + "",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp Quotum
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListSSHKeysResponse) UnsafeGetTotalCount() uint32 {
@@ -2216,4 +2347,23 @@ func (r *ListAPIKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.APIKeys = append(r.APIKeys, results.APIKeys...)
 	r.TotalCount += uint32(len(results.APIKeys))
 	return uint32(len(results.APIKeys)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListQuotaResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListQuotaResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListQuotaResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Quota = append(r.Quota, results.Quota...)
+	r.TotalCount += uint64(len(results.Quota))
+	return uint64(len(results.Quota)), nil
 }
