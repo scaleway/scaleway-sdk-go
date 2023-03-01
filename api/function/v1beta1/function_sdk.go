@@ -718,12 +718,20 @@ type CreateTriggerRequestMnqNatsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Subject string `json:"subject"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type CreateTriggerRequestMnqSqsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Queue string `json:"queue"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type CreateTriggerRequestSqsClientConfig struct {
@@ -1021,12 +1029,20 @@ type TriggerMnqNatsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Subject string `json:"subject"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type TriggerMnqSqsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Queue string `json:"queue"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type TriggerSqsClientConfig struct {
@@ -1043,12 +1059,20 @@ type UpdateTriggerRequestMnqNatsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Subject string `json:"subject"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type UpdateTriggerRequestMnqSqsClientConfig struct {
 	MnqNamespaceID string `json:"mnq_namespace_id"`
 
 	Queue string `json:"queue"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
 }
 
 type UpdateTriggerRequestSqsClientConfig struct {
