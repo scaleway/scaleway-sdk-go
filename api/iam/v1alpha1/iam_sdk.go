@@ -552,9 +552,11 @@ type ListPoliciesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListQuotaResponse: list quota response
 type ListQuotaResponse struct {
+	// Quota: list of quota
 	Quota []*Quotum `json:"quota"`
-
+	// TotalCount: total count of quota
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -634,12 +636,14 @@ type Policy struct {
 	NoPrincipal *bool `json:"no_principal,omitempty"`
 }
 
+// Quotum: quotum
 type Quotum struct {
+	// Name: name of the quotum
 	Name string `json:"name"`
-
+	// Limit: max limit of the quotum
 	// Precisely one of Limit, Unlimited must be set.
 	Limit *uint64 `json:"limit,omitempty"`
-
+	// Unlimited: whether the quotum is unlimited or not
 	// Precisely one of Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
 }
@@ -2113,18 +2117,23 @@ func (s *API) DeleteAPIKey(req *DeleteAPIKeyRequest, opts ...scw.RequestOption) 
 }
 
 type ListQuotaRequest struct {
-	// OrderBy:
+	// OrderBy: criteria for sorting results
 	//
 	// Default value: name_asc
 	OrderBy ListQuotaRequestOrderBy `json:"-"`
-
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100
+	//
+	// Default value: 20
 	PageSize *uint32 `json:"-"`
-
+	// Page: number of page. Value must be greater to 1
+	//
+	// Default value: 1
+	Page *int32 `json:"-"`
+	// OrganizationID: filter by organization ID
 	OrganizationID string `json:"-"`
 }
 
+// ListQuota: list all quota in the organization with the associated limit
 func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*ListQuotaResponse, error) {
 	var err error
 
@@ -2140,8 +2149,8 @@ func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*List
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
@@ -2161,11 +2170,13 @@ func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*List
 }
 
 type GetQuotumRequest struct {
+	// QuotumName: name of the quotum to get
 	QuotumName string `json:"-"`
-
+	// OrganizationID: ID of the organization
 	OrganizationID string `json:"-"`
 }
 
+// GetQuotum: get a quotum in the organization with the associated limit
 func (s *API) GetQuotum(req *GetQuotumRequest, opts ...scw.RequestOption) (*Quotum, error) {
 	var err error
 
