@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: iPAM API
+// API: iPAM API.
 type API struct {
 	client *scw.Client
 }
@@ -163,7 +163,6 @@ type ListIPsResponse struct {
 
 type Resource struct {
 	// Type:
-	//
 	// Default value: unknown_type
 	Type ResourceType `json:"type"`
 
@@ -198,16 +197,13 @@ func (s *API) Regions() []scw.Region {
 }
 
 type ListIPsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
 	// OrderBy:
-	//
 	// Default value: created_at_desc
 	OrderBy ListIPsRequestOrderBy `json:"-"`
 
@@ -221,7 +217,6 @@ type ListIPsRequest struct {
 
 	ResourceID *string `json:"-"`
 	// ResourceType:
-	//
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
 
@@ -230,7 +225,7 @@ type ListIPsRequest struct {
 	Tags *[]string `json:"-"`
 }
 
-// ListIPs: find IP addresses
+// ListIPs: find IP addresses.
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
