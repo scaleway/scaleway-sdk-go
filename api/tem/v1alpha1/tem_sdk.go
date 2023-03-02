@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: tem
+// API: tem.
 type API struct {
 	client *scw.Client
 }
@@ -152,59 +152,58 @@ func (enum *EmailStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// CreateEmailRequestAddress: create email request. address
+// CreateEmailRequestAddress: create email request. address.
 type CreateEmailRequestAddress struct {
-	// Email: email address
+	// Email: email address.
 	Email string `json:"email"`
-	// Name: optional display name
+	// Name: optional display name.
 	Name *string `json:"name"`
 }
 
-// CreateEmailRequestAttachment: create email request. attachment
+// CreateEmailRequestAttachment: create email request. attachment.
 type CreateEmailRequestAttachment struct {
-	// Name: filename of the attachment
+	// Name: filename of the attachment.
 	Name string `json:"name"`
-	// Type: mIME type of the attachment (Currently only allow, text files, pdf and html files)
+	// Type: mIME type of the attachment (Currently only allow, text files, pdf and html files).
 	Type string `json:"type"`
-	// Content: content of the attachment, encoded in base64
+	// Content: content of the attachment, encoded in base64.
 	Content []byte `json:"content"`
 }
 
-// CreateEmailResponse: create email response
+// CreateEmailResponse: create email response.
 type CreateEmailResponse struct {
-	// Emails: single page of emails matching the requested criteria
+	// Emails: single page of emails matching the requested criteria.
 	Emails []*Email `json:"emails"`
 }
 
-// Domain: domain
+// Domain: domain.
 type Domain struct {
-	// ID: ID of the domain
+	// ID: ID of the domain.
 	ID string `json:"id"`
-	// OrganizationID: ID of the organization to which the domain belongs
+	// OrganizationID: ID of the organization to which the domain belongs.
 	OrganizationID string `json:"organization_id"`
-	// ProjectID: ID of the project
+	// ProjectID: ID of the project.
 	ProjectID string `json:"project_id"`
-	// Name: domain name (example.com)
+	// Name: domain name (example.com).
 	Name string `json:"name"`
-	// Status: status of the domain
-	//
+	// Status: status of the domain.
 	// Default value: unknown
 	Status DomainStatus `json:"status"`
-	// CreatedAt: date and time of domain's creation
+	// CreatedAt: date and time of domain's creation.
 	CreatedAt *time.Time `json:"created_at"`
-	// NextCheckAt: date and time of the next scheduled check
+	// NextCheckAt: date and time of the next scheduled check.
 	NextCheckAt *time.Time `json:"next_check_at"`
-	// LastValidAt: date and time the domain was last found to be valid
+	// LastValidAt: date and time the domain was last found to be valid.
 	LastValidAt *time.Time `json:"last_valid_at"`
-	// RevokedAt: date and time of the revocation of the domain
+	// RevokedAt: date and time of the revocation of the domain.
 	RevokedAt *time.Time `json:"revoked_at"`
-	// LastError: error message if the last check failed
+	// LastError: error message if the last check failed.
 	LastError *string `json:"last_error"`
-	// SpfConfig: snippet of the SPF record that should be registered in the DNS zone
+	// SpfConfig: snippet of the SPF record that should be registered in the DNS zone.
 	SpfConfig string `json:"spf_config"`
-	// DkimConfig: dKIM public key, as should be recorded in the DNS zone
+	// DkimConfig: dKIM public key, as should be recorded in the DNS zone.
 	DkimConfig string `json:"dkim_config"`
-	// Statistics: domain's statistics
+	// Statistics: domain's statistics.
 	Statistics *DomainStatistics `json:"statistics"`
 
 	Region scw.Region `json:"region"`
@@ -220,43 +219,41 @@ type DomainStatistics struct {
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
-// Email: email
+// Email: email.
 type Email struct {
-	// ID: technical ID of the email
+	// ID: technical ID of the email.
 	ID string `json:"id"`
-	// MessageID: messageID of the email
+	// MessageID: messageID of the email.
 	MessageID string `json:"message_id"`
-	// ProjectID: ID of the project to which the email belongs
+	// ProjectID: ID of the project to which the email belongs.
 	ProjectID string `json:"project_id"`
-	// MailFrom: email address of the sender
+	// MailFrom: email address of the sender.
 	MailFrom string `json:"mail_from"`
-	// RcptTo: email address of the recipient
+	// RcptTo: email address of the recipient.
 	RcptTo string `json:"rcpt_to"`
-	// RcptType: type of the recipient
-	//
+	// RcptType: type of the recipient.
 	// Default value: unknown_rcpt_type
 	RcptType EmailRcptType `json:"rcpt_type"`
-	// CreatedAt: creation date of the email object
+	// CreatedAt: creation date of the email object.
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: last update time of the email object
+	// UpdatedAt: last update time of the email object.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// Status: status of the email
-	//
+	// Status: status of the email.
 	// Default value: unknown
 	Status EmailStatus `json:"status"`
-	// StatusDetails: additional information on the status
+	// StatusDetails: additional information on the status.
 	StatusDetails *string `json:"status_details"`
-	// TryCount: total number of attempts to send the email
+	// TryCount: total number of attempts to send the email.
 	TryCount uint32 `json:"try_count"`
-	// LastTries: informations about the latest three attempts to send the email
+	// LastTries: informations about the latest three attempts to send the email.
 	LastTries []*EmailTry `json:"last_tries"`
 }
 
-// EmailTry: email. try
+// EmailTry: email. try.
 type EmailTry struct {
-	// Rank: rank number of this attempt to send the email
+	// Rank: rank number of this attempt to send the email.
 	Rank uint32 `json:"rank"`
-	// TriedAt: date of the attempt
+	// TriedAt: date of the attempt.
 	TriedAt *time.Time `json:"tried_at"`
 	// Code: the SMTP status code received after the attempt. 0 if the attempt did not reach an SMTP server.
 	Code int32 `json:"code"`
@@ -264,35 +261,35 @@ type EmailTry struct {
 	Message string `json:"message"`
 }
 
-// ListDomainsResponse: list domains response
+// ListDomainsResponse: list domains response.
 type ListDomainsResponse struct {
-	// TotalCount: total number of domains matching the request (without pagination)
+	// TotalCount: total number of domains matching the request (without pagination).
 	TotalCount uint32 `json:"total_count"`
 
 	Domains []*Domain `json:"domains"`
 }
 
-// ListEmailsResponse: list emails response
+// ListEmailsResponse: list emails response.
 type ListEmailsResponse struct {
-	// TotalCount: count of all emails matching the requested criteria
+	// TotalCount: count of all emails matching the requested criteria.
 	TotalCount uint32 `json:"total_count"`
-	// Emails: single page of emails matching the requested criteria
+	// Emails: single page of emails matching the requested criteria.
 	Emails []*Email `json:"emails"`
 }
 
-// Statistics: statistics
+// Statistics: statistics.
 type Statistics struct {
-	// TotalCount: total number of emails matching the request criteria
+	// TotalCount: total number of emails matching the request criteria.
 	TotalCount uint32 `json:"total_count"`
-	// NewCount: number of emails still in the `new` transient state (received from the API, not yet processed)
+	// NewCount: number of emails still in the `new` transient state (received from the API, not yet processed).
 	NewCount uint32 `json:"new_count"`
-	// SendingCount: number of emails still in the `sending` transient state (received from the API, not yet in their final status)
+	// SendingCount: number of emails still in the `sending` transient state (received from the API, not yet in their final status).
 	SendingCount uint32 `json:"sending_count"`
-	// SentCount: number of emails in the final `sent` state (have been delivered to the target mail system)
+	// SentCount: number of emails in the final `sent` state (have been delivered to the target mail system).
 	SentCount uint32 `json:"sent_count"`
-	// FailedCount: number of emails in the final `failed` state (refused by the target mail system with a final error status)
+	// FailedCount: number of emails in the final `failed` state (refused by the target mail system with a final error status).
 	FailedCount uint32 `json:"failed_count"`
-	// CanceledCount: number of emails in the final `canceled` state (canceled by customer's request)
+	// CanceledCount: number of emails in the final `canceled` state (canceled by customer's request).
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
@@ -304,33 +301,31 @@ func (s *API) Regions() []scw.Region {
 }
 
 type CreateEmailRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// From: sender information (must be from a checked domain declared in the project)
+	// From: sender information (must be from a checked domain declared in the project).
 	From *CreateEmailRequestAddress `json:"from"`
-	// To: array of recipient information (limited to 1 recipient)
+	// To: array of recipient information (limited to 1 recipient).
 	To []*CreateEmailRequestAddress `json:"to"`
-	// Cc: array of recipient information (unimplemented)
+	// Cc: array of recipient information (unimplemented).
 	Cc []*CreateEmailRequestAddress `json:"cc"`
-	// Bcc: array of recipient information (unimplemented)
+	// Bcc: array of recipient information (unimplemented).
 	Bcc []*CreateEmailRequestAddress `json:"bcc"`
-	// Subject: message subject
+	// Subject: message subject.
 	Subject string `json:"subject"`
-	// Text: text content
+	// Text: text content.
 	Text string `json:"text"`
-	// HTML: HTML content
+	// HTML: HTML content.
 	HTML string `json:"html"`
-	// ProjectID: ID of the project in which to create the email
+	// ProjectID: ID of the project in which to create the email.
 	ProjectID string `json:"project_id"`
-	// Attachments: array of attachments
+	// Attachments: array of attachments.
 	Attachments []*CreateEmailRequestAttachment `json:"attachments"`
-	// SendBefore: maximum date to deliver mail
+	// SendBefore: maximum date to deliver mail.
 	SendBefore *time.Time `json:"send_before"`
 }
 
-// CreateEmail: send an email
+// CreateEmail: send an email.
 func (s *API) CreateEmail(req *CreateEmailRequest, opts ...scw.RequestOption) (*CreateEmailResponse, error) {
 	var err error
 
@@ -369,15 +364,13 @@ func (s *API) CreateEmail(req *CreateEmailRequest, opts ...scw.RequestOption) (*
 }
 
 type GetEmailRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// EmailID: ID of the email to retrieve
+	// EmailID: ID of the email to retrieve.
 	EmailID string `json:"-"`
 }
 
-// GetEmail: get information about an email
+// GetEmail: get information about an email.
 func (s *API) GetEmail(req *GetEmailRequest, opts ...scw.RequestOption) (*Email, error) {
 	var err error
 
@@ -410,33 +403,31 @@ func (s *API) GetEmail(req *GetEmailRequest, opts ...scw.RequestOption) (*Email,
 }
 
 type ListEmailsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// ProjectID: optional ID of the project in which to list the emails
+	// ProjectID: optional ID of the project in which to list the emails.
 	ProjectID *string `json:"-"`
-	// DomainID: optional ID of the domain for which to list the emails
+	// DomainID: optional ID of the domain for which to list the emails.
 	DomainID *string `json:"-"`
-	// MessageID: optional ID of the message for which to list the emails
+	// MessageID: optional ID of the message for which to list the emails.
 	MessageID *string `json:"-"`
-	// Since: optional, list emails created after this date
+	// Since: optional, list emails created after this date.
 	Since *time.Time `json:"-"`
-	// Until: optional, list emails created before this date
+	// Until: optional, list emails created before this date.
 	Until *time.Time `json:"-"`
-	// MailFrom: optional, list emails sent with this `mail_from` sender's address
+	// MailFrom: optional, list emails sent with this `mail_from` sender's address.
 	MailFrom *string `json:"-"`
-	// MailTo: optional, list emails sent with this `mail_to` recipient's address
+	// MailTo: optional, list emails sent with this `mail_to` recipient's address.
 	MailTo *string `json:"-"`
-	// Statuses: optional, list emails having any of this status
+	// Statuses: optional, list emails having any of this status.
 	Statuses []EmailStatus `json:"-"`
 }
 
-// ListEmails: list emails sent from a domain and/or for a project and/or for an organization
+// ListEmails: list emails sent from a domain and/or for a project and/or for an organization.
 func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*ListEmailsResponse, error) {
 	var err error
 
@@ -483,23 +474,21 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 }
 
 type GetStatisticsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: optional, count emails for this project
+	// ProjectID: optional, count emails for this project.
 	ProjectID *string `json:"-"`
-	// DomainID: optional, count emails send from this domain (must be coherent with the `project_id` and the `organization_id`)
+	// DomainID: optional, count emails send from this domain (must be coherent with the `project_id` and the `organization_id`).
 	DomainID *string `json:"-"`
-	// Since: optional, count emails created after this date
+	// Since: optional, count emails created after this date.
 	Since *time.Time `json:"-"`
-	// Until: optional, count emails created before this date
+	// Until: optional, count emails created before this date.
 	Until *time.Time `json:"-"`
-	// MailFrom: optional, count emails sent with this `mail_from` sender's address
+	// MailFrom: optional, count emails sent with this `mail_from` sender's address.
 	MailFrom *string `json:"-"`
 }
 
-// GetStatistics: get statistics on the email statuses
+// GetStatistics: get statistics on the email statuses.
 func (s *API) GetStatistics(req *GetStatisticsRequest, opts ...scw.RequestOption) (*Statistics, error) {
 	var err error
 
@@ -536,15 +525,13 @@ func (s *API) GetStatistics(req *GetStatisticsRequest, opts ...scw.RequestOption
 }
 
 type CancelEmailRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// EmailID: ID of the email to cancel
+	// EmailID: ID of the email to cancel.
 	EmailID string `json:"-"`
 }
 
-// CancelEmail: try to cancel an email if it has not yet been sent
+// CancelEmail: try to cancel an email if it has not yet been sent.
 func (s *API) CancelEmail(req *CancelEmailRequest, opts ...scw.RequestOption) (*Email, error) {
 	var err error
 
@@ -582,9 +569,7 @@ func (s *API) CancelEmail(req *CancelEmailRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateDomainRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
 	ProjectID string `json:"project_id"`
@@ -592,7 +577,7 @@ type CreateDomainRequest struct {
 	DomainName string `json:"domain_name"`
 }
 
-// CreateDomain: register a domain in a project
+// CreateDomain: register a domain in a project.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -631,15 +616,13 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 }
 
 type GetDomainRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// DomainID: ID of the domain
+	// DomainID: ID of the domain.
 	DomainID string `json:"-"`
 }
 
-// GetDomain: get information about a domain
+// GetDomain: get information about a domain.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -672,13 +655,11 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 }
 
 type ListDomainsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Page: page number (1 for the first page)
+	// Page: page number (1 for the first page).
 	Page *int32 `json:"-"`
-	// PageSize: page size
+	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
 
 	ProjectID *string `json:"-"`
@@ -690,7 +671,7 @@ type ListDomainsRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListDomains: list domains in a project and/or in an organization
+// ListDomains: list domains in a project and/or in an organization.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -733,15 +714,13 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 }
 
 type RevokeDomainRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// DomainID: ID of the domain to revoke
+	// DomainID: ID of the domain to revoke.
 	DomainID string `json:"-"`
 }
 
-// RevokeDomain: revoke a domain
+// RevokeDomain: revoke a domain.
 func (s *API) RevokeDomain(req *RevokeDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -779,15 +758,13 @@ func (s *API) RevokeDomain(req *RevokeDomainRequest, opts ...scw.RequestOption) 
 }
 
 type CheckDomainRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// DomainID: ID of the domain to check
+	// DomainID: ID of the domain to check.
 	DomainID string `json:"-"`
 }
 
-// CheckDomain: ask for an immediate check of a domain (DNS check)
+// CheckDomain: ask for an immediate check of a domain (DNS check).
 func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 

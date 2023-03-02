@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: account API
+// API: account API.
 type API struct {
 	client *scw.Client
 }
@@ -85,14 +85,14 @@ func (enum *ListSSHKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ListSSHKeysResponse: list ssh keys response
+// ListSSHKeysResponse: list ssh keys response.
 type ListSSHKeysResponse struct {
 	SSHKeys []*SSHKey `json:"ssh_keys"`
 
 	TotalCount uint32 `json:"total_count"`
 }
 
-// SSHKey: ssh key
+// SSHKey: ssh key.
 type SSHKey struct {
 	ID string `json:"id"`
 
@@ -125,7 +125,6 @@ type SSHKeyCreationInfo struct {
 
 type ListSSHKeysRequest struct {
 	// OrderBy:
-	//
 	// Default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
 
@@ -140,7 +139,7 @@ type ListSSHKeysRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSSHKeys: list all SSH keys of your project
+// ListSSHKeys: list all SSH keys of your project.
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
@@ -174,19 +173,19 @@ func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*
 }
 
 type CreateSSHKeyRequest struct {
-	// Name: the name of the SSH key
+	// Name: the name of the SSH key.
 	Name string `json:"name"`
-	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported
+	// PublicKey: SSH public key. Currently ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported.
 	PublicKey string `json:"public_key"`
-	// Deprecated: OrganizationID: use project_id field instead
+	// Deprecated: OrganizationID: use project_id field instead.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
-	// ProjectID: project owning the resource
+	// ProjectID: project owning the resource.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSSHKey: add an SSH key to your project
+// CreateSSHKey: add an SSH key to your project.
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -221,11 +220,11 @@ func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) 
 }
 
 type GetSSHKeyRequest struct {
-	// SSHKeyID: the ID of the SSH key
+	// SSHKeyID: the ID of the SSH key.
 	SSHKeyID string `json:"-"`
 }
 
-// GetSSHKey: get an SSH key from your project
+// GetSSHKey: get an SSH key from your project.
 func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -250,11 +249,11 @@ func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHK
 
 type UpdateSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
-	// Name: name of the SSH key
+	// Name: name of the SSH key.
 	Name *string `json:"name"`
 }
 
-// UpdateSSHKey: update an SSH key on your project
+// UpdateSSHKey: update an SSH key on your project.
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -286,7 +285,7 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: remove an SSH key from your project
+// DeleteSSHKey: remove an SSH key from your project.
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
