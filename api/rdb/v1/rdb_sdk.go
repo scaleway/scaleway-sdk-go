@@ -4134,6 +4134,54 @@ func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+type MigrateEndpointRequest struct {
+	// Region:
+	//
+	// Region to target. If none is passed will use default region from the config
+	Region scw.Region `json:"-"`
+	// EndpointID: UUID of the endpoint you want to migrate
+	EndpointID string `json:"-"`
+	// InstanceID: UUID of the instance you want to attach the endpoint to
+	InstanceID string `json:"instance_id"`
+}
+
+// MigrateEndpoint: migrate an existing instance endpoint to another instance
+func (s *API) MigrateEndpoint(req *MigrateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return nil, errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "/migrate",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDatabaseEnginesResponse) UnsafeGetTotalCount() uint32 {
