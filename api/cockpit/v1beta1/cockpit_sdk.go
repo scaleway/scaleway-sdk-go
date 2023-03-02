@@ -297,6 +297,9 @@ type ActivateCockpitRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// ActivateCockpit: activate a cockpit
+//
+// Activate a cockpit associated with the given project ID.
 func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -363,6 +366,9 @@ type DeactivateCockpitRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// DeactivateCockpit: deactivate a cockpit
+//
+// Deactivate a cockpit associated with the given project ID.
 func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
