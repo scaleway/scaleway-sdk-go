@@ -397,7 +397,7 @@ type ResetCockpitGrafanaRequest struct {
 
 // ResetCockpitGrafana: reset Grafana
 //
-// Reset the Grafana your cockpit associated with the given project ID.
+// Reset the Grafana of your cockpit associated with the given project ID.
 func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -436,7 +436,7 @@ type CreateTokenRequest struct {
 
 // CreateToken: create a token
 //
-// Create token associated with the given project ID.
+// Create a token associated with the given project ID.
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 

@@ -729,7 +729,7 @@ type Offer struct {
 	//
 	// Default value: empty
 	Stock OfferStock `json:"stock"`
-	// Bandwidth: bandwidth available in bits/s with the offer
+	// Bandwidth: public Bandwidth available in bits/s with the offer
 	Bandwidth uint64 `json:"bandwidth"`
 	// CommercialRange: commercial range of the offer
 	CommercialRange string `json:"commercial_range"`
@@ -763,6 +763,12 @@ type Offer struct {
 	Fee *scw.Money `json:"fee"`
 	// Options: options available on offer
 	Options []*OfferOptionOffer `json:"options"`
+	// PrivateBandwidth: private bandwidth available in bits/s with the offer
+	PrivateBandwidth uint64 `json:"private_bandwidth"`
+	// SharedBandwidth: the offer is shared or not
+	SharedBandwidth bool `json:"shared_bandwidth"`
+	// Tags: array of tags attached to the offer
+	Tags []string `json:"tags"`
 }
 
 // OfferOptionOffer: offer. option offer

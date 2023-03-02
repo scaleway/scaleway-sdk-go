@@ -62,15 +62,24 @@ func NewAPI(client *scw.Client) *API {
 type EyeColors string
 
 const (
+	// Unknown color
 	EyeColorsUnknown = EyeColors("unknown")
-	EyeColorsAmber   = EyeColors("amber")
-	EyeColorsBlue    = EyeColors("blue")
-	EyeColorsBrown   = EyeColors("brown")
-	EyeColorsGray    = EyeColors("gray")
-	EyeColorsGreen   = EyeColors("green")
-	EyeColorsHazel   = EyeColors("hazel")
-	EyeColorsRed     = EyeColors("red")
-	EyeColorsViolet  = EyeColors("violet")
+	// Rare and striking shade that typically features a golden or yellowish-brown hue
+	EyeColorsAmber = EyeColors("amber")
+	// Relatively rare, with the highest frequency found in eastern Europe
+	EyeColorsBlue = EyeColors("blue")
+	// Most common eye color in the world caused by a high concentration of melanin in the iris
+	EyeColorsBrown = EyeColors("brown")
+	// Relatively rare color which can change depending on the lighting conditions
+	EyeColorsGray = EyeColors("gray")
+	// Rare and unique color characterized by a combination of yellow, brown, and blue pigments
+	EyeColorsGreen = EyeColors("green")
+	// Brownish-yellow or greenish-brown with a hint of gold
+	EyeColorsHazel = EyeColors("hazel")
+	// Rare mutation that results in a reddish-pink hue
+	EyeColorsRed = EyeColors("red")
+	// Rare and striking shade that appears to be a mix of blue and purple
+	EyeColorsViolet = EyeColors("violet")
 )
 
 func (enum EyeColors) String() string {
@@ -99,8 +108,11 @@ func (enum *EyeColors) UnmarshalJSON(data []byte) error {
 type HumanStatus string
 
 const (
+	// Unknown status
 	HumanStatusUnknown = HumanStatus("unknown")
+	// The human is stopped
 	HumanStatusStopped = HumanStatus("stopped")
+	// The human is running
 	HumanStatusRunning = HumanStatus("running")
 )
 
@@ -130,12 +142,18 @@ func (enum *HumanStatus) UnmarshalJSON(data []byte) error {
 type ListHumansRequestOrderBy string
 
 const (
-	ListHumansRequestOrderByCreatedAtAsc  = ListHumansRequestOrderBy("created_at_asc")
+	// Ascending creation date
+	ListHumansRequestOrderByCreatedAtAsc = ListHumansRequestOrderBy("created_at_asc")
+	// Descending creation date
 	ListHumansRequestOrderByCreatedAtDesc = ListHumansRequestOrderBy("created_at_desc")
-	ListHumansRequestOrderByUpdatedAtAsc  = ListHumansRequestOrderBy("updated_at_asc")
+	// Ascending update date
+	ListHumansRequestOrderByUpdatedAtAsc = ListHumansRequestOrderBy("updated_at_asc")
+	// Descending update date
 	ListHumansRequestOrderByUpdatedAtDesc = ListHumansRequestOrderBy("updated_at_desc")
-	ListHumansRequestOrderByHeightAsc     = ListHumansRequestOrderBy("height_asc")
-	ListHumansRequestOrderByHeightDesc    = ListHumansRequestOrderBy("height_desc")
+	// Ascending height
+	ListHumansRequestOrderByHeightAsc = ListHumansRequestOrderBy("height_asc")
+	// Descending height
+	ListHumansRequestOrderByHeightDesc = ListHumansRequestOrderBy("height_desc")
 )
 
 func (enum ListHumansRequestOrderBy) String() string {
