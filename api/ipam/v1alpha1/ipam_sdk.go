@@ -94,6 +94,8 @@ const (
 	ResourceTypeFipIP              = ResourceType("fip_ip")
 	ResourceTypeVpcGateway         = ResourceType("vpc_gateway")
 	ResourceTypeK8sNode            = ResourceType("k8s_node")
+	ResourceTypeRdbInstance        = ResourceType("rdb_instance")
+	ResourceTypeRedisCluster       = ResourceType("redis_cluster")
 )
 
 func (enum ResourceType) String() string {
