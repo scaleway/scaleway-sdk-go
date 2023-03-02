@@ -150,7 +150,7 @@ type IP struct {
 
 	Region scw.Region `json:"region"`
 
-	Zone scw.Zone `json:"zone"`
+	Zone *scw.Zone `json:"zone"`
 }
 
 type ListIPsResponse struct {

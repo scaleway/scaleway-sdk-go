@@ -394,16 +394,16 @@ type ListLocalImagesRequest struct {
 
 	ImageLabel *string `json:"-"`
 
-	Zone scw.Zone `json:"-"`
+	Zone *scw.Zone `json:"-"`
 }
 
 // ListLocalImages: list local images from a specific image or version
 func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOption) (*ListLocalImagesResponse, error) {
 	var err error
 
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
+	defaultZone, exist := s.client.GetDefaultZone()
+	if (req.Zone == nil || *req.Zone == "") && exist {
+		req.Zone = &defaultZone
 	}
 
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
