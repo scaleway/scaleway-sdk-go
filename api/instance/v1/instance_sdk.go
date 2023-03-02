@@ -1441,7 +1441,7 @@ type SetSecurityGroupRulesRequestRule struct {
 	// Editable: indicates if this rule is editable. Rules with the value false will be ignored
 	Editable *bool `json:"editable"`
 	// Zone: zone of the rule. This field is ignored
-	Zone scw.Zone `json:"zone"`
+	Zone *scw.Zone `json:"zone"`
 }
 
 type SetSecurityGroupRulesResponse struct {
