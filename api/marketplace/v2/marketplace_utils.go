@@ -57,7 +57,7 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 
 	resp, err := s.ListLocalImages(&ListLocalImagesRequest{
 		ImageLabel: scw.StringPtr(req.ImageLabel),
-		Zone:       req.Zone,
+		Zone:       &req.Zone,
 	})
 	if err != nil {
 		return nil, err
