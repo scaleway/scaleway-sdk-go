@@ -291,12 +291,10 @@ func listerGetTotalCount(i interface{}) uint64 {
 }
 
 func listerAppend(recv interface{}, elems interface{}) (uint64, error) {
-	var recvLister lister
-
 	if l, isLister := recv.(lister); isLister {
 		return l.UnsafeAppend(elems)
 	} else if l32, isLister32 := recv.(lister32); isLister32 {
-		total, err := l32.UnsafeAppend(recvLister)
+		total, err := l32.UnsafeAppend(elems)
 		return uint64(total), err
 	}
 
