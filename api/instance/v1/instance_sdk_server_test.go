@@ -163,3 +163,17 @@ func TestCreateServerWithIncorrectBody(t *testing.T) {
 	})
 	testhelpers.Assert(t, err != nil, "This request should error")
 }
+
+func TestListServerMultipleZones(t *testing.T) {
+	client, r, err := httprecorder.CreateRecordedScwClient("server-list-zones")
+	testhelpers.AssertNoError(t, err)
+	defer func() {
+		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
+	}()
+
+	instanceAPI := NewAPI(client)
+
+	// Create server
+	_, err = instanceAPI.ListServers(&ListServersRequest{}, scw.WithZones(instanceAPI.Zones()...))
+	testhelpers.Assert(t, err == nil, "This request should not error: %s", err)
+}
