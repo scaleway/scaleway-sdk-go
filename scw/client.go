@@ -280,45 +280,60 @@ type legacyLister interface {
 	UnsafeSetTotalCount(totalCount int)
 }
 
-// Wrap a lister32 to use it as a lister
-type lister32Wrapper struct {
-	lister32
+func listerGetTotalCount(i interface{}) uint64 {
+	if l, isLister := i.(lister); isLister {
+		return l.UnsafeGetTotalCount()
+	}
+	if l32, isLister32 := i.(lister32); isLister32 {
+		return uint64(l32.UnsafeGetTotalCount())
+	}
+	panic(fmt.Errorf("%T does not support pagination but checks failed, should not happen", i))
 }
 
-func (l lister32Wrapper) UnsafeGetTotalCount() uint64 {
-	return uint64(l.lister32.UnsafeGetTotalCount())
+func listerAppend(recv interface{}, elems interface{}) (uint64, error) {
+	var recvLister lister
+
+	if l, isLister := recv.(lister); isLister {
+		return l.UnsafeAppend(elems)
+	} else if l32, isLister32 := recv.(lister32); isLister32 {
+		total, err := l32.UnsafeAppend(recvLister)
+		return uint64(total), err
+	}
+
+	panic(fmt.Errorf("%T does not support pagination but checks failed, should not happen", recv))
 }
 
-func (l lister32Wrapper) UnsafeAppend(i interface{}) (uint64, error) {
-	total, err := l.lister32.UnsafeAppend(i)
-	return uint64(total), err
+func isLister(i interface{}) bool {
+	switch i.(type) {
+	case lister:
+		return true
+	case lister32:
+		return true
+	default:
+		return false
+	}
 }
 
 const maxPageCount uint64 = math.MaxUint32
 
 // doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
-	response := res
-	if l32, isLister32 := response.(lister32); isLister32 {
-		response = lister32Wrapper{l32}
-	}
-
 	// check for lister interface
-	if response, isLister := response.(lister); isLister {
+	if isLister(res) {
 		pageCount := maxPageCount
 		for page := uint64(1); page <= pageCount; page++ {
 			// set current page
 			req.Query.Set("page", strconv.FormatUint(page, 10))
 
 			// request the next page
-			nextPage := newVariableFromType(getListerResponse(response))
+			nextPage := newVariableFromType(res)
 			err := c.do(req, nextPage)
 			if err != nil {
 				return err
 			}
 
 			// append results
-			pageSize, err := response.UnsafeAppend(nextPage)
+			pageSize, err := listerAppend(res, nextPage)
 			if err != nil {
 				return err
 			}
@@ -329,7 +344,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 			// set total count on first request
 			if pageCount == maxPageCount {
-				totalCount := getResponseLister(nextPage).UnsafeGetTotalCount()
+				totalCount := listerGetTotalCount(nextPage)
 				pageCount = (totalCount + pageSize - 1) / pageSize
 			}
 		}
@@ -341,7 +356,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 
 // doListLocalities collects all localities using mutliple list requests and aggregate all results on a lister response
 // results is sorted by locality
-func (c *Client) doListLocalities(req *ScalewayRequest, res lister, localities []string) (err error) {
+func (c *Client) doListLocalities(req *ScalewayRequest, res interface{}, localities []string) (err error) {
 	path := req.Path
 	if !strings.Contains(path, "%locality%") {
 		return fmt.Errorf("request is not a valid locality request")
@@ -368,7 +383,7 @@ func (c *Client) doListLocalities(req *ScalewayRequest, res lister, localities [
 				errChan <- err
 			}
 			responseMutex.Lock()
-			_, err = res.UnsafeAppend(zoneResponse)
+			_, err = listerAppend(res, zoneResponse)
 			responseMutex.Unlock()
 			if err != nil {
 				errChan <- err
@@ -396,7 +411,7 @@ L: // We gather potential errors and return them all together
 // doListZones collects all zones using multiple list requests and aggregate all results on a single response.
 // result is sorted by zone
 func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone) (err error) {
-	if response, isLister := res.(lister); isLister {
+	if isLister(res) {
 		// Prepare request with %zone% that can be replaced with actual zone
 		for _, zone := range AllZones {
 			if strings.Contains(req.Path, string(zone)) {
@@ -412,7 +427,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 			localities = append(localities, string(zone))
 		}
 
-		err := c.doListLocalities(req, response, localities)
+		err := c.doListLocalities(req, res, localities)
 		if err != nil {
 			return fmt.Errorf("failed to list localities: %w", err)
 		}
@@ -427,7 +442,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 // doListRegions collects all regions using multiple list requests and aggregate all results on a single response.
 // result is sorted by region
 func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []Region) (err error) {
-	if response, isLister := res.(lister); isLister {
+	if isLister(res) {
 		// Prepare request with %locality% that can be replaced with actual region
 		for _, region := range AllRegions {
 			if strings.Contains(req.Path, string(region)) {
@@ -443,7 +458,7 @@ func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []
 			localities = append(localities, string(region))
 		}
 
-		err := c.doListLocalities(req, response, localities)
+		err := c.doListLocalities(req, res, localities)
 		if err != nil {
 			return fmt.Errorf("failed to list localities: %w", err)
 		}
@@ -519,24 +534,6 @@ func sortResponseByRegions(res interface{}, regions []Region) {
 func newVariableFromType(t interface{}) interface{} {
 	// reflect.New always create a pointer, that's why we use reflect.Indirect before
 	return reflect.New(reflect.Indirect(reflect.ValueOf(t)).Type()).Interface()
-}
-
-// getListerResponse return the response from a lister
-// used as a wrapper lister32 is not a valid response
-func getListerResponse(l interface{}) interface{} {
-	if wrappedLister, isWrapped := l.(lister32Wrapper); isWrapped {
-		return wrappedLister.lister32
-	}
-	return l
-}
-
-// getResponseLister return the lister from a response
-// used as a lister32 must be wrapped
-func getResponseLister(l interface{}) lister {
-	if l32, isLister32 := l.(lister32); isLister32 {
-		return lister32Wrapper{l32}
-	}
-	return l.(lister)
 }
 
 func newHTTPClient() *http.Client {
