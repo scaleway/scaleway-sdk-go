@@ -222,5 +222,3 @@ func TestNewVariableFromType(t *testing.T) {
 
 	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
 }
-
-func Test
