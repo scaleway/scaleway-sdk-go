@@ -1109,10 +1109,13 @@ type CreateGatewayNetworkRequest struct {
 	// EnableMasquerade: whether to enable masquerade on this network.
 	EnableMasquerade bool `json:"enable_masquerade"`
 	// DHCPID: existing configuration.
-	// Precisely one of Address, DHCPID must be set.
+	// Precisely one of Address, DHCP, DHCPID must be set.
 	DHCPID *string `json:"dhcp_id,omitempty"`
+	// DHCP: new DHCP configuration.
+	// Precisely one of Address, DHCP, DHCPID must be set.
+	DHCP *CreateDHCPRequest `json:"dhcp,omitempty"`
 	// Address: static IP address in CIDR format to to use without DHCP.
-	// Precisely one of Address, DHCPID must be set.
+	// Precisely one of Address, DHCP, DHCPID must be set.
 	Address *scw.IPNet `json:"address,omitempty"`
 	// EnableDHCP: whether to enable DHCP on this Private Network. Defaults to `true` if either `dhcp_id` or `dhcp` short: are present. If set to `true`, requires that either `dhcp_id` or `dhcp` to be present.
 	EnableDHCP *bool `json:"enable_dhcp"`
