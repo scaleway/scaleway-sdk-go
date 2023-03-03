@@ -186,6 +186,38 @@ func (enum *ListGroupsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListJWTsRequestOrderBy string
+
+const (
+	ListJWTsRequestOrderByCreatedAtAsc  = ListJWTsRequestOrderBy("created_at_asc")
+	ListJWTsRequestOrderByCreatedAtDesc = ListJWTsRequestOrderBy("created_at_desc")
+	ListJWTsRequestOrderByUpdatedAtAsc  = ListJWTsRequestOrderBy("updated_at_asc")
+	ListJWTsRequestOrderByUpdatedAtDesc = ListJWTsRequestOrderBy("updated_at_desc")
+)
+
+func (enum ListJWTsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListJWTsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListJWTsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListJWTsRequestOrderBy(ListJWTsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPermissionSetsRequestOrderBy string
 
 const (
@@ -512,6 +544,26 @@ type Group struct {
 	ApplicationIDs []string `json:"application_ids"`
 }
 
+// JWT: jwt.
+type JWT struct {
+	// Jti: jWT ID.
+	Jti string `json:"jti"`
+	// IssuerID: ID of the user who issued the JWT.
+	IssuerID string `json:"issuer_id"`
+	// AudienceID: ID of the user targeted by the JWT.
+	AudienceID string `json:"audience_id"`
+	// CreatedAt: creation date of the JWT.
+	CreatedAt *time.Time `json:"created_at"`
+	// UpdatedAt: last update date of the JWT.
+	UpdatedAt *time.Time `json:"updated_at"`
+	// ExpiresAt: expiration date of the JWT.
+	ExpiresAt *time.Time `json:"expires_at"`
+	// IP: IP address used during the creation of the JWT.
+	IP net.IP `json:"ip"`
+	// UserAgent: user-agent used during the creation of the JWT.
+	UserAgent string `json:"user_agent"`
+}
+
 // ListAPIKeysResponse: list api keys response.
 type ListAPIKeysResponse struct {
 	// APIKeys: list of API keys.
@@ -534,6 +586,12 @@ type ListGroupsResponse struct {
 	Groups []*Group `json:"groups"`
 	// TotalCount: total count of groups.
 	TotalCount uint32 `json:"total_count"`
+}
+
+type ListJWTsResponse struct {
+	Jwts []*JWT `json:"jwts"`
+
+	TotalCount uint64 `json:"total_count"`
 }
 
 // ListPermissionSetsResponse: list permission sets response.
@@ -2177,6 +2235,108 @@ func (s *API) GetQuotum(req *GetQuotumRequest, opts ...scw.RequestOption) (*Quot
 	return &resp, nil
 }
 
+type ListJWTsRequest struct {
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
+	OrderBy ListJWTsRequestOrderBy `json:"-"`
+	// AudienceID: ID of the user to search.
+	AudienceID *string `json:"-"`
+	// PageSize: number of results per page. Value must be between 1 and 100.
+	// Default value: 20
+	PageSize *uint32 `json:"-"`
+	// Page: number of page. Value must be greater to 1.
+	// Default value: 1
+	Page *int32 `json:"-"`
+	// Expired: filter out expired JWTs or not.
+	Expired *bool `json:"-"`
+}
+
+// ListJWTs: list JWTs.
+func (s *API) ListJWTs(req *ListJWTsRequest, opts ...scw.RequestOption) (*ListJWTsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "audience_id", req.AudienceID)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "expired", req.Expired)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iam/v1alpha1/jwts",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListJWTsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetJWTRequest struct {
+	// Jti: jWT ID of the JWT to get.
+	Jti string `json:"-"`
+}
+
+// GetJWT: get a JWT.
+func (s *API) GetJWT(req *GetJWTRequest, opts ...scw.RequestOption) (*JWT, error) {
+	var err error
+
+	if fmt.Sprint(req.Jti) == "" {
+		return nil, errors.New("field Jti cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/iam/v1alpha1/jwts/" + fmt.Sprint(req.Jti) + "",
+		Headers: http.Header{},
+	}
+
+	var resp JWT
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteJWTRequest struct {
+	// Jti: jWT ID of the JWT to delete.
+	Jti string `json:"-"`
+}
+
+// DeleteJWT: delete a JWT.
+func (s *API) DeleteJWT(req *DeleteJWTRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.Jti) == "" {
+		return errors.New("field Jti cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/iam/v1alpha1/jwts/" + fmt.Sprint(req.Jti) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListSSHKeysResponse) UnsafeGetTotalCount() uint32 {
@@ -2346,4 +2506,23 @@ func (r *ListQuotaResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Quota = append(r.Quota, results.Quota...)
 	r.TotalCount += uint64(len(results.Quota))
 	return uint64(len(results.Quota)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListJWTsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListJWTsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListJWTsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Jwts = append(r.Jwts, results.Jwts...)
+	r.TotalCount += uint64(len(results.Jwts))
+	return uint64(len(results.Jwts)), nil
 }
