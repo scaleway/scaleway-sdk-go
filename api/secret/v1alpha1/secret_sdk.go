@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to conveniently store, access and share sensitive data
+// API: this API allows you to conveniently store, access and share sensitive data.
 type API struct {
 	client *scw.Client
 }
@@ -147,81 +147,75 @@ func (enum *SecretVersionStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// AccessSecretVersionResponse: access secret version response
+// AccessSecretVersionResponse: access secret version response.
 type AccessSecretVersionResponse struct {
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"secret_id"`
-	// Revision: revision of the SecretVersion
+	// Revision: revision of the SecretVersion.
 	Revision uint32 `json:"revision"`
-	// Data: the base64-encoded secret payload of the SecretVersion
+	// Data: the base64-encoded secret payload of the SecretVersion.
 	Data []byte `json:"data"`
 }
 
-// ListSecretVersionsResponse: list secret versions response
+// ListSecretVersionsResponse: list secret versions response.
 type ListSecretVersionsResponse struct {
-	// TotalCount: count of all SecretVersions
+	// TotalCount: count of all SecretVersions.
 	TotalCount uint32 `json:"total_count"`
-	// Versions: single page of SecretVersions
+	// Versions: single page of SecretVersions.
 	Versions []*SecretVersion `json:"versions"`
 }
 
-// ListSecretsResponse: list secrets response
+// ListSecretsResponse: list secrets response.
 type ListSecretsResponse struct {
-	// TotalCount: count of all Secrets matching the requested criteria
+	// TotalCount: count of all Secrets matching the requested criteria.
 	TotalCount uint32 `json:"total_count"`
-	// Secrets: single page of Secrets matching the requested criteria
+	// Secrets: single page of Secrets matching the requested criteria.
 	Secrets []*Secret `json:"secrets"`
 }
 
-// Secret: secret
+// Secret: secret.
 type Secret struct {
-	// ID: ID of the Secret
+	// ID: ID of the Secret.
 	ID string `json:"id"`
-	// ProjectID: ID of the project containing the Secret
+	// ProjectID: ID of the project containing the Secret.
 	ProjectID string `json:"project_id"`
-	// Name: name of the Secret
+	// Name: name of the Secret.
 	Name string `json:"name"`
-	// Status: current status of the Secret
-	//
-	// * `ready`: the Secret is ready.
+	// Status: * `ready`: the Secret is ready.
 	// * `locked`: the Secret is locked.
-	//
 	// Default value: ready
 	Status SecretStatus `json:"status"`
-	// CreatedAt: the time at which the Secret was created
+	// CreatedAt: the time at which the Secret was created.
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: the time at which the Secret was updated
+	// UpdatedAt: the time at which the Secret was updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// Tags: list of tags associated to this Secret
+	// Tags: list of tags associated to this Secret.
 	Tags []string `json:"tags"`
-	// Region: region of the Secret
+	// Region: region of the Secret.
 	Region scw.Region `json:"region"`
-	// VersionCount: the number of versions for this Secret
+	// VersionCount: the number of versions for this Secret.
 	VersionCount uint32 `json:"version_count"`
-	// Description: description of the Secret
+	// Description: description of the Secret.
 	Description *string `json:"description"`
 }
 
-// SecretVersion: secret version
+// SecretVersion: secret version.
 type SecretVersion struct {
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"secret_id"`
-	// Revision: revision of the SecretVersion
+	// Revision: revision of the SecretVersion.
 	Revision uint32 `json:"revision"`
-	// Status: current status of the SecretVersion
-	//
-	// * `unknown`: the SecretVersion is in an invalid state.
+	// Status: * `unknown`: the SecretVersion is in an invalid state.
 	// * `enabled`: the SecretVersion is accessible.
 	// * `disabled`: the SecretVersion is not accessible but can be enabled.
 	// * `destroyed`: the SecretVersion is permanently destroyed.
-	//
 	// Default value: unknown
 	Status SecretVersionStatus `json:"status"`
-	// CreatedAt: the time at which the SecretVersion was created
+	// CreatedAt: the time at which the SecretVersion was created.
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: the time at which the SecretVersion was updated
+	// UpdatedAt: the time at which the SecretVersion was updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// Description: description of the SecretVersion
+	// Description: description of the SecretVersion.
 	Description *string `json:"description"`
 }
 
@@ -233,21 +227,19 @@ func (s *API) Regions() []scw.Region {
 }
 
 type CreateSecretRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: ID of the project containing the Secret
+	// ProjectID: ID of the project containing the Secret.
 	ProjectID string `json:"project_id"`
-	// Name: name of the Secret
+	// Name: name of the Secret.
 	Name string `json:"name"`
-	// Tags: list of tags associated to this Secret
+	// Tags: list of tags associated to this Secret.
 	Tags []string `json:"tags"`
-	// Description: description of the Secret
+	// Description: description of the Secret.
 	Description *string `json:"description"`
 }
 
-// CreateSecret: create a Secret containing no versions
+// CreateSecret: create a Secret containing no versions.
 func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -286,15 +278,13 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 }
 
 type GetSecretRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
 }
 
-// GetSecret: get metadata of a Secret
+// GetSecret: get metadata of a Secret.
 func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -327,15 +317,13 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 }
 
 type GetSecretByNameRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretName: name of the Secret
+	// SecretName: name of the Secret.
 	SecretName string `json:"-"`
 }
 
-// GetSecretByName: get metadata of a Secret
+// GetSecretByName: get metadata of a Secret.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -368,21 +356,19 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 }
 
 type UpdateSecretRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Name: new name of the Secret (optional)
+	// Name: new name of the Secret (optional).
 	Name *string `json:"name"`
-	// Tags: new list of tags associated to this Secret (optional)
+	// Tags: new list of tags associated to this Secret (optional).
 	Tags *[]string `json:"tags"`
-	// Description: description of the Secret
+	// Description: description of the Secret.
 	Description *string `json:"description"`
 }
 
-// UpdateSecret: update metadata of a Secret
+// UpdateSecret: update metadata of a Secret.
 func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -420,20 +406,17 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 }
 
 type ListSecretsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// OrganizationID: ID of an organization to filter on (optional)
+	// OrganizationID: ID of an organization to filter on (optional).
 	OrganizationID *string `json:"-"`
-	// ProjectID: ID of a project to filter on (optional)
+	// ProjectID: ID of a project to filter on (optional).
 	ProjectID *string `json:"-"`
-	// Name: secret name to filter on (optional)
+	// Name: secret name to filter on (optional).
 	Name *string `json:"-"`
-	// Tags: list of tags to filter on (optional)
+	// Tags: list of tags to filter on (optional).
 	Tags []string `json:"-"`
 	// OrderBy:
-	//
 	// Default value: name_asc
 	OrderBy ListSecretsRequestOrderBy `json:"-"`
 
@@ -442,7 +425,7 @@ type ListSecretsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListSecrets: list Secrets
+// ListSecrets: list Secrets.
 func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*ListSecretsResponse, error) {
 	var err error
 
@@ -486,15 +469,13 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 }
 
 type DeleteSecretRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
 }
 
-// DeleteSecret: delete a secret
+// DeleteSecret: delete a secret.
 func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -525,19 +506,17 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 }
 
 type CreateSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Data: the base64-encoded secret payload of the SecretVersion
+	// Data: the base64-encoded secret payload of the SecretVersion.
 	Data []byte `json:"data"`
-	// Description: description of the SecretVersion
+	// Description: description of the SecretVersion.
 	Description *string `json:"description"`
 }
 
-// CreateSecretVersion: create a SecretVersion
+// CreateSecretVersion: create a SecretVersion.
 func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -575,17 +554,15 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 }
 
 type GetSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// GetSecretVersion: get metadata of a SecretVersion
+// GetSecretVersion: get metadata of a SecretVersion.
 func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -622,17 +599,15 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 }
 
 type GetSecretVersionByNameRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretName: name of the Secret
+	// SecretName: name of the Secret.
 	SecretName string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// GetSecretVersionByName: get metadata of a SecretVersion
+// GetSecretVersionByName: get metadata of a SecretVersion.
 func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -669,19 +644,17 @@ func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ..
 }
 
 type UpdateSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
-	// Description: description of the SecretVersion
+	// Description: description of the SecretVersion.
 	Description *string `json:"description"`
 }
 
-// UpdateSecretVersion: update metadata of a SecretVersion
+// UpdateSecretVersion: update metadata of a SecretVersion.
 func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -723,21 +696,19 @@ func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.R
 }
 
 type ListSecretVersionsRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// Status: filter results by status
+	// Status: filter results by status.
 	Status []SecretVersionStatus `json:"-"`
 }
 
-// ListSecretVersions: list versions of a secret, not returning any sensitive data
+// ListSecretVersions: list versions of a secret, not returning any sensitive data.
 func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -781,21 +752,19 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 }
 
 type ListSecretVersionsByNameRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretName: name of the Secret
+	// SecretName: name of the Secret.
 	SecretName string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// Status: filter results by status
+	// Status: filter results by status.
 	Status []SecretVersionStatus `json:"-"`
 }
 
-// ListSecretVersionsByName: list versions of a secret, not returning any sensitive data
+// ListSecretVersionsByName: list versions of a secret, not returning any sensitive data.
 func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -839,17 +808,15 @@ func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opt
 }
 
 type DestroySecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// DestroySecretVersion: destroy a SecretVersion, permanently destroying the sensitive data
+// DestroySecretVersion: destroy a SecretVersion, permanently destroying the sensitive data.
 func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -891,17 +858,15 @@ func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw
 }
 
 type EnableSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// EnableSecretVersion: enable a SecretVersion
+// EnableSecretVersion: enable a SecretVersion.
 func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -943,17 +908,15 @@ func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.R
 }
 
 type DisableSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// DisableSecretVersion: disable a SecretVersion
+// DisableSecretVersion: disable a SecretVersion.
 func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -995,17 +958,15 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 }
 
 type AccessSecretVersionRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretID: ID of the Secret
+	// SecretID: ID of the Secret.
 	SecretID string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// AccessSecretVersion: access a SecretVersion, returning the sensitive data
+// AccessSecretVersion: access a SecretVersion, returning the sensitive data.
 func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
@@ -1042,17 +1003,15 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 }
 
 type AccessSecretVersionByNameRequest struct {
-	// Region:
-	//
-	// Region to target. If none is passed will use default region from the config
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SecretName: name of the Secret
+	// SecretName: name of the Secret.
 	SecretName string `json:"-"`
-	// Revision: revision of the SecretVersion (may be a number or "latest")
+	// Revision: revision of the SecretVersion (may be a number or "latest").
 	Revision string `json:"-"`
 }
 
-// AccessSecretVersionByName: access a SecretVersion, returning the sensitive data
+// AccessSecretVersionByName: access a SecretVersion, returning the sensitive data.
 func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
