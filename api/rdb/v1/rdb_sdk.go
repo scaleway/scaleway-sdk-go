@@ -912,7 +912,14 @@ type EndpointSpecPrivateNetwork struct {
 	// PrivateNetworkID: UUID of the private network to be connected to the database instance.
 	PrivateNetworkID string `json:"private_network_id"`
 	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitation.
-	ServiceIP scw.IPNet `json:"service_ip"`
+	// Precisely one of IpamConfig, ServiceIP must be set.
+	ServiceIP *scw.IPNet `json:"service_ip,omitempty"`
+	// IpamConfig: automated configuration of your private network endpoint with Scaleway IPAM service. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// Precisely one of IpamConfig, ServiceIP must be set.
+	IpamConfig *EndpointSpecPrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
+}
+
+type EndpointSpecPrivateNetworkIpamConfig struct {
 }
 
 // EngineSetting: engine setting.
@@ -1256,7 +1263,14 @@ type ReadReplicaEndpointSpecPrivateNetwork struct {
 	// PrivateNetworkID: UUID of the private network to be connected to the read replica.
 	PrivateNetworkID string `json:"private_network_id"`
 	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitations.
-	ServiceIP scw.IPNet `json:"service_ip"`
+	// Precisely one of IpamConfig, ServiceIP must be set.
+	ServiceIP *scw.IPNet `json:"service_ip,omitempty"`
+	// IpamConfig: automated configuration of your private network endpoint with Scaleway IPAM service. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// Precisely one of IpamConfig, ServiceIP must be set.
+	IpamConfig *ReadReplicaEndpointSpecPrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
+}
+
+type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct {
 }
 
 // SetInstanceACLRulesResponse: set instance acl rules response.
