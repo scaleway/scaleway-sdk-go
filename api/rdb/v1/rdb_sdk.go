@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: database RDB API.
+// API: managed Database for PostgreSQL and MySQL API.
 type API struct {
 	client *scw.Client
 }
@@ -766,13 +766,13 @@ type ACLRuleRequest struct {
 
 // AddInstanceACLRulesResponse: add instance acl rules response.
 type AddInstanceACLRulesResponse struct {
-	// Rules: rules enabled on the instance.
+	// Rules: ACL Rules enabled for the Database Instance.
 	Rules []*ACLRule `json:"rules"`
 }
 
 // AddInstanceSettingsResponse: add instance settings response.
 type AddInstanceSettingsResponse struct {
-	// Settings: settings available on the instance.
+	// Settings: settings available on the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
 }
 
@@ -788,9 +788,9 @@ type BackupSchedule struct {
 type Database struct {
 	// Name: name of the database.
 	Name string `json:"name"`
-	// Owner: name of the owner of the database.
+	// Owner: name of the database owner.
 	Owner string `json:"owner"`
-	// Managed: whether or not the database is managed or not.
+	// Managed: defines whether the database is managed or not.
 	Managed bool `json:"managed"`
 	// Size: size of the database.
 	Size scw.Size `json:"size"`
@@ -800,9 +800,9 @@ type Database struct {
 type DatabaseBackup struct {
 	// ID: UUID of the database backup.
 	ID string `json:"id"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"instance_id"`
-	// DatabaseName: name of the database of this backup.
+	// DatabaseName: name of backed up database.
 	DatabaseName string `json:"database_name"`
 	// Name: name of the backup.
 	Name string `json:"name"`
@@ -811,21 +811,21 @@ type DatabaseBackup struct {
 	Status DatabaseBackupStatus `json:"status"`
 	// Size: size of the database backup.
 	Size *scw.Size `json:"size"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
-	// CreatedAt: creation date (Format ISO 8601).
+	// CreatedAt: creation date (must follow the ISO 8601 format).
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: updated date (Format ISO 8601).
+	// UpdatedAt: updated date (must follow the ISO 8601 format).
 	UpdatedAt *time.Time `json:"updated_at"`
-	// InstanceName: name of the instance of the backup.
+	// InstanceName: name of the Database Instance of the backup.
 	InstanceName string `json:"instance_name"`
 	// DownloadURL: URL you can download the backup from.
 	DownloadURL *string `json:"download_url"`
 	// DownloadURLExpiresAt: expiration date of the download link.
 	DownloadURLExpiresAt *time.Time `json:"download_url_expires_at"`
-	// Region: region of this database backup.
+	// Region: region of the database backup.
 	Region scw.Region `json:"region"`
-	// SameRegion: store logical backups in the same region as the source database instance.
+	// SameRegion: store logical backups in the same region as the source Database Instance.
 	SameRegion bool `json:"same_region"`
 }
 
@@ -837,19 +837,19 @@ type DatabaseEngine struct {
 	LogoURL string `json:"logo_url"`
 	// Versions: available versions.
 	Versions []*EngineVersion `json:"versions"`
-	// Region: region of this database engine.
+	// Region: region of this Database Instance.
 	Region scw.Region `json:"region"`
 }
 
 // DeleteInstanceACLRulesResponse: delete instance acl rules response.
 type DeleteInstanceACLRulesResponse struct {
-	// Rules: ACL rules present on the instance.
+	// Rules: IP addresses defined in the ACL rules of the Database Instance.
 	Rules []*ACLRule `json:"rules"`
 }
 
 // DeleteInstanceSettingsResponse: delete instance settings response.
 type DeleteInstanceSettingsResponse struct {
-	// Settings: settings names to delete from the instance.
+	// Settings: settings names to delete from the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
 }
 
@@ -864,13 +864,13 @@ type Endpoint struct {
 	Port uint32 `json:"port"`
 	// Name: name of the endpoint.
 	Name *string `json:"name"`
-	// PrivateNetwork: private network details. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// PrivateNetwork: private Network details. One maximum per Database Instance or Read Replica (a Database Instance and its Read Replica can have different Private Networks). Cannot be updated (has to be deleted and recreated).
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
-	// LoadBalancer: load balancer details. Public endpoint for RDB instances which is systematically present. One per RDB instance.
+	// LoadBalancer: load balancer details. Public endpoint for Database Instance which is systematically present. One per Database Instance.
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointLoadBalancerDetails `json:"load_balancer,omitempty"`
-	// DirectAccess: direct access details. Public endpoint reserved for read replicas. One per read replica.
+	// DirectAccess: direct access details. Public endpoint reserved for Read Replicas. One per Read Replica.
 	// Precisely one of DirectAccess, LoadBalancer, PrivateNetwork must be set.
 	DirectAccess *EndpointDirectAccessDetails `json:"direct_access,omitempty"`
 	// Hostname: hostname of the endpoint.
@@ -896,10 +896,10 @@ type EndpointPrivateNetworkDetails struct {
 
 // EndpointSpec: endpoint spec.
 type EndpointSpec struct {
-	// LoadBalancer: load balancer endpoint specifications. Public endpoint for RDB instances which is systematically present. One per RDB instance.
+	// LoadBalancer: load balancer endpoint specifications. Public endpoint for Database Instance which is systematically present. One per RDB instance.
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	LoadBalancer *EndpointSpecLoadBalancer `json:"load_balancer,omitempty"`
-	// PrivateNetwork: private network endpoint specifications. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// PrivateNetwork: private Network endpoint specifications. One maximum per Database Instance or Read Replica (a Database Instance and its Read Replica can have different Private Networks). Cannot be updated (has to be deleted and recreated).
 	// Precisely one of LoadBalancer, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 }
@@ -909,12 +909,12 @@ type EndpointSpecLoadBalancer struct {
 
 // EndpointSpecPrivateNetwork: endpoint spec. private network.
 type EndpointSpecPrivateNetwork struct {
-	// PrivateNetworkID: UUID of the private network to be connected to the database instance.
+	// PrivateNetworkID: UUID of the Private Network to be connected to the Database Instance.
 	PrivateNetworkID string `json:"private_network_id"`
-	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitation.
+	// ServiceIP: endpoint IPv4 address with a CIDR notation. Refer to the official Scaleway documentation to learn more about IP and subnet limitations.
 	// Precisely one of IpamConfig, ServiceIP must be set.
 	ServiceIP *scw.IPNet `json:"service_ip,omitempty"`
-	// IpamConfig: automated configuration of your private network endpoint with Scaleway IPAM service. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// IpamConfig: automated configuration of your Private Network endpoint with Scaleway IPAM service. One at the most per Database Instance or Read Replica (a Database Instance and its Read Replica can have different Private Networks). Cannot be updated (has to be deleted and recreated).
 	// Precisely one of IpamConfig, ServiceIP must be set.
 	IpamConfig *EndpointSpecPrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 }
@@ -924,7 +924,7 @@ type EndpointSpecPrivateNetworkIpamConfig struct {
 
 // EngineSetting: engine setting.
 type EngineSetting struct {
-	// Name: setting name from database engine.
+	// Name: setting name from the database engine.
 	Name string `json:"name"`
 	// DefaultValue: value set when not specified.
 	DefaultValue string `json:"default_value"`
@@ -963,56 +963,56 @@ type EngineVersion struct {
 	Disabled bool `json:"disabled"`
 	// Beta: beta status of engine version.
 	Beta bool `json:"beta"`
-	// AvailableInitSettings: engine settings available to be set at database initialisation.
+	// AvailableInitSettings: engine settings available to be set at database initialization.
 	AvailableInitSettings []*EngineSetting `json:"available_init_settings"`
 }
 
 // Instance: instance.
 type Instance struct {
-	// CreatedAt: creation date (Format ISO 8601).
+	// CreatedAt: creation date (must follow the ISO 8601 format).
 	CreatedAt *time.Time `json:"created_at"`
-	// Volume: volumes of the instance.
+	// Volume: volumes of the Database Instance.
 	Volume *Volume `json:"volume"`
-	// Region: region the instance is in.
+	// Region: region the Database Instance is in.
 	Region scw.Region `json:"region"`
-	// ID: UUID of the instance.
+	// ID: UUID of the Database Instance.
 	ID string `json:"id"`
-	// Name: name of the instance.
+	// Name: name of the Database Instance.
 	Name string `json:"name"`
-	// OrganizationID: organization ID the instance belongs to.
+	// OrganizationID: organization ID the Database Instance belongs to.
 	OrganizationID string `json:"organization_id"`
-	// ProjectID: project ID the instance belongs to.
+	// ProjectID: project ID the Database Instance belongs to.
 	ProjectID string `json:"project_id"`
-	// Status: status of the instance.
+	// Status: status of the Database Instance.
 	// Default value: unknown
 	Status InstanceStatus `json:"status"`
 	// Engine: database engine of the database (PostgreSQL, MySQL, ...).
 	Engine string `json:"engine"`
 	// UpgradableVersion: available database engine versions for upgrade.
 	UpgradableVersion []*UpgradableVersion `json:"upgradable_version"`
-	// Deprecated: Endpoint: endpoint of the instance.
+	// Deprecated: Endpoint: endpoint of the Database Instance.
 	Endpoint *Endpoint `json:"endpoint,omitempty"`
-	// Tags: list of tags applied to the instance.
+	// Tags: list of tags applied to the Database Instance.
 	Tags []string `json:"tags"`
-	// Settings: advanced settings of the instance.
+	// Settings: advanced settings of the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
-	// BackupSchedule: backup schedule of the instance.
+	// BackupSchedule: backup schedule of the Database Instance.
 	BackupSchedule *BackupSchedule `json:"backup_schedule"`
-	// IsHaCluster: whether or not High-Availability is enabled.
+	// IsHaCluster: defines whether or not High-Availability is enabled.
 	IsHaCluster bool `json:"is_ha_cluster"`
-	// ReadReplicas: read replicas of the instance.
+	// ReadReplicas: read Replicas of the Database Instance.
 	ReadReplicas []*ReadReplica `json:"read_replicas"`
-	// NodeType: node type of the instance.
+	// NodeType: node type of the Database Instance.
 	NodeType string `json:"node_type"`
-	// InitSettings: list of engine settings to be set at database initialisation.
+	// InitSettings: list of engine settings to be set at database initialization.
 	InitSettings []*InstanceSetting `json:"init_settings"`
-	// Endpoints: list of instance endpoints.
+	// Endpoints: list of Database Instance endpoints.
 	Endpoints []*Endpoint `json:"endpoints"`
-	// LogsPolicy: logs policy of the instance.
+	// LogsPolicy: logs policy of the Database Instance.
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
-	// BackupSameRegion: store logical backups in the same region as the database instance.
+	// BackupSameRegion: store logical backups in the same region as the Database Instance.
 	BackupSameRegion bool `json:"backup_same_region"`
-	// Maintenances: list of instance maintenances.
+	// Maintenances: list of Database Instance maintenance events.
 	Maintenances []*Maintenance `json:"maintenances"`
 }
 
@@ -1020,24 +1020,24 @@ type Instance struct {
 type InstanceLog struct {
 	// DownloadURL: presigned S3 URL to download your log file.
 	DownloadURL *string `json:"download_url"`
-	// ID: UUID of the instance log.
+	// ID: UUID of the Database Instance log.
 	ID string `json:"id"`
-	// Status: status of the logs in a given instance.
+	// Status: status of the logs in a Database Instance.
 	// Default value: unknown
 	Status InstanceLogStatus `json:"status"`
-	// NodeName: name of the undelying node.
+	// NodeName: name of the underlying node.
 	NodeName string `json:"node_name"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
-	// CreatedAt: creation date (Format ISO 8601).
+	// CreatedAt: creation date (must follow the ISO 8601 format).
 	CreatedAt *time.Time `json:"created_at"`
-	// Region: region the instance is in.
+	// Region: region the Database Instance is in.
 	Region scw.Region `json:"region"`
 }
 
 // InstanceMetrics: instance metrics.
 type InstanceMetrics struct {
-	// Timeseries: time series of metrics of a given instance.
+	// Timeseries: time series of metrics of a Database Instance.
 	Timeseries []*scw.TimeSeries `json:"timeseries"`
 }
 
@@ -1067,21 +1067,21 @@ type ListDatabaseEnginesResponse struct {
 type ListDatabasesResponse struct {
 	// Databases: list of the databases.
 	Databases []*Database `json:"databases"`
-	// TotalCount: total count of databases present on a given instance.
+	// TotalCount: total count of databases present on a Database Instance.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListInstanceACLRulesResponse: list instance acl rules response.
 type ListInstanceACLRulesResponse struct {
-	// Rules: list of the ACL rules present on a given instance.
+	// Rules: list of ACL rules present on a Database Instance.
 	Rules []*ACLRule `json:"rules"`
-	// TotalCount: total count of ACL rules present on a given instance.
+	// TotalCount: total count of ACL rules present on a Database Instance.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListInstanceLogsDetailsResponse: list instance logs details response.
 type ListInstanceLogsDetailsResponse struct {
-	// Details: remote instance logs details.
+	// Details: remote Database Instance logs details.
 	Details []*ListInstanceLogsDetailsResponseInstanceLogDetail `json:"details"`
 }
 
@@ -1093,15 +1093,15 @@ type ListInstanceLogsDetailsResponseInstanceLogDetail struct {
 
 // ListInstanceLogsResponse: list instance logs response.
 type ListInstanceLogsResponse struct {
-	// InstanceLogs: available logs in a given instance.
+	// InstanceLogs: available logs in a Database Instance.
 	InstanceLogs []*InstanceLog `json:"instance_logs"`
 }
 
 // ListInstancesResponse: list instances response.
 type ListInstancesResponse struct {
-	// Instances: list all instances available in a given organization/project.
+	// Instances: list of all Database Instances available in an Organization or Project.
 	Instances []*Instance `json:"instances"`
-	// TotalCount: total count of instances available in a given organization/project.
+	// TotalCount: total count of Database Instances available in a Organization or Project.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1115,9 +1115,9 @@ type ListNodeTypesResponse struct {
 
 // ListPrivilegesResponse: list privileges response.
 type ListPrivilegesResponse struct {
-	// Privileges: privileges of a given user in a given database in a given instance.
+	// Privileges: privileges of a user in a database in a Database Instance.
 	Privileges []*Privilege `json:"privileges"`
-	// TotalCount: total count of privileges present on a given database.
+	// TotalCount: total count of privileges present on a database.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1131,17 +1131,17 @@ type ListSnapshotsResponse struct {
 
 // ListUsersResponse: list users response.
 type ListUsersResponse struct {
-	// Users: list of users in a given instance.
+	// Users: list of users in a Database Instance.
 	Users []*User `json:"users"`
-	// TotalCount: total count of users present on a given instance.
+	// TotalCount: total count of users present on a Database Instance.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // LogsPolicy: logs policy.
 type LogsPolicy struct {
-	// MaxAgeRetention: max age (in day) of remote logs to keep on the database instance.
+	// MaxAgeRetention: max age (in days) of remote logs to keep on the Database Instance.
 	MaxAgeRetention *uint32 `json:"max_age_retention"`
-	// TotalDiskRetention: max disk size of remote logs to keep on the database instance.
+	// TotalDiskRetention: max disk size of remote logs to keep on the Database Instance.
 	TotalDiskRetention *scw.Size `json:"total_disk_retention"`
 }
 
@@ -1217,7 +1217,7 @@ type NodeTypeVolumeType struct {
 
 // PrepareInstanceLogsResponse: prepare instance logs response.
 type PrepareInstanceLogsResponse struct {
-	// InstanceLogs: instance logs for a given instance between a start and an end date.
+	// InstanceLogs: instance logs for a Database Instance between a start and an end date.
 	InstanceLogs []*InstanceLog `json:"instance_logs"`
 }
 
@@ -1234,23 +1234,23 @@ type Privilege struct {
 
 // ReadReplica: read replica.
 type ReadReplica struct {
-	// ID: UUID of the read replica.
+	// ID: UUID of the Read Replica.
 	ID string `json:"id"`
-	// Endpoints: display read replica connection information.
+	// Endpoints: display Read Replica connection information.
 	Endpoints []*Endpoint `json:"endpoints"`
 	// Status: read replica status.
 	// Default value: unknown
 	Status ReadReplicaStatus `json:"status"`
-	// Region: region the read replica is in.
+	// Region: region the Read Replica is in.
 	Region scw.Region `json:"region"`
 }
 
 // ReadReplicaEndpointSpec: read replica endpoint spec.
 type ReadReplicaEndpointSpec struct {
-	// DirectAccess: direct access endpoint specifications. Public endpoint reserved for read replicas. One per read replica.
+	// DirectAccess: direct access endpoint specifications. Public endpoint reserved for Read Replicas. One per Read Replica.
 	// Precisely one of DirectAccess, PrivateNetwork must be set.
 	DirectAccess *ReadReplicaEndpointSpecDirectAccess `json:"direct_access,omitempty"`
-	// PrivateNetwork: private network endpoint specifications. One at the most per read replica. Cannot be updated (has to be deleted and recreated).
+	// PrivateNetwork: private Network endpoint specifications. One at the most per Read Replica. Cannot be updated (has to be deleted and recreated).
 	// Precisely one of DirectAccess, PrivateNetwork must be set.
 	PrivateNetwork *ReadReplicaEndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 }
@@ -1260,12 +1260,12 @@ type ReadReplicaEndpointSpecDirectAccess struct {
 
 // ReadReplicaEndpointSpecPrivateNetwork: read replica endpoint spec. private network.
 type ReadReplicaEndpointSpecPrivateNetwork struct {
-	// PrivateNetworkID: UUID of the private network to be connected to the read replica.
+	// PrivateNetworkID: UUID of the Private Network to be connected to the Read Replica.
 	PrivateNetworkID string `json:"private_network_id"`
-	// ServiceIP: endpoint IPv4 adress with a CIDR notation. Check documentation about IP and subnet limitations.
+	// ServiceIP: endpoint IPv4 address with a CIDR notation. Refer to the official Scaleway documentation to learn more about IP and subnet limitations.
 	// Precisely one of IpamConfig, ServiceIP must be set.
 	ServiceIP *scw.IPNet `json:"service_ip,omitempty"`
-	// IpamConfig: automated configuration of your private network endpoint with Scaleway IPAM service. One at the most per RDB instance or read replica (an RDB instance and its read replica can have different private networks). Cannot be updated (has to be deleted and recreated).
+	// IpamConfig: automated configuration of your Private Network endpoint with Scaleway IPAM service. One at the most per Database Instance or Read Replica (a Database Instance and its Read Replica can have different private networks). Cannot be updated (has to be deleted and recreated).
 	// Precisely one of IpamConfig, ServiceIP must be set.
 	IpamConfig *ReadReplicaEndpointSpecPrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 }
@@ -1275,13 +1275,13 @@ type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct {
 
 // SetInstanceACLRulesResponse: set instance acl rules response.
 type SetInstanceACLRulesResponse struct {
-	// Rules: aCLs rules configured for an instance.
+	// Rules: aCLs rules configured for a Database Instance.
 	Rules []*ACLRule `json:"rules"`
 }
 
 // SetInstanceSettingsResponse: set instance settings response.
 type SetInstanceSettingsResponse struct {
-	// Settings: settings configured for a given instance.
+	// Settings: settings configured for a Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
 }
 
@@ -1289,7 +1289,7 @@ type SetInstanceSettingsResponse struct {
 type Snapshot struct {
 	// ID: UUID of the snapshot.
 	ID string `json:"id"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"instance_id"`
 	// Name: name of the snapshot.
 	Name string `json:"name"`
@@ -1298,13 +1298,13 @@ type Snapshot struct {
 	Status SnapshotStatus `json:"status"`
 	// Size: size of the snapshot.
 	Size *scw.Size `json:"size"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
-	// CreatedAt: creation date (Format ISO 8601).
+	// CreatedAt: creation date (must follow the ISO 8601 format).
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: updated date (Format ISO 8601).
+	// UpdatedAt: updated date (must follow the ISO 8601 format).
 	UpdatedAt *time.Time `json:"updated_at"`
-	// InstanceName: name of the instance of the snapshot.
+	// InstanceName: name of the Database Instance of the snapshot.
 	InstanceName string `json:"instance_name"`
 	// NodeType: source node type.
 	NodeType string `json:"node_type"`
@@ -1324,9 +1324,9 @@ type UpgradableVersion struct {
 
 // User: user.
 type User struct {
-	// Name: name of the user (Length must be between 1 and 63 characters, The max Length is 32 for MySQL engines, First character must be an alphabet character (a-zA-Z), Your Username cannot start with '_rdb', Only a-zA-Z0-9_$- characters are accepted).
+	// Name: name of the user (Length must be between 1 and 63 characters for PostgreSQL and between 1 and 32 characters for MySQL. First character must be an alphabet character (a-zA-Z). Your username cannot start with '_rdb' or in PostgreSQL, 'pg_'. Only a-zA-Z0-9_$- characters are accepted).
 	Name string `json:"name"`
-	// IsAdmin: whether or not a user got administrative privileges on the database instance.
+	// IsAdmin: defines whether or not a user got administrative privileges on the Database Instance.
 	IsAdmin bool `json:"is_admin"`
 }
 
@@ -1348,9 +1348,9 @@ func (s *API) Regions() []scw.Region {
 type ListDatabaseEnginesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Name: name of the Database Engine.
+	// Name: name of the database engine.
 	Name *string `json:"-"`
-	// Version: version of the Database Engine.
+	// Version: version of the database engine.
 	Version *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1358,7 +1358,7 @@ type ListDatabaseEnginesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDatabaseEngines: list available database engines.
+// ListDatabaseEngines: list the PostgreSQL and MySQL database engines available at Scaleway.
 func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.RequestOption) (*ListDatabaseEnginesResponse, error) {
 	var err error
 
@@ -1401,7 +1401,7 @@ func (s *API) ListDatabaseEngines(req *ListDatabaseEnginesRequest, opts ...scw.R
 type ListNodeTypesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// IncludeDisabledTypes: whether or not to include disabled types.
+	// IncludeDisabledTypes: defines whether or not to include disabled types.
 	IncludeDisabledTypes bool `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1409,7 +1409,7 @@ type ListNodeTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListNodeTypes: list available node types.
+// ListNodeTypes: list all available node types. By default, the databases returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
 func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
 	var err error
 
@@ -1456,11 +1456,11 @@ type ListDatabaseBackupsRequest struct {
 	// OrderBy: criteria to use when ordering database backups listing.
 	// Default value: created_at_asc
 	OrderBy ListDatabaseBackupsRequestOrderBy `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID *string `json:"-"`
-	// OrganizationID: organization ID the database backups belongs to.
+	// OrganizationID: organization ID of the Organization the database backups belong to.
 	OrganizationID *string `json:"-"`
-	// ProjectID: project ID the database backups belongs to.
+	// ProjectID: project ID of the Project the database backups belong to.
 	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1468,7 +1468,7 @@ type ListDatabaseBackupsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDatabaseBackups: list database backups.
+// ListDatabaseBackups: list all backups in a specified zone, for a given Scaleway Organization or Scaleway Project. By default, the backups listed are ordered by creation date in ascending order. This can be modified via the `order_by` field.
 func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.RequestOption) (*ListDatabaseBackupsResponse, error) {
 	var err error
 
@@ -1514,17 +1514,17 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 type CreateDatabaseBackupRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"instance_id"`
-	// DatabaseName: name of the database you want to make a backup of.
+	// DatabaseName: name of the database you want to back up.
 	DatabaseName string `json:"database_name"`
 	// Name: name of the backup.
 	Name string `json:"name"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// CreateDatabaseBackup: create a database backup.
+// CreateDatabaseBackup: create a new backup. You must set the `instance_id`, `database_name`, `name` and `expires_at` parameters.
 func (s *API) CreateDatabaseBackup(req *CreateDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1568,7 +1568,7 @@ type GetDatabaseBackupRequest struct {
 	DatabaseBackupID string `json:"-"`
 }
 
-// GetDatabaseBackup: get a database backup.
+// GetDatabaseBackup: retrieve information about a given backup, specified by its database backup ID and region. Full details about the backup, like size, URL and expiration date, are returned in the response.
 func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1607,11 +1607,11 @@ type UpdateDatabaseBackupRequest struct {
 	DatabaseBackupID string `json:"-"`
 	// Name: name of the Database Backup.
 	Name *string `json:"name"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// UpdateDatabaseBackup: update a database backup.
+// UpdateDatabaseBackup: update the parameters of a backup, including name and expiration date.
 func (s *API) UpdateDatabaseBackup(req *UpdateDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1655,7 +1655,7 @@ type DeleteDatabaseBackupRequest struct {
 	DatabaseBackupID string `json:"-"`
 }
 
-// DeleteDatabaseBackup: delete a database backup.
+// DeleteDatabaseBackup: delete a backup, specified by its database backup ID and region. Deleting a backup is permanent, and cannot be undone.
 func (s *API) DeleteDatabaseBackup(req *DeleteDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1692,13 +1692,13 @@ type RestoreDatabaseBackupRequest struct {
 	Region scw.Region `json:"-"`
 	// DatabaseBackupID: backup of a logical database.
 	DatabaseBackupID string `json:"-"`
-	// DatabaseName: defines the destination database in order to restore into a specified database, the default destination is set to the origin database of the backup.
+	// DatabaseName: defines the destination database to restore into a specified database (the default destination is set to the origin database of the backup).
 	DatabaseName *string `json:"database_name"`
-	// InstanceID: defines the rdb instance where the backup has to be restored.
+	// InstanceID: defines the Database Instance where the backup has to be restored.
 	InstanceID string `json:"instance_id"`
 }
 
-// RestoreDatabaseBackup: restore a database backup.
+// RestoreDatabaseBackup: launch the process of restoring database backup. You must specify the `instance_id` of the Database Instance of destination, where the backup will be restored. Note that large database backups can take up to several hours to restore.
 func (s *API) RestoreDatabaseBackup(req *RestoreDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1742,7 +1742,7 @@ type ExportDatabaseBackupRequest struct {
 	DatabaseBackupID string `json:"-"`
 }
 
-// ExportDatabaseBackup: export a database backup.
+// ExportDatabaseBackup: export a backup, specified by the `database_backup_id` and the `region` parameters. The download URL is returned in the response.
 func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
 
@@ -1782,27 +1782,27 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 type UpgradeInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to upgrade.
+	// InstanceID: UUID of the Database Instance you want to upgrade.
 	InstanceID string `json:"-"`
-	// NodeType: node type of the instance you want to upgrade to.
+	// NodeType: node type of the Database Instance you want to upgrade to.
 	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	NodeType *string `json:"node_type,omitempty"`
-	// EnableHa: set to true to enable high availability on your instance.
+	// EnableHa: defines whether or not high availability should be enabled on the Database Instance.
 	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 	// VolumeSize: increase your block storage volume size.
 	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
-	// VolumeType: change your instance storage type.
+	// VolumeType: change your Database Instance storage type.
 	// Default value: lssd
 	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	VolumeType *VolumeType `json:"volume_type,omitempty"`
-	// UpgradableVersionID: this will create a new Database Instance with same instance specification as the current one and perform a Database Engine upgrade.
+	// UpgradableVersionID: this will create a new Database Instance with same specifications as the current one and perform a Database Engine upgrade.
 	// Precisely one of EnableHa, NodeType, UpgradableVersionID, VolumeSize, VolumeType must be set.
 	UpgradableVersionID *string `json:"upgradable_version_id,omitempty"`
 }
 
-// UpgradeInstance: upgrade your current instance specifications like node type, high availability, volume, or db engine version.
+// UpgradeInstance: upgrade your current Database Instance specifications like node type, high availability, volume, or the database engine version. Note that upon upgrade the `enable_ha` parameter can only be set to `true`.
 func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1842,16 +1842,16 @@ func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOp
 type ListInstancesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Tags: list instance that have a given tags.
+	// Tags: list Database Instances that have a given tag.
 	Tags []string `json:"-"`
-	// Name: list instance that match a given name pattern.
+	// Name: lists Database Instances that match a name pattern.
 	Name *string `json:"-"`
-	// OrderBy: criteria to use when ordering instance listing.
+	// OrderBy: criteria to use when ordering Database Instance listings.
 	// Default value: created_at_asc
 	OrderBy ListInstancesRequestOrderBy `json:"-"`
-	// OrganizationID: please use `project_id` instead.
+	// OrganizationID: please use project_id instead.
 	OrganizationID *string `json:"-"`
-	// ProjectID: project ID to list the instance of.
+	// ProjectID: project ID to list the Database Instance of.
 	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -1859,7 +1859,7 @@ type ListInstancesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListInstances: list instances.
+// ListInstances: list all Database Instances in the specified zone, for a given Scaleway Organization or Scaleway Project. By default, the Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags` and `name`. For the `name` parameter, the value you include will be checked against the whole name string to see if it includes the string you put in the parameter.
 func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption) (*ListInstancesResponse, error) {
 	var err error
 
@@ -1905,11 +1905,11 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 type GetInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 }
 
-// GetInstance: get an instance.
+// GetInstance: retrieve information about a given Database Instance, specified by the `region` and `instance_id` parameters. Its full details, including name, status, IP address and port, are returned in the response object.
 func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1944,42 +1944,42 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 type CreateInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Deprecated: OrganizationID: please use `project_id` instead.
+	// Deprecated: OrganizationID: please use project_id instead.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
-	// ProjectID: the project ID on which to create the instance.
+	// ProjectID: the Project ID on which the Database Instance will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
-	// Name: name of the instance.
+	// Name: name of the Database Instance.
 	Name string `json:"name"`
-	// Engine: database engine of the database (PostgreSQL, MySQL, ...).
+	// Engine: database engine of the Database Instance (PostgreSQL, MySQL, ...).
 	Engine string `json:"engine"`
-	// UserName: name of the user created when the instance is created.
+	// UserName: username created when the Database Instance is created.
 	UserName string `json:"user_name"`
 	// Password: password of the user.
 	Password string `json:"password"`
-	// NodeType: type of node to use for the instance.
+	// NodeType: type of node to use for the Database Instance.
 	NodeType string `json:"node_type"`
-	// IsHaCluster: whether or not High-Availability is enabled.
+	// IsHaCluster: defines whether or not High-Availability is enabled.
 	IsHaCluster bool `json:"is_ha_cluster"`
-	// DisableBackup: whether or not backups are disabled.
+	// DisableBackup: defines whether or not backups are disabled.
 	DisableBackup bool `json:"disable_backup"`
-	// Tags: tags to apply to the instance.
+	// Tags: tags to apply to the Database Instance.
 	Tags []string `json:"tags"`
-	// InitSettings: list of engine settings to be set at database initialisation.
+	// InitSettings: list of engine settings to be set upon Database Instance initialization.
 	InitSettings []*InstanceSetting `json:"init_settings"`
-	// VolumeType: type of volume where data are stored (lssd, bssd, ...).
+	// VolumeType: type of volume where data is stored (lssd, bssd, ...).
 	// Default value: lssd
 	VolumeType VolumeType `json:"volume_type"`
 	// VolumeSize: volume size when volume_type is not lssd.
 	VolumeSize scw.Size `json:"volume_size"`
-	// InitEndpoints: one or multiple EndpointSpec used to expose your database instance. A load_balancer public endpoint is systematically created.
+	// InitEndpoints: one or multiple EndpointSpec used to expose your Database Instance. A load_balancer public endpoint is systematically created.
 	InitEndpoints []*EndpointSpec `json:"init_endpoints"`
-	// BackupSameRegion: store logical backups in the same region as the database instance.
+	// BackupSameRegion: defines whether to or not to store logical backups in the same region as the Database Instance.
 	BackupSameRegion bool `json:"backup_same_region"`
 }
 
-// CreateInstance: create an instance.
+// CreateInstance: create a new Database Instance. You must set the `engine`, `user_name`, `password` and `node_type` parameters. Optionally, you can specify the volume type and size.
 func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -2029,25 +2029,25 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 type UpdateInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance to update.
+	// InstanceID: UUID of the Database Instance to update.
 	InstanceID string `json:"-"`
 	// BackupScheduleFrequency: in hours.
 	BackupScheduleFrequency *uint32 `json:"backup_schedule_frequency"`
 	// BackupScheduleRetention: in days.
 	BackupScheduleRetention *uint32 `json:"backup_schedule_retention"`
-	// IsBackupScheduleDisabled: whether or not the backup schedule is disabled.
+	// IsBackupScheduleDisabled: defines whether or not the backup schedule is disabled.
 	IsBackupScheduleDisabled *bool `json:"is_backup_schedule_disabled"`
-	// Name: name of the instance.
+	// Name: name of the Database Instance.
 	Name *string `json:"name"`
-	// Tags: tags of a given instance.
+	// Tags: tags of a Database Instance.
 	Tags *[]string `json:"tags"`
-	// LogsPolicy: logs policy of the instance.
+	// LogsPolicy: logs policy of the Database Instance.
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
-	// BackupSameRegion: store logical backups in the same region as the database instance.
+	// BackupSameRegion: store logical backups in the same region as the Database Instance.
 	BackupSameRegion *bool `json:"backup_same_region"`
 }
 
-// UpdateInstance: update an instance.
+// UpdateInstance: update the parameters of a Database Instance, including name, tags and backup schedule details.
 func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -2087,11 +2087,11 @@ func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOpti
 type DeleteInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance to delete.
+	// InstanceID: UUID of the Database Instance to delete.
 	InstanceID string `json:"-"`
 }
 
-// DeleteInstance: delete an instance.
+// DeleteInstance: delete a given Database Instance, specified by the `region` and `instance_id` parameters. Deleting a Database Instance is permanent, and cannot be undone. Note that upon deletion all your data will be lost.
 func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -2126,15 +2126,15 @@ func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOpti
 type CloneInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to clone.
+	// InstanceID: UUID of the Database Instance you want to clone.
 	InstanceID string `json:"-"`
-	// Name: name of the clone instance.
+	// Name: name of the Database Instance clone.
 	Name string `json:"name"`
 	// NodeType: node type of the clone.
 	NodeType *string `json:"node_type"`
 }
 
-// CloneInstance: clone an instance.
+// CloneInstance: clone a given Database Instance, specified by the `region` and `instance_id` parameters. The clone feature allows you to create a new Database Instance from an existing one. The clone includes all existing databases, users and permissions. You can create a clone on a Database Instance bigger than your current one.
 func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -2174,11 +2174,11 @@ func (s *API) CloneInstance(req *CloneInstanceRequest, opts ...scw.RequestOption
 type RestartInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to restart.
+	// InstanceID: UUID of the Database Instance you want to restart.
 	InstanceID string `json:"-"`
 }
 
-// RestartInstance: restart an instance.
+// RestartInstance: restart a given Database Instance, specified by the `region` and `instance_id` parameters. The status of the Database Instance returned in the response.
 func (s *API) RestartInstance(req *RestartInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -2218,11 +2218,11 @@ func (s *API) RestartInstance(req *RestartInstanceRequest, opts ...scw.RequestOp
 type GetInstanceCertificateRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 }
 
-// GetInstanceCertificate: get the TLS certificate of an instance.
+// GetInstanceCertificate: retrieve information about the TLS certificate of a given Database Instance. Details like name and content are returned in the response.
 func (s *API) GetInstanceCertificate(req *GetInstanceCertificateRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -2257,11 +2257,11 @@ func (s *API) GetInstanceCertificate(req *GetInstanceCertificateRequest, opts ..
 type RenewInstanceCertificateRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want logs of.
+	// InstanceID: UUID of the Database Instance you want logs of.
 	InstanceID string `json:"-"`
 }
 
-// RenewInstanceCertificate: renew the TLS certificate of an instance.
+// RenewInstanceCertificate: renew a TLS for a Database Instance. Renewing a certificate means that you will not be able to connect to your Database Instance using the previous certificate. You will also need to download and update the new certificate for all database clients.
 func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2299,7 +2299,7 @@ func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opt
 type GetInstanceMetricsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 	// StartDate: start date to gather metrics from.
 	StartDate *time.Time `json:"-"`
@@ -2309,7 +2309,7 @@ type GetInstanceMetricsRequest struct {
 	MetricName *string `json:"-"`
 }
 
-// GetInstanceMetrics: get database instance metrics.
+// GetInstanceMetrics: retrieve the time series metrics of a give Database Instance. You can define the period from which to retrieve metrics by specifying the `start_date` and `end_date`.
 func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
 	var err error
 
@@ -2350,13 +2350,13 @@ func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.Req
 type CreateReadReplicaRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want a read replica of.
+	// InstanceID: UUID of the Database Instance you want to create a Read Replica from.
 	InstanceID string `json:"instance_id"`
 	// EndpointSpec: specification of the endpoint you want to create.
 	EndpointSpec []*ReadReplicaEndpointSpec `json:"endpoint_spec"`
 }
 
-// CreateReadReplica: you can only create a maximum of 3 read replicas for one instance.
+// CreateReadReplica: create a new Read Replica of a Database Instance. You must specify the `region` and the `instance_id`. You can only create a maximum of 3 Read Replicas per Database Instance.
 func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2392,11 +2392,11 @@ func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.Reque
 type GetReadReplicaRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ReadReplicaID: UUID of the read replica.
+	// ReadReplicaID: UUID of the Read Replica.
 	ReadReplicaID string `json:"-"`
 }
 
-// GetReadReplica: get a read replica.
+// GetReadReplica: retrieve information about a Database Instance Read Replica. Full details about the Read Replica, like `endpoints`, `status`  and `region` are returned in the response.
 func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2431,11 +2431,11 @@ func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOpti
 type DeleteReadReplicaRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ReadReplicaID: UUID of the read replica.
+	// ReadReplicaID: UUID of the Read Replica.
 	ReadReplicaID string `json:"-"`
 }
 
-// DeleteReadReplica: delete a read replica.
+// DeleteReadReplica: delete a Read Replica of a Database Instance. You must specify the `region` and `read_replica_id` parameters of the Read Replica you want to delete.
 func (s *API) DeleteReadReplica(req *DeleteReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2470,13 +2470,12 @@ func (s *API) DeleteReadReplica(req *DeleteReadReplicaRequest, opts ...scw.Reque
 type ResetReadReplicaRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ReadReplicaID: UUID of the read replica.
+	// ReadReplicaID: UUID of the Read Replica.
 	ReadReplicaID string `json:"-"`
 }
 
-// ResetReadReplica: when you resync a read replica, first it is reset, and then its data is resynchronized from the primary node.
-// Your read replica will be unavailable during the resync process. The duration of this process is proportional to your Database Instance size.
-// The configured endpoints will not change.
+// ResetReadReplica: when you resync a Read Replica, first it is reset, then its data is resynchronized from the primary node. Your Read Replica remains unavailable during the resync process. The duration of this process is proportional to the size of your Database Instance.
+// The configured endpoints do not change.
 func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2516,13 +2515,13 @@ func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.Request
 type CreateReadReplicaEndpointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ReadReplicaID: UUID of the read replica.
+	// ReadReplicaID: UUID of the Read Replica.
 	ReadReplicaID string `json:"-"`
 	// EndpointSpec: specification of the endpoint you want to create.
 	EndpointSpec []*ReadReplicaEndpointSpec `json:"endpoint_spec"`
 }
 
-// CreateReadReplicaEndpoint: a read replica can have at most one direct access and one private network endpoint.
+// CreateReadReplicaEndpoint: create a new endpoint for a Read Replica. Read Replicas can have at most one direct access and one Private Network endpoint.
 func (s *API) CreateReadReplicaEndpoint(req *CreateReadReplicaEndpointRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -2562,15 +2561,15 @@ func (s *API) CreateReadReplicaEndpoint(req *CreateReadReplicaEndpointRequest, o
 type PrepareInstanceLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want logs of.
+	// InstanceID: UUID of the Database Instance you want logs of.
 	InstanceID string `json:"-"`
-	// StartDate: start datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`.
+	// StartDate: start datetime of your log. (RFC 3339 format).
 	StartDate *time.Time `json:"start_date"`
-	// EndDate: end datetime of your log. Format: `{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z`.
+	// EndDate: end datetime of your log. (RFC 3339 format).
 	EndDate *time.Time `json:"end_date"`
 }
 
-// PrepareInstanceLogs: prepare your instance logs. Logs will be grouped on a minimum interval of a day.
+// PrepareInstanceLogs: prepare your Database Instance logs. You can define the `start_date` and `end_date` parameters for your query. The download URL is returned in the response. Logs are recorded from 00h00 to 23h59 and then aggregated in a `.log` file once a day. Therefore, even if you specify a timeframe from which you want to get the logs, you will receive logs from the full 24 hours.
 func (s *API) PrepareInstanceLogs(req *PrepareInstanceLogsRequest, opts ...scw.RequestOption) (*PrepareInstanceLogsResponse, error) {
 	var err error
 
@@ -2610,14 +2609,14 @@ func (s *API) PrepareInstanceLogs(req *PrepareInstanceLogsRequest, opts ...scw.R
 type ListInstanceLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want logs of.
+	// InstanceID: UUID of the Database Instance you want logs of.
 	InstanceID string `json:"-"`
-	// OrderBy: criteria to use when ordering instance logs listing.
+	// OrderBy: criteria to use when ordering Database Instance logs listing.
 	// Default value: created_at_asc
 	OrderBy ListInstanceLogsRequestOrderBy `json:"-"`
 }
 
-// ListInstanceLogs: list available logs of a given instance.
+// ListInstanceLogs: list the available logs of a Database Instance. By default, the logs returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
 func (s *API) ListInstanceLogs(req *ListInstanceLogsRequest, opts ...scw.RequestOption) (*ListInstanceLogsResponse, error) {
 	var err error
 
@@ -2660,7 +2659,7 @@ type GetInstanceLogRequest struct {
 	InstanceLogID string `json:"-"`
 }
 
-// GetInstanceLog: get specific logs of a given instance.
+// GetInstanceLog: retrieve information about the logs of a Database Instance. Specify the `instance_log_id` and `region` in your request to get information such as `download_url`, `status`, `expires_at` and `created_at` about your logs in the response.
 func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOption) (*InstanceLog, error) {
 	var err error
 
@@ -2695,13 +2694,13 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 type PurgeInstanceLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want logs of.
+	// InstanceID: UUID of the Database Instance you want logs of.
 	InstanceID string `json:"-"`
-	// LogName: specific log name to purge.
+	// LogName: given log name to purge.
 	LogName *string `json:"log_name"`
 }
 
-// PurgeInstanceLogs: purge remote instances logs.
+// PurgeInstanceLogs: purge a given remote log from a Database Instance. You can specify the `log_name` of the log you wish to clean from your Database Instance.
 func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2739,11 +2738,11 @@ func (s *API) PurgeInstanceLogs(req *PurgeInstanceLogsRequest, opts ...scw.Reque
 type ListInstanceLogsDetailsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want logs of.
+	// InstanceID: UUID of the Database Instance you want logs of.
 	InstanceID string `json:"-"`
 }
 
-// ListInstanceLogsDetails: list remote instances logs details.
+// ListInstanceLogsDetails: list remote log details. By default, the details returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
 func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts ...scw.RequestOption) (*ListInstanceLogsDetailsResponse, error) {
 	var err error
 
@@ -2778,13 +2777,13 @@ func (s *API) ListInstanceLogsDetails(req *ListInstanceLogsDetailsRequest, opts 
 type AddInstanceSettingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to add settings to.
+	// InstanceID: UUID of the Database Instance you want to add settings to.
 	InstanceID string `json:"-"`
-	// Settings: settings to add on the instance.
+	// Settings: settings to add to the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
 }
 
-// AddInstanceSettings: add an instance setting.
+// AddInstanceSettings: add an advanced setting to a Database Instance. You must set the `name` and the `value` of each setting.
 func (s *API) AddInstanceSettings(req *AddInstanceSettingsRequest, opts ...scw.RequestOption) (*AddInstanceSettingsResponse, error) {
 	var err error
 
@@ -2824,13 +2823,13 @@ func (s *API) AddInstanceSettings(req *AddInstanceSettingsRequest, opts ...scw.R
 type DeleteInstanceSettingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance to delete settings from.
+	// InstanceID: UUID of the Database Instance to delete settings from.
 	InstanceID string `json:"-"`
 	// SettingNames: settings names to delete.
 	SettingNames []string `json:"setting_names"`
 }
 
-// DeleteInstanceSettings: delete an instance setting.
+// DeleteInstanceSettings: delete an advanced setting in a Database Instance. You must specify the names of the settings you want to delete in the request.
 func (s *API) DeleteInstanceSettings(req *DeleteInstanceSettingsRequest, opts ...scw.RequestOption) (*DeleteInstanceSettingsResponse, error) {
 	var err error
 
@@ -2870,13 +2869,13 @@ func (s *API) DeleteInstanceSettings(req *DeleteInstanceSettingsRequest, opts ..
 type SetInstanceSettingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance where the settings has to be set.
+	// InstanceID: UUID of the Database Instance where the settings must be set.
 	InstanceID string `json:"-"`
-	// Settings: settings to define for the instance.
+	// Settings: settings to define for the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
 }
 
-// SetInstanceSettings: set a given instance setting.
+// SetInstanceSettings: update an advanced setting for a Database Instance. Settings added upon database engine initalization can only be defined once, and cannot, therefore, be updated.
 func (s *API) SetInstanceSettings(req *SetInstanceSettingsRequest, opts ...scw.RequestOption) (*SetInstanceSettingsResponse, error) {
 	var err error
 
@@ -2916,7 +2915,7 @@ func (s *API) SetInstanceSettings(req *SetInstanceSettingsRequest, opts ...scw.R
 type ListInstanceACLRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -2924,7 +2923,7 @@ type ListInstanceACLRulesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListInstanceACLRules: list ACL rules of a given instance.
+// ListInstanceACLRules: list the ACL rules for a given Database Instance. The response is an array of ACL objects, each one representing an ACL that denies, allows or redirects traffic based on certain conditions.
 func (s *API) ListInstanceACLRules(req *ListInstanceACLRulesRequest, opts ...scw.RequestOption) (*ListInstanceACLRulesResponse, error) {
 	var err error
 
@@ -2969,13 +2968,13 @@ func (s *API) ListInstanceACLRules(req *ListInstanceACLRulesRequest, opts ...scw
 type AddInstanceACLRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to add acl rules to.
+	// InstanceID: UUID of the Database Instance you want to add ACL rules to.
 	InstanceID string `json:"-"`
-	// Rules: aCLs rules to add to the instance.
+	// Rules: ACL rules to add to the Database Instance.
 	Rules []*ACLRuleRequest `json:"rules"`
 }
 
-// AddInstanceACLRules: add an additional ACL rule to a database instance.
+// AddInstanceACLRules: add an additional ACL rule to a Database Instance.
 func (s *API) AddInstanceACLRules(req *AddInstanceACLRulesRequest, opts ...scw.RequestOption) (*AddInstanceACLRulesResponse, error) {
 	var err error
 
@@ -3015,13 +3014,13 @@ func (s *API) AddInstanceACLRules(req *AddInstanceACLRulesRequest, opts ...scw.R
 type SetInstanceACLRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance where the ACL rules has to be set.
+	// InstanceID: UUID of the Database Instance where the ACL rules must be set.
 	InstanceID string `json:"-"`
-	// Rules: ACL rules to define for the instance.
+	// Rules: ACL rules to define for the Database Instance.
 	Rules []*ACLRuleRequest `json:"rules"`
 }
 
-// SetInstanceACLRules: replace all the ACL rules of a database instance.
+// SetInstanceACLRules: replace all the ACL rules of a Database Instance.
 func (s *API) SetInstanceACLRules(req *SetInstanceACLRulesRequest, opts ...scw.RequestOption) (*SetInstanceACLRulesResponse, error) {
 	var err error
 
@@ -3061,13 +3060,13 @@ func (s *API) SetInstanceACLRules(req *SetInstanceACLRulesRequest, opts ...scw.R
 type DeleteInstanceACLRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to delete an ACL rules from.
+	// InstanceID: UUID of the Database Instance you want to delete an ACL rule from.
 	InstanceID string `json:"-"`
-	// ACLRuleIPs: ACL rules IP present on the instance.
+	// ACLRuleIPs: IP addresses defined in the ACL rules of the Database Instance.
 	ACLRuleIPs []string `json:"acl_rule_ips"`
 }
 
-// DeleteInstanceACLRules: delete ACL rules of a given instance.
+// DeleteInstanceACLRules: delete one or more ACL rules of a Database Instance.
 func (s *API) DeleteInstanceACLRules(req *DeleteInstanceACLRulesRequest, opts ...scw.RequestOption) (*DeleteInstanceACLRulesResponse, error) {
 	var err error
 
@@ -3107,11 +3106,11 @@ func (s *API) DeleteInstanceACLRules(req *DeleteInstanceACLRulesRequest, opts ..
 type ListUsersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 	// Name: name of the user.
 	Name *string `json:"-"`
-	// OrderBy: criteria to use when ordering users listing.
+	// OrderBy: criteria to use when requesting user listing.
 	// Default value: name_asc
 	OrderBy ListUsersRequestOrderBy `json:"-"`
 
@@ -3120,7 +3119,7 @@ type ListUsersRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListUsers: list users of a given instance.
+// ListUsers: list all users of a given Database Instance. By default, the users returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
 func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*ListUsersResponse, error) {
 	var err error
 
@@ -3167,17 +3166,17 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 type CreateUserRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to create a user in.
+	// InstanceID: UUID of the Database Instance in which you want to create a user.
 	InstanceID string `json:"-"`
 	// Name: name of the user you want to create.
 	Name string `json:"name"`
 	// Password: password of the user you want to create.
 	Password string `json:"password"`
-	// IsAdmin: whether the user you want to create will have administrative privileges.
+	// IsAdmin: defines whether the user will have administrative privileges.
 	IsAdmin bool `json:"is_admin"`
 }
 
-// CreateUser: create a user on a given instance.
+// CreateUser: create a new user for a Database Instance. You must define the `name`, `password` and `is_admin` parameters.
 func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -3217,17 +3216,17 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 type UpdateUserRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance the user belongs to.
+	// InstanceID: UUID of the Database Instance the user belongs to.
 	InstanceID string `json:"-"`
 	// Name: name of the database user.
 	Name string `json:"-"`
 	// Password: password of the database user.
 	Password *string `json:"password"`
-	// IsAdmin: whether or not this user got administrative privileges.
+	// IsAdmin: defines whether or not this user got administrative privileges.
 	IsAdmin *bool `json:"is_admin"`
 }
 
-// UpdateUser: update a user on a given instance.
+// UpdateUser: update the parameters of a user on a Database Instance. You can update the `password` and `is_admin` parameters, but you cannot change the name of the user.
 func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -3271,13 +3270,13 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 type DeleteUserRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance to delete a user from.
+	// InstanceID: UUID of the Database Instance to delete the user from.
 	InstanceID string `json:"-"`
 	// Name: name of the user.
 	Name string `json:"-"`
 }
 
-// DeleteUser: delete a user on a given instance.
+// DeleteUser: delete a given user on a Database Instance. You must specify, in the endpoint,  the `region`, `instance_id` and `name` parameters of the user you want to delete.
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3314,11 +3313,11 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 type ListDatabasesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance to list database of.
+	// InstanceID: UUID of the Database Instance to list the databases of.
 	InstanceID string `json:"-"`
 	// Name: name of the database.
 	Name *string `json:"-"`
-	// Managed: whether or not the database is managed.
+	// Managed: defines whether or not the database is managed.
 	Managed *bool `json:"-"`
 	// Owner: user that owns this database.
 	Owner *string `json:"-"`
@@ -3331,7 +3330,7 @@ type ListDatabasesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDatabases: list all database in a given instance.
+// ListDatabases: list all databases of a given Database Instance. By default, the databases returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `name`, `managed` and `owner`.
 func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption) (*ListDatabasesResponse, error) {
 	var err error
 
@@ -3380,13 +3379,13 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 type CreateDatabaseRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance where to create the database.
+	// InstanceID: UUID of the Database Instance where to create the database.
 	InstanceID string `json:"-"`
 	// Name: name of the database.
 	Name string `json:"name"`
 }
 
-// CreateDatabase: create a database in a given instance.
+// CreateDatabase: create a new database. You must define the `name` parameter in the request.
 func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOption) (*Database, error) {
 	var err error
 
@@ -3426,13 +3425,13 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 type DeleteDatabaseRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance where to delete the database.
+	// InstanceID: UUID of the Database Instance where to delete the database.
 	InstanceID string `json:"-"`
 	// Name: name of the database to delete.
 	Name string `json:"-"`
 }
 
-// DeleteDatabase: delete a database in a given instance.
+// DeleteDatabase: delete a given database on a Database Instance. You must specify, in the endpoint, the `region`, `instance_id` and `name` parameters of the database you want to delete.
 func (s *API) DeleteDatabase(req *DeleteDatabaseRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3469,7 +3468,7 @@ func (s *API) DeleteDatabase(req *DeleteDatabaseRequest, opts ...scw.RequestOpti
 type ListPrivilegesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 	// OrderBy: criteria to use when ordering privileges listing.
 	// Default value: user_name_asc
@@ -3484,7 +3483,7 @@ type ListPrivilegesRequest struct {
 	UserName *string `json:"-"`
 }
 
-// ListPrivileges: list privileges of a given user for a given database on a given instance.
+// ListPrivileges: list privileges of a user on a database. By default, the details returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `database_name` and `user_name`.
 func (s *API) ListPrivileges(req *ListPrivilegesRequest, opts ...scw.RequestOption) (*ListPrivilegesResponse, error) {
 	var err error
 
@@ -3532,7 +3531,7 @@ func (s *API) ListPrivileges(req *ListPrivilegesRequest, opts ...scw.RequestOpti
 type SetPrivilegeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 	// DatabaseName: name of the database.
 	DatabaseName string `json:"database_name"`
@@ -3543,7 +3542,7 @@ type SetPrivilegeRequest struct {
 	Permission Permission `json:"permission"`
 }
 
-// SetPrivilege: set privileges of a given user for a given database on a given instance.
+// SetPrivilege: set the privileges of a user on a database. You must define `database_name`, `user_name` and `permission` in the request body.
 func (s *API) SetPrivilege(req *SetPrivilegeRequest, opts ...scw.RequestOption) (*Privilege, error) {
 	var err error
 
@@ -3588,7 +3587,7 @@ type ListSnapshotsRequest struct {
 	// OrderBy: criteria to use when ordering snapshot listing.
 	// Default value: created_at_asc
 	OrderBy ListSnapshotsRequestOrderBy `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID *string `json:"-"`
 	// OrganizationID: organization ID the snapshots belongs to.
 	OrganizationID *string `json:"-"`
@@ -3600,7 +3599,7 @@ type ListSnapshotsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListSnapshots: list instance snapshots.
+// ListSnapshots: list snapshots. You can include the `instance_id` or `project_id` in your query to get the list of snaphots for specific Database Instances and/or Projects. By default, the details returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
 func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
 
@@ -3650,7 +3649,7 @@ type GetSnapshotRequest struct {
 	SnapshotID string `json:"-"`
 }
 
-// GetSnapshot: get an instance snapshot.
+// GetSnapshot: retrieve information about a given snapshot, specified by its `snapshot_id` and `region`. Full details about the snapshot, like size and expiration date, are returned in the response.
 func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
@@ -3685,15 +3684,15 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 type CreateSnapshotRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance.
+	// InstanceID: UUID of the Database Instance.
 	InstanceID string `json:"-"`
 	// Name: name of the snapshot.
 	Name string `json:"name"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// CreateSnapshot: create an instance snapshot.
+// CreateSnapshot: create a new snapshot of a Database Instance. You must define the `name` parameter in the request.
 func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
@@ -3741,11 +3740,11 @@ type UpdateSnapshotRequest struct {
 	SnapshotID string `json:"-"`
 	// Name: name of the snapshot.
 	Name *string `json:"name"`
-	// ExpiresAt: expiration date (Format ISO 8601).
+	// ExpiresAt: expiration date (must follow the ISO 8601 format).
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// UpdateSnapshot: update an instance snapshot.
+// UpdateSnapshot: update the parameters of a snapshot of a Database Instance. You can update the `name` and `expires_at` parameters.
 func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
@@ -3789,7 +3788,7 @@ type DeleteSnapshotRequest struct {
 	SnapshotID string `json:"-"`
 }
 
-// DeleteSnapshot: delete an instance snapshot.
+// DeleteSnapshot: delete a given snapshot of a Database Instance. You must specify, in the endpoint,  the `region` and `snapshot_id` parameters of the snapshot you want to delete.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
@@ -3824,17 +3823,17 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 type CreateInstanceFromSnapshotRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// SnapshotID: block snapshot of the instance.
+	// SnapshotID: block snapshot of the Database Instance.
 	SnapshotID string `json:"-"`
-	// InstanceName: name of the instance created with the snapshot.
+	// InstanceName: name of the Database Instance created with the snapshot.
 	InstanceName string `json:"instance_name"`
-	// IsHaCluster: whether or not High-Availability is enabled on the new instance.
+	// IsHaCluster: defines whether or not High-Availability is enabled on the new Database Instance.
 	IsHaCluster *bool `json:"is_ha_cluster"`
 	// NodeType: the node type used to restore the snapshot.
 	NodeType *string `json:"node_type"`
 }
 
-// CreateInstanceFromSnapshot: create a new instance from a given snapshot.
+// CreateInstanceFromSnapshot: restore a snapshot. When you restore a snapshot, a new Instance is created and billed to your account. Note that is possible to select a larger node type for your new Database Instance. However, the Block volume size will be the same as the size of the restored snapshot. All Instance settings will be restored if you chose a node type with the same or more memory size than the initial Instance. Settings will be reset to the default if your node type has less memory.
 func (s *API) CreateInstanceFromSnapshot(req *CreateInstanceFromSnapshotRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -3874,13 +3873,13 @@ func (s *API) CreateInstanceFromSnapshot(req *CreateInstanceFromSnapshotRequest,
 type CreateEndpointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// InstanceID: UUID of the instance you want to add endpoint to.
+	// InstanceID: UUID of the Database Instance you to which you want to add an endpoint.
 	InstanceID string `json:"-"`
 	// EndpointSpec: specification of the endpoint you want to create.
 	EndpointSpec *EndpointSpec `json:"endpoint_spec"`
 }
 
-// CreateEndpoint: create a new instance endpoint.
+// CreateEndpoint: create a new endpoint for a Database Instance. You can add `load_balacer` and `private_network` specifications to the body of the request. Note that this action replaces your current endpoint, which means you might need to update any environment configurations that point to the old endpoint.
 func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
@@ -3920,11 +3919,11 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 type DeleteEndpointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// EndpointID: this endpoint can also be used to delete a read replica endpoint.
+	// EndpointID: this endpoint can also be used to delete a Read Replica endpoint.
 	EndpointID string `json:"-"`
 }
 
-// DeleteEndpoint: delete an instance endpoint.
+// DeleteEndpoint: delete the endpoint of a Database Instance. You must specify the `region` and `endpoint_id` parameters of the endpoint you want to delete. Note that might need to update any environment configurations that point to the deleted endpoint.
 func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3961,7 +3960,7 @@ type GetEndpointRequest struct {
 	EndpointID string `json:"-"`
 }
 
-// GetEndpoint: get an instance endpoint.
+// GetEndpoint: retrieve information about a Database Instance endpoint. Full details about the endpoint, like `ip`, `port`, `private_network` and `load_balancer` specifications are returned in the response.
 func (s *API) GetEndpoint(req *GetEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
