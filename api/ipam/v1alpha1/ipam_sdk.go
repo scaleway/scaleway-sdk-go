@@ -162,8 +162,7 @@ type ListIPsResponse struct {
 }
 
 type Resource struct {
-	// Type:
-	// Default value: unknown_type
+	// Type: default value: unknown_type
 	Type ResourceType `json:"type"`
 
 	ID string `json:"id"`
@@ -203,8 +202,7 @@ type ListIPsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_desc
+	// OrderBy: default value: created_at_desc
 	OrderBy ListIPsRequestOrderBy `json:"-"`
 
 	ProjectID *string `json:"-"`
@@ -216,8 +214,7 @@ type ListIPsRequest struct {
 	Attached *bool `json:"-"`
 
 	ResourceID *string `json:"-"`
-	// ResourceType:
-	// Default value: unknown_type
+	// ResourceType: default value: unknown_type
 	ResourceType ResourceType `json:"-"`
 
 	MacAddress *string `json:"-"`

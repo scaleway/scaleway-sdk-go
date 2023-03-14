@@ -40,6 +40,7 @@ var (
 )
 
 // API: this API allows you to conveniently store, access and share sensitive data.
+// Secret API (beta).
 type API struct {
 	client *scw.Client
 }
@@ -181,7 +182,8 @@ type Secret struct {
 	ProjectID string `json:"project_id"`
 	// Name: name of the Secret.
 	Name string `json:"name"`
-	// Status: * `ready`: the Secret is ready.
+	// Status: current status of the Secret.
+	// * `ready`: the Secret is ready.
 	// * `locked`: the Secret is locked.
 	// Default value: ready
 	Status SecretStatus `json:"status"`
@@ -205,7 +207,8 @@ type SecretVersion struct {
 	SecretID string `json:"secret_id"`
 	// Revision: revision of the SecretVersion.
 	Revision uint32 `json:"revision"`
-	// Status: * `unknown`: the SecretVersion is in an invalid state.
+	// Status: current status of the SecretVersion.
+	// * `unknown`: the SecretVersion is in an invalid state.
 	// * `enabled`: the SecretVersion is accessible.
 	// * `disabled`: the SecretVersion is not accessible but can be enabled.
 	// * `destroyed`: the SecretVersion is permanently destroyed.
@@ -416,8 +419,7 @@ type ListSecretsRequest struct {
 	Name *string `json:"-"`
 	// Tags: list of tags to filter on (optional).
 	Tags []string `json:"-"`
-	// OrderBy:
-	// Default value: name_asc
+	// OrderBy: default value: name_asc
 	OrderBy ListSecretsRequestOrderBy `json:"-"`
 
 	Page *int32 `json:"-"`

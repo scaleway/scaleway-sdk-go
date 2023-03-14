@@ -214,7 +214,8 @@ type FlexibleIP struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// CreatedAt: date of creation of the Flexible IP.
 	CreatedAt *time.Time `json:"created_at"`
-	// Status: - ready : Flexible IP is created and ready to be attached to a server or to have a virtual MAC generated.
+	// Status: status of the Flexible IP.
+	// - ready : Flexible IP is created and ready to be attached to a server or to have a virtual MAC generated.
 	// - updating: Flexible IP is being attached to a server or a virtual MAC operation is ongoing
 	// - attached: Flexible IP is attached to a server
 	// - error: a Flexible IP operation resulted in an error
@@ -519,7 +520,8 @@ func (s *API) DeleteFlexibleIP(req *DeleteFlexibleIPRequest, opts ...scw.Request
 type AttachFlexibleIPRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// FipsIDs: multiple IDs can be provided as long as Flexible IPs belong to the same MAC groups (see details about MAC groups).
+	// FipsIDs: a list of Flexible IP IDs to attach.
+	// Multiple IDs can be provided as long as Flexible IPs belong to the same MAC groups (see details about MAC groups).
 	FipsIDs []string `json:"fips_ids"`
 	// ServerID: a server ID on which to attach the Flexible IPs.
 	ServerID string `json:"server_id"`
@@ -561,7 +563,8 @@ func (s *API) AttachFlexibleIP(req *AttachFlexibleIPRequest, opts ...scw.Request
 type DetachFlexibleIPRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// FipsIDs: multiple IDs can be provided as long as Flexible IPs belong to the same MAC groups (see details about MAC groups).
+	// FipsIDs: a list of Flexible IP IDs to detach.
+	// Multiple IDs can be provided as long as Flexible IPs belong to the same MAC groups (see details about MAC groups).
 	FipsIDs []string `json:"fips_ids"`
 }
 
@@ -648,13 +651,16 @@ func (s *API) GenerateMACAddr(req *GenerateMACAddrRequest, opts ...scw.RequestOp
 type DuplicateMACAddrRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// FipID: flexible IPs need to be attached to the same server.
+	// FipID: flexible IP ID on which to duplicate the Virtual MAC.
+	// Flexible IPs need to be attached to the same server.
 	FipID string `json:"-"`
-	// DuplicateFromFipID: flexible IPs need to be attached to the same server.
+	// DuplicateFromFipID: flexible IP ID to duplicate the Virtual MAC from.
+	// Flexible IPs need to be attached to the same server.
 	DuplicateFromFipID string `json:"duplicate_from_fip_id"`
 }
 
-// DuplicateMACAddr: duplicate a Virtual MAC from a given Flexible IP onto another attached on the same server.
+// DuplicateMACAddr: duplicate a Virtual MAC.
+// Duplicate a Virtual MAC from a given Flexible IP onto another attached on the same server.
 func (s *API) DuplicateMACAddr(req *DuplicateMACAddrRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -739,7 +745,8 @@ func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*
 type DeleteMACAddrRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// FipID: if the Flexible IP belongs to a MAC group, the MAC will be removed from the MAC group and from the Flexible IP.
+	// FipID: flexible IP ID from which to delete the Virtual MAC.
+	// If the Flexible IP belongs to a MAC group, the MAC will be removed from the MAC group and from the Flexible IP.
 	FipID string `json:"-"`
 }
 

@@ -40,6 +40,7 @@ var (
 )
 
 // API: serverless functions API.
+// Functions API.
 type API struct {
 	client *scw.Client
 }
@@ -753,8 +754,7 @@ type Cron struct {
 	Schedule string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status CronStatus `json:"status"`
 
 	Name string `json:"name"`
@@ -769,8 +769,7 @@ type Domain struct {
 	FunctionID string `json:"function_id"`
 
 	URL string `json:"url"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status DomainStatus `json:"status"`
 
 	ErrorMessage *string `json:"error_message"`
@@ -789,8 +788,7 @@ type Function struct {
 	Name string `json:"name"`
 
 	NamespaceID string `json:"namespace_id"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status FunctionStatus `json:"status"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
@@ -798,8 +796,7 @@ type Function struct {
 	MinScale uint32 `json:"min_scale"`
 
 	MaxScale uint32 `json:"max_scale"`
-	// Runtime:
-	// Default value: unknown_runtime
+	// Runtime: default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
 
 	MemoryLimit uint32 `json:"memory_limit"`
@@ -811,8 +808,7 @@ type Function struct {
 	Handler string `json:"handler"`
 
 	ErrorMessage *string `json:"error_message"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
@@ -822,7 +818,8 @@ type Function struct {
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Region scw.Region `json:"region"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
@@ -912,8 +909,7 @@ type Namespace struct {
 	OrganizationID string `json:"organization_id"`
 
 	ProjectID string `json:"project_id"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status NamespaceStatus `json:"status"`
 
 	RegistryNamespaceID string `json:"registry_namespace_id"`
@@ -939,8 +935,7 @@ type Runtime struct {
 	DefaultHandler string `json:"default_handler"`
 
 	CodeSample string `json:"code_sample"`
-	// Status:
-	// Default value: unknown_status
+	// Status: default value: unknown_status
 	Status RuntimeStatus `json:"status"`
 
 	StatusMessage string `json:"status_message"`
@@ -975,8 +970,7 @@ type Token struct {
 	NamespaceID *string `json:"namespace_id,omitempty"`
 	// Deprecated
 	PublicKey *string `json:"public_key,omitempty"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status TokenStatus `json:"status"`
 
 	Description *string `json:"description"`
@@ -990,11 +984,9 @@ type Trigger struct {
 	Name string `json:"name"`
 
 	Description string `json:"description"`
-	// InputType:
-	// Default value: unknown_input_type
+	// InputType: default value: unknown_input_type
 	InputType TriggerInputType `json:"input_type"`
-	// Status:
-	// Default value: unknown_status
+	// Status: default value: unknown_status
 	Status TriggerStatus `json:"status"`
 
 	ErrorMessage *string `json:"error_message"`
@@ -1092,8 +1084,7 @@ type ListNamespacesRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
 
 	Name *string `json:"-"`
@@ -1152,7 +1143,8 @@ type GetNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// GetNamespace: get the namespace associated with the given id.
+// GetNamespace: get a namespace.
+// Get the namespace associated with the given id.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1254,7 +1246,8 @@ type UpdateNamespaceRequest struct {
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
-// UpdateNamespace: update the space associated with the given id.
+// UpdateNamespace: update an existing namespace.
+// Update the space associated with the given id.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1298,7 +1291,8 @@ type DeleteNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// DeleteNamespace: delete the namespace associated with the given id.
+// DeleteNamespace: delete an existing namespace.
+// Delete the namespace associated with the given id.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1337,8 +1331,7 @@ type ListFunctionsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListFunctionsRequestOrderBy `json:"-"`
 
 	NamespaceID string `json:"-"`
@@ -1400,7 +1393,8 @@ type GetFunctionRequest struct {
 	FunctionID string `json:"-"`
 }
 
-// GetFunction: get the function associated with the given id.
+// GetFunction: get a function.
+// Get the function associated with the given id.
 func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1445,8 +1439,7 @@ type CreateFunctionRequest struct {
 	MinScale *uint32 `json:"min_scale"`
 
 	MaxScale *uint32 `json:"max_scale"`
-	// Runtime:
-	// Default value: unknown_runtime
+	// Runtime: default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
 
 	MemoryLimit *uint32 `json:"memory_limit"`
@@ -1454,14 +1447,14 @@ type CreateFunctionRequest struct {
 	Timeout *scw.Duration `json:"timeout"`
 
 	Handler *string `json:"handler"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
@@ -1516,8 +1509,7 @@ type UpdateFunctionRequest struct {
 	MinScale *uint32 `json:"min_scale"`
 
 	MaxScale *uint32 `json:"max_scale"`
-	// Runtime:
-	// Default value: unknown_runtime
+	// Runtime: default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
 
 	MemoryLimit *uint32 `json:"memory_limit"`
@@ -1527,21 +1519,22 @@ type UpdateFunctionRequest struct {
 	Redeploy *bool `json:"redeploy"`
 
 	Handler *string `json:"handler"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 }
 
-// UpdateFunction: update the function associated with the given id.
+// UpdateFunction: update an existing function.
+// Update the function associated with the given id.
 func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1585,7 +1578,8 @@ type DeleteFunctionRequest struct {
 	FunctionID string `json:"-"`
 }
 
-// DeleteFunction: delete the function associated with the given id.
+// DeleteFunction: delete a function.
+// Delete the function associated with the given id.
 func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1624,7 +1618,8 @@ type DeployFunctionRequest struct {
 	FunctionID string `json:"-"`
 }
 
-// DeployFunction: deploy a function associated with the given id.
+// DeployFunction: deploy a function.
+// Deploy a function associated with the given id.
 func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1666,7 +1661,8 @@ type ListFunctionRuntimesRequest struct {
 	Region scw.Region `json:"-"`
 }
 
-// ListFunctionRuntimes: list available function runtimes.
+// ListFunctionRuntimes: list function runtimes.
+// List available function runtimes.
 func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw.RequestOption) (*ListFunctionRuntimesResponse, error) {
 	var err error
 
@@ -1703,7 +1699,8 @@ type GetFunctionUploadURLRequest struct {
 	ContentLength uint64 `json:"-"`
 }
 
-// GetFunctionUploadURL: get an upload URL of a function associated with the given id.
+// GetFunctionUploadURL: get an upload URL of a function.
+// Get an upload URL of a function associated with the given id.
 func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw.RequestOption) (*UploadURL, error) {
 	var err error
 
@@ -1746,7 +1743,8 @@ type GetFunctionDownloadURLRequest struct {
 	FunctionID string `json:"-"`
 }
 
-// GetFunctionDownloadURL: get a download URL for a function associated with the given id.
+// GetFunctionDownloadURL: get a download URL of a function.
+// Get a download URL for a function associated with the given id.
 func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ...scw.RequestOption) (*DownloadURL, error) {
 	var err error
 
@@ -1785,8 +1783,7 @@ type ListCronsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListCronsRequestOrderBy `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -1839,7 +1836,8 @@ type GetCronRequest struct {
 	CronID string `json:"-"`
 }
 
-// GetCron: get the cron associated with the given id.
+// GetCron: get a cron.
+// Get the cron associated with the given id.
 func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1932,7 +1930,8 @@ type UpdateCronRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateCron: update the cron associated with the given id.
+// UpdateCron: update an existing cron.
+// Update the cron associated with the given id.
 func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1976,7 +1975,8 @@ type DeleteCronRequest struct {
 	CronID string `json:"-"`
 }
 
-// DeleteCron: delete the cron associated with the given id.
+// DeleteCron: delete an existing cron.
+// Delete the cron associated with the given id.
 func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2017,8 +2017,7 @@ type ListLogsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: timestamp_desc
+	// OrderBy: default value: timestamp_desc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 }
 
@@ -2072,8 +2071,7 @@ type ListDomainsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListDomainsRequestOrderBy `json:"-"`
 
 	FunctionID string `json:"-"`
@@ -2378,8 +2376,7 @@ type ListTokensRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
 
 	FunctionID *string `json:"-"`
@@ -2564,8 +2561,7 @@ type ListTriggersRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListTriggersRequestOrderBy `json:"-"`
 
 	FunctionID *string `json:"-"`

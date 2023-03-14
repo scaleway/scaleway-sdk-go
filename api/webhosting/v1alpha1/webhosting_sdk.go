@@ -616,7 +616,8 @@ type GetHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// GetHosting: get the details of a Hosting with the given ID.
+// GetHosting: get a hosting.
+// Get the details of a Hosting with the given ID.
 func (s *API) GetHosting(req *GetHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -707,7 +708,8 @@ type DeleteHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// DeleteHosting: delete a hosting with the given ID.
+// DeleteHosting: delete a hosting.
+// Delete a hosting with the given ID.
 func (s *API) DeleteHosting(req *DeleteHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -746,7 +748,8 @@ type RestoreHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// RestoreHosting: restore a hosting with the given ID.
+// RestoreHosting: retore a hosting.
+// Restore a hosting with the given ID.
 func (s *API) RestoreHosting(req *RestoreHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -790,7 +793,8 @@ type GetDomainDNSRecordsRequest struct {
 	Domain string `json:"-"`
 }
 
-// GetDomainDNSRecords: get the DNS records of a specified domain.
+// GetDomainDNSRecords: get the DNS records.
+// Get the DNS records of a specified domain.
 func (s *API) GetDomainDNSRecords(req *GetDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
 	var err error
 

@@ -39,7 +39,8 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage projects.
+// API: user related data.
+// This API allows you to manage projects.
 type API struct {
 	client *scw.Client
 }
@@ -118,7 +119,8 @@ type CreateProjectRequest struct {
 	Description *string `json:"description"`
 }
 
-// CreateProject: generate a new Project for an Organization, specifying its configuration including name and description.
+// CreateProject: create a new Project for an Organization.
+// Generate a new Project for an Organization, specifying its configuration including name and description.
 func (s *API) CreateProject(req *CreateProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
@@ -163,7 +165,8 @@ type ListProjectsRequest struct {
 	ProjectIDs []string `json:"-"`
 }
 
-// ListProjects: list all Projects of an Organization. The response will include the total number of Projects as well as their associated Organizations, names and IDs. Other information include the creation and update date of the Project.
+// ListProjects: list all Projects of an Organization.
+// List all Projects of an Organization. The response will include the total number of Projects as well as their associated Organizations, names and IDs. Other information include the creation and update date of the Project.
 func (s *API) ListProjects(req *ListProjectsRequest, opts ...scw.RequestOption) (*ListProjectsResponse, error) {
 	var err error
 
@@ -206,7 +209,8 @@ type GetProjectRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// GetProject: retrieve information about an existing Project, specified by its Project ID. Its full details, including ID, name and description, are returned in the response object.
+// GetProject: get an existing Project.
+// Retrieve information about an existing Project, specified by its Project ID. Its full details, including ID, name and description, are returned in the response object.
 func (s *API) GetProject(req *GetProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
@@ -239,7 +243,8 @@ type DeleteProjectRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// DeleteProject: delete an existing Project, specified by its Project ID. The Project needs to be empty (meaning there are no resources left in it) to be deleted effectively. Note that deleting a Project is permanent, and cannot be undone.
+// DeleteProject: delete an existing Project.
+// Delete an existing Project, specified by its Project ID. The Project needs to be empty (meaning there are no resources left in it) to be deleted effectively. Note that deleting a Project is permanent, and cannot be undone.
 func (s *API) DeleteProject(req *DeleteProjectRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -274,7 +279,8 @@ type UpdateProjectRequest struct {
 	Description *string `json:"description"`
 }
 
-// UpdateProject: update the parameters of an existing Project, specified by its Project ID. These parameters include the name and description.
+// UpdateProject: update Project.
+// Update the parameters of an existing Project, specified by its Project ID. These parameters include the name and description.
 func (s *API) UpdateProject(req *UpdateProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
