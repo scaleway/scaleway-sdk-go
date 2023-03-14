@@ -505,7 +505,7 @@ type Cluster struct {
 	ID string `json:"id"`
 	// Type: type of the cluster.
 	Type string `json:"type"`
-	// Name: nqme of the cluster.
+	// Name: name of the cluster.
 	Name string `json:"name"`
 	// Status: status of the cluster.
 	// Default value: unknown
@@ -1017,10 +1017,10 @@ type CreateClusterRequest struct {
 	// Deprecated: OrganizationID: organization ID in which the cluster will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
-	// ProjectID: poject ID in which the cluster will be created.
+	// ProjectID: project ID in which the cluster will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
-	// Type: the type of the cluster (possible values are kapsule, multicloud).
+	// Type: type of the cluster (possible values are kapsule, multicloud).
 	Type string `json:"type"`
 	// Name: name of the cluster.
 	Name string `json:"name"`
@@ -1054,7 +1054,7 @@ type CreateClusterRequest struct {
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
 }
 
-// CreateCluster: creates a new Kubernetes cluster on a Scaleway account.
+// CreateCluster: create a new Kubernetes cluster on a Scaleway account.
 func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1216,7 +1216,7 @@ type DeleteClusterRequest struct {
 	WithAdditionalResources bool `json:"-"`
 }
 
-// DeleteCluster: deletes a specific cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancers or Block Volumes that are associated with the cluster.
+// DeleteCluster: delete a specific cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancers or Block Volumes that are associated with the cluster.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1263,7 +1263,7 @@ type UpgradeClusterRequest struct {
 	UpgradePools bool `json:"upgrade_pools"`
 }
 
-// UpgradeCluster: upgrades a specific Kubernetes cluster and/or its associated pools to a specific and supported Kubernetes version.
+// UpgradeCluster: upgrade a specific Kubernetes cluster and/or its associated pools to a specific and supported Kubernetes version.
 func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
