@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: scaleway Apple silicon M1 as-a-Service is built using the latest generation of Apple Mac mini hardware (fifth generation).
+// API: scaleway Apple silicon as-a-Service is built using the latest generation of Apple Mac mini hardware (fifth generation).
 //
 // These dedicated Mac mini M1s are designed for developing, building, testing, and signing applications for Apple devices, including iPhones, iPads, Mac computers and much more.
 //
@@ -163,7 +163,7 @@ func (enum *ServerTypeStock) UnmarshalJSON(data []byte) error {
 
 // ListOSResponse: list os response.
 type ListOSResponse struct {
-	// TotalCount: total number of os.
+	// TotalCount: total number of OS.
 	TotalCount uint32 `json:"total_count"`
 	// Os: list of OS.
 	Os []*OS `json:"os"`
@@ -171,25 +171,25 @@ type ListOSResponse struct {
 
 // ListServerTypesResponse: list server types response.
 type ListServerTypesResponse struct {
-	// ServerTypes: the available server types.
+	// ServerTypes: available server types.
 	ServerTypes []*ServerType `json:"server_types"`
 }
 
 // ListServersResponse: list servers response.
 type ListServersResponse struct {
-	// TotalCount: the total number of servers.
+	// TotalCount: total number of servers.
 	TotalCount uint32 `json:"total_count"`
-	// Servers: the paginated returned servers.
+	// Servers: paginated returned servers.
 	Servers []*Server `json:"servers"`
 }
 
 // OS: os.
 type OS struct {
-	// ID: the OS unique ID.
+	// ID: unique ID of the OS.
 	ID string `json:"id"`
-	// Name: the OS name.
+	// Name: oS name.
 	Name string `json:"name"`
-	// Label: the OS name as it should be displayed.
+	// Label: oS name as it should be displayed.
 	Label string `json:"label"`
 	// ImageURL: URL of the image.
 	ImageURL string `json:"image_url"`
@@ -216,13 +216,13 @@ type Server struct {
 	// Status: current status of the server.
 	// Default value: unknown_status
 	Status ServerStatus `json:"status"`
-	// CreatedAt: the date at which the server was created.
+	// CreatedAt: date on which the server was created.
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: the date at which the server was last updated.
+	// UpdatedAt: date on which the server was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// DeletableAt: the date at which the server was last deleted.
+	// DeletableAt: date on which the server was last deleted.
 	DeletableAt *time.Time `json:"deletable_at"`
-	// Zone: the zone of the server.
+	// Zone: zone of the server.
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -273,7 +273,7 @@ type ListServerTypesRequest struct {
 	Zone scw.Zone `json:"-"`
 }
 
-// ListServerTypes: list all server types technical details.
+// ListServerTypes: list all technical details about Apple silicon server types available in the specified zone. Since there is only one Availability Zone for Apple silicon servers, the targeted value is `fr-par-3`.
 func (s *API) ListServerTypes(req *ListServerTypesRequest, opts ...scw.RequestOption) (*ListServerTypesResponse, error) {
 	var err error
 
@@ -351,7 +351,7 @@ type CreateServerRequest struct {
 	Type string `json:"type"`
 }
 
-// CreateServer: create a server.
+// CreateServer: create a new server in the targeted zone, specifying its configuration including name and type.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -396,21 +396,21 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 type ListServersRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// OrderBy: the sort order of the returned servers.
+	// OrderBy: sort order of the returned servers.
 	// Default value: created_at_asc
 	OrderBy ListServersRequestOrderBy `json:"-"`
-	// ProjectID: list only servers of this project ID.
+	// ProjectID: only list servers of this project ID.
 	ProjectID *string `json:"-"`
-	// OrganizationID: list only servers of this organization ID.
+	// OrganizationID: only list servers of this Organization ID.
 	OrganizationID *string `json:"-"`
-	// Page: a positive integer to choose the page to return.
+	// Page: positive integer to choose the page to return.
 	Page *int32 `json:"-"`
-	// PageSize: a positive integer lower or equal to 100 to select the number of items to return.
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
 	// Default value: 50
 	PageSize *uint32 `json:"-"`
 }
 
-// ListServers: list all servers.
+// ListServers: list all servers in the specified zone. By default, returned servers in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -454,18 +454,18 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 type ListOSRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// Page: a positive integer to choose the page to return.
+	// Page: positive integer to choose the page to return.
 	Page *int32 `json:"-"`
-	// PageSize: a positive integer lower or equal to 100 to select the number of items to return.
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
 	// Default value: 50
 	PageSize *uint32 `json:"-"`
-	// ServerType: list of compatible server type.
+	// ServerType: list of compatible server types.
 	ServerType *string `json:"-"`
-	// Name: filter os by name (for eg. "11.1" will return "11.1.2" and "11.1" but not "12").
+	// Name: filter OS by name (note that "11.1" will return "11.1.2" and "11.1" but not "12")).
 	Name *string `json:"-"`
 }
 
-// ListOS: list all Operating System (OS).
+// ListOS: list all Operating System (OS). The response will include the total number of OS as well as their associated IDs, names and labels.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
 
@@ -512,7 +512,7 @@ type GetOSRequest struct {
 	OsID string `json:"-"`
 }
 
-// GetOS: get an Operating System (OS).
+// GetOS: get an Operating System (OS).  The response will include the OS's unique ID as well as its name and label.
 func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	var err error
 
@@ -551,7 +551,7 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServer: get a server.
+// GetServer: retrieve information about an existing Apple silicon server, specified by its server ID. Its full details, including name, status and IP address, are returned in the response object.
 func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -592,7 +592,7 @@ type UpdateServerRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateServer: update a server.
+// UpdateServer: update the parameters of an existing Apple silicon server, specified by its server ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -636,7 +636,7 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete a server.
+// DeleteServer: delete an existing Apple silicon server, specified by its server ID. Deleting a server is permanent, and cannot be undone. Note that the minimum allocation period for Apple silicon-as-a-service is 24 hours, meaning you cannot delete your server prior to that.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -673,7 +673,7 @@ type RebootServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// RebootServer: reboot a server.
+// RebootServer: reboot an existing Apple silicon server, specified by its server ID.
 func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -717,7 +717,7 @@ type ReinstallServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// ReinstallServer: reinstall a server.
+// ReinstallServer: reinstall an existing Apple silicon server (specified by its server ID) from a new image (OS). All the data on the disk is deleted and all configuration is reset to the defailt configuration values of the image (OS).
 func (s *API) ReinstallServer(req *ReinstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
