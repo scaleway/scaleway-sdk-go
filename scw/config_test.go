@@ -478,6 +478,7 @@ profiles:
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, `access_key: SCW234567890ABCDEFGH
 secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+send_telemetry: true
 `, p.String())
 	testhelpers.Equals(t, v2ValidSecretKey2, *p.SecretKey)
 }

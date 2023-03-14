@@ -303,6 +303,38 @@ func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type OfferQuotaWarning string
+
+const (
+	OfferQuotaWarningUnknownQuotaWarning   = OfferQuotaWarning("unknown_quota_warning")
+	OfferQuotaWarningEmailCountExceeded    = OfferQuotaWarning("email_count_exceeded")
+	OfferQuotaWarningDatabaseCountExceeded = OfferQuotaWarning("database_count_exceeded")
+	OfferQuotaWarningDiskUsageExceeded     = OfferQuotaWarning("disk_usage_exceeded")
+)
+
+func (enum OfferQuotaWarning) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_quota_warning"
+	}
+	return string(enum)
+}
+
+func (enum OfferQuotaWarning) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OfferQuotaWarning) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OfferQuotaWarning(OfferQuotaWarning(tmp).String())
+	return nil
+}
+
 // DNSRecord: dns record.
 type DNSRecord struct {
 	// Name: record name.
@@ -421,6 +453,10 @@ type Offer struct {
 	Product *OfferProduct `json:"product"`
 	// Price: offer price.
 	Price *scw.Money `json:"price"`
+	// Available: if offer is available for a specific hosting.
+	Available bool `json:"available"`
+	// QuotaWarnings: if not available, return quota warnings.
+	QuotaWarnings []OfferQuotaWarning `json:"quota_warnings"`
 }
 
 // OfferProduct: offer. product.
@@ -796,6 +832,8 @@ type ListOffersRequest struct {
 	WithoutOptions bool `json:"-"`
 	// OnlyOptions: select only options.
 	OnlyOptions bool `json:"-"`
+	// HostingID: define a specific hosting id (optional).
+	HostingID *string `json:"-"`
 }
 
 // ListOffers: list all offers.
@@ -811,6 +849,7 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "without_options", req.WithoutOptions)
 	parameter.AddToQuery(query, "only_options", req.OnlyOptions)
+	parameter.AddToQuery(query, "hosting_id", req.HostingID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

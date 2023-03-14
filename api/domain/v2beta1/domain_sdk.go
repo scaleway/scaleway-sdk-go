@@ -153,6 +153,7 @@ const (
 	ContactExtensionNLLegalFormFoundation                            = ContactExtensionNLLegalForm("foundation")
 	ContactExtensionNLLegalFormAssociation                           = ContactExtensionNLLegalForm("association")
 	ContactExtensionNLLegalFormTradingPartnership                    = ContactExtensionNLLegalForm("trading_partnership")
+	ContactExtensionNLLegalFormNaturalPerson                         = ContactExtensionNLLegalForm("natural_person")
 )
 
 func (enum ContactExtensionNLLegalForm) String() string {
