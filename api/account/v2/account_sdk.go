@@ -85,40 +85,40 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // ListProjectsResponse: list projects response.
 type ListProjectsResponse struct {
-	// TotalCount: the total number of projects.
+	// TotalCount: total number of Projects.
 	TotalCount uint32 `json:"total_count"`
-	// Projects: the paginated returned projects.
+	// Projects: paginated returned Projects.
 	Projects []*Project `json:"projects"`
 }
 
 // Project: project.
 type Project struct {
-	// ID: the ID of the project.
+	// ID: ID of the Project.
 	ID string `json:"id"`
-	// Name: the name of the project.
+	// Name: name of the Project.
 	Name string `json:"name"`
-	// OrganizationID: the organization ID of the project.
+	// OrganizationID: organization ID of the Project.
 	OrganizationID string `json:"organization_id"`
-	// CreatedAt: the creation date of the project.
+	// CreatedAt: creation date of the Project.
 	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: the update date of the project.
+	// UpdatedAt: update date of the Project.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// Description: the description of the project.
+	// Description: description of the Project.
 	Description string `json:"description"`
 }
 
 // Service API
 
 type CreateProjectRequest struct {
-	// Name: the name of the project.
+	// Name: name of the Project.
 	Name string `json:"name"`
-	// OrganizationID: the organization ID of the project.
+	// OrganizationID: organization ID of the Project.
 	OrganizationID string `json:"organization_id"`
-	// Description: the description of the project.
+	// Description: description of the Project.
 	Description *string `json:"description"`
 }
 
-// CreateProject: create project.
+// CreateProject: generate a new Project for an Organization, specifying its configuration including name and description.
 func (s *API) CreateProject(req *CreateProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
@@ -148,22 +148,22 @@ func (s *API) CreateProject(req *CreateProjectRequest, opts ...scw.RequestOption
 }
 
 type ListProjectsRequest struct {
-	// OrganizationID: the organization ID of the project.
+	// OrganizationID: organization ID of the Project.
 	OrganizationID string `json:"-"`
-	// Name: the name of the project.
+	// Name: name of the Project.
 	Name *string `json:"-"`
-	// Page: the page number for the returned projects.
+	// Page: page number for the returned Projects.
 	Page *int32 `json:"-"`
-	// PageSize: the maximum number of project per page.
+	// PageSize: maximum number of Project per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: the sort order of the returned projects.
+	// OrderBy: sort order of the returned Projects.
 	// Default value: created_at_asc
 	OrderBy ListProjectsRequestOrderBy `json:"-"`
-	// ProjectIDs: filter out by a list of project ID.
+	// ProjectIDs: project IDs to filter for. The results will be limited to any Projects with an ID in this array.
 	ProjectIDs []string `json:"-"`
 }
 
-// ListProjects: list projects.
+// ListProjects: list all Projects of an Organization. The response will include the total number of Projects as well as their associated Organizations, names and IDs. Other information include the creation and update date of the Project.
 func (s *API) ListProjects(req *ListProjectsRequest, opts ...scw.RequestOption) (*ListProjectsResponse, error) {
 	var err error
 
@@ -202,11 +202,11 @@ func (s *API) ListProjects(req *ListProjectsRequest, opts ...scw.RequestOption) 
 }
 
 type GetProjectRequest struct {
-	// ProjectID: the project ID of the project.
+	// ProjectID: project ID of the Project.
 	ProjectID string `json:"-"`
 }
 
-// GetProject: get project.
+// GetProject: retrieve information about an existing Project, specified by its Project ID. Its full details, including ID, name and description, are returned in the response object.
 func (s *API) GetProject(req *GetProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
@@ -235,11 +235,11 @@ func (s *API) GetProject(req *GetProjectRequest, opts ...scw.RequestOption) (*Pr
 }
 
 type DeleteProjectRequest struct {
-	// ProjectID: the project ID of the project.
+	// ProjectID: project ID of the Project.
 	ProjectID string `json:"-"`
 }
 
-// DeleteProject: delete project.
+// DeleteProject: delete an existing Project, specified by its Project ID. The Project needs to be empty (meaning there are no resources left in it) to be deleted effectively. Note that deleting a Project is permanent, and cannot be undone.
 func (s *API) DeleteProject(req *DeleteProjectRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -266,15 +266,15 @@ func (s *API) DeleteProject(req *DeleteProjectRequest, opts ...scw.RequestOption
 }
 
 type UpdateProjectRequest struct {
-	// ProjectID: the project ID of the project.
+	// ProjectID: project ID of the Project.
 	ProjectID string `json:"-"`
-	// Name: the name of the project.
+	// Name: name of the Project.
 	Name *string `json:"name"`
-	// Description: the description of the project.
+	// Description: description of the Project.
 	Description *string `json:"description"`
 }
 
-// UpdateProject: update project.
+// UpdateProject: update the parameters of an existing Project, specified by its Project ID. These parameters include the name and description.
 func (s *API) UpdateProject(req *UpdateProjectRequest, opts ...scw.RequestOption) (*Project, error) {
 	var err error
 
