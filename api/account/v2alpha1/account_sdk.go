@@ -124,8 +124,7 @@ type SSHKeyCreationInfo struct {
 // Service API
 
 type ListSSHKeysRequest struct {
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
 
 	Page *int32 `json:"-"`

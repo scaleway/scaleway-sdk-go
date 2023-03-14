@@ -548,7 +548,8 @@ type Cluster struct {
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of enabled admission plugins.
 	AdmissionPlugins []string `json:"admission_plugins"`
-	// OpenIDConnectConfig: this feature is in ALPHA state, it may be deleted or modified. This configuration is the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	// OpenIDConnectConfig: aLPHA - The OpenID Connect configuration of the cluster.
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration is the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *ClusterOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
@@ -578,7 +579,8 @@ type ClusterAutoscalerConfig struct {
 	IgnoreDaemonsetsUtilization bool `json:"ignore_daemonsets_utilization"`
 	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
 	BalanceSimilarNodeGroups bool `json:"balance_similar_node_groups"`
-	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
+	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable.
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down.
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
@@ -590,19 +592,24 @@ type ClusterAutoscalerConfig struct {
 
 // ClusterOpenIDConnectConfig: cluster. open id connect config.
 type ClusterOpenIDConnectConfig struct {
-	// IssuerURL: URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys.
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
 	IssuerURL string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for.
 	ClientID string `json:"client_id"`
-	// UsernameClaim: jWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	// UsernameClaim: jWT claim to use as the user name.
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
 	UsernameClaim string `json:"username_claim"`
-	// UsernamePrefix: prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	// UsernamePrefix: prefix prepended to username.
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
 	UsernamePrefix string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group.
 	GroupsClaim []string `json:"groups_claim"`
-	// GroupsPrefix: prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	// GroupsPrefix: prefix prepended to group claims.
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
 	GroupsPrefix string `json:"groups_prefix"`
-	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token.
+	// Multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
 	RequiredClaim []string `json:"required_claim"`
 }
 
@@ -630,7 +637,8 @@ type CreateClusterRequestAutoscalerConfig struct {
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
-	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
+	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable.
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
@@ -642,19 +650,24 @@ type CreateClusterRequestAutoscalerConfig struct {
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request. open id connect config.
 type CreateClusterRequestOpenIDConnectConfig struct {
-	// IssuerURL: URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys.
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
 	IssuerURL string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for.
 	ClientID string `json:"client_id"`
-	// UsernameClaim: jWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	// UsernameClaim: jWT claim to use as the user name.
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
 	UsernameClaim *string `json:"username_claim"`
-	// UsernamePrefix: prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	// UsernamePrefix: prefix prepended to username.
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
 	UsernamePrefix *string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group.
 	GroupsClaim *[]string `json:"groups_claim"`
-	// GroupsPrefix: prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	// GroupsPrefix: prefix prepended to group claims.
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
 	GroupsPrefix *string `json:"groups_prefix"`
-	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token.
+	// Multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
 	RequiredClaim *[]string `json:"required_claim"`
 }
 
@@ -662,7 +675,8 @@ type CreateClusterRequestOpenIDConnectConfig struct {
 type CreateClusterRequestPoolConfig struct {
 	// Name: name of the pool.
 	Name string `json:"name"`
-	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
+	// NodeType: node type is the type of Scaleway Instance wanted for the pool.
+	// Node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
 	PlacementGroupID *string `json:"placement_group_id"`
@@ -670,11 +684,14 @@ type CreateClusterRequestPoolConfig struct {
 	Autoscaling bool `json:"autoscaling"`
 	// Size: size (number of nodes) of the pool.
 	Size uint32 `json:"size"`
-	// MinSize: defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MinSize: minimum size of the pool.
+	// Defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize *uint32 `json:"min_size"`
-	// MaxSize: defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MaxSize: maximum size of the pool.
+	// Defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize *uint32 `json:"max_size"`
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
+	// ContainerRuntime: container runtime for the nodes of the pool.
+	// Customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
@@ -687,7 +704,8 @@ type CreateClusterRequestPoolConfig struct {
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
-	// RootVolumeType: defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
+	// RootVolumeType: system volume disk type.
+	// Defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
@@ -777,7 +795,8 @@ type Node struct {
 	PoolID string `json:"pool_id"`
 	// ClusterID: cluster ID of the node.
 	ClusterID string `json:"cluster_id"`
-	// ProviderID: it is prefixed by instance type and location information (see https://pkg.go.dev/k8s.io/api/core/v1#NodeSpec.ProviderID).
+	// ProviderID: underlying instance ID.
+	// It is prefixed by instance type and location information (see https://pkg.go.dev/k8s.io/api/core/v1#NodeSpec.ProviderID).
 	ProviderID string `json:"provider_id"`
 	// Region: cluster region of the node.
 	Region scw.Region `json:"region"`
@@ -787,7 +806,8 @@ type Node struct {
 	PublicIPV4 *net.IP `json:"public_ip_v4,omitempty"`
 	// Deprecated: PublicIPV6: public IPv6 address of the node.
 	PublicIPV6 *net.IP `json:"public_ip_v6,omitempty"`
-	// Deprecated: Conditions: these conditions contains the Node Problem Detector conditions, as well as some in house conditions.
+	// Deprecated: Conditions: conditions of the node.
+	// These conditions contains the Node Problem Detector conditions, as well as some in house conditions.
 	Conditions *map[string]string `json:"conditions,omitempty"`
 	// Status: status of the node.
 	// Default value: unknown
@@ -817,17 +837,21 @@ type Pool struct {
 	Status PoolStatus `json:"status"`
 	// Version: version of the pool.
 	Version string `json:"version"`
-	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
+	// NodeType: node type is the type of Scaleway Instance wanted for the pool.
+	// Node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
 	Autoscaling bool `json:"autoscaling"`
 	// Size: size (number of nodes) of the pool.
 	Size uint32 `json:"size"`
-	// MinSize: defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MinSize: minimum size of the pool.
+	// Defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize uint32 `json:"min_size"`
-	// MaxSize: defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MaxSize: maximum size of the pool.
+	// Defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize uint32 `json:"max_size"`
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
+	// ContainerRuntime: container runtime for the nodes of the pool.
+	// Customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
@@ -842,7 +866,8 @@ type Pool struct {
 	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
-	// RootVolumeType: defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
+	// RootVolumeType: system volume disk type.
+	// Defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
@@ -881,7 +906,8 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
-	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
+	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable.
+	// Pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they don't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
@@ -893,19 +919,24 @@ type UpdateClusterRequestAutoscalerConfig struct {
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request. open id connect config.
 type UpdateClusterRequestOpenIDConnectConfig struct {
-	// IssuerURL: URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
+	// IssuerURL: URL of the provider which allows the API server to discover public signing keys.
+	// URL of the provider which allows the API server to discover public signing keys. Only URLs which use the `https://` scheme are accepted. This is typically the provider's discovery URL without a path, for example "https://accounts.google.com" or "https://login.salesforce.com". This URL should point to the level below .well-known/openid-configuration.
 	IssuerURL *string `json:"issuer_url"`
 	// ClientID: a client id that all tokens must be issued for.
 	ClientID *string `json:"client_id"`
-	// UsernameClaim: jWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
+	// UsernameClaim: jWT claim to use as the user name.
+	// JWT claim to use as the user name. By default `sub`, which is expected to be a unique identifier of the end user. Admins can choose other claims, such as `email` or `name`, depending on their provider. However, claims other than `email` will be prefixed with the issuer URL to prevent naming clashes with other plugins.
 	UsernameClaim *string `json:"username_claim"`
-	// UsernamePrefix: prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
+	// UsernamePrefix: prefix prepended to username.
+	// Prefix prepended to username claims to prevent clashes with existing names (such as `system:` users). For example, the value `oidc:` will create usernames like `oidc:jane.doe`. If this flag isn't provided and `username_claim` is a value other than `email` the prefix defaults to `( Issuer URL )#` where `( Issuer URL )` is the value of `issuer_url`. The value `-` can be used to disable all prefixing.
 	UsernamePrefix *string `json:"username_prefix"`
 	// GroupsClaim: jWT claim to use as the user's group.
 	GroupsClaim *[]string `json:"groups_claim"`
-	// GroupsPrefix: prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
+	// GroupsPrefix: prefix prepended to group claims.
+	// Prefix prepended to group claims to prevent clashes with existing names (such as `system:` groups). For example, the value `oidc:` will create group names like `oidc:engineering` and `oidc:infra`.
 	GroupsPrefix *string `json:"groups_prefix"`
-	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
+	// RequiredClaim: multiple key=value pairs that describes a required claim in the ID token.
+	// Multiple key=value pairs that describes a required claim in the ID token. If set, the claims are verified to be present in the ID token with a matching value.
 	RequiredClaim *[]string `json:"required_claim"`
 }
 
@@ -967,7 +998,8 @@ type ListClustersRequest struct {
 	Type *string `json:"-"`
 }
 
-// ListClusters: list all the existing Kubernetes clusters in a specific Region.
+// ListClusters: list all clusters.
+// List all the existing Kubernetes clusters in a specific Region.
 func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) (*ListClustersResponse, error) {
 	var err error
 
@@ -1020,7 +1052,8 @@ type CreateClusterRequest struct {
 	// ProjectID: project ID in which the cluster will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
-	// Type: type of the cluster (possible values are kapsule, multicloud).
+	// Type: type of the cluster.
+	// Type of the cluster (possible values are kapsule, multicloud).
 	Type string `json:"type"`
 	// Name: name of the cluster.
 	Name string `json:"name"`
@@ -1040,21 +1073,25 @@ type CreateClusterRequest struct {
 	Ingress *Ingress `json:"ingress,omitempty"`
 	// Pools: pools to be created along with the cluster.
 	Pools []*CreateClusterRequestPoolConfig `json:"pools"`
-	// AutoscalerConfig: this field allows to specify some configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
+	// AutoscalerConfig: autoscaler config for the cluster.
+	// This field allows to specify some configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
 	AutoscalerConfig *CreateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
-	// AutoUpgrade: this configuration enables to set a specific 2-hour time window in which the cluster can be automatically updated to the latest patch version in the current minor one.
+	// AutoUpgrade: auto upgrade configuration of the cluster.
+	// This configuration enables to set a specific 2-hour time window in which the cluster can be automatically updated to the latest patch version in the current minor one.
 	AutoUpgrade *CreateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 	// FeatureGates: list of feature gates to enable.
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of admission plugins to enable.
 	AdmissionPlugins []string `json:"admission_plugins"`
-	// OpenIDConnectConfig: this feature is in ALPHA state, it may be deleted or modified. This configuration enables to set the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	// OpenIDConnectConfig: aLPHA - OpenID Connect configuration of the cluster.
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to set the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *CreateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
 }
 
-// CreateCluster: create a new Kubernetes cluster on a Scaleway account.
+// CreateCluster: create a new cluster.
+// Create a new Kubernetes cluster on a Scaleway account.
 func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1108,7 +1145,8 @@ type GetClusterRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// GetCluster: get details about a specific Kubernetes cluster.
+// GetCluster: get specific cluster information.
+// Get details about a specific Kubernetes cluster.
 func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1151,26 +1189,30 @@ type UpdateClusterRequest struct {
 	Description *string `json:"description"`
 	// Tags: new tags associated with the cluster.
 	Tags *[]string `json:"tags"`
-	// AutoscalerConfig: object defining the configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
+	// AutoscalerConfig: new autoscaler config for the cluster.
+	// Object defining the configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
 	// Deprecated: EnableDashboard: new value of the Kubernetes Dashboard enablement.
 	EnableDashboard *bool `json:"enable_dashboard,omitempty"`
 	// Deprecated: Ingress: new Ingress Controller for the cluster.
 	// Default value: unknown_ingress
 	Ingress *Ingress `json:"ingress,omitempty"`
-	// AutoUpgrade: new auto upgrade configuration of the cluster. Note that all fields need to be set.
+	// AutoUpgrade: new auto upgrade configuration of the cluster.
+	// New auto upgrade configuration of the cluster. Note that all fields need to be set.
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade"`
 	// FeatureGates: list of feature gates to enable.
 	FeatureGates *[]string `json:"feature_gates"`
 	// AdmissionPlugins: list of admission plugins to enable.
 	AdmissionPlugins *[]string `json:"admission_plugins"`
-	// OpenIDConnectConfig: this feature is in ALPHA state, it may be deleted or modified. This configuration enables to update the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	// OpenIDConnectConfig: aLPHA - New OpenID Connect configuration of the cluster.
+	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to update the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
 	OpenIDConnectConfig *UpdateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans *[]string `json:"apiserver_cert_sans"`
 }
 
-// UpdateCluster: update a specific Kubernetes cluster. Note that this method is designed to update details such as name, description, tags and configuration. However, you cannot upgrade a cluster with this method. To do so, use the dedicated endpoint.
+// UpdateCluster: update a cluster.
+// Update a specific Kubernetes cluster. Note that this method is designed to update details such as name, description, tags and configuration. However, you cannot upgrade a cluster with this method. To do so, use the dedicated endpoint.
 func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1216,7 +1258,8 @@ type DeleteClusterRequest struct {
 	WithAdditionalResources bool `json:"-"`
 }
 
-// DeleteCluster: delete a specific cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancers or Block Volumes that are associated with the cluster.
+// DeleteCluster: delete a cluster.
+// Delete a specific cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancers or Block Volumes that are associated with the cluster.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1257,13 +1300,16 @@ type UpgradeClusterRequest struct {
 	Region scw.Region `json:"-"`
 	// ClusterID: ID of the cluster to upgrade.
 	ClusterID string `json:"-"`
-	// Version: new Kubernetes version of the cluster. Note that the version shoud either be a higher patch version of the same minor version or the direct minor version after the current one.
+	// Version: new Kubernetes version of the cluster.
+	// New Kubernetes version of the cluster. Note that the version shoud either be a higher patch version of the same minor version or the direct minor version after the current one.
 	Version string `json:"version"`
-	// UpgradePools: this field makes the upgrade upgrades the pool once the Kubernetes master in upgrade.
+	// UpgradePools: enablement of the pools upgrade.
+	// This field makes the upgrade upgrades the pool once the Kubernetes master in upgrade.
 	UpgradePools bool `json:"upgrade_pools"`
 }
 
-// UpgradeCluster: upgrade a specific Kubernetes cluster and/or its associated pools to a specific and supported Kubernetes version.
+// UpgradeCluster: upgrade a cluster.
+// Upgrade a specific Kubernetes cluster and/or its associated pools to a specific and supported Kubernetes version.
 func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -1307,7 +1353,8 @@ type ListClusterAvailableVersionsRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// ListClusterAvailableVersions: list the versions that a specific Kubernetes cluster is allowed to upgrade to. Results will comprise every patch version greater than the current patch, as well as one minor version ahead of the current version. Any upgrade skipping a minor version will not work.
+// ListClusterAvailableVersions: list available versions for a cluster.
+// List the versions that a specific Kubernetes cluster is allowed to upgrade to. Results will comprise every patch version greater than the current patch, as well as one minor version ahead of the current version. Any upgrade skipping a minor version will not work.
 func (s *API) ListClusterAvailableVersions(req *ListClusterAvailableVersionsRequest, opts ...scw.RequestOption) (*ListClusterAvailableVersionsResponse, error) {
 	var err error
 
@@ -1346,7 +1393,8 @@ type GetClusterKubeConfigRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// getClusterKubeConfig: download the Kubernetes cluster config file (AKA kubeconfig) for a specific cluster in order to use it with, for instance, `kubectl`. Tips: add `?dl=1` at the end of the URL to directly get the base64 decoded kubeconfig. If not, the kubeconfig will be base64 encoded.
+// getClusterKubeConfig: download the kubeconfig for a cluster.
+// Download the Kubernetes cluster config file (AKA kubeconfig) for a specific cluster in order to use it with, for instance, `kubectl`. Tips: add `?dl=1` at the end of the URL to directly get the base64 decoded kubeconfig. If not, the kubeconfig will be base64 encoded.
 func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -1385,7 +1433,8 @@ type ResetClusterAdminTokenRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// ResetClusterAdminToken: reset the admin token for a specific Kubernetes cluster. This will invalidate the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to redownload kubeconfig in order to keep interacting with the cluster.
+// ResetClusterAdminToken: reset the admin token of a cluster.
+// Reset the admin token for a specific Kubernetes cluster. This will invalidate the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to redownload kubeconfig in order to keep interacting with the cluster.
 func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1439,7 +1488,8 @@ type ListPoolsRequest struct {
 	Status PoolStatus `json:"-"`
 }
 
-// ListPools: list all the existing pools for a specific Kubernetes cluster.
+// ListPools: list all the pools in a cluster.
+// List all the existing pools for a specific Kubernetes cluster.
 func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*ListPoolsResponse, error) {
 	var err error
 
@@ -1491,7 +1541,8 @@ type CreatePoolRequest struct {
 	ClusterID string `json:"-"`
 	// Name: name of the pool.
 	Name string `json:"name"`
-	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
+	// NodeType: node type is the type of Scaleway Instance wanted for the pool.
+	// Node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers.
 	NodeType string `json:"node_type"`
 	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
 	PlacementGroupID *string `json:"placement_group_id"`
@@ -1499,11 +1550,14 @@ type CreatePoolRequest struct {
 	Autoscaling bool `json:"autoscaling"`
 	// Size: size (number of nodes) of the pool.
 	Size uint32 `json:"size"`
-	// MinSize: defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MinSize: minimum size of the pool.
+	// Defines the minimum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MinSize *uint32 `json:"min_size"`
-	// MaxSize: defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
+	// MaxSize: maximum size of the pool.
+	// Defines the maximum size of the pool. Note that this field will be used only when autoscaling is enabled.
 	MaxSize *uint32 `json:"max_size"`
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
+	// ContainerRuntime: container runtime for the nodes of the pool.
+	// Customization of the container runtime is available for each pool. Note that `docker` is deprecated since 1.20 and will be removed in 1.24.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
@@ -1516,14 +1570,16 @@ type CreatePoolRequest struct {
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy"`
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
-	// RootVolumeType: defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
+	// RootVolumeType: system volume disk type.
+	// Defines the system volume disk type, we provide two different types of volume (`volume_type`): `l_ssd` is a local block storage: your system is stored locally on the hypervisor of your node. `b_ssd` is a remote block storage: your system is stored on a centralised and resilient cluster.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
 	RootVolumeSize *scw.Size `json:"root_volume_size"`
 }
 
-// CreatePool: create a new pool in a specific Kubernetes cluster.
+// CreatePool: create a new pool in a cluster.
+// Create a new pool in a specific Kubernetes cluster.
 func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -1576,7 +1632,8 @@ type GetPoolRequest struct {
 	PoolID string `json:"-"`
 }
 
-// GetPool: get details about a specific pool in a Kubernetes cluster.
+// GetPool: get a pool in a cluster.
+// Get details about a specific pool in a Kubernetes cluster.
 func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -1617,7 +1674,8 @@ type UpgradePoolRequest struct {
 	Version string `json:"version"`
 }
 
-// UpgradePool: upgrade the Kubernetes version of a specific pool. Note that this will work when the targeted version is the same than the version of the cluster.
+// UpgradePool: upgrade a pool in a cluster.
+// Upgrade the Kubernetes version of a specific pool. Note that this will work when the targeted version is the same than the version of the cluster.
 func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -1677,7 +1735,8 @@ type UpdatePoolRequest struct {
 	UpgradePolicy *UpdatePoolRequestUpgradePolicy `json:"upgrade_policy"`
 }
 
-// UpdatePool: update attributes of a specific pool, such as size, autoscaling settings, and tags.
+// UpdatePool: update a pool in a cluster.
+// Update attributes of a specific pool, such as size, autoscaling settings, and tags.
 func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -1721,7 +1780,8 @@ type DeletePoolRequest struct {
 	PoolID string `json:"-"`
 }
 
-// DeletePool: delete a specific pool from a cluster. All of the pool's nodes will also be deleted.
+// DeletePool: delete a pool in a cluster.
+// Delete a specific pool from a cluster. All of the pool's nodes will also be deleted.
 func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -1760,7 +1820,8 @@ type CreateExternalNodeRequest struct {
 	PoolID string `json:"-"`
 }
 
-// CreateExternalNode: get metadata about a Kosmos node. This method is not intended to be directly called by end users, only by the kapsule-node-agent.
+// CreateExternalNode: create a Kosmos node.
+// Get metadata about a Kosmos node. This method is not intended to be directly called by end users, only by the kapsule-node-agent.
 func (s *API) CreateExternalNode(req *CreateExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNode, error) {
 	var err error
 
@@ -1818,7 +1879,8 @@ type ListNodesRequest struct {
 	Status NodeStatus `json:"-"`
 }
 
-// ListNodes: list all the existing nodes for a specific Kubernetes cluster.
+// ListNodes: list all the nodes in a cluster.
+// List all the existing nodes for a specific Kubernetes cluster.
 func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*ListNodesResponse, error) {
 	var err error
 
@@ -1871,7 +1933,8 @@ type GetNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// GetNode: get details about a specific Kubernetes node.
+// GetNode: get a node in a cluster.
+// Get details about a specific Kubernetes node.
 func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -1910,7 +1973,8 @@ type ReplaceNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// Deprecated: ReplaceNode: replace a specific node. The node will be set cordoned, meaning that scheduling will be disabled. Then the existing pods on the node will be drained and reschedule onto another schedulable node. Then the node will be deleted, and a new one will be created after the deletion. Note that when there is not enough space to reschedule all the pods (in a one node cluster for instance), you may experience some disruption of your applications.
+// Deprecated: ReplaceNode: replace a node in a cluster.
+// Replace a specific node. The node will be set cordoned, meaning that scheduling will be disabled. Then the existing pods on the node will be drained and reschedule onto another schedulable node. Then the node will be deleted, and a new one will be created after the deletion. Note that when there is not enough space to reschedule all the pods (in a one node cluster for instance), you may experience some disruption of your applications.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -1954,7 +2018,8 @@ type RebootNodeRequest struct {
 	NodeID string `json:"-"`
 }
 
-// RebootNode: reboot a specific node. This node will first be cordoned, meaning that scheduling will be disabled. Then the existing pods on the node will be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (in a one-node cluster, for instance), you may experience some disruption of your applications.
+// RebootNode: reboot a node in a cluster.
+// Reboot a specific node. This node will first be cordoned, meaning that scheduling will be disabled. Then the existing pods on the node will be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (in a one-node cluster, for instance), you may experience some disruption of your applications.
 func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -2002,7 +2067,8 @@ type DeleteNodeRequest struct {
 	Replace bool `json:"-"`
 }
 
-// DeleteNode: delete a specific node. Note that when there is not enough space to reschedule all the pods (in a one-node cluster for instance), you may experience some disruption of your applications.
+// DeleteNode: delete a node in a cluster.
+// Delete a specific node. Note that when there is not enough space to reschedule all the pods (in a one-node cluster for instance), you may experience some disruption of your applications.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -2044,7 +2110,8 @@ type ListVersionsRequest struct {
 	Region scw.Region `json:"-"`
 }
 
-// ListVersions: list all available versions for the creation of a new Kubernetes cluster.
+// ListVersions: list all available versions.
+// List all available versions for the creation of a new Kubernetes cluster.
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
@@ -2079,7 +2146,8 @@ type GetVersionRequest struct {
 	VersionName string `json:"-"`
 }
 
-// GetVersion: get a specific Kubernetes version and the details about the version.
+// GetVersion: get details about a specific version.
+// Get a specific Kubernetes version and the details about the version.
 func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Version, error) {
 	var err error
 

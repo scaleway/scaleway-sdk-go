@@ -40,6 +40,7 @@ var (
 )
 
 // API: tem.
+// Transactional Email API.
 type API struct {
 	client *scw.Client
 }

@@ -40,6 +40,7 @@ var (
 )
 
 // API: serverless Containers API.
+// Containers API.
 type API struct {
 	client *scw.Client
 }
@@ -570,8 +571,7 @@ type Container struct {
 	Name string `json:"name"`
 
 	NamespaceID string `json:"namespace_id"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status ContainerStatus `json:"status"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
@@ -587,8 +587,7 @@ type Container struct {
 	Timeout *scw.Duration `json:"timeout"`
 
 	ErrorMessage *string `json:"error_message"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
@@ -598,14 +597,14 @@ type Container struct {
 	MaxConcurrency uint32 `json:"max_concurrency"`
 
 	DomainName string `json:"domain_name"`
-	// Protocol:
-	// Default value: unknown_protocol
+	// Protocol: default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
 
 	Port uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
@@ -623,8 +622,7 @@ type Cron struct {
 	Schedule string `json:"schedule"`
 
 	Args *scw.JSONObject `json:"args"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status CronStatus `json:"status"`
 
 	Name string `json:"name"`
@@ -639,8 +637,7 @@ type Domain struct {
 	ContainerID string `json:"container_id"`
 
 	URL string `json:"url"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status DomainStatus `json:"status"`
 
 	ErrorMessage *string `json:"error_message"`
@@ -714,8 +711,7 @@ type Namespace struct {
 	OrganizationID string `json:"organization_id"`
 
 	ProjectID string `json:"project_id"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status NamespaceStatus `json:"status"`
 
 	RegistryNamespaceID string `json:"registry_namespace_id"`
@@ -756,8 +752,7 @@ type Token struct {
 	NamespaceID *string `json:"namespace_id,omitempty"`
 	// Deprecated
 	PublicKey *string `json:"public_key,omitempty"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status TokenStatus `json:"status"`
 
 	Description *string `json:"description"`
@@ -779,8 +774,7 @@ type ListNamespacesRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
 
 	Name *string `json:"-"`
@@ -839,7 +833,8 @@ type GetNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// GetNamespace: get the namespace associated with the given id.
+// GetNamespace: get a namespace.
+// Get the namespace associated with the given id.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -941,7 +936,8 @@ type UpdateNamespaceRequest struct {
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
-// UpdateNamespace: update the space associated with the given id.
+// UpdateNamespace: update an existing namespace.
+// Update the space associated with the given id.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -985,7 +981,8 @@ type DeleteNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// DeleteNamespace: delete the namespace associated with the given id.
+// DeleteNamespace: delete an existing namespace.
+// Delete the namespace associated with the given id.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1024,8 +1021,7 @@ type ListContainersRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListContainersRequestOrderBy `json:"-"`
 
 	NamespaceID string `json:"-"`
@@ -1087,7 +1083,8 @@ type GetContainerRequest struct {
 	ContainerID string `json:"-"`
 }
 
-// GetContainer: get the container associated with the given id.
+// GetContainer: get a container.
+// Get the container associated with the given id.
 func (s *API) GetContainer(req *GetContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -1136,8 +1133,7 @@ type CreateContainerRequest struct {
 	MemoryLimit *uint32 `json:"memory_limit"`
 
 	Timeout *scw.Duration `json:"timeout"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
@@ -1145,14 +1141,14 @@ type CreateContainerRequest struct {
 	RegistryImage *string `json:"registry_image"`
 
 	MaxConcurrency *uint32 `json:"max_concurrency"`
-	// Protocol:
-	// Default value: unknown_protocol
+	// Protocol: default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
 
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
@@ -1213,8 +1209,7 @@ type UpdateContainerRequest struct {
 	Timeout *scw.Duration `json:"timeout"`
 
 	Redeploy *bool `json:"redeploy"`
-	// Privacy:
-	// Default value: unknown_privacy
+	// Privacy: default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
 	Description *string `json:"description"`
@@ -1222,21 +1217,22 @@ type UpdateContainerRequest struct {
 	RegistryImage *string `json:"registry_image"`
 
 	MaxConcurrency *uint32 `json:"max_concurrency"`
-	// Protocol:
-	// Default value: unknown_protocol
+	// Protocol: default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
 
 	Port *uint32 `json:"port"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: possible values:
+	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: enabled
 	HTTPOption ContainerHTTPOption `json:"http_option"`
 }
 
-// UpdateContainer: update the container associated with the given id.
+// UpdateContainer: update an existing container.
+// Update the container associated with the given id.
 func (s *API) UpdateContainer(req *UpdateContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -1280,7 +1276,8 @@ type DeleteContainerRequest struct {
 	ContainerID string `json:"-"`
 }
 
-// DeleteContainer: delete the container associated with the given id.
+// DeleteContainer: delete a container.
+// Delete the container associated with the given id.
 func (s *API) DeleteContainer(req *DeleteContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -1319,7 +1316,8 @@ type DeployContainerRequest struct {
 	ContainerID string `json:"-"`
 }
 
-// DeployContainer: deploy a container associated with the given id.
+// DeployContainer: deploy a container.
+// Deploy a container associated with the given id.
 func (s *API) DeployContainer(req *DeployContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -1363,8 +1361,7 @@ type ListCronsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListCronsRequestOrderBy `json:"-"`
 
 	ContainerID string `json:"-"`
@@ -1417,7 +1414,8 @@ type GetCronRequest struct {
 	CronID string `json:"-"`
 }
 
-// GetCron: get the cron associated with the given id.
+// GetCron: get a cron.
+// Get the cron associated with the given id.
 func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1510,7 +1508,8 @@ type UpdateCronRequest struct {
 	Name *string `json:"name"`
 }
 
-// UpdateCron: update the cron associated with the given id.
+// UpdateCron: update an existing cron.
+// Update the cron associated with the given id.
 func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1554,7 +1553,8 @@ type DeleteCronRequest struct {
 	CronID string `json:"-"`
 }
 
-// DeleteCron: delete the cron associated with the given id.
+// DeleteCron: delete an existing cron.
+// Delete the cron associated with the given id.
 func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1595,8 +1595,7 @@ type ListLogsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: timestamp_desc
+	// OrderBy: default value: timestamp_desc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 }
 
@@ -1650,8 +1649,7 @@ type ListDomainsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListDomainsRequestOrderBy `json:"-"`
 
 	ContainerID string `json:"-"`
@@ -1956,8 +1954,7 @@ type ListTokensRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
 
 	ContainerID *string `json:"-"`

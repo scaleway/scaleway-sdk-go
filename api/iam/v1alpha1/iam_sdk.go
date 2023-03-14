@@ -813,7 +813,8 @@ type ListSSHKeysRequest struct {
 	Disabled *bool `json:"-"`
 }
 
-// ListSSHKeys: list SSH keys. By default, the SSH keys listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters for your query such as `organization_id`, `name`, `project_id` and `disabled`.
+// ListSSHKeys: list SSH keys.
+// List SSH keys. By default, the SSH keys listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters for your query such as `organization_id`, `name`, `project_id` and `disabled`.
 func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*ListSSHKeysResponse, error) {
 	var err error
 
@@ -856,7 +857,8 @@ type CreateSSHKeyRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// CreateSSHKey: add a new SSH key to a Scaleway Project. You must specify the `name`, `public_key` and `project_id`.
+// CreateSSHKey: create an SSH key.
+// Add a new SSH key to a Scaleway Project. You must specify the `name`, `public_key` and `project_id`.
 func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -894,7 +896,8 @@ type GetSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// GetSSHKey: retrieve information about a given SSH key, specified by the `ssh_key_id` parameter. The SSH key's full details, including `id`, `name`, `public_key`, and `project_id` are returned in the response.
+// GetSSHKey: get an SSH key.
+// Retrieve information about a given SSH key, specified by the `ssh_key_id` parameter. The SSH key's full details, including `id`, `name`, `public_key`, and `project_id` are returned in the response.
 func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -925,7 +928,8 @@ type UpdateSSHKeyRequest struct {
 	Disabled *bool `json:"disabled"`
 }
 
-// UpdateSSHKey: update the parameters of an SSH key, including `name` and `disable`.
+// UpdateSSHKey: update an SSH key.
+// Update the parameters of an SSH key, including `name` and `disable`.
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -957,7 +961,8 @@ type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
-// DeleteSSHKey: delete a given SSH key, specified by the `ssh_key_id`. Deleting an SSH is permanent, and cannot be undone. Note that you might need to update any configurations that used the SSH key.
+// DeleteSSHKey: delete an SSH key.
+// Delete a given SSH key, specified by the `ssh_key_id`. Deleting an SSH is permanent, and cannot be undone. Note that you might need to update any configurations that used the SSH key.
 func (s *API) DeleteSSHKey(req *DeleteSSHKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -994,7 +999,8 @@ type ListUsersRequest struct {
 	UserIDs []string `json:"-"`
 }
 
-// ListUsers: list the users of an Organization. By default, the users listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters for your query such as `user_ids`.
+// ListUsers: list users of an Organization.
+// List the users of an Organization. By default, the users listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters for your query such as `user_ids`.
 func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*ListUsersResponse, error) {
 	var err error
 
@@ -1031,7 +1037,8 @@ type GetUserRequest struct {
 	UserID string `json:"-"`
 }
 
-// GetUser: retrieve information about a user, specified by the `user_id` parameter. The user's full details, including `id`, `email`, `organization_id`, `status` and `two_factor_enabled` are returned in the response.
+// GetUser: get a given user.
+// Retrieve information about a user, specified by the `user_id` parameter. The user's full details, including `id`, `email`, `organization_id`, `status` and `two_factor_enabled` are returned in the response.
 func (s *API) GetUser(req *GetUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -1059,7 +1066,8 @@ type DeleteUserRequest struct {
 	UserID string `json:"-"`
 }
 
-// DeleteUser: remove a user from an Organization in which they are a guest. You must define the `user_id` in your request. Note that removing a user from an Organization automatically deletes their API keys, and any policies directly attached to them become orphaned.
+// DeleteUser: delete a guest user from an Organization.
+// Remove a user from an Organization in which they are a guest. You must define the `user_id` in your request. Note that removing a user from an Organization automatically deletes their API keys, and any policies directly attached to them become orphaned.
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1100,7 +1108,8 @@ type ListApplicationsRequest struct {
 	ApplicationIDs []string `json:"-"`
 }
 
-// ListApplications: list the applications of an Organization. By default, the applications listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters for your query such as `application_ids`.
+// ListApplications: list applications of an Organization.
+// List the applications of an Organization. By default, the applications listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters for your query such as `application_ids`.
 func (s *API) ListApplications(req *ListApplicationsRequest, opts ...scw.RequestOption) (*ListApplicationsResponse, error) {
 	var err error
 
@@ -1143,7 +1152,8 @@ type CreateApplicationRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateApplication: create a new application. You must define the `name` parameter in the request.
+// CreateApplication: create a new application.
+// Create a new application. You must define the `name` parameter in the request.
 func (s *API) CreateApplication(req *CreateApplicationRequest, opts ...scw.RequestOption) (*Application, error) {
 	var err error
 
@@ -1181,7 +1191,8 @@ type GetApplicationRequest struct {
 	ApplicationID string `json:"-"`
 }
 
-// GetApplication: retrieve information about an application, specified by the `application_id` parameter. The application's full details, including `id`, `email`, `organization_id`, `status` and `two_factor_enabled` are returned in the response.
+// GetApplication: get a given application.
+// Retrieve information about an application, specified by the `application_id` parameter. The application's full details, including `id`, `email`, `organization_id`, `status` and `two_factor_enabled` are returned in the response.
 func (s *API) GetApplication(req *GetApplicationRequest, opts ...scw.RequestOption) (*Application, error) {
 	var err error
 
@@ -1213,7 +1224,8 @@ type UpdateApplicationRequest struct {
 	Description *string `json:"description"`
 }
 
-// UpdateApplication: update the parameters of an application, including `name` and `description`.
+// UpdateApplication: update an application.
+// Update the parameters of an application, including `name` and `description`.
 func (s *API) UpdateApplication(req *UpdateApplicationRequest, opts ...scw.RequestOption) (*Application, error) {
 	var err error
 
@@ -1246,7 +1258,8 @@ type DeleteApplicationRequest struct {
 	ApplicationID string `json:"-"`
 }
 
-// DeleteApplication: delete an application. Note that this action is irreversible and will automatically delete the application's API keys. Policies attached to users and applications via this group will no longer apply.
+// DeleteApplication: delete an application.
+// Delete an application. Note that this action is irreversible and will automatically delete the application's API keys. Policies attached to users and applications via this group will no longer apply.
 func (s *API) DeleteApplication(req *DeleteApplicationRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1289,7 +1302,8 @@ type ListGroupsRequest struct {
 	GroupIDs []string `json:"-"`
 }
 
-// ListGroups: list groups. By default, the groups listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters to filter your query. Use `user_ids` or `application_ids` to list all groups certain users or applications belong to.
+// ListGroups: list groups.
+// List groups. By default, the groups listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters to filter your query. Use `user_ids` or `application_ids` to list all groups certain users or applications belong to.
 func (s *API) ListGroups(req *ListGroupsRequest, opts ...scw.RequestOption) (*ListGroupsResponse, error) {
 	var err error
 
@@ -1333,7 +1347,8 @@ type CreateGroupRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateGroup: create a new group. You must define the `name` and `organization_id` parameters in the request.
+// CreateGroup: create a group.
+// Create a new group. You must define the `name` and `organization_id` parameters in the request.
 func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1371,7 +1386,8 @@ type GetGroupRequest struct {
 	GroupID string `json:"-"`
 }
 
-// GetGroup: retrive information about a given group, specified by the `group_id` parameter. The group's full details, including `user_ids` and `application_ids` are returned in the response.
+// GetGroup: get a group.
+// Retrive information about a given group, specified by the `group_id` parameter. The group's full details, including `user_ids` and `application_ids` are returned in the response.
 func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1403,7 +1419,8 @@ type UpdateGroupRequest struct {
 	Description *string `json:"description"`
 }
 
-// UpdateGroup: update the parameters of group, including `name` and `description`.
+// UpdateGroup: update a group.
+// Update the parameters of group, including `name` and `description`.
 func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1439,7 +1456,8 @@ type SetGroupMembersRequest struct {
 	ApplicationIDs []string `json:"application_ids"`
 }
 
-// SetGroupMembers: overwrite users and applications configuration in a group. Any information that you add using this command will overwrite the previous configuration.
+// SetGroupMembers: overwrite users and applications of a group.
+// Overwrite users and applications configuration in a group. Any information that you add using this command will overwrite the previous configuration.
 func (s *API) SetGroupMembers(req *SetGroupMembersRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1478,7 +1496,8 @@ type AddGroupMemberRequest struct {
 	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// AddGroupMember: add a user or an application to a group. You can specify a `user_id` and and `application_id` in the body of your request. Note that you can only add one of each per request.
+// AddGroupMember: add a user or an application to a group.
+// Add a user or an application to a group. You can specify a `user_id` and and `application_id` in the body of your request. Note that you can only add one of each per request.
 func (s *API) AddGroupMember(req *AddGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1517,7 +1536,8 @@ type RemoveGroupMemberRequest struct {
 	ApplicationID *string `json:"application_id,omitempty"`
 }
 
-// RemoveGroupMember: remove a user or an application from a group. You can specify a `user_id` and and `application_id` in the body of your request. Note that you can only remove one of each per request. Removing a user from a group means that any permissions given to them via the group (i.e. from an attached policy) will no longer apply. Be sure you want to remove these permissions from the user before proceeding.
+// RemoveGroupMember: remove a user or an application from a group.
+// Remove a user or an application from a group. You can specify a `user_id` and and `application_id` in the body of your request. Note that you can only remove one of each per request. Removing a user from a group means that any permissions given to them via the group (i.e. from an attached policy) will no longer apply. Be sure you want to remove these permissions from the user before proceeding.
 func (s *API) RemoveGroupMember(req *RemoveGroupMemberRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1550,7 +1570,8 @@ type DeleteGroupRequest struct {
 	GroupID string `json:"-"`
 }
 
-// DeleteGroup: delete a group. Note that this action is irreversible and could delete permissions for group members. Policies attached to users and applications via this group will no longer apply.
+// DeleteGroup: delete a group.
+// Delete a group. Note that this action is irreversible and could delete permissions for group members. Policies attached to users and applications via this group will no longer apply.
 func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1597,7 +1618,8 @@ type ListPoliciesRequest struct {
 	PolicyName *string `json:"-"`
 }
 
-// ListPolicies: list the policies of an Organization. By default, the policies listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters to filter your query, such as `user_ids`, `groups_ids`, `application_ids`, and `policy_name`.
+// ListPolicies: list policies of an Organization.
+// List the policies of an Organization. By default, the policies listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters to filter your query, such as `user_ids`, `groups_ids`, `application_ids`, and `policy_name`.
 func (s *API) ListPolicies(req *ListPoliciesRequest, opts ...scw.RequestOption) (*ListPoliciesResponse, error) {
 	var err error
 
@@ -1657,7 +1679,8 @@ type CreatePolicyRequest struct {
 	NoPrincipal *bool `json:"no_principal,omitempty"`
 }
 
-// CreatePolicy: create a new application. You must define the `name` parameter in the request. You can specify parameters such as `user_id`, `groups_id`, `application_id`, `no_principal`, `rules` and its child attributes.
+// CreatePolicy: create a new policy.
+// Create a new application. You must define the `name` parameter in the request. You can specify parameters such as `user_id`, `groups_id`, `application_id`, `no_principal`, `rules` and its child attributes.
 func (s *API) CreatePolicy(req *CreatePolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
@@ -1695,7 +1718,8 @@ type GetPolicyRequest struct {
 	PolicyID string `json:"-"`
 }
 
-// GetPolicy: retrieve information about a policy, speficified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
+// GetPolicy: get an existing policy.
+// Retrieve information about a policy, speficified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
 func (s *API) GetPolicy(req *GetPolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
@@ -1739,7 +1763,8 @@ type UpdatePolicyRequest struct {
 	NoPrincipal *bool `json:"no_principal,omitempty"`
 }
 
-// UpdatePolicy: update the parameters of a policy, including `name`, `description`, `user_id`, `group_id`, `application_id` and `no_principal`.
+// UpdatePolicy: update an existing policy.
+// Update the parameters of a policy, including `name`, `description`, `user_id`, `group_id`, `application_id` and `no_principal`.
 func (s *API) UpdatePolicy(req *UpdatePolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
@@ -1772,7 +1797,8 @@ type DeletePolicyRequest struct {
 	PolicyID string `json:"-"`
 }
 
-// DeletePolicy: delete a policy. You must define specify the `policy_id` parameter in your request. Note that when deleting a policy, all permissions it gives to its principal (user, group or application) will be revoked.
+// DeletePolicy: delete a policy.
+// Delete a policy. You must define specify the `policy_id` parameter in your request. Note that when deleting a policy, all permissions it gives to its principal (user, group or application) will be revoked.
 func (s *API) DeletePolicy(req *DeletePolicyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1831,7 +1857,8 @@ type SetRulesRequest struct {
 	Rules []*RuleSpecs `json:"rules"`
 }
 
-// SetRules: overwrite the rules of a given policy. Any information that you add using this command will overwrite the previous configuration. If you include some of the rules you already had in your previous configuration in your new one, but you change their order, the new order of display will apply. While policy rules are ordered, they have no impact on the access logic of IAM because rules are allow-only.
+// SetRules: set rules of a given policy.
+// Overwrite the rules of a given policy. Any information that you add using this command will overwrite the previous configuration. If you include some of the rules you already had in your previous configuration in your new one, but you change their order, the new order of display will apply. While policy rules are ordered, they have no impact on the access logic of IAM because rules are allow-only.
 func (s *API) SetRules(req *SetRulesRequest, opts ...scw.RequestOption) (*SetRulesResponse, error) {
 	var err error
 
@@ -1866,7 +1893,8 @@ type ListRulesRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListRules: list the rules of a given policy. By default, the rules listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `policy_id` in the query path of your request.
+// ListRules: list rules of a given policy.
+// List the rules of a given policy. By default, the rules listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `policy_id` in the query path of your request.
 func (s *API) ListRules(req *ListRulesRequest, opts ...scw.RequestOption) (*ListRulesResponse, error) {
 	var err error
 
@@ -1910,7 +1938,8 @@ type ListPermissionSetsRequest struct {
 	OrganizationID string `json:"-"`
 }
 
-// ListPermissionSets: list permission sets available for given Organization. You must define the `organization_id` in the query path of your request.
+// ListPermissionSets: list permission sets.
+// List permission sets available for given Organization. You must define the `organization_id` in the query path of your request.
 func (s *API) ListPermissionSets(req *ListPermissionSetsRequest, opts ...scw.RequestOption) (*ListPermissionSetsResponse, error) {
 	var err error
 
@@ -1977,7 +2006,8 @@ type ListAPIKeysRequest struct {
 	BearerType BearerType `json:"-"`
 }
 
-// ListAPIKeys: list API keys. By default, the API keys listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters for your query such as `editable`, `expired`, `access_key` and `bearer_id`.
+// ListAPIKeys: list API keys.
+// List API keys. By default, the API keys listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You can define additional parameters for your query such as `editable`, `expired`, `access_key` and `bearer_id`.
 func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*ListAPIKeysResponse, error) {
 	var err error
 
@@ -2031,7 +2061,8 @@ type CreateAPIKeyRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateAPIKey: create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id` which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that he secret key is only showed once. Make sure that you copy and store both keys somewhere safe.
+// CreateAPIKey: create an API key.
+// Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id` which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that he secret key is only showed once. Make sure that you copy and store both keys somewhere safe.
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -2060,7 +2091,8 @@ type GetAPIKeyRequest struct {
 	AccessKey string `json:"-"`
 }
 
-// GetAPIKey: retrive information about an API key, specified by the `access_key` parameter. The API key's details, including either the `user_id` or `application_id` of its bearer are returned in the response. Note that the string value for the `secret_key` is nullable, and therefore is not displayed in the response. The `secret_key` value is only displayed upon API key creation.
+// GetAPIKey: get an API key.
+// Retrive information about an API key, specified by the `access_key` parameter. The API key's details, including either the `user_id` or `application_id` of its bearer are returned in the response. Note that the string value for the `secret_key` is nullable, and therefore is not displayed in the response. The `secret_key` value is only displayed upon API key creation.
 func (s *API) GetAPIKey(req *GetAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -2092,7 +2124,8 @@ type UpdateAPIKeyRequest struct {
 	Description *string `json:"description"`
 }
 
-// UpdateAPIKey: update the parameters of an API key, including `default_project_id` and `description`.
+// UpdateAPIKey: update an API key.
+// Update the parameters of an API key, including `default_project_id` and `description`.
 func (s *API) UpdateAPIKey(req *UpdateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -2125,7 +2158,8 @@ type DeleteAPIKeyRequest struct {
 	AccessKey string `json:"-"`
 }
 
-// DeleteAPIKey: delete an API key. Note that this action is irreversible and cannot be undone. Make sure you update any configurations using the API keys you delete.
+// DeleteAPIKey: delete an API key.
+// Delete an API key. Note that this action is irreversible and cannot be undone. Make sure you update any configurations using the API keys you delete.
 func (s *API) DeleteAPIKey(req *DeleteAPIKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2160,7 +2194,8 @@ type ListQuotaRequest struct {
 	OrganizationID string `json:"-"`
 }
 
-// ListQuota: list all product and features quota for an Organization, with their associated limits. By default, the quota listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request.
+// ListQuota: list all quotas in the Organization.
+// List all product and features quota for an Organization, with their associated limits. By default, the quota listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request.
 func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*ListQuotaResponse, error) {
 	var err error
 
@@ -2203,7 +2238,8 @@ type GetQuotumRequest struct {
 	OrganizationID string `json:"-"`
 }
 
-// GetQuotum: retrieve information about a resource quota, speficified by the `quotum_name` parameter. The quota's `limit`, or whether it is unlimited, is returned in the response.
+// GetQuotum: get a quota in the Organization.
+// Retrieve information about a resource quota, speficified by the `quotum_name` parameter. The quota's `limit`, or whether it is unlimited, is returned in the response.
 func (s *API) GetQuotum(req *GetQuotumRequest, opts ...scw.RequestOption) (*Quotum, error) {
 	var err error
 

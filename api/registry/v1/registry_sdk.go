@@ -40,6 +40,7 @@ var (
 )
 
 // API: container registry API.
+// Registry API.
 type API struct {
 	client *scw.Client
 }
@@ -296,7 +297,8 @@ type Image struct {
 	// Visibility: a `public` image is pullable from internet without authentication, opposed to a `private` image. `inherit` will use the namespace `is_public` parameter.
 	// Default value: visibility_unknown
 	Visibility ImageVisibility `json:"visibility"`
-	// Size: image size in bytes, calculated from the size of image layers. One layer used in two tags of the same image is counted once but one layer used in two images is counted twice.
+	// Size: image size in bytes, calculated from the size of image layers.
+	// Image size in bytes, calculated from the size of image layers. One layer used in two tags of the same image is counted once but one layer used in two images is counted twice.
 	Size scw.Size `json:"size"`
 	// CreatedAt: creation date.
 	CreatedAt *time.Time `json:"created_at"`
@@ -456,7 +458,8 @@ type GetNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// GetNamespace: get the namespace associated with the given id.
+// GetNamespace: get a namespace.
+// Get the namespace associated with the given id.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -563,7 +566,8 @@ type UpdateNamespaceRequest struct {
 	IsPublic *bool `json:"is_public"`
 }
 
-// UpdateNamespace: update the namespace associated with the given id.
+// UpdateNamespace: update an existing namespace.
+// Update the namespace associated with the given id.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -607,7 +611,8 @@ type DeleteNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 }
 
-// DeleteNamespace: delete the namespace associated with the given id.
+// DeleteNamespace: delete an existing namespace.
+// Delete the namespace associated with the given id.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -709,7 +714,8 @@ type GetImageRequest struct {
 	ImageID string `json:"-"`
 }
 
-// GetImage: get the image associated with the given id.
+// GetImage: get a image.
+// Get the image associated with the given id.
 func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*Image, error) {
 	var err error
 
@@ -751,7 +757,8 @@ type UpdateImageRequest struct {
 	Visibility ImageVisibility `json:"visibility"`
 }
 
-// UpdateImage: update the image associated with the given id.
+// UpdateImage: update an existing image.
+// Update the image associated with the given id.
 func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*Image, error) {
 	var err error
 
@@ -795,7 +802,8 @@ type DeleteImageRequest struct {
 	ImageID string `json:"-"`
 }
 
-// DeleteImage: delete the image associated with the given id.
+// DeleteImage: delete an image.
+// Delete the image associated with the given id.
 func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) (*Image, error) {
 	var err error
 
@@ -894,7 +902,8 @@ type GetTagRequest struct {
 	TagID string `json:"-"`
 }
 
-// GetTag: get the tag associated with the given id.
+// GetTag: get a tag.
+// Get the tag associated with the given id.
 func (s *API) GetTag(req *GetTagRequest, opts ...scw.RequestOption) (*Tag, error) {
 	var err error
 
@@ -935,7 +944,8 @@ type DeleteTagRequest struct {
 	Force bool `json:"-"`
 }
 
-// DeleteTag: delete the tag associated with the given id.
+// DeleteTag: delete a tag.
+// Delete the tag associated with the given id.
 func (s *API) DeleteTag(req *DeleteTagRequest, opts ...scw.RequestOption) (*Tag, error) {
 	var err error
 

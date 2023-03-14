@@ -171,7 +171,8 @@ type Image struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// ValidUntil: expiration date of this image.
 	ValidUntil *time.Time `json:"valid_until"`
-	// Label: typically an identifier for a distribution (ex. "ubuntu_focal").
+	// Label: label of this image.
+	// Typically an identifier for a distribution (ex. "ubuntu_focal").
 	Label string `json:"label"`
 }
 
@@ -201,7 +202,8 @@ type ListVersionsResponse struct {
 
 // LocalImage: local image.
 type LocalImage struct {
-	// ID: version you will typically use to define an image in an API call.
+	// ID: UUID of this local image.
+	// Version you will typically use to define an image in an API call.
 	ID string `json:"id"`
 	// CompatibleCommercialTypes: list of all commercial types that are compatible with this local image.
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
@@ -312,8 +314,7 @@ type ListVersionsRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListVersionsRequestOrderBy `json:"-"`
 }
 
@@ -381,8 +382,7 @@ type ListLocalImagesRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	Page *int32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
 
 	ImageLabel *string `json:"-"`

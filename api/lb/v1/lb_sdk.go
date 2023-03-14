@@ -40,6 +40,7 @@ var (
 )
 
 // ZonedAPI: this API allows you to manage your Scaleway Load Balancer services.
+// Load Balancer API.
 type ZonedAPI struct {
 	client *scw.Client
 }
@@ -52,6 +53,7 @@ func NewZonedAPI(client *scw.Client) *ZonedAPI {
 }
 
 // API: this API allows you to manage your load balancer service.
+// Load balancer API.
 type API struct {
 	client *scw.Client
 }
@@ -764,7 +766,7 @@ func (enum *Protocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software. For more information on the different protocols available, see the [dedicated documentation](https://www.scaleway.com/en/docs/network/load-balancer/reference-content/configuring-load-balancer/#choosing-a-proxy-protocol)
+// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software. For more information on the different protocols available, see the [dedicated documentation](https://www.scaleway.com/en/docs/network/load-balancer/reference-content/configuring-load-balancer/#choosing-a-proxy-protocol).
 type ProxyProtocol string
 
 const (
@@ -1219,27 +1221,36 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 
 // HealthCheckHTTPConfig: health check. http config.
 type HealthCheckHTTPConfig struct {
-	// URI: the HTTP URI to use when performing a health check on backend servers.
+	// URI: HTTP URI used for the health check.
+	// The HTTP URI to use when performing a health check on backend servers.
 	URI string `json:"uri"`
-	// Method: the HTTP method used when performing a health check on backend servers.
+	// Method: HTTP method used for the health check.
+	// The HTTP method used when performing a health check on backend servers.
 	Method string `json:"method"`
-	// Code: the HTTP response code that should be returned for a health check to be considered successful.
+	// Code: HTTP response code expected for a successful health check.
+	// The HTTP response code that should be returned for a health check to be considered successful.
 	Code *int32 `json:"code"`
-	// HostHeader: the HTTP host header used when performing a health check on backend servers.
+	// HostHeader: HTTP host header used for the health check.
+	// The HTTP host header used when performing a health check on backend servers.
 	HostHeader string `json:"host_header"`
 }
 
 // HealthCheckHTTPSConfig: health check. https config.
 type HealthCheckHTTPSConfig struct {
-	// URI: the HTTP URI to use when performing a health check on backend servers.
+	// URI: HTTP URI used for the health check.
+	// The HTTP URI to use when performing a health check on backend servers.
 	URI string `json:"uri"`
-	// Method: the HTTP method used when performing a health check on backend servers.
+	// Method: HTTP method used for the health check.
+	// The HTTP method used when performing a health check on backend servers.
 	Method string `json:"method"`
-	// Code: the HTTP response code that should be returned for a health check to be considered successful.
+	// Code: HTTP response code expected for a successful health check.
+	// The HTTP response code that should be returned for a health check to be considered successful.
 	Code *int32 `json:"code"`
-	// HostHeader: the HTTP host header used when performing a health check on backend servers.
+	// HostHeader: HTTP host header used for the health check.
+	// The HTTP host header used when performing a health check on backend servers.
 	HostHeader string `json:"host_header"`
-	// Sni: the SNI value used when performing a health check on backend servers over SSL.
+	// Sni: sNI used for SSL health checks.
+	// The SNI value used when performing a health check on backend servers over SSL.
 	Sni string `json:"sni"`
 }
 
@@ -1353,8 +1364,7 @@ type LBStats struct {
 
 type LBType struct {
 	Name string `json:"name"`
-	// StockStatus:
-	// Default value: unknown
+	// StockStatus: default value: unknown
 	StockStatus LBTypeStock `json:"stock_status"`
 
 	Description string `json:"description"`
@@ -1504,10 +1514,12 @@ type Route struct {
 
 // RouteMatch: route. match.
 type RouteMatch struct {
-	// Sni: value to match in the Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer. This field should be set for routes on TCP Load Balancers.
+	// Sni: server Name Indication (SNI) value to match.
+	// Value to match in the Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer. This field should be set for routes on TCP Load Balancers.
 	// Precisely one of HostHeader, Sni must be set.
 	Sni *string `json:"sni,omitempty"`
-	// HostHeader: value to match in the HTTP Host request header from an incoming connection. This field should be set for routes on HTTP Load Balancers.
+	// HostHeader: HTTP host header to match.
+	// Value to match in the HTTP Host request header from an incoming connection. This field should be set for routes on HTTP Load Balancers.
 	// Precisely one of HostHeader, Sni must be set.
 	HostHeader *string `json:"host_header,omitempty"`
 }
@@ -1541,6 +1553,7 @@ type SubscriberEmailConfig struct {
 }
 
 // SubscriberWebhookConfig: webhook alert of subscriber.
+// Subscriber. webhook config.
 type SubscriberWebhookConfig struct {
 	// URI: URI to receive POST requests.
 	URI string `json:"uri"`
@@ -1571,7 +1584,8 @@ type ZonedAPIListLBsRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListLBs: list all Load Balancers in the specified zone, for a Scaleway Organization or Scaleway Project. By default, the Load Balancers returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
+// ListLBs: list Load Balancers.
+// List all Load Balancers in the specified zone, for a Scaleway Organization or Scaleway Project. By default, the Load Balancers returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *ZonedAPI) ListLBs(req *ZonedAPIListLBsRequest, opts ...scw.RequestOption) (*ListLBsResponse, error) {
 	var err error
 
@@ -1637,7 +1651,8 @@ type ZonedAPICreateLBRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-// CreateLB: create a new Load Balancer. Note that the Load Balancer will be created without frontends or backends; these must be created separately via the dedicated endpoints.
+// CreateLB: create a Load Balancer.
+// Create a new Load Balancer. Note that the Load Balancer will be created without frontends or backends; these must be created separately via the dedicated endpoints.
 func (s *ZonedAPI) CreateLB(req *ZonedAPICreateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -1691,7 +1706,8 @@ type ZonedAPIGetLBRequest struct {
 	LBID string `json:"-"`
 }
 
-// GetLB: retrieve information about an existing Load Balancer, specified by its Load Balancer ID. Its full details, including name, status and IP address, are returned in the response object.
+// GetLB: get a Load Balancer.
+// Retrieve information about an existing Load Balancer, specified by its Load Balancer ID. Its full details, including name, status and IP address, are returned in the response object.
 func (s *ZonedAPI) GetLB(req *ZonedAPIGetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -1739,7 +1755,8 @@ type ZonedAPIUpdateLBRequest struct {
 	SslCompatibilityLevel SSLCompatibilityLevel `json:"ssl_compatibility_level"`
 }
 
-// UpdateLB: update the parameters of an existing Load Balancer, specified by its Load Balancer ID. Note that the request type is PUT and not PATCH. You must set all parameters.
+// UpdateLB: update a Load Balancer.
+// Update the parameters of an existing Load Balancer, specified by its Load Balancer ID. Note that the request type is PUT and not PATCH. You must set all parameters.
 func (s *ZonedAPI) UpdateLB(req *ZonedAPIUpdateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -1785,7 +1802,8 @@ type ZonedAPIDeleteLBRequest struct {
 	ReleaseIP bool `json:"-"`
 }
 
-// DeleteLB: delete an existing Load Balancer, specified by its Load Balancer ID. Deleting a Load Balancer is permanent, and cannot be undone. The Load Balancer's flexible IP address can either be deleted with the Load Balancer, or kept in your account for future use.
+// DeleteLB: delete a Load Balancer.
+// Delete an existing Load Balancer, specified by its Load Balancer ID. Deleting a Load Balancer is permanent, and cannot be undone. The Load Balancer's flexible IP address can either be deleted with the Load Balancer, or kept in your account for future use.
 func (s *ZonedAPI) DeleteLB(req *ZonedAPIDeleteLBRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1828,7 +1846,8 @@ type ZonedAPIMigrateLBRequest struct {
 	Type string `json:"type"`
 }
 
-// MigrateLB: migrate an existing Load Balancer from one commercial type to another. Allows you to scale your Load Balancer up or down in terms of bandwidth or multi-cloud provision.
+// MigrateLB: migrate a Load Balancer.
+// Migrate an existing Load Balancer from one commercial type to another. Allows you to scale your Load Balancer up or down in terms of bandwidth or multi-cloud provision.
 func (s *ZonedAPI) MigrateLB(req *ZonedAPIMigrateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -1880,7 +1899,8 @@ type ZonedAPIListIPsRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListIPs: list the Load Balancer flexible IP addresses held in the account (filtered by Organization ID or Project ID). It is also possible to search for a specific IP address.
+// ListIPs: list IP addresses.
+// List the Load Balancer flexible IP addresses held in the account (filtered by Organization ID or Project ID). It is also possible to search for a specific IP address.
 func (s *ZonedAPI) ListIPs(req *ZonedAPIListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
@@ -1934,7 +1954,8 @@ type ZonedAPICreateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// CreateIP: create a new Load Balancer flexible IP address, in the specified Scaleway Project. This can be attached to new Load Balancers created in the future.
+// CreateIP: create an IP address.
+// Create a new Load Balancer flexible IP address, in the specified Scaleway Project. This can be attached to new Load Balancers created in the future.
 func (s *ZonedAPI) CreateIP(req *ZonedAPICreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1984,7 +2005,8 @@ type ZonedAPIGetIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// GetIP: retrieve the full details of a Load Balancer flexible IP address.
+// GetIP: get an IP address.
+// Retrieve the full details of a Load Balancer flexible IP address.
 func (s *ZonedAPI) GetIP(req *ZonedAPIGetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2023,7 +2045,8 @@ type ZonedAPIReleaseIPRequest struct {
 	IPID string `json:"-"`
 }
 
-// ReleaseIP: delete a Load Balancer flexible IP address. This action is irreversible, and cannot be undone.
+// ReleaseIP: delete an IP address.
+// Delete a Load Balancer flexible IP address. This action is irreversible, and cannot be undone.
 func (s *ZonedAPI) ReleaseIP(req *ZonedAPIReleaseIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2062,7 +2085,8 @@ type ZonedAPIUpdateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// UpdateIP: update the reverse DNS of a Load Balancer flexible IP address.
+// UpdateIP: update an IP address.
+// Update the reverse DNS of a Load Balancer flexible IP address.
 func (s *ZonedAPI) UpdateIP(req *ZonedAPIUpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2115,7 +2139,8 @@ type ZonedAPIListBackendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListBackends: list all the backends of a Load Balancer, specified by its Load Balancer ID. By default, results are returned in ascending order by the creation date of each backend. The response is an array of backend objects, containing full details of each one including their configuration parameters such as protocol, port and forwarding algorithm.
+// ListBackends: list the backends of a given Load Balancer.
+// List all the backends of a Load Balancer, specified by its Load Balancer ID. By default, results are returned in ascending order by the creation date of each backend. The response is an array of backend objects, containing full details of each one including their configuration parameters such as protocol, port and forwarding algorithm.
 func (s *ZonedAPI) ListBackends(req *ZonedAPIListBackendsRequest, opts ...scw.RequestOption) (*ListBackendsResponse, error) {
 	var err error
 
@@ -2245,7 +2270,8 @@ func (m ZonedAPICreateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// CreateBackend: create a new backend for a given Load Balancer, specifying its full configuration including protocol, port and forwarding algorithm.
+// CreateBackend: create a backend for a given Load Balancer.
+// Create a new backend for a given Load Balancer, specifying its full configuration including protocol, port and forwarding algorithm.
 func (s *ZonedAPI) CreateBackend(req *ZonedAPICreateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2293,7 +2319,8 @@ type ZonedAPIGetBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
-// GetBackend: get the full details of a given backend, specified by its backend ID. The response contains the backend's full configuration parameters including protocol, port and forwarding algorithm.
+// GetBackend: get a backend of a given Load Balancer.
+// Get the full details of a given backend, specified by its backend ID. The response contains the backend's full configuration parameters including protocol, port and forwarding algorithm.
 func (s *ZonedAPI) GetBackend(req *ZonedAPIGetBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2407,7 +2434,8 @@ func (m ZonedAPIUpdateBackendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// UpdateBackend: update a backend of a given Load Balancer, specified by its backend ID. Note that the request type is PUT and not PATCH. You must set all parameters.
+// UpdateBackend: update a backend of a given Load Balancer.
+// Update a backend of a given Load Balancer, specified by its backend ID. Note that the request type is PUT and not PATCH. You must set all parameters.
 func (s *ZonedAPI) UpdateBackend(req *ZonedAPIUpdateBackendRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2451,7 +2479,8 @@ type ZonedAPIDeleteBackendRequest struct {
 	BackendID string `json:"-"`
 }
 
-// DeleteBackend: delete a backend of a given Load Balancer, specified by its backend ID. This action is irreversible and cannot be undone.
+// DeleteBackend: delete a backend of a given Load Balancer.
+// Delete a backend of a given Load Balancer, specified by its backend ID. This action is irreversible and cannot be undone.
 func (s *ZonedAPI) DeleteBackend(req *ZonedAPIDeleteBackendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2490,7 +2519,8 @@ type ZonedAPIAddBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
-// AddBackendServers: for a given backend specified by its backend ID, add a set of backend servers (identified by their IP addresses) it should forward traffic to. These will be appended to any existing set of backend servers for this backend.
+// AddBackendServers: add a set of backend servers to a given backend.
+// For a given backend specified by its backend ID, add a set of backend servers (identified by their IP addresses) it should forward traffic to. These will be appended to any existing set of backend servers for this backend.
 func (s *ZonedAPI) AddBackendServers(req *ZonedAPIAddBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2536,7 +2566,8 @@ type ZonedAPIRemoveBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
-// RemoveBackendServers: for a given backend specified by its backend ID, remove the specified backend servers (identified by their IP addresses) so that it no longer forwards traffic to them.
+// RemoveBackendServers: remove a set of servers for a given backend.
+// For a given backend specified by its backend ID, remove the specified backend servers (identified by their IP addresses) so that it no longer forwards traffic to them.
 func (s *ZonedAPI) RemoveBackendServers(req *ZonedAPIRemoveBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2582,7 +2613,8 @@ type ZonedAPISetBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
-// SetBackendServers: for a given backend specified by its backend ID, define the set of backend servers (identified by their IP addresses) that it should forward traffic to. Any existing backend servers configured for this backend will be removed.
+// SetBackendServers: define all backend servers for a given backend.
+// For a given backend specified by its backend ID, define the set of backend servers (identified by their IP addresses) that it should forward traffic to. Any existing backend servers configured for this backend will be removed.
 func (s *ZonedAPI) SetBackendServers(req *ZonedAPISetBackendServersRequest, opts ...scw.RequestOption) (*Backend, error) {
 	var err error
 
@@ -2693,7 +2725,8 @@ func (m ZonedAPIUpdateHealthCheckRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// UpdateHealthCheck: update the configuration of the health check performed by a given backend to verify the health of its backend servers, identified by its backend ID. Note that the request type is PUT and not PATCH. You must set all parameters.
+// UpdateHealthCheck: update a health check for a given backend.
+// Update the configuration of the health check performed by a given backend to verify the health of its backend servers, identified by its backend ID. Note that the request type is PUT and not PATCH. You must set all parameters.
 func (s *ZonedAPI) UpdateHealthCheck(req *ZonedAPIUpdateHealthCheckRequest, opts ...scw.RequestOption) (*HealthCheck, error) {
 	var err error
 
@@ -2746,7 +2779,8 @@ type ZonedAPIListFrontendsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListFrontends: list all the frontends of a Load Balancer, specified by its Load Balancer ID. By default, results are returned in ascending order by the creation date of each frontend. The response is an array of frontend objects, containing full details of each one including the port they listen on and the backend they are attached to.
+// ListFrontends: list frontends of a given Load Balancer.
+// List all the frontends of a Load Balancer, specified by its Load Balancer ID. By default, results are returned in ascending order by the creation date of each frontend. The response is an array of frontend objects, containing full details of each one including the port they listen on and the backend they are attached to.
 func (s *ZonedAPI) ListFrontends(req *ZonedAPIListFrontendsRequest, opts ...scw.RequestOption) (*ListFrontendsResponse, error) {
 	var err error
 
@@ -2843,7 +2877,8 @@ func (m ZonedAPICreateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// CreateFrontend: create a new frontend for a given Load Balancer, specifying its configuration including the port it should listen on and the backend to attach it to.
+// CreateFrontend: create a frontend in a given Load Balancer.
+// Create a new frontend for a given Load Balancer, specifying its configuration including the port it should listen on and the backend to attach it to.
 func (s *ZonedAPI) CreateFrontend(req *ZonedAPICreateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2891,7 +2926,8 @@ type ZonedAPIGetFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
-// GetFrontend: get the full details of a given frontend, specified by its frontend ID. The response contains the frontend's full configuration parameters including the backend it is attached to, the port it listens on, and any certificates it has.
+// GetFrontend: get a frontend.
+// Get the full details of a given frontend, specified by its frontend ID. The response contains the frontend's full configuration parameters including the backend it is attached to, the port it listens on, and any certificates it has.
 func (s *ZonedAPI) GetFrontend(req *ZonedAPIGetFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -2976,7 +3012,8 @@ func (m ZonedAPIUpdateFrontendRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
-// UpdateFrontend: update a given frontend, specified by its frontend ID. You can update configuration parameters including its name and the port it listens on. Note that the request type is PUT and not PATCH. You must set all parameters.
+// UpdateFrontend: update a frontend.
+// Update a given frontend, specified by its frontend ID. You can update configuration parameters including its name and the port it listens on. Note that the request type is PUT and not PATCH. You must set all parameters.
 func (s *ZonedAPI) UpdateFrontend(req *ZonedAPIUpdateFrontendRequest, opts ...scw.RequestOption) (*Frontend, error) {
 	var err error
 
@@ -3020,7 +3057,8 @@ type ZonedAPIDeleteFrontendRequest struct {
 	FrontendID string `json:"-"`
 }
 
-// DeleteFrontend: delete a given frontend, specified by its frontend ID. This action is irreversible and cannot be undone.
+// DeleteFrontend: delete a frontend.
+// Delete a given frontend, specified by its frontend ID. This action is irreversible and cannot be undone.
 func (s *ZonedAPI) DeleteFrontend(req *ZonedAPIDeleteFrontendRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3064,7 +3102,8 @@ type ZonedAPIListRoutesRequest struct {
 	FrontendID *string `json:"-"`
 }
 
-// ListRoutes: list all routes for a given frontend. The response is an array of routes, each one  with a specified backend to direct to if a certain condition is matched (based on the value of the SNI field or HTTP Host header).
+// ListRoutes: list all routes.
+// List all routes for a given frontend. The response is an array of routes, each one  with a specified backend to direct to if a certain condition is matched (based on the value of the SNI field or HTTP Host header).
 func (s *ZonedAPI) ListRoutes(req *ZonedAPIListRoutesRequest, opts ...scw.RequestOption) (*ListRoutesResponse, error) {
 	var err error
 
@@ -3115,7 +3154,8 @@ type ZonedAPICreateRouteRequest struct {
 	Match *RouteMatch `json:"match"`
 }
 
-// CreateRoute: create a new route on a given frontend. To configure a route, specify the backend to direct to if a certain condition is matched (based on the value of the SNI field or HTTP Host header).
+// CreateRoute: create a route.
+// Create a new route on a given frontend. To configure a route, specify the backend to direct to if a certain condition is matched (based on the value of the SNI field or HTTP Host header).
 func (s *ZonedAPI) CreateRoute(req *ZonedAPICreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
 	var err error
 
@@ -3155,7 +3195,8 @@ type ZonedAPIGetRouteRequest struct {
 	RouteID string `json:"-"`
 }
 
-// GetRoute: retrieve information about an existing route, specified by its route ID. Its full details, origin frontend, target backend and match condition, are returned in the response object.
+// GetRoute: get a route.
+// Retrieve information about an existing route, specified by its route ID. Its full details, origin frontend, target backend and match condition, are returned in the response object.
 func (s *ZonedAPI) GetRoute(req *ZonedAPIGetRouteRequest, opts ...scw.RequestOption) (*Route, error) {
 	var err error
 
@@ -3198,7 +3239,8 @@ type ZonedAPIUpdateRouteRequest struct {
 	Match *RouteMatch `json:"match"`
 }
 
-// UpdateRoute: update the configuration of an existing route, specified by its route ID.
+// UpdateRoute: update a route.
+// Update the configuration of an existing route, specified by its route ID.
 func (s *ZonedAPI) UpdateRoute(req *ZonedAPIUpdateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
 	var err error
 
@@ -3242,7 +3284,8 @@ type ZonedAPIDeleteRouteRequest struct {
 	RouteID string `json:"-"`
 }
 
-// DeleteRoute: delete an existing route, specified by its route ID. Deleting a route is permanent, and cannot be undone.
+// DeleteRoute: delete a route.
+// Delete an existing route, specified by its route ID. Deleting a route is permanent, and cannot be undone.
 func (s *ZonedAPI) DeleteRoute(req *ZonedAPIDeleteRouteRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3322,7 +3365,8 @@ type ZonedAPIListBackendStatsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListBackendStats: list information about your backend servers, including their state and the result of their last health check.
+// ListBackendStats: list backend server statistics.
+// List information about your backend servers, including their state and the result of their last health check.
 func (s *ZonedAPI) ListBackendStats(req *ZonedAPIListBackendStatsRequest, opts ...scw.RequestOption) (*ListBackendStatsResponse, error) {
 	var err error
 
@@ -3380,7 +3424,8 @@ type ZonedAPIListACLsRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListACLs: list the ACLs for a given frontend, specified by its frontend ID. The response is an array of ACL objects, each one representing an ACL that denies or allows traffic based on certain conditions.
+// ListACLs: list ACLs for a given frontend.
+// List the ACLs for a given frontend, specified by its frontend ID. The response is an array of ACL objects, each one representing an ACL that denies or allows traffic based on certain conditions.
 func (s *ZonedAPI) ListACLs(req *ZonedAPIListACLsRequest, opts ...scw.RequestOption) (*ListACLResponse, error) {
 	var err error
 
@@ -3441,7 +3486,8 @@ type ZonedAPICreateACLRequest struct {
 	Description string `json:"description"`
 }
 
-// CreateACL: create a new ACL for a given frontend. Each ACL must have a name, an action to perform (allow or deny), and a match rule (the action is carried out when the incoming traffic matches the rule).
+// CreateACL: create an ACL for a given frontend.
+// Create a new ACL for a given frontend. Each ACL must have a name, an action to perform (allow or deny), and a match rule (the action is carried out when the incoming traffic matches the rule).
 func (s *ZonedAPI) CreateACL(req *ZonedAPICreateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3489,7 +3535,8 @@ type ZonedAPIGetACLRequest struct {
 	ACLID string `json:"-"`
 }
 
-// GetACL: get information for a particular ACL, specified by its ACL ID. The response returns full details of the ACL, including its name, action, match rule and frontend.
+// GetACL: get an ACL.
+// Get information for a particular ACL, specified by its ACL ID. The response returns full details of the ACL, including its name, action, match rule and frontend.
 func (s *ZonedAPI) GetACL(req *ZonedAPIGetACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3538,7 +3585,8 @@ type ZonedAPIUpdateACLRequest struct {
 	Description *string `json:"description"`
 }
 
-// UpdateACL: update a particular ACL, specified by its ACL ID. You can update details including its name, action and match rule.
+// UpdateACL: update an ACL.
+// Update a particular ACL, specified by its ACL ID. You can update details including its name, action and match rule.
 func (s *ZonedAPI) UpdateACL(req *ZonedAPIUpdateACLRequest, opts ...scw.RequestOption) (*ACL, error) {
 	var err error
 
@@ -3582,7 +3630,8 @@ type ZonedAPIDeleteACLRequest struct {
 	ACLID string `json:"-"`
 }
 
-// DeleteACL: delete an ACL, specified by its ACL ID. Deleting an ACL is irreversible and cannot be undone.
+// DeleteACL: delete an ACL.
+// Delete an ACL, specified by its ACL ID. Deleting an ACL is irreversible and cannot be undone.
 func (s *ZonedAPI) DeleteACL(req *ZonedAPIDeleteACLRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3621,7 +3670,8 @@ type ZonedAPISetACLsRequest struct {
 	ACLs []*ACLSpec `json:"acls"`
 }
 
-// SetACLs: for a given frontend specified by its frontend ID, define and add the complete set of ACLS for that frontend. Any existing ACLs on this frontend will be removed.
+// SetACLs: define all ACLs for a given frontend.
+// For a given frontend specified by its frontend ID, define and add the complete set of ACLS for that frontend. Any existing ACLs on this frontend will be removed.
 func (s *ZonedAPI) SetACLs(req *ZonedAPISetACLsRequest, opts ...scw.RequestOption) (*SetACLsResponse, error) {
 	var err error
 
@@ -3673,7 +3723,8 @@ type ZonedAPICreateCertificateRequest struct {
 	CustomCertificate *CreateCertificateRequestCustomCertificate `json:"custom_certificate,omitempty"`
 }
 
-// CreateCertificate: generate a new SSL/TLS certificate for a given Load Balancer. You can choose to create a Let's Encrypt certificate, or import a custom certificate.
+// CreateCertificate: create an SSL/TLS certificate.
+// Generate a new SSL/TLS certificate for a given Load Balancer. You can choose to create a Let's Encrypt certificate, or import a custom certificate.
 func (s *ZonedAPI) CreateCertificate(req *ZonedAPICreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3730,7 +3781,8 @@ type ZonedAPIListCertificatesRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListCertificates: list all the SSL/TLS certificates on a given Load Balancer. The response is an array of certificate objects, which are by default listed in ascending order of creation date.
+// ListCertificates: list all SSL/TLS certificates on a given Load Balancer.
+// List all the SSL/TLS certificates on a given Load Balancer. The response is an array of certificate objects, which are by default listed in ascending order of creation date.
 func (s *ZonedAPI) ListCertificates(req *ZonedAPIListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
 	var err error
 
@@ -3781,7 +3833,8 @@ type ZonedAPIGetCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// GetCertificate: get information for a particular SSL/TLS certificate, specified by its certificate ID. The response returns full details of the certificate, including its type, main domain name, and alternative domain names.
+// GetCertificate: get an SSL/TLS certificate.
+// Get information for a particular SSL/TLS certificate, specified by its certificate ID. The response returns full details of the certificate, including its type, main domain name, and alternative domain names.
 func (s *ZonedAPI) GetCertificate(req *ZonedAPIGetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3822,7 +3875,8 @@ type ZonedAPIUpdateCertificateRequest struct {
 	Name string `json:"name"`
 }
 
-// UpdateCertificate: update the name of a particular SSL/TLS certificate, specified by its certificate ID.
+// UpdateCertificate: update an SSL/TLS certificate.
+// Update the name of a particular SSL/TLS certificate, specified by its certificate ID.
 func (s *ZonedAPI) UpdateCertificate(req *ZonedAPIUpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 
@@ -3866,7 +3920,8 @@ type ZonedAPIDeleteCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
-// DeleteCertificate: delete an SSL/TLS certificate, specified by its certificate ID. Deleting a certificate is irreversible and cannot be undone.
+// DeleteCertificate: delete an SSL/TLS certificate.
+// Delete an SSL/TLS certificate, specified by its certificate ID. Deleting a certificate is irreversible and cannot be undone.
 func (s *ZonedAPI) DeleteCertificate(req *ZonedAPIDeleteCertificateRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3905,7 +3960,8 @@ type ZonedAPIListLBTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListLBTypes: list all the different commercial Load Balancer types. The response includes an array of offer types, each with a name, description, and information about its stock availability.
+// ListLBTypes: list all Load Balancer offer types.
+// List all the different commercial Load Balancer types. The response includes an array of offer types, each with a name, description, and information about its stock availability.
 func (s *ZonedAPI) ListLBTypes(req *ZonedAPIListLBTypesRequest, opts ...scw.RequestOption) (*ListLBTypesResponse, error) {
 	var err error
 
@@ -3962,7 +4018,8 @@ type ZonedAPICreateSubscriberRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// CreateSubscriber: create a new subscriber, either with an email configuration or a webhook configuration, for a specified Scaleway Project.
+// CreateSubscriber: create a subscriber.
+// Create a new subscriber, either with an email configuration or a webhook configuration, for a specified Scaleway Project.
 func (s *ZonedAPI) CreateSubscriber(req *ZonedAPICreateSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
@@ -4012,7 +4069,8 @@ type ZonedAPIGetSubscriberRequest struct {
 	SubscriberID string `json:"-"`
 }
 
-// GetSubscriber: retrieve information about an existing subscriber, specified by its subscriber ID. Its full details, including name and email/webhook configuration, are returned in the response object.
+// GetSubscriber: get a subscriber.
+// Retrieve information about an existing subscriber, specified by its subscriber ID. Its full details, including name and email/webhook configuration, are returned in the response object.
 func (s *ZonedAPI) GetSubscriber(req *ZonedAPIGetSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
@@ -4062,7 +4120,8 @@ type ZonedAPIListSubscriberRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSubscriber: list all subscribers to Load Balancer alerts. By default, returns all subscribers to Load Balancer alerts for the Organization associated with the authentication token used for the request.
+// ListSubscriber: list all subscribers.
+// List all subscribers to Load Balancer alerts. By default, returns all subscribers to Load Balancer alerts for the Organization associated with the authentication token used for the request.
 func (s *ZonedAPI) ListSubscriber(req *ZonedAPIListSubscriberRequest, opts ...scw.RequestOption) (*ListSubscriberResponse, error) {
 	var err error
 
@@ -4119,7 +4178,8 @@ type ZonedAPIUpdateSubscriberRequest struct {
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 }
 
-// UpdateSubscriber: update the parameters of a given subscriber (e.g. name, webhook configuration, email configuration), specified by its subscriber ID.
+// UpdateSubscriber: update a subscriber.
+// Update the parameters of a given subscriber (e.g. name, webhook configuration, email configuration), specified by its subscriber ID.
 func (s *ZonedAPI) UpdateSubscriber(req *ZonedAPIUpdateSubscriberRequest, opts ...scw.RequestOption) (*Subscriber, error) {
 	var err error
 
@@ -4163,7 +4223,8 @@ type ZonedAPIDeleteSubscriberRequest struct {
 	SubscriberID string `json:"-"`
 }
 
-// DeleteSubscriber: delete an existing subscriber, specified by its subscriber ID. Deleting a subscriber is permanent, and cannot be undone.
+// DeleteSubscriber: delete a subscriber.
+// Delete an existing subscriber, specified by its subscriber ID. Deleting a subscriber is permanent, and cannot be undone.
 func (s *ZonedAPI) DeleteSubscriber(req *ZonedAPIDeleteSubscriberRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4202,7 +4263,8 @@ type ZonedAPISubscribeToLBRequest struct {
 	SubscriberID string `json:"subscriber_id"`
 }
 
-// SubscribeToLB: subscribe an existing subscriber to alerts for a given Load Balancer.
+// SubscribeToLB: subscribe a subscriber to alerts for a given Load Balancer.
+// Subscribe an existing subscriber to alerts for a given Load Balancer.
 func (s *ZonedAPI) SubscribeToLB(req *ZonedAPISubscribeToLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -4246,7 +4308,8 @@ type ZonedAPIUnsubscribeFromLBRequest struct {
 	LBID string `json:"-"`
 }
 
-// UnsubscribeFromLB: unsubscribe a subscriber from alerts for a given Load Balancer. The subscriber is not deleted, and can be resubscribed in the future if necessary.
+// UnsubscribeFromLB: unsubscribe a subscriber from alerts for a given Load Balancer.
+// Unsubscribe a subscriber from alerts for a given Load Balancer. The subscriber is not deleted, and can be resubscribed in the future if necessary.
 func (s *ZonedAPI) UnsubscribeFromLB(req *ZonedAPIUnsubscribeFromLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
 
@@ -4292,7 +4355,8 @@ type ZonedAPIListLBPrivateNetworksRequest struct {
 	Page *int32 `json:"-"`
 }
 
-// ListLBPrivateNetworks: list the Private Networks attached to a given Load Balancer, specified by its Load Balancer ID. The response is an array of Private Network objects, giving information including the status, configuration, name and creation date of each Private Network.
+// ListLBPrivateNetworks: list Private Networks attached to a Load Balancer.
+// List the Private Networks attached to a given Load Balancer, specified by its Load Balancer ID. The response is an array of Private Network objects, giving information including the status, configuration, name and creation date of each Private Network.
 func (s *ZonedAPI) ListLBPrivateNetworks(req *ZonedAPIListLBPrivateNetworksRequest, opts ...scw.RequestOption) (*ListLBPrivateNetworksResponse, error) {
 	var err error
 
@@ -4353,7 +4417,8 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	IpamConfig *PrivateNetworkIpamConfig `json:"ipam_config,omitempty"`
 }
 
-// AttachPrivateNetwork: attach a specified Load Balancer to a specified Private Network, defining a static or DHCP configuration for the Load Balancer on the network.
+// AttachPrivateNetwork: attach a Load Balancer to a Private Network.
+// Attach a specified Load Balancer to a specified Private Network, defining a static or DHCP configuration for the Load Balancer on the network.
 func (s *ZonedAPI) AttachPrivateNetwork(req *ZonedAPIAttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
@@ -4403,7 +4468,8 @@ type ZonedAPIDetachPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
-// DetachPrivateNetwork: detach a specified Load Balancer from a specified Private Network.
+// DetachPrivateNetwork: detach Load Balancer from Private Network.
+// Detach a specified Load Balancer from a specified Private Network.
 func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -6522,7 +6588,8 @@ type CreateCertificateRequest struct {
 	CustomCertificate *CreateCertificateRequestCustomCertificate `json:"custom_certificate,omitempty"`
 }
 
-// CreateCertificate: generate a new TLS certificate using Let's Encrypt or import your certificate.
+// CreateCertificate: create a TLS certificate.
+// Generate a new TLS certificate using Let's Encrypt or import your certificate.
 func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
 

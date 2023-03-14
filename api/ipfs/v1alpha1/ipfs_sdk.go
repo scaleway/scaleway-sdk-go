@@ -40,6 +40,7 @@ var (
 )
 
 // API: pinning service ipfs API for Scaleway.
+// Ipfs pinning service v1alpha1.
 type API struct {
 	client *scw.Client
 }
@@ -158,8 +159,7 @@ type ListVolumesResponse struct {
 
 type Pin struct {
 	PinID string `json:"pin_id"`
-	// Status:
-	// Default value: unknown_status
+	// Status: default value: unknown_status
 	Status PinStatus `json:"status"`
 
 	CreatedAt *time.Time `json:"created_at"`
@@ -317,8 +317,7 @@ type ListVolumesRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListVolumesRequestOrderBy `json:"-"`
 }
 
@@ -707,11 +706,9 @@ type ListPinsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListPinsRequestOrderBy `json:"-"`
-	// Status:
-	// Default value: unknown_status
+	// Status: default value: unknown_status
 	Status PinStatus `json:"-"`
 }
 

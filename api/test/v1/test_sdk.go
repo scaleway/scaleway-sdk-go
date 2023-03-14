@@ -39,7 +39,8 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: test is a fake service that aim to manage fake humans. It is used for internal and public end-to-end tests.
+// API: no Auth Service for end-to-end testing.
+// Test is a fake service that aim to manage fake humans. It is used for internal and public end-to-end tests.
 //
 // This service don't use the Scaleway authentication service but a fake one.
 // It allows to use this test service publicly without requiring a Scaleway account.
@@ -199,11 +200,9 @@ type Human struct {
 	HairCount uint64 `json:"hair_count"`
 
 	IsHappy bool `json:"is_happy"`
-	// EyesColor:
-	// Default value: unknown
+	// EyesColor: default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
-	// Status:
-	// Default value: unknown
+	// Status: default value: unknown
 	Status HumanStatus `json:"status"`
 
 	Name string `json:"name"`
@@ -229,7 +228,8 @@ type RegisterRequest struct {
 	Username string `json:"username"`
 }
 
-// Register: register a human and return a access-key and a secret-key that must be used in all other commands.
+// Register: register a user.
+// Register a human and return a access-key and a secret-key that must be used in all other commands.
 //
 // Hint: you can use other test commands by setting the SCW_SECRET_KEY env variable.
 func (s *API) Register(req *RegisterRequest, opts ...scw.RequestOption) (*RegisterResponse, error) {
@@ -259,8 +259,7 @@ type ListHumansRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// OrderBy:
-	// Default value: created_at_asc
+	// OrderBy: default value: created_at_asc
 	OrderBy ListHumansRequestOrderBy `json:"-"`
 
 	OrganizationID *string `json:"-"`
@@ -305,7 +304,8 @@ type GetHumanRequest struct {
 	HumanID string `json:"-"`
 }
 
-// GetHuman: get the human details associated with the given id.
+// GetHuman: get human details.
+// Get the human details associated with the given id.
 func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
@@ -342,8 +342,7 @@ type CreateHumanRequest struct {
 	HairCount uint64 `json:"hair_count"`
 
 	IsHappy bool `json:"is_happy"`
-	// EyesColor:
-	// Default value: unknown
+	// EyesColor: default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
 	// Deprecated
 	// Precisely one of OrganizationID, ProjectID must be set.
@@ -406,14 +405,14 @@ type UpdateHumanRequest struct {
 	HairCount *uint64 `json:"hair_count"`
 
 	IsHappy *bool `json:"is_happy"`
-	// EyesColor:
-	// Default value: unknown
+	// EyesColor: default value: unknown
 	EyesColor EyeColors `json:"eyes_color"`
 
 	Name *string `json:"name"`
 }
 
-// UpdateHuman: update the human associated with the given id.
+// UpdateHuman: update an existing human.
+// Update the human associated with the given id.
 func (s *API) UpdateHuman(req *UpdateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
@@ -446,7 +445,8 @@ type DeleteHumanRequest struct {
 	HumanID string `json:"-"`
 }
 
-// DeleteHuman: delete the human associated with the given id.
+// DeleteHuman: delete an existing human.
+// Delete the human associated with the given id.
 func (s *API) DeleteHuman(req *DeleteHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
@@ -474,7 +474,8 @@ type RunHumanRequest struct {
 	HumanID string `json:"-"`
 }
 
-// RunHuman: start a one hour running for the given human.
+// RunHuman: start a 1h running for the given human.
+// Start a one hour running for the given human.
 func (s *API) RunHuman(req *RunHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 

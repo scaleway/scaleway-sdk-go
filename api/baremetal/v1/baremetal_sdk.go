@@ -40,6 +40,7 @@ var (
 )
 
 // API: this API allows to manage your Elastic Metal server.
+// Elastic Metal API.
 type API struct {
 	client *scw.Client
 }
@@ -773,7 +774,7 @@ type OfferOptionOffer struct {
 	ID string `json:"id"`
 	// Name: name of the option.
 	Name string `json:"name"`
-	// Enabled: if true the option is enabled and included by default in the offer
+	// Enabled: if true the option is enabled and included by default in the offer.
 	// If false the option is available for the offer but not included by default.
 	Enabled bool `json:"enabled"`
 	// SubscriptionPeriod: period of subscription for the offer.
@@ -981,7 +982,8 @@ type ListServersRequest struct {
 	OptionID *string `json:"-"`
 }
 
-// ListServers: list Elastic Metal servers for a specific organization.
+// ListServers: list Elastic Metal servers for an organization.
+// List Elastic Metal servers for a specific organization.
 func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*ListServersResponse, error) {
 	var err error
 
@@ -1033,7 +1035,8 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServer: get full details of an existing Elastic Metal server associated with the ID.
+// GetServer: get a specific Elastic Metal server.
+// Get full details of an existing Elastic Metal server associated with the ID.
 func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1088,7 +1091,8 @@ type CreateServerRequest struct {
 	OptionIDs []string `json:"option_ids"`
 }
 
-// CreateServer: create a new Elastic Metal server. Once the server is created, proceed with the [installation of an OS](#post-3e949e).
+// CreateServer: create an Elastic Metal server.
+// Create a new Elastic Metal server. Once the server is created, proceed with the [installation of an OS](#post-3e949e).
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1144,7 +1148,8 @@ type UpdateServerRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdateServer: update the server associated with the ID. You can update parameters such as the server's name, tags and description. Any parameters left null in the request body are not updated.
+// UpdateServer: update an Elastic Metal server.
+// Update the server associated with the ID. You can update parameters such as the server's name, tags and description. Any parameters left null in the request body are not updated.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1202,7 +1207,8 @@ type InstallServerRequest struct {
 	ServicePassword *string `json:"service_password"`
 }
 
-// InstallServer: install an Operating System (OS) on the Elastic Metal server with a specific ID.
+// InstallServer: install an Elastic Metal server.
+// Install an Operating System (OS) on the Elastic Metal server with a specific ID.
 func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1246,7 +1252,8 @@ type GetServerMetricsRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServerMetrics: get the ping status of the server associated with the ID.
+// GetServerMetrics: return server metrics.
+// Get the ping status of the server associated with the ID.
 func (s *API) GetServerMetrics(req *GetServerMetricsRequest, opts ...scw.RequestOption) (*GetServerMetricsResponse, error) {
 	var err error
 
@@ -1285,7 +1292,8 @@ type DeleteServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// DeleteServer: delete the server associated with the ID.
+// DeleteServer: delete an Elastic Metal server.
+// Delete the server associated with the ID.
 func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1327,7 +1335,8 @@ type RebootServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// RebootServer: reboot the Elastic Metal server associated with the ID, use the `boot_type` `rescue` to reboot the server in rescue mode.
+// RebootServer: reboot an Elastic Metal server.
+// Reboot the Elastic Metal server associated with the ID, use the `boot_type` `rescue` to reboot the server in rescue mode.
 func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1374,7 +1383,8 @@ type StartServerRequest struct {
 	BootType ServerBootType `json:"boot_type"`
 }
 
-// StartServer: start the server associated with the ID.
+// StartServer: start an Elastic Metal server.
+// Start the server associated with the ID.
 func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1418,7 +1428,8 @@ type StopServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopServer: stop the server associated with the ID. The server remains allocated to your account and all data remains on the local storage of the server.
+// StopServer: stop an Elastic Metal server.
+// Stop the server associated with the ID. The server remains allocated to your account and all data remains on the local storage of the server.
 func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1469,7 +1480,8 @@ type ListServerEventsRequest struct {
 	OrderBy ListServerEventsRequestOrderBy `json:"-"`
 }
 
-// ListServerEvents: list event (i.e. start/stop/reboot) associated to the server ID.
+// ListServerEvents: list server events.
+// List event (i.e. start/stop/reboot) associated to the server ID.
 func (s *API) ListServerEvents(req *ListServerEventsRequest, opts ...scw.RequestOption) (*ListServerEventsResponse, error) {
 	var err error
 
@@ -1521,7 +1533,8 @@ type StartBMCAccessRequest struct {
 	IP net.IP `json:"ip"`
 }
 
-// StartBMCAccess: start BMC (Baseboard Management Controller) access associated with the ID.
+// StartBMCAccess: start BMC access.
+// Start BMC (Baseboard Management Controller) access associated with the ID.
 // The BMC (Baseboard Management Controller) access is available one hour after the installation of the server.
 // You need first to create an option Remote Access. You will find the ID and the price with a call to listOffers (https://developers.scaleway.com/en/products/baremetal/api/#get-78db92). Then add the option https://developers.scaleway.com/en/products/baremetal/api/#post-b14abd.
 // After adding the BMC option, you need to Get Remote Access to get the login/password https://developers.scaleway.com/en/products/baremetal/api/#get-cefc0f. Do not forget to delete the Option after use.
@@ -1568,7 +1581,8 @@ type GetBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetBMCAccess: get the BMC (Baseboard Management Controller) access associated with the ID, including the URL and login information needed to connect.
+// GetBMCAccess: get BMC access.
+// Get the BMC (Baseboard Management Controller) access associated with the ID, including the URL and login information needed to connect.
 func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
 	var err error
 
@@ -1607,7 +1621,8 @@ type StopBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
-// StopBMCAccess: stop BMC (Baseboard Management Controller) access associated with the ID.
+// StopBMCAccess: stop BMC access.
+// Stop BMC (Baseboard Management Controller) access associated with the ID.
 func (s *API) StopBMCAccess(req *StopBMCAccessRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1648,7 +1663,8 @@ type UpdateIPRequest struct {
 	Reverse *string `json:"reverse"`
 }
 
-// UpdateIP: configure the IP address associated with the server ID and IP ID. You can use this method to set a reverse DNS for an IP address.
+// UpdateIP: update IP.
+// Configure the IP address associated with the server ID and IP ID. You can use this method to set a reverse DNS for an IP address.
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -1700,7 +1716,8 @@ type AddOptionServerRequest struct {
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// AddOptionServer: add an option, such as Private Networks, to a specific server.
+// AddOptionServer: add server option.
+// Add an option, such as Private Networks, to a specific server.
 func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1750,7 +1767,8 @@ type DeleteOptionServerRequest struct {
 	OptionID string `json:"-"`
 }
 
-// DeleteOptionServer: delete an option from a specific server.
+// DeleteOptionServer: delete server option.
+// Delete an option from a specific server.
 func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1798,7 +1816,8 @@ type ListOffersRequest struct {
 	SubscriptionPeriod OfferSubscriptionPeriod `json:"-"`
 }
 
-// ListOffers: list all available Elastic Metal server configurations.
+// ListOffers: list offers.
+// List all available Elastic Metal server configurations.
 func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*ListOffersResponse, error) {
 	var err error
 
@@ -1844,7 +1863,8 @@ type GetOfferRequest struct {
 	OfferID string `json:"-"`
 }
 
-// GetOffer: get details of an offer identified by its offer ID.
+// GetOffer: get offer.
+// Get details of an offer identified by its offer ID.
 func (s *API) GetOffer(req *GetOfferRequest, opts ...scw.RequestOption) (*Offer, error) {
 	var err error
 
@@ -1883,7 +1903,8 @@ type GetOptionRequest struct {
 	OptionID string `json:"-"`
 }
 
-// GetOption: return specific option for the ID.
+// GetOption: get option.
+// Return specific option for the ID.
 func (s *API) GetOption(req *GetOptionRequest, opts ...scw.RequestOption) (*Option, error) {
 	var err error
 
@@ -1928,7 +1949,8 @@ type ListOptionsRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListOptions: list all options matching with filters.
+// ListOptions: list options.
+// List all options matching with filters.
 func (s *API) ListOptions(req *ListOptionsRequest, opts ...scw.RequestOption) (*ListOptionsResponse, error) {
 	var err error
 
@@ -1982,7 +2004,8 @@ type ListSettingsRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSettings: return all settings for a project ID.
+// ListSettings: list all settings.
+// Return all settings for a project ID.
 func (s *API) ListSettings(req *ListSettingsRequest, opts ...scw.RequestOption) (*ListSettingsResponse, error) {
 	var err error
 
@@ -2031,7 +2054,8 @@ type UpdateSettingRequest struct {
 	Enabled *bool `json:"enabled"`
 }
 
-// UpdateSetting: update a setting for a project ID (enable or disable).
+// UpdateSetting: update setting.
+// Update a setting for a project ID (enable or disable).
 func (s *API) UpdateSetting(req *UpdateSettingRequest, opts ...scw.RequestOption) (*Setting, error) {
 	var err error
 
@@ -2079,7 +2103,8 @@ type ListOSRequest struct {
 	OfferID *string `json:"-"`
 }
 
-// ListOS: list all OSes that are available for installation on Elastic Metal servers.
+// ListOS: list available OSes.
+// List all OSes that are available for installation on Elastic Metal servers.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
 
@@ -2125,7 +2150,8 @@ type GetOSRequest struct {
 	OsID string `json:"-"`
 }
 
-// GetOS: return specific OS for the ID.
+// GetOS: get an OS with an ID.
+// Return specific OS for the ID.
 func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	var err error
 

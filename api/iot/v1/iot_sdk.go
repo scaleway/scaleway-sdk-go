@@ -40,6 +40,7 @@ var (
 )
 
 // API: this API allows you to manage IoT hubs and devices.
+// IoT API.
 type API struct {
 	client *scw.Client
 }
@@ -550,14 +551,12 @@ type CreateRouteRequestDatabaseConfig struct {
 	Password string `json:"password"`
 
 	Query string `json:"query"`
-	// Engine:
-	// Default value: unknown
+	// Engine: default value: unknown
 	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type CreateRouteRequestRestConfig struct {
-	// Verb:
-	// Default value: unknown
+	// Verb: default value: unknown
 	Verb RouteRestConfigHTTPVerb `json:"verb"`
 
 	URI string `json:"uri"`
@@ -571,8 +570,7 @@ type CreateRouteRequestS3Config struct {
 	BucketName string `json:"bucket_name"`
 
 	ObjectPrefix string `json:"object_prefix"`
-	// Strategy:
-	// Default value: unknown
+	// Strategy: default value: unknown
 	Strategy RouteS3ConfigS3Strategy `json:"strategy"`
 }
 
@@ -599,7 +597,8 @@ type Device struct {
 	AllowMultipleConnections bool `json:"allow_multiple_connections"`
 	// MessageFilters: filter-sets to restrict the topics the device can publish/subscribe to.
 	MessageFilters *DeviceMessageFilters `json:"message_filters"`
-	// HasCustomCertificate: assigning a custom certificate allows a device to authenticate using that specific certificate without checking the hub's CA certificate.
+	// HasCustomCertificate: whether the device was assigned a custom certificate.
+	// Assigning a custom certificate allows a device to authenticate using that specific certificate without checking the hub's CA certificate.
 	HasCustomCertificate bool `json:"has_custom_certificate"`
 	// CreatedAt: device add date.
 	CreatedAt *time.Time `json:"created_at"`
@@ -617,7 +616,8 @@ type DeviceMessageFilters struct {
 
 // DeviceMessageFiltersRule: device. message filters. rule.
 type DeviceMessageFiltersRule struct {
-	// Policy: if accept, the set will accept all topics in the topics list, but no other.
+	// Policy: how to use the topic list.
+	// If accept, the set will accept all topics in the topics list, but no other.
 	// If reject, the set will deny all topics in the topics list, but all others will be allowed.
 	// Default value: unknown
 	Policy DeviceMessageFiltersRulePolicy `json:"policy"`
@@ -667,7 +667,8 @@ type Hub struct {
 	DeviceCount uint64 `json:"device_count"`
 	// ConnectedDeviceCount: number of currently connected devices.
 	ConnectedDeviceCount uint64 `json:"connected_device_count"`
-	// Endpoint: devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
+	// Endpoint: host to connect your devices to.
+	// Devices should be connected to this host, port may be 1883 (MQTT), 8883 (MQTT over TLS), 80 (MQTT over Websocket) or 443 (MQTT over Websocket over TLS).
 	Endpoint string `json:"endpoint"`
 	// DisableEvents: disable Hub events.
 	DisableEvents bool `json:"disable_events"`
@@ -683,9 +684,11 @@ type Hub struct {
 	ProjectID string `json:"project_id"`
 	// OrganizationID: organization owning the resource.
 	OrganizationID string `json:"organization_id"`
-	// EnableDeviceAutoProvisioning: when an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your hub. The hub uses the common name of the device certifcate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
+	// EnableDeviceAutoProvisioning: enable device auto provisioning.
+	// When an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your hub. The hub uses the common name of the device certifcate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
 	EnableDeviceAutoProvisioning bool `json:"enable_device_auto_provisioning"`
-	// HasCustomCa: after creating a hub, this flag is set to False as the hub certificates are managed by Scaleway. Once a custom certificate authority is installed, this flag will be set to true.
+	// HasCustomCa: whether the hub is using a custom certificate authority.
+	// After creating a hub, this flag is set to False as the hub certificates are managed by Scaleway. Once a custom certificate authority is installed, this flag will be set to true.
 	HasCustomCa bool `json:"has_custom_ca"`
 	// TwinsGraphiteConfig: bETA - not implemented yet.
 	// Precisely one of TwinsGraphiteConfig must be set.
@@ -755,7 +758,8 @@ type Network struct {
 	HubID string `json:"hub_id"`
 	// CreatedAt: network creation date.
 	CreatedAt *time.Time `json:"created_at"`
-	// TopicPrefix: this prefix will be prepended to all topics for this Network.
+	// TopicPrefix: topic prefix for the Network.
+	// This prefix will be prepended to all topics for this Network.
 	TopicPrefix string `json:"topic_prefix"`
 }
 
@@ -887,14 +891,12 @@ type UpdateRouteRequestDatabaseConfig struct {
 	Password *string `json:"password"`
 
 	Query *string `json:"query"`
-	// Engine:
-	// Default value: unknown
+	// Engine: default value: unknown
 	Engine RouteDatabaseConfigEngine `json:"engine"`
 }
 
 type UpdateRouteRequestRestConfig struct {
-	// Verb:
-	// Default value: unknown
+	// Verb: default value: unknown
 	Verb RouteRestConfigHTTPVerb `json:"verb"`
 
 	URI *string `json:"uri"`
@@ -908,8 +910,7 @@ type UpdateRouteRequestS3Config struct {
 	BucketName *string `json:"bucket_name"`
 
 	ObjectPrefix *string `json:"object_prefix"`
-	// Strategy:
-	// Default value: unknown
+	// Strategy: default value: unknown
 	Strategy RouteS3ConfigS3Strategy `json:"strategy"`
 }
 
@@ -1321,7 +1322,8 @@ type SetHubCARequest struct {
 	HubID string `json:"-"`
 	// CaCertPem: the CA's PEM-encoded certificate.
 	CaCertPem string `json:"ca_cert_pem"`
-	// ChallengeCertPem: the challenge is a PEM-encoded certificate to prove the possession of the CA. It must be signed by the CA, and have a Common Name equal to the Hub ID.
+	// ChallengeCertPem: proof of possession PEM-encoded certificate.
+	// The challenge is a PEM-encoded certificate to prove the possession of the CA. It must be signed by the CA, and have a Common Name equal to the Hub ID.
 	ChallengeCertPem string `json:"challenge_cert_pem"`
 }
 
@@ -1988,7 +1990,8 @@ type CreateRouteRequest struct {
 	RestConfig *CreateRouteRequestRestConfig `json:"rest_config,omitempty"`
 }
 
-// CreateRoute: multiple route kinds can be created:
+// CreateRoute: create a route.
+// Multiple route kinds can be created:
 // - Database Route.
 //   Create a route that will record subscribed MQTT messages into your database.
 //   <b>You need to manage the database by yourself</b>.
@@ -2406,9 +2409,11 @@ type PutTwinDocumentRequest struct {
 	TwinID string `json:"-"`
 	// DocumentName: document name.
 	DocumentName string `json:"-"`
-	// Version: if set, ensures that the document's current version matches before persisting the update.
+	// Version: the version of the document to update.
+	// If set, ensures that the document's current version matches before persisting the update.
 	Version *uint32 `json:"version"`
-	// Data: the new data that will replace the contents of the document.
+	// Data: new document data.
+	// The new data that will replace the contents of the document.
 	Data *scw.JSONObject `json:"data"`
 }
 
@@ -2460,9 +2465,11 @@ type PatchTwinDocumentRequest struct {
 	TwinID string `json:"-"`
 	// DocumentName: document name.
 	DocumentName string `json:"-"`
-	// Version: if set, ensures that the document's current version matches before persisting the update.
+	// Version: the version of the document to update.
+	// If set, ensures that the document's current version matches before persisting the update.
 	Version *uint32 `json:"version"`
-	// Data: a json data that will be applied on the document's current data.
+	// Data: patch data.
+	// A json data that will be applied on the document's current data.
 	// Patching rules:
 	// * The patch goes recursively through the patch objects.
 	// * If the patch object property is null, then it is removed from the final object.

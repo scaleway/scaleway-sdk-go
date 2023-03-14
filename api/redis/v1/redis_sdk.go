@@ -449,7 +449,8 @@ type CreateClusterRequest struct {
 	ClusterSize *int32 `json:"cluster_size"`
 	// ACLRules: list of ACLRuleSpec used to secure your publicly exposed cluster.
 	ACLRules []*ACLRuleSpec `json:"acl_rules"`
-	// Endpoints: zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks. If no EndpoindSpec is given the cluster will be publicly exposed by default.
+	// Endpoints: zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks.
+	// Zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks. If no EndpoindSpec is given the cluster will be publicly exposed by default.
 	Endpoints []*EndpointSpec `json:"endpoints"`
 	// TLSEnabled: whether or not TLS is enabled.
 	TLSEnabled bool `json:"tls_enabled"`
@@ -672,7 +673,8 @@ type MigrateClusterRequest struct {
 	ClusterSize *uint32 `json:"cluster_size,omitempty"`
 }
 
-// MigrateCluster: upgrade your Database for Redis® cluster to a new version or scale it vertically / horizontally. Please note: scaling horizontally your Database for Redis® cluster won't renew its TLS certificate. In order to refresh the SSL certificate, you have to use the dedicated api route.
+// MigrateCluster: migrate your cluster architecture.
+// Upgrade your Database for Redis® cluster to a new version or scale it vertically / horizontally. Please note: scaling horizontally your Database for Redis® cluster won't renew its TLS certificate. In order to refresh the SSL certificate, you have to use the dedicated api route.
 func (s *API) MigrateCluster(req *MigrateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 

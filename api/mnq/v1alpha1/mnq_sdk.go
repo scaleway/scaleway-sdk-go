@@ -40,6 +40,7 @@ var (
 )
 
 // API: this API allows you to manage Messaging or Queueing brokers.
+// MnQ API (beta).
 type API struct {
 	client *scw.Client
 }
@@ -506,7 +507,8 @@ type CreateCredentialRequest struct {
 	Permissions *Permissions `json:"permissions,omitempty"`
 }
 
-// CreateCredential: create a set of credentials for a specific namespace.
+// CreateCredential: create a set of credentials.
+// Create a set of credentials for a specific namespace.
 func (s *API) CreateCredential(req *CreateCredentialRequest, opts ...scw.RequestOption) (*Credential, error) {
 	var err error
 
