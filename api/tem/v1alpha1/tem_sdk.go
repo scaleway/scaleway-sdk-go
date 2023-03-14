@@ -234,6 +234,8 @@ type Email struct {
 	// RcptType: type of the recipient.
 	// Default value: unknown_rcpt_type
 	RcptType EmailRcptType `json:"rcpt_type"`
+	// Subject: subject of the email.
+	Subject string `json:"subject"`
 	// CreatedAt: creation date of the email object.
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last update time of the email object.
@@ -425,6 +427,8 @@ type ListEmailsRequest struct {
 	MailTo *string `json:"-"`
 	// Statuses: optional, list emails having any of this status.
 	Statuses []EmailStatus `json:"-"`
+	// Subject: optional, list emails having this subject.
+	Subject *string `json:"-"`
 }
 
 // ListEmails: list emails sent from a domain and/or for a project and/or for an organization.
@@ -452,6 +456,7 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "mail_from", req.MailFrom)
 	parameter.AddToQuery(query, "mail_to", req.MailTo)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "subject", req.Subject)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -571,10 +576,12 @@ func (s *API) CancelEmail(req *CancelEmailRequest, opts ...scw.RequestOption) (*
 type CreateDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// ProjectID: ID of the project to which the domain belongs.
 	ProjectID string `json:"project_id"`
-
+	// DomainName: fully qualified domain dame.
 	DomainName string `json:"domain_name"`
+	// AcceptTos: accept the Scaleway Terms of Service.
+	AcceptTos bool `json:"accept_tos"`
 }
 
 // CreateDomain: register a domain in a project.
