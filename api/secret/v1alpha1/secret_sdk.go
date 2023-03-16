@@ -326,7 +326,7 @@ type GetSecretByNameRequest struct {
 	SecretName string `json:"-"`
 }
 
-// GetSecretByName: get metadata of a Secret.
+// GetSecretByName: get metadata of a Secret by name.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -477,7 +477,7 @@ type DeleteSecretRequest struct {
 	SecretID string `json:"-"`
 }
 
-// DeleteSecret: delete a secret.
+// DeleteSecret: delete a Secret.
 func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -609,7 +609,7 @@ type GetSecretVersionByNameRequest struct {
 	Revision string `json:"-"`
 }
 
-// GetSecretVersionByName: get metadata of a SecretVersion.
+// GetSecretVersionByName: get metadata of a SecretVersion by name.
 func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -710,7 +710,7 @@ type ListSecretVersionsRequest struct {
 	Status []SecretVersionStatus `json:"-"`
 }
 
-// ListSecretVersions: list versions of a secret, not returning any sensitive data.
+// ListSecretVersions: list versions of a Secret, not returning any sensitive data.
 func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -766,7 +766,7 @@ type ListSecretVersionsByNameRequest struct {
 	Status []SecretVersionStatus `json:"-"`
 }
 
-// ListSecretVersionsByName: list versions of a secret, not returning any sensitive data.
+// ListSecretVersionsByName: list versions of a Secret by name, not returning any sensitive data.
 func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -1013,7 +1013,7 @@ type AccessSecretVersionByNameRequest struct {
 	Revision string `json:"-"`
 }
 
-// AccessSecretVersionByName: access a SecretVersion, returning the sensitive data.
+// AccessSecretVersionByName: access a SecretVersion by name, returning the sensitive data.
 func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
