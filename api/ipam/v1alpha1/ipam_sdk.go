@@ -220,6 +220,8 @@ type ListIPsRequest struct {
 	MacAddress *string `json:"-"`
 
 	Tags *[]string `json:"-"`
+
+	IsIPv6 *bool `json:"-"`
 }
 
 // ListIPs: find IP addresses.
@@ -248,6 +250,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
 	parameter.AddToQuery(query, "mac_address", req.MacAddress)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
