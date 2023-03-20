@@ -1304,7 +1304,7 @@ type UpgradeClusterRequest struct {
 	// New Kubernetes version of the cluster. Note that the version shoud either be a higher patch version of the same minor version or the direct minor version after the current one.
 	Version string `json:"version"`
 	// UpgradePools: enablement of the pools upgrade.
-	// This field makes the upgrade upgrades the pool once the Kubernetes master in upgrade.
+	// This field also trigger pools upgrade once the control plane is upgraded.
 	UpgradePools bool `json:"upgrade_pools"`
 }
 
@@ -1329,6 +1329,54 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/upgrade",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Cluster
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SetClusterTypeRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ClusterID: ID of the cluster to migrate from one type to another.
+	ClusterID string `json:"-"`
+	// Type: type of the cluster.
+	// Type of the cluster. Note that some migrations are not possible (please refer to product documentation).
+	Type string `json:"type"`
+}
+
+// SetClusterType: change type of a cluster.
+// Change type of a specific Kubernetes cluster.
+func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/set-type",
 		Headers: http.Header{},
 	}
 
