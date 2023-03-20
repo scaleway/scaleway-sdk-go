@@ -1011,6 +1011,8 @@ type TriggerMnqNatsClientConfig struct {
 	MnqProjectID string `json:"mnq_project_id"`
 
 	MnqRegion string `json:"mnq_region"`
+
+	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
 type TriggerMnqSqsClientConfig struct {
@@ -1021,6 +1023,8 @@ type TriggerMnqSqsClientConfig struct {
 	MnqProjectID string `json:"mnq_project_id"`
 
 	MnqRegion string `json:"mnq_region"`
+
+	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
 type TriggerSqsClientConfig struct {
