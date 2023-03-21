@@ -1407,7 +1407,7 @@ type ListNodeTypesRequest struct {
 }
 
 // ListNodeTypes: list available node types.
-// List all available node types. By default, the databases returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
+// List all available node types. By default, the node types returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
 	var err error
 
@@ -1467,7 +1467,7 @@ type ListDatabaseBackupsRequest struct {
 }
 
 // ListDatabaseBackups: list database backups.
-// List all backups in a specified zone, for a given Scaleway Organization or Scaleway Project. By default, the backups listed are ordered by creation date in ascending order. This can be modified via the `order_by` field.
+// List all backups in a specified region, for a given Scaleway Organization or Scaleway Project. By default, the backups listed are ordered by creation date in ascending order. This can be modified via the `order_by` field.
 func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.RequestOption) (*ListDatabaseBackupsResponse, error) {
 	var err error
 
@@ -1867,7 +1867,7 @@ type ListInstancesRequest struct {
 }
 
 // ListInstances: list Database Instances.
-// List all Database Instances in the specified zone, for a given Scaleway Organization or Scaleway Project. By default, the Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags` and `name`. For the `name` parameter, the value you include will be checked against the whole name string to see if it includes the string you put in the parameter.
+// List all Database Instances in the specified region, for a given Scaleway Organization or Scaleway Project. By default, the Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags` and `name`. For the `name` parameter, the value you include will be checked against the whole name string to see if it includes the string you put in the parameter.
 func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption) (*ListInstancesResponse, error) {
 	var err error
 
@@ -2326,7 +2326,7 @@ type GetInstanceMetricsRequest struct {
 }
 
 // GetInstanceMetrics: get Database Instance metrics.
-// Retrieve the time series metrics of a give Database Instance. You can define the period from which to retrieve metrics by specifying the `start_date` and `end_date`.
+// Retrieve the time series metrics of a given Database Instance. You can define the period from which to retrieve metrics by specifying the `start_date` and `end_date`.
 func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
 	var err error
 
@@ -3643,7 +3643,7 @@ type ListSnapshotsRequest struct {
 }
 
 // ListSnapshots: list snapshots.
-// List snapshots. You can include the `instance_id` or `project_id` in your query to get the list of snaphots for specific Database Instances and/or Projects. By default, the details returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
+// List snapshots. You can include the `instance_id` or `project_id` in your query to get the list of snapshots for specific Database Instances and/or Projects. By default, the details returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
 	var err error
 
@@ -3929,7 +3929,7 @@ type CreateEndpointRequest struct {
 }
 
 // CreateEndpoint: create a new Database Instance endpoint.
-// Create a new endpoint for a Database Instance. You can add `load_balacer` and `private_network` specifications to the body of the request. Note that this action replaces your current endpoint, which means you might need to update any environment configurations that point to the old endpoint.
+// Create a new endpoint for a Database Instance. You can add `load_balancer` and `private_network` specifications to the body of the request. Note that this action replaces your current endpoint, which means you might need to update any environment configurations that point to the old endpoint.
 func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
