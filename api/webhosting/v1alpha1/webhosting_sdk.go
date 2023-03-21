@@ -748,7 +748,7 @@ type RestoreHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// RestoreHosting: retore a hosting.
+// RestoreHosting: restore a hosting.
 // Restore a hosting with the given ID.
 func (s *API) RestoreHosting(req *RestoreHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
@@ -794,7 +794,7 @@ type GetDomainDNSRecordsRequest struct {
 }
 
 // GetDomainDNSRecords: get the DNS records.
-// Get the DNS records of a specified domain.
+// The set of DNS record of a specific domain associated to a hosting.
 func (s *API) GetDomainDNSRecords(req *GetDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
 	var err error
 
