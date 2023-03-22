@@ -229,6 +229,8 @@ type CreateVolumeRequest struct {
 	Region scw.Region `json:"-"`
 
 	ProjectID string `json:"project_id"`
+
+	Name string `json:"name"`
 }
 
 // CreateVolume: create volume in S3 bucket.
@@ -703,6 +705,8 @@ type ListPinsRequest struct {
 
 	ProjectID *string `json:"-"`
 
+	OrganizationID *string `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
@@ -728,6 +732,7 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 	query := url.Values{}
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
