@@ -706,6 +706,8 @@ type MoveMACAddrRequest struct {
 	DstFipID string `json:"dst_fip_id"`
 }
 
+// MoveMACAddr: move a virtual MAC.
+// Move a Virtual MAC from a given Flexible IP onto another Flexible IP.
 func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
