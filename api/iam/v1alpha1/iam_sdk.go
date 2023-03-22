@@ -1823,6 +1823,8 @@ type ClonePolicyRequest struct {
 	PolicyID string `json:"-"`
 }
 
+// ClonePolicy: clone a policy.
+// Clone a policy. You must define specify the `policy_id` parameter in your request.
 func (s *API) ClonePolicy(req *ClonePolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
