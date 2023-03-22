@@ -16,6 +16,8 @@ Scaleway is a single way to create, deploy and scale your infrastructure in the 
 
 - [Godoc](https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc)
 - [Developers website](https://developers.scaleway.com) (API documentation)
+- [Products availability guide](https://www.scaleway.com/en/docs/console/my-account/reference-content/products-availability/)
+- [The community tools](https://developers.scaleway.com/en/community-tools/#official-repos)
 
 ## Installation
 
@@ -41,9 +43,11 @@ func main() {
 	// Create a Scaleway client
 	client, err := scw.NewClient(
 		// Get your organization ID at https://console.scaleway.com/organization/settings
-		scw.WithDefaultOrganizationID("ORGANISATION_ID"),
+		scw.WithDefaultOrganizationID("SCW_DEFAULT_ORGANIZATION_ID"),
 		// Get your credentials at https://console.scaleway.com/iam/api-keys
-		scw.WithAuth("ACCESS_KEY", "SECRET_KEY"),
+		scw.WithAuth("SCW_ACCESS_KEY", "SCW_SECRET_KEY"),
+		// Get more about our availability zones at https://www.scaleway.com/en/docs/console/my-account/reference-content/products-availability/
+		scw.WithDefaultRegion("SCW_REGION"),
 	)
 	if err != nil {
 		panic(err)
