@@ -553,6 +553,8 @@ type Cluster struct {
 	OpenIDConnectConfig *ClusterOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
+	// PrivateNetworkID: private network ID for internal cluster communication.
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // ClusterAutoUpgrade: cluster. auto upgrade.
@@ -1088,6 +1090,8 @@ type CreateClusterRequest struct {
 	OpenIDConnectConfig *CreateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
+	// PrivateNetworkID: private network ID for internal cluster communication (cannot be changed later).
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // CreateCluster: create a new cluster.
