@@ -1504,6 +1504,8 @@ type UpdateEndpointRequest struct {
 	PublicNetwork *EndpointSpecPublicNetworkSpec `json:"public_network,omitempty"`
 }
 
+// UpdateEndpoint: update an endpoint.
+// Update information about a Redis™ Database Instance (Redis™ cluster) endpoint. Full details about the endpoint, like `ips`, `port`, `private_network` and `public_network` specifications are returned in the response.
 func (s *API) UpdateEndpoint(req *UpdateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
