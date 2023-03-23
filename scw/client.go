@@ -91,6 +91,18 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) GetHTTPClient() *http.Client {
+	if c.httpClient == nil {
+		return nil
+	}
+
+	if httpClient, ok := c.httpClient.(*http.Client); ok {
+		return httpClient
+	}
+
+	return nil
+}
+
 // GetDefaultOrganizationID returns the default organization ID
 // of the client. This value can be set in the client option
 // WithDefaultOrganizationID(). Be aware this value can be empty.
