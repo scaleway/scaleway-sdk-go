@@ -943,6 +943,8 @@ type Runtime struct {
 	Extension string `json:"extension"`
 
 	Implementation string `json:"implementation"`
+
+	LogoURL string `json:"logo_url"`
 }
 
 type Secret struct {
