@@ -445,6 +445,10 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 		req.ProjectID = defaultProjectID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("token")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/cockpit/v1beta1/tokens",
