@@ -984,6 +984,10 @@ type Backend struct {
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
+	// RedispatchAttemptCount: whether to use another backend server on each attempt.
+	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
+	// MaxRetries: number of retries when a backend server connection failed.
+	MaxRetries *int32 `json:"max_retries"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -1181,6 +1185,8 @@ type HealthCheck struct {
 	CheckDelay *time.Duration `json:"check_delay"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
+	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
+	TransientCheckDelay *scw.Duration `json:"transient_check_delay"`
 }
 
 func (m *HealthCheck) UnmarshalJSON(b []byte) error {
@@ -2228,6 +2234,10 @@ type ZonedAPICreateBackendRequest struct {
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
+	// RedispatchAttemptCount: whether to use another backend server on each attempt.
+	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
+	// MaxRetries: number of retries when a backend server connection failed.
+	MaxRetries *int32 `json:"max_retries"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2392,6 +2402,10 @@ type ZonedAPIUpdateBackendRequest struct {
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
+	// RedispatchAttemptCount: whether to use another backend server on each retries.
+	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
+	// MaxRetries: number of retries when a backend server connection failed.
+	MaxRetries *int32 `json:"max_retries"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2687,6 +2701,8 @@ type ZonedAPIUpdateHealthCheckRequest struct {
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
+	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
+	TransientCheckDelay *scw.Duration `json:"transient_check_delay"`
 }
 
 func (m *ZonedAPIUpdateHealthCheckRequest) UnmarshalJSON(b []byte) error {
@@ -5165,6 +5181,10 @@ type CreateBackendRequest struct {
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
+	// RedispatchAttemptCount: whether to use another backend server on each attempt.
+	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
+	// MaxRetries: number of retries when a backend server connection failed.
+	MaxRetries *int32 `json:"max_retries"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5327,6 +5347,10 @@ type UpdateBackendRequest struct {
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
+	// RedispatchAttemptCount: whether to use another backend server on each retries.
+	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
+	// MaxRetries: number of retries when a backend server connection failed.
+	MaxRetries *int32 `json:"max_retries"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5617,6 +5641,8 @@ type UpdateHealthCheckRequest struct {
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
+	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
+	TransientCheckDelay *scw.Duration `json:"transient_check_delay"`
 }
 
 func (m *UpdateHealthCheckRequest) UnmarshalJSON(b []byte) error {
