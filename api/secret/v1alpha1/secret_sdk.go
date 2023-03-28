@@ -522,6 +522,9 @@ type CreateSecretVersionRequest struct {
 	Data []byte `json:"data"`
 	// Description: description of the version.
 	Description *string `json:"description"`
+	// DisablePrevious: disable the previous secret version.
+	// If there is no previous version or if the previous version was already disabled, does nothing.
+	DisablePrevious bool `json:"disable_previous"`
 }
 
 // CreateSecretVersion: create a version.
