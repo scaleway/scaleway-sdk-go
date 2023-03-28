@@ -207,6 +207,12 @@ type CockpitEndpoints struct {
 	GrafanaURL string `json:"grafana_url"`
 }
 
+// CockpitMetrics: cockpit metrics.
+type CockpitMetrics struct {
+	// Timeseries: timeseries array.
+	Timeseries []*scw.TimeSeries `json:"timeseries"`
+}
+
 // ContactPoint: alert contact point.
 // Contact point.
 type ContactPoint struct {
@@ -351,6 +357,49 @@ func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Co
 	}
 
 	var resp Cockpit
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetCockpitMetricsRequest struct {
+	// ProjectID: project ID.
+	ProjectID string `json:"-"`
+	// StartDate: start date.
+	StartDate *time.Time `json:"-"`
+	// EndDate: end date.
+	EndDate *time.Time `json:"-"`
+	// MetricName: metric name.
+	MetricName *string `json:"-"`
+}
+
+// GetCockpitMetrics: get cockpit metrics.
+// Get the cockpit metrics with the given project ID.
+func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "metric_name", req.MetricName)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/cockpit/v1beta1/cockpit/metrics",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp CockpitMetrics
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
