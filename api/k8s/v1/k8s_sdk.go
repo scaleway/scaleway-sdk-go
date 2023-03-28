@@ -548,8 +548,8 @@ type Cluster struct {
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of enabled admission plugins.
 	AdmissionPlugins []string `json:"admission_plugins"`
-	// OpenIDConnectConfig: aLPHA - The OpenID Connect configuration of the cluster.
-	// This feature is in ALPHA state, it may be deleted or modified. This configuration is the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	// OpenIDConnectConfig: openID Connect configuration of the cluster.
+	// This configuration enables to update the OpenID Connect configuration of the Kubernetes API server.
 	OpenIDConnectConfig *ClusterOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
@@ -1085,8 +1085,8 @@ type CreateClusterRequest struct {
 	FeatureGates []string `json:"feature_gates"`
 	// AdmissionPlugins: list of admission plugins to enable.
 	AdmissionPlugins []string `json:"admission_plugins"`
-	// OpenIDConnectConfig: aLPHA - OpenID Connect configuration of the cluster.
-	// This feature is in ALPHA state, it may be deleted or modified. This configuration enables to set the [OpenID Connect configuration](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) of the Kubernetes API server.
+	// OpenIDConnectConfig: openID Connect configuration of the cluster.
+	// This configuration enables to update the OpenID Connect configuration of the Kubernetes API server.
 	OpenIDConnectConfig *CreateClusterRequestOpenIDConnectConfig `json:"open_id_connect_config"`
 	// ApiserverCertSans: additional Subject Alternative Names for the Kubernetes API server certificate.
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
