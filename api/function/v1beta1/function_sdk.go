@@ -1039,31 +1039,7 @@ type TriggerSqsClientConfig struct {
 	SecretKey string `json:"secret_key"`
 }
 
-type UpdateTriggerRequestMnqNatsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
-
-	Subject string `json:"subject"`
-
-	MnqProjectID string `json:"mnq_project_id"`
-
-	MnqRegion string `json:"mnq_region"`
-}
-
-type UpdateTriggerRequestMnqSqsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
-
-	Queue string `json:"queue"`
-
-	MnqProjectID string `json:"mnq_project_id"`
-
-	MnqRegion string `json:"mnq_region"`
-}
-
 type UpdateTriggerRequestSqsClientConfig struct {
-	Endpoint string `json:"endpoint"`
-
-	QueueURL string `json:"queue_url"`
-
 	AccessKey string `json:"access_key"`
 
 	SecretKey string `json:"secret_key"`
@@ -2628,14 +2604,8 @@ type UpdateTriggerRequest struct {
 
 	Description *string `json:"description"`
 
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	ScwSqsConfig *UpdateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
-
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	// Precisely one of SqsConfig must be set.
 	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
-
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	ScwNatsConfig *UpdateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 }
 
 func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
