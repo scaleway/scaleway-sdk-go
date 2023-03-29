@@ -147,6 +147,36 @@ func (enum *ListGrafanaUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListPlansRequestOrderBy string
+
+const (
+	ListPlansRequestOrderByNameAsc  = ListPlansRequestOrderBy("name_asc")
+	ListPlansRequestOrderByNameDesc = ListPlansRequestOrderBy("name_desc")
+)
+
+func (enum ListPlansRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPlansRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPlansRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPlansRequestOrderBy(ListPlansRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListTokensRequestOrderBy string
 
 const (
@@ -179,6 +209,38 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PlanName string
+
+const (
+	PlanNameUnknownName = PlanName("unknown_name")
+	PlanNameFree        = PlanName("free")
+	PlanNamePremium     = PlanName("premium")
+	PlanNameCustom      = PlanName("custom")
+)
+
+func (enum PlanName) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_name"
+	}
+	return string(enum)
+}
+
+func (enum PlanName) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PlanName) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PlanName(PlanName(tmp).String())
+	return nil
+}
+
 // Cockpit: cockpit.
 type Cockpit struct {
 	// ProjectID: project ID.
@@ -194,6 +256,8 @@ type Cockpit struct {
 	Status CockpitStatus `json:"status"`
 	// ManagedAlertsEnabled: managed alerts enabled.
 	ManagedAlertsEnabled bool `json:"managed_alerts_enabled"`
+	// Plan: pricing plan.
+	Plan *Plan `json:"plan"`
 }
 
 // CockpitEndpoints: cockpit. endpoints.
@@ -255,11 +319,43 @@ type ListGrafanaUsersResponse struct {
 	GrafanaUsers []*GrafanaUser `json:"grafana_users"`
 }
 
+// ListPlansResponse: list all pricing plans response.
+// List plans response.
+type ListPlansResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	Plans []*Plan `json:"plans"`
+}
+
 // ListTokensResponse: list tokens response.
 type ListTokensResponse struct {
 	TotalCount uint32 `json:"total_count"`
 
 	Tokens []*Token `json:"tokens"`
+}
+
+// Plan: plan.
+type Plan struct {
+	// ID: plan id.
+	ID string `json:"id"`
+	// Name: plan name.
+	// Default value: unknown_name
+	Name PlanName `json:"name"`
+	// RetentionMetricsInterval: retention for metrics.
+	RetentionMetricsInterval *scw.Duration `json:"retention_metrics_interval"`
+	// RetentionLogsInterval: retention for logs.
+	RetentionLogsInterval *scw.Duration `json:"retention_logs_interval"`
+	// SampleIngestionPrice: ingestion price for 1million samples in cents.
+	SampleIngestionPrice uint32 `json:"sample_ingestion_price"`
+	// LogsIngestionPrice: ingestion price in cents for 1 Go of logs.
+	LogsIngestionPrice uint32 `json:"logs_ingestion_price"`
+	// RetentionPrice: retention price in euros per month.
+	RetentionPrice uint32 `json:"retention_price"`
+}
+
+// SelectPlanResponse: select pricing plan response.
+// Select plan response.
+type SelectPlanResponse struct {
 }
 
 // Token: token.
@@ -992,6 +1088,81 @@ func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opt
 	return &resp, nil
 }
 
+type ListPlansRequest struct {
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy: default value: name_asc
+	OrderBy ListPlansRequestOrderBy `json:"-"`
+}
+
+// ListPlans: list plans.
+// List all pricing plans.
+func (s *API) ListPlans(req *ListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/cockpit/v1beta1/plans",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListPlansResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type SelectPlanRequest struct {
+	ProjectID string `json:"project_id"`
+
+	PlanID string `json:"plan_id"`
+}
+
+// SelectPlan: select pricing plan.
+// Select the wanted pricing plan.
+func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*SelectPlanResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/cockpit/v1beta1/select-plan",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SelectPlanResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
@@ -1047,4 +1218,23 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint32, error)
 	r.GrafanaUsers = append(r.GrafanaUsers, results.GrafanaUsers...)
 	r.TotalCount += uint32(len(results.GrafanaUsers))
 	return uint32(len(results.GrafanaUsers)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPlansResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Plans = append(r.Plans, results.Plans...)
+	r.TotalCount += uint64(len(results.Plans))
+	return uint64(len(results.Plans)), nil
 }
