@@ -345,6 +345,11 @@ type EndpointSpecPrivateNetworkSpec struct {
 	ID string `json:"id"`
 	// ServiceIPs: endpoint IPv4 address with a CIDR notation. You must provide at least one IPv4 per node.
 	ServiceIPs []scw.IPNet `json:"service_ips"`
+	// IpamConfig: automated configuration of your Private Network endpoint with Scaleway IPAM service.
+	IpamConfig *EndpointSpecPrivateNetworkSpecIpamConfig `json:"ipam_config"`
+}
+
+type EndpointSpecPrivateNetworkSpecIpamConfig struct {
 }
 
 // EndpointSpecPublicNetworkSpec: endpoint spec. public network spec.
