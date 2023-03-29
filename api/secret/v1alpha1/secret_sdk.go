@@ -174,6 +174,20 @@ type ListSecretsResponse struct {
 	Secrets []*Secret `json:"secrets"`
 }
 
+// PasswordGenerationParams: password generation params.
+type PasswordGenerationParams struct {
+	// Length: length of the password to generate (between 1 and 1024).
+	Length uint32 `json:"length"`
+	// NoLowercaseLetters: do not include lower case letters by default in the alphabet.
+	NoLowercaseLetters bool `json:"no_lowercase_letters"`
+	// NoUppercaseLetters: do not include upper case letters by default in the alphabet.
+	NoUppercaseLetters bool `json:"no_uppercase_letters"`
+	// NoDigits: do not include digits by default in the alphabet.
+	NoDigits bool `json:"no_digits"`
+	// AdditionalChars: additional ascii characters to be included in the alphabet.
+	AdditionalChars string `json:"additional_chars"`
+}
+
 // Secret: secret.
 type Secret struct {
 	// ID: ID of the secret.
@@ -525,6 +539,12 @@ type CreateSecretVersionRequest struct {
 	// DisablePrevious: disable the previous secret version.
 	// If there is no previous version or if the previous version was already disabled, does nothing.
 	DisablePrevious bool `json:"disable_previous"`
+	// PasswordGeneration: options to generate a password.
+	// If specified, a random password will be generated. The data field must be empty.
+	// By default, the generator will use upper and lower case letters, and digits.
+	// This behavior can be tuned using the generation params.
+	// Precisely one of PasswordGeneration must be set.
+	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
 }
 
 // CreateSecretVersion: create a version.
