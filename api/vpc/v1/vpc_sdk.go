@@ -138,6 +138,8 @@ type ListPrivateNetworksRequest struct {
 	ProjectID *string `json:"-"`
 	// PrivateNetworkIDs: the PrivateNetwork IDs on which to filter the returned private networks.
 	PrivateNetworkIDs []string `json:"-"`
+	// IncludeRegional: include regional Private Networks.
+	IncludeRegional *bool `json:"-"`
 }
 
 // ListPrivateNetworks: list private networks.
@@ -163,6 +165,7 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
+	parameter.AddToQuery(query, "include_regional", req.IncludeRegional)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
