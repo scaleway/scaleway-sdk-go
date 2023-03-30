@@ -1154,35 +1154,35 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 
 // HealthCheck: health check.
 type HealthCheck struct {
+	// Port: port to use for the backend server health check.
+	Port int32 `json:"port"`
+	// CheckDelay: time to wait between two consecutive health checks.
+	CheckDelay *time.Duration `json:"check_delay"`
+	// CheckTimeout: maximum time a backend server has to reply to the health check.
+	CheckTimeout *time.Duration `json:"check_timeout"`
+	// CheckMaxRetries: number of consecutive unsuccessful health checks after which the server will be considered dead.
+	CheckMaxRetries int32 `json:"check_max_retries"`
+	// TCPConfig: object to configure a basic TCP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
+	// PgsqlConfig: object to configure a PostgreSQL health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 	// LdapConfig: object to configure an LDAP health check. The response is analyzed to find the LDAPv3 response message.
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
 	// RedisConfig: object to configure a Redis health check. The response is analyzed to find the +PONG response message.
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks after which the server will be considered dead.
-	CheckMaxRetries int32 `json:"check_max_retries"`
-	// TCPConfig: object to configure a basic TCP health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-	// PgsqlConfig: object to configure a PostgreSQL health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
 	// HTTPConfig: object to configure an HTTP health check.
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
 	// HTTPSConfig: object to configure an HTTPS health check.
 	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
 	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
-	// Port: port to use for the backend server health check.
-	Port int32 `json:"port"`
-	// CheckTimeout: maximum time a backend server has to reply to the health check.
-	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckDelay: time to wait between two consecutive health checks.
-	CheckDelay *time.Duration `json:"check_delay"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
 	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
@@ -1194,8 +1194,8 @@ func (m *HealthCheck) UnmarshalJSON(b []byte) error {
 	tmp := struct {
 		tmpType
 
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{}
 	err := json.Unmarshal(b, &tmp)
 	if err != nil {
@@ -1204,8 +1204,8 @@ func (m *HealthCheck) UnmarshalJSON(b []byte) error {
 
 	*m = HealthCheck(tmp.tmpType)
 
-	m.CheckTimeout = tmp.TmpCheckTimeout.Standard()
 	m.CheckDelay = tmp.TmpCheckDelay.Standard()
+	m.CheckTimeout = tmp.TmpCheckTimeout.Standard()
 	return nil
 }
 
@@ -1214,13 +1214,13 @@ func (m HealthCheck) MarshalJSON() ([]byte, error) {
 	tmp := struct {
 		tmpType
 
-		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 		TmpCheckDelay   *marshaler.Duration `json:"check_delay"`
+		TmpCheckTimeout *marshaler.Duration `json:"check_timeout"`
 	}{
 		tmpType: tmpType(m),
 
-		TmpCheckTimeout: marshaler.NewDuration(m.CheckTimeout),
 		TmpCheckDelay:   marshaler.NewDuration(m.CheckDelay),
+		TmpCheckTimeout: marshaler.NewDuration(m.CheckTimeout),
 	}
 	return json.Marshal(tmp)
 }
@@ -1263,11 +1263,15 @@ type HealthCheckHTTPSConfig struct {
 type HealthCheckLdapConfig struct {
 }
 
+// HealthCheckMysqlConfig: health check. mysql config.
 type HealthCheckMysqlConfig struct {
+	// User: mySQL user to use for the health check.
 	User string `json:"user"`
 }
 
+// HealthCheckPgsqlConfig: health check. pgsql config.
 type HealthCheckPgsqlConfig struct {
+	// User: postgreSQL user to use for the health check.
 	User string `json:"user"`
 }
 
@@ -1368,15 +1372,18 @@ type LBStats struct {
 	BackendServersStats []*BackendServerStats `json:"backend_servers_stats"`
 }
 
+// LBType: lb type.
 type LBType struct {
+	// Name: load Balancer commercial offer type name.
 	Name string `json:"name"`
-	// StockStatus: default value: unknown
+	// StockStatus: current stock status for a given Load Balancer type.
+	// Default value: unknown
 	StockStatus LBTypeStock `json:"stock_status"`
-
+	// Description: load Balancer commercial offer type description.
 	Description string `json:"description"`
-	// Deprecated
+	// Deprecated: Region: the region the Load Balancer stock is in.
 	Region *scw.Region `json:"region,omitempty"`
-
+	// Zone: the zone the Load Balancer stock is in.
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -1498,7 +1505,9 @@ type PrivateNetworkDHCPConfig struct {
 type PrivateNetworkIpamConfig struct {
 }
 
+// PrivateNetworkStaticConfig: private network. static config.
 type PrivateNetworkStaticConfig struct {
+	// IPAddress: array of a local IP address for the Load Balancer on this Private Network.
 	IPAddress []string `json:"ip_address"`
 }
 
@@ -2225,12 +2234,12 @@ type ZonedAPICreateBackendRequest struct {
 	// OnMarkedDownAction: action to take when a backend server is marked as down.
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software.
+	// ProxyProtocol: protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. The PROXY protocol must be supported by the backend servers' software.
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud. Do not include the scheme (eg https://).
+	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host"`
-	// SslBridging: defines whether to enable SSL between the Load Balancer and backend servers.
+	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
@@ -2390,19 +2399,19 @@ type ZonedAPIUpdateBackendRequest struct {
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
 	// TimeoutTunnel: maximum allowed tunnel inactivity time after Websocket is established (takes precedence over client and server timeout).
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction: action to take when a backend server is marked down.
+	// OnMarkedDownAction: action to take when a backend server is marked as down.
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software.
+	// ProxyProtocol: protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. The PROXY protocol must be supported by the backend servers' software.
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud. Do not include the scheme (eg https://).
+	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
-	// RedispatchAttemptCount: whether to use another backend server on each retries.
+	// RedispatchAttemptCount: whether to use another backend server on each attempt.
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
@@ -2676,31 +2685,31 @@ type ZonedAPIUpdateHealthCheckRequest struct {
 	CheckDelay *time.Duration `json:"check_delay"`
 	// CheckTimeout: maximum time a backend server has to reply to the health check.
 	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks, after which the server will be considered dead.
+	// CheckMaxRetries: number of consecutive unsuccessful health checks after which the server will be considered dead.
 	CheckMaxRetries int32 `json:"check_max_retries"`
-	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-	// LdapConfig: the response is analyzed to find an LDAPv3 response message.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig: the response is analyzed to find the +PONG response message.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-	// PgsqlConfig: postgreSQL health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-	// TCPConfig: basic TCP health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-	// HTTPConfig: HTTP health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
-	// HTTPSConfig: HTTPS health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
+	// TCPConfig: object to configure a basic TCP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
+	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
+	// PgsqlConfig: object to configure a PostgreSQL health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
+	// LdapConfig: object to configure an LDAP health check. The response is analyzed to find the LDAPv3 response message.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
+	// RedisConfig: object to configure a Redis health check. The response is analyzed to find the +PONG response message.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
+	// HTTPConfig: object to configure an HTTP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
+	// HTTPSConfig: object to configure an HTTPS health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
 	TransientCheckDelay *scw.Duration `json:"transient_check_delay"`
 }
@@ -3114,7 +3123,7 @@ type ZonedAPIListRoutesRequest struct {
 	PageSize *uint32 `json:"-"`
 	// Page: the page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-
+	// FrontendID: frontend ID to filter for, only Routes from this Frontend will be returned.
 	FrontendID *string `json:"-"`
 }
 
@@ -5172,12 +5181,12 @@ type CreateBackendRequest struct {
 	// OnMarkedDownAction: action to take when a backend server is marked as down.
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software.
+	// ProxyProtocol: protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. The PROXY protocol must be supported by the backend servers' software.
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud. Do not include the scheme (eg https://).
+	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host"`
-	// SslBridging: defines whether to enable SSL between the Load Balancer and backend servers.
+	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
@@ -5335,19 +5344,19 @@ type UpdateBackendRequest struct {
 	TimeoutConnect *time.Duration `json:"timeout_connect"`
 	// TimeoutTunnel: maximum allowed tunnel inactivity time after Websocket is established (takes precedence over client and server timeout).
 	TimeoutTunnel *time.Duration `json:"timeout_tunnel"`
-	// OnMarkedDownAction: action to take when a backend server is marked down.
+	// OnMarkedDownAction: action to take when a backend server is marked as down.
 	// Default value: on_marked_down_action_none
 	OnMarkedDownAction OnMarkedDownAction `json:"on_marked_down_action"`
-	// ProxyProtocol: pROXY protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. PROXY protocol must be supported by the backend servers' software.
+	// ProxyProtocol: protocol to use between the Load Balancer and backend servers. Allows the backend servers to be informed of the client's real IP address. The PROXY protocol must be supported by the backend servers' software.
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud. Do not include the scheme (eg https://).
+	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host"`
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
 	SslBridging *bool `json:"ssl_bridging"`
 	// IgnoreSslServerVerify: defines whether the server certificate verification should be ignored.
 	IgnoreSslServerVerify *bool `json:"ignore_ssl_server_verify"`
-	// RedispatchAttemptCount: whether to use another backend server on each retries.
+	// RedispatchAttemptCount: whether to use another backend server on each attempt.
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
@@ -5616,31 +5625,31 @@ type UpdateHealthCheckRequest struct {
 	CheckDelay *time.Duration `json:"check_delay"`
 	// CheckTimeout: maximum time a backend server has to reply to the health check.
 	CheckTimeout *time.Duration `json:"check_timeout"`
-	// CheckMaxRetries: number of consecutive unsuccessful health checks, after which the server will be considered dead.
+	// CheckMaxRetries: number of consecutive unsuccessful health checks after which the server will be considered dead.
 	CheckMaxRetries int32 `json:"check_max_retries"`
-	// MysqlConfig: the check requires MySQL >=3.22, for older version, please use TCP check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
-	// LdapConfig: the response is analyzed to find an LDAPv3 response message.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
-	// RedisConfig: the response is analyzed to find the +PONG response message.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
-	// PgsqlConfig: postgreSQL health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
-	// TCPConfig: basic TCP health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
-	// HTTPConfig: HTTP health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
-	// HTTPSConfig: HTTPS health check.
-	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
-	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// CheckSendProxy: defines whether proxy protocol should be activated for the health check.
 	CheckSendProxy bool `json:"check_send_proxy"`
+	// TCPConfig: object to configure a basic TCP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
+	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
+	// PgsqlConfig: object to configure a PostgreSQL health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	PgsqlConfig *HealthCheckPgsqlConfig `json:"pgsql_config,omitempty"`
+	// LdapConfig: object to configure an LDAP health check. The response is analyzed to find the LDAPv3 response message.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	LdapConfig *HealthCheckLdapConfig `json:"ldap_config,omitempty"`
+	// RedisConfig: object to configure a Redis health check. The response is analyzed to find the +PONG response message.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	RedisConfig *HealthCheckRedisConfig `json:"redis_config,omitempty"`
+	// HTTPConfig: object to configure an HTTP health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPConfig *HealthCheckHTTPConfig `json:"http_config,omitempty"`
+	// HTTPSConfig: object to configure an HTTPS health check.
+	// Precisely one of HTTPConfig, HTTPSConfig, LdapConfig, MysqlConfig, PgsqlConfig, RedisConfig, TCPConfig must be set.
+	HTTPSConfig *HealthCheckHTTPSConfig `json:"https_config,omitempty"`
 	// TransientCheckDelay: time to wait between two consecutive health checks when a backend server is in a transient state (going UP or DOWN).
 	TransientCheckDelay *scw.Duration `json:"transient_check_delay"`
 }
@@ -6048,7 +6057,7 @@ type ListRoutesRequest struct {
 	PageSize *uint32 `json:"-"`
 	// Page: the page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-
+	// FrontendID: frontend ID to filter for, only Routes from this Frontend will be returned.
 	FrontendID *string `json:"-"`
 }
 
