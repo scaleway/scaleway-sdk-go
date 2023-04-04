@@ -157,6 +157,9 @@ type AccessSecretVersionResponse struct {
 	Revision uint32 `json:"revision"`
 	// Data: the base64-encoded secret payload of the version.
 	Data []byte `json:"data"`
+	// DataCrc32: the CRC32 checksum of the data as a base-10 integer.
+	// This field is present only if a CRC32 was supplied during the creation of the version.
+	DataCrc32 uint32 `json:"data_crc32"`
 }
 
 // ListSecretVersionsResponse: list secret versions response.
@@ -544,6 +547,9 @@ type CreateSecretVersionRequest struct {
 	// If specified, a random password will be generated. The data field must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
 	// Precisely one of PasswordGeneration must be set.
 	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
+	// DataCrc32: the CRC32 checksum of the data as a base-10 integer.
+	// This field is optional and can be set to 0. If greater than 0, the Secret Manager will verify the integrity of the data received against the given CRC32. An error is returned if the CRC32 does not match. Otherwise, the CRC32 will be stored and returned along with the SecretVersion on futur accesses.
+	DataCrc32 uint32 `json:"data_crc32"`
 }
 
 // CreateSecretVersion: create a version.
