@@ -152,7 +152,8 @@ func (enum *SecretVersionStatus) UnmarshalJSON(data []byte) error {
 type AccessSecretVersionResponse struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"secret_id"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1.
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1.
 	Revision uint32 `json:"revision"`
 	// Data: the base64-encoded secret payload of the version.
 	Data []byte `json:"data"`
@@ -540,9 +541,7 @@ type CreateSecretVersionRequest struct {
 	// If there is no previous version or if the previous version was already disabled, does nothing.
 	DisablePrevious bool `json:"disable_previous"`
 	// PasswordGeneration: options to generate a password.
-	// If specified, a random password will be generated. The data field must be empty.
-	// By default, the generator will use upper and lower case letters, and digits.
-	// This behavior can be tuned using the generation params.
+	// If specified, a random password will be generated. The data field must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
 	// Precisely one of PasswordGeneration must be set.
 	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
 }
@@ -590,7 +589,8 @@ type GetSecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -636,7 +636,8 @@ type GetSecretVersionByNameRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretName: name of the secret.
 	SecretName string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -682,7 +683,8 @@ type UpdateSecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 	// Description: description of the version.
 	Description *string `json:"description"`
@@ -849,7 +851,8 @@ type DestroySecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -900,7 +903,8 @@ type EnableSecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -951,7 +955,8 @@ type DisableSecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -1002,7 +1007,8 @@ type AccessSecretVersionRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
@@ -1048,7 +1054,8 @@ type AccessSecretVersionByNameRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretName: name of the secret.
 	SecretName string `json:"-"`
-	// Revision: version number. The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// Revision: version number.
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
 }
 
