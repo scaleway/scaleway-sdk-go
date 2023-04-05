@@ -1040,9 +1040,9 @@ type TriggerSqsClientConfig struct {
 }
 
 type UpdateTriggerRequestSqsClientConfig struct {
-	AccessKey string `json:"access_key"`
+	AccessKey *string `json:"access_key"`
 
-	SecretKey string `json:"secret_key"`
+	SecretKey *string `json:"secret_key"`
 }
 
 // UploadURL: upload url.
@@ -2452,7 +2452,7 @@ type CreateTriggerRequest struct {
 
 	Name string `json:"name"`
 
-	Description string `json:"description"`
+	Description *string `json:"description"`
 
 	FunctionID string `json:"function_id"`
 
