@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: this API allows you to manage Messaging or Queueing brokers.
+// API: this API allows you to manage Scaleway Messaging and Queueing brokers.
 // MnQ API (beta).
 type API struct {
 	client *scw.Client
@@ -155,19 +155,19 @@ func (enum *NamespaceProtocol) UnmarshalJSON(data []byte) error {
 
 // Credential: credential.
 type Credential struct {
-	// ID: credential ID.
+	// ID: ID of the credentials.
 	ID string `json:"id"`
-	// Name: credential name.
+	// Name: name of the credentials.
 	Name string `json:"name"`
-	// NamespaceID: namespace containing the Credential.
+	// NamespaceID: namespace containing the credentials.
 	NamespaceID string `json:"namespace_id"`
-	// Protocol: protocol associated to the Credential.
+	// Protocol: protocol associated with the credentials.
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-	// NatsCredentials: credentials file used to connect to the NATS service.
+	// NatsCredentials: object containing the credentials, if the credentials are for a NATS namespace.
 	// Precisely one of NatsCredentials, SqsSnsCredentials must be set.
 	NatsCredentials *CredentialNATSCredsFile `json:"nats_credentials,omitempty"`
-	// SqsSnsCredentials: credential used to connect to the SQS/SNS service.
+	// SqsSnsCredentials: object containing the credentials and their metadata, if the credentials are for an SQS/SNS namespace.
 	// Precisely one of NatsCredentials, SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
 }
@@ -180,51 +180,51 @@ type CredentialNATSCredsFile struct {
 
 // CredentialSQSSNSCreds: credential.sqssns creds.
 type CredentialSQSSNSCreds struct {
-	// AccessKey: ID of the key.
+	// AccessKey: access key ID.
 	AccessKey string `json:"access_key"`
-	// SecretKey: secret value of the key.
+	// SecretKey: secret key ID.
 	SecretKey *string `json:"secret_key"`
-	// Permissions: list of permissions associated to this Credential.
+	// Permissions: permissions associated with these credentials.
 	Permissions *Permissions `json:"permissions"`
 }
 
 // CredentialSummary: credential summary.
 type CredentialSummary struct {
-	// ID: credential ID.
+	// ID: ID of the credentials.
 	ID string `json:"id"`
-	// Name: credential name.
+	// Name: name of the credentials.
 	Name string `json:"name"`
-	// NamespaceID: namespace containing the Credential.
+	// NamespaceID: namespace containing the credentials.
 	NamespaceID string `json:"namespace_id"`
-	// Protocol: protocol associated to the Credential.
+	// Protocol: protocol associated with the credentials.
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-	// SqsSnsCredentials: credential used to connect to the SQS/SNS service.
+	// SqsSnsCredentials: object containing the credentials and their metadata, if the credentials are for an SQS/SNS namespace.
 	// Precisely one of SqsSnsCredentials must be set.
 	SqsSnsCredentials *CredentialSummarySQSSNSCreds `json:"sqs_sns_credentials,omitempty"`
 }
 
 // CredentialSummarySQSSNSCreds: credential summary.sqssns creds.
 type CredentialSummarySQSSNSCreds struct {
-	// AccessKey: ID of the key.
+	// AccessKey: access key ID.
 	AccessKey string `json:"access_key"`
-	// Permissions: list of permissions associated to this Credential.
+	// Permissions: permissions associated with these credentials.
 	Permissions *Permissions `json:"permissions"`
 }
 
 // ListCredentialsResponse: list credentials response.
 type ListCredentialsResponse struct {
-	// TotalCount: total number of existing Credentials.
+	// TotalCount: total count of existing credentials (matching any filters specified).
 	TotalCount uint32 `json:"total_count"`
-	// Credentials: a page of Credentials.
+	// Credentials: credentials on this page.
 	Credentials []*CredentialSummary `json:"credentials"`
 }
 
 // ListNamespacesResponse: list namespaces response.
 type ListNamespacesResponse struct {
-	// TotalCount: total number of existing Namespaces.
+	// TotalCount: total count of existing namespaces (matching any filters specified).
 	TotalCount uint32 `json:"total_count"`
-	// Namespaces: a page of Namespaces.
+	// Namespaces: namespaces on this page.
 	Namespaces []*Namespace `json:"namespaces"`
 }
 
@@ -234,14 +234,14 @@ type Namespace struct {
 	ID string `json:"id"`
 	// Name: namespace name.
 	Name string `json:"name"`
-	// Endpoint: endpoint of the service matching the Namespace protocol.
+	// Endpoint: endpoint of the service matching the namespace's protocol.
 	Endpoint string `json:"endpoint"`
 	// Protocol: namespace protocol.
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
-	// ProjectID: project containing the Namespace.
+	// ProjectID: project ID of the Project containing the namespace.
 	ProjectID string `json:"project_id"`
-	// Region: region where the Namespace is deployed.
+	// Region: region where the namespace is deployed.
 	Region scw.Region `json:"region"`
 	// CreatedAt: namespace creation date.
 	CreatedAt *time.Time `json:"created_at"`
@@ -251,11 +251,11 @@ type Namespace struct {
 
 // Permissions: permissions.
 type Permissions struct {
-	// CanPublish: defines if user can publish messages to the service.
+	// CanPublish: defines whether the credentials bearer can publish messages to the service (send messages to SQS queues or publish to SNS topics).
 	CanPublish *bool `json:"can_publish"`
-	// CanReceive: defines if user can receive messages from the service.
+	// CanReceive: defines whether the credentials bearer can receive messages from the service.
 	CanReceive *bool `json:"can_receive"`
-	// CanManage: defines if user can manage the associated resource(s).
+	// CanManage: defines whether the credentials bearer can manage the associated resources (SQS queues or SNS topics or subscriptions).
 	CanManage *bool `json:"can_manage"`
 }
 
@@ -269,20 +269,21 @@ func (s *API) Regions() []scw.Region {
 type ListNamespacesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// OrganizationID: will list only the Namespaces owned by the specified organization.
+	// OrganizationID: include only namespaces in this Organization.
 	OrganizationID *string `json:"-"`
-	// ProjectID: will list only the Namespaces contained into the specified project.
+	// ProjectID: include only namespaces in this Project.
 	ProjectID *string `json:"-"`
-	// Page: indicate the page number of results to be returned.
+	// Page: page number to return.
 	Page *int32 `json:"-"`
-	// PageSize: maximum number of results returned by page.
+	// PageSize: maximum number of namespaces to return per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: field used for sorting results.
+	// OrderBy: order in which to return results.
 	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
 }
 
 // ListNamespaces: list namespaces.
+// List all Messaging and Queuing namespaces in the specified region, for a Scaleway Organization or Project. By default, the namespaces returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
@@ -328,7 +329,7 @@ type CreateNamespaceRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: namespace name.
 	Name string `json:"name"`
-	// Protocol: namespace protocol.
+	// Protocol: namespace protocol. You must specify a valid protocol (and not `unknown`) to avoid an error.
 	// Default value: unknown
 	Protocol NamespaceProtocol `json:"protocol"`
 	// ProjectID: project containing the Namespace.
@@ -336,6 +337,7 @@ type CreateNamespaceRequest struct {
 }
 
 // CreateNamespace: create a namespace.
+// Create a Messaging and Queuing namespace, set to the desired protocol.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -387,6 +389,7 @@ type UpdateNamespaceRequest struct {
 }
 
 // UpdateNamespace: update the name of a namespace.
+// Update the name of a Messaging and Queuing namespace, specified by its namespace ID.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -427,6 +430,7 @@ type GetNamespaceRequest struct {
 }
 
 // GetNamespace: get a namespace.
+// Retrieve information about an existing Messaging and Queuing namespace, identified by its namespace ID. Its full details, including name, endpoint and protocol, are returned in the response.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -461,11 +465,12 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 type DeleteNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// NamespaceID: ID of the Namespace to delete.
+	// NamespaceID: ID of the namespace to delete.
 	NamespaceID string `json:"-"`
 }
 
 // DeleteNamespace: delete a namespace.
+// Delete a Messaging and Queuing namespace, specified by its namespace ID. Note that deleting a namespace is irreversible, and any URLs, credentials and queued messages belonging to this namespace will also be deleted.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -498,17 +503,17 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 type CreateCredentialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// NamespaceID: namespace containing the Credential.
+	// NamespaceID: namespace containing the credentials.
 	NamespaceID string `json:"namespace_id"`
-	// Name: credential name.
+	// Name: name of the credentials.
 	Name string `json:"name"`
-	// Permissions: list of permissions associated to this Credential.
+	// Permissions: permissions associated with these credentials.
 	// Precisely one of Permissions must be set.
 	Permissions *Permissions `json:"permissions,omitempty"`
 }
 
-// CreateCredential: create a set of credentials.
-// Create a set of credentials for a specific namespace.
+// CreateCredential: create credentials.
+// Create a set of credentials for a Messaging and Queuing namespace, specified by its namespace ID. If creating credentials for a NATS namespace, the `permissions` object must not be included in the request. If creating credentials for an SQS/SNS namespace, the `permissions` object is required, with all three of its child attributes.
 func (s *API) CreateCredential(req *CreateCredentialRequest, opts ...scw.RequestOption) (*Credential, error) {
 	var err error
 
@@ -548,11 +553,12 @@ func (s *API) CreateCredential(req *CreateCredentialRequest, opts ...scw.Request
 type DeleteCredentialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// CredentialID: ID of the Credential to delete.
+	// CredentialID: ID of the credentials to delete.
 	CredentialID string `json:"-"`
 }
 
 // DeleteCredential: delete credentials.
+// Delete a set of credentials, specified by their credential ID. Deleting credentials is irreversible and cannot be undone. The credentials can no longer be used to access the namespace.
 func (s *API) DeleteCredential(req *DeleteCredentialRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -585,18 +591,19 @@ func (s *API) DeleteCredential(req *DeleteCredentialRequest, opts ...scw.Request
 type ListCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// NamespaceID: namespace containing the Credential.
+	// NamespaceID: namespace containing the credentials.
 	NamespaceID *string `json:"-"`
-	// Page: indicate the page number of results to be returned.
+	// Page: page number to return.
 	Page *int32 `json:"-"`
-	// PageSize: maximum number of results returned by page.
+	// PageSize: maximum number of credentials to return per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: field used for sorting results.
+	// OrderBy: order in which to return results.
 	// Default value: id_asc
 	OrderBy ListCredentialsRequestOrderBy `json:"-"`
 }
 
 // ListCredentials: list credentials.
+// List existing credentials in the specified region. The response contains only the metadata for the credentials, not the credentials themselves (for this, use **Get Credentials**).
 func (s *API) ListCredentials(req *ListCredentialsRequest, opts ...scw.RequestOption) (*ListCredentialsResponse, error) {
 	var err error
 
@@ -639,16 +646,17 @@ func (s *API) ListCredentials(req *ListCredentialsRequest, opts ...scw.RequestOp
 type UpdateCredentialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// CredentialID: ID of the Credential to update.
+	// CredentialID: ID of the credentials to update.
 	CredentialID string `json:"-"`
-	// Name: credential name.
+	// Name: name of the credentials.
 	Name *string `json:"name"`
-	// Permissions: list of permissions associated to this Credential.
+	// Permissions: permissions associated with these credentials.
 	// Precisely one of Permissions must be set.
 	Permissions *Permissions `json:"permissions,omitempty"`
 }
 
-// UpdateCredential: update a set of credentials.
+// UpdateCredential: update credentials.
+// Update a set of credentials. You can update the credentials' name, or (in the case of SQS/SNS credentials only) their permissions. To update the name of NATS credentials, do not include the `permissions` object in your request.
 func (s *API) UpdateCredential(req *UpdateCredentialRequest, opts ...scw.RequestOption) (*Credential, error) {
 	var err error
 
@@ -688,11 +696,12 @@ func (s *API) UpdateCredential(req *UpdateCredentialRequest, opts ...scw.Request
 type GetCredentialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// CredentialID: ID of the Credential to get.
+	// CredentialID: ID of the credentials to get.
 	CredentialID string `json:"-"`
 }
 
-// GetCredential: get a set of credentials.
+// GetCredential: get credentials.
+// Retrieve an existing set of credentials, identified by the `credential_id`. The credentials themselves, as well as their metadata (protocol, namespace ID etc), are returned in the response.
 func (s *API) GetCredential(req *GetCredentialRequest, opts ...scw.RequestOption) (*Credential, error) {
 	var err error
 
