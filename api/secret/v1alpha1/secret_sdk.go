@@ -232,6 +232,8 @@ type SecretVersion struct {
 	// * `destroyed`: the version is permanently deleted. It is not possible to recover it.
 	// Default value: unknown
 	Status SecretVersionStatus `json:"status"`
+	// IsLatest: true if the version is the latest one.
+	IsLatest bool `json:"is_latest"`
 	// CreatedAt: date and time of the version's creation.
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: last update of the version.
