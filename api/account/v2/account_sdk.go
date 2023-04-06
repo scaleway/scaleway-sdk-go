@@ -52,38 +52,6 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-type CaptchaProviderName string
-
-const (
-	CaptchaProviderNameUnknownName     = CaptchaProviderName("unknown_name")
-	CaptchaProviderNameRecaptchaV2     = CaptchaProviderName("recaptcha_v2")
-	CaptchaProviderNameFriendlyCaptcha = CaptchaProviderName("friendly_captcha")
-	CaptchaProviderNameHcaptcha        = CaptchaProviderName("hcaptcha")
-)
-
-func (enum CaptchaProviderName) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_name"
-	}
-	return string(enum)
-}
-
-func (enum CaptchaProviderName) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *CaptchaProviderName) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = CaptchaProviderName(CaptchaProviderName(tmp).String())
-	return nil
-}
-
 type ListProjectsRequestOrderBy string
 
 const (
@@ -114,11 +82,6 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 	*enum = ListProjectsRequestOrderBy(ListProjectsRequestOrderBy(tmp).String())
 	return nil
-}
-
-type CaptchaProvider struct {
-	// Name: default value: unknown_name
-	Name CaptchaProviderName `json:"name"`
 }
 
 // ListProjectsResponse: list projects response.
@@ -342,28 +305,6 @@ func (s *API) UpdateProject(req *UpdateProjectRequest, opts ...scw.RequestOption
 	}
 
 	var resp Project
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetCaptchaProviderRequest struct {
-}
-
-// GetCaptchaProvider: get a Captcha provider.
-func (s *API) GetCaptchaProvider(req *GetCaptchaProviderRequest, opts ...scw.RequestOption) (*CaptchaProvider, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/account/v2/captcha-provider",
-		Headers: http.Header{},
-	}
-
-	var resp CaptchaProvider
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
