@@ -747,31 +747,35 @@ type CreateTriggerRequestSqsClientConfig struct {
 
 // Cron: cron.
 type Cron struct {
+	// ID: UUID of the cron.
 	ID string `json:"id"`
-
+	// FunctionID: UUID of the function the cron applies to.
 	FunctionID string `json:"function_id"`
-
+	// Schedule: schedule of the cron.
 	Schedule string `json:"schedule"`
-
+	// Args: arguments to pass with the cron.
 	Args *scw.JSONObject `json:"args"`
-	// Status: default value: unknown
+	// Status: status of the cron.
+	// Default value: unknown
 	Status CronStatus `json:"status"`
-
+	// Name: name of the cron.
 	Name string `json:"name"`
 }
 
 // Domain: domain.
 type Domain struct {
+	// ID: UUID of the domain.
 	ID string `json:"id"`
-
+	// Hostname: hostname associated with the function.
 	Hostname string `json:"hostname"`
-
+	// FunctionID: UUID of the function the domain is associated with.
 	FunctionID string `json:"function_id"`
-
+	// URL: URL of the function.
 	URL string `json:"url"`
-	// Status: default value: unknown
+	// Status: state of the doamin.
+	// Default value: unknown
 	Status DomainStatus `json:"status"`
-
+	// ErrorMessage: error message if the domain is in "error" state.
 	ErrorMessage *string `json:"error_message"`
 }
 
@@ -783,42 +787,46 @@ type DownloadURL struct {
 
 // Function: function.
 type Function struct {
+	// ID: UUID of the function.
 	ID string `json:"id"`
-
+	// Name: name of the function.
 	Name string `json:"name"`
-
+	// NamespaceID: UUID of the namespace the function belongs to.
 	NamespaceID string `json:"namespace_id"`
-	// Status: default value: unknown
+	// Status: status of the function.
+	// Default value: unknown
 	Status FunctionStatus `json:"status"`
-
+	// EnvironmentVariables: environment variables of the function.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
-
+	// MinScale: minimum number of instances to scale the function to.
 	MinScale uint32 `json:"min_scale"`
-
+	// MaxScale: maximum number of instances to scale the function to.
 	MaxScale uint32 `json:"max_scale"`
-	// Runtime: default value: unknown_runtime
+	// Runtime: runtime of the function.
+	// Default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
-
+	// MemoryLimit: memory limit of the function in MB.
 	MemoryLimit uint32 `json:"memory_limit"`
-
+	// CPULimit: CPU limit of the function.
 	CPULimit uint32 `json:"cpu_limit"`
-
+	// Timeout: request processing time limit for the function.
 	Timeout *scw.Duration `json:"timeout"`
-
+	// Handler: handler to use for the function.
 	Handler string `json:"handler"`
-
+	// ErrorMessage: error message if the function is in "error" state.
 	ErrorMessage *string `json:"error_message"`
-	// Privacy: default value: unknown_privacy
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
-
+	// Description: description of the function.
 	Description *string `json:"description"`
-
+	// DomainName: domain name associated with the function.
 	DomainName string `json:"domain_name"`
-
+	// SecretEnvironmentVariables: secret environment variables of the function.
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-
+	// Region: region in which the function is deployed.
 	Region scw.Region `json:"region"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled.
+	// HTTPOption: configuration for handling of HTTP and HTTPS requests.
 	// Possible values:
 	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
 	//  - enabled: Serve both HTTP and HTTPS traffic.
@@ -830,43 +838,48 @@ type Function struct {
 
 // ListCronsResponse: list crons response.
 type ListCronsResponse struct {
+	// Crons: array of crons.
 	Crons []*Cron `json:"crons"`
-
+	// TotalCount: total number of crons.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListDomainsResponse: list domains response.
 type ListDomainsResponse struct {
+	// Domains: array of domains.
 	Domains []*Domain `json:"domains"`
-
+	// TotalCount: total number of domains.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListFunctionRuntimesResponse: list function runtimes response.
 type ListFunctionRuntimesResponse struct {
+	// Runtimes: array of runtimes available.
 	Runtimes []*Runtime `json:"runtimes"`
-
+	// TotalCount: total number of runtimes.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListFunctionsResponse: list functions response.
 type ListFunctionsResponse struct {
+	// Functions: array of functions.
 	Functions []*Function `json:"functions"`
-
+	// TotalCount: total number of functions.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListLogsResponse: list logs response.
 type ListLogsResponse struct {
+	// Logs: array of logs.
 	Logs []*Log `json:"logs"`
-
+	// TotalCount: total number of logs.
 	TotalCount uint32 `json:"total_count"`
 }
 
 // ListNamespacesResponse: list namespaces response.
 type ListNamespacesResponse struct {
 	Namespaces []*Namespace `json:"namespaces"`
-
+	// TotalCount: total number of namespaces.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -884,12 +897,13 @@ type ListTriggersResponse struct {
 
 // Log: log.
 type Log struct {
+	// Message: message of the log.
 	Message string `json:"message"`
-
+	// Timestamp: timestamp of the log.
 	Timestamp *time.Time `json:"timestamp"`
-
+	// ID: UUID of the log.
 	ID string `json:"id"`
-	// Level: contains the severity of the log (info, debug, error, ...).
+	// Level: severity of the log (info, debug, error etc.).
 	Level string `json:"level"`
 	// Source: source of the log (core runtime or user code).
 	Source string `json:"source"`
@@ -900,28 +914,30 @@ type Log struct {
 
 // Namespace: namespace.
 type Namespace struct {
+	// ID: UUID of the namespace.
 	ID string `json:"id"`
-
+	// Name: name of the namespace.
 	Name string `json:"name"`
-
+	// EnvironmentVariables: environment variables of the namespace.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
-
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID string `json:"organization_id"`
-
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID string `json:"project_id"`
-	// Status: default value: unknown
+	// Status: status of the namespace.
+	// Default value: unknown
 	Status NamespaceStatus `json:"status"`
-
+	// RegistryNamespaceID: UUID of the registry namespace.
 	RegistryNamespaceID string `json:"registry_namespace_id"`
-
+	// ErrorMessage: error message if the namespace is in "error" state.
 	ErrorMessage *string `json:"error_message"`
-
+	// RegistryEndpoint: registry endpoint of the namespace.
 	RegistryEndpoint string `json:"registry_endpoint"`
-
+	// Description: description of the namespace.
 	Description *string `json:"description"`
-
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-
+	// Region: region in which the namespace is located.
 	Region scw.Region `json:"region"`
 }
 
@@ -961,22 +977,24 @@ type SecretHashedValue struct {
 
 // Token: token.
 type Token struct {
+	// ID: UUID of the token.
 	ID string `json:"id"`
-
+	// Token: string of the token.
 	Token string `json:"token"`
-
+	// FunctionID: UUID of the function the token is associated with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
-
+	// NamespaceID: UUID of the namespace the token is assoicated with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
-	// Deprecated
+	// Deprecated: PublicKey: public key of the token.
 	PublicKey *string `json:"public_key,omitempty"`
-	// Status: default value: unknown
+	// Status: status of the token.
+	// Default value: unknown
 	Status TokenStatus `json:"status"`
-
+	// Description: description of the token.
 	Description *string `json:"description"`
-
+	// ExpiresAt: date on which the token expires.
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
@@ -1047,8 +1065,9 @@ type UpdateTriggerRequestSqsClientConfig struct {
 
 // UploadURL: upload url.
 type UploadURL struct {
+	// URL: upload URL to upload the function to.
 	URL string `json:"url"`
-
+	// Headers: HTTP headers.
 	Headers map[string]*[]string `json:"headers"`
 }
 
@@ -1062,21 +1081,23 @@ func (s *API) Regions() []scw.Region {
 type ListNamespacesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of namespaces per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the namespaces.
+	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
-
+	// Name: name of the namespace.
 	Name *string `json:"-"`
-
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID *string `json:"-"`
-
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID *string `json:"-"`
 }
 
 // ListNamespaces: list all your namespaces.
+// List all existing namespaces in the specified region.
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
@@ -1121,12 +1142,12 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 type GetNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: UUID of the namespace.
 	NamespaceID string `json:"-"`
 }
 
 // GetNamespace: get a namespace.
-// Get the namespace associated with the given id.
+// Get the namespace associated with the specified ID.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1163,17 +1184,18 @@ type CreateNamespaceRequest struct {
 	Region scw.Region `json:"-"`
 
 	Name string `json:"name"`
-
+	// EnvironmentVariables: environment variables of the namespace.
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
-
+	// ProjectID: UUID of the project in which the namespace will be created.
 	ProjectID string `json:"project_id"`
-
+	// Description: description of the namespace.
 	Description *string `json:"description"`
-
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // CreateNamespace: create a new namespace.
+// Create a new namespace in a specified Organization or Proejct.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1218,18 +1240,18 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 type UpdateNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: UUID of the namespapce.
 	NamespaceID string `json:"-"`
-
+	// EnvironmentVariables: environment variables of the namespace.
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
-
+	// Description: description of the namespace.
 	Description *string `json:"description"`
-
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 }
 
 // UpdateNamespace: update an existing namespace.
-// Update the space associated with the given id.
+// Update the namespace associated with the specified ID.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1269,12 +1291,12 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 type DeleteNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// NamespaceID: UUID of the namespace.
 	NamespaceID string `json:"-"`
 }
 
 // DeleteNamespace: delete an existing namespace.
-// Delete the namespace associated with the given id.
+// Delete the namespace associated with the specified ID.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1309,19 +1331,20 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 type ListFunctionsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of functions per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the functions.
+	// Default value: created_at_asc
 	OrderBy ListFunctionsRequestOrderBy `json:"-"`
-
+	// NamespaceID: UUID of the namespace the function belongs to.
 	NamespaceID string `json:"-"`
-
+	// Name: name of the function.
 	Name *string `json:"-"`
-
+	// OrganizationID: UUID of the Organziation the function belongs to.
 	OrganizationID *string `json:"-"`
-
+	// ProjectID: UUID of the Project the function belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -1371,12 +1394,12 @@ func (s *API) ListFunctions(req *ListFunctionsRequest, opts ...scw.RequestOption
 type GetFunctionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function.
 	FunctionID string `json:"-"`
 }
 
 // GetFunction: get a function.
-// Get the function associated with the given id.
+// Get the function associated with the specified ID.
 func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1411,27 +1434,29 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 type CreateFunctionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Name: name of the function to create.
 	Name string `json:"name"`
-
+	// NamespaceID: UUID of the namespace the function will be created in.
 	NamespaceID string `json:"namespace_id"`
-
+	// EnvironmentVariables: environment variables of the function.
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
-
+	// MinScale: minumum number of instances to scale the function to.
 	MinScale *uint32 `json:"min_scale"`
-
+	// MaxScale: maximum number of instances to scale the function to.
 	MaxScale *uint32 `json:"max_scale"`
-	// Runtime: default value: unknown_runtime
+	// Runtime: runtime to use with the function.
+	// Default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
-
+	// MemoryLimit: memory limit of the function in MB.
 	MemoryLimit *uint32 `json:"memory_limit"`
-
+	// Timeout: request processing time limit for the function.
 	Timeout *scw.Duration `json:"timeout"`
-
+	// Handler: handler to use with the function.
 	Handler *string `json:"handler"`
-	// Privacy: default value: unknown_privacy
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
-
+	// Description: description of the function.
 	Description *string `json:"description"`
 
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
@@ -1444,6 +1469,7 @@ type CreateFunctionRequest struct {
 }
 
 // CreateFunction: create a new function.
+// Create a new function in the specified region for a specified Organization or Project.
 func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1483,29 +1509,31 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 type UpdateFunctionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to update.
 	FunctionID string `json:"-"`
-
+	// EnvironmentVariables: environment variables of the function to update.
 	EnvironmentVariables *map[string]string `json:"environment_variables"`
-
+	// MinScale: minumum number of instances to scale the function to.
 	MinScale *uint32 `json:"min_scale"`
-
+	// MaxScale: maximum number of instances to scale the function to.
 	MaxScale *uint32 `json:"max_scale"`
-	// Runtime: default value: unknown_runtime
+	// Runtime: runtime to use with the function.
+	// Default value: unknown_runtime
 	Runtime FunctionRuntime `json:"runtime"`
-
+	// MemoryLimit: memory limit of the function in MB.
 	MemoryLimit *uint32 `json:"memory_limit"`
-
+	// Timeout: processing time limit for the function.
 	Timeout *scw.Duration `json:"timeout"`
-
+	// Redeploy: redeploy failed function.
 	Redeploy *bool `json:"redeploy"`
-
+	// Handler: handler to use with the function.
 	Handler *string `json:"handler"`
-	// Privacy: default value: unknown_privacy
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
-
+	// Description: description of the function.
 	Description *string `json:"description"`
-
+	// SecretEnvironmentVariables: secret environment variables of the function.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 	// HTTPOption: configure how HTTP and HTTPS requests are handled.
 	// Possible values:
@@ -1516,7 +1544,7 @@ type UpdateFunctionRequest struct {
 }
 
 // UpdateFunction: update an existing function.
-// Update the function associated with the given id.
+// Update the function associated with the specified ID.
 func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1556,12 +1584,12 @@ func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOpti
 type DeleteFunctionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to delete.
 	FunctionID string `json:"-"`
 }
 
 // DeleteFunction: delete a function.
-// Delete the function associated with the given id.
+// Delete the function associated with the specified ID.
 func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1596,12 +1624,12 @@ func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOpti
 type DeployFunctionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to deploy.
 	FunctionID string `json:"-"`
 }
 
 // DeployFunction: deploy a function.
-// Deploy a function associated with the given id.
+// Deploy a function associated with the specified ID.
 func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1675,14 +1703,14 @@ func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw
 type GetFunctionUploadURLRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to get the upload URL for.
 	FunctionID string `json:"-"`
 
 	ContentLength uint64 `json:"-"`
 }
 
 // GetFunctionUploadURL: get an upload URL of a function.
-// Get an upload URL of a function associated with the given id.
+// Get an upload URL of a function associated with the specified ID.
 func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw.RequestOption) (*UploadURL, error) {
 	var err error
 
@@ -1721,12 +1749,12 @@ func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw
 type GetFunctionDownloadURLRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to get the the download URL for.
 	FunctionID string `json:"-"`
 }
 
 // GetFunctionDownloadURL: get a download URL of a function.
-// Get a download URL for a function associated with the given id.
+// Get a download URL for a function associated with the specified ID.
 func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ...scw.RequestOption) (*DownloadURL, error) {
 	var err error
 
@@ -1761,17 +1789,19 @@ func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ..
 type ListCronsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of crons per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the crons.
+	// Default value: created_at_asc
 	OrderBy ListCronsRequestOrderBy `json:"-"`
-
+	// FunctionID: UUID of the function.
 	FunctionID string `json:"-"`
 }
 
-// ListCrons: list all your crons.
+// ListCrons: list all crons.
+// List all the cronjobs in a specified region.
 func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*ListCronsResponse, error) {
 	var err error
 
@@ -1814,12 +1844,12 @@ func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*List
 type GetCronRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// CronID: UUID of the cron to get.
 	CronID string `json:"-"`
 }
 
 // GetCron: get a cron.
-// Get the cron associated with the given id.
+// Get the cron associated with the specified ID.
 func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1854,17 +1884,18 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 type CreateCronRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to use the cron with.
 	FunctionID string `json:"function_id"`
-
+	// Schedule: schedule of the cron in UNIX cron format.
 	Schedule string `json:"schedule"`
-
+	// Args: arguments to use with the cron.
 	Args *scw.JSONObject `json:"args"`
-
+	// Name: name of the cron.
 	Name *string `json:"name"`
 }
 
 // CreateCron: create a new cron.
+// Create a new cronjob for a function with the specified ID.
 func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1900,20 +1931,20 @@ func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cr
 type UpdateCronRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// CronID: UUID of the cron to update.
 	CronID string `json:"-"`
-
+	// FunctionID: UUID of the function to use the cron with.
 	FunctionID *string `json:"function_id"`
-
+	// Schedule: schedule of the cron in UNIX cron format.
 	Schedule *string `json:"schedule"`
-
+	// Args: arguments to use with the cron.
 	Args *scw.JSONObject `json:"args"`
-
+	// Name: name of the cron.
 	Name *string `json:"name"`
 }
 
 // UpdateCron: update an existing cron.
-// Update the cron associated with the given id.
+// Update the cron associated with the specified ID.
 func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1953,12 +1984,12 @@ func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cr
 type DeleteCronRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// CronID: UUID of the cron to delete.
 	CronID string `json:"-"`
 }
 
 // DeleteCron: delete an existing cron.
-// Delete the cron associated with the given id.
+// Delete the cron associated with the specified ID.
 func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1993,17 +2024,19 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 type ListLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to get the logs for.
 	FunctionID string `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of logs per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: timestamp_desc
+	// OrderBy: order of the logs.
+	// Default value: timestamp_desc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 }
 
-// ListLogs: list your application logs.
+// ListLogs: list application logs.
+// List the application logs of the function with the specified ID.
 func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
 	var err error
 
@@ -2049,17 +2082,19 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 type ListDomainsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of domains per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the domains.
+	// Default value: created_at_asc
 	OrderBy ListDomainsRequestOrderBy `json:"-"`
-
+	// FunctionID: UUID of the function the domain is assoicated with.
 	FunctionID string `json:"-"`
 }
 
 // ListDomains: list all domain name bindings.
+// List all domain name bindings in a specified region.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -2102,11 +2137,12 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 type GetDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// DomainID: UUID of the domain to get.
 	DomainID string `json:"-"`
 }
 
 // GetDomain: get a domain name binding.
+// Get a domain name binding for the function with the specified ID.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2141,13 +2177,14 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 type CreateDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Hostname: hostame to create.
 	Hostname string `json:"hostname"`
-
+	// FunctionID: UUID of the function to associate the domain with.
 	FunctionID string `json:"function_id"`
 }
 
 // CreateDomain: create a domain name binding.
+// Create a domain name binding for the function with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2183,11 +2220,12 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 type DeleteDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// DomainID: UUID of the domain to delete.
 	DomainID string `json:"-"`
 }
 
 // DeleteDomain: delete a domain name binding.
+// Delete a domain name binding for the function with the specified ID.
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2267,15 +2305,15 @@ func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token,
 type CreateTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// FunctionID: UUID of the function to associate the token with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
-
+	// NamespaceID: UUID of the namespace to associate the token with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
-
+	// Description: description of the token.
 	Description *string `json:"description"`
-
+	// ExpiresAt: date on which the token expires.
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
@@ -2315,7 +2353,7 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 type GetTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// TokenID: UUID of the token to get.
 	TokenID string `json:"-"`
 }
 
@@ -2354,15 +2392,16 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 type ListTokensRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
-
+	// PageSize: number of tokens per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order for the tokens.
+	// Default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
-
+	// FunctionID: UUID of the function the token is assoicated with.
 	FunctionID *string `json:"-"`
-
+	// NamespaceID: UUID of the namespace the token is associated with.
 	NamespaceID *string `json:"-"`
 }
 
@@ -2410,7 +2449,7 @@ func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*Li
 type DeleteTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// TokenID: UUID of the token to delete.
 	TokenID string `json:"-"`
 }
 
