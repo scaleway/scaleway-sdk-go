@@ -784,11 +784,13 @@ type User struct {
 	// Type: type of user.
 	// Default value: unknown_type
 	Type UserType `json:"type"`
-	// TwoFactorEnabled: whether MFA is enabled.
-	TwoFactorEnabled bool `json:"two_factor_enabled"`
+	// Deprecated: TwoFactorEnabled: deprecated, use "mfa" instead.
+	TwoFactorEnabled *bool `json:"two_factor_enabled,omitempty"`
 	// Status: status of user invitation.
 	// Default value: unknown_status
 	Status UserStatus `json:"status"`
+	// Mfa: whether MFA is enabled.
+	Mfa bool `json:"mfa"`
 }
 
 // Service API
@@ -997,6 +999,8 @@ type ListUsersRequest struct {
 	OrganizationID *string `json:"-"`
 	// UserIDs: filter by list of IDs.
 	UserIDs []string `json:"-"`
+	// Mfa: filter by MFA status.
+	Mfa *bool `json:"-"`
 }
 
 // ListUsers: list users of an Organization.
@@ -1015,6 +1019,7 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "user_ids", req.UserIDs)
+	parameter.AddToQuery(query, "mfa", req.Mfa)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
@@ -1038,7 +1043,7 @@ type GetUserRequest struct {
 }
 
 // GetUser: get a given user.
-// Retrieve information about a user, specified by the `user_id` parameter. The user's full details, including `id`, `email`, `organization_id`, `status` and `two_factor_enabled` are returned in the response.
+// Retrieve information about a user, specified by the `user_id` parameter. The user's full details, including `id`, `email`, `organization_id`, `status` and `mfa` are returned in the response.
 func (s *API) GetUser(req *GetUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
