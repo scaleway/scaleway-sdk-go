@@ -141,7 +141,10 @@ func (c *Client) GetSecretKey() (secretKey string, exists bool) {
 func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 	if token, isToken := c.auth.(*auth.Token); isToken {
 		return token.AccessKey, isToken
+	} else if token, isNoAuth := c.auth.(*auth.NoAuth); isNoAuth {
+		return token.AccessKey, isNoAuth
 	}
+
 	return "", false
 }
 

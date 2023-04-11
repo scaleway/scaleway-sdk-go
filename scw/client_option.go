@@ -79,6 +79,8 @@ func WithProfile(p *Profile) ClientOption {
 
 		if p.SecretKey != nil {
 			s.token = auth.NewToken(accessKey, *p.SecretKey)
+		} else if noAuthToken, isNoAuth := s.token.(*auth.NoAuth); isNoAuth {
+			noAuthToken.AccessKey = accessKey
 		}
 
 		if p.APIURL != nil {
