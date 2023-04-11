@@ -465,8 +465,10 @@ type GetCockpitMetricsRequest struct {
 	// ProjectID: project ID.
 	ProjectID string `json:"-"`
 	// StartDate: start date.
+	// Start date, if omited, query will be instant query and End Date will be used as query time.
 	StartDate *time.Time `json:"-"`
 	// EndDate: end date.
+	// End date, if omited set to now.
 	EndDate *time.Time `json:"-"`
 	// MetricName: metric name.
 	MetricName *string `json:"-"`
