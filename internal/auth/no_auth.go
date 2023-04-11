@@ -3,8 +3,6 @@ package auth
 import "net/http"
 
 type NoAuth struct {
-	// auth config may contain an access key without being authenticated
-	AccessKey string
 }
 
 // NewNoAuth return an auth with no authentication method
