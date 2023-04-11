@@ -75,6 +75,7 @@ func WithProfile(p *Profile) ClientOption {
 		accessKey := ""
 		if p.AccessKey != nil {
 			accessKey = *p.AccessKey
+			s.token = auth.NewAccessKeyOnly(accessKey)
 		}
 
 		if p.SecretKey != nil {

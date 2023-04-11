@@ -38,6 +38,20 @@ func TestNewClientWithNoAuth(t *testing.T) {
 		testhelpers.Equals(t, "", accessKey)
 		testhelpers.Assert(t, !exist, "accessKey must not exist")
 	})
+	t.Run("Only access key", func(t *testing.T) {
+		client, err := NewClient(WithProfile(&Profile{
+			AccessKey: StringPtr(testAccessKey),
+		}))
+		testhelpers.AssertNoError(t, err)
+
+		secretKey, exist := client.GetSecretKey()
+		testhelpers.Equals(t, "", secretKey)
+		testhelpers.Assert(t, !exist, "secretKey must not exist")
+
+		accessKey, exist := client.GetAccessKey()
+		testhelpers.Assert(t, exist, "accessKey must exist")
+		testhelpers.Equals(t, accessKey, testAccessKey)
+	})
 }
 
 func TestNewClientMultipleClients(t *testing.T) {
