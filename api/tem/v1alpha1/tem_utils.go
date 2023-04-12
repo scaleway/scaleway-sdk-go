@@ -11,6 +11,13 @@ import (
 const (
 	defaultTimeout       = 5 * time.Minute
 	defaultRetryInterval = 15 * time.Second
+
+	SMTPHost             = "smtp.tem.scw.cloud"
+	SMTPPortUnsecure     = 25
+	SMTPPort             = 587
+	SMTPPortAlternative  = 2587
+	SMTPSPort            = 465
+	SMTPSPortAlternative = 2465
 )
 
 // WaitForDomainRequest is used by WaitForDomain method
