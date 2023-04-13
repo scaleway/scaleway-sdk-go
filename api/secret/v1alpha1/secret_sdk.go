@@ -217,6 +217,8 @@ type Secret struct {
 	VersionCount uint32 `json:"version_count"`
 	// Description: updated description of the secret.
 	Description *string `json:"description"`
+	// IsManaged: true for secrets that are managed by another product.
+	IsManaged bool `json:"is_managed"`
 }
 
 // SecretVersion: secret version.
@@ -432,6 +434,50 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
+type AddSecretOwnerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+	// ProductName: name of the product to add.
+	ProductName string `json:"product_name"`
+}
+
+// AddSecretOwner: allow another product to use the secret.
+func (s *API) AddSecretOwner(req *AddSecretOwnerRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/add-owner",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type ListSecretsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
@@ -443,6 +489,8 @@ type ListSecretsRequest struct {
 	Name *string `json:"-"`
 	// Tags: list of tags to filter on (optional).
 	Tags []string `json:"-"`
+	// IsManaged: filter by managed / not managed (optional).
+	IsManaged *bool `json:"-"`
 	// OrderBy: default value: name_asc
 	OrderBy ListSecretsRequestOrderBy `json:"-"`
 
@@ -471,6 +519,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "is_managed", req.IsManaged)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
