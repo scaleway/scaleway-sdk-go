@@ -112,7 +112,7 @@ func WithProfile(p *Profile) ClientOption {
 	}
 }
 
-// WithProfile client option configures a client from the environment variables.
+// WithEnv client option configures a client from the environment variables.
 func WithEnv() ClientOption {
 	return WithProfile(LoadEnvProfile())
 }
