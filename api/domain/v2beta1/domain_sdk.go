@@ -39,8 +39,8 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: DNS API.
-// Manage your DNS zones and records.
+// API: domains and DNS API documetation.
+// Manage your domains, DNS zones and records with the Domains and DNS API.
 type API struct {
 	client *scw.Client
 }
@@ -1290,21 +1290,21 @@ type ListContactsResponse struct {
 
 // ListDNSZoneNameserversResponse: list dns zone nameservers response.
 type ListDNSZoneNameserversResponse struct {
-	// Ns: the returned DNS zone nameservers.
+	// Ns: DNS zone name servers returned.
 	Ns []*Nameserver `json:"ns"`
 }
 
 // ListDNSZoneRecordsResponse: list dns zone records response.
 type ListDNSZoneRecordsResponse struct {
-	// TotalCount: the total number of DNS zone records.
+	// TotalCount: total number of DNS zone records.
 	TotalCount uint32 `json:"total_count"`
-	// Records: the paginated returned DNS zone records.
+	// Records: paginated returned DNS zone records.
 	Records []*Record `json:"records"`
 }
 
 // ListDNSZoneVersionRecordsResponse: list dns zone version records response.
 type ListDNSZoneVersionRecordsResponse struct {
-	// TotalCount: the total number of DNS zones versions records.
+	// TotalCount: total number of DNS zones versions records.
 	TotalCount uint32 `json:"total_count"`
 
 	Records []*Record `json:"records"`
@@ -1312,7 +1312,7 @@ type ListDNSZoneVersionRecordsResponse struct {
 
 // ListDNSZoneVersionsResponse: list dns zone versions response.
 type ListDNSZoneVersionsResponse struct {
-	// TotalCount: the total number of DNS zones versions.
+	// TotalCount: total number of DNS zones versions.
 	TotalCount uint32 `json:"total_count"`
 
 	Versions []*DNSZoneVersion `json:"versions"`
@@ -1320,9 +1320,9 @@ type ListDNSZoneVersionsResponse struct {
 
 // ListDNSZonesResponse: list dns zones response.
 type ListDNSZonesResponse struct {
-	// TotalCount: the total number of DNS zones.
+	// TotalCount: total number of DNS zones matching the requested criteria.
 	TotalCount uint32 `json:"total_count"`
-	// DNSZones: the paginated returned DNS zones.
+	// DNSZones: paginated returned DNS zones.
 	DNSZones []*DNSZone `json:"dns_zones"`
 }
 
@@ -1556,7 +1556,7 @@ type RecordWeightedConfigWeightedIP struct {
 
 // RefreshDNSZoneResponse: refresh dns zone response.
 type RefreshDNSZoneResponse struct {
-	// DNSZones: the returned DNS zones.
+	// DNSZones: DNS zones returned.
 	DNSZones []*DNSZone `json:"dns_zones"`
 }
 
@@ -1678,39 +1678,38 @@ type UpdateContactRequestQuestion struct {
 
 // UpdateDNSZoneNameserversResponse: update dns zone nameservers response.
 type UpdateDNSZoneNameserversResponse struct {
-	// Ns: the returned DNS zone nameservers.
+	// Ns: DNS zone name servers returned.
 	Ns []*Nameserver `json:"ns"`
 }
 
 // UpdateDNSZoneRecordsResponse: update dns zone records response.
 type UpdateDNSZoneRecordsResponse struct {
-	// Records: the returned DNS zone records.
+	// Records: DNS zone records returned.
 	Records []*Record `json:"records"`
 }
 
 // Service API
 
 type ListDNSZonesRequest struct {
-	// OrganizationID: the organization ID on which to filter the returned DNS zones.
+	// OrganizationID: organization ID on which to filter the returned DNS zones.
 	OrganizationID *string `json:"-"`
-	// ProjectID: the project ID on which to filter the returned DNS zones.
+	// ProjectID: project ID on which to filter the returned DNS zones.
 	ProjectID *string `json:"-"`
-	// OrderBy: the sort order of the returned DNS zones.
+	// OrderBy: sort order of the returned DNS zones.
 	// Default value: domain_asc
 	OrderBy ListDNSZonesRequestOrderBy `json:"-"`
-	// Page: the page number for the returned DNS zones.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zones per page.
+	// PageSize: maximum number of DNS zones to return per page.
 	PageSize *uint32 `json:"-"`
-	// Domain: the domain on which to filter the returned DNS zones.
+	// Domain: domain on which to filter the returned DNS zones.
 	Domain string `json:"-"`
-	// DNSZone: the DNS zone on which to filter the returned DNS zones.
+	// DNSZone: DNS zone on which to filter the returned DNS zones.
 	DNSZone string `json:"-"`
 }
 
 // ListDNSZones: list DNS zones.
-// Returns a list of manageable DNS zones.
-// You can filter the DNS zones by domain name.
+// Retrieve the list of DNS zones you can manage and filter DNS zones associated with specific domain names.
 func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) (*ListDNSZonesResponse, error) {
 	var err error
 
@@ -1745,16 +1744,16 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 }
 
 type CreateDNSZoneRequest struct {
-	// Domain: the domain of the DNS zone to create.
+	// Domain: domain in which to crreate the DNS zone.
 	Domain string `json:"domain"`
-	// Subdomain: the subdomain of the DNS zone to create.
+	// Subdomain: subdomain of the DNS zone to create.
 	Subdomain string `json:"subdomain"`
-	// ProjectID: the project ID where the DNS zone will be created.
+	// ProjectID: project ID in which to create the DNS zone.
 	ProjectID string `json:"project_id"`
 }
 
 // CreateDNSZone: create a DNS zone.
-// Create a new DNS zone.
+// Create a new DNS zone specified by the domain name, the subdomain and the Project ID.
 func (s *API) CreateDNSZone(req *CreateDNSZoneRequest, opts ...scw.RequestOption) (*DNSZone, error) {
 	var err error
 
@@ -1784,16 +1783,16 @@ func (s *API) CreateDNSZone(req *CreateDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type UpdateDNSZoneRequest struct {
-	// DNSZone: the DNS zone to update.
+	// DNSZone: DNS zone to update.
 	DNSZone string `json:"-"`
-	// NewDNSZone: the new DNS zone.
+	// NewDNSZone: name of the new DNS zone to create.
 	NewDNSZone *string `json:"new_dns_zone"`
-	// ProjectID: the project ID of the new DNS zone.
+	// ProjectID: project ID in which to create the new DNS zone.
 	ProjectID string `json:"project_id"`
 }
 
 // UpdateDNSZone: update a DNS zone.
-// Update the name and/or the organizations for a DNS zone.
+// Update the name and/or the Organizations for a DNS zone.
 func (s *API) UpdateDNSZone(req *UpdateDNSZoneRequest, opts ...scw.RequestOption) (*DNSZone, error) {
 	var err error
 
@@ -1827,18 +1826,18 @@ func (s *API) UpdateDNSZone(req *UpdateDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type CloneDNSZoneRequest struct {
-	// DNSZone: the DNS zone to clone.
+	// DNSZone: DNS zone to clone.
 	DNSZone string `json:"-"`
-	// DestDNSZone: the destinaton DNS zone.
+	// DestDNSZone: destination DNS zone in which to clone the chosen DNS zone.
 	DestDNSZone string `json:"dest_dns_zone"`
-	// Overwrite: whether or not the destination DNS zone will be overwritten.
+	// Overwrite: specifies whether or not the destination DNS zone will be overwritten.
 	Overwrite bool `json:"overwrite"`
-	// ProjectID: the project ID of the destination DNS zone.
+	// ProjectID: project ID of the destination DNS zone.
 	ProjectID *string `json:"project_id"`
 }
 
 // CloneDNSZone: clone a DNS zone.
-// Clone an existed DNS zone with all its records into a new one.
+// Clone an existing DNS zone with all its records into a new DNS zone.
 func (s *API) CloneDNSZone(req *CloneDNSZoneRequest, opts ...scw.RequestOption) (*DNSZone, error) {
 	var err error
 
@@ -1867,14 +1866,14 @@ func (s *API) CloneDNSZone(req *CloneDNSZoneRequest, opts ...scw.RequestOption) 
 }
 
 type DeleteDNSZoneRequest struct {
-	// DNSZone: the DNS zone to delete.
+	// DNSZone: DNS zone to delete.
 	DNSZone string `json:"-"`
-	// ProjectID: the project ID of the DNS zone to delete.
+	// ProjectID: project ID of the DNS zone to delete.
 	ProjectID string `json:"-"`
 }
 
-// DeleteDNSZone: delete DNS zone.
-// Delete a DNS zone and all it's records.
+// DeleteDNSZone: delete a DNS zone.
+// Delete a DNS zone and all its records.
 func (s *API) DeleteDNSZone(req *DeleteDNSZoneRequest, opts ...scw.RequestOption) (*DeleteDNSZoneResponse, error) {
 	var err error
 
@@ -1907,29 +1906,29 @@ func (s *API) DeleteDNSZone(req *DeleteDNSZoneRequest, opts ...scw.RequestOption
 }
 
 type ListDNSZoneRecordsRequest struct {
-	// DNSZone: the DNS zone on which to filter the returned DNS zone records.
+	// DNSZone: DNS zone on which to filter the returned DNS zone records.
 	DNSZone string `json:"-"`
-	// ProjectID: the project ID on which to filter the returned DNS zone records.
+	// ProjectID: project ID on which to filter the returned DNS zone records.
 	ProjectID *string `json:"-"`
-	// OrderBy: the sort order of the returned DNS zone records.
+	// OrderBy: sort order of the returned DNS zone records.
 	// Default value: name_asc
 	OrderBy ListDNSZoneRecordsRequestOrderBy `json:"-"`
-	// Page: the page number for the returned DNS zone records.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zone records per page.
+	// PageSize: maximum number of DNS zone records per page.
 	PageSize *uint32 `json:"-"`
-	// Name: the name on which to filter the returned DNS zone records.
+	// Name: name on which to filter the returned DNS zone records.
 	Name string `json:"-"`
-	// Type: the record type on which to filter the returned DNS zone records.
+	// Type: record type on which to filter the returned DNS zone records.
 	// Default value: unknown
 	Type RecordType `json:"-"`
-	// ID: the record ID on which to filter the returned DNS zone records.
+	// ID: record ID on which to filter the returned DNS zone records.
 	ID *string `json:"-"`
 }
 
-// ListDNSZoneRecords: list DNS zone records.
-// Returns a list of DNS records of a DNS zone with default NS.
-// You can filter the records by type and name.
+// ListDNSZoneRecords: list records within a DNS zone.
+// Retrieve a list of DNS records within a DNS zone that has default name servers.
+// You can filter records by type and name.
 func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneRecordsResponse, error) {
 	var err error
 
@@ -1968,34 +1967,26 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 }
 
 type UpdateDNSZoneRecordsRequest struct {
-	// DNSZone: the DNS zone where the DNS zone records will be updated.
+	// DNSZone: DNS zone in which to update the DNS zone records.
 	DNSZone string `json:"-"`
-	// Changes: the changes made to the records.
+	// Changes: changes made to the records.
 	Changes []*RecordChange `json:"changes"`
-	// ReturnAllRecords: whether or not to return all the records.
+	// ReturnAllRecords: specifies whether or not to return all the records.
 	ReturnAllRecords *bool `json:"return_all_records"`
-	// DisallowNewZoneCreation: forbid the creation of the target zone if not existing (default action is yes).
+	// DisallowNewZoneCreation: disable the creation of the target zone if it does not exist. Target zone creation is disabled by default.
 	DisallowNewZoneCreation bool `json:"disallow_new_zone_creation"`
-	// Serial: don't use the autoincremenent serial but the provided one (0 to keep the same).
+	// Serial: use the provided serial (0) instead of the auto-increment serial.
 	Serial *uint64 `json:"serial"`
 }
 
-// UpdateDNSZoneRecords: update DNS zone records.
-// Only available with default NS.<br/>
-// Send a list of actions and records.
+// UpdateDNSZoneRecords: update records within a DNS zone.
+// Update records within a DNS zone that has default name servers and perform several actions on your records.
 //
-// Action can be:
-//  - add:
-//   - Add new record
-//   - Can be more specific and add a new IP to an existing A record for example
-//  - set:
-//   - Edit a record
-//   - Can be more specific and edit an IP from an existing A record for example
-//  - delete:
-//   - Delete a record
-//   - Can be more specific and delete an IP from an existing A record for example
-//  - clear:
-//   - Delete all records from a DNS zone
+// Actions include:
+//  - add: allows you to add a new record or add a new IP to an existing A record, for example
+//  - set: allows you to edit a record or edit an IP from an existing A record, for example
+//  - delete: allows you to delete a record or delete an IP from an existing A record, for example
+//  - clear: allows you to delete all records from a DNS zone
 //
 // All edits will be versioned.
 func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw.RequestOption) (*UpdateDNSZoneRecordsResponse, error) {
@@ -2026,14 +2017,14 @@ func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw
 }
 
 type ListDNSZoneNameserversRequest struct {
-	// DNSZone: the DNS zone on which to filter the returned DNS zone nameservers.
+	// DNSZone: DNS zone on which to filter the returned DNS zone name servers.
 	DNSZone string `json:"-"`
-	// ProjectID: the project ID on which to filter the returned DNS zone nameservers.
+	// ProjectID: project ID on which to filter the returned DNS zone name servers.
 	ProjectID *string `json:"-"`
 }
 
-// ListDNSZoneNameservers: list DNS zone nameservers.
-// Returns a list of Nameservers and their optional glue records for a DNS zone.
+// ListDNSZoneNameservers: list name servers within a DNS zone.
+// Retrieve a list of name servers within a DNS zone and their optional glue records.
 func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ...scw.RequestOption) (*ListDNSZoneNameserversResponse, error) {
 	var err error
 
@@ -2061,14 +2052,14 @@ func (s *API) ListDNSZoneNameservers(req *ListDNSZoneNameserversRequest, opts ..
 }
 
 type UpdateDNSZoneNameserversRequest struct {
-	// DNSZone: the DNS zone where the DNS zone nameservers will be updated.
+	// DNSZone: DNS zone in which to update the DNS zone name servers.
 	DNSZone string `json:"-"`
-	// Ns: the new DNS zone nameservers.
+	// Ns: new DNS zone name servers.
 	Ns []*Nameserver `json:"ns"`
 }
 
-// UpdateDNSZoneNameservers: update DNS zone nameservers.
-// Update DNS zone nameservers and set optional glue records.
+// UpdateDNSZoneNameservers: update name servers within a DNS zone.
+// Update name servers within a DNS zone and set optional glue records.
 func (s *API) UpdateDNSZoneNameservers(req *UpdateDNSZoneNameserversRequest, opts ...scw.RequestOption) (*UpdateDNSZoneNameserversResponse, error) {
 	var err error
 
@@ -2097,13 +2088,12 @@ func (s *API) UpdateDNSZoneNameservers(req *UpdateDNSZoneNameserversRequest, opt
 }
 
 type ClearDNSZoneRecordsRequest struct {
-	// DNSZone: the DNS zone to clear.
+	// DNSZone: DNS zone to clear.
 	DNSZone string `json:"-"`
 }
 
-// ClearDNSZoneRecords: clear DNS zone records.
-// Only available with default NS.<br/>
-// Delete all the records from a DNS zone.
+// ClearDNSZoneRecords: clear records within a DNS zone.
+// Delete all records within a DNS zone that has default name servers.<br/>
 // All edits will be versioned.
 func (s *API) ClearDNSZoneRecords(req *ClearDNSZoneRecordsRequest, opts ...scw.RequestOption) (*ClearDNSZoneRecordsResponse, error) {
 	var err error
@@ -2128,15 +2118,15 @@ func (s *API) ClearDNSZoneRecords(req *ClearDNSZoneRecordsRequest, opts ...scw.R
 }
 
 type ExportRawDNSZoneRequest struct {
-	// DNSZone: the DNS zone to export.
+	// DNSZone: DNS zone to export.
 	DNSZone string `json:"-"`
-	// Format: format for DNS zone.
+	// Format: DNS zone format.
 	// Default value: bind
 	Format RawFormat `json:"-"`
 }
 
-// ExportRawDNSZone: export raw DNS zone.
-// Get a DNS zone in a given format with default NS.
+// ExportRawDNSZone: export a raw DNS zone.
+// Export a DNS zone with default name servers, in a specific format.
 func (s *API) ExportRawDNSZone(req *ExportRawDNSZoneRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -2164,7 +2154,7 @@ func (s *API) ExportRawDNSZone(req *ExportRawDNSZoneRequest, opts ...scw.Request
 }
 
 type ImportRawDNSZoneRequest struct {
-	// DNSZone: the DNS zone to import.
+	// DNSZone: DNS zone to import.
 	DNSZone string `json:"-"`
 	// Deprecated
 	Content *string `json:"content,omitempty"`
@@ -2175,13 +2165,13 @@ type ImportRawDNSZoneRequest struct {
 	// BindSource: import a bind file format.
 	// Precisely one of AxfrSource, BindSource must be set.
 	BindSource *ImportRawDNSZoneRequestBindSource `json:"bind_source,omitempty"`
-	// AxfrSource: import from the nameserver given with tsig use or not.
+	// AxfrSource: import from the name server given with TSIG, to use or not.
 	// Precisely one of AxfrSource, BindSource must be set.
 	AxfrSource *ImportRawDNSZoneRequestAXFRSource `json:"axfr_source,omitempty"`
 }
 
-// ImportRawDNSZone: import raw DNS zone.
-// Import and replace records from a given provider format with default NS.
+// ImportRawDNSZone: import a raw DNS zone.
+// Import and replace the format of records from a given provider, with default name servers.
 func (s *API) ImportRawDNSZone(req *ImportRawDNSZoneRequest, opts ...scw.RequestOption) (*ImportRawDNSZoneResponse, error) {
 	var err error
 
@@ -2221,8 +2211,8 @@ type ImportProviderDNSZoneRequest struct {
 	OnlineV1 *ImportProviderDNSZoneRequestOnlineV1 `json:"online_v1,omitempty"`
 }
 
-// ImportProviderDNSZone: import provider DNS zone.
-// Import and replace records from a given provider format with default NS.
+// ImportProviderDNSZone: import a DNS zone from another provider.
+// Import and replace the format of records from a given provider, with default name servers.
 func (s *API) ImportProviderDNSZone(req *ImportProviderDNSZoneRequest, opts ...scw.RequestOption) (*ImportProviderDNSZoneResponse, error) {
 	var err error
 
@@ -2251,16 +2241,16 @@ func (s *API) ImportProviderDNSZone(req *ImportProviderDNSZoneRequest, opts ...s
 }
 
 type RefreshDNSZoneRequest struct {
-	// DNSZone: the DNS zone to refresh.
+	// DNSZone: DNS zone to refresh.
 	DNSZone string `json:"-"`
-	// RecreateDNSZone: whether or not to recreate the DNS zone.
+	// RecreateDNSZone: specifies whether or not to recreate the DNS zone.
 	RecreateDNSZone bool `json:"recreate_dns_zone"`
-	// RecreateSubDNSZone: whether or not to recreate the sub DNS zone.
+	// RecreateSubDNSZone: specifies whether or not to recreate the sub DNS zone.
 	RecreateSubDNSZone bool `json:"recreate_sub_dns_zone"`
 }
 
-// RefreshDNSZone: refresh DNS zone.
-// Refresh SOA DNS zone.
+// RefreshDNSZone: refresh a DNS zone.
+// Refresh an SOA DNS zone to reload the records in the DNS zone and update the SOA serial.
 // You can recreate the given DNS zone and its sub DNS zone if needed.
 func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOption) (*RefreshDNSZoneResponse, error) {
 	var err error
@@ -2291,16 +2281,15 @@ func (s *API) RefreshDNSZone(req *RefreshDNSZoneRequest, opts ...scw.RequestOpti
 
 type ListDNSZoneVersionsRequest struct {
 	DNSZone string `json:"-"`
-	// Page: the page number for the returned DNS zones versions.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zones versions per page.
+	// PageSize: maximum number of DNS zones versions per page.
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDNSZoneVersions: list DNS zone versions.
-// Get a list of DNS zone versions.<br/>
-// The maximum version count is 100.<br/>
-// If the count reaches this limit, the oldest version will be deleted after each new modification.
+// ListDNSZoneVersions: list versions of a DNS zone.
+// Retrieve a list of a DNS zone's versions.<br/>
+// The maximum version count is 100. If the count reaches this limit, the oldest version will be deleted after each new modification.
 func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionsResponse, error) {
 	var err error
 
@@ -2335,14 +2324,14 @@ func (s *API) ListDNSZoneVersions(req *ListDNSZoneVersionsRequest, opts ...scw.R
 
 type ListDNSZoneVersionRecordsRequest struct {
 	DNSZoneVersionID string `json:"-"`
-	// Page: the page number for the returned DNS zones versions records.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
-	// PageSize: the maximum number of DNS zones versions records per page.
+	// PageSize: maximum number of DNS zones versions records per page.
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDNSZoneVersionRecords: list DNS zone version records.
-// Get a list of records from a previous DNS zone version.
+// ListDNSZoneVersionRecords: list records from a given version of a specific DNS zone.
+// Retrieve a list of records from a specific DNS zone version.
 func (s *API) ListDNSZoneVersionRecords(req *ListDNSZoneVersionRecordsRequest, opts ...scw.RequestOption) (*ListDNSZoneVersionRecordsResponse, error) {
 	var err error
 
@@ -2379,8 +2368,8 @@ type GetDNSZoneVersionDiffRequest struct {
 	DNSZoneVersionID string `json:"-"`
 }
 
-// GetDNSZoneVersionDiff: get DNS zone version diff.
-// Get all differences from a previous DNS zone version.
+// GetDNSZoneVersionDiff: access differences from a specific DNS zone version.
+// Access a previous DNS zone version to see the differences from another specific version.
 func (s *API) GetDNSZoneVersionDiff(req *GetDNSZoneVersionDiffRequest, opts ...scw.RequestOption) (*GetDNSZoneVersionDiffResponse, error) {
 	var err error
 
@@ -2407,8 +2396,8 @@ type RestoreDNSZoneVersionRequest struct {
 	DNSZoneVersionID string `json:"-"`
 }
 
-// RestoreDNSZoneVersion: restore DNS zone version.
-// Restore and activate a previous DNS zone version.
+// RestoreDNSZoneVersion: restore a DNS zone version.
+// Restore and activate a version of a specific DNS zone.
 func (s *API) RestoreDNSZoneVersion(req *RestoreDNSZoneVersionRequest, opts ...scw.RequestOption) (*RestoreDNSZoneVersionResponse, error) {
 	var err error
 
@@ -2440,7 +2429,8 @@ type GetSSLCertificateRequest struct {
 	DNSZone string `json:"-"`
 }
 
-// GetSSLCertificate: get the zone TLS certificate if it exists.
+// GetSSLCertificate: get a DNS zone's TLS certificate.
+// Get the DNS zone's TLS certificate. If you do not have a certificate, the ouptut returns `no certificate found`.
 func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
 
@@ -2469,7 +2459,8 @@ type CreateSSLCertificateRequest struct {
 	AlternativeDNSZones []string `json:"alternative_dns_zones"`
 }
 
-// CreateSSLCertificate: create or return the zone TLS certificate.
+// CreateSSLCertificate: create or get the DNS zone's TLS certificate.
+// Create a new TLS certificate or retrieve information about an existing TLS certificate.
 func (s *API) CreateSSLCertificate(req *CreateSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
 
@@ -2503,7 +2494,8 @@ type ListSSLCertificatesRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// ListSSLCertificates: list all user TLS certificates.
+// ListSSLCertificates: list a user's TLS certificates.
+// List all the TLS certificates a user has created, specified by the user's Project ID and the DNS zone.
 func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.RequestOption) (*ListSSLCertificatesResponse, error) {
 	var err error
 
@@ -2538,7 +2530,8 @@ type DeleteSSLCertificateRequest struct {
 	DNSZone string `json:"-"`
 }
 
-// DeleteSSLCertificate: delete an TLS certificate.
+// DeleteSSLCertificate: delete a TLS certificate.
+// Delete an existing TLS certificate specified by its DNS zone. Deleting a TLS certificate is permanent and cannot be undone.
 func (s *API) DeleteSSLCertificate(req *DeleteSSLCertificateRequest, opts ...scw.RequestOption) (*DeleteSSLCertificateResponse, error) {
 	var err error
 
@@ -2565,8 +2558,8 @@ type GetDNSZoneTsigKeyRequest struct {
 	DNSZone string `json:"-"`
 }
 
-// GetDNSZoneTsigKey: get the DNS zone TSIG Key.
-// Get the DNS zone TSIG Key to allow AXFR request.
+// GetDNSZoneTsigKey: get the DNS zone's TSIG key.
+// Retrieve information about the TSIG key of a given DNS zone to allow AXFR requests.
 func (s *API) GetDNSZoneTsigKey(req *GetDNSZoneTsigKeyRequest, opts ...scw.RequestOption) (*GetDNSZoneTsigKeyResponse, error) {
 	var err error
 
@@ -2593,7 +2586,8 @@ type DeleteDNSZoneTsigKeyRequest struct {
 	DNSZone string `json:"-"`
 }
 
-// DeleteDNSZoneTsigKey: delete the DNS zone TSIG Key.
+// DeleteDNSZoneTsigKey: delete the DNS zone's TSIG key.
+// Delete an existing TSIG key specified by its DNS zone. Deleting a TSIG key is permanent and cannot be undone.
 func (s *API) DeleteDNSZoneTsigKey(req *DeleteDNSZoneTsigKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
