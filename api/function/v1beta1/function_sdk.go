@@ -815,6 +815,8 @@ type Function struct {
 	Handler string `json:"handler"`
 	// ErrorMessage: error message if the function is in "error" state.
 	ErrorMessage *string `json:"error_message"`
+	// BuildMessage: description of the current build step.
+	BuildMessage *string `json:"build_message"`
 	// Privacy: privacy setting of the function.
 	// Default value: unknown_privacy
 	Privacy FunctionPrivacy `json:"privacy"`
