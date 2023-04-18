@@ -508,8 +508,7 @@ type CreateCredentialRequest struct {
 	// Name: name of the credentials.
 	Name string `json:"name"`
 	// Permissions: permissions associated with these credentials.
-	// Precisely one of Permissions must be set.
-	Permissions *Permissions `json:"permissions,omitempty"`
+	Permissions *Permissions `json:"permissions"`
 }
 
 // CreateCredential: create credentials.
@@ -651,8 +650,7 @@ type UpdateCredentialRequest struct {
 	// Name: name of the credentials.
 	Name *string `json:"name"`
 	// Permissions: permissions associated with these credentials.
-	// Precisely one of Permissions must be set.
-	Permissions *Permissions `json:"permissions,omitempty"`
+	Permissions *Permissions `json:"permissions"`
 }
 
 // UpdateCredential: update credentials.
