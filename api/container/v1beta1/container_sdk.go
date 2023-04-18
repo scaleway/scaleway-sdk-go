@@ -583,7 +583,7 @@ type Container struct {
 	MaxScale uint32 `json:"max_scale"`
 	// MemoryLimit: memory limit of the container in MB.
 	MemoryLimit uint32 `json:"memory_limit"`
-	// CPULimit: CPU limit of the container.
+	// CPULimit: CPU limit of the container in mvCPU.
 	CPULimit uint32 `json:"cpu_limit"`
 	// Timeout: processing time limit for the container.
 	Timeout *scw.Duration `json:"timeout"`
@@ -1152,6 +1152,8 @@ type CreateContainerRequest struct {
 	MaxScale *uint32 `json:"max_scale"`
 	// MemoryLimit: memory limit of the container in MB.
 	MemoryLimit *uint32 `json:"memory_limit"`
+	// CPULimit: CPU limit of the container in mvCPU.
+	CPULimit *uint32 `json:"cpu_limit"`
 	// Timeout: processing time limit for the container.
 	Timeout *scw.Duration `json:"timeout"`
 	// Privacy: privacy setting of the container.
@@ -1225,6 +1227,8 @@ type UpdateContainerRequest struct {
 	MaxScale *uint32 `json:"max_scale"`
 	// MemoryLimit: memory limit of the container in MB.
 	MemoryLimit *uint32 `json:"memory_limit"`
+	// CPULimit: CPU limit of the container in mvCPU.
+	CPULimit *uint32 `json:"cpu_limit"`
 	// Timeout: processing time limit for the container.
 	Timeout *scw.Duration `json:"timeout"`
 	// Redeploy: defines whether to redeploy failed containers.
