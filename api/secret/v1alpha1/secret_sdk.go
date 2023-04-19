@@ -583,50 +583,6 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-type AddSecretOwnerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// ProductName: name of the product to add.
-	ProductName string `json:"product_name"`
-}
-
-// AddSecretOwner: allow a product to use the secret.
-func (s *API) AddSecretOwner(req *AddSecretOwnerRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.SecretID) == "" {
-		return errors.New("field SecretID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/add-owner",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 type CreateSecretVersionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
