@@ -282,13 +282,13 @@ func (enum *TagStatus) UnmarshalJSON(data []byte) error {
 
 // Image: image.
 type Image struct {
-	// ID: the UUID of the image.
+	// ID: UUID of the image.
 	ID string `json:"id"`
-	// Name: the name of the image, it must be unique within the namespace.
+	// Name: name of the image, it must be unique within the namespace.
 	Name string `json:"name"`
-	// NamespaceID: the UUID of the namespace the image belongs to.
+	// NamespaceID: UUID of the namespace the image belongs to.
 	NamespaceID string `json:"namespace_id"`
-	// Status: the status of the image.
+	// Status: status of the image.
 	// Default value: unknown
 	Status ImageStatus `json:"status"`
 	// StatusMessage: details of the image status.
@@ -333,9 +333,9 @@ type ListTagsResponse struct {
 
 // Namespace: namespace.
 type Namespace struct {
-	// ID: the UUID of the namespace.
+	// ID: UUID of the namespace.
 	ID string `json:"id"`
-	// Name: the name of the namespace, unique in a region accross all organizations.
+	// Name: name of the namespace, unique in a region accross all organizations.
 	Name string `json:"name"`
 	// Description: description of the namespace.
 	Description string `json:"description"`
@@ -350,7 +350,7 @@ type Namespace struct {
 	StatusMessage string `json:"status_message"`
 	// Endpoint: endpoint reachable by docker.
 	Endpoint string `json:"endpoint"`
-	// IsPublic: whether or not namespace is public.
+	// IsPublic: defines whether or not namespace is public.
 	IsPublic bool `json:"is_public"`
 	// Size: total size of the namespace, calculated as the sum of the size of all images in the namespace.
 	Size scw.Size `json:"size"`
@@ -366,7 +366,7 @@ type Namespace struct {
 
 // Tag: tag.
 type Tag struct {
-	// ID: the UUID of the tag.
+	// ID: UUID of the tag.
 	ID string `json:"id"`
 	// Name: tag name, unique to an image.
 	Name string `json:"name"`
@@ -454,7 +454,7 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 type GetNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// NamespaceID: the UUID of the namespace.
+	// NamespaceID: UUID of the namespace.
 	NamespaceID string `json:"-"`
 }
 
@@ -504,7 +504,7 @@ type CreateNamespaceRequest struct {
 	// ProjectID: project ID on which the namespace will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
-	// IsPublic: whether or not namespace is public.
+	// IsPublic: defines whether or not namespace is public.
 	IsPublic bool `json:"is_public"`
 }
 
@@ -563,7 +563,7 @@ type UpdateNamespaceRequest struct {
 	NamespaceID string `json:"-"`
 	// Description: namespace description.
 	Description *string `json:"description"`
-	// IsPublic: whether or not the namespace is public.
+	// IsPublic: defines whether or not the namespace is public.
 	IsPublic *bool `json:"is_public"`
 }
 
@@ -608,7 +608,7 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 type DeleteNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// NamespaceID: the UUID of the namespace.
+	// NamespaceID: UUID of the namespace.
 	NamespaceID string `json:"-"`
 }
 
@@ -712,7 +712,7 @@ func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*Li
 type GetImageRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ImageID: the UUID of the image.
+	// ImageID: UUID of the image.
 	ImageID string `json:"-"`
 }
 
@@ -800,7 +800,7 @@ func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*
 type DeleteImageRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ImageID: the UUID of the image.
+	// ImageID: UUID of the image.
 	ImageID string `json:"-"`
 }
 
@@ -840,7 +840,7 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) (*
 type ListTagsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ImageID: the UUID of the image.
+	// ImageID: UUID of the image.
 	ImageID string `json:"-"`
 	// Page: a positive integer to choose the page to display.
 	Page *int32 `json:"-"`
@@ -901,7 +901,7 @@ func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTa
 type GetTagRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// TagID: the UUID of the tag.
+	// TagID: UUID of the tag.
 	TagID string `json:"-"`
 }
 
@@ -941,7 +941,7 @@ func (s *API) GetTag(req *GetTagRequest, opts ...scw.RequestOption) (*Tag, error
 type DeleteTagRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// TagID: the UUID of the tag.
+	// TagID: UUID of the tag.
 	TagID string `json:"-"`
 	// Force: if two tags share the same digest the deletion will fail unless this parameter is set to true.
 	Force bool `json:"-"`
