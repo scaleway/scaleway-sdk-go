@@ -40,7 +40,7 @@ var (
 )
 
 // API: this API allows you to manage Scaleway Messaging and Queueing brokers.
-// MnQ API (beta).
+// Messaging and Queuing API.
 type API struct {
 	client *scw.Client
 }
