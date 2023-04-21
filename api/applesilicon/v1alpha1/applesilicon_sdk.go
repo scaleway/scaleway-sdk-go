@@ -312,7 +312,7 @@ type GetServerTypeRequest struct {
 }
 
 // GetServerType: get a server type.
-// Get a server technical details.
+// Get technical details (CPU, disk size etc.) of a server type.
 func (s *API) GetServerType(req *GetServerTypeRequest, opts ...scw.RequestOption) (*ServerType, error) {
 	var err error
 
@@ -471,8 +471,8 @@ type ListOSRequest struct {
 	Name *string `json:"-"`
 }
 
-// ListOS: list all Operating System (OS).
-// List all Operating System (OS). The response will include the total number of OS as well as their associated IDs, names and labels.
+// ListOS: list all Operating Systems (OS).
+// List all Operating Systems (OS). The response will include the total number of OS as well as their associated IDs, names and labels.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
 
