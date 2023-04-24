@@ -39,8 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: serverless functions API.
-// Functions API.
+// API: serverless Functions API.
 type API struct {
 	client *scw.Client
 }
