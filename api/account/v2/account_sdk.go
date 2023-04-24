@@ -129,6 +129,10 @@ func (s *API) CreateProject(req *CreateProjectRequest, opts ...scw.RequestOption
 		req.OrganizationID = defaultOrganizationID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("proj")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/account/v2/projects",
