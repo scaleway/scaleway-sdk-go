@@ -40,7 +40,6 @@ var (
 )
 
 // API: serverless Containers API.
-// Containers API.
 type API struct {
 	client *scw.Client
 }
