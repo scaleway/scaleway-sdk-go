@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: domains and DNS API documetation.
+// API: domains and DNS API.
 // Manage your domains, DNS zones and records with the Domains and DNS API.
 type API struct {
 	client *scw.Client
