@@ -236,7 +236,7 @@ type AvailableClusterSetting struct {
 	MinValue *int64 `json:"min_value"`
 	// Regex: optional validation rule of the setting.
 	Regex *string `json:"regex"`
-	// Deprecated: whether or not the setting is deprecated.
+	// Deprecated: defines whether or not the setting is deprecated.
 	Deprecated bool `json:"deprecated"`
 }
 
@@ -263,7 +263,7 @@ type Cluster struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: update date (Format ISO 8601).
 	UpdatedAt *time.Time `json:"updated_at"`
-	// TLSEnabled: whether or not TLS is enabled.
+	// TLSEnabled: defines whether or not TLS is enabled.
 	TLSEnabled bool `json:"tls_enabled"`
 	// ClusterSettings: list of Database Instance settings.
 	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
@@ -393,9 +393,9 @@ type NodeType struct {
 	Vcpus uint32 `json:"vcpus"`
 	// Memory: quantity of RAM.
 	Memory scw.Size `json:"memory"`
-	// Disabled: the node type is currently disabled.
+	// Disabled: defines whether node type is currently disabled or not.
 	Disabled bool `json:"disabled"`
-	// Beta: the node type is currently in beta.
+	// Beta: defines whether node type is currently in beta.
 	Beta bool `json:"beta"`
 	// Zone: zone of the node type.
 	Zone scw.Zone `json:"zone"`
@@ -436,7 +436,7 @@ func (s *API) Zones() []scw.Zone {
 type CreateClusterRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// ProjectID: the Project ID in which to create the Database Instance.
+	// ProjectID: project ID in which to create the Database Instance.
 	ProjectID string `json:"project_id"`
 	// Name: name of the Database Instance.
 	Name string `json:"name"`
@@ -457,7 +457,7 @@ type CreateClusterRequest struct {
 	// Endpoints: zero or multiple EndpointSpec used to expose your cluster publicly and inside Private Networks.
 	// Zero or multiple EndpointSpec used to expose your cluster publicly and inside private networks. If no EndpoindSpec is given the cluster will be publicly exposed by default.
 	Endpoints []*EndpointSpec `json:"endpoints"`
-	// TLSEnabled: whether or not TLS is enabled.
+	// TLSEnabled: defines whether or not TLS is enabled.
 	TLSEnabled bool `json:"tls_enabled"`
 	// ClusterSettings: list of advanced settings to be set upon Database Instance initialization.
 	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
@@ -815,7 +815,7 @@ func (s *API) GetClusterMetrics(req *GetClusterMetricsRequest, opts ...scw.Reque
 type ListNodeTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// IncludeDisabledTypes: whether or not to include disabled types.
+	// IncludeDisabledTypes: defines whether or not to include disabled types.
 	IncludeDisabledTypes bool `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -866,11 +866,11 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 type ListClusterVersionsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-	// IncludeDisabled: whether or not to include disabled Redis™ engine versions.
+	// IncludeDisabled: defines whether or not to include disabled Redis™ engine versions.
 	IncludeDisabled bool `json:"-"`
-	// IncludeBeta: whether or not to include beta Redis™ engine versions.
+	// IncludeBeta: defines whether or not to include beta Redis™ engine versions.
 	IncludeBeta bool `json:"-"`
-	// IncludeDeprecated: whether or not to include deprecated Redis™ engine versions.
+	// IncludeDeprecated: defines whether or not to include deprecated Redis™ engine versions.
 	IncludeDeprecated bool `json:"-"`
 	// Version: list Redis™ engine versions that match a given name pattern.
 	Version *string `json:"-"`
