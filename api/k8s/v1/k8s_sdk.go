@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: kapsule API.
+// API: kubernetes API.
 type API struct {
 	client *scw.Client
 }
@@ -1076,7 +1076,7 @@ type CreateClusterRequest struct {
 	// Pools: pools to be created along with the cluster.
 	Pools []*CreateClusterRequestPoolConfig `json:"pools"`
 	// AutoscalerConfig: autoscaler config for the cluster.
-	// This field allows to specify some configuration for the autoscaler, which is an implementation of the [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
+	// This field allows to specify some configuration for the autoscaler, which is an implementation of the cluster-autoscaler (https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/).
 	AutoscalerConfig *CreateClusterRequestAutoscalerConfig `json:"autoscaler_config"`
 	// AutoUpgrade: auto upgrade configuration of the cluster.
 	// This configuration enables to set a specific 2-hour time window in which the cluster can be automatically updated to the latest patch version in the current minor one.
