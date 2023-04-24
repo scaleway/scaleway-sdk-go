@@ -226,6 +226,8 @@ type ListIPsRequest struct {
 	IsIPv6 *bool `json:"-"`
 
 	ResourceName *string `json:"-"`
+
+	ResourceIDs []string `json:"-"`
 }
 
 // ListIPs: find IP addresses.
@@ -256,6 +258,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "resource_name", req.ResourceName)
+	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
