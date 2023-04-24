@@ -39,8 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: tem.
-// Transactional Email API documentation.
+// API: transactional Email API.
 type API struct {
 	client *scw.Client
 }
@@ -292,7 +291,7 @@ type Statistics struct {
 	SentCount uint32 `json:"sent_count"`
 	// FailedCount: number of emails in the final `failed` state. This means emails that have been refused by the target mail system with a final error status.
 	FailedCount uint32 `json:"failed_count"`
-	// CanceledCount: number of emails in the final `canceled` state. This meanns emails that have been canceled upon request.
+	// CanceledCount: number of emails in the final `canceled` state. This means emails that have been canceled upon request.
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
