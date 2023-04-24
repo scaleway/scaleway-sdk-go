@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: flexible IP API.
+// API: elastic Metal - Flexible IP API.
 type API struct {
 	client *scw.Client
 }
