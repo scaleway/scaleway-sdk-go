@@ -40,7 +40,7 @@ var (
 )
 
 // API: this API allows you to manage IoT hubs and devices.
-// IoT API.
+// IoT Hub API.
 type API struct {
 	client *scw.Client
 }
@@ -1287,6 +1287,7 @@ type GetHubMetricsRequest struct {
 }
 
 // Deprecated: GetHubMetrics: get a hub's metrics.
+// Get the metrics of an existing IoT Hub, specified by its Hub ID.
 func (s *API) GetHubMetrics(req *GetHubMetricsRequest, opts ...scw.RequestOption) (*GetHubMetricsResponse, error) {
 	var err error
 
@@ -1897,6 +1898,7 @@ type GetDeviceMetricsRequest struct {
 }
 
 // Deprecated: GetDeviceMetrics: get a device's metrics.
+// Get the metrics of an existing device, specified by its device ID.
 func (s *API) GetDeviceMetrics(req *GetDeviceMetricsRequest, opts ...scw.RequestOption) (*GetDeviceMetricsResponse, error) {
 	var err error
 
@@ -2211,7 +2213,7 @@ type ListNetworksRequest struct {
 	TopicPrefix *string `json:"-"`
 }
 
-// ListNetworks: list the Networks.
+// ListNetworks: list the networks.
 func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) (*ListNetworksResponse, error) {
 	var err error
 
@@ -2267,7 +2269,8 @@ type CreateNetworkRequest struct {
 	TopicPrefix string `json:"topic_prefix"`
 }
 
-// CreateNetwork: create a new Network.
+// CreateNetwork: create a new network.
+// Create a new network for an existing hub.  Beside the default network, you can add networks for different data providers. Possible network types are Sigfox and REST.
 func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption) (*CreateNetworkResponse, error) {
 	var err error
 
@@ -2311,7 +2314,8 @@ type GetNetworkRequest struct {
 	NetworkID string `json:"-"`
 }
 
-// GetNetwork: retrieve a specific Network.
+// GetNetwork: retrieve a specific network.
+// Retrieve an existing network, specified by its network ID.  The response returns full details of the network, including its type, the topic prefix and its endpoint.
 func (s *API) GetNetwork(req *GetNetworkRequest, opts ...scw.RequestOption) (*Network, error) {
 	var err error
 
@@ -2351,6 +2355,7 @@ type DeleteNetworkRequest struct {
 }
 
 // DeleteNetwork: delete a Network.
+// Delete an existing network, specified by its network ID. Deleting a network is permanent, and cannot be undone.
 func (s *API) DeleteNetwork(req *DeleteNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
