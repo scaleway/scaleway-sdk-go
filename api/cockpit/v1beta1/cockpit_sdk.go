@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: cockpit's API allows you to monitor your applications and their infrastructure.
+// API: cockpit API.
 // Cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
 type API struct {
 	client *scw.Client
