@@ -13,6 +13,7 @@ const (
 	waitForCronDefaultTimeout      = 15 * time.Minute
 	waitForDomainDefaultTimeout    = 15 * time.Minute
 	waitForFunctionDefaultTimeout  = 15 * time.Minute
+	waitForTriggerDefaultTimeout   = 15 * time.Minute
 	defaultRetryInterval           = 5 * time.Second
 )
 
@@ -206,4 +207,51 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	}
 
 	return domain.(*Domain), nil
+}
+
+// WaitForTriggerRequest waits for the Trigger to be in a ready state before returning.
+type WaitForTriggerRequest struct {
+	TriggerID     string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForTrigger waits for the Trigger to be in a ready state before returning.
+func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	timeout := waitForTriggerDefaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[TriggerStatus]struct{}{
+		TriggerStatusError: {},
+		TriggerStatusReady: {},
+	}
+
+	trigger, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			trigger, err := s.GetTrigger(&GetTriggerRequest{
+				TriggerID: req.TriggerID,
+				Region:    req.Region,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTerminal := terminalStatus[trigger.Status]
+			return trigger, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Trigger failed")
+	}
+
+	return trigger.(*Trigger), nil
 }
