@@ -208,6 +208,7 @@ const (
 	FunctionRuntimePhp82          = FunctionRuntime("php82")
 	FunctionRuntimeNode19         = FunctionRuntime("node19")
 	FunctionRuntimeGo120          = FunctionRuntime("go120")
+	FunctionRuntimeNode20         = FunctionRuntime("node20")
 )
 
 func (enum FunctionRuntime) String() string {
