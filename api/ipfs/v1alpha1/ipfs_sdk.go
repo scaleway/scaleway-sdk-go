@@ -145,6 +145,10 @@ func (enum *PinStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CreateVolumeJWTResponse struct {
+	Token string `json:"token"`
+}
+
 type ListPinsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 
@@ -790,6 +794,91 @@ func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type CreateVolumeJWTRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	VolumeID string `json:"-"`
+}
+
+func (s *API) CreateVolumeJWT(req *CreateVolumeJWTRequest, opts ...scw.RequestOption) (*CreateVolumeJWTResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return nil, errors.New("field VolumeID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "/token",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CreateVolumeJWTResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteVolumeJWTRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	VolumeID string `json:"-"`
+
+	Token string `json:"-"`
+}
+
+func (s *API) DeleteVolumeJWT(req *DeleteVolumeJWTRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "token", req.Token)
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return errors.New("field VolumeID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "/token",
 		Query:   query,
 		Headers: http.Header{},
 	}
