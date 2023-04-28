@@ -704,10 +704,12 @@ type OS struct {
 	ServiceUser *OSOSField `json:"service_user"`
 	// ServicePassword: object defining the password requirements to install the service.
 	ServicePassword *OSOSField `json:"service_password"`
-	// Enabled: state of OS.
+	// Enabled: defines if the operating system is enabled or not.
 	Enabled bool `json:"enabled"`
 	// LicenseRequired: license required (check server options for pricing details).
 	LicenseRequired bool `json:"license_required"`
+	// Allowed: defines if a specific Organization is allowed to install this OS type.
+	Allowed bool `json:"allowed"`
 }
 
 type OSOSField struct {
