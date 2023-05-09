@@ -791,6 +791,8 @@ type User struct {
 	Status UserStatus `json:"status"`
 	// Mfa: defines whether MFA is enabled.
 	Mfa bool `json:"mfa"`
+	// AccountRootUserID: ID of the account root user associated with the user.
+	AccountRootUserID string `json:"account_root_user_id"`
 }
 
 // Service API
