@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: webhosting API.
+// API: web Hosting API.
 type API struct {
 	client *scw.Client
 }
@@ -342,7 +342,7 @@ type DNSRecord struct {
 	// Type: record type.
 	// Default value: unknown_type
 	Type DNSRecordType `json:"type"`
-	// TTL: record time to live.
+	// TTL: record time-to-live.
 	TTL uint32 `json:"ttl"`
 	// Value: record value.
 	Value string `json:"value"`
@@ -366,41 +366,41 @@ type DNSRecords struct {
 
 // Hosting: hosting.
 type Hosting struct {
-	// ID: ID of the hosting.
+	// ID: ID of the Web Hosting plan.
 	ID string `json:"id"`
-	// OrganizationID: organization ID of the hosting.
+	// OrganizationID: ID of the Scaleway Organization the Web Hosting plan belongs to.
 	OrganizationID string `json:"organization_id"`
-	// ProjectID: project ID of the hosting.
+	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
-	// UpdatedAt: last update date.
+	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-	// CreatedAt: creation date.
+	// CreatedAt: date on which the Web Hosting plan was created.
 	CreatedAt *time.Time `json:"created_at"`
-	// Status: the hosting status.
+	// Status: status of the Web Hosting plan.
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 	// PlatformHostname: hostname of the host platform.
 	PlatformHostname string `json:"platform_hostname"`
 	// PlatformNumber: number of the host platform.
 	PlatformNumber *int32 `json:"platform_number"`
-	// OfferID: ID of the active offer.
+	// OfferID: ID of the active offer for the Web Hosting plan.
 	OfferID string `json:"offer_id"`
-	// OfferName: name of the active offer.
+	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
-	// Domain: main domain of the hosting.
+	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
-	// Tags: tags of the hosting.
+	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
-	// Options: active options of the hosting.
+	// Options: array of any options activated for the Web Hosting plan.
 	Options []*HostingOption `json:"options"`
-	// DNSStatus: DNS status of the hosting.
+	// DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_dns_status
 	DNSStatus HostingDNSStatus `json:"dns_status"`
-	// CpanelURLs: URL to connect to cPanel Dashboard and to Webmail interface.
+	// CpanelURLs: URL to connect to cPanel dashboard and to Webmail interface.
 	CpanelURLs *HostingCpanelURLs `json:"cpanel_urls"`
-	// Username: main hosting cPanel username.
+	// Username: main Web Hosting cPanel username.
 	Username string `json:"username"`
-	// Region: region of the hosting.
+	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
 
@@ -420,15 +420,15 @@ type HostingOption struct {
 
 // ListHostingsResponse: list hostings response.
 type ListHostingsResponse struct {
-	// TotalCount: number of returned hostings.
+	// TotalCount: number of Web Hosting plans returned.
 	TotalCount uint32 `json:"total_count"`
-	// Hostings: list of hostings.
+	// Hostings: list of Web Hosting plans.
 	Hostings []*Hosting `json:"hostings"`
 }
 
 // ListOffersResponse: list offers response.
 type ListOffersResponse struct {
-	// Offers: list of returned offers.
+	// Offers: list of offers.
 	Offers []*Offer `json:"offers"`
 }
 
@@ -439,7 +439,7 @@ type Nameserver struct {
 	// Status: status of the nameserver.
 	// Default value: unknown_status
 	Status NameserverStatus `json:"status"`
-	// IsDefault: if the nameserver is the default.
+	// IsDefault: defines whether the nameserver is the default one.
 	IsDefault bool `json:"is_default"`
 }
 
@@ -449,13 +449,13 @@ type Offer struct {
 	ID string `json:"id"`
 	// BillingOperationPath: unique identifier used for billing.
 	BillingOperationPath string `json:"billing_operation_path"`
-	// Product: offer product.
+	// Product: product constituting this offer.
 	Product *OfferProduct `json:"product"`
-	// Price: offer price.
+	// Price: price of this offer.
 	Price *scw.Money `json:"price"`
-	// Available: if offer is available for a specific hosting.
+	// Available: if a hosting_id was specified in the call, defines whether this offer is available for that Web Hosting plan to migrate (update) to.
 	Available bool `json:"available"`
-	// QuotaWarnings: if not available, return quota warnings.
+	// QuotaWarnings: quota warnings, if the offer is not available for the specified hosting_id.
 	QuotaWarnings []OfferQuotaWarning `json:"quota_warnings"`
 }
 
@@ -491,21 +491,22 @@ func (s *API) Regions() []scw.Region {
 type CreateHostingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// OfferID: ID of the selected offer for the hosting.
+	// OfferID: ID of the selected offer for the Web Hosting plan.
 	OfferID string `json:"offer_id"`
-	// ProjectID: project ID of the hosting.
+	// ProjectID: ID of the Scaleway Project in which to create the Web Hosting plan.
 	ProjectID string `json:"project_id"`
-	// Email: contact email of the client for the hosting.
+	// Email: contact email for the Web Hosting client.
 	Email *string `json:"email"`
-	// Tags: the tags of the hosting.
+	// Tags: list of tags for the Web Hosting plan.
 	Tags []string `json:"tags"`
-	// Domain: the domain name of the hosting.
+	// Domain: domain name to link to the Web Hosting plan. You must already own this domain name, and have completed the DNS validation process beforehand.
 	Domain string `json:"domain"`
-	// OptionIDs: iDs of the selected options for the hosting.
+	// OptionIDs: iDs of any selected additional options for the Web Hosting plan.
 	OptionIDs []string `json:"option_ids"`
 }
 
-// CreateHosting: create a hosting.
+// CreateHosting: order a Web Hosting plan.
+// Order a Web Hosting plan, specifying the offer type required via the `offer_id` parameter.
 func (s *API) CreateHosting(req *CreateHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -546,26 +547,27 @@ func (s *API) CreateHosting(req *CreateHostingRequest, opts ...scw.RequestOption
 type ListHostingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Page: a positive integer to choose the page to return.
+	// Page: page number to return, from the paginated results (must be a positive integer).
 	Page *int32 `json:"-"`
-	// PageSize: a positive integer lower or equal to 100 to select the number of items to return.
+	// PageSize: number of Web Hosting plans to return (must be a positive integer lower or equal to 100).
 	PageSize *uint32 `json:"-"`
-	// OrderBy: define the order of the returned hostings.
+	// OrderBy: sort order for Web Hosting plans in the response.
 	// Default value: created_at_asc
 	OrderBy ListHostingsRequestOrderBy `json:"-"`
-	// Tags: return hostings with these tags.
+	// Tags: tags to filter for, only Web Hosting plans with matching tags will be returned.
 	Tags *[]string `json:"-"`
-	// Statuses: return hostings with these statuses.
+	// Statuses: statuses to filter for, only Web Hosting plans with matching statuses will be returned.
 	Statuses []HostingStatus `json:"-"`
-	// Domain: return hostings with this domain.
+	// Domain: domain to filter for, only Web Hosting plans associated with this domain will be returned.
 	Domain *string `json:"-"`
-	// ProjectID: return hostings from this project ID.
+	// ProjectID: project ID to filter for, only Web Hosting plans from this Project will be returned.
 	ProjectID *string `json:"-"`
-	// OrganizationID: return hostings from this organization ID.
+	// OrganizationID: organization ID to filter for, only Web Hosting plans from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 }
 
-// ListHostings: list all hostings.
+// ListHostings: list all Web Hosting plans.
+// List all of your existing Web Hosting plans. Various filters are available to limit the results, including filtering by domain, status, tag and Project ID.
 func (s *API) ListHostings(req *ListHostingsRequest, opts ...scw.RequestOption) (*ListHostingsResponse, error) {
 	var err error
 
@@ -616,8 +618,8 @@ type GetHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// GetHosting: get a hosting.
-// Get the details of a Hosting with the given ID.
+// GetHosting: get a Web Hosting plan.
+// Get the details of one of your existing Web Hosting plans, specified by its `hosting_id`.
 func (s *API) GetHosting(req *GetHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -654,17 +656,18 @@ type UpdateHostingRequest struct {
 	Region scw.Region `json:"-"`
 	// HostingID: hosting ID.
 	HostingID string `json:"-"`
-	// Email: new contact email for the hosting.
+	// Email: new contact email for the Web Hosting plan.
 	Email *string `json:"email"`
-	// Tags: new tags for the hosting.
+	// Tags: new tags for the Web Hosting plan.
 	Tags *[]string `json:"tags"`
-	// OptionIDs: new options IDs for the hosting.
+	// OptionIDs: iDs of the new options for the Web Hosting plan.
 	OptionIDs *[]string `json:"option_ids"`
-	// OfferID: new offer ID for the hosting.
+	// OfferID: ID of the new offer for the Web Hosting plan.
 	OfferID *string `json:"offer_id"`
 }
 
-// UpdateHosting: update a hosting.
+// UpdateHosting: update a Web Hosting plan.
+// Update the details of one of your existing Web Hosting plans, specified by its `hosting_id`. You can update parameters including the contact email address, tags, options and offer.
 func (s *API) UpdateHosting(req *UpdateHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -708,8 +711,8 @@ type DeleteHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// DeleteHosting: delete a hosting.
-// Delete a hosting with the given ID.
+// DeleteHosting: delete a Web Hosting plan.
+// Delete a Web Hosting plan, specified by its `hosting_id`. Note that deletion is not immediate: it will take place at the end of the calendar month, after which time your Web Hosting plan and all its data (files and emails) will be irreversibly lost.
 func (s *API) DeleteHosting(req *DeleteHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -748,8 +751,8 @@ type RestoreHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
-// RestoreHosting: restore a hosting.
-// Restore a hosting with the given ID.
+// RestoreHosting: restore a Web Hosting plan.
+// When you [delete a Web Hosting plan](#path-hostings-delete-a-hosting), definitive deletion does not take place until the end of the calendar month. In the time between initiating the deletion, and definitive deletion at the end of the month, you can choose to **restore** the Web Hosting plan, using this endpoint and specifying its `hosting_id`.
 func (s *API) RestoreHosting(req *RestoreHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -789,12 +792,12 @@ func (s *API) RestoreHosting(req *RestoreHostingRequest, opts ...scw.RequestOpti
 type GetDomainDNSRecordsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// Domain: domain associated to the DNS records.
+	// Domain: domain associated with the DNS records.
 	Domain string `json:"-"`
 }
 
-// GetDomainDNSRecords: get the DNS records.
-// The set of DNS record of a specific domain associated to a hosting.
+// GetDomainDNSRecords: get DNS records.
+// Get the set of DNS records of a specified domain associated with a Web Hosting plan.
 func (s *API) GetDomainDNSRecords(req *GetDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
 	var err error
 
@@ -829,18 +832,19 @@ func (s *API) GetDomainDNSRecords(req *GetDomainDNSRecordsRequest, opts ...scw.R
 type ListOffersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// OrderBy: define the order of the returned hostings.
+	// OrderBy: sort order of offers in the response.
 	// Default value: price_asc
 	OrderBy ListOffersRequestOrderBy `json:"-"`
-	// WithoutOptions: select only offers, no options.
+	// WithoutOptions: defines whether the response should consist of offers only, without options.
 	WithoutOptions bool `json:"-"`
-	// OnlyOptions: select only options.
+	// OnlyOptions: defines whether the response should consist of options only, without offers.
 	OnlyOptions bool `json:"-"`
-	// HostingID: define a specific hosting id (optional).
+	// HostingID: ID of a Web Hosting plan, to check compatibility with returned offers (in case of wanting to update the plan).
 	HostingID *string `json:"-"`
 }
 
 // ListOffers: list all offers.
+// List the different Web Hosting offers, and their options, available to order from Scaleway.
 func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*ListOffersResponse, error) {
 	var err error
 
