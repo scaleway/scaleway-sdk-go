@@ -235,13 +235,12 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
 	if res != nil {
 		contentType := httpResponse.Header.Get("Content-Type")
 
-		switch contentType {
-		case "application/json":
+		if strings.HasPrefix(contentType, "application/json") {
 			err = json.NewDecoder(httpResponse.Body).Decode(&res)
 			if err != nil {
 				return errors.Wrap(err, "could not parse %s response body", contentType)
 			}
-		default:
+		} else {
 			buffer, isBuffer := res.(io.Writer)
 			if !isBuffer {
 				return errors.Wrap(err, "could not handle %s response body with %T result type", contentType, buffer)
