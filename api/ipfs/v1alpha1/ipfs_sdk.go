@@ -145,10 +145,6 @@ func (enum *PinStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type CreateVolumeJWTResponse struct {
-	Token string `json:"token"`
-}
-
 type ListPinsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 
@@ -237,7 +233,7 @@ type CreateVolumeRequest struct {
 	Name string `json:"name"`
 }
 
-// CreateVolume: create volume in S3 bucket.
+// CreateVolume: create volume.
 func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -427,7 +423,7 @@ type DeleteVolumeRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// DeleteVolume: delete volume in S3 bucket.
+// DeleteVolume: delete volume.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -470,7 +466,7 @@ type CreatePinByURLRequest struct {
 	PinOptions *PinOptions `json:"pin_options"`
 }
 
-// CreatePinByURL: add content in s3 bucket.
+// CreatePinByURL: add content in volume by url.
 func (s *API) CreatePinByURL(req *CreatePinByURLRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -520,7 +516,7 @@ type CreatePinByCIDRequest struct {
 	PinOptions *PinOptions `json:"pin_options"`
 }
 
-// CreatePinByCID: add content in s3 bucket.
+// CreatePinByCID: add content in volume by cid.
 func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -536,54 +532,6 @@ func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOpti
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-cid",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Pin
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type CreatePinByRawRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	VolumeID string `json:"volume_id"`
-
-	Content []byte `json:"content"`
-
-	MimeType *string `json:"mime_type"`
-
-	Name *string `json:"name"`
-
-	PinOptions *PinOptions `json:"pin_options"`
-}
-
-// CreatePinByRaw: add content in s3 bucket.
-func (s *API) CreatePinByRaw(req *CreatePinByRawRequest, opts ...scw.RequestOption) (*Pin, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-raw",
 		Headers: http.Header{},
 	}
 
@@ -665,7 +613,7 @@ type GetPinRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// GetPin: get pin id create when content is add in s3 bucket.
+// GetPin: get pin id in volume.
 func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -720,6 +668,7 @@ type ListPinsRequest struct {
 	Status PinStatus `json:"-"`
 }
 
+// ListPins: list pins in specific volume.
 func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPinsResponse, error) {
 	var err error
 
@@ -794,91 +743,6 @@ func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type CreateVolumeJWTRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	VolumeID string `json:"-"`
-}
-
-func (s *API) CreateVolumeJWT(req *CreateVolumeJWTRequest, opts ...scw.RequestOption) (*CreateVolumeJWTResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.VolumeID) == "" {
-		return nil, errors.New("field VolumeID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "/token",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp CreateVolumeJWTResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteVolumeJWTRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	VolumeID string `json:"-"`
-
-	Token string `json:"-"`
-}
-
-func (s *API) DeleteVolumeJWT(req *DeleteVolumeJWTRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "token", req.Token)
-
-	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.VolumeID) == "" {
-		return errors.New("field VolumeID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "/token",
 		Query:   query,
 		Headers: http.Header{},
 	}
