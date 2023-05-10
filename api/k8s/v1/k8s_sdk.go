@@ -1054,8 +1054,7 @@ type CreateClusterRequest struct {
 	// ProjectID: project ID in which the cluster will be created.
 	// Precisely one of OrganizationID, ProjectID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
-	// Type: type of the cluster.
-	// Type of the cluster (possible values are kapsule, multicloud).
+	// Type: type of the cluster (possible values are kapsule, multicloud).
 	Type string `json:"type"`
 	// Name: name of the cluster.
 	Name string `json:"name"`
@@ -1355,8 +1354,7 @@ type SetClusterTypeRequest struct {
 	Region scw.Region `json:"-"`
 	// ClusterID: ID of the cluster to migrate from one type to another.
 	ClusterID string `json:"-"`
-	// Type: type of the cluster.
-	// Type of the cluster. Note that some migrations are not possible (please refer to product documentation).
+	// Type: type of the cluster. Note that some migrations are not possible (please refer to product documentation).
 	Type string `json:"type"`
 }
 
