@@ -172,7 +172,7 @@ type Pin struct {
 }
 
 type PinCID struct {
-	Cid string `json:"cid"`
+	Cid *string `json:"cid"`
 
 	Name *string `json:"name"`
 
@@ -183,6 +183,8 @@ type PinCID struct {
 
 type PinCIDMeta struct {
 	AppID string `json:"app_id"`
+
+	URL *string `json:"url"`
 }
 
 type PinInfo struct {
