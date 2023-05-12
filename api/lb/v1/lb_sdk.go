@@ -991,6 +991,10 @@ type Backend struct {
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
+	// MaxConnections: maximum number of connections allowed per backend server.
+	MaxConnections *int32 `json:"max_connections"`
+	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
+	TimeoutQueue *scw.Duration `json:"timeout_queue"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -2257,6 +2261,10 @@ type ZonedAPICreateBackendRequest struct {
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
+	// MaxConnections: maximum number of connections allowed per backend server.
+	MaxConnections *int32 `json:"max_connections"`
+	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
+	TimeoutQueue *scw.Duration `json:"timeout_queue"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -2428,6 +2436,10 @@ type ZonedAPIUpdateBackendRequest struct {
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
+	// MaxConnections: maximum number of connections allowed per backend server.
+	MaxConnections *int32 `json:"max_connections"`
+	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
+	TimeoutQueue *scw.Duration `json:"timeout_queue"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5213,6 +5225,10 @@ type CreateBackendRequest struct {
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
+	// MaxConnections: maximum number of connections allowed per backend server.
+	MaxConnections *int32 `json:"max_connections"`
+	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
+	TimeoutQueue *scw.Duration `json:"timeout_queue"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -5382,6 +5398,10 @@ type UpdateBackendRequest struct {
 	RedispatchAttemptCount *int32 `json:"redispatch_attempt_count"`
 	// MaxRetries: number of retries when a backend server connection failed.
 	MaxRetries *int32 `json:"max_retries"`
+	// MaxConnections: maximum number of connections allowed per backend server.
+	MaxConnections *int32 `json:"max_connections"`
+	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
+	TimeoutQueue *scw.Duration `json:"timeout_queue"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
