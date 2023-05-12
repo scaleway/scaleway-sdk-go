@@ -119,11 +119,14 @@ type CNI string
 
 const (
 	CNIUnknownCni = CNI("unknown_cni")
-	CNICilium     = CNI("cilium")
-	CNICalico     = CNI("calico")
-	CNIWeave      = CNI("weave")
-	CNIFlannel    = CNI("flannel")
-	CNIKilo       = CNI("kilo")
+	// Cilium CNI will be configured (https://github.com/cilium/cilium)
+	CNICilium = CNI("cilium")
+	// Calico CNI will be configured (https://github.com/projectcalico/calico)
+	CNICalico  = CNI("calico")
+	CNIWeave   = CNI("weave")
+	CNIFlannel = CNI("flannel")
+	// Kilo CNI will be configured (https://github.com/squat/kilo/). Note that this CNI is only available for Kosmos clusters
+	CNIKilo = CNI("kilo")
 )
 
 func (enum CNI) String() string {
@@ -152,13 +155,19 @@ func (enum *CNI) UnmarshalJSON(data []byte) error {
 type ClusterStatus string
 
 const (
-	ClusterStatusUnknown      = ClusterStatus("unknown")
-	ClusterStatusCreating     = ClusterStatus("creating")
-	ClusterStatusReady        = ClusterStatus("ready")
-	ClusterStatusDeleting     = ClusterStatus("deleting")
-	ClusterStatusDeleted      = ClusterStatus("deleted")
-	ClusterStatusUpdating     = ClusterStatus("updating")
-	ClusterStatusLocked       = ClusterStatus("locked")
+	ClusterStatusUnknown = ClusterStatus("unknown")
+	// Cluster is provisioning
+	ClusterStatusCreating = ClusterStatus("creating")
+	// Cluster is ready to use
+	ClusterStatusReady = ClusterStatus("ready")
+	// Cluster is waiting to be processed for deletion
+	ClusterStatusDeleting = ClusterStatus("deleting")
+	ClusterStatusDeleted  = ClusterStatus("deleted")
+	// Cluster is updating its own configuration, it can be a version upgrade too
+	ClusterStatusUpdating = ClusterStatus("updating")
+	// Cluster is locked because an abuse has been detected or reported
+	ClusterStatusLocked = ClusterStatus("locked")
+	// Cluster has no associated pool
 	ClusterStatusPoolRequired = ClusterStatus("pool_required")
 )
 
@@ -363,13 +372,19 @@ func (enum *MaintenanceWindowDayOfTheWeek) UnmarshalJSON(data []byte) error {
 type NodeStatus string
 
 const (
-	NodeStatusUnknown       = NodeStatus("unknown")
-	NodeStatusCreating      = NodeStatus("creating")
-	NodeStatusNotReady      = NodeStatus("not_ready")
-	NodeStatusReady         = NodeStatus("ready")
-	NodeStatusDeleting      = NodeStatus("deleting")
-	NodeStatusDeleted       = NodeStatus("deleted")
-	NodeStatusLocked        = NodeStatus("locked")
+	NodeStatusUnknown = NodeStatus("unknown")
+	// Node is provisioning
+	NodeStatusCreating = NodeStatus("creating")
+	// Node is unable to connect to apiserver
+	NodeStatusNotReady = NodeStatus("not_ready")
+	// Node is ready to execute workload (marked schedulable by k8s scheduler)
+	NodeStatusReady = NodeStatus("ready")
+	// Node is waiting to be processed for deletion
+	NodeStatusDeleting = NodeStatus("deleting")
+	NodeStatusDeleted  = NodeStatus("deleted")
+	// Node is locked because an abuse has been detected or reported
+	NodeStatusLocked = NodeStatus("locked")
+	// Node is rebooting
 	NodeStatusRebooting     = NodeStatus("rebooting")
 	NodeStatusCreationError = NodeStatus("creation_error")
 	NodeStatusUpgrading     = NodeStatus("upgrading")
@@ -403,13 +418,18 @@ func (enum *NodeStatus) UnmarshalJSON(data []byte) error {
 type PoolStatus string
 
 const (
-	PoolStatusUnknown   = PoolStatus("unknown")
-	PoolStatusReady     = PoolStatus("ready")
-	PoolStatusDeleting  = PoolStatus("deleting")
-	PoolStatusDeleted   = PoolStatus("deleted")
-	PoolStatusScaling   = PoolStatus("scaling")
-	PoolStatusWarning   = PoolStatus("warning")
-	PoolStatusLocked    = PoolStatus("locked")
+	PoolStatusUnknown = PoolStatus("unknown")
+	// Pool has the right amount of nodes and is ready to process the workload
+	PoolStatusReady = PoolStatus("ready")
+	// Pool is waiting to be processed for deletion
+	PoolStatusDeleting = PoolStatus("deleting")
+	PoolStatusDeleted  = PoolStatus("deleted")
+	// Pool is growing or shrinking
+	PoolStatusScaling = PoolStatus("scaling")
+	PoolStatusWarning = PoolStatus("warning")
+	// Pool is locked because an abuse has been detected or reported
+	PoolStatusLocked = PoolStatus("locked")
+	// Pool is upgrading its Kubernetes version
 	PoolStatusUpgrading = PoolStatus("upgrading")
 )
 
@@ -440,8 +460,10 @@ type PoolVolumeType string
 
 const (
 	PoolVolumeTypeDefaultVolumeType = PoolVolumeType("default_volume_type")
-	PoolVolumeTypeLSSD              = PoolVolumeType("l_ssd")
-	PoolVolumeTypeBSSD              = PoolVolumeType("b_ssd")
+	// Local Block Storage: your system is stored locally on your node hypervisor. Lower latency, no persistence across node replacements
+	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster. Higher latency, persistence across node replacements
+	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
 )
 
 func (enum PoolVolumeType) String() string {
@@ -472,8 +494,9 @@ type Runtime string
 const (
 	RuntimeUnknownRuntime = Runtime("unknown_runtime")
 	RuntimeDocker         = Runtime("docker")
-	RuntimeContainerd     = Runtime("containerd")
-	RuntimeCrio           = Runtime("crio")
+	// Containerd Runtime will be configured (https://github.com/containerd/containerd)
+	RuntimeContainerd = Runtime("containerd")
+	RuntimeCrio       = Runtime("crio")
 )
 
 func (enum Runtime) String() string {
