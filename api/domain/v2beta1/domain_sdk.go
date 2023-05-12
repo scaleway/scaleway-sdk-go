@@ -52,7 +52,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// RegistrarAPI: domains registrar API.
+// RegistrarAPI: domains and DNS - Registrar API.
 // Manage your domains and contacts.
 type RegistrarAPI struct {
 	client *scw.Client
