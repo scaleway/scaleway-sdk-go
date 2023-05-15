@@ -472,6 +472,10 @@ func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []
 
 // sortSliceByZones sorts a slice of struct using a Zone field that should exist
 func sortSliceByZones(list interface{}, zones []Zone) {
+	if !generic.HasField(list, "Zone") {
+		return
+	}
+
 	zoneMap := map[Zone]int{}
 	for i, zone := range zones {
 		zoneMap[zone] = i
@@ -483,6 +487,10 @@ func sortSliceByZones(list interface{}, zones []Zone) {
 
 // sortSliceByRegions sorts a slice of struct using a Region field that should exist
 func sortSliceByRegions(list interface{}, regions []Region) {
+	if !generic.HasField(list, "Region") {
+		return
+	}
+
 	regionMap := map[Region]int{}
 	for i, region := range regions {
 		regionMap[region] = i
