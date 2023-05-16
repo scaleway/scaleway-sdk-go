@@ -740,13 +740,15 @@ type ExternalNode struct {
 
 	ClusterURL string `json:"cluster_url"`
 
-	ClusterVersion string `json:"cluster_version"`
+	PoolVersion string `json:"pool_version"`
 
 	ClusterCa string `json:"cluster_ca"`
 
 	KubeToken string `json:"kube_token"`
 
 	KubeletConfig string `json:"kubelet_config"`
+
+	ExternalIP string `json:"external_ip"`
 }
 
 // ListClusterAvailableVersionsResponse: list cluster available versions response.
