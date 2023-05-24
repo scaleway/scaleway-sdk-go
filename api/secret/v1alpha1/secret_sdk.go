@@ -241,7 +241,7 @@ type SecretVersion struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	// Description: description of the version.
 	Description *string `json:"description"`
-	// IsLatest: true if the version is the latest one.
+	// IsLatest: returns `true` if the version is the latest.
 	IsLatest bool `json:"is_latest"`
 }
 
@@ -595,12 +595,8 @@ type CreateSecretVersionRequest struct {
 	// DisablePrevious: disable the previous secret version.
 	// Optional. If there is no previous version or if the previous version was already disabled, does nothing.
 	DisablePrevious *bool `json:"disable_previous"`
-	// PasswordGeneration: options to generate a password.
-	// Optional. If specified, a random password will be generated. The `data` and `data_crc32` fields must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
-	// Precisely one of PasswordGeneration must be set.
-	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
-	// DataCrc32: the CRC32 checksum of the data as a base-10 integer.
-	// Optional. If specified, Secret Manager will verify the integrity of the data received against the given CRC32. An error is returned if the CRC32 does not match. Otherwise, the CRC32 will be stored and returned along with the SecretVersion on futur accesses.
+	// DataCrc32: (Optional.) The CRC32 checksum of the data as a base-10 integer.
+	// If specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
 	DataCrc32 *uint32 `json:"data_crc32"`
 }
 
@@ -625,6 +621,66 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method:  "POST",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SecretVersion
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GeneratePasswordRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+	// Description: description of the version.
+	Description *string `json:"description"`
+	// DisablePrevious: (Optional.) Disable the previous secret version.
+	// This has no effect if there is no previous version or if the previous version was already disabled.
+	DisablePrevious *bool `json:"disable_previous"`
+	// Length: length of the password to generate (between 1 and 1024 characters).
+	Length uint32 `json:"length"`
+	// NoLowercaseLetters: (Optional.) Exclude lower case letters by default in the password character set.
+	NoLowercaseLetters *bool `json:"no_lowercase_letters"`
+	// NoUppercaseLetters: (Optional.) Exclude upper case letters by default in the password character set.
+	NoUppercaseLetters *bool `json:"no_uppercase_letters"`
+	// NoDigits: (Optional.) Exclude digits by default in the password character set.
+	NoDigits *bool `json:"no_digits"`
+	// AdditionalChars: (Optional.) Additional ASCII characters to be included in the password character set.
+	AdditionalChars *string `json:"additional_chars"`
+}
+
+// GeneratePassword: generate a password in a new version.
+// Generate a password for the given secret specified by the `region` and `secret_id` parameters. This will also create a new version of the secret that will store the password.
+func (s *API) GeneratePassword(req *GeneratePasswordRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/generate-password",
 		Headers: http.Header{},
 	}
 
