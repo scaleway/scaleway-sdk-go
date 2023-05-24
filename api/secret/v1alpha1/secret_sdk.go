@@ -349,10 +349,13 @@ type GetSecretByNameRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretName: name of the secret.
 	SecretName string `json:"-"`
+	// ProjectID: ID of the Project to target.
+	// (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
+	ProjectID *string `json:"-"`
 }
 
 // GetSecretByName: get metadata using the secret's ID.
-// Retrieve the metadata of a secret specified by the `region` and the `secret_id` parameters.
+// Retrieve the metadata of a secret specified by the `region`, `secret_id` and `project_id` parameters.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -360,6 +363,9 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -372,6 +378,7 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -593,7 +600,7 @@ type CreateSecretVersionRequest struct {
 	// Description: description of the version.
 	Description *string `json:"description"`
 	// DisablePrevious: disable the previous secret version.
-	// Optional. If there is no previous version or if the previous version was already disabled, does nothing.
+	// (Optional.) If there is no previous version or if the previous version was already disabled, does nothing.
 	DisablePrevious *bool `json:"disable_previous"`
 	// DataCrc32: (Optional.) The CRC32 checksum of the data as a base-10 integer.
 	// If specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
@@ -753,10 +760,13 @@ type GetSecretVersionByNameRequest struct {
 	// Revision: version number.
 	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
+	// ProjectID: ID of the Project to target.
+	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
+	ProjectID *string `json:"-"`
 }
 
 // GetSecretVersionByName: get metadata of a secret's version using the secret's name.
-// Retrieve the metadata of a secret's given version specified by the `region`, `secret_name` and `revision` parameters.
+// Retrieve the metadata of a secret's given version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
 func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -764,6 +774,9 @@ func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ..
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -780,6 +793,7 @@ func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ..
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -914,10 +928,13 @@ type ListSecretVersionsByNameRequest struct {
 	PageSize *uint32 `json:"-"`
 	// Status: filter results by status.
 	Status []SecretVersionStatus `json:"-"`
+	// ProjectID: ID of the Project to target.
+	// (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
+	ProjectID *string `json:"-"`
 }
 
 // ListSecretVersionsByName: list versions of a secret using the secret's name.
-// Retrieve the list of a given secret's versions specified by the `secret_name` and `region` parameters.
+// Retrieve the list of a given secret's versions specified by the `secret_name`,`region` and `project_id` parameters.
 func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -935,6 +952,7 @@ func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opt
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1119,10 +1137,13 @@ type AccessSecretVersionByNameRequest struct {
 	// Revision: version number.
 	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
 	Revision string `json:"-"`
+	// ProjectID: ID of the Project to target.
+	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
+	ProjectID *string `json:"-"`
 }
 
 // AccessSecretVersionByName: access a secret's version using the secret's name.
-// Access sensitive data in a secret's version specified by the `region`, `secret_name` and `revision` parameters.
+// Access sensitive data in a secret's version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
 func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
@@ -1130,6 +1151,9 @@ func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, o
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1146,6 +1170,7 @@ func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, o
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
