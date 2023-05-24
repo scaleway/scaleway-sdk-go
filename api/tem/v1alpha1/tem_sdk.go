@@ -152,6 +152,46 @@ func (enum *EmailStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListEmailsRequestOrderBy string
+
+const (
+	ListEmailsRequestOrderByCreatedAtDesc = ListEmailsRequestOrderBy("created_at_desc")
+	ListEmailsRequestOrderByCreatedAtAsc  = ListEmailsRequestOrderBy("created_at_asc")
+	ListEmailsRequestOrderByUpdatedAtDesc = ListEmailsRequestOrderBy("updated_at_desc")
+	ListEmailsRequestOrderByUpdatedAtAsc  = ListEmailsRequestOrderBy("updated_at_asc")
+	ListEmailsRequestOrderByStatusDesc    = ListEmailsRequestOrderBy("status_desc")
+	ListEmailsRequestOrderByStatusAsc     = ListEmailsRequestOrderBy("status_asc")
+	ListEmailsRequestOrderByMailFromDesc  = ListEmailsRequestOrderBy("mail_from_desc")
+	ListEmailsRequestOrderByMailFromAsc   = ListEmailsRequestOrderBy("mail_from_asc")
+	ListEmailsRequestOrderByMailRcptDesc  = ListEmailsRequestOrderBy("mail_rcpt_desc")
+	ListEmailsRequestOrderByMailRcptAsc   = ListEmailsRequestOrderBy("mail_rcpt_asc")
+	ListEmailsRequestOrderBySubjectDesc   = ListEmailsRequestOrderBy("subject_desc")
+	ListEmailsRequestOrderBySubjectAsc    = ListEmailsRequestOrderBy("subject_asc")
+)
+
+func (enum ListEmailsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListEmailsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListEmailsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListEmailsRequestOrderBy(ListEmailsRequestOrderBy(tmp).String())
+	return nil
+}
+
 // CreateEmailRequestAddress: create email request. address.
 type CreateEmailRequestAddress struct {
 	// Email: email address.
@@ -229,8 +269,10 @@ type Email struct {
 	ProjectID string `json:"project_id"`
 	// MailFrom: email address of the sender.
 	MailFrom string `json:"mail_from"`
-	// RcptTo: email address of the recipient.
-	RcptTo string `json:"rcpt_to"`
+	// Deprecated: RcptTo: (Deprecated) Email address of the recipient.
+	RcptTo *string `json:"rcpt_to,omitempty"`
+	// MailRcpt: email address of the recipient.
+	MailRcpt string `json:"mail_rcpt"`
 	// RcptType: type of recipient.
 	// Default value: unknown_rcpt_type
 	RcptType EmailRcptType `json:"rcpt_type"`
@@ -273,7 +315,7 @@ type ListDomainsResponse struct {
 
 // ListEmailsResponse: list emails response.
 type ListEmailsResponse struct {
-	// TotalCount: count of all emails matching the requested criteria.
+	// TotalCount: number of emails matching the requested criteria.
 	TotalCount uint32 `json:"total_count"`
 	// Emails: single page of emails matching the requested criteria.
 	Emails []*Email `json:"emails"`
@@ -413,28 +455,47 @@ type ListEmailsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-	// ProjectID: ID of the Project in which to list the emails (optional).
+	// ProjectID: (Optional) ID of the Project in which to list the emails.
 	ProjectID *string `json:"-"`
-	// DomainID: ID of the domain for which to list the emails (optional).
+	// DomainID: (Optional) ID of the domain for which to list the emails.
 	DomainID *string `json:"-"`
-	// MessageID: ID of the message for which to list the emails (optional).
+	// MessageID: (Optional) ID of the message for which to list the emails.
 	MessageID *string `json:"-"`
-	// Subject: subject of the email.
-	Subject *string `json:"-"`
-	// Since: list emails created after this date (optional).
+	// Since: (Optional) List emails created after this date.
 	Since *time.Time `json:"-"`
-	// Until: list emails created before this date (optional).
+	// Until: (Optional) List emails created before this date.
 	Until *time.Time `json:"-"`
-	// MailFrom: list emails sent with this `mail_from` sender's address (optional).
+	// MailFrom: (Optional) List emails sent with this sender's email address.
 	MailFrom *string `json:"-"`
-	// MailTo: list emails sent with this `mail_to` recipient's address (optional).
+	// Deprecated: MailTo: (Deprecated) List emails sent to this recipient's email address.
 	MailTo *string `json:"-"`
-	// Statuses: list emails having any of this status (optional).
+	// MailRcpt: (Optional) List emails sent to this recipient's email address.
+	MailRcpt *string `json:"-"`
+	// Statuses: (Optional) List emails with any of these statuses.
 	Statuses []EmailStatus `json:"-"`
+	// Subject: (Optional) List emails with this subject.
+	Subject *string `json:"-"`
+	// OrderBy: (Optional) List emails corresponding to specific criteria.
+	// You can filter your emails in ascending or descending order using:
+	//   - created_at
+	//   - updated_at
+	//   - status
+	//   - mail_from
+	//   - mail_rcpt
+	//   - subject.
+	// Default value: created_at_desc
+	OrderBy ListEmailsRequestOrderBy `json:"-"`
 }
 
 // ListEmails: list emails.
 // Retrieve the list of emails sent from a specific domain or for a specific Project or Organization. You must specify the `region`.
+// You can filter your emails in ascending or descending order using:
+//   - created_at
+//   - updated_at
+//   - status
+//   - mail_from
+//   - mail_rcpt
+//   - subject.
 func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*ListEmailsResponse, error) {
 	var err error
 
@@ -454,12 +515,14 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "domain_id", req.DomainID)
 	parameter.AddToQuery(query, "message_id", req.MessageID)
-	parameter.AddToQuery(query, "subject", req.Subject)
 	parameter.AddToQuery(query, "since", req.Since)
 	parameter.AddToQuery(query, "until", req.Until)
 	parameter.AddToQuery(query, "mail_from", req.MailFrom)
 	parameter.AddToQuery(query, "mail_to", req.MailTo)
+	parameter.AddToQuery(query, "mail_rcpt", req.MailRcpt)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "subject", req.Subject)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -484,15 +547,15 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 type GetStatisticsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: number of emails for this Project (optional).
+	// ProjectID: (Optional) Number of emails for this Project.
 	ProjectID *string `json:"-"`
-	// DomainID: number of emails sent from this domain (must be coherent with the `project_id` and the `organization_id`) (optional).
+	// DomainID: (Optional) Number of emails sent from this domain (must be coherent with the `project_id` and the `organization_id`).
 	DomainID *string `json:"-"`
-	// Since: number of emails created after this date (optional).
+	// Since: (Optional) Number of emails created after this date.
 	Since *time.Time `json:"-"`
-	// Until: number of emails created before this date (optional).
+	// Until: (Optional) Number of emails created before this date.
 	Until *time.Time `json:"-"`
-	// MailFrom: number of emails sent with this `mail_from` sender's address (optional).
+	// MailFrom: (Optional) Number of emails sent with this sender's email address.
 	MailFrom *string `json:"-"`
 }
 
