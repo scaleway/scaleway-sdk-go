@@ -55,9 +55,13 @@ func NewAPI(client *scw.Client) *API {
 type ListCredentialsRequestOrderBy string
 
 const (
-	ListCredentialsRequestOrderByIDAsc    = ListCredentialsRequestOrderBy("id_asc")
-	ListCredentialsRequestOrderByIDDesc   = ListCredentialsRequestOrderBy("id_desc")
-	ListCredentialsRequestOrderByNameAsc  = ListCredentialsRequestOrderBy("name_asc")
+	// Order by id (ascending alphabetical order)
+	ListCredentialsRequestOrderByIDAsc = ListCredentialsRequestOrderBy("id_asc")
+	// Order by id (descending alphabetical order)
+	ListCredentialsRequestOrderByIDDesc = ListCredentialsRequestOrderBy("id_desc")
+	// Order by name (ascending alphabetical order)
+	ListCredentialsRequestOrderByNameAsc = ListCredentialsRequestOrderBy("name_asc")
+	// Order by name (descending alphabetical order)
 	ListCredentialsRequestOrderByNameDesc = ListCredentialsRequestOrderBy("name_desc")
 )
 
@@ -87,15 +91,25 @@ func (enum *ListCredentialsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListNamespacesRequestOrderBy string
 
 const (
-	ListNamespacesRequestOrderByCreatedAtAsc  = ListNamespacesRequestOrderBy("created_at_asc")
+	// Order by creation date (ascending chronological order)
+	ListNamespacesRequestOrderByCreatedAtAsc = ListNamespacesRequestOrderBy("created_at_asc")
+	// Order by creation date (descending chronological order)
 	ListNamespacesRequestOrderByCreatedAtDesc = ListNamespacesRequestOrderBy("created_at_desc")
-	ListNamespacesRequestOrderByUpdatedAtAsc  = ListNamespacesRequestOrderBy("updated_at_asc")
+	// Order by last update date (ascending chronological order)
+	ListNamespacesRequestOrderByUpdatedAtAsc = ListNamespacesRequestOrderBy("updated_at_asc")
+	// Order by last update date (descending chronological order)
 	ListNamespacesRequestOrderByUpdatedAtDesc = ListNamespacesRequestOrderBy("updated_at_desc")
-	ListNamespacesRequestOrderByIDAsc         = ListNamespacesRequestOrderBy("id_asc")
-	ListNamespacesRequestOrderByIDDesc        = ListNamespacesRequestOrderBy("id_desc")
-	ListNamespacesRequestOrderByNameAsc       = ListNamespacesRequestOrderBy("name_asc")
-	ListNamespacesRequestOrderByNameDesc      = ListNamespacesRequestOrderBy("name_desc")
-	ListNamespacesRequestOrderByProjectIDAsc  = ListNamespacesRequestOrderBy("project_id_asc")
+	// Order by id (ascending alphabetical order)
+	ListNamespacesRequestOrderByIDAsc = ListNamespacesRequestOrderBy("id_asc")
+	// Order by id (descending alphabetical order)
+	ListNamespacesRequestOrderByIDDesc = ListNamespacesRequestOrderBy("id_desc")
+	// Order by name (ascending alphabetical order)
+	ListNamespacesRequestOrderByNameAsc = ListNamespacesRequestOrderBy("name_asc")
+	// Order by name (descending alphabetical order)
+	ListNamespacesRequestOrderByNameDesc = ListNamespacesRequestOrderBy("name_desc")
+	// Order by project_id (ascending alphabetical order)
+	ListNamespacesRequestOrderByProjectIDAsc = ListNamespacesRequestOrderBy("project_id_asc")
+	// Order by project_id (descending alphabetical order)
 	ListNamespacesRequestOrderByProjectIDDesc = ListNamespacesRequestOrderBy("project_id_desc")
 )
 
@@ -125,9 +139,12 @@ func (enum *ListNamespacesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type NamespaceProtocol string
 
 const (
+	// Unknown protocol
 	NamespaceProtocolUnknown = NamespaceProtocol("unknown")
-	NamespaceProtocolNats    = NamespaceProtocol("nats")
-	NamespaceProtocolSqsSns  = NamespaceProtocol("sqs_sns")
+	// NATS protocol
+	NamespaceProtocolNats = NamespaceProtocol("nats")
+	// SQS / SNS protocol
+	NamespaceProtocolSqsSns = NamespaceProtocol("sqs_sns")
 )
 
 func (enum NamespaceProtocol) String() string {
