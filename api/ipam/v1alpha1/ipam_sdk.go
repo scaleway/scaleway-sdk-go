@@ -93,6 +93,7 @@ const (
 	ResourceTypeLBServer           = ResourceType("lb_server")
 	ResourceTypeFipIP              = ResourceType("fip_ip")
 	ResourceTypeVpcGateway         = ResourceType("vpc_gateway")
+	ResourceTypeVpcGatewayNetwork  = ResourceType("vpc_gateway_network")
 	ResourceTypeK8sNode            = ResourceType("k8s_node")
 	ResourceTypeRdbInstance        = ResourceType("rdb_instance")
 	ResourceTypeRedisCluster       = ResourceType("redis_cluster")
