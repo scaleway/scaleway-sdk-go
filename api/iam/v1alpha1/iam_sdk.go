@@ -1532,6 +1532,44 @@ func (s *API) AddGroupMember(req *AddGroupMemberRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+type AddGroupMembersRequest struct {
+	// GroupID: ID of the group.
+	GroupID string `json:"-"`
+	// UserIDs: iDs of the users to add.
+	UserIDs []string `json:"user_ids"`
+	// ApplicationIDs: iDs of the applications to add.
+	ApplicationIDs []string `json:"application_ids"`
+}
+
+// AddGroupMembers: add multiple users and applications to a group.
+// Add multiple users and applications to a group in a single call. You can specify an array of `user_id`s and `application_id`s. Note that any existing users and applications in the group will remain. To add new users/applications and delete pre-existing ones, use the [Overwrite users and applications of a group](#path-groups-overwrite-users-and-applications-of-a-group) method.
+func (s *API) AddGroupMembers(req *AddGroupMembersRequest, opts ...scw.RequestOption) (*Group, error) {
+	var err error
+
+	if fmt.Sprint(req.GroupID) == "" {
+		return nil, errors.New("field GroupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/iam/v1alpha1/groups/" + fmt.Sprint(req.GroupID) + "/add-members",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Group
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type RemoveGroupMemberRequest struct {
 	// GroupID: ID of the group.
 	GroupID string `json:"-"`
