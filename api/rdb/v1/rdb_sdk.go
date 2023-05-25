@@ -1240,6 +1240,8 @@ type ReadReplica struct {
 	Status ReadReplicaStatus `json:"status"`
 	// Region: region the Read Replica is in.
 	Region scw.Region `json:"region"`
+	// SameZone: whether the replica is in the same availability zone as the main instance nodes or not.
+	SameZone bool `json:"same_zone"`
 }
 
 // ReadReplicaEndpointSpec: read replica endpoint spec.
@@ -2371,6 +2373,8 @@ type CreateReadReplicaRequest struct {
 	InstanceID string `json:"instance_id"`
 	// EndpointSpec: specification of the endpoint you want to create.
 	EndpointSpec []*ReadReplicaEndpointSpec `json:"endpoint_spec"`
+	// SameZone: defines whether to create the replica in the same availability zone as the main instance nodes or not.
+	SameZone *bool `json:"same_zone"`
 }
 
 // CreateReadReplica: create a Read Replica.
