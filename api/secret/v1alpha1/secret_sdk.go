@@ -602,6 +602,10 @@ type CreateSecretVersionRequest struct {
 	// DisablePrevious: disable the previous secret version.
 	// (Optional.) If there is no previous version or if the previous version was already disabled, does nothing.
 	DisablePrevious *bool `json:"disable_previous"`
+	// Deprecated: PasswordGeneration: options to generate a password.
+	// (Optional.) If specified, a random password will be generated. The `data` and `data_crc32` fields must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
+	// Precisely one of PasswordGeneration must be set.
+	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
 	// DataCrc32: (Optional.) The CRC32 checksum of the data as a base-10 integer.
 	// If specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
 	DataCrc32 *uint32 `json:"data_crc32"`
