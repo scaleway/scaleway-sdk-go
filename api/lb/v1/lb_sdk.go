@@ -3373,6 +3373,8 @@ type ZonedAPIGetLBStatsRequest struct {
 	Zone scw.Zone `json:"-"`
 	// LBID: load Balancer ID.
 	LBID string `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 // Deprecated: GetLBStats: get usage statistics of a given Load Balancer.
@@ -3383,6 +3385,9 @@ func (s *ZonedAPI) GetLBStats(req *ZonedAPIGetLBStatsRequest, opts ...scw.Reques
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -3395,6 +3400,7 @@ func (s *ZonedAPI) GetLBStats(req *ZonedAPIGetLBStatsRequest, opts ...scw.Reques
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/stats",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
@@ -6319,6 +6325,8 @@ type GetLBStatsRequest struct {
 	Region scw.Region `json:"-"`
 	// LBID: load Balancer ID.
 	LBID string `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 // Deprecated: GetLBStats: get usage statistics of a given load balancer.
@@ -6329,6 +6337,9 @@ func (s *API) GetLBStats(req *GetLBStatsRequest, opts ...scw.RequestOption) (*LB
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
 	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -6341,6 +6352,7 @@ func (s *API) GetLBStats(req *GetLBStatsRequest, opts ...scw.RequestOption) (*LB
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
 		Path:    "/lb/v1/regions/" + fmt.Sprint(req.Region) + "/lbs/" + fmt.Sprint(req.LBID) + "/stats",
+		Query:   query,
 		Headers: http.Header{},
 	}
 
