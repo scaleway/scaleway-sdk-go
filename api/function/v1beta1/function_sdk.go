@@ -1197,7 +1197,7 @@ type CreateNamespaceRequest struct {
 }
 
 // CreateNamespace: create a new namespace.
-// Create a new namespace in a specified Organization or Proejct.
+// Create a new namespace in a specified Organization or Project.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
