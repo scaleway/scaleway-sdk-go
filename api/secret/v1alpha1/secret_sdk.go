@@ -86,6 +86,35 @@ func (enum *ListSecretsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type Product string
+
+const (
+	ProductUnknown = Product("unknown")
+)
+
+func (enum Product) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum Product) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *Product) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = Product(Product(tmp).String())
+	return nil
+}
+
 type SecretStatus string
 
 const (
@@ -551,8 +580,11 @@ type AddSecretOwnerRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// ProductName: name of the product to add.
-	ProductName string `json:"product_name"`
+	// Deprecated: ProductName: (Deprecated: use product field) ID of the product to add (see product enum).
+	ProductName *string `json:"product_name,omitempty"`
+	// Product: ID of the product to add (see product enum).
+	// Default value: unknown
+	Product Product `json:"product"`
 }
 
 // AddSecretOwner: allow a product to use the secret.
