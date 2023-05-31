@@ -184,6 +184,8 @@ type PinCIDMeta struct {
 	AppID string `json:"app_id"`
 
 	URL *string `json:"url"`
+
+	Size *uint32 `json:"size"`
 }
 
 type PinInfo struct {
@@ -216,6 +218,8 @@ type Volume struct {
 	Tags []string `json:"tags"`
 
 	Name string `json:"name"`
+
+	Size *uint32 `json:"size"`
 }
 
 // Service API
