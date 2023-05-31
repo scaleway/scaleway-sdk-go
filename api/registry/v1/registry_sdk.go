@@ -943,8 +943,8 @@ type DeleteTagRequest struct {
 	Region scw.Region `json:"-"`
 	// TagID: UUID of the tag.
 	TagID string `json:"-"`
-	// Force: if two tags share the same digest the deletion will fail unless this parameter is set to true.
-	Force bool `json:"-"`
+	// Deprecated: Force: if two tags share the same digest the deletion will fail unless this parameter is set to true (deprecated).
+	Force *bool `json:"-"`
 }
 
 // DeleteTag: delete a tag.
