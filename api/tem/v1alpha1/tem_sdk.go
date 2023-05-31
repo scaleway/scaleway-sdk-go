@@ -54,13 +54,20 @@ func NewAPI(client *scw.Client) *API {
 type DomainStatus string
 
 const (
-	DomainStatusUnknown   = DomainStatus("unknown")
-	DomainStatusChecked   = DomainStatus("checked")
+	// Default unknown domain status
+	DomainStatusUnknown = DomainStatus("unknown")
+	// Domain is checked
+	DomainStatusChecked = DomainStatus("checked")
+	// Domain is unchecked
 	DomainStatusUnchecked = DomainStatus("unchecked")
-	DomainStatusInvalid   = DomainStatus("invalid")
-	DomainStatusLocked    = DomainStatus("locked")
-	DomainStatusRevoked   = DomainStatus("revoked")
-	DomainStatusPending   = DomainStatus("pending")
+	// Domain is invalid
+	DomainStatusInvalid = DomainStatus("invalid")
+	// Domain is locked
+	DomainStatusLocked = DomainStatus("locked")
+	// Domain is revoked
+	DomainStatusRevoked = DomainStatus("revoked")
+	// Domain is pending for check
+	DomainStatusPending = DomainStatus("pending")
 )
 
 func (enum DomainStatus) String() string {
@@ -89,10 +96,14 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type EmailRcptType string
 
 const (
+	// Default unknown recipient type
 	EmailRcptTypeUnknownRcptType = EmailRcptType("unknown_rcpt_type")
-	EmailRcptTypeTo              = EmailRcptType("to")
-	EmailRcptTypeCc              = EmailRcptType("cc")
-	EmailRcptTypeBcc             = EmailRcptType("bcc")
+	// Primary recipient
+	EmailRcptTypeTo = EmailRcptType("to")
+	// Carbon copy recipient
+	EmailRcptTypeCc = EmailRcptType("cc")
+	// Blind carbon copy recipient
+	EmailRcptTypeBcc = EmailRcptType("bcc")
 )
 
 func (enum EmailRcptType) String() string {
@@ -121,11 +132,17 @@ func (enum *EmailRcptType) UnmarshalJSON(data []byte) error {
 type EmailStatus string
 
 const (
-	EmailStatusUnknown  = EmailStatus("unknown")
-	EmailStatusNew      = EmailStatus("new")
-	EmailStatusSending  = EmailStatus("sending")
-	EmailStatusSent     = EmailStatus("sent")
-	EmailStatusFailed   = EmailStatus("failed")
+	// Default unknown email status
+	EmailStatusUnknown = EmailStatus("unknown")
+	// Email is new
+	EmailStatusNew = EmailStatus("new")
+	// Email is in the process of being sent
+	EmailStatusSending = EmailStatus("sending")
+	// Email is sent
+	EmailStatusSent = EmailStatus("sent")
+	// Email sending has failed
+	EmailStatusFailed = EmailStatus("failed")
+	// Email is canceled
 	EmailStatusCanceled = EmailStatus("canceled")
 )
 
@@ -155,18 +172,30 @@ func (enum *EmailStatus) UnmarshalJSON(data []byte) error {
 type ListEmailsRequestOrderBy string
 
 const (
+	// Order by creation date (descending chronological order)
 	ListEmailsRequestOrderByCreatedAtDesc = ListEmailsRequestOrderBy("created_at_desc")
-	ListEmailsRequestOrderByCreatedAtAsc  = ListEmailsRequestOrderBy("created_at_asc")
+	// Order by creation date (ascending chronological order)
+	ListEmailsRequestOrderByCreatedAtAsc = ListEmailsRequestOrderBy("created_at_asc")
+	// Order by last update date (descending chronological order)
 	ListEmailsRequestOrderByUpdatedAtDesc = ListEmailsRequestOrderBy("updated_at_desc")
-	ListEmailsRequestOrderByUpdatedAtAsc  = ListEmailsRequestOrderBy("updated_at_asc")
-	ListEmailsRequestOrderByStatusDesc    = ListEmailsRequestOrderBy("status_desc")
-	ListEmailsRequestOrderByStatusAsc     = ListEmailsRequestOrderBy("status_asc")
-	ListEmailsRequestOrderByMailFromDesc  = ListEmailsRequestOrderBy("mail_from_desc")
-	ListEmailsRequestOrderByMailFromAsc   = ListEmailsRequestOrderBy("mail_from_asc")
-	ListEmailsRequestOrderByMailRcptDesc  = ListEmailsRequestOrderBy("mail_rcpt_desc")
-	ListEmailsRequestOrderByMailRcptAsc   = ListEmailsRequestOrderBy("mail_rcpt_asc")
-	ListEmailsRequestOrderBySubjectDesc   = ListEmailsRequestOrderBy("subject_desc")
-	ListEmailsRequestOrderBySubjectAsc    = ListEmailsRequestOrderBy("subject_asc")
+	// Order by last update date (ascending chronological order)
+	ListEmailsRequestOrderByUpdatedAtAsc = ListEmailsRequestOrderBy("updated_at_asc")
+	// Order by status (descending alphabetical order)
+	ListEmailsRequestOrderByStatusDesc = ListEmailsRequestOrderBy("status_desc")
+	// Order by status (ascending alphabetical order)
+	ListEmailsRequestOrderByStatusAsc = ListEmailsRequestOrderBy("status_asc")
+	// Order by mail_from (descending alphabetical order)
+	ListEmailsRequestOrderByMailFromDesc = ListEmailsRequestOrderBy("mail_from_desc")
+	// Order by mail_from (ascending alphabetical order)
+	ListEmailsRequestOrderByMailFromAsc = ListEmailsRequestOrderBy("mail_from_asc")
+	// Order by mail recipient (descending alphabetical order)
+	ListEmailsRequestOrderByMailRcptDesc = ListEmailsRequestOrderBy("mail_rcpt_desc")
+	// Order by mail recipient (ascending alphabetical order)
+	ListEmailsRequestOrderByMailRcptAsc = ListEmailsRequestOrderBy("mail_rcpt_asc")
+	// Order by subject (descending alphabetical order)
+	ListEmailsRequestOrderBySubjectDesc = ListEmailsRequestOrderBy("subject_desc")
+	// Order by subject (ascending alphabetical order)
+	ListEmailsRequestOrderBySubjectAsc = ListEmailsRequestOrderBy("subject_asc")
 )
 
 func (enum ListEmailsRequestOrderBy) String() string {
@@ -349,11 +378,11 @@ type CreateEmailRequest struct {
 	Region scw.Region `json:"-"`
 	// From: sender information. Must be from a checked domain declared in the Project.
 	From *CreateEmailRequestAddress `json:"from"`
-	// To: array of recipient information (limited to 1 recipient).
+	// To: an array of the primary recipient's information.
 	To []*CreateEmailRequestAddress `json:"to"`
-	// Cc: array of recipient information (unimplemented).
+	// Cc: an array of the carbon copy recipient's information.
 	Cc []*CreateEmailRequestAddress `json:"cc"`
-	// Bcc: array of recipient information (unimplemented).
+	// Bcc: an array of the blind carbon copy recipient's information.
 	Bcc []*CreateEmailRequestAddress `json:"bcc"`
 	// Subject: subject of the email.
 	Subject string `json:"subject"`
@@ -475,27 +504,15 @@ type ListEmailsRequest struct {
 	Statuses []EmailStatus `json:"-"`
 	// Subject: (Optional) List emails with this subject.
 	Subject *string `json:"-"`
+	// Search: (Optional) List emails by searching to all fields.
+	Search *string `json:"-"`
 	// OrderBy: (Optional) List emails corresponding to specific criteria.
-	// You can filter your emails in ascending or descending order using:
-	//   - created_at
-	//   - updated_at
-	//   - status
-	//   - mail_from
-	//   - mail_rcpt
-	//   - subject.
 	// Default value: created_at_desc
 	OrderBy ListEmailsRequestOrderBy `json:"-"`
 }
 
 // ListEmails: list emails.
 // Retrieve the list of emails sent from a specific domain or for a specific Project or Organization. You must specify the `region`.
-// You can filter your emails in ascending or descending order using:
-//   - created_at
-//   - updated_at
-//   - status
-//   - mail_from
-//   - mail_rcpt
-//   - subject.
 func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*ListEmailsResponse, error) {
 	var err error
 
@@ -522,6 +539,7 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "mail_rcpt", req.MailRcpt)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
 	parameter.AddToQuery(query, "subject", req.Subject)
+	parameter.AddToQuery(query, "search", req.Search)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	if fmt.Sprint(req.Region) == "" {
