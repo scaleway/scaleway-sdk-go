@@ -195,6 +195,8 @@ type VPC struct {
 	CreatedAt *time.Time `json:"created_at"`
 	// UpdatedAt: date the VPC was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
+	// PrivateNetworkCount: number of Private Networks within this VPC.
+	PrivateNetworkCount uint32 `json:"private_network_count"`
 }
 
 // Service API
