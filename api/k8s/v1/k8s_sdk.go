@@ -1245,7 +1245,7 @@ type DeleteClusterRequest struct {
 	Region scw.Region `json:"-"`
 	// ClusterID: ID of the cluster to delete.
 	ClusterID string `json:"-"`
-	// WithAdditionalResources: defines whether all volumes (including retain volume type) and Load Balancers with a name starting with the cluster ID will also be deleted.
+	// WithAdditionalResources: defines whether all volumes (including retain volume type), empty Private Networks and Load Balancers with a name starting with the cluster ID will also be deleted.
 	WithAdditionalResources bool `json:"-"`
 }
 
