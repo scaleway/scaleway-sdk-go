@@ -39,18 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: apple Mac mini as a service.
-// Scaleway Apple silicon as-a-Service is built using the latest generation of Apple Mac mini hardware (fifth generation).
-//
-// These dedicated Mac mini M1s are designed for developing, building, testing, and signing applications for Apple devices, including iPhones, iPads, Mac computers and much more.
-//
-// Get set to explore, learn and build on a dedicated Mac mini M1 with more performance and speed than you ever thought possible.
-//
-// **Apple silicon as a Service comes with a minimum allocation period of 24 hours**.
-//
-// Mac mini and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions.
-// IOS is a trademark or registered trademark of Cisco in the U.S. and other countries and is used by Apple under license.
-// Scaleway is not affiliated with Apple Inc.
+// API: apple silicon API.
 type API struct {
 	client *scw.Client
 }
