@@ -181,11 +181,13 @@ type PinCID struct {
 }
 
 type PinCIDMeta struct {
-	AppID string `json:"app_id"`
+	ID string `json:"id"`
 
 	URL *string `json:"url"`
 
-	Size *uint32 `json:"size"`
+	Size *uint64 `json:"size"`
+
+	Progress *uint32 `json:"progress"`
 }
 
 type PinInfo struct {
@@ -219,7 +221,7 @@ type Volume struct {
 
 	Name string `json:"name"`
 
-	Size *uint32 `json:"size"`
+	Size *uint64 `json:"size"`
 }
 
 // Service API
@@ -522,8 +524,6 @@ type CreatePinByCIDRequest struct {
 
 	Origins []string `json:"origins"`
 
-	Meta *PinCIDMeta `json:"meta"`
-
 	PinOptions *PinOptions `json:"pin_options"`
 }
 
@@ -577,8 +577,6 @@ type ReplacePinRequest struct {
 	Name *string `json:"name"`
 
 	Origins []string `json:"origins"`
-
-	Meta *PinCIDMeta `json:"meta"`
 
 	PinOptions *PinOptions `json:"pin_options"`
 }
