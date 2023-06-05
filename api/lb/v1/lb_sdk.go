@@ -1668,6 +1668,8 @@ type ZonedAPICreateLBRequest struct {
 	Description string `json:"description"`
 	// IPID: ID of an existing flexible IP address to attach to the Load Balancer.
 	IPID *string `json:"ip_id"`
+	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
+	AssignFlexibleIP *bool `json:"assign_flexible_ip"`
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 	// Type: load Balancer commercial offer type. Use the Load Balancer types endpoint to retrieve a list of available offer types.
@@ -4649,6 +4651,8 @@ type CreateLBRequest struct {
 	Description string `json:"description"`
 	// IPID: ID of an existing flexible IP address to attach to the Load Balancer.
 	IPID *string `json:"ip_id"`
+	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
+	AssignFlexibleIP *bool `json:"assign_flexible_ip"`
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 	// Type: load Balancer commercial offer type. Use the Load Balancer types endpoint to retrieve a list of available offer types.
