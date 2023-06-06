@@ -900,7 +900,7 @@ type ACLActionRedirect struct {
 	// Type: redirect type.
 	// Default value: location
 	Type ACLActionRedirectRedirectType `json:"type"`
-	// Target: redirect target. For a location redirect, you can use a URL e.g. `https://scaleway.com`. Using a scheme name (e.g. `https`, `http`, `ftp`, `git`) will replace the request's original scheme. This can be useful to implement HTTP to HTTPS redirects. Valid placeholders that can be used in a `location` redirect to preserve parts of the original request in the redirection URL are {{ host }}, {{ query }}, {{ path }} and {{ scheme }}.
+	// Target: redirect target. For a location redirect, you can use a URL e.g. `https://scaleway.com`. Using a scheme name (e.g. `https`, `http`, `ftp`, `git`) will replace the request's original scheme. This can be useful to implement HTTP to HTTPS redirects. Valid placeholders that can be used in a `location` redirect to preserve parts of the original request in the redirection URL are \{\{ host \}\}, \{\{ query \}\}, \{\{ path \}\} and \{\{ scheme \}\}.
 	Target string `json:"target"`
 	// Code: HTTP redirect code to use. Valid values are 301, 302, 303, 307 and 308. Default value is 302.
 	Code *int32 `json:"code"`
@@ -1666,10 +1666,12 @@ type ZonedAPICreateLBRequest struct {
 	Name string `json:"name"`
 	// Description: description for the Load Balancer.
 	Description string `json:"description"`
-	// IPID: ID of an existing flexible IP address to attach to the Load Balancer.
-	IPID *string `json:"ip_id"`
+	// Deprecated: IPID: ID of an existing flexible IP address to attach to the Load Balancer.
+	IPID *string `json:"ip_id,omitempty"`
 	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip"`
+	// IPIDs: list of IP IDs to attach to the Load Balancer.
+	IPIDs []string `json:"ip_ids"`
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 	// Type: load Balancer commercial offer type. Use the Load Balancer types endpoint to retrieve a list of available offer types.
@@ -1980,6 +1982,8 @@ type ZonedAPICreateIPRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse"`
+	// IsIPv6: if true, creates a Flexible IP with an ipv6 address.
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // CreateIP: create an IP address.
@@ -3424,6 +3428,8 @@ type ZonedAPIListBackendStatsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: number of items to return.
 	PageSize *uint32 `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 // ListBackendStats: list backend server statistics.
@@ -3444,6 +3450,7 @@ func (s *ZonedAPI) ListBackendStats(req *ZonedAPIListBackendStatsRequest, opts .
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -4649,10 +4656,12 @@ type CreateLBRequest struct {
 	Name string `json:"name"`
 	// Description: description for the Load Balancer.
 	Description string `json:"description"`
-	// IPID: ID of an existing flexible IP address to attach to the Load Balancer.
-	IPID *string `json:"ip_id"`
+	// Deprecated: IPID: ID of an existing flexible IP address to attach to the Load Balancer.
+	IPID *string `json:"ip_id,omitempty"`
 	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip"`
+	// IPIDs: list of IP IDs to attach to the Load Balancer.
+	IPIDs []string `json:"ip_ids"`
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 	// Type: load Balancer commercial offer type. Use the Load Balancer types endpoint to retrieve a list of available offer types.
@@ -4957,6 +4966,8 @@ type CreateIPRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse"`
+	// IsIPv6: if true, creates a Flexible IP with an ipv6 address.
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // CreateIP: create an IP.
@@ -6378,6 +6389,8 @@ type ListBackendStatsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: number of items to return.
 	PageSize *uint32 `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.RequestOption) (*ListBackendStatsResponse, error) {
@@ -6396,6 +6409,7 @@ func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.Request
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
