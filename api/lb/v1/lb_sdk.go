@@ -900,7 +900,7 @@ type ACLActionRedirect struct {
 	// Type: redirect type.
 	// Default value: location
 	Type ACLActionRedirectRedirectType `json:"type"`
-	// Target: redirect target. For a location redirect, you can use a URL e.g. `https://scaleway.com`. Using a scheme name (e.g. `https`, `http`, `ftp`, `git`) will replace the request's original scheme. This can be useful to implement HTTP to HTTPS redirects. Valid placeholders that can be used in a `location` redirect to preserve parts of the original request in the redirection URL are {{ host }}, {{ query }}, {{ path }} and {{ scheme }}.
+	// Target: redirect target. For a location redirect, you can use a URL e.g. `https://scaleway.com`. Using a scheme name (e.g. `https`, `http`, `ftp`, `git`) will replace the request's original scheme. This can be useful to implement HTTP to HTTPS redirects. Valid placeholders that can be used in a `location` redirect to preserve parts of the original request in the redirection URL are \{\{ host \}\}, \{\{ query \}\}, \{\{ path \}\} and \{\{ scheme \}\}.
 	Target string `json:"target"`
 	// Code: HTTP redirect code to use. Valid values are 301, 302, 303, 307 and 308. Default value is 302.
 	Code *int32 `json:"code"`
