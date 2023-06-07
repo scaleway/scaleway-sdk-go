@@ -3428,6 +3428,8 @@ type ZonedAPIListBackendStatsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: number of items to return.
 	PageSize *uint32 `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 // ListBackendStats: list backend server statistics.
@@ -3448,6 +3450,7 @@ func (s *ZonedAPI) ListBackendStats(req *ZonedAPIListBackendStatsRequest, opts .
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -6386,6 +6389,8 @@ type ListBackendStatsRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: number of items to return.
 	PageSize *uint32 `json:"-"`
+	// BackendID: ID of the backend.
+	BackendID *string `json:"-"`
 }
 
 func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.RequestOption) (*ListBackendStatsResponse, error) {
@@ -6404,6 +6409,7 @@ func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.Request
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "backend_id", req.BackendID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
