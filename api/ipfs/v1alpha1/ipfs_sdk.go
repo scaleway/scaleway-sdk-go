@@ -181,17 +181,19 @@ type PinCID struct {
 }
 
 type PinCIDMeta struct {
-	ID string `json:"id"`
+	ID *string `json:"id"`
+}
+
+type PinInfo struct {
+	StatusDetails *string `json:"status_details"`
+
+	ID *string `json:"id"`
 
 	URL *string `json:"url"`
 
 	Size *uint64 `json:"size"`
 
 	Progress *uint32 `json:"progress"`
-}
-
-type PinInfo struct {
-	StatusDetails *string `json:"status_details"`
 }
 
 type PinOptions struct {
