@@ -194,6 +194,40 @@ func (enum *ClusterStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ClusterTypeAvailability string
+
+const (
+	// Type is available in quantity
+	ClusterTypeAvailabilityAvailable = ClusterTypeAvailability("available")
+	// Limited availability
+	ClusterTypeAvailabilityScarce = ClusterTypeAvailability("scarce")
+	// Out of stock
+	ClusterTypeAvailabilityShortage = ClusterTypeAvailability("shortage")
+)
+
+func (enum ClusterTypeAvailability) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "available"
+	}
+	return string(enum)
+}
+
+func (enum ClusterTypeAvailability) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ClusterTypeAvailability) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ClusterTypeAvailability(ClusterTypeAvailability(tmp).String())
+	return nil
+}
+
 type Ingress string
 
 const (
@@ -631,6 +665,15 @@ type ClusterOpenIDConnectConfig struct {
 	RequiredClaim []string `json:"required_claim"`
 }
 
+// ClusterType: cluster type.
+type ClusterType struct {
+	// Name: cluster type name.
+	Name string `json:"name"`
+	// Availability: cluster type availability.
+	// Default value: available
+	Availability ClusterTypeAvailability `json:"availability"`
+}
+
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
 type CreateClusterRequestAutoUpgrade struct {
 	// Enable: defines whether auto upgrade is enabled for the cluster.
@@ -755,6 +798,14 @@ type ExternalNode struct {
 type ListClusterAvailableVersionsResponse struct {
 	// Versions: available Kubernetes versions for the cluster.
 	Versions []*Version `json:"versions"`
+}
+
+// ListClusterTypesResponse: list cluster types response.
+type ListClusterTypesResponse struct {
+	// TotalCount: total number of cluster-types.
+	TotalCount uint32 `json:"total_count"`
+	// ClusterTypes: paginated returned cluster-types.
+	ClusterTypes []*ClusterType `json:"cluster_types"`
 }
 
 // ListClustersResponse: list clusters response.
@@ -2258,6 +2309,54 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 	return &resp, nil
 }
 
+type ListClusterTypesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// Page: page number, from the paginated results, to return for cluster-types.
+	Page *int32 `json:"-"`
+	// PageSize: maximum number of clusters per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListClusterTypes: list cluster types.
+// List available cluster types and their technical details.
+func (s *API) ListClusterTypes(req *ListClusterTypesRequest, opts ...scw.RequestOption) (*ListClusterTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/cluster-types",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListClusterTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
@@ -2313,4 +2412,23 @@ func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Nodes = append(r.Nodes, results.Nodes...)
 	r.TotalCount += uint32(len(results.Nodes))
 	return uint32(len(results.Nodes)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListClusterTypesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListClusterTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListClusterTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ClusterTypes = append(r.ClusterTypes, results.ClusterTypes...)
+	r.TotalCount += uint32(len(results.ClusterTypes))
+	return uint32(len(results.ClusterTypes)), nil
 }
