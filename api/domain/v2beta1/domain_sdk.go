@@ -2151,10 +2151,10 @@ type UpdateDNSZoneRecordsRequest struct {
 // Update records within a DNS zone that has default name servers and perform several actions on your records.
 //
 // Actions include:
-//  - add: allows you to add a new record or add a new IP to an existing A record, for example
-//  - set: allows you to edit a record or edit an IP from an existing A record, for example
-//  - delete: allows you to delete a record or delete an IP from an existing A record, for example
-//  - clear: allows you to delete all records from a DNS zone
+//   - add: allows you to add a new record or add a new IP to an existing A record, for example
+//   - set: allows you to edit a record or edit an IP from an existing A record, for example
+//   - delete: allows you to delete a record or delete an IP from an existing A record, for example
+//   - clear: allows you to delete all records from a DNS zone
 //
 // All edits will be versioned.
 func (s *API) UpdateDNSZoneRecords(req *UpdateDNSZoneRecordsRequest, opts ...scw.RequestOption) (*UpdateDNSZoneRecordsResponse, error) {
@@ -2797,8 +2797,8 @@ type RegistrarAPIListTasksRequest struct {
 }
 
 // ListTasks: list tasks.
-// List all account tasks.
-// You can filter the list by domain name.
+// List all operations performed on the account.
+// You can filter the list of tasks by domain name.
 func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.RequestOption) (*ListTasksResponse, error) {
 	var err error
 
@@ -2859,9 +2859,9 @@ type RegistrarAPIBuyDomainsRequest struct {
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 }
 
-// BuyDomains: buy one or more domains.
+// BuyDomains: purchase domains.
 // Request the registration of domain names.
-// You can provide an already existing domain's contact or a new contact.
+// You can provide a domain's already existing contact or a new contact.
 func (s *RegistrarAPI) BuyDomains(req *RegistrarAPIBuyDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -2898,8 +2898,8 @@ type RegistrarAPIRenewDomainsRequest struct {
 	ForceLateRenewal *bool `json:"force_late_renewal"`
 }
 
-// RenewDomains: renew one or more domains.
-// Request the renewal of domain names.
+// RenewDomains: renew domains.
+// Request the renewal of one or more domain names.
 func (s *RegistrarAPI) RenewDomains(req *RegistrarAPIRenewDomainsRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -2948,7 +2948,7 @@ type RegistrarAPITransferInDomainRequest struct {
 }
 
 // TransferInDomain: transfer a domain.
-// Request the transfer from another registrar domain to Scaleway.
+// Request the transfer of a domain from another registrar to Scaleway Domains and DNS.
 func (s *RegistrarAPI) TransferInDomain(req *RegistrarAPITransferInDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -2989,11 +2989,11 @@ type RegistrarAPITradeDomainRequest struct {
 	NewOwnerContact *NewContact `json:"new_owner_contact,omitempty"`
 }
 
-// TradeDomain: trade a domain contact.
-// Request a trade for the contact owner.<br/>
-// If an `organization_id` is given, the change is from the current Scaleway account to another Scaleway account.<br/>
-// If no contact is given, the first contact of the other Scaleway account is taken.<br/>
-// If the other Scaleway account has no contact. An error occurs.
+// TradeDomain: trade a domain's contact.
+// Request to change a domain's contact owner.<br/>
+// If you specify the `organization_id` of the domain's new owner, the contact will change from the current owner's Scaleway account to the new owner's Scaleway account.<br/>
+// If the new owner's current contact information is not available, the first ever contact they have created for previous domains is taken into account to operate the change.<br/>
+// If the new owner has never created a contact to register domains before, an error message displays.
 func (s *RegistrarAPI) TradeDomain(req *RegistrarAPITradeDomainRequest, opts ...scw.RequestOption) (*OrderResponse, error) {
 	var err error
 
@@ -3109,9 +3109,9 @@ type RegistrarAPICheckContactsCompatibilityRequest struct {
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 }
 
-// CheckContactsCompatibility: check if contacts are compatible against a domain or a tld.
-// Check if contacts are compatible against a domain or a tld.
-// If not, it will return the information requiring a correction.
+// CheckContactsCompatibility: check if contacts are compatible with a domain or a TLD.
+// Check whether contacts are compatible with a domain or a TLD.
+// If contacts are not compatible with either the domain or the TLD, the information that needs to be corrected is returned.
 func (s *RegistrarAPI) CheckContactsCompatibility(req *RegistrarAPICheckContactsCompatibilityRequest, opts ...scw.RequestOption) (*CheckContactsCompatibilityResponse, error) {
 	var err error
 
@@ -3148,7 +3148,7 @@ type RegistrarAPIListContactsRequest struct {
 }
 
 // ListContacts: list contacts.
-// Return a list of contacts with their domains and roles.
+// Retrieve the list of contacts and their associated domains and roles.
 // You can filter the list by domain name.
 func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts ...scw.RequestOption) (*ListContactsResponse, error) {
 	var err error
@@ -3186,7 +3186,7 @@ type RegistrarAPIGetContactRequest struct {
 }
 
 // GetContact: get a contact.
-// Return a contact details retrieved from the registrar using a given contact ID.
+// Retrieve a contact's details from the registrar using the given contact's ID.
 func (s *RegistrarAPI) GetContact(req *RegistrarAPIGetContactRequest, opts ...scw.RequestOption) (*Contact, error) {
 	var err error
 
@@ -3252,7 +3252,7 @@ type RegistrarAPIUpdateContactRequest struct {
 }
 
 // UpdateContact: update contact.
-// You can edit the contact coordinates.
+// Edit the contact's information.
 func (s *RegistrarAPI) UpdateContact(req *RegistrarAPIUpdateContactRequest, opts ...scw.RequestOption) (*Contact, error) {
 	var err error
 
@@ -3301,7 +3301,7 @@ type RegistrarAPIListDomainsRequest struct {
 }
 
 // ListDomains: list domains.
-// Returns a list of domains owned by the user.
+// Retrieve the list of domains you own.
 func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -3349,8 +3349,8 @@ type RegistrarAPIListRenewableDomainsRequest struct {
 	OrganizationID *string `json:"-"`
 }
 
-// ListRenewableDomains: list scaleway domains that can or not be renewed.
-// Returns a list of domains owned by the user with a renew status and if renewable, the maximum renew duration in years.
+// ListRenewableDomains: list domains that can be renewed.
+// Retrieve the list of domains you own that can be renewed. You can also see the maximum renewal duration in years for your domains that are renewable.
 func (s *RegistrarAPI) ListRenewableDomains(req *RegistrarAPIListRenewableDomainsRequest, opts ...scw.RequestOption) (*ListRenewableDomainsResponse, error) {
 	var err error
 
@@ -3387,7 +3387,7 @@ type RegistrarAPIGetDomainRequest struct {
 }
 
 // GetDomain: get domain.
-// Returns a the domain with more informations.
+// Retrieve a specific domain and display the domain's information.
 func (s *RegistrarAPI) GetDomain(req *RegistrarAPIGetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3432,9 +3432,9 @@ type RegistrarAPIUpdateDomainRequest struct {
 	AdministrativeContact *NewContact `json:"administrative_contact,omitempty"`
 }
 
-// UpdateDomain: update a domain.
-// Update the domain contacts or create a new one.<br/>
-// If you add the same contact for multiple roles. Only one ID will be created and used for all of them.
+// UpdateDomain: update a domain's contacts.
+// Update contacts for a specific domain or create a new contact.<br/>
+// If you add the same contact for multiple roles (owner, administrative, technical), only one ID will be created and used for all of the roles.
 func (s *RegistrarAPI) UpdateDomain(req *RegistrarAPIUpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3466,8 +3466,8 @@ type RegistrarAPILockDomainTransferRequest struct {
 	Domain string `json:"-"`
 }
 
-// LockDomainTransfer: lock domain transfer.
-// Lock domain transfer. A locked domain transfer can't be transferred and the auth code can't be requested.
+// LockDomainTransfer: lock the transfer of a domain.
+// Lock the transfer of a domain. This means that the domain cannot be transferred and the authorization code cannot be requested to your current registrar.
 func (s *RegistrarAPI) LockDomainTransfer(req *RegistrarAPILockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3499,8 +3499,8 @@ type RegistrarAPIUnlockDomainTransferRequest struct {
 	Domain string `json:"-"`
 }
 
-// UnlockDomainTransfer: unlock domain transfer.
-// Unlock domain transfer. An unlocked domain can be transferred and the auth code can be requested for this.
+// UnlockDomainTransfer: unlock the transfer of a domain.
+// Unlock the transfer of a domain. This means that the domain can be transferred and the authorization code can be requested to your current registrar.
 func (s *RegistrarAPI) UnlockDomainTransfer(req *RegistrarAPIUnlockDomainTransferRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3532,7 +3532,8 @@ type RegistrarAPIEnableDomainAutoRenewRequest struct {
 	Domain string `json:"-"`
 }
 
-// EnableDomainAutoRenew: enable domain auto renew.
+// EnableDomainAutoRenew: enable auto renew.
+// Enable the `auto renew` feature for a domain. This means the domain will be automatically renewed before its expiry date.
 func (s *RegistrarAPI) EnableDomainAutoRenew(req *RegistrarAPIEnableDomainAutoRenewRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3564,7 +3565,8 @@ type RegistrarAPIDisableDomainAutoRenewRequest struct {
 	Domain string `json:"-"`
 }
 
-// DisableDomainAutoRenew: disable domain auto renew.
+// DisableDomainAutoRenew: disable auto renew.
+// Disable the `auto renew` feature for a domain. This means the domain will not be renewed before its expiry date.
 func (s *RegistrarAPI) DisableDomainAutoRenew(req *RegistrarAPIDisableDomainAutoRenewRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3596,9 +3598,9 @@ type RegistrarAPIGetDomainAuthCodeRequest struct {
 	Domain string `json:"-"`
 }
 
-// GetDomainAuthCode: return domain auth code.
-// If possible, return the auth code for an unlocked domain transfer, or an error if the domain is locked.
-// Some TLD may have a different procedure to retrieve the auth code, in that case, the information is given in the message field.
+// GetDomainAuthCode: get a domain's authorization code.
+// Retrieve the authorization code to tranfer an unlocked domain. The output returns an error if the domain is locked.
+// Some TLDs may have a different procedure to retrieve the authorization code. In that case, the information displays in the message field.
 func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeRequest, opts ...scw.RequestOption) (*GetDomainAuthCodeResponse, error) {
 	var err error
 
@@ -3660,7 +3662,8 @@ type RegistrarAPIDisableDomainDNSSECRequest struct {
 	Domain string `json:"-"`
 }
 
-// DisableDomainDNSSEC: disable domain DNSSEC.
+// DisableDomainDNSSEC: disable a domain's DNSSEC.
+// Disable DNSSEC for a domain.
 func (s *RegistrarAPI) DisableDomainDNSSEC(req *RegistrarAPIDisableDomainDNSSECRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -3698,9 +3701,9 @@ type RegistrarAPISearchAvailableDomainsRequest struct {
 }
 
 // SearchAvailableDomains: search available domains.
-// Search a domain (or at maximum, 10 domains).
+// Search a domain or a maximum of 10 domains that are available.
 //
-// If the TLD list is empty or not set the search returns the results from the most popular TLDs.
+// If the TLD list is empty or not set, the search returns the results from the most popular TLDs.
 func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDomainsRequest, opts ...scw.RequestOption) (*SearchAvailableDomainsResponse, error) {
 	var err error
 
@@ -3733,7 +3736,8 @@ type RegistrarAPICreateDomainHostRequest struct {
 	IPs []net.IP `json:"ips"`
 }
 
-// CreateDomainHost: create domain hostname with glue IPs.
+// CreateDomainHost: create a hostname for a domain.
+// Create a hostname for a domain with glue IPs.
 func (s *RegistrarAPI) CreateDomainHost(req *RegistrarAPICreateDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
 	var err error
 
@@ -3769,7 +3773,8 @@ type RegistrarAPIListDomainHostsRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListDomainHosts: list domain hostnames with they glue IPs.
+// ListDomainHosts: list a domain's hostnames.
+// List a domain's hostnames using their glue IPs.
 func (s *RegistrarAPI) ListDomainHosts(req *RegistrarAPIListDomainHostsRequest, opts ...scw.RequestOption) (*ListDomainHostsResponse, error) {
 	var err error
 
@@ -3810,7 +3815,8 @@ type RegistrarAPIUpdateDomainHostRequest struct {
 	IPs *[]string `json:"ips"`
 }
 
-// UpdateDomainHost: update domain hostname with glue IPs.
+// UpdateDomainHost: update a domain's hostname.
+// Update a domain's hostname with glue IPs.
 func (s *RegistrarAPI) UpdateDomainHost(req *RegistrarAPIUpdateDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
 	var err error
 
@@ -3848,7 +3854,7 @@ type RegistrarAPIDeleteDomainHostRequest struct {
 	Name string `json:"-"`
 }
 
-// DeleteDomainHost: delete domain hostname.
+// DeleteDomainHost: delete a domain's hostname.
 func (s *RegistrarAPI) DeleteDomainHost(req *RegistrarAPIDeleteDomainHostRequest, opts ...scw.RequestOption) (*Host, error) {
 	var err error
 
