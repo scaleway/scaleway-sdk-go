@@ -51,22 +51,58 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type DomainLastStatusRecordStatus string
+
+const (
+	// If unspecified, the status of the domain's record is unknown by default
+	DomainLastStatusRecordStatusUnknownRecordStatus = DomainLastStatusRecordStatus("unknown_record_status")
+	// The record is valid
+	DomainLastStatusRecordStatusValid = DomainLastStatusRecordStatus("valid")
+	// The record is invalid
+	DomainLastStatusRecordStatusInvalid = DomainLastStatusRecordStatus("invalid")
+	// The record was not found
+	DomainLastStatusRecordStatusNotFound = DomainLastStatusRecordStatus("not_found")
+)
+
+func (enum DomainLastStatusRecordStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_record_status"
+	}
+	return string(enum)
+}
+
+func (enum DomainLastStatusRecordStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainLastStatusRecordStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainLastStatusRecordStatus(DomainLastStatusRecordStatus(tmp).String())
+	return nil
+}
+
 type DomainStatus string
 
 const (
-	// Default unknown domain status
+	// If unspecified, the status of the domain is unknown by default
 	DomainStatusUnknown = DomainStatus("unknown")
-	// Domain is checked
+	// The domain is checked
 	DomainStatusChecked = DomainStatus("checked")
-	// Domain is unchecked
+	// The domain is unchecked
 	DomainStatusUnchecked = DomainStatus("unchecked")
-	// Domain is invalid
+	// The domain is invalid
 	DomainStatusInvalid = DomainStatus("invalid")
-	// Domain is locked
+	// The domain is locked
 	DomainStatusLocked = DomainStatus("locked")
-	// Domain is revoked
+	// The domain is revoked
 	DomainStatusRevoked = DomainStatus("revoked")
-	// Domain is pending for check
+	// The domain is pending for check
 	DomainStatusPending = DomainStatus("pending")
 )
 
@@ -96,7 +132,7 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 type EmailRcptType string
 
 const (
-	// Default unknown recipient type
+	// If unspecified, the recipient type is unknown by default
 	EmailRcptTypeUnknownRcptType = EmailRcptType("unknown_rcpt_type")
 	// Primary recipient
 	EmailRcptTypeTo = EmailRcptType("to")
@@ -132,17 +168,17 @@ func (enum *EmailRcptType) UnmarshalJSON(data []byte) error {
 type EmailStatus string
 
 const (
-	// Default unknown email status
+	// If unspecified, the status of the email is unknown by default
 	EmailStatusUnknown = EmailStatus("unknown")
-	// Email is new
+	// The email is new
 	EmailStatusNew = EmailStatus("new")
-	// Email is in the process of being sent
+	// The email is in the process of being sent
 	EmailStatusSending = EmailStatus("sending")
-	// Email is sent
+	// The email was sent
 	EmailStatusSent = EmailStatus("sent")
-	// Email sending has failed
+	// The sending of the email failed
 	EmailStatusFailed = EmailStatus("failed")
-	// Email is canceled
+	// The sending of the email was canceled
 	EmailStatusCanceled = EmailStatus("canceled")
 )
 
@@ -266,8 +302,8 @@ type Domain struct {
 	LastValidAt *time.Time `json:"last_valid_at"`
 	// RevokedAt: date and time of the domain's deletion.
 	RevokedAt *time.Time `json:"revoked_at"`
-	// LastError: error message returned if the last check failed.
-	LastError *string `json:"last_error"`
+	// Deprecated: LastError: error message returned if the last check failed.
+	LastError *string `json:"last_error,omitempty"`
 	// SpfConfig: snippet of the SPF record to register in the DNS zone.
 	SpfConfig string `json:"spf_config"`
 	// DkimConfig: dKIM public key to record in the DNS zone.
@@ -276,6 +312,40 @@ type Domain struct {
 	Statistics *DomainStatistics `json:"statistics"`
 
 	Region scw.Region `json:"region"`
+}
+
+// DomainLastStatus: domain last status.
+type DomainLastStatus struct {
+	// DomainID: the id of the domain.
+	DomainID string `json:"domain_id"`
+	// DomainName: the domain name (example.com).
+	DomainName string `json:"domain_name"`
+	// SpfRecord: the SPF record verification data.
+	SpfRecord *DomainLastStatusSpfRecord `json:"spf_record"`
+	// DkimRecord: the DKIM record verification data.
+	DkimRecord *DomainLastStatusDkimRecord `json:"dkim_record"`
+}
+
+// DomainLastStatusDkimRecord: domain last status. dkim record.
+type DomainLastStatusDkimRecord struct {
+	// Status: status of the DKIM record's configurartion.
+	// Default value: unknown_record_status
+	Status DomainLastStatusRecordStatus `json:"status"`
+	// LastValidAt: time and date the DKIM record was last valid.
+	LastValidAt *time.Time `json:"last_valid_at"`
+	// Error: an error text displays in case the record is not valid.
+	Error *string `json:"error"`
+}
+
+// DomainLastStatusSpfRecord: domain last status. spf record.
+type DomainLastStatusSpfRecord struct {
+	// Status: status of the SPF record's configurartion.
+	// Default value: unknown_record_status
+	Status DomainLastStatusRecordStatus `json:"status"`
+	// LastValidAt: time and date the SPF record was last valid.
+	LastValidAt *time.Time `json:"last_valid_at"`
+	// Error: an error text displays in case the record is not valid.
+	Error *string `json:"error"`
 }
 
 type DomainStatistics struct {
@@ -298,7 +368,7 @@ type Email struct {
 	ProjectID string `json:"project_id"`
 	// MailFrom: email address of the sender.
 	MailFrom string `json:"mail_from"`
-	// Deprecated: RcptTo: (Deprecated) Email address of the recipient.
+	// Deprecated: RcptTo: email address of the recipient.
 	RcptTo *string `json:"rcpt_to,omitempty"`
 	// MailRcpt: email address of the recipient.
 	MailRcpt string `json:"mail_rcpt"`
@@ -496,7 +566,7 @@ type ListEmailsRequest struct {
 	Until *time.Time `json:"-"`
 	// MailFrom: (Optional) List emails sent with this sender's email address.
 	MailFrom *string `json:"-"`
-	// Deprecated: MailTo: (Deprecated) List emails sent to this recipient's email address.
+	// Deprecated: MailTo: list emails sent to this recipient's email address.
 	MailTo *string `json:"-"`
 	// MailRcpt: (Optional) List emails sent to this recipient's email address.
 	MailRcpt *string `json:"-"`
@@ -891,6 +961,51 @@ func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Domain
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CheckDomainLastStatusRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// DomainID: ID of the domain to delete.
+	DomainID string `json:"-"`
+}
+
+// CheckDomainLastStatus: display SPF and DKIM records status and potential errors.
+// Display SPF and DKIM records status and potential errors, including the found records to make debugging easier.
+func (s *API) CheckDomainLastStatus(req *CheckDomainLastStatusRequest, opts ...scw.RequestOption) (*DomainLastStatus, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainID) == "" {
+		return nil, errors.New("field DomainID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "/verification",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DomainLastStatus
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
