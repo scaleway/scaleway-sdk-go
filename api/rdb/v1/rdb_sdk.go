@@ -3933,7 +3933,7 @@ type CreateEndpointRequest struct {
 }
 
 // CreateEndpoint: create a new Database Instance endpoint.
-// Create a new endpoint for a Database Instance. You can add `load_balancer` and `private_network` specifications to the body of the request. Note that this action replaces your current endpoint, which means you might need to update any environment configurations that point to the old endpoint.
+// Create a new endpoint for a Database Instance. You can add `load_balancer` and `private_network` specifications to the body of the request.
 func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
 	var err error
 
