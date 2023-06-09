@@ -3,9 +3,10 @@ package instance
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"sync"
 	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -428,4 +429,36 @@ func (s *API) WaitForMACAddress(req *WaitForMACAddressRequest, opts ...scw.Reque
 		return nil, errors.Wrap(err, "waiting for server failed")
 	}
 	return pn.(*PrivateNIC), nil
+}
+
+// UnsafeSetTotalCount should not be used
+// Internal usage only
+func (r *GetServerTypesAvailabilityResponse) UnsafeSetTotalCount(totalCount int) {
+	r.TotalCount = uint32(totalCount)
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *GetServerTypesAvailabilityResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *GetServerTypesAvailabilityResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*GetServerTypesAvailabilityResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	if r.Servers == nil {
+		r.Servers = make(map[string]*GetServerTypesAvailabilityResponseAvailability, len(results.Servers))
+	}
+
+	for name, serverTypeAvailability := range results.Servers {
+		r.Servers[name] = serverTypeAvailability
+	}
+
+	r.TotalCount += uint32(len(results.Servers))
+	return uint32(len(results.Servers)), nil
 }
