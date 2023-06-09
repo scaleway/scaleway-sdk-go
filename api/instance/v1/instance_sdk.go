@@ -893,8 +893,12 @@ type GetServerResponse struct {
 	Server *Server `json:"server"`
 }
 
+// GetServerTypesAvailabilityResponse: get server types availability response.
 type GetServerTypesAvailabilityResponse struct {
+	// Servers: map of server types.
 	Servers map[string]*GetServerTypesAvailabilityResponseAvailability `json:"servers"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 type GetServerTypesAvailabilityResponseAvailability struct {
@@ -1675,9 +1679,10 @@ func (s *API) Zones() []scw.Zone {
 type GetServerTypesAvailabilityRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-
+	// PerPage: a positive integer lower or equal to 100 to select the number of items to return.
+	// Default value: 50
 	PerPage *uint32 `json:"-"`
-
+	// Page: a positive integer to choose the page to return.
 	Page *int32 `json:"-"`
 }
 
