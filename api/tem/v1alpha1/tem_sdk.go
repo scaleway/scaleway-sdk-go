@@ -969,16 +969,16 @@ func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type CheckDomainLastStatusRequest struct {
+type GetDomainLastStatusRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 	// DomainID: ID of the domain to delete.
 	DomainID string `json:"-"`
 }
 
-// CheckDomainLastStatus: display SPF and DKIM records status and potential errors.
+// GetDomainLastStatus: display SPF and DKIM records status and potential errors.
 // Display SPF and DKIM records status and potential errors, including the found records to make debugging easier.
-func (s *API) CheckDomainLastStatus(req *CheckDomainLastStatusRequest, opts ...scw.RequestOption) (*DomainLastStatus, error) {
+func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.RequestOption) (*DomainLastStatus, error) {
 	var err error
 
 	if req.Region == "" {
@@ -995,14 +995,9 @@ func (s *API) CheckDomainLastStatus(req *CheckDomainLastStatusRequest, opts ...s
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
+		Method:  "GET",
 		Path:    "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "/verification",
 		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
 	}
 
 	var resp DomainLastStatus
