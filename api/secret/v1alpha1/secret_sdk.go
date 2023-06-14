@@ -207,6 +207,14 @@ type ListSecretsResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListTagsResponse: list tags response.
+type ListTagsResponse struct {
+	// Tags: list of tags.
+	Tags []string `json:"tags"`
+	// TotalCount: count of all tags matching the requested criteria.
+	TotalCount uint32 `json:"total_count"`
+}
+
 // PasswordGenerationParams: password generation params.
 type PasswordGenerationParams struct {
 	// Length: length of the password to generate (between 1 and 1024).
@@ -1271,6 +1279,58 @@ func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw
 	return &resp, nil
 }
 
+type ListTagsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ProjectID: ID of the Project to target.
+	// (Optional.) If not specified, Secret Manager will look for tags in all Projects.
+	ProjectID *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListTags: list tags.
+// List all tags associated to secrets in one or several Projects.
+func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTagsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/tags",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListTagsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListSecretsResponse) UnsafeGetTotalCount() uint32 {
@@ -1307,4 +1367,23 @@ func (r *ListSecretVersionsResponse) UnsafeAppend(res interface{}) (uint32, erro
 	r.Versions = append(r.Versions, results.Versions...)
 	r.TotalCount += uint32(len(results.Versions))
 	return uint32(len(results.Versions)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTagsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tags = append(r.Tags, results.Tags...)
+	r.TotalCount += uint32(len(results.Tags))
+	return uint32(len(results.Tags)), nil
 }
