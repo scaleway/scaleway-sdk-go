@@ -188,6 +188,7 @@ const (
 	HostingStatusDeleting      = HostingStatus("deleting")
 	HostingStatusError         = HostingStatus("error")
 	HostingStatusLocked        = HostingStatus("locked")
+	HostingStatusMigrating     = HostingStatus("migrating")
 )
 
 func (enum HostingStatus) String() string {
