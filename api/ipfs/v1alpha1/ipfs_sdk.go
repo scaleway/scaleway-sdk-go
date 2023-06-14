@@ -242,7 +242,8 @@ type CreateVolumeRequest struct {
 	Name string `json:"name"`
 }
 
-// CreateVolume: create a new volume from a Project ID. Volume is identified by an ID and used to host pin references.
+// CreateVolume: create a new volume.
+// Create a new volume from a Project ID. Volume is identified by an ID and used to host pin references.
 // Volume is personal (at least to your organization) even if IPFS blocks and CID are available to anyone.
 // Should be the first command you made because every pin must be attached to a volume.
 func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
@@ -289,7 +290,8 @@ type GetVolumeRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// GetVolume: retrieve information about a specific volume.
+// GetVolume: get information about a volume.
+// Retrieve information about a specific volume.
 func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -334,7 +336,8 @@ type ListVolumesRequest struct {
 	OrderBy ListVolumesRequestOrderBy `json:"-"`
 }
 
-// ListVolumes: retrieve information about all volumes from a Project ID.
+// ListVolumes: list all volumes by a Project ID.
+// Retrieve information about all volumes from a Project ID.
 func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
 
@@ -390,7 +393,8 @@ type UpdateVolumeRequest struct {
 	Tags *[]string `json:"tags"`
 }
 
-// UpdateVolume: update volume information (tag, name...).
+// UpdateVolume: update volume information.
+// Update volume information (tag, name...).
 func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -434,7 +438,8 @@ type DeleteVolumeRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// DeleteVolume: delete a volume by its ID and every pin attached to this volume. Can take a while, depending of your pinned content.
+// DeleteVolume: delete an existing volume.
+// Delete a volume by its ID and every pin attached to this volume. This process can take a while to conclude, depending on the size of your pinned content.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -477,7 +482,8 @@ type CreatePinByURLRequest struct {
 	PinOptions *PinOptions `json:"pin_options"`
 }
 
-// CreatePinByURL: create a pin request. Will fetch and store the content pointed by the provided URL. The content must be available on the public IPFS network.
+// CreatePinByURL: create a pin by URL.
+// Will fetch and store the content pointed by the provided URL. The content must be available on the public IPFS network.
 // The content (IPFS blocks) will be host by the pinning service until pin deletion.
 // From that point, any other IPFS peer can fetch and host your content: Make sure to pin public or encrypted content.
 // Many pin requests (from different users) can target the same CID.
@@ -529,7 +535,8 @@ type CreatePinByCIDRequest struct {
 	PinOptions *PinOptions `json:"pin_options"`
 }
 
-// CreatePinByCID: create a pin request. Will fetch and store the content pointed by the provided CID. The content must be available on the public IPFS network.
+// CreatePinByCID: create a pin by CID.
+// Will fetch and store the content pointed by the provided CID. The content must be available on the public IPFS network.
 // The content (IPFS blocks) will be host by the pinning service until pin deletion.
 // From that point, any other IPFS peer can fetch and host your content: Make sure to pin public or encrypted content.
 // Many pin requests (from different users) can target the same CID.
@@ -628,7 +635,8 @@ type GetPinRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// GetPin: retrieve information about the provided pin ID (not the CID): status, last modification, CID.
+// GetPin: get pin information.
+// Retrieve information about the provided **pin ID**, such as status, last modification, and CID.
 func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -683,7 +691,8 @@ type ListPinsRequest struct {
 	Status PinStatus `json:"-"`
 }
 
-// ListPins: retrieve information about all pins into a volume.
+// ListPins: list all pins within a volume.
+// Retrieve information about all pins into a volume.
 func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPinsResponse, error) {
 	var err error
 
@@ -735,8 +744,9 @@ type DeletePinRequest struct {
 	VolumeID string `json:"-"`
 }
 
-// DeletePin: create an unpin request. If the pin was the last to target a specific CID, the content will be erase from storage.
-// The function is indempotent.
+// DeletePin: create an unpin request.
+// An unpin request means that you no longer own the content.
+// This content can therefore be removed and no longer provided on the IPFS network.
 func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error {
 	var err error
 

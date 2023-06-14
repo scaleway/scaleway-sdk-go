@@ -237,6 +237,16 @@ type ListIPsRequest struct {
 	ResourceName *string `json:"-"`
 
 	ResourceIDs []string `json:"-"`
+
+	SourceZonal string `json:"-"`
+
+	SourceZonalNat string `json:"-"`
+
+	SourceRegional bool `json:"-"`
+
+	SourcePrivateNetworkID string `json:"-"`
+
+	SourceSubnetID string `json:"-"`
 }
 
 // ListIPs: find IP addresses.
@@ -272,6 +282,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "resource_name", req.ResourceName)
 	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
+	parameter.AddToQuery(query, "source_zonal", req.SourceZonal)
+	parameter.AddToQuery(query, "source_zonal_nat", req.SourceZonalNat)
+	parameter.AddToQuery(query, "source_regional", req.SourceRegional)
+	parameter.AddToQuery(query, "source_private_network_id", req.SourcePrivateNetworkID)
+	parameter.AddToQuery(query, "source_subnet_id", req.SourceSubnetID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

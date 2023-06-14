@@ -185,6 +185,36 @@ func (enum *NodeTypeStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PrivateNetworkProvisioningMode string
+
+const (
+	PrivateNetworkProvisioningModeStatic = PrivateNetworkProvisioningMode("static")
+	PrivateNetworkProvisioningModeIpam   = PrivateNetworkProvisioningMode("ipam")
+)
+
+func (enum PrivateNetworkProvisioningMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "static"
+	}
+	return string(enum)
+}
+
+func (enum PrivateNetworkProvisioningMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PrivateNetworkProvisioningMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PrivateNetworkProvisioningMode(PrivateNetworkProvisioningMode(tmp).String())
+	return nil
+}
+
 // ACLRule: acl rule.
 type ACLRule struct {
 	// ID: ID of the rule.
@@ -409,6 +439,9 @@ type PrivateNetwork struct {
 	ServiceIPs []scw.IPNet `json:"service_ips"`
 	// Zone: zone of the Private Network.
 	Zone scw.Zone `json:"zone"`
+	// ProvisioningMode: how your endpoint ips are provisioned.
+	// Default value: static
+	ProvisioningMode PrivateNetworkProvisioningMode `json:"provisioning_mode"`
 }
 
 type PublicNetwork struct {
