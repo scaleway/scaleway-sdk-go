@@ -237,16 +237,6 @@ type ListIPsRequest struct {
 	ResourceName *string `json:"-"`
 
 	ResourceIDs []string `json:"-"`
-
-	SourceZonal string `json:"-"`
-
-	SourceZonalNat string `json:"-"`
-
-	SourceRegional bool `json:"-"`
-
-	SourcePrivateNetworkID string `json:"-"`
-
-	SourceSubnetID string `json:"-"`
 }
 
 // ListIPs: find IP addresses.
