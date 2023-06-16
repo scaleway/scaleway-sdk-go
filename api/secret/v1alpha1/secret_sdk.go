@@ -348,8 +348,8 @@ type GetSecretRequest struct {
 	SecretID string `json:"-"`
 }
 
-// GetSecret: get metadata using the secret's name.
-// Retrieve the metadata of a secret specified by the `region` and the `secret_name` parameters.
+// GetSecret: get metadata using the secret's ID.
+// Retrieve the metadata of a secret specified by the `region` and `secret_id` parameters.
 func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -391,8 +391,8 @@ type GetSecretByNameRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// GetSecretByName: get metadata using the secret's ID.
-// Retrieve the metadata of a secret specified by the `region`, `secret_id` and `project_id` parameters.
+// GetSecretByName: get metadata using the secret's name.
+// Retrieve the metadata of a secret specified by the `region` and `secret_name` parameters.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
