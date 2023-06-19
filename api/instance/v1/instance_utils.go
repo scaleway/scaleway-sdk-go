@@ -110,8 +110,8 @@ func volumesToVolumeTemplates(volumes map[string]*VolumeServer) map[string]*Volu
 	volumeTemplates := map[string]*VolumeServerTemplate{}
 	for key, volume := range volumes {
 		volumeTemplates[key] = &VolumeServerTemplate{
-			ID:   volume.ID,
-			Name: volume.Name,
+			ID:   &volume.ID,
+			Name: &volume.Name,
 		}
 	}
 	return volumeTemplates
@@ -143,9 +143,9 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 		key := fmt.Sprintf("%d", i)
 		if _, ok := newVolumes[key]; !ok {
 			newVolumes[key] = &VolumeServerTemplate{
-				ID: req.VolumeID,
+				ID: &req.VolumeID,
 				// name is ignored on this PATCH
-				Name: req.VolumeID,
+				Name: &req.VolumeID,
 			}
 			found = true
 			break
