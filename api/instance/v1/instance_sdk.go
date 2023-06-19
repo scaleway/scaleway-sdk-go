@@ -1726,23 +1726,23 @@ type VolumeServer struct {
 // VolumeServerTemplate: volume server template.
 type VolumeServerTemplate struct {
 	// ID: UUID of the volume.
-	ID string `json:"id,omitempty"`
+	ID *string `json:"id,omitempty"`
 	// Boot: force the Instance to boot on this volume.
 	// Default value: false
-	Boot bool `json:"boot,omitempty"`
+	Boot *bool `json:"boot,omitempty"`
 	// Name: name of the volume.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 	// Size: disk size of the volume, must be a multiple of 512.
-	Size scw.Size `json:"size,omitempty"`
+	Size *scw.Size `json:"size,omitempty"`
 	// VolumeType: type of the volume.
 	// Default value: l_ssd
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 	// BaseSnapshot: ID of the snapshot on which this volume will be based.
-	BaseSnapshot string `json:"base_snapshot,omitempty"`
+	BaseSnapshot *string `json:"base_snapshot,omitempty"`
 	// Organization: organization ID of the volume.
-	Organization string `json:"organization,omitempty"`
+	Organization *string `json:"organization,omitempty"`
 	// Project: project ID of the volume.
-	Project string `json:"project,omitempty"`
+	Project *string `json:"project,omitempty"`
 }
 
 type VolumeSummary struct {
