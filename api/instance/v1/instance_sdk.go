@@ -4966,6 +4966,8 @@ type CreatePrivateNICRequest struct {
 	PrivateNetworkID string `json:"private_network_id,omitempty"`
 	// Tags: private NIC tags.
 	Tags []string `json:"tags,omitempty"`
+	// IPIDs: ip_ids defined from IPAM.
+	IPIDs []string `json:"ip_ids,omitempty"`
 }
 
 // CreatePrivateNIC: create a private NIC connecting an Instance to a Private Network.
