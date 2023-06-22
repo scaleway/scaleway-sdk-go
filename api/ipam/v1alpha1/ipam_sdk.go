@@ -213,15 +213,15 @@ type ListIPsRequest struct {
 
 	OrganizationID *string `json:"-"`
 
-	SourceZonal string `json:"-"`
+	SourceZonal *string `json:"-"`
 
-	SourceZonalNat string `json:"-"`
+	SourceZonalNat *string `json:"-"`
 
-	SourceRegional bool `json:"-"`
+	SourceRegional *bool `json:"-"`
 
-	SourcePrivateNetworkID string `json:"-"`
+	SourcePrivateNetworkID *string `json:"-"`
 
-	SourceSubnetID string `json:"-"`
+	SourceSubnetID *string `json:"-"`
 
 	Attached *bool `json:"-"`
 
