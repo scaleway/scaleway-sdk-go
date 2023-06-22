@@ -157,6 +157,8 @@ type PrivateNetwork struct {
 	Subnets []*Subnet `json:"subnets"`
 	// VpcID: vPC the Private Network belongs to.
 	VpcID string `json:"vpc_id"`
+	// DHCPEnabled: defines whether managed DHCP is enabled for this Private Network.
+	DHCPEnabled bool `json:"dhcp_enabled"`
 }
 
 type SetSubnetsResponse struct {
@@ -479,6 +481,8 @@ type ListPrivateNetworksRequest struct {
 	PrivateNetworkIDs []string `json:"-"`
 	// VpcID: vPC ID to filter for. Only Private Networks belonging to this VPC will be returned.
 	VpcID *string `json:"-"`
+	// DHCPEnabled: DHCP status to filter for. When true, only Private Networks with managed DHCP enabled will be returned.
+	DHCPEnabled *bool `json:"-"`
 }
 
 // ListPrivateNetworks: list Private Networks.
@@ -506,6 +510,7 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+	parameter.AddToQuery(query, "dhcp_enabled", req.DHCPEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
