@@ -213,15 +213,15 @@ type ListIPsRequest struct {
 
 	OrganizationID *string `json:"-"`
 
-	SourceZonal *string `json:"-"`
+	Zonal *string `json:"-"`
 
-	SourceZonalNat *string `json:"-"`
+	ZonalNat *string `json:"-"`
 
-	SourceRegional *bool `json:"-"`
+	Regional *bool `json:"-"`
 
-	SourcePrivateNetworkID *string `json:"-"`
+	PrivateNetworkID *string `json:"-"`
 
-	SourceSubnetID *string `json:"-"`
+	SubnetID *string `json:"-"`
 
 	Attached *bool `json:"-"`
 
@@ -260,11 +260,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "source_zonal", req.SourceZonal)
-	parameter.AddToQuery(query, "source_zonal_nat", req.SourceZonalNat)
-	parameter.AddToQuery(query, "source_regional", req.SourceRegional)
-	parameter.AddToQuery(query, "source_private_network_id", req.SourcePrivateNetworkID)
-	parameter.AddToQuery(query, "source_subnet_id", req.SourceSubnetID)
+	parameter.AddToQuery(query, "zonal", req.Zonal)
+	parameter.AddToQuery(query, "zonal_nat", req.ZonalNat)
+	parameter.AddToQuery(query, "regional", req.Regional)
+	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
 	parameter.AddToQuery(query, "attached", req.Attached)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
