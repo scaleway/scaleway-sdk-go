@@ -1292,7 +1292,7 @@ type ListTagsRequest struct {
 }
 
 // ListTags: list tags.
-// List all tags associated to secrets in one or several Projects.
+// List all tags associated with secrets within a given Project.
 func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTagsResponse, error) {
 	var err error
 
