@@ -6385,6 +6385,7 @@ type ListBackendStatsRequest struct {
 	BackendID *string `json:"-"`
 }
 
+// ListBackendStats: list backend server statistics.
 func (s *API) ListBackendStats(req *ListBackendStatsRequest, opts ...scw.RequestOption) (*ListBackendStatsResponse, error) {
 	var err error
 
