@@ -435,6 +435,36 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListTriggersRequestOrderBy string
+
+const (
+	ListTriggersRequestOrderByCreatedAtAsc  = ListTriggersRequestOrderBy("created_at_asc")
+	ListTriggersRequestOrderByCreatedAtDesc = ListTriggersRequestOrderBy("created_at_desc")
+)
+
+func (enum ListTriggersRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListTriggersRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListTriggersRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListTriggersRequestOrderBy(ListTriggersRequestOrderBy(tmp).String())
+	return nil
+}
+
 type LogStream string
 
 const (
@@ -563,6 +593,73 @@ func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type TriggerInputType string
+
+const (
+	TriggerInputTypeUnknownInputType = TriggerInputType("unknown_input_type")
+	TriggerInputTypeSqs              = TriggerInputType("sqs")
+	TriggerInputTypeScwSqs           = TriggerInputType("scw_sqs")
+	TriggerInputTypeNats             = TriggerInputType("nats")
+	TriggerInputTypeScwNats          = TriggerInputType("scw_nats")
+)
+
+func (enum TriggerInputType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_input_type"
+	}
+	return string(enum)
+}
+
+func (enum TriggerInputType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *TriggerInputType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = TriggerInputType(TriggerInputType(tmp).String())
+	return nil
+}
+
+type TriggerStatus string
+
+const (
+	TriggerStatusUnknownStatus = TriggerStatus("unknown_status")
+	TriggerStatusReady         = TriggerStatus("ready")
+	TriggerStatusDeleting      = TriggerStatus("deleting")
+	TriggerStatusError         = TriggerStatus("error")
+	TriggerStatusCreating      = TriggerStatus("creating")
+	TriggerStatusPending       = TriggerStatus("pending")
+)
+
+func (enum TriggerStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum TriggerStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = TriggerStatus(TriggerStatus(tmp).String())
+	return nil
+}
+
 // Container: container.
 type Container struct {
 	// ID: UUID of the container.
@@ -614,6 +711,36 @@ type Container struct {
 	HTTPOption ContainerHTTPOption `json:"http_option"`
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
+}
+
+type CreateTriggerRequestMnqNatsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Subject string `json:"subject"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
+}
+
+type CreateTriggerRequestMnqSqsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Queue string `json:"queue"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
+}
+
+type CreateTriggerRequestSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
+
+	QueueURL string `json:"queue_url"`
+
+	AccessKey string `json:"access_key"`
+
+	SecretKey string `json:"secret_key"`
 }
 
 // Cron: cron.
@@ -691,6 +818,12 @@ type ListNamespacesResponse struct {
 
 type ListTokensResponse struct {
 	Tokens []*Token `json:"tokens"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+type ListTriggersResponse struct {
+	Triggers []*Trigger `json:"triggers"`
 
 	TotalCount uint32 `json:"total_count"`
 }
@@ -773,6 +906,71 @@ type Token struct {
 	Description *string `json:"description"`
 	// ExpiresAt: expiry date of the token.
 	ExpiresAt *time.Time `json:"expires_at"`
+}
+
+type Trigger struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Description string `json:"description"`
+	// InputType: default value: unknown_input_type
+	InputType TriggerInputType `json:"input_type"`
+	// Status: default value: unknown_status
+	Status TriggerStatus `json:"status"`
+
+	ErrorMessage *string `json:"error_message"`
+
+	ContainerID string `json:"container_id"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwSqsConfig *TriggerMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *TriggerSqsClientConfig `json:"sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwNatsConfig *TriggerMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+}
+
+type TriggerMnqNatsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Subject string `json:"subject"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
+
+	MnqCredentialID *string `json:"mnq_credential_id"`
+}
+
+type TriggerMnqSqsClientConfig struct {
+	MnqNamespaceID string `json:"mnq_namespace_id"`
+
+	Queue string `json:"queue"`
+
+	MnqProjectID string `json:"mnq_project_id"`
+
+	MnqRegion string `json:"mnq_region"`
+
+	MnqCredentialID *string `json:"mnq_credential_id"`
+}
+
+type TriggerSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
+
+	QueueURL string `json:"queue_url"`
+
+	AccessKey string `json:"access_key"`
+
+	SecretKey string `json:"secret_key"`
+}
+
+type UpdateTriggerRequestSqsClientConfig struct {
+	AccessKey *string `json:"access_key"`
+
+	SecretKey *string `json:"secret_key"`
 }
 
 // Service API
@@ -2078,6 +2276,252 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+type CreateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Name string `json:"name"`
+
+	Description *string `json:"description"`
+
+	ContainerID string `json:"container_id"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+}
+
+// CreateTrigger: create a trigger.
+// Create a new trigger for a specified container.
+func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	TriggerID string `json:"-"`
+}
+
+// GetTrigger: get a trigger.
+// Get a trigger with a specified ID.
+func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return nil, errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListTriggersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy: default value: created_at_asc
+	OrderBy ListTriggersRequestOrderBy `json:"-"`
+
+	ContainerID *string `json:"-"`
+
+	NamespaceID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+}
+
+// ListTriggers: list all triggers.
+// List all triggers belonging to a specified Organization or Project.
+func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "container_id", req.ContainerID)
+	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListTriggersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	TriggerID string `json:"-"`
+
+	Name *string `json:"name"`
+
+	Description *string `json:"description"`
+
+	// Precisely one of SqsConfig must be set.
+	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+}
+
+// UpdateTrigger: update a trigger.
+// Update a trigger with a specified ID.
+func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return nil, errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	TriggerID string `json:"-"`
+}
+
+// DeleteTrigger: delete a trigger.
+// Delete a trigger with a specified ID.
+func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return nil, errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListNamespacesResponse) UnsafeGetTotalCount() uint32 {
@@ -2190,4 +2634,23 @@ func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Tokens = append(r.Tokens, results.Tokens...)
 	r.TotalCount += uint32(len(results.Tokens))
 	return uint32(len(results.Tokens)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTriggersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Triggers = append(r.Triggers, results.Triggers...)
+	r.TotalCount += uint32(len(results.Triggers))
+	return uint32(len(results.Triggers)), nil
 }
