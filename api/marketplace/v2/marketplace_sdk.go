@@ -145,6 +145,40 @@ func (enum *ListVersionsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LocalImageType string
+
+const (
+	// Unspecified image type
+	LocalImageTypeUnknownType = LocalImageType("unknown_type")
+	// An image type that can be used to create volumes which are managed via the Instance API.
+	LocalImageTypeInstanceLocal = LocalImageType("instance_local")
+	// An image type that can be used to create volumes which are managed via the Scaleway Block Storage (SBS) API.
+	LocalImageTypeInstanceSbs = LocalImageType("instance_sbs")
+)
+
+func (enum LocalImageType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum LocalImageType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LocalImageType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LocalImageType(LocalImageType(tmp).String())
+	return nil
+}
+
 type Category struct {
 	ID string `json:"id"`
 
@@ -213,6 +247,9 @@ type LocalImage struct {
 	Zone scw.Zone `json:"zone"`
 	// Label: image label this image belongs to.
 	Label string `json:"label"`
+	// Type: type of this local image.
+	// Default value: unknown_type
+	Type LocalImageType `json:"type"`
 }
 
 // Version: version.
@@ -394,6 +431,8 @@ type ListLocalImagesRequest struct {
 	ImageLabel *string `json:"-"`
 
 	Zone *scw.Zone `json:"-"`
+	// Type: default value: unknown_type
+	Type LocalImageType `json:"-"`
 }
 
 // ListLocalImages: list local images from a specific image or version.
@@ -419,6 +458,7 @@ func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "image_label", req.ImageLabel)
 	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
