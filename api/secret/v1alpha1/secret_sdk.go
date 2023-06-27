@@ -145,6 +145,39 @@ func (enum *SecretStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SecretType string
+
+const (
+	SecretTypeUnknownSecretType = SecretType("unknown_secret_type")
+	// default type.
+	SecretTypeOpaque = SecretType("opaque")
+	// Certificates used by load balancers, the format must be PEM concatenated and contains exactly one PKCS8 private key and the certificate full chain containing all intermediates CA.
+	SecretTypeNetworkEdgeCertificate = SecretType("network_edge_certificate")
+)
+
+func (enum SecretType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_secret_type"
+	}
+	return string(enum)
+}
+
+func (enum SecretType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SecretType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SecretType(SecretType(tmp).String())
+	return nil
+}
+
 type SecretVersionStatus string
 
 const (
@@ -252,8 +285,12 @@ type Secret struct {
 	VersionCount uint32 `json:"version_count"`
 	// Description: updated description of the secret.
 	Description *string `json:"description"`
-	// IsManaged: true for secrets that are managed by another product.
+	// IsManaged: returns `true` for secrets that are managed by another product.
 	IsManaged bool `json:"is_managed"`
+	// Type: type of the secret.
+	// See `Secret.Type` enum for description of values.
+	// Default value: unknown_secret_type
+	Type SecretType `json:"type"`
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
@@ -300,6 +337,10 @@ type CreateSecretRequest struct {
 	Tags []string `json:"tags"`
 	// Description: description of the secret.
 	Description *string `json:"description"`
+	// Type: type of the secret.
+	// (Optional.) See `Secret.Type` enum for description of values. If not specified, the type is `Opaque`.
+	// Default value: unknown_secret_type
+	Type SecretType `json:"type"`
 }
 
 // CreateSecret: create a secret.
@@ -588,9 +629,10 @@ type AddSecretOwnerRequest struct {
 	Region scw.Region `json:"-"`
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
-	// Deprecated: ProductName: (Deprecated: use product field) ID of the product to add (see product enum).
+	// Deprecated: ProductName: (Deprecated: use `product` field) Name of the product to add.
 	ProductName *string `json:"product_name,omitempty"`
-	// Product: ID of the product to add (see product enum).
+	// Product: ID of the product to add.
+	// See `Product` enum for description of values.
 	// Default value: unknown
 	Product Product `json:"product"`
 }
