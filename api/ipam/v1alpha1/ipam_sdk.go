@@ -54,10 +54,12 @@ func NewAPI(client *scw.Client) *API {
 type ListIPsRequestOrderBy string
 
 const (
-	ListIPsRequestOrderByCreatedAtDesc = ListIPsRequestOrderBy("created_at_desc")
-	ListIPsRequestOrderByCreatedAtAsc  = ListIPsRequestOrderBy("created_at_asc")
-	ListIPsRequestOrderByUpdatedAtDesc = ListIPsRequestOrderBy("updated_at_desc")
-	ListIPsRequestOrderByUpdatedAtAsc  = ListIPsRequestOrderBy("updated_at_asc")
+	ListIPsRequestOrderByCreatedAtDesc  = ListIPsRequestOrderBy("created_at_desc")
+	ListIPsRequestOrderByCreatedAtAsc   = ListIPsRequestOrderBy("created_at_asc")
+	ListIPsRequestOrderByUpdatedAtDesc  = ListIPsRequestOrderBy("updated_at_desc")
+	ListIPsRequestOrderByUpdatedAtAsc   = ListIPsRequestOrderBy("updated_at_asc")
+	ListIPsRequestOrderByAttachedAtDesc = ListIPsRequestOrderBy("attached_at_desc")
+	ListIPsRequestOrderByAttachedAtAsc  = ListIPsRequestOrderBy("attached_at_asc")
 )
 
 func (enum ListIPsRequestOrderBy) String() string {
