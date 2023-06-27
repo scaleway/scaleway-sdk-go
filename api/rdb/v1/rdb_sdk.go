@@ -773,12 +773,16 @@ type AddInstanceSettingsResponse struct {
 	Settings []*InstanceSetting `json:"settings"`
 }
 
+// BackupSchedule: backup schedule.
 type BackupSchedule struct {
+	// Frequency: frequency of the backup schedule (in hours).
 	Frequency uint32 `json:"frequency"`
-
+	// Retention: default retention period of backups (in days).
 	Retention uint32 `json:"retention"`
-
+	// Disabled: defines whether the backup schedule feature is disabled.
 	Disabled bool `json:"disabled"`
+	// NextRunAt: next run of the backup schedule (accurate to 10 minutes).
+	NextRunAt *time.Time `json:"next_run_at"`
 }
 
 // Database: database.
@@ -2057,6 +2061,8 @@ type UpdateInstanceRequest struct {
 	LogsPolicy *LogsPolicy `json:"logs_policy"`
 	// BackupSameRegion: store logical backups in the same region as the Database Instance.
 	BackupSameRegion *bool `json:"backup_same_region"`
+	// BackupScheduleStartHour: defines the start time of the autobackup.
+	BackupScheduleStartHour *uint32 `json:"backup_schedule_start_hour"`
 }
 
 // UpdateInstance: update a Database Instance.
