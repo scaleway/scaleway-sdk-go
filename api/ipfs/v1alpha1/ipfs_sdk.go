@@ -111,6 +111,55 @@ func (enum *ListVolumesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PinDetails string
+
+const (
+	PinDetailsUnknownDetails                  = PinDetails("unknown_details")
+	PinDetailsPinningLookingForProvider       = PinDetails("pinning_looking_for_provider")
+	PinDetailsPinningInProgress               = PinDetails("pinning_in_progress")
+	PinDetailsPinningBlocksFetched            = PinDetails("pinning_blocks_fetched")
+	PinDetailsPinningFetchingURLData          = PinDetails("pinning_fetching_url_data")
+	PinDetailsPinnedOk                        = PinDetails("pinned_ok")
+	PinDetailsUnpinnedOk                      = PinDetails("unpinned_ok")
+	PinDetailsUnpinningInProgress             = PinDetails("unpinning_in_progress")
+	PinDetailsFailedContainsBannedCid         = PinDetails("failed_contains_banned_cid")
+	PinDetailsFailedPinning                   = PinDetails("failed_pinning")
+	PinDetailsFailedPinningNoProvider         = PinDetails("failed_pinning_no_provider")
+	PinDetailsFailedPinningBadCidFormat       = PinDetails("failed_pinning_bad_cid_format")
+	PinDetailsFailedPinningTimeout            = PinDetails("failed_pinning_timeout")
+	PinDetailsFailedPinningTooBigContent      = PinDetails("failed_pinning_too_big_content")
+	PinDetailsFailedPinningUnreachableURL     = PinDetails("failed_pinning_unreachable_url")
+	PinDetailsFailedPinningBadURLFormat       = PinDetails("failed_pinning_bad_url_format")
+	PinDetailsFailedPinningNoURLContentLength = PinDetails("failed_pinning_no_url_content_length")
+	PinDetailsFailedPinningBadURLStatusCode   = PinDetails("failed_pinning_bad_url_status_code")
+	PinDetailsFailedUnpinning                 = PinDetails("failed_unpinning")
+	PinDetailsCheckingCoherence               = PinDetails("checking_coherence")
+	PinDetailsRescheduled                     = PinDetails("rescheduled")
+)
+
+func (enum PinDetails) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_details"
+	}
+	return string(enum)
+}
+
+func (enum PinDetails) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PinDetails) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PinDetails(PinDetails(tmp).String())
+	return nil
+}
+
 type PinStatus string
 
 const (
@@ -185,8 +234,6 @@ type PinCIDMeta struct {
 }
 
 type PinInfo struct {
-	StatusDetails *string `json:"status_details"`
-
 	ID *string `json:"id"`
 
 	URL *string `json:"url"`
@@ -194,6 +241,8 @@ type PinInfo struct {
 	Size *uint64 `json:"size"`
 
 	Progress *uint32 `json:"progress"`
+	// StatusDetails: default value: unknown_details
+	StatusDetails PinDetails `json:"status_details"`
 }
 
 type PinOptions struct {
