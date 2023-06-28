@@ -672,6 +672,8 @@ type ClusterType struct {
 	// Availability: cluster type availability.
 	// Default value: available
 	Availability ClusterTypeAvailability `json:"availability"`
+	// MaxNodes: maximum number of nodes supported by the offer.
+	MaxNodes uint32 `json:"max_nodes"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
