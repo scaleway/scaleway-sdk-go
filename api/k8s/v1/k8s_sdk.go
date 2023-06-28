@@ -674,6 +674,8 @@ type ClusterType struct {
 	Availability ClusterTypeAvailability `json:"availability"`
 	// MaxNodes: maximum number of nodes supported by the offer.
 	MaxNodes uint32 `json:"max_nodes"`
+	// CommitmentDelay: time period during which you can no longer switch to a lower offer.
+	CommitmentDelay *scw.Duration `json:"commitment_delay"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
