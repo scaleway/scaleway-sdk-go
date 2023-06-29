@@ -611,6 +611,8 @@ type Cluster struct {
 	ApiserverCertSans []string `json:"apiserver_cert_sans"`
 	// PrivateNetworkID: private network ID for internal cluster communication.
 	PrivateNetworkID *string `json:"private_network_id"`
+	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
+	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 }
 
 // ClusterAutoUpgrade: cluster. auto upgrade.
@@ -674,6 +676,8 @@ type ClusterType struct {
 	Availability ClusterTypeAvailability `json:"availability"`
 	// MaxNodes: maximum number of nodes supported by the offer.
 	MaxNodes uint32 `json:"max_nodes"`
+	// CommitmentDelay: time period during which you can no longer switch to a lower offer.
+	CommitmentDelay *scw.Duration `json:"commitment_delay"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
