@@ -271,8 +271,8 @@ type Secret struct {
 	// Name: name of the secret.
 	Name string `json:"name"`
 	// Status: current status of the secret.
-	// * `ready`: the secret is ready.
-	// * `locked`: the secret is locked.
+	// * `ready`: the secret can be read, modified and deleted.
+	// * `locked`: no action can be performed on the secret. This status can only be applied and removed by Scaleway.
 	// Default value: ready
 	Status SecretStatus `json:"status"`
 	// CreatedAt: date and time of the secret's creation.
@@ -287,6 +287,8 @@ type Secret struct {
 	Description *string `json:"description"`
 	// IsManaged: returns `true` for secrets that are managed by another product.
 	IsManaged bool `json:"is_managed"`
+	// IsProtected: returns `true` for protected secrets that cannot be deleted.
+	IsProtected bool `json:"is_protected"`
 	// Type: type of the secret.
 	// See `Secret.Type` enum for description of values.
 	// Default value: unknown_secret_type
@@ -622,6 +624,96 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 		return err
 	}
 	return nil
+}
+
+type ProtectSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// SecretID: ID of the secret to protect.
+	SecretID string `json:"-"`
+}
+
+// ProtectSecret: protect a secret.
+// Protect a given secret specified by the `secret_id` parameter. A protected secret can be read and modified but cannot be deleted.
+func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/protect",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UnprotectSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// SecretID: ID of the secret to unprotect.
+	SecretID string `json:"-"`
+}
+
+// UnprotectSecret: unprotect a secret.
+// Unprotect a given secret specified by the `secret_id` parameter. An unprotected secret can be read, modified and deleted.
+func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/unprotect",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type AddSecretOwnerRequest struct {
