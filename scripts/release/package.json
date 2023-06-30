@@ -9,7 +9,7 @@
     "get-stream": "^5.1.0",
     "git-raw-commits": "2.0.9",
     "open": "^7.0.2",
-    "semver": "^6.3.0"
+    "semver": "^7.5.2"
   },
   "scripts": {
     "release": "node release.js"
