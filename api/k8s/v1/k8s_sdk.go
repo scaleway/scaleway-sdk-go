@@ -800,6 +800,14 @@ type ExternalNode struct {
 	ExternalIP string `json:"external_ip"`
 }
 
+// ListClusterAvailableTypesResponse: list cluster available types response.
+type ListClusterAvailableTypesResponse struct {
+	// ClusterTypes: available cluster types for the cluster.
+	ClusterTypes []*ClusterType `json:"cluster_types"`
+	// TotalCount: total number of types.
+	TotalCount uint32 `json:"total_count"`
+}
+
 // ListClusterAvailableVersionsResponse: list cluster available versions response.
 type ListClusterAvailableVersionsResponse struct {
 	// Versions: available Kubernetes versions for the cluster.
@@ -1471,6 +1479,46 @@ func (s *API) ListClusterAvailableVersions(req *ListClusterAvailableVersionsRequ
 	}
 
 	var resp ListClusterAvailableVersionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListClusterAvailableTypesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ClusterID: cluster ID for which the available Kubernetes types will be listed.
+	ClusterID string `json:"-"`
+}
+
+// ListClusterAvailableTypes: list available cluster types for a cluster.
+// List the cluster types that a specific Kubernetes cluster is allowed to switch to.
+func (s *API) ListClusterAvailableTypes(req *ListClusterAvailableTypesRequest, opts ...scw.RequestOption) (*ListClusterAvailableTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/available-types",
+		Headers: http.Header{},
+	}
+
+	var resp ListClusterAvailableTypesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
