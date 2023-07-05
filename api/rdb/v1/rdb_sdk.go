@@ -1186,9 +1186,11 @@ type NodeType struct {
 	AvailableVolumeTypes []*NodeTypeVolumeType `json:"available_volume_types"`
 	// IsHaRequired: the Node Type can be used only with high availability option.
 	IsHaRequired bool `json:"is_ha_required"`
-	// Generation: generation associated the NodeType offer.
+	// Generation: generation associated with the NodeType offer.
 	// Default value: unknown_generation
 	Generation NodeTypeGeneration `json:"generation"`
+	// InstanceRange: instance range associated with the NodeType offer.
+	InstanceRange string `json:"instance_range"`
 	// Region: region the Node Type is in.
 	Region scw.Region `json:"region"`
 }
