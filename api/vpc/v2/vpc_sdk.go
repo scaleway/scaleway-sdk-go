@@ -280,9 +280,6 @@ type CreateVPCRequest struct {
 	Region scw.Region `json:"-"`
 	// Name: name for the VPC.
 	Name string `json:"name"`
-	// DefaultPrivateNetworkName: name for the VPC's associated default Private Network.
-	// Default value: default
-	DefaultPrivateNetworkName string `json:"default_private_network_name"`
 	// ProjectID: scaleway Project in which to create the VPC.
 	ProjectID string `json:"project_id"`
 	// Tags: tags for the VPC.
