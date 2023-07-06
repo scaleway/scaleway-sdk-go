@@ -401,6 +401,8 @@ type Hosting struct {
 	CpanelURLs *HostingCpanelURLs `json:"cpanel_urls"`
 	// Username: main Web Hosting cPanel username.
 	Username string `json:"username"`
+	// OfferEndOfLife: indicates if the hosting offer has reached its end of life.
+	OfferEndOfLife bool `json:"offer_end_of_life"`
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -458,6 +460,8 @@ type Offer struct {
 	Available bool `json:"available"`
 	// QuotaWarnings: quota warnings, if the offer is not available for the specified hosting_id.
 	QuotaWarnings []OfferQuotaWarning `json:"quota_warnings"`
+	// EndOfLife: indicates if the offer has reached its end of life.
+	EndOfLife bool `json:"end_of_life"`
 }
 
 // OfferProduct: offer. product.
