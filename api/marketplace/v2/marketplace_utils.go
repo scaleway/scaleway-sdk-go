@@ -45,6 +45,7 @@ type GetLocalImageByLabelRequest struct {
 	ImageLabel     string
 	Zone           scw.Zone
 	CommercialType string
+	Type           LocalImageType
 }
 
 // GetLocalImageByLabel returns the local image for the given image label in the given zone and compatible with given commercial type
@@ -58,7 +59,8 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 	resp, err := s.ListLocalImages(&ListLocalImagesRequest{
 		ImageLabel: scw.StringPtr(req.ImageLabel),
 		Zone:       &req.Zone,
-	})
+		Type:       req.Type,
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}
