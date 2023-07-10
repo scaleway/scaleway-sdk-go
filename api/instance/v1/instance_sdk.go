@@ -2364,6 +2364,12 @@ type UpdateServerRequest struct {
 	PlacementGroup *NullableStringValue `json:"placement_group,omitempty"`
 	// PrivateNics: instance private NICs.
 	PrivateNics []*PrivateNIC `json:"private_nics,omitempty"`
+	// CommercialType: set the commercial_type for this Instance.
+	// Warning: This field has some restrictions:
+	// - Cannot be changed if the Instance is not in `stopped` state.
+	// - Cannot be changed if the Instance is in a placement group.
+	// - Local storage requirements of the target commercial_types must be fulfilled (i.e. if an Instance has 80GB of local storage, it can be changed into a GP1-XS, which has a maximum of 150GB, but it cannot be changed into a DEV1-S, which has only 20GB).
+	CommercialType *string `json:"commercial_type,omitempty"`
 }
 
 // updateServer: update an Instance.
