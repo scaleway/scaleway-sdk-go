@@ -228,6 +228,39 @@ func (enum *ClusterTypeAvailability) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ClusterTypeResiliency string
+
+const (
+	ClusterTypeResiliencyUnknownResiliency = ClusterTypeResiliency("unknown_resiliency")
+	// The control plane is rescheduled on other machines in case of failure of a lower layer
+	ClusterTypeResiliencyStandard = ClusterTypeResiliency("standard")
+	// The control plane has replicas to ensure service continuity in case of failure of a lower layer.
+	ClusterTypeResiliencyHighAvailability = ClusterTypeResiliency("high_availability")
+)
+
+func (enum ClusterTypeResiliency) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_resiliency"
+	}
+	return string(enum)
+}
+
+func (enum ClusterTypeResiliency) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ClusterTypeResiliency) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ClusterTypeResiliency(ClusterTypeResiliency(tmp).String())
+	return nil
+}
+
 type Ingress string
 
 const (
@@ -678,6 +711,11 @@ type ClusterType struct {
 	MaxNodes uint32 `json:"max_nodes"`
 	// CommitmentDelay: time period during which you can no longer switch to a lower offer.
 	CommitmentDelay *scw.Duration `json:"commitment_delay"`
+	// SLA: value of the Service Level Agreement of the offer.
+	SLA float32 `json:"sla"`
+	// Resiliency: resiliency offered by the offer.
+	// Default value: unknown_resiliency
+	Resiliency ClusterTypeResiliency `json:"resiliency"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
