@@ -88,18 +88,19 @@ func (enum *ListIPsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType        = ResourceType("unknown_type")
-	ResourceTypeInstanceServer     = ResourceType("instance_server")
-	ResourceTypeInstanceIP         = ResourceType("instance_ip")
-	ResourceTypeInstancePrivateNic = ResourceType("instance_private_nic")
-	ResourceTypeLBServer           = ResourceType("lb_server")
-	ResourceTypeFipIP              = ResourceType("fip_ip")
-	ResourceTypeVpcGateway         = ResourceType("vpc_gateway")
-	ResourceTypeVpcGatewayNetwork  = ResourceType("vpc_gateway_network")
-	ResourceTypeK8sNode            = ResourceType("k8s_node")
-	ResourceTypeRdbInstance        = ResourceType("rdb_instance")
-	ResourceTypeRedisCluster       = ResourceType("redis_cluster")
-	ResourceTypeBaremetalServer    = ResourceType("baremetal_server")
+	ResourceTypeUnknownType         = ResourceType("unknown_type")
+	ResourceTypeInstanceServer      = ResourceType("instance_server")
+	ResourceTypeInstanceIP          = ResourceType("instance_ip")
+	ResourceTypeInstancePrivateNic  = ResourceType("instance_private_nic")
+	ResourceTypeLBServer            = ResourceType("lb_server")
+	ResourceTypeFipIP               = ResourceType("fip_ip")
+	ResourceTypeVpcGateway          = ResourceType("vpc_gateway")
+	ResourceTypeVpcGatewayNetwork   = ResourceType("vpc_gateway_network")
+	ResourceTypeK8sNode             = ResourceType("k8s_node")
+	ResourceTypeRdbInstance         = ResourceType("rdb_instance")
+	ResourceTypeRedisCluster        = ResourceType("redis_cluster")
+	ResourceTypeBaremetalServer     = ResourceType("baremetal_server")
+	ResourceTypeBaremetalPrivateNic = ResourceType("baremetal_private_nic")
 )
 
 func (enum ResourceType) String() string {
