@@ -129,6 +129,40 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type EmailFlag string
+
+const (
+	// If unspecified, the flag type is unknown by default
+	EmailFlagUnknownFlag = EmailFlag("unknown_flag")
+	// Refers to a non critical error received while sending the email(s). Soft bounced emails are retried
+	EmailFlagSoftBounce = EmailFlag("soft_bounce")
+	// Refers to a critical error that happened while sending the email(s)
+	EmailFlagHardBounce = EmailFlag("hard_bounce")
+)
+
+func (enum EmailFlag) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_flag"
+	}
+	return string(enum)
+}
+
+func (enum EmailFlag) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *EmailFlag) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = EmailFlag(EmailFlag(tmp).String())
+	return nil
+}
+
 type EmailRcptType string
 
 const (
@@ -390,6 +424,8 @@ type Email struct {
 	TryCount uint32 `json:"try_count"`
 	// LastTries: information about the last three attempts to send the email.
 	LastTries []*EmailTry `json:"last_tries"`
+	// Flags: flags categorize emails. They allow you to obtain more information about recurring errors, for example.
+	Flags []EmailFlag `json:"flags"`
 }
 
 // EmailTry: email. try.
@@ -579,6 +615,8 @@ type ListEmailsRequest struct {
 	// OrderBy: (Optional) List emails corresponding to specific criteria.
 	// Default value: created_at_desc
 	OrderBy ListEmailsRequestOrderBy `json:"-"`
+	// Flags: (Optional) List emails containing only specific flags.
+	Flags []EmailFlag `json:"-"`
 }
 
 // ListEmails: list emails.
@@ -611,6 +649,7 @@ func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "subject", req.Subject)
 	parameter.AddToQuery(query, "search", req.Search)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "flags", req.Flags)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
