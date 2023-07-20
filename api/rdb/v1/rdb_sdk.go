@@ -651,6 +651,7 @@ const (
 	ReadReplicaStatusError        = ReadReplicaStatus("error")
 	ReadReplicaStatusLocked       = ReadReplicaStatus("locked")
 	ReadReplicaStatusConfiguring  = ReadReplicaStatus("configuring")
+	ReadReplicaStatusPromoting    = ReadReplicaStatus("promoting")
 )
 
 func (enum ReadReplicaStatus) String() string {
@@ -2537,6 +2538,51 @@ func (s *API) ResetReadReplica(req *ResetReadReplicaRequest, opts ...scw.Request
 	}
 
 	var resp ReadReplica
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PromoteReadReplicaRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ReadReplicaID: UUID of the Read Replica.
+	ReadReplicaID string `json:"-"`
+}
+
+// PromoteReadReplica: promote a Read Replica.
+// Promote a Read Replica to Database Instance automatically.
+func (s *API) PromoteReadReplica(req *PromoteReadReplicaRequest, opts ...scw.RequestOption) (*Instance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ReadReplicaID) == "" {
+		return nil, errors.New("field ReadReplicaID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/read-replicas/" + fmt.Sprint(req.ReadReplicaID) + "/promote",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Instance
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
