@@ -716,6 +716,10 @@ type ClusterType struct {
 	// Resiliency: resiliency offered by the offer.
 	// Default value: unknown_resiliency
 	Resiliency ClusterTypeResiliency `json:"resiliency"`
+	// Memory: max RAM allowed for the control plane.
+	Memory scw.Size `json:"memory"`
+	// Dedicated: returns information if this offer uses dedicated resources.
+	Dedicated bool `json:"dedicated"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request. auto upgrade.
