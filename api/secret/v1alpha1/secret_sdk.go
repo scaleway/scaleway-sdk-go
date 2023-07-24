@@ -152,7 +152,7 @@ const (
 	// default type.
 	SecretTypeOpaque = SecretType("opaque")
 	// Certificates used by load balancers, the format must be PEM concatenated and contains exactly one PKCS8 private key and the certificate full chain containing all intermediates CA.
-	SecretTypeNetworkEdgeCertificate = SecretType("network_edge_certificate")
+	SecretTypeCertificate = SecretType("certificate")
 )
 
 func (enum SecretType) String() string {
