@@ -93,7 +93,7 @@ type WaitForDNSRecordExistRequest struct {
 func (s *API) WaitForDNSRecordExist(
 	req *WaitForDNSRecordExistRequest,
 	opts ...scw.RequestOption,
-) (*DNSZone, error) {
+) (*DNSRecord, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
