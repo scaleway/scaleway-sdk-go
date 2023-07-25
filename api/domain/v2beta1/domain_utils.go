@@ -132,5 +132,5 @@ func (s *API) WaitForDNSRecordExist(
 		return nil, errors.Wrap(err, "check for DNS Record exist failed")
 	}
 
-	return dns.(*DNSZone), nil
+	return dns.(*DNSRecord), nil
 }
