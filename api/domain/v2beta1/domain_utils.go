@@ -94,7 +94,6 @@ func (s *API) WaitForDNSRecordExist(
 	req *WaitForDNSRecordExistRequest,
 	opts ...scw.RequestOption,
 ) (*DNSZone, error) {
-
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
