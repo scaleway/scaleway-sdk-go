@@ -93,7 +93,7 @@ type WaitForDNSRecordExistRequest struct {
 func (s *API) WaitForDNSRecordExist(
 	req *WaitForDNSRecordExistRequest,
 	opts ...scw.RequestOption,
-) (*DNSRecord, error) {
+) (*Record, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -120,9 +120,9 @@ func (s *API) WaitForDNSRecordExist(
 				return nil, false, fmt.Errorf(ErrCodeNoSuchDNSRecord)
 			}
 
-			Dns := DNSRecords.Records[0]
+			record := DNSRecords.Records[0]
 
-			return Dns, true, nil
+			return record, true, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
@@ -132,5 +132,5 @@ func (s *API) WaitForDNSRecordExist(
 		return nil, errors.Wrap(err, "check for DNS Record exist failed")
 	}
 
-	return dns.(*DNSRecord), nil
+	return dns.(*Record), nil
 }
