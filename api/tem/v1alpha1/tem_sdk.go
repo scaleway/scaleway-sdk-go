@@ -138,6 +138,8 @@ const (
 	EmailFlagSoftBounce = EmailFlag("soft_bounce")
 	// Refers to a critical error that happened while sending the email(s)
 	EmailFlagHardBounce = EmailFlag("hard_bounce")
+	// Refers to an email considered as spam
+	EmailFlagSpam = EmailFlag("spam")
 )
 
 func (enum EmailFlag) String() string {
