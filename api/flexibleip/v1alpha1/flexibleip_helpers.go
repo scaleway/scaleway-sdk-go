@@ -32,11 +32,18 @@ func (s *API) WaitForFlexibleIP(req *WaitForFlexibleIPRequest, opts ...scw.Reque
 		retryInterval = *req.RetryInterval
 	}
 
-	terminalStatus := map[FlexibleIPStatus]struct{}{
+	fipTerminalStatus := map[FlexibleIPStatus]struct{}{
 		FlexibleIPStatusError:    {},
 		FlexibleIPStatusReady:    {},
 		FlexibleIPStatusAttached: {},
 		FlexibleIPStatusLocked:   {},
+	}
+
+	macAddressTerminalStatus := map[MACAddressStatus]struct{}{
+		MACAddressStatusUnknown: {},
+		MACAddressStatusReady:   {},
+		MACAddressStatusUsed:    {},
+		MACAddressStatusError:   {},
 	}
 
 	fip, err := async.WaitSync(&async.WaitSyncConfig{
@@ -49,7 +56,13 @@ func (s *API) WaitForFlexibleIP(req *WaitForFlexibleIPRequest, opts ...scw.Reque
 				return nil, false, err
 			}
 
-			_, isTerminal := terminalStatus[fip.Status]
+			// Check if the MACAddress is in a terminal state
+			_, isMacAddressTerminal := macAddressTerminalStatus[fip.MacAddress.Status]
+			if fip.MacAddress != nil && !isMacAddressTerminal {
+				return nil, false, nil
+			}
+
+			_, isTerminal := fipTerminalStatus[fip.Status]
 			return fip, isTerminal, nil
 		},
 		Timeout:          timeout,
