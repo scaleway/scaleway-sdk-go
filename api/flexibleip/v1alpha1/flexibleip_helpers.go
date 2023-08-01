@@ -57,13 +57,13 @@ func (s *API) WaitForFlexibleIP(req *WaitForFlexibleIPRequest, opts ...scw.Reque
 			}
 
 			// Check if the MACAddress is in a terminal state
-			_, isMacAddressTerminal := macAddressTerminalStatus[fip.MacAddress.Status]
-			if fip.MacAddress != nil && !isMacAddressTerminal {
-				return nil, false, nil
+			isMacAddressTerminal := true
+			if fip.MacAddress != nil {
+				_, isMacAddressTerminal = macAddressTerminalStatus[fip.MacAddress.Status]
 			}
 
 			_, isTerminal := fipTerminalStatus[fip.Status]
-			return fip, isTerminal, nil
+			return fip, isTerminal && isMacAddressTerminal, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
