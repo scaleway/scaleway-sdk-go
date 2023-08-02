@@ -1821,7 +1821,7 @@ type setSnapshotResponse struct {
 
 // Zones list localities the api is available in
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
 
 type GetServerTypesAvailabilityRequest struct {
@@ -2077,7 +2077,7 @@ type CreateServerRequest struct {
 	// PublicIP: ID of the reserved IP to attach to the Instance.
 	PublicIP *string `json:"public_ip,omitempty"`
 	// PublicIPs: a list of reserved IP IDs to attach to the Instance.
-	PublicIPs []*string `json:"public_ips,omitempty"`
+	PublicIPs *[]string `json:"public_ips,omitempty"`
 	// BootType: boot type to use.
 	// Default value: local
 	BootType *BootType `json:"boot_type,omitempty"`
