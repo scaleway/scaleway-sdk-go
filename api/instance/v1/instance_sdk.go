@@ -2077,7 +2077,7 @@ type CreateServerRequest struct {
 	// PublicIP: ID of the reserved IP to attach to the Instance.
 	PublicIP *string `json:"public_ip,omitempty"`
 	// PublicIPs: a list of reserved IP IDs to attach to the Instance.
-	PublicIPs []*string `json:"public_ips,omitempty"`
+	PublicIPs *[]string `json:"public_ips,omitempty"`
 	// BootType: boot type to use.
 	// Default value: local
 	BootType *BootType `json:"boot_type,omitempty"`
