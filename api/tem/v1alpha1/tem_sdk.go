@@ -140,6 +140,8 @@ const (
 	EmailFlagHardBounce = EmailFlag("hard_bounce")
 	// Refers to an email considered as spam
 	EmailFlagSpam = EmailFlag("spam")
+	// Refers to an email not delivered because the recipient mailbox is full
+	EmailFlagMailboxFull = EmailFlag("mailbox_full")
 )
 
 func (enum EmailFlag) String() string {
