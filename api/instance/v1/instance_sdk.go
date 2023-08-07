@@ -56,6 +56,7 @@ type Arch string
 const (
 	ArchX86_64 = Arch("x86_64")
 	ArchArm    = Arch("arm")
+	ArchArm64  = Arch("arm64")
 )
 
 func (enum Arch) String() string {
