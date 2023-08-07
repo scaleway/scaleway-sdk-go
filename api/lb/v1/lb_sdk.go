@@ -1511,7 +1511,7 @@ type PrivateNetwork struct {
 }
 
 type PrivateNetworkDHCPConfig struct {
-	IPID string `json:"ip_id"`
+	IPID *string `json:"ip_id"`
 }
 
 type PrivateNetworkIpamConfig struct {
