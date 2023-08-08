@@ -52,6 +52,38 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type ListFoldersRequestOrderBy string
+
+const (
+	ListFoldersRequestOrderByCreatedAtAsc  = ListFoldersRequestOrderBy("created_at_asc")
+	ListFoldersRequestOrderByCreatedAtDesc = ListFoldersRequestOrderBy("created_at_desc")
+	ListFoldersRequestOrderByNameAsc       = ListFoldersRequestOrderBy("name_asc")
+	ListFoldersRequestOrderByNameDesc      = ListFoldersRequestOrderBy("name_desc")
+)
+
+func (enum ListFoldersRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListFoldersRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListFoldersRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListFoldersRequestOrderBy(ListFoldersRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListSecretsRequestOrderBy string
 
 const (
@@ -224,6 +256,29 @@ type AccessSecretVersionResponse struct {
 	DataCrc32 *uint32 `json:"data_crc32"`
 }
 
+// Folder: folder.
+type Folder struct {
+	// ID: ID of the folder.
+	ID string `json:"id"`
+	// ProjectID: ID of the Project containing the folder.
+	ProjectID string `json:"project_id"`
+	// Name: name of the folder.
+	Name string `json:"name"`
+	// Path: path of the folder.
+	// Location of the folder in the directory structure.
+	Path string `json:"path"`
+	// CreatedAt: date and time of the folder's creation.
+	CreatedAt *time.Time `json:"created_at"`
+}
+
+// ListFoldersResponse: list folders response.
+type ListFoldersResponse struct {
+	// Folders: list of folders.
+	Folders []*Folder `json:"folders"`
+	// TotalCount: count of all folders matching the requested criteria.
+	TotalCount uint32 `json:"total_count"`
+}
+
 // ListSecretVersionsResponse: list secret versions response.
 type ListSecretVersionsResponse struct {
 	// Versions: single page of versions.
@@ -293,6 +348,9 @@ type Secret struct {
 	// See `Secret.Type` enum for description of values.
 	// Default value: unknown_secret_type
 	Type SecretType `json:"type"`
+	// Path: path of the secret.
+	// Location of the secret in the directory structure.
+	Path string `json:"path"`
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
@@ -343,10 +401,13 @@ type CreateSecretRequest struct {
 	// (Optional.) See `Secret.Type` enum for description of values. If not specified, the type is `Opaque`.
 	// Default value: unknown_secret_type
 	Type SecretType `json:"type"`
+	// Path: path of the secret.
+	// (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path"`
 }
 
 // CreateSecret: create a secret.
-// You must sepcify the `region` to create a secret.
+// You must specify the `region` to create a secret.
 func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -376,6 +437,56 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type CreateFolderRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ProjectID: ID of the Project containing the folder.
+	ProjectID string `json:"project_id"`
+	// Name: name of the folder.
+	Name string `json:"name"`
+	// Path: path of the folder.
+	// (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path"`
+}
+
+// CreateFolder: create folder.
+func (s *API) CreateFolder(req *CreateFolderRequest, opts ...scw.RequestOption) (*Folder, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Folder
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -434,8 +545,12 @@ type GetSecretByNameRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// GetSecretByName: get metadata using the secret's name.
+// Deprecated: GetSecretByName: get metadata using the secret's name.
 // Retrieve the metadata of a secret specified by the `region` and `secret_name` parameters.
+//
+// GetSecretByName usage is now deprecated.
+//
+// Scaleway recommends you to use ListSecrets with the `name` filter.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -482,6 +597,9 @@ type UpdateSecretRequest struct {
 	Tags *[]string `json:"tags"`
 	// Description: description of the secret.
 	Description *string `json:"description"`
+	// Path: path of the folder.
+	// (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path"`
 }
 
 // UpdateSecret: update metadata of a secret.
@@ -541,6 +659,8 @@ type ListSecretsRequest struct {
 	Name *string `json:"-"`
 	// IsManaged: filter by managed / not managed (optional).
 	IsManaged *bool `json:"-"`
+	// Path: filter by path (optional).
+	Path *string `json:"-"`
 }
 
 // ListSecrets: list secrets.
@@ -567,6 +687,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "is_managed", req.IsManaged)
+	parameter.AddToQuery(query, "path", req.Path)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -580,6 +701,68 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp ListSecretsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ListFoldersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+	// Path: filter by path (optional).
+	Path *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy: default value: created_at_asc
+	OrderBy ListFoldersRequestOrderBy `json:"-"`
+}
+
+// ListFolders: list secrets.
+// Retrieve the list of folders created within a Project.
+func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*ListFoldersResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "path", req.Path)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListFoldersResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -616,6 +799,43 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "DELETE",
 		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type DeleteFolderRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+	// FolderID: ID of the folder.
+	FolderID string `json:"-"`
+}
+
+// DeleteFolder: delete a given folder specified by the and `folder_id` parameter.
+func (s *API) DeleteFolder(req *DeleteFolderRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.FolderID) == "" {
+		return errors.New("field FolderID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders/" + fmt.Sprint(req.FolderID) + "",
 		Headers: http.Header{},
 	}
 
@@ -1482,6 +1702,25 @@ func (r *ListSecretsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Secrets = append(r.Secrets, results.Secrets...)
 	r.TotalCount += uint32(len(results.Secrets))
 	return uint32(len(results.Secrets)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFoldersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFoldersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListFoldersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Folders = append(r.Folders, results.Folders...)
+	r.TotalCount += uint32(len(results.Folders))
+	return uint32(len(results.Folders)), nil
 }
 
 // UnsafeGetTotalCount should not be used
