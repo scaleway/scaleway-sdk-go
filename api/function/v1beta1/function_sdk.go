@@ -1707,7 +1707,7 @@ type GetFunctionUploadURLRequest struct {
 	Region scw.Region `json:"-"`
 	// FunctionID: UUID of the function to get the upload URL for.
 	FunctionID string `json:"-"`
-
+	// ContentLength: size of the archive to upload in bytes.
 	ContentLength uint64 `json:"-"`
 }
 
