@@ -209,6 +209,7 @@ const (
 	FunctionRuntimeNode19         = FunctionRuntime("node19")
 	FunctionRuntimeGo120          = FunctionRuntime("go120")
 	FunctionRuntimeNode20         = FunctionRuntime("node20")
+	FunctionRuntimeGo121          = FunctionRuntime("go121")
 )
 
 func (enum FunctionRuntime) String() string {
