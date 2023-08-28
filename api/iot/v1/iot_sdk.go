@@ -2014,15 +2014,15 @@ type CreateRouteRequest struct {
 
 // CreateRoute: create a route.
 // Multiple kinds of routes can be created, such as:
-// - Database Route
-//   Create a route that will record subscribed MQTT messages into your database.
-//   <b>You need to manage the database by yourself</b>.
-// - REST Route.
-//   Create a route that will call a REST API on received subscribed MQTT messages.
-// - S3 Routes.
-//   Create a route that will put subscribed MQTT messages into an S3 bucket.
-//   You need to create the bucket yourself and grant write access.
-//   Granting can be done with s3cmd (`s3cmd setacl s3://<my-bucket> --acl-grant=write:555c69c3-87d0-4bf8-80f1-99a2f757d031:555c69c3-87d0-4bf8-80f1-99a2f757d031`).
+//   - Database Route
+//     Create a route that will record subscribed MQTT messages into your database.
+//     <b>You need to manage the database by yourself</b>.
+//   - REST Route.
+//     Create a route that will call a REST API on received subscribed MQTT messages.
+//   - S3 Routes.
+//     Create a route that will put subscribed MQTT messages into an S3 bucket.
+//     You need to create the bucket yourself and grant write access.
+//     Granting can be done with s3cmd (`s3cmd setacl s3://<my-bucket> --acl-grant=write:555c69c3-87d0-4bf8-80f1-99a2f757d031:555c69c3-87d0-4bf8-80f1-99a2f757d031`).
 func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
 	var err error
 
