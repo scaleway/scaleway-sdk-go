@@ -51,6 +51,36 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+type ListNamesRequestOrderBy string
+
+const (
+	ListNamesRequestOrderByCreatedAtAsc  = ListNamesRequestOrderBy("created_at_asc")
+	ListNamesRequestOrderByCreatedAtDesc = ListNamesRequestOrderBy("created_at_desc")
+)
+
+func (enum ListNamesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListNamesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListNamesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListNamesRequestOrderBy(ListNamesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPinsRequestOrderBy string
 
 const (
@@ -108,6 +138,39 @@ func (enum *ListVolumesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListVolumesRequestOrderBy(ListVolumesRequestOrderBy(tmp).String())
+	return nil
+}
+
+type NameStatus string
+
+const (
+	NameStatusUnknownStatus = NameStatus("unknown_status")
+	NameStatusQueued        = NameStatus("queued")
+	NameStatusPublishing    = NameStatus("publishing")
+	NameStatusFailed        = NameStatus("failed")
+	NameStatusPublished     = NameStatus("published")
+)
+
+func (enum NameStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum NameStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *NameStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = NameStatus(NameStatus(tmp).String())
 	return nil
 }
 
@@ -193,6 +256,12 @@ func (enum *PinStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListNamesResponse struct {
+	Names []*Name `json:"names"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
 type ListPinsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 
@@ -203,6 +272,26 @@ type ListVolumesResponse struct {
 	Volumes []*Volume `json:"volumes"`
 
 	TotalCount uint64 `json:"total_count"`
+}
+
+type Name struct {
+	NameID string `json:"name_id"`
+
+	ProjectID string `json:"project_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	Tags []string `json:"tags"`
+
+	Name string `json:"name"`
+
+	Key string `json:"key"`
+
+	Cid string `json:"cid"`
+	// Status: default value: unknown_status
+	Status NameStatus `json:"status"`
 }
 
 type Pin struct {
@@ -829,6 +918,230 @@ func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
+type CreateNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	ProjectID string `json:"project_id"`
+
+	Name string `json:"name"`
+
+	Cid string `json:"cid"`
+}
+
+func (s *API) CreateName(req *CreateNameRequest, opts ...scw.RequestOption) (*Name, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Name
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	NameID string `json:"-"`
+}
+
+func (s *API) GetName(req *GetNameRequest, opts ...scw.RequestOption) (*Name, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.NameID) == "" {
+		return nil, errors.New("field NameID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp Name
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type DeleteNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	NameID string `json:"-"`
+}
+
+func (s *API) DeleteName(req *DeleteNameRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.NameID) == "" {
+		return errors.New("field NameID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "DELETE",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
+		Headers: http.Header{},
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type ListNamesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+	// OrderBy: default value: created_at_asc
+	OrderBy ListNamesRequestOrderBy `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+}
+
+func (s *API) ListNames(req *ListNamesRequest, opts ...scw.RequestOption) (*ListNamesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListNamesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UpdateNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	NameID string `json:"-"`
+
+	Name *string `json:"name"`
+
+	Tags *[]string `json:"tags"`
+}
+
+func (s *API) UpdateName(req *UpdateNameRequest, opts ...scw.RequestOption) (*Name, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.NameID) == "" {
+		return nil, errors.New("field NameID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "PATCH",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Name
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListVolumesResponse) UnsafeGetTotalCount() uint64 {
@@ -865,4 +1178,23 @@ func (r *ListPinsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Pins = append(r.Pins, results.Pins...)
 	r.TotalCount += uint64(len(results.Pins))
 	return uint64(len(results.Pins)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNamesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNamesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListNamesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Names = append(r.Names, results.Names...)
+	r.TotalCount += uint64(len(results.Names))
+	return uint64(len(results.Names)), nil
 }
