@@ -850,6 +850,7 @@ const (
 	VolumeVolumeTypeLSSD    = VolumeVolumeType("l_ssd")
 	VolumeVolumeTypeBSSD    = VolumeVolumeType("b_ssd")
 	VolumeVolumeTypeUnified = VolumeVolumeType("unified")
+	VolumeVolumeTypeScratch = VolumeVolumeType("scratch")
 )
 
 func (enum VolumeVolumeType) String() string {
