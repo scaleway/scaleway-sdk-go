@@ -1494,6 +1494,8 @@ type ServerType struct {
 	Network *ServerTypeNetwork `json:"network"`
 	// Capabilities: capabilities.
 	Capabilities *ServerTypeCapabilities `json:"capabilities"`
+	// ScratchStorageMaxSize: maximum available scratch storage.
+	ScratchStorageMaxSize *uint64 `json:"scratch_storage_max_size"`
 }
 
 // ServerTypeCapabilities: server type. capabilities.
