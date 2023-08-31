@@ -1,8 +1,8 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
-// Package document_db provides methods and message types of the document_db v1beta1 API.
-package document_db
+// Package documentdb provides methods and message types of the documentdb v1beta1 API.
+package documentdb
 
 import (
 	"bytes"
