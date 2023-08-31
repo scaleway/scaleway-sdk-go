@@ -1,4 +1,4 @@
-package document_db
+package documentdb
 
 import (
 	"time"
