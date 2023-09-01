@@ -1496,7 +1496,7 @@ type ServerType struct {
 	// Capabilities: capabilities.
 	Capabilities *ServerTypeCapabilities `json:"capabilities"`
 	// ScratchStorageMaxSize: maximum available scratch storage.
-	ScratchStorageMaxSize *uint64 `json:"scratch_storage_max_size"`
+	ScratchStorageMaxSize *scw.Size `json:"scratch_storage_max_size"`
 }
 
 // ServerTypeCapabilities: server type. capabilities.
