@@ -550,7 +550,7 @@ type GetSecretByNameRequest struct {
 //
 // GetSecretByName usage is now deprecated.
 //
-// Scaleway recommends you to use ListSecrets with the `name` filter.
+// Scaleway recommends that you use the `ListSecrets` request with the `name` filter.
 func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -816,7 +816,7 @@ type DeleteFolderRequest struct {
 	FolderID string `json:"-"`
 }
 
-// DeleteFolder: delete a given folder specified by the and `folder_id` parameter.
+// DeleteFolder: delete a given folder specified by the `region` and `folder_id` parameters.
 func (s *API) DeleteFolder(req *DeleteFolderRequest, opts ...scw.RequestOption) error {
 	var err error
 
