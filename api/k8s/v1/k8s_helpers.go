@@ -183,6 +183,7 @@ func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.Request
 
 	terminalStatus := map[ClusterStatus]struct{}{
 		ClusterStatusPoolRequired: {},
+		ClusterStatusReady:        {},
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
