@@ -1104,6 +1104,8 @@ type UpdateNameRequest struct {
 	Name *string `json:"name"`
 
 	Tags *[]string `json:"tags"`
+
+	Cid *string `json:"cid"`
 }
 
 func (s *API) UpdateName(req *UpdateNameRequest, opts ...scw.RequestOption) (*Name, error) {
