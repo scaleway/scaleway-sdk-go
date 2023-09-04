@@ -488,12 +488,13 @@ func (enum *SecurityGroupState) UnmarshalJSON(data []byte) error {
 type ServerAction string
 
 const (
-	ServerActionPoweron     = ServerAction("poweron")
-	ServerActionBackup      = ServerAction("backup")
-	ServerActionStopInPlace = ServerAction("stop_in_place")
-	ServerActionPoweroff    = ServerAction("poweroff")
-	ServerActionTerminate   = ServerAction("terminate")
-	ServerActionReboot      = ServerAction("reboot")
+	ServerActionPoweron        = ServerAction("poweron")
+	ServerActionBackup         = ServerAction("backup")
+	ServerActionStopInPlace    = ServerAction("stop_in_place")
+	ServerActionPoweroff       = ServerAction("poweroff")
+	ServerActionTerminate      = ServerAction("terminate")
+	ServerActionReboot         = ServerAction("reboot")
+	ServerActionEnableRoutedIP = ServerAction("enable_routed_ip")
 )
 
 func (enum ServerAction) String() string {
