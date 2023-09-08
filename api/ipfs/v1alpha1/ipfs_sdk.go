@@ -256,6 +256,20 @@ func (enum *PinStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ExportKeyNameResponse struct {
+	NameID string `json:"name_id"`
+
+	ProjectID string `json:"project_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	PublicKey string `json:"public_key"`
+
+	PrivateKey string `json:"private_key"`
+}
+
 type ListNamesResponse struct {
 	Names []*Name `json:"names"`
 
@@ -1127,6 +1141,92 @@ func (s *API) UpdateName(req *UpdateNameRequest, opts ...scw.RequestOption) (*Na
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
 		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Name
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ExportKeyNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	NameID string `json:"-"`
+}
+
+func (s *API) ExportKeyName(req *ExportKeyNameRequest, opts ...scw.RequestOption) (*ExportKeyNameResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.NameID) == "" {
+		return nil, errors.New("field NameID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/export-key/" + fmt.Sprint(req.NameID) + "",
+		Headers: http.Header{},
+	}
+
+	var resp ExportKeyNameResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ImportKeyNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	ProjectID string `json:"project_id"`
+
+	Name string `json:"name"`
+
+	PrivateKey string `json:"private_key"`
+}
+
+func (s *API) ImportKeyName(req *ImportKeyNameRequest, opts ...scw.RequestOption) (*Name, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/import-key",
 		Headers: http.Header{},
 	}
 
