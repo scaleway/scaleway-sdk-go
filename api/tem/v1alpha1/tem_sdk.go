@@ -140,8 +140,14 @@ const (
 	EmailFlagHardBounce = EmailFlag("hard_bounce")
 	// Refers to an email considered as spam
 	EmailFlagSpam = EmailFlag("spam")
-	// Refers to an email not delivered because the recipient mailbox is full
+	// Refers to an undelivered email because the recipient mailbox is full
 	EmailFlagMailboxFull = EmailFlag("mailbox_full")
+	// Refers to an undelivered email because the recipient mailbox does not exist
+	EmailFlagMailboxNotFound = EmailFlag("mailbox_not_found")
+	// Refers to an email slightly delayed by the recipient to ensure that Scaleway is not sending spam
+	EmailFlagGreylisted = EmailFlag("greylisted")
+	// Refers to an email with a `send-before` tag to indicate the maximum time limit for the email to be sent
+	EmailFlagSendBeforeExpiration = EmailFlag("send_before_expiration")
 )
 
 func (enum EmailFlag) String() string {
