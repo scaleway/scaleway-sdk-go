@@ -302,10 +302,10 @@ type Name struct {
 	Name string `json:"name"`
 
 	Key string `json:"key"`
-
-	Cid string `json:"cid"`
 	// Status: default value: unknown_status
 	Status NameStatus `json:"status"`
+
+	Value string `json:"value"`
 }
 
 type Pin struct {
@@ -844,7 +844,7 @@ type ListPinsRequest struct {
 }
 
 // ListPins: list all pins within a volume.
-// Retrieve information about all pins into a volume.
+// Retrieve information about all pins within a volume.
 func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPinsResponse, error) {
 	var err error
 
@@ -940,9 +940,11 @@ type CreateNameRequest struct {
 
 	Name string `json:"name"`
 
-	Cid string `json:"cid"`
+	Value string `json:"value"`
 }
 
+// CreateName: create a new name.
+// You can use the `ipfs key` command to list and generate more names and their respective keys.
 func (s *API) CreateName(req *CreateNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
@@ -987,6 +989,8 @@ type GetNameRequest struct {
 	NameID string `json:"-"`
 }
 
+// GetName: get information about a name.
+// Retrieve information about a specific name.
 func (s *API) GetName(req *GetNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
@@ -1025,6 +1029,8 @@ type DeleteNameRequest struct {
 	NameID string `json:"-"`
 }
 
+// DeleteName: delete an existing name.
+// Delete a name by its ID.
 func (s *API) DeleteName(req *DeleteNameRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1069,6 +1075,8 @@ type ListNamesRequest struct {
 	OrganizationID *string `json:"-"`
 }
 
+// ListNames: list all names by a Project ID.
+// Retrieve information about all names from a Project ID.
 func (s *API) ListNames(req *ListNamesRequest, opts ...scw.RequestOption) (*ListNamesResponse, error) {
 	var err error
 
@@ -1119,9 +1127,11 @@ type UpdateNameRequest struct {
 
 	Tags *[]string `json:"tags"`
 
-	Cid *string `json:"cid"`
+	Value *string `json:"value"`
 }
 
+// UpdateName: update name information.
+// Update name information (CID, tag, name...).
 func (s *API) UpdateName(req *UpdateNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
@@ -1165,6 +1175,8 @@ type ExportKeyNameRequest struct {
 	NameID string `json:"-"`
 }
 
+// ExportKeyName: export your private key.
+// Export a private key by its ID.
 func (s *API) ExportKeyName(req *ExportKeyNameRequest, opts ...scw.RequestOption) (*ExportKeyNameResponse, error) {
 	var err error
 
@@ -1205,8 +1217,12 @@ type ImportKeyNameRequest struct {
 	Name string `json:"name"`
 
 	PrivateKey string `json:"private_key"`
+
+	Value string `json:"value"`
 }
 
+// ImportKeyName: import your private key.
+// Import a private key.
 func (s *API) ImportKeyName(req *ImportKeyNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
