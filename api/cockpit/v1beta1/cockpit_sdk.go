@@ -397,10 +397,14 @@ type TokenScopes struct {
 	QueryLogs bool `json:"query_logs"`
 	// WriteLogs: permission to write logs.
 	WriteLogs bool `json:"write_logs"`
-	// SetupLogsRules: permission to setup logs rules.
+	// SetupLogsRules: permission to set up logs rules.
 	SetupLogsRules bool `json:"setup_logs_rules"`
-	// SetupAlerts: permission to setup alerts.
+	// SetupAlerts: permission to set up alerts.
 	SetupAlerts bool `json:"setup_alerts"`
+	// QueryTraces: permission to fetch traces.
+	QueryTraces bool `json:"query_traces"`
+	// WriteTraces: permission to write traces.
+	WriteTraces bool `json:"write_traces"`
 }
 
 // Service API
