@@ -783,8 +783,10 @@ func (enum *VolumeServerState) UnmarshalJSON(data []byte) error {
 type VolumeServerVolumeType string
 
 const (
-	VolumeServerVolumeTypeLSSD = VolumeServerVolumeType("l_ssd")
-	VolumeServerVolumeTypeBSSD = VolumeServerVolumeType("b_ssd")
+	VolumeServerVolumeTypeLSSD      = VolumeServerVolumeType("l_ssd")
+	VolumeServerVolumeTypeBSSD      = VolumeServerVolumeType("b_ssd")
+	VolumeServerVolumeTypeSbsVolume = VolumeServerVolumeType("sbs_volume")
+	VolumeServerVolumeTypeScratch   = VolumeServerVolumeType("scratch")
 )
 
 func (enum VolumeServerVolumeType) String() string {
@@ -848,10 +850,11 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 type VolumeVolumeType string
 
 const (
-	VolumeVolumeTypeLSSD    = VolumeVolumeType("l_ssd")
-	VolumeVolumeTypeBSSD    = VolumeVolumeType("b_ssd")
-	VolumeVolumeTypeUnified = VolumeVolumeType("unified")
-	VolumeVolumeTypeScratch = VolumeVolumeType("scratch")
+	VolumeVolumeTypeLSSD      = VolumeVolumeType("l_ssd")
+	VolumeVolumeTypeBSSD      = VolumeVolumeType("b_ssd")
+	VolumeVolumeTypeUnified   = VolumeVolumeType("unified")
+	VolumeVolumeTypeScratch   = VolumeVolumeType("scratch")
+	VolumeVolumeTypeSbsVolume = VolumeVolumeType("sbs_volume")
 )
 
 func (enum VolumeVolumeType) String() string {
