@@ -470,20 +470,22 @@ type OfferProduct struct {
 	Name string `json:"name"`
 	// Option: product option.
 	Option bool `json:"option"`
-
+	// EmailAccountsQuota: limit number of email accounts.
 	EmailAccountsQuota int32 `json:"email_accounts_quota"`
-
+	// EmailStorageQuota: limit quantity of email storage in gigabytes.
 	EmailStorageQuota int32 `json:"email_storage_quota"`
-
+	// DatabasesQuota: limit number of databases.
 	DatabasesQuota int32 `json:"databases_quota"`
-
+	// HostingStorageQuota: limit quantity of hosting storage in gigabytes.
 	HostingStorageQuota uint32 `json:"hosting_storage_quota"`
-
+	// SupportIncluded: whether or not support is included.
 	SupportIncluded bool `json:"support_included"`
-
+	// VCPU: limit number of virtual CPU.
 	VCPU uint32 `json:"v_cpu"`
-
+	// RAM: limit quantity of memory in gigabytes.
 	RAM uint32 `json:"ram"`
+	// MaxAddonDomains: limit number of add-on domains.
+	MaxAddonDomains int32 `json:"max_addon_domains"`
 }
 
 // Service API
