@@ -562,7 +562,7 @@ type ListHostingsRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListHostingsRequestOrderBy `json:"-"`
 	// Tags: tags to filter for, only Web Hosting plans with matching tags will be returned.
-	Tags *[]string `json:"-"`
+	Tags []string `json:"-"`
 	// Statuses: statuses to filter for, only Web Hosting plans with matching statuses will be returned.
 	Statuses []HostingStatus `json:"-"`
 	// Domain: domain to filter for, only Web Hosting plans associated with this domain will be returned.
