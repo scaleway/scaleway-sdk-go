@@ -2942,6 +2942,8 @@ type ListSnapshotsRequest struct {
 	Project *string `json:"-"`
 
 	Tags *string `json:"-"`
+
+	BaseVolumeID *string `json:"-"`
 }
 
 // ListSnapshots: list snapshots.
@@ -2966,6 +2968,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "base_volume_id", req.BaseVolumeID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
