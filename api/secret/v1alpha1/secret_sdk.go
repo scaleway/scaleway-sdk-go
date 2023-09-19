@@ -724,7 +724,7 @@ type ListFoldersRequest struct {
 	OrderBy ListFoldersRequestOrderBy `json:"-"`
 }
 
-// ListFolders: list secrets.
+// ListFolders: list folders.
 // Retrieve the list of folders created within a Project.
 func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*ListFoldersResponse, error) {
 	var err error
