@@ -39,8 +39,8 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: cockpit API.
-// Cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
+// API: cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
+// Cockpit API.
 type API struct {
 	client *scw.Client
 }
@@ -83,6 +83,39 @@ func (enum *CockpitStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = CockpitStatus(CockpitStatus(tmp).String())
+	return nil
+}
+
+type DatasourceType string
+
+const (
+	DatasourceTypeUnknownDatasourceType = DatasourceType("unknown_datasource_type")
+	DatasourceTypeMetrics               = DatasourceType("metrics")
+	DatasourceTypeLogs                  = DatasourceType("logs")
+	DatasourceTypeTraces                = DatasourceType("traces")
+	DatasourceTypeAlerts                = DatasourceType("alerts")
+)
+
+func (enum DatasourceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_datasource_type"
+	}
+	return string(enum)
+}
+
+func (enum DatasourceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DatasourceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DatasourceType(DatasourceType(tmp).String())
 	return nil
 }
 
@@ -290,6 +323,21 @@ type ContactPointEmail struct {
 	To string `json:"to"`
 }
 
+// Datasource: datasource.
+type Datasource struct {
+	// ID: ID of the datasource.
+	ID string `json:"id"`
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
+	// Name: datasource name.
+	Name string `json:"name"`
+	// URL: datasource URL.
+	URL string `json:"url"`
+	// Type: datasource type.
+	// Default value: unknown_datasource_type
+	Type DatasourceType `json:"type"`
+}
+
 // GrafanaUser: grafana user.
 type GrafanaUser struct {
 	// ID: ID of the Grafana user.
@@ -414,8 +462,7 @@ type ActivateCockpitRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// ActivateCockpit: activate a Cockpit.
-// Activate the Cockpit of the specified Project ID.
+// ActivateCockpit: activate the Cockpit of the specified Project ID.
 func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -449,8 +496,7 @@ type GetCockpitRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// GetCockpit: get a Cockpit.
-// Retrieve the Cockpit of the specified Project ID.
+// GetCockpit: retrieve the Cockpit of the specified Project ID.
 func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -489,8 +535,7 @@ type GetCockpitMetricsRequest struct {
 	MetricName *string `json:"-"`
 }
 
-// GetCockpitMetrics: get Cockpit metrics.
-// Get metrics from your Cockpit with the specified Project ID.
+// GetCockpitMetrics: get metrics from your Cockpit with the specified Project ID.
 func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
 	var err error
 
@@ -526,8 +571,7 @@ type DeactivateCockpitRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// DeactivateCockpit: deactivate a Cockpit.
-// Deactivate the Cockpit of the specified Project ID.
+// DeactivateCockpit: deactivate the Cockpit of the specified Project ID.
 func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -561,8 +605,7 @@ type ResetCockpitGrafanaRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// ResetCockpitGrafana: reset a Grafana.
-// Reset your Cockpit's Grafana associated with the specified Project ID.
+// ResetCockpitGrafana: reset your Cockpit's Grafana associated with the specified Project ID.
 func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -591,6 +634,45 @@ func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.R
 	return &resp, nil
 }
 
+type CreateDatasourceRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
+	// Name: datasource name.
+	Name string `json:"name"`
+	// Type: datasource type.
+	// Default value: unknown_datasource_type
+	Type DatasourceType `json:"type"`
+}
+
+// CreateDatasource: create a datasource for the specified Project ID and the given type.
+func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.RequestOption) (*Datasource, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "POST",
+		Path:    "/cockpit/v1beta1/datasources",
+		Headers: http.Header{},
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Datasource
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type CreateTokenRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
@@ -600,8 +682,7 @@ type CreateTokenRequest struct {
 	Scopes *TokenScopes `json:"scopes"`
 }
 
-// CreateToken: create a token.
-// Create a token associated with the specified Project ID.
+// CreateToken: create a token associated with the specified Project ID.
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -645,8 +726,7 @@ type ListTokensRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// ListTokens: list tokens.
-// Get a list of tokens associated with the specified Project ID.
+// ListTokens: get a list of tokens associated with the specified Project ID.
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -687,8 +767,7 @@ type GetTokenRequest struct {
 	TokenID string `json:"-"`
 }
 
-// GetToken: get a token.
-// Retrieve the token associated with the specified token ID.
+// GetToken: retrieve the token associated with the specified token ID.
 func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -716,8 +795,7 @@ type DeleteTokenRequest struct {
 	TokenID string `json:"-"`
 }
 
-// DeleteToken: delete a token.
-// Delete the token associated with the specified token ID.
+// DeleteToken: delete the token associated with the specified token ID.
 func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -745,8 +823,7 @@ type CreateContactPointRequest struct {
 	ContactPoint *ContactPoint `json:"contact_point"`
 }
 
-// CreateContactPoint: create a contact point.
-// Create a contact point to receive alerts for the default receiver.
+// CreateContactPoint: create a contact point to receive alerts for the default receiver.
 func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
 	var err error
 
@@ -784,8 +861,7 @@ type ListContactPointsRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// ListContactPoints: list contact points.
-// Get a list of contact points for the Cockpit associated with the specified Project ID.
+// ListContactPoints: get a list of contact points for the Cockpit associated with the specified Project ID.
 func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
 	var err error
 
@@ -827,8 +903,7 @@ type DeleteContactPointRequest struct {
 	ContactPoint *ContactPoint `json:"contact_point"`
 }
 
-// DeleteContactPoint: delete an alert contact point.
-// Delete a contact point for the default receiver.
+// DeleteContactPoint: delete a contact point for the default receiver.
 func (s *API) DeleteContactPoint(req *DeleteContactPointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -860,8 +935,7 @@ type EnableManagedAlertsRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// EnableManagedAlerts: enable managed alerts.
-// Enable the sending of managed alerts for the specified Project's Cockpit.
+// EnableManagedAlerts: enable the sending of managed alerts for the specified Project's Cockpit.
 func (s *API) EnableManagedAlerts(req *EnableManagedAlertsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -893,8 +967,7 @@ type DisableManagedAlertsRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// DisableManagedAlerts: disable managed alerts.
-// Disable the sending of managed alerts for the specified Project's Cockpit.
+// DisableManagedAlerts: disable the sending of managed alerts for the specified Project's Cockpit.
 func (s *API) DisableManagedAlerts(req *DisableManagedAlertsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -925,8 +998,7 @@ type TriggerTestAlertRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// TriggerTestAlert: trigger a test alert.
-// Trigger a test alert to all of the Cockpit's receivers.
+// TriggerTestAlert: trigger a test alert to all of the Cockpit's receivers.
 func (s *API) TriggerTestAlert(req *TriggerTestAlertRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -963,8 +1035,7 @@ type CreateGrafanaUserRequest struct {
 	Role GrafanaUserRole `json:"role"`
 }
 
-// CreateGrafanaUser: create a Grafana user.
-// Create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
+// CreateGrafanaUser: create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
 func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
@@ -1004,8 +1075,7 @@ type ListGrafanaUsersRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// ListGrafanaUsers: list Grafana users.
-// Get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
+// ListGrafanaUsers: get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
 func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
 	var err error
 
@@ -1048,8 +1118,7 @@ type DeleteGrafanaUserRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// DeleteGrafanaUser: delete a Grafana user.
-// Delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
+// DeleteGrafanaUser: delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
 func (s *API) DeleteGrafanaUser(req *DeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1087,8 +1156,7 @@ type ResetGrafanaUserPasswordRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// ResetGrafanaUserPassword: reset a Grafana user's password.
-// Reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
+// ResetGrafanaUserPassword: reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
 func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
@@ -1130,8 +1198,7 @@ type ListPlansRequest struct {
 	OrderBy ListPlansRequestOrderBy `json:"-"`
 }
 
-// ListPlans: list pricing plans.
-// Get a list of all pricing plans available.
+// ListPlans: get a list of all pricing plans available.
 func (s *API) ListPlans(req *ListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1168,8 +1235,7 @@ type SelectPlanRequest struct {
 	PlanID string `json:"plan_id"`
 }
 
-// SelectPlan: select pricing plan.
-// Select your chosen pricing plan for your Cockpit, specifying the Cockpit's Project ID and the pricing plan's ID in the request.
+// SelectPlan: select your chosen pricing plan for your Cockpit, specifying the Cockpit's Project ID and the pricing plan's ID in the request.
 func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*SelectPlanResponse, error) {
 	var err error
 
