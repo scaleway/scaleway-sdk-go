@@ -712,8 +712,8 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 type ListFoldersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"-"`
+	// ProjectID: filter by Project ID (optional).
+	ProjectID *string `json:"-"`
 	// Path: filter by path (optional).
 	Path *string `json:"-"`
 
@@ -728,11 +728,6 @@ type ListFoldersRequest struct {
 // Retrieve the list of folders created within a Project.
 func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*ListFoldersResponse, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
