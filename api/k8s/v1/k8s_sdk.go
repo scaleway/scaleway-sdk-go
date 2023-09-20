@@ -1099,6 +1099,8 @@ type ListClustersRequest struct {
 	Status ClusterStatus `json:"-"`
 	// Type: type to filter on, only clusters with this type will be returned.
 	Type *string `json:"-"`
+	// PrivateNetworkID: private Network ID to filter on, only clusters within this Private Network will be returned.
+	PrivateNetworkID *string `json:"-"`
 }
 
 // ListClusters: list Clusters.
@@ -1125,6 +1127,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
