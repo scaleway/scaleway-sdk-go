@@ -1490,10 +1490,12 @@ type ListSubscriberResponse struct {
 type PrivateNetwork struct {
 	// LB: load Balancer object which is attached to the Private Network.
 	LB *LB `json:"lb"`
+	// IpamIDs: iPAM IDs of the booked IP addresses.
+	IpamIDs []string `json:"ipam_ids"`
 	// Deprecated: StaticConfig: object containing an array of a local IP address for the Load Balancer on this Private Network.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
-	// DHCPConfig: object containing DHCP-assigned IP addresses.
+	// Deprecated: DHCPConfig: object containing DHCP-assigned IP addresses.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
 	// Deprecated: IpamConfig: for internal use only.
@@ -1511,7 +1513,8 @@ type PrivateNetwork struct {
 }
 
 type PrivateNetworkDHCPConfig struct {
-	IPID *string `json:"ip_id"`
+	// Deprecated
+	IPID *string `json:"ip_id,omitempty"`
 }
 
 type PrivateNetworkIpamConfig struct {
@@ -4474,7 +4477,7 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	// Deprecated: StaticConfig: object containing an array of a local IP address for the Load Balancer on this Private Network.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
-	// DHCPConfig: defines whether to let DHCP assign IP addresses.
+	// Deprecated: DHCPConfig: defines whether to let DHCP assign IP addresses.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
 	// Deprecated: IpamConfig: for internal use only.
@@ -7365,7 +7368,7 @@ type AttachPrivateNetworkRequest struct {
 	// Deprecated: StaticConfig: object containing an array of a local IP address for the Load Balancer on this Private Network.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	StaticConfig *PrivateNetworkStaticConfig `json:"static_config,omitempty"`
-	// DHCPConfig: defines whether to let DHCP assign IP addresses.
+	// Deprecated: DHCPConfig: defines whether to let DHCP assign IP addresses.
 	// Precisely one of DHCPConfig, IpamConfig, StaticConfig must be set.
 	DHCPConfig *PrivateNetworkDHCPConfig `json:"dhcp_config,omitempty"`
 	// Deprecated: IpamConfig: for internal use only.
