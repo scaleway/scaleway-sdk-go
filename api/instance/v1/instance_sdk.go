@@ -2930,19 +2930,19 @@ func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) er
 type ListSnapshotsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
-
+	// Organization: list snapshots only for this Organization ID.
 	Organization *string `json:"-"`
-
-	PerPage *uint32 `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	Name *string `json:"-"`
-
+	// Project: list snapshots only for this Project ID.
 	Project *string `json:"-"`
-
+	// PerPage: number of snapshots returned per page (positive integer lower or equal to 100).
+	PerPage *uint32 `json:"-"`
+	// Page: page to be returned.
+	Page *int32 `json:"-"`
+	// Name: list snapshots of the requested name.
+	Name *string `json:"-"`
+	// Tags: list snapshots that have the requested tag.
 	Tags *string `json:"-"`
-
+	// BaseVolumeID: list snapshots originating only from this volume.
 	BaseVolumeID *string `json:"-"`
 }
 
@@ -2963,10 +2963,10 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization", req.Organization)
+	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "project", req.Project)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "base_volume_id", req.BaseVolumeID)
 
