@@ -717,6 +717,7 @@ type VolumeType string
 const (
 	VolumeTypeLssd = VolumeType("lssd")
 	VolumeTypeBssd = VolumeType("bssd")
+	VolumeTypeSbs  = VolumeType("sbs")
 )
 
 func (enum VolumeType) String() string {
