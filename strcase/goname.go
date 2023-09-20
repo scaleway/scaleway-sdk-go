@@ -95,6 +95,8 @@ func toGoName(name string) (should string) {
 	return string(runes)
 }
 
+// Deprecated: this list should not be completed as it affects generation for our Go SDK only.
+//
 // commonInitialisms is a set of common initialisms.
 // Only add entries that are highly unlikely to be non-initialisms.
 // For instance, "ID" is fine (Freudian code is rare), but "AND" is not.
@@ -116,7 +118,6 @@ var commonInitialisms = map[string]bool{
 	"JSON":  true,
 	"LB":    true,
 	"LHS":   true,
-	"MNQ":   true,
 	"QPS":   true,
 	"RAM":   true,
 	"RHS":   true,
@@ -126,8 +127,6 @@ var commonInitialisms = map[string]bool{
 	"SQL":   true,
 	"SSD":   true,
 	"SSH":   true,
-	"SNS":   true,
-	"SQS":   true,
 	"TCP":   true,
 	"TLS":   true,
 	"TTL":   true,
