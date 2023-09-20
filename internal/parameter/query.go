@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"reflect"
 	"time"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // AddToQuery add a key/value pair to an URL query
@@ -24,6 +25,10 @@ func AddToQuery(query url.Values, key string, value interface{}) {
 	switch {
 	case elemType == reflect.TypeOf(net.IP{}):
 		query.Add(key, value.(*net.IP).String())
+	case elemType == reflect.TypeOf(net.IPNet{}):
+		query.Add(key, value.(*net.IPNet).String())
+	case elemType == reflect.TypeOf(scw.IPNet{}):
+		query.Add(key, value.(*scw.IPNet).String())
 	case elemType.Kind() == reflect.Slice:
 		for i := 0; i < elemValue.Len(); i++ {
 			query.Add(key, fmt.Sprint(elemValue.Index(i).Interface()))
