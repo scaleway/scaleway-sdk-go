@@ -1104,7 +1104,10 @@ type GetSecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 }
 
@@ -1151,7 +1154,10 @@ type GetSecretVersionByNameRequest struct {
 	// SecretName: name of the secret.
 	SecretName string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 	// ProjectID: ID of the Project to target.
 	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
@@ -1205,7 +1211,10 @@ type UpdateSecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 	// Description: description of the version.
 	Description *string `json:"description"`
@@ -1377,7 +1386,10 @@ type EnableSecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 }
 
@@ -1429,7 +1441,10 @@ type DisableSecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 }
 
@@ -1481,7 +1496,10 @@ type AccessSecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 }
 
@@ -1528,7 +1546,10 @@ type AccessSecretVersionByNameRequest struct {
 	// SecretName: name of the secret.
 	SecretName string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 	// ProjectID: ID of the Project to target.
 	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
@@ -1582,7 +1603,10 @@ type DestroySecretVersionRequest struct {
 	// SecretID: ID of the secret.
 	SecretID string `json:"-"`
 	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be a number or "latest".
+	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
 	Revision string `json:"-"`
 }
 
