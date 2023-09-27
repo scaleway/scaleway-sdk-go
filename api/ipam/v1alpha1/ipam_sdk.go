@@ -155,6 +155,8 @@ type IP struct {
 
 	Tags []string `json:"tags"`
 
+	Reverses []*Reverse `json:"reverses"`
+
 	Region scw.Region `json:"region"`
 
 	Zone *scw.Zone `json:"zone"`
@@ -175,6 +177,12 @@ type Resource struct {
 	MacAddress *string `json:"mac_address"`
 
 	Name *string `json:"name"`
+}
+
+type Reverse struct {
+	Hostname string `json:"hostname"`
+
+	Address *scw.IPNet `json:"address"`
 }
 
 type Source struct {
