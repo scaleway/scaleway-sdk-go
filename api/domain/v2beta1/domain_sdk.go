@@ -800,6 +800,38 @@ func (enum *ListTasksRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListTldsRequestOrderBy string
+
+const (
+	// Order by TLD name (ascending)
+	ListTldsRequestOrderByNameAsc = ListTldsRequestOrderBy("name_asc")
+	// Order by TLD name (descending)
+	ListTldsRequestOrderByNameDesc = ListTldsRequestOrderBy("name_desc")
+)
+
+func (enum ListTldsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListTldsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListTldsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListTldsRequestOrderBy(ListTldsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type RawFormat string
 
 const (
@@ -1572,6 +1604,14 @@ type ListTasksResponse struct {
 	TotalCount uint32 `json:"total_count"`
 
 	Tasks []*Task `json:"tasks"`
+}
+
+// ListTldsResponse: list tlds response.
+type ListTldsResponse struct {
+	// Tlds: array of TLDs.
+	Tlds []*Tld `json:"tlds"`
+	// TotalCount: total count of TLDs returned.
+	TotalCount uint64 `json:"total_count"`
 }
 
 type Nameserver struct {
@@ -3794,6 +3834,50 @@ func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDo
 	return &resp, nil
 }
 
+type RegistrarAPIListTldsRequest struct {
+	// Tlds: array of TLDs to return.
+	Tlds []string `json:"-"`
+	// Page: page number for the returned Projects.
+	Page *int32 `json:"-"`
+	// PageSize: maximum number of Project per page.
+	PageSize *uint32 `json:"-"`
+	// OrderBy: sort order of the returned TLDs.
+	// Default value: name_asc
+	OrderBy ListTldsRequestOrderBy `json:"-"`
+}
+
+// ListTlds: list TLD offers.
+// Retrieve the list of TLDs and offers associated with them.
+func (s *RegistrarAPI) ListTlds(req *RegistrarAPIListTldsRequest, opts ...scw.RequestOption) (*ListTldsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "tlds", req.Tlds)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/domain/v2beta1/tlds",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListTldsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type RegistrarAPICreateDomainHostRequest struct {
 	Domain string `json:"-"`
 
@@ -4116,6 +4200,25 @@ func (r *ListRenewableDomainsResponse) UnsafeAppend(res interface{}) (uint32, er
 	r.Domains = append(r.Domains, results.Domains...)
 	r.TotalCount += uint32(len(results.Domains))
 	return uint32(len(results.Domains)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTldsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTldsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListTldsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tlds = append(r.Tlds, results.Tlds...)
+	r.TotalCount += uint64(len(results.Tlds))
+	return uint64(len(results.Tlds)), nil
 }
 
 // UnsafeGetTotalCount should not be used
