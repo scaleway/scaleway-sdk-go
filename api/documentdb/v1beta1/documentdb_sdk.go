@@ -39,7 +39,7 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: managed Database for FerretDB API.
+// API: managed Document Databases API.
 type API struct {
 	client *scw.Client
 }
