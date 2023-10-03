@@ -3,8 +3,9 @@ package scw
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
@@ -285,6 +286,50 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestFile_MarshalJSON(t *testing.T) {
+	cases := []struct {
+		name string
+		file *File
+		want string
+		err  error
+	}{
+		{
+			name: "basic",
+			file: &File{
+				Name:        "example.txt",
+				ContentType: "text/plain",
+				Content:     strings.NewReader("Hello, world!"),
+			},
+			want: `{"name":"example.txt","content_type":"text/plain","content":"Hello, world!"}`,
+		},
+		{
+			name: "empty",
+			file: &File{},
+			want: `{"name":"","content_type":"","content":""}`,
+		},
+		{
+			name: "nil content",
+			file: &File{
+				Name:        "example.txt",
+				ContentType: "text/plain",
+				Content:     nil,
+			},
+			want: `{"name":"example.txt","content_type":"text/plain","content":""}`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := json.Marshal(c.file)
+
+			testhelpers.Equals(t, c.err, err)
+			if c.err == nil {
+				testhelpers.Equals(t, c.want, string(got))
+			}
+		})
+	}
+}
+
 func TestFile_UnmarshalJSON(t *testing.T) {
 	type testCase struct {
 		json        string
@@ -300,7 +345,7 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.name, f.Name)
 			testhelpers.Equals(t, c.contentType, f.ContentType)
-			s, err := ioutil.ReadAll(f.Content)
+			s, err := io.ReadAll(f.Content)
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.content, s)
 		}
