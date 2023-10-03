@@ -212,6 +212,9 @@ type GetConsumptionRequest struct {
 	OrganizationID string `json:"-"`
 }
 
+// GetConsumption: get current month's consumption.
+// The consumption reflects the amount of money you have spent for the products you have used.
+// The consumption value is monetary and is not computed in real time.
 func (s *API) GetConsumption(req *GetConsumptionRequest, opts ...scw.RequestOption) (*GetConsumptionResponse, error) {
 	var err error
 
@@ -259,6 +262,8 @@ type ListInvoicesRequest struct {
 	OrderBy ListInvoicesRequestOrderBy `json:"-"`
 }
 
+// ListInvoices: list invoices.
+// List all your invoices, filtering by `start_date` and `invoice_type`. Each invoice has its own ID.
 func (s *API) ListInvoices(req *ListInvoicesRequest, opts ...scw.RequestOption) (*ListInvoicesResponse, error) {
 	var err error
 
@@ -300,6 +305,8 @@ type DownloadInvoiceRequest struct {
 	FileType DownloadInvoiceRequestFileType `json:"-"`
 }
 
+// DownloadInvoice: download an invoice.
+// Download a specific invoice, specified by its ID.
 func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
