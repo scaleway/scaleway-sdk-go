@@ -43,6 +43,28 @@ type File struct {
 	Content io.Reader `json:"content"`
 }
 
+func (f *File) MarshalJSON() ([]byte, error) {
+	buf := new(bytes.Buffer)
+	if f.Content != nil {
+		_, err := io.Copy(buf, f.Content)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	tmpFile := struct {
+		Name        string `json:"name"`
+		ContentType string `json:"content_type"`
+		Content     string `json:"content"`
+	}{
+		Name:        f.Name,
+		ContentType: f.ContentType,
+		Content:     buf.String(),
+	}
+
+	return json.Marshal(tmpFile)
+}
+
 func (f *File) UnmarshalJSON(b []byte) error {
 	type file File
 	var tmpFile struct {
