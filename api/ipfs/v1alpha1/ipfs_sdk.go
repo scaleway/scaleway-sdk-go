@@ -285,7 +285,7 @@ func (s *API) Regions() []scw.Region {
 type CreateVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: project id.
+	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 	// Name: volume name.
 	Name string `json:"name"`
@@ -335,7 +335,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 type GetVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 }
 
@@ -375,14 +375,14 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 type ListVolumesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// ProjectID: project id whose volumes you wish to list.
+	// ProjectID: project ID, only volumes belonging to this project will be listed.
 	ProjectID string `json:"-"`
-	// OrderBy: sort order of the returned Volume.
+	// OrderBy: sort the order of the returned volumes.
 	// Default value: created_at_asc
 	OrderBy ListVolumesRequestOrderBy `json:"-"`
-	// Page: page number to return, from the paginated results.
+	// Page: page number.
 	Page *int32 `json:"-"`
-	// PageSize: maximum number of Volume to return per page.
+	// PageSize: maximum number of volumes to return per page.
 	PageSize *uint32 `json:"-"`
 }
 
@@ -435,11 +435,11 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 type UpdateVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 	// Name: volume name.
 	Name *string `json:"name"`
-	// Tags: tags for the Volume.
+	// Tags: tags of the volume.
 	Tags *[]string `json:"tags"`
 }
 
@@ -484,7 +484,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 type DeleteVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 }
 
@@ -522,9 +522,9 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 type CreatePinByURLRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume Id on which you wish to pin your content.
+	// VolumeID: volume ID on which you want to pin your content.
 	VolumeID string `json:"volume_id"`
-	// URL: url whose content you wish to pin.
+	// URL: URL containing the content you want to pin.
 	URL string `json:"url"`
 	// Name: pin name.
 	Name *string `json:"name"`
@@ -573,11 +573,11 @@ func (s *API) CreatePinByURL(req *CreatePinByURLRequest, opts ...scw.RequestOpti
 type CreatePinByCIDRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume Id on which you wish to pin your content.
+	// VolumeID: volume ID on which you want to pin your content.
 	VolumeID string `json:"volume_id"`
-	// Cid: cid whose content you wish to pin.
+	// Cid: cID containing the content you want to pin.
 	Cid string `json:"cid"`
-	// Origins: node containing the content you wish to pin.
+	// Origins: node containing the content you want to pin.
 	Origins []string `json:"origins"`
 	// Name: pin name.
 	Name *string `json:"name"`
@@ -626,15 +626,15 @@ func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOpti
 type ReplacePinRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// PinID: pin id whose information you wish to replace.
+	// PinID: pin ID whose information you wish to replace.
 	PinID string `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"volume_id"`
-	// Cid: new cid you want to pin in place of the old one.
+	// Cid: new CID you want to pin in place of the old one.
 	Cid string `json:"cid"`
 	// Name: new name to replace.
 	Name *string `json:"name"`
-	// Origins: node containing the content you wish to pin.
+	// Origins: node containing the content you want to pin.
 	Origins []string `json:"origins"`
 	// PinOptions: pin options.
 	PinOptions *PinOptions `json:"pin_options"`
@@ -679,9 +679,9 @@ func (s *API) ReplacePin(req *ReplacePinRequest, opts ...scw.RequestOption) (*Re
 type GetPinRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// PinID: pin id for which you wish to obtain information.
+	// PinID: pin ID of which you want to obtain information.
 	PinID string `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 }
 
@@ -725,18 +725,18 @@ func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error
 type ListPinsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// VolumeID: volume ID for which you wish to list the pins.
+	// VolumeID: volume ID of which you want to list the pins.
 	VolumeID string `json:"-"`
-	// ProjectID: project id.
+	// ProjectID: project ID.
 	ProjectID *string `json:"-"`
-	// OrganizationID: organization id.
+	// OrganizationID: organization ID.
 	OrganizationID *string `json:"-"`
 	// OrderBy: sort order of the returned Volume.
 	// Default value: created_at_asc
 	OrderBy ListPinsRequestOrderBy `json:"-"`
-	// Page: page number to return, from the paginated results.
+	// Page: page number.
 	Page *int32 `json:"-"`
-	// PageSize: maximum number of Volume to return per page.
+	// PageSize: maximum number of volumes to return per page.
 	PageSize *uint32 `json:"-"`
 	// Status: list pins by status.
 	// Default value: unknown_status
@@ -790,9 +790,9 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 type DeletePinRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-	// PinID: pin id you wish to remove from the volume.
+	// PinID: pin ID you want to remove from the volume.
 	PinID string `json:"-"`
-	// VolumeID: volume id.
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 }
 
