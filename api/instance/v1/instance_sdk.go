@@ -2021,6 +2021,8 @@ type ListServersRequest struct {
 	PrivateNetworks []string `json:"-"`
 	// PrivateNicMacAddress: list Instances associated with the given private NIC MAC address.
 	PrivateNicMacAddress *string `json:"-"`
+	// Servers: list Instances from these server ids (use commas to separate them).
+	Servers []string `json:"-"`
 }
 
 // ListServers: list all Instances.
@@ -2057,6 +2059,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 		parameter.AddToQuery(query, "private_networks", strings.Join(req.PrivateNetworks, ","))
 	}
 	parameter.AddToQuery(query, "private_nic_mac_address", req.PrivateNicMacAddress)
+	if len(req.Servers) != 0 {
+		parameter.AddToQuery(query, "servers", strings.Join(req.Servers, ","))
+	}
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
