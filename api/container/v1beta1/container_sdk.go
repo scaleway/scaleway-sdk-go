@@ -721,6 +721,8 @@ type CreateTriggerRequestMnqNatsClientConfig struct {
 	MnqProjectID string `json:"mnq_project_id"`
 
 	MnqRegion string `json:"mnq_region"`
+
+	MnqNatsAccountID string `json:"mnq_nats_account_id"`
 }
 
 type CreateTriggerRequestMnqSqsClientConfig struct {
