@@ -808,6 +808,8 @@ type CreateClusterRequestPoolConfig struct {
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
 	RootVolumeSize *scw.Size `json:"root_volume_size"`
+	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
+	PublicIPDisabled bool `json:"public_ip_disabled"`
 }
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request. pool config. upgrade policy.
@@ -981,6 +983,8 @@ type Pool struct {
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
 	RootVolumeSize *scw.Size `json:"root_volume_size"`
+	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
+	PublicIPDisabled bool `json:"public_ip_disabled"`
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
 }
@@ -1805,6 +1809,8 @@ type CreatePoolRequest struct {
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 	// RootVolumeSize: system volume disk size.
 	RootVolumeSize *scw.Size `json:"root_volume_size"`
+	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
+	PublicIPDisabled bool `json:"public_ip_disabled"`
 }
 
 // CreatePool: create a new Pool in a Cluster.
