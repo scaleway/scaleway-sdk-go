@@ -150,6 +150,38 @@ func (enum *GrafanaUserRole) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDatasourcesRequestOrderBy string
+
+const (
+	ListDatasourcesRequestOrderByCreatedAtAsc  = ListDatasourcesRequestOrderBy("created_at_asc")
+	ListDatasourcesRequestOrderByCreatedAtDesc = ListDatasourcesRequestOrderBy("created_at_desc")
+	ListDatasourcesRequestOrderByNameAsc       = ListDatasourcesRequestOrderBy("name_asc")
+	ListDatasourcesRequestOrderByNameDesc      = ListDatasourcesRequestOrderBy("name_desc")
+)
+
+func (enum ListDatasourcesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListDatasourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDatasourcesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDatasourcesRequestOrderBy(ListDatasourcesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListGrafanaUsersRequestOrderBy string
 
 const (
@@ -362,6 +394,14 @@ type ListContactPointsResponse struct {
 	HasAdditionalReceivers bool `json:"has_additional_receivers"`
 	// HasAdditionalContactPoints: specifies whether there are unmanaged contact points.
 	HasAdditionalContactPoints bool `json:"has_additional_contact_points"`
+}
+
+// ListDatasourcesResponse: list datasources response.
+type ListDatasourcesResponse struct {
+	// TotalCount: count of all datasources corresponding to the request.
+	TotalCount uint32 `json:"total_count"`
+	// Datasources: list of the datasources within the pagination.
+	Datasources []*Datasource `json:"datasources"`
 }
 
 // ListGrafanaUsersResponse: response returned when listing Grafana users.
@@ -673,6 +713,57 @@ func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+type ListDatasourcesRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+	// OrderBy: how the response is ordered.
+	// Default value: created_at_asc
+	OrderBy ListDatasourcesRequestOrderBy `json:"-"`
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+	// Types: filter by datasource types.
+	Types []DatasourceType `json:"-"`
+}
+
+// ListDatasources: get a list of datasources for the specified Project ID.
+func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOption) (*ListDatasourcesResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "types", req.Types)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/cockpit/v1beta1/datasources",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListDatasourcesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 type CreateTokenRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
@@ -720,7 +811,8 @@ type ListTokensRequest struct {
 	Page *int32 `json:"-"`
 	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: how the response is ordered.
+	// Default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"-"`
@@ -1262,6 +1354,25 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Se
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatasourcesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatasourcesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDatasourcesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Datasources = append(r.Datasources, results.Datasources...)
+	r.TotalCount += uint32(len(results.Datasources))
+	return uint32(len(results.Datasources)), nil
 }
 
 // UnsafeGetTotalCount should not be used
