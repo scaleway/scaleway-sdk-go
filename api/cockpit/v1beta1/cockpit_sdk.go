@@ -370,6 +370,21 @@ type Datasource struct {
 	Type DatasourceType `json:"type"`
 }
 
+// GrafanaProductDashboard: grafana dashboard.
+// Grafana product dashboard.
+type GrafanaProductDashboard struct {
+	// DashboardName: name of the dashboard.
+	DashboardName string `json:"dashboard_name"`
+	// Title: title of the dashboard.
+	Title string `json:"title"`
+	// URL: URL of the dashboard.
+	URL string `json:"url"`
+	// Tags: tags of the dashboard.
+	Tags []string `json:"tags"`
+	// Variables: variables of the dashboard.
+	Variables []string `json:"variables"`
+}
+
 // GrafanaUser: grafana user.
 type GrafanaUser struct {
 	// ID: ID of the Grafana user.
@@ -402,6 +417,15 @@ type ListDatasourcesResponse struct {
 	TotalCount uint32 `json:"total_count"`
 	// Datasources: list of the datasources within the pagination.
 	Datasources []*Datasource `json:"datasources"`
+}
+
+// ListGrafanaProductDashboardsResponse: response returned when getting a list of dashboards.
+// List grafana product dashboards response.
+type ListGrafanaProductDashboardsResponse struct {
+	// TotalCount: count of grafana dasboards.
+	TotalCount uint64 `json:"total_count"`
+	// Dashboards: information on grafana dashboards.
+	Dashboards []*GrafanaProductDashboard `json:"dashboards"`
 }
 
 // ListGrafanaUsersResponse: response returned when listing Grafana users.
@@ -1356,6 +1380,94 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Se
 	return &resp, nil
 }
 
+type ListGrafanaProductDashboardsRequest struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+	// Page: page number.
+	Page *int32 `json:"-"`
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+	// Tags: tags to filter the dashboards.
+	Tags []string `json:"-"`
+}
+
+// ListGrafanaProductDashboards: list product dashboards.
+// Get a list of available product dashboards.
+func (s *API) ListGrafanaProductDashboards(req *ListGrafanaProductDashboardsRequest, opts ...scw.RequestOption) (*ListGrafanaProductDashboardsResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "tags", req.Tags)
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/cockpit/v1beta1/grafana-product-dashboards",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp ListGrafanaProductDashboardsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type GetGrafanaProductDashboardRequest struct {
+	// DashboardName: name of the dashboard.
+	DashboardName string `json:"-"`
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+}
+
+// GetGrafanaProductDashboard: get a product dashboard.
+// Get a product dashboard specified by the dashboard ID.
+func (s *API) GetGrafanaProductDashboard(req *GetGrafanaProductDashboardRequest, opts ...scw.RequestOption) (*GrafanaProductDashboard, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.DashboardName) == "" {
+		return nil, errors.New("field DashboardName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method:  "GET",
+		Path:    "/cockpit/v1beta1/grafana-product-dashboards/" + fmt.Sprint(req.DashboardName) + "",
+		Query:   query,
+		Headers: http.Header{},
+	}
+
+	var resp GrafanaProductDashboard
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDatasourcesResponse) UnsafeGetTotalCount() uint32 {
@@ -1449,4 +1561,23 @@ func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Plans = append(r.Plans, results.Plans...)
 	r.TotalCount += uint64(len(results.Plans))
 	return uint64(len(results.Plans)), nil
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListGrafanaProductDashboardsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListGrafanaProductDashboardsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Dashboards = append(r.Dashboards, results.Dashboards...)
+	r.TotalCount += uint64(len(results.Dashboards))
+	return uint64(len(results.Dashboards)), nil
 }
