@@ -712,12 +712,45 @@ func (enum *SnapshotStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type StorageClass string
+
+const (
+	StorageClassUnknownStorageClass = StorageClass("unknown_storage_class")
+	StorageClassLssd                = StorageClass("lssd")
+	StorageClassBssd                = StorageClass("bssd")
+	StorageClassSbs                 = StorageClass("sbs")
+)
+
+func (enum StorageClass) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_storage_class"
+	}
+	return string(enum)
+}
+
+func (enum StorageClass) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *StorageClass) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = StorageClass(StorageClass(tmp).String())
+	return nil
+}
+
 type VolumeType string
 
 const (
-	VolumeTypeLssd = VolumeType("lssd")
-	VolumeTypeBssd = VolumeType("bssd")
-	VolumeTypeSbs  = VolumeType("sbs")
+	VolumeTypeLssd   = VolumeType("lssd")
+	VolumeTypeBssd   = VolumeType("bssd")
+	VolumeTypeSbs5k  = VolumeType("sbs_5k")
+	VolumeTypeSbs15k = VolumeType("sbs_15k")
 )
 
 func (enum VolumeType) String() string {
@@ -1218,6 +1251,9 @@ type NodeTypeVolumeType struct {
 	MaxSize scw.Size `json:"max_size"`
 	// ChunkSize: minimum increment level for a Block Storage volume size.
 	ChunkSize scw.Size `json:"chunk_size"`
+	// Class: the storage class of the volume.
+	// Default value: unknown_storage_class
+	Class StorageClass `json:"class"`
 }
 
 // PrepareInstanceLogsResponse: prepare instance logs response.
@@ -1342,6 +1378,8 @@ type Volume struct {
 	Type VolumeType `json:"type"`
 
 	Size scw.Size `json:"size"`
+	// Class: default value: unknown_storage_class
+	Class StorageClass `json:"class"`
 }
 
 // Service API
