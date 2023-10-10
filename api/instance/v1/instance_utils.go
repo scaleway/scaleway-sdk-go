@@ -122,6 +122,15 @@ func volumesToVolumeTemplates(volumes map[string]*VolumeServer) map[string]*Volu
 // Note: Implementation is thread-safe.
 func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) (*AttachVolumeResponse, error) {
 	defer lockServer(req.Zone, req.ServerID).Unlock()
+	// check where the volume comes from
+	volume, err := s.getUnknownVolume(&getUnknownVolumeRequest{
+		Zone:     req.Zone,
+		VolumeID: req.VolumeID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	// get server with volumes
 	getServerResponse, err := s.GetServer(&GetServerRequest{
 		Zone:     req.Zone,
@@ -144,9 +153,13 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 		if _, ok := newVolumes[key]; !ok {
 			newVolumes[key] = &VolumeServerTemplate{
 				ID: &req.VolumeID,
-				// name is ignored on this PATCH
-				Name: &req.VolumeID,
 			}
+			if volume.Type == VolumeVolumeTypeSbsVolume {
+				newVolumes[key].VolumeType = VolumeVolumeTypeSbsVolume
+			} else {
+				newVolumes[key].Name = &req.VolumeID
+			}
+
 			found = true
 			break
 		}
@@ -173,6 +186,10 @@ func (s *API) AttachVolume(req *AttachVolumeRequest, opts ...scw.RequestOption) 
 type DetachVolumeRequest struct {
 	Zone     scw.Zone `json:"-"`
 	VolumeID string   `json:"-"`
+	// IsBlockVolume should be set to true if volume is from block API,
+	// can be set to false if volume is from instance API,
+	// if left nil both API will be tried
+	IsBlockVolume *bool `json:"-"`
 }
 
 // DetachVolumeResponse contains the updated server after detaching a volume
@@ -184,27 +201,23 @@ type DetachVolumeResponse struct {
 //
 // Note: Implementation is thread-safe.
 func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) (*DetachVolumeResponse, error) {
-	// get volume
-	getVolumeResponse, err := s.GetVolume(&GetVolumeRequest{
+	volume, err := s.getUnknownVolume(&getUnknownVolumeRequest{
 		Zone:     req.Zone,
 		VolumeID: req.VolumeID,
 	})
 	if err != nil {
 		return nil, err
 	}
-	if getVolumeResponse.Volume == nil {
-		return nil, errors.New("expected volume to have value in response")
-	}
-	if getVolumeResponse.Volume.Server == nil {
+
+	if volume.ServerID == nil {
 		return nil, errors.New("volume should be attached to a server")
 	}
-	serverID := getVolumeResponse.Volume.Server.ID
 
-	defer lockServer(req.Zone, serverID).Unlock()
+	defer lockServer(req.Zone, *volume.ServerID).Unlock()
 	// get server with volumes
 	getServerResponse, err := s.GetServer(&GetServerRequest{
 		Zone:     req.Zone,
-		ServerID: serverID,
+		ServerID: *volume.ServerID,
 	})
 	if err != nil {
 		return nil, err
@@ -222,7 +235,7 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	// update server
 	updateServerResponse, err := s.updateServer(&UpdateServerRequest{
 		Zone:     req.Zone,
-		ServerID: serverID,
+		ServerID: *volume.ServerID,
 		Volumes:  &newVolumes,
 	})
 	if err != nil {

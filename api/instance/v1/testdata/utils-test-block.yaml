@@ -2,7 +2,41 @@
 version: 1
 interactions:
 - request:
-    body: '{"name":"instance_utils_test","commercial_type":"PRO2-XXS","image":"81b9475d-e1b5-43c2-ac48-4c1a3b640686","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
+    body: '{"name":"instance_utils_test","project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","from_empty":{"size":20000000000},"tags":null}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes
+    method: POST
+  response:
+    body: '{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","name":"instance_utils_test","type":"sbs_5k","size":20000000000,"project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","created_at":"2023-10-10T09:15:41.944351Z","updated_at":"2023-10-10T09:15:41.944351Z","references":[],"parent_snapshot_id":null,"status":"creating","tags":[],"specs":{"perf_iops":5000,"class":"sbs"},"zone":"fr-par-1"}'
+    headers:
+      Content-Length:
+      - "378"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 10 Oct 2023 09:15:41 GMT
+      Server:
+      - Scaleway API-Gateway
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - f33df77b-5c58-4180-9431-3a53ca434d62
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: '{"name":"instance_utils_test","commercial_type":"PRO2-XXS","image":"81b9475d-e1b5-43c2-ac48-4c1a3b640686","volumes":{"0":{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","volume_type":"sbs_volume"}},"project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
     headers:
       Content-Type:
@@ -12,7 +46,7 @@ interactions:
     url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers
     method: POST
   response:
-    body: '{"server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test",
+    body: '{"server": {"id": "45041cdf-fbe1-4feb-b4d5-c957f805aaa5", "name": "instance_utils_test",
       "arch": "x86_64", "commercial_type": "PRO2-XXS", "boot_type": "local", "organization":
       "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
       "hostname": "instance-utils-test", "image": {"id": "81b9475d-e1b5-43c2-ac48-4c1a3b640686",
@@ -22,17 +56,12 @@ interactions:
       "extra_volumes": {}, "public": true, "arch": "x86_64", "creation_date": "2023-08-08T13:35:09.293489+00:00",
       "modification_date": "2023-08-08T13:35:09.293489+00:00", "default_bootscript":
       null, "from_server": null, "state": "available", "tags": [], "zone": "fr-par-1"},
-      "volumes": {"0": {"boot": false, "id": "6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2",
-      "name": "Ubuntu 22.04 Jammy Jellyfish", "volume_type": "b_ssd", "export_uri":
-      null, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test"},
-      "size": 10000000000, "state": "available", "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "tags": [], "zone":
-      "fr-par-1"}}, "tags": [], "state": "stopped", "protected": false, "state_detail":
-      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:37",
-      "routed_ip_enabled": false, "ipv6": null, "extra_networks": [], "dynamic_ip_required":
-      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "bootscript": {"id":
+      "volumes": {"0": {"boot": false, "volume_type": "sbs_volume", "id": "8fee9b00-2905-432e-82b9-f73c3f816c95"}},
+      "tags": [], "state": "stopped", "protected": false, "state_detail": "", "public_ip":
+      null, "public_ips": [], "mac_address": "de:00:00:28:23:39", "routed_ip_enabled":
+      false, "ipv6": null, "extra_networks": [], "dynamic_ip_required": true, "enable_ipv6":
+      false, "private_ip": null, "creation_date": "2023-10-10T09:15:42.194549+00:00",
+      "modification_date": "2023-10-10T09:15:42.194549+00:00", "bootscript": {"id":
       "fdfe150f-a870-4ce4-b432-9f56b5b995c1", "public": true, "title": "x86_64 mainline
       4.4.230 rev1", "architecture": "x86_64", "organization": "11111111-1111-4111-8111-111111111111",
       "project": "11111111-1111-4111-8111-111111111111", "kernel": "http://10.194.3.9/kernel/x86_64-mainline-lts-4.4-4.4.230-rev1/vmlinuz-4.4.230",
@@ -44,15 +73,15 @@ interactions:
       [], "zone": "fr-par-1"}}'
     headers:
       Content-Length:
-      - "2652"
+      - "2216"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:38 GMT
+      - Tue, 10 Oct 2023 09:15:42 GMT
       Location:
-      - https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+      - https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -62,177 +91,30 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 9f05fb6a-ad06-4f27-9ea4-07860cd3a735
+      - 56ed70e3-76a3-4942-ab76-2e35e6669f10
     status: 201 Created
     code: 201
     duration: ""
 - request:
-    body: '{"project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","type":"unknown_iptype"}'
-    form: {}
-    headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips
-    method: POST
-  response:
-    body: '{"ip": {"id": "785a05a2-5ca1-48c2-bea1-8ec4b358853b", "address": "51.15.243.218",
-      "prefix": null, "reverse": null, "server": null, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "zone": "fr-par-1", "type":
-      "nat", "state": "attached", "tags": []}}'
-    headers:
-      Content-Length:
-      - "306"
-      Content-Security-Policy:
-      - default-src 'none'; frame-ancestors 'none'
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 10 Oct 2023 09:15:39 GMT
-      Location:
-      - https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/785a05a2-5ca1-48c2-bea1-8ec4b358853b
-      Server:
-      - Scaleway API-Gateway
-      Strict-Transport-Security:
-      - max-age=63072000
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Request-Id:
-      - 9263a54a-4df9-4c8d-ba7f-6e6676662636
-    status: 201 Created
-    code: 201
-    duration: ""
-- request:
-    body: '{"type":"unknown_iptype","server":"d98c50d4-04b9-405d-be55-40dc42c5b344"}'
-    form: {}
-    headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/785a05a2-5ca1-48c2-bea1-8ec4b358853b
-    method: PATCH
-  response:
-    body: '{"ip": {"id": "785a05a2-5ca1-48c2-bea1-8ec4b358853b", "address": "51.15.243.218",
-      "prefix": null, "reverse": null, "server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344",
-      "name": "instance_utils_test"}, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "zone": "fr-par-1", "type":
-      "nat", "state": "attached", "tags": []}}'
-    headers:
-      Content-Length:
-      - "379"
-      Content-Security-Policy:
-      - default-src 'none'; frame-ancestors 'none'
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 10 Oct 2023 09:15:39 GMT
-      Server:
-      - Scaleway API-Gateway
-      Strict-Transport-Security:
-      - max-age=63072000
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Request-Id:
-      - 5adf5fd2-64f8-4a03-a978-2085819552ed
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: '{"type":"unknown_iptype","server":null}'
-    form: {}
-    headers:
-      Content-Type:
-      - application/json
-      User-Agent:
-      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/785a05a2-5ca1-48c2-bea1-8ec4b358853b
-    method: PATCH
-  response:
-    body: '{"ip": {"id": "785a05a2-5ca1-48c2-bea1-8ec4b358853b", "address": "51.15.243.218",
-      "prefix": null, "reverse": null, "server": null, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "zone": "fr-par-1", "type":
-      "nat", "state": "detached", "tags": []}}'
-    headers:
-      Content-Length:
-      - "306"
-      Content-Security-Policy:
-      - default-src 'none'; frame-ancestors 'none'
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 10 Oct 2023 09:15:39 GMT
-      Server:
-      - Scaleway API-Gateway
-      Strict-Transport-Security:
-      - max-age=63072000
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Request-Id:
-      - abd05986-39e4-470f-a2fe-c810a8dd60e5
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
     body: ""
     form: {}
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/ips/785a05a2-5ca1-48c2-bea1-8ec4b358853b
-    method: DELETE
-  response:
-    body: ""
-    headers:
-      Content-Security-Policy:
-      - default-src 'none'; frame-ancestors 'none'
-      Date:
-      - Tue, 10 Oct 2023 09:15:39 GMT
-      Server:
-      - Scaleway API-Gateway
-      Strict-Transport-Security:
-      - max-age=63072000
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Request-Id:
-      - c18db02f-632e-46a1-a21c-4967e8a108da
-    status: 204 No Content
-    code: 204
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      User-Agent:
-      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
     method: GET
   response:
-    body: '{"volume": {"id": "6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2", "name": "Ubuntu
-      22.04 Jammy Jellyfish", "volume_type": "b_ssd", "export_uri": null, "organization":
-      "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test"},
-      "size": 10000000000, "state": "available", "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "tags": [], "zone":
-      "fr-par-1"}}'
+    body: '{"type": "not_found", "message": "resource is not found", "resource": "instance_volume",
+      "resource_id": "8fee9b00-2905-432e-82b9-f73c3f816c95"}'
     headers:
       Content-Length:
-      - "523"
+      - "143"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:39 GMT
+      - Tue, 10 Oct 2023 09:15:42 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -242,7 +124,39 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 487e6ad2-2b73-4498-83fb-1425e9eccf15
+      - b2c9f99f-0c30-4c47-8081-f93d59d4da79
+    status: 404 Not Found
+    code: 404
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
+    method: GET
+  response:
+    body: '{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","name":"instance_utils_test","type":"sbs_5k","size":20000000000,"project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","created_at":"2023-10-10T09:15:41.944351Z","updated_at":"2023-10-10T09:15:42.291624Z","references":[{"id":"48a35868-5e79-45ec-bf2c-2e186bbb6cca","product_resource_type":"instance_server","product_resource_id":"45041cdf-fbe1-4feb-b4d5-c957f805aaa5","created_at":"2023-10-10T09:15:42.291624Z","type":"exclusive","status":"attached"}],"parent_snapshot_id":null,"status":"in_use","tags":[],"specs":{"perf_iops":5000,"class":"sbs"},"zone":"fr-par-1"}'
+    headers:
+      Content-Length:
+      - "606"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 10 Oct 2023 09:15:42 GMT
+      Server:
+      - Scaleway API-Gateway
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - abbca92a-2ca7-4064-ad91-b42a23f8a3b0
     status: 200 OK
     code: 200
     duration: ""
@@ -252,10 +166,10 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
     method: GET
   response:
-    body: '{"server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test",
+    body: '{"server": {"id": "45041cdf-fbe1-4feb-b4d5-c957f805aaa5", "name": "instance_utils_test",
       "arch": "x86_64", "commercial_type": "PRO2-XXS", "boot_type": "local", "organization":
       "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
       "hostname": "instance-utils-test", "image": {"id": "81b9475d-e1b5-43c2-ac48-4c1a3b640686",
@@ -265,17 +179,12 @@ interactions:
       "extra_volumes": {}, "public": true, "arch": "x86_64", "creation_date": "2023-08-08T13:35:09.293489+00:00",
       "modification_date": "2023-08-08T13:35:09.293489+00:00", "default_bootscript":
       null, "from_server": null, "state": "available", "tags": [], "zone": "fr-par-1"},
-      "volumes": {"0": {"boot": false, "id": "6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2",
-      "name": "Ubuntu 22.04 Jammy Jellyfish", "volume_type": "b_ssd", "export_uri":
-      null, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test"},
-      "size": 10000000000, "state": "available", "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "tags": [], "zone":
-      "fr-par-1"}}, "tags": [], "state": "stopped", "protected": false, "state_detail":
-      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:37",
-      "routed_ip_enabled": false, "ipv6": null, "extra_networks": [], "dynamic_ip_required":
-      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "bootscript": {"id":
+      "volumes": {"0": {"boot": false, "volume_type": "sbs_volume", "id": "8fee9b00-2905-432e-82b9-f73c3f816c95"}},
+      "tags": [], "state": "stopped", "protected": false, "state_detail": "", "public_ip":
+      null, "public_ips": [], "mac_address": "de:00:00:28:23:39", "routed_ip_enabled":
+      false, "ipv6": null, "extra_networks": [], "dynamic_ip_required": true, "enable_ipv6":
+      false, "private_ip": null, "creation_date": "2023-10-10T09:15:42.194549+00:00",
+      "modification_date": "2023-10-10T09:15:42.194549+00:00", "bootscript": {"id":
       "fdfe150f-a870-4ce4-b432-9f56b5b995c1", "public": true, "title": "x86_64 mainline
       4.4.230 rev1", "architecture": "x86_64", "organization": "11111111-1111-4111-8111-111111111111",
       "project": "11111111-1111-4111-8111-111111111111", "kernel": "http://10.194.3.9/kernel/x86_64-mainline-lts-4.4-4.4.230-rev1/vmlinuz-4.4.230",
@@ -287,13 +196,13 @@ interactions:
       [], "zone": "fr-par-1"}}'
     headers:
       Content-Length:
-      - "2652"
+      - "2216"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:40 GMT
+      - Tue, 10 Oct 2023 09:15:42 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -303,7 +212,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 45254b89-4baf-42d4-ae6d-fd195b7dda23
+      - b18e30e2-31b9-4306-a013-adff691aa458
     status: 200 OK
     code: 200
     duration: ""
@@ -315,10 +224,10 @@ interactions:
       - application/json
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
     method: PATCH
   response:
-    body: '{"server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test",
+    body: '{"server": {"id": "45041cdf-fbe1-4feb-b4d5-c957f805aaa5", "name": "instance_utils_test",
       "arch": "x86_64", "commercial_type": "PRO2-XXS", "boot_type": "local", "organization":
       "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
       "hostname": "instance-utils-test", "image": {"id": "81b9475d-e1b5-43c2-ac48-4c1a3b640686",
@@ -329,10 +238,10 @@ interactions:
       "modification_date": "2023-08-08T13:35:09.293489+00:00", "default_bootscript":
       null, "from_server": null, "state": "available", "tags": [], "zone": "fr-par-1"},
       "volumes": {}, "tags": [], "state": "stopped", "protected": false, "state_detail":
-      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:37",
+      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:39",
       "routed_ip_enabled": false, "ipv6": null, "extra_networks": [], "dynamic_ip_required":
-      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "bootscript": {"id":
+      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:42.194549+00:00",
+      "modification_date": "2023-10-10T09:15:42.194549+00:00", "bootscript": {"id":
       "fdfe150f-a870-4ce4-b432-9f56b5b995c1", "public": true, "title": "x86_64 mainline
       4.4.230 rev1", "architecture": "x86_64", "organization": "11111111-1111-4111-8111-111111111111",
       "project": "11111111-1111-4111-8111-111111111111", "kernel": "http://10.194.3.9/kernel/x86_64-mainline-lts-4.4-4.4.230-rev1/vmlinuz-4.4.230",
@@ -350,7 +259,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:40 GMT
+      - Tue, 10 Oct 2023 09:15:43 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -360,7 +269,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - d3ac5d9c-81af-4e4f-a8dd-957b411d134c
+      - 2843fe05-016b-4d2a-89f4-1b154d15b2bc
     status: 200 OK
     code: 200
     duration: ""
@@ -370,24 +279,20 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
     method: GET
   response:
-    body: '{"volume": {"id": "6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2", "name": "Ubuntu
-      22.04 Jammy Jellyfish", "volume_type": "b_ssd", "export_uri": null, "organization":
-      "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "server": null, "size": 10000000000, "state": "available", "creation_date":
-      "2023-10-10T09:15:38.261953+00:00", "modification_date": "2023-10-10T09:15:40.350007+00:00",
-      "tags": [], "zone": "fr-par-1"}}'
+    body: '{"type": "not_found", "message": "resource is not found", "resource": "instance_volume",
+      "resource_id": "8fee9b00-2905-432e-82b9-f73c3f816c95"}'
     headers:
       Content-Length:
-      - "450"
+      - "143"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:40 GMT
+      - Tue, 10 Oct 2023 09:15:43 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -397,7 +302,39 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - e12c4f7d-3176-4bdc-8c69-24e0054d1315
+      - 24a61d76-c62e-4761-a803-bd721fa9529e
+    status: 404 Not Found
+    code: 404
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
+    method: GET
+  response:
+    body: '{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","name":"instance_utils_test","type":"sbs_5k","size":20000000000,"project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","created_at":"2023-10-10T09:15:41.944351Z","updated_at":"2023-10-10T09:15:42.291624Z","references":[{"id":"48a35868-5e79-45ec-bf2c-2e186bbb6cca","product_resource_type":"instance_server","product_resource_id":"45041cdf-fbe1-4feb-b4d5-c957f805aaa5","created_at":"2023-10-10T09:15:42.291624Z","type":"exclusive","status":"detaching"}],"parent_snapshot_id":null,"status":"in_use","tags":[],"specs":{"perf_iops":5000,"class":"sbs"},"zone":"fr-par-1"}'
+    headers:
+      Content-Length:
+      - "607"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 10 Oct 2023 09:15:43 GMT
+      Server:
+      - Scaleway API-Gateway
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - aa42f28d-0b55-4f99-8d1a-fe7012206c12
     status: 200 OK
     code: 200
     duration: ""
@@ -407,10 +344,10 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
     method: GET
   response:
-    body: '{"server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test",
+    body: '{"server": {"id": "45041cdf-fbe1-4feb-b4d5-c957f805aaa5", "name": "instance_utils_test",
       "arch": "x86_64", "commercial_type": "PRO2-XXS", "boot_type": "local", "organization":
       "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
       "hostname": "instance-utils-test", "image": {"id": "81b9475d-e1b5-43c2-ac48-4c1a3b640686",
@@ -421,10 +358,10 @@ interactions:
       "modification_date": "2023-08-08T13:35:09.293489+00:00", "default_bootscript":
       null, "from_server": null, "state": "available", "tags": [], "zone": "fr-par-1"},
       "volumes": {}, "tags": [], "state": "stopped", "protected": false, "state_detail":
-      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:37",
+      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:39",
       "routed_ip_enabled": false, "ipv6": null, "extra_networks": [], "dynamic_ip_required":
-      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "bootscript": {"id":
+      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:42.194549+00:00",
+      "modification_date": "2023-10-10T09:15:42.194549+00:00", "bootscript": {"id":
       "fdfe150f-a870-4ce4-b432-9f56b5b995c1", "public": true, "title": "x86_64 mainline
       4.4.230 rev1", "architecture": "x86_64", "organization": "11111111-1111-4111-8111-111111111111",
       "project": "11111111-1111-4111-8111-111111111111", "kernel": "http://10.194.3.9/kernel/x86_64-mainline-lts-4.4-4.4.230-rev1/vmlinuz-4.4.230",
@@ -442,7 +379,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:40 GMT
+      - Tue, 10 Oct 2023 09:15:43 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -452,22 +389,22 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 23420bb5-e634-4f49-9318-7643e0f5cd21
+      - 5c73ad17-30af-40a9-8940-b6795fd0ac2f
     status: 200 OK
     code: 200
     duration: ""
 - request:
-    body: '{"volumes":{"0":{"id":"6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2","name":"6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2"}}}'
+    body: '{"volumes":{"0":{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","volume_type":"sbs_volume"}}}'
     form: {}
     headers:
       Content-Type:
       - application/json
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
     method: PATCH
   response:
-    body: '{"server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test",
+    body: '{"server": {"id": "45041cdf-fbe1-4feb-b4d5-c957f805aaa5", "name": "instance_utils_test",
       "arch": "x86_64", "commercial_type": "PRO2-XXS", "boot_type": "local", "organization":
       "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
       "hostname": "instance-utils-test", "image": {"id": "81b9475d-e1b5-43c2-ac48-4c1a3b640686",
@@ -477,17 +414,12 @@ interactions:
       "extra_volumes": {}, "public": true, "arch": "x86_64", "creation_date": "2023-08-08T13:35:09.293489+00:00",
       "modification_date": "2023-08-08T13:35:09.293489+00:00", "default_bootscript":
       null, "from_server": null, "state": "available", "tags": [], "zone": "fr-par-1"},
-      "volumes": {"0": {"boot": false, "id": "6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2",
-      "name": "Ubuntu 22.04 Jammy Jellyfish", "volume_type": "b_ssd", "export_uri":
-      null, "organization": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b", "project": "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b",
-      "server": {"id": "d98c50d4-04b9-405d-be55-40dc42c5b344", "name": "instance_utils_test"},
-      "size": 10000000000, "state": "available", "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:40.986653+00:00", "tags": [], "zone":
-      "fr-par-1"}}, "tags": [], "state": "stopped", "protected": false, "state_detail":
-      "", "public_ip": null, "public_ips": [], "mac_address": "de:00:00:28:23:37",
-      "routed_ip_enabled": false, "ipv6": null, "extra_networks": [], "dynamic_ip_required":
-      true, "enable_ipv6": false, "private_ip": null, "creation_date": "2023-10-10T09:15:38.261953+00:00",
-      "modification_date": "2023-10-10T09:15:38.261953+00:00", "bootscript": {"id":
+      "volumes": {"0": {"boot": false, "volume_type": "sbs_volume", "id": "8fee9b00-2905-432e-82b9-f73c3f816c95"}},
+      "tags": [], "state": "stopped", "protected": false, "state_detail": "", "public_ip":
+      null, "public_ips": [], "mac_address": "de:00:00:28:23:39", "routed_ip_enabled":
+      false, "ipv6": null, "extra_networks": [], "dynamic_ip_required": true, "enable_ipv6":
+      false, "private_ip": null, "creation_date": "2023-10-10T09:15:42.194549+00:00",
+      "modification_date": "2023-10-10T09:15:42.194549+00:00", "bootscript": {"id":
       "fdfe150f-a870-4ce4-b432-9f56b5b995c1", "public": true, "title": "x86_64 mainline
       4.4.230 rev1", "architecture": "x86_64", "organization": "11111111-1111-4111-8111-111111111111",
       "project": "11111111-1111-4111-8111-111111111111", "kernel": "http://10.194.3.9/kernel/x86_64-mainline-lts-4.4-4.4.230-rev1/vmlinuz-4.4.230",
@@ -495,17 +427,16 @@ interactions:
       "bootcmdargs": "LINUX_COMMON scaleway boot=local nbd.max_part=16", "default":
       true, "zone": "fr-par-1"}, "security_group": {"id": "0fe819c3-274d-472a-b3f5-ddb258d2d8bb",
       "name": "Default security group"}, "location": null, "maintenances": [], "allowed_actions":
-      ["poweron", "backup", "enable_routed_ip"], "placement_group": null, "private_nics":
-      [], "zone": "fr-par-1"}}'
+      [], "placement_group": null, "private_nics": [], "zone": "fr-par-1"}}'
     headers:
       Content-Length:
-      - "2652"
+      - "2177"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Content-Type:
       - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:41 GMT
+      - Tue, 10 Oct 2023 09:15:44 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -515,7 +446,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 1bdd821b-b03f-4a71-8d1a-cb203d27ca32
+      - 8580916d-0c18-412e-9189-770abbf7b76f
     status: 200 OK
     code: 200
     duration: ""
@@ -525,7 +456,7 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/d98c50d4-04b9-405d-be55-40dc42c5b344
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/45041cdf-fbe1-4feb-b4d5-c957f805aaa5
     method: DELETE
   response:
     body: ""
@@ -533,7 +464,7 @@ interactions:
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
       Date:
-      - Tue, 10 Oct 2023 09:15:41 GMT
+      - Tue, 10 Oct 2023 09:15:44 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -543,7 +474,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - a6634954-7a64-4b28-9786-7f7ca3da6b1a
+      - 4c7d02ff-4c22-4851-b5ed-2391081da3a5
     status: 204 No Content
     code: 204
     duration: ""
@@ -553,15 +484,19 @@ interactions:
     headers:
       User-Agent:
       - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
-    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2
-    method: DELETE
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
+    method: GET
   response:
-    body: ""
+    body: '{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","name":"instance_utils_test","type":"sbs_5k","size":20000000000,"project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","created_at":"2023-10-10T09:15:41.944351Z","updated_at":"2023-10-10T09:15:43.979984Z","references":[{"id":"8f209e83-a243-4746-9a9b-5854d6eb819c","product_resource_type":"instance_server","product_resource_id":"45041cdf-fbe1-4feb-b4d5-c957f805aaa5","created_at":"2023-10-10T09:15:43.979984Z","type":"exclusive","status":"detaching"}],"parent_snapshot_id":null,"status":"in_use","tags":[],"specs":{"perf_iops":5000,"class":"sbs"},"zone":"fr-par-1"}'
     headers:
+      Content-Length:
+      - "607"
       Content-Security-Policy:
       - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
       Date:
-      - Tue, 10 Oct 2023 09:15:41 GMT
+      - Tue, 10 Oct 2023 09:15:44 GMT
       Server:
       - Scaleway API-Gateway
       Strict-Transport-Security:
@@ -571,7 +506,69 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Request-Id:
-      - 41993e5b-f681-4b71-9838-b81f3ffd7d12
+      - 377eff0a-3fbf-4d5b-b8a4-eae1f439d816
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
+    method: GET
+  response:
+    body: '{"id":"8fee9b00-2905-432e-82b9-f73c3f816c95","name":"instance_utils_test","type":"sbs_5k","size":20000000000,"project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","created_at":"2023-10-10T09:15:41.944351Z","updated_at":"2023-10-10T09:15:44.866432Z","references":[],"parent_snapshot_id":null,"status":"available","tags":[],"specs":{"perf_iops":5000,"class":"sbs"},"zone":"fr-par-1"}'
+    headers:
+      Content-Length:
+      - "379"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 10 Oct 2023 09:15:49 GMT
+      Server:
+      - Scaleway API-Gateway
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - 6d33e435-971b-41aa-a0f7-699a500d0342
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.21.1; linux; amd64)
+    url: https://api.scaleway.com/block/v1alpha1/zones/fr-par-1/volumes/8fee9b00-2905-432e-82b9-f73c3f816c95
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 10 Oct 2023 09:15:49 GMT
+      Server:
+      - Scaleway API-Gateway
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - c9f2353a-8511-4cf0-8db9-2a6d4e9ed93e
     status: 204 No Content
     code: 204
     duration: ""
