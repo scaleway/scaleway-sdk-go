@@ -104,9 +104,9 @@ func (s *API) getUnknownVolume(req *getUnknownVolumeRequest, opts ...scw.Request
 		for _, reference := range getVolumeResponse.References {
 			if reference.ProductResourceType == "instance_server" {
 				volume.ServerID = &reference.ProductResourceID
-				volume.Type = VolumeVolumeTypeSbsVolume
 			}
 		}
+		volume.Type = VolumeVolumeTypeSbsVolume
 	}
 
 	return volume, nil
