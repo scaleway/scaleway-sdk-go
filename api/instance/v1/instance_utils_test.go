@@ -130,11 +130,12 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 	blockAPI := block.NewAPI(client)
 
 	var (
-		serverID string
-		volumeID string
-		zone     = scw.ZoneFrPar1
-		project  = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
-		image    = "81b9475d-e1b5-43c2-ac48-4c1a3b640686"
+		serverID  string
+		volumeID  string
+		volumeID2 string
+		zone      = scw.ZoneFrPar1
+		project   = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
+		image     = "81b9475d-e1b5-43c2-ac48-4c1a3b640686"
 	)
 
 	t.Run("create server and volume", func(t *testing.T) {
@@ -150,6 +151,19 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		volumeID = createVolumeResponse.ID
+
+		createVolumeResponse, err = blockAPI.CreateVolume(&block.CreateVolumeRequest{
+			Zone:      zone,
+			Name:      "instance_utils_test2",
+			ProjectID: project,
+			FromEmpty: &block.CreateVolumeRequestFromEmpty{
+				Size: scw.GB * 20,
+			},
+			Tags: nil,
+		})
+		testhelpers.AssertNoError(t, err)
+
+		volumeID2 = createVolumeResponse.ID
 
 		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
 			Zone:           zone,
@@ -190,6 +204,18 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.Assert(t, attachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
 		testhelpers.Assert(t, len(attachVolumeResponse.Server.Volumes) == 1, "Server should have one volumes after attaching")
 		testhelpers.Equals(t, volumeID, attachVolumeResponse.Server.Volumes["0"].ID)
+
+		attachVolumeResponse, err = instanceAPI.AttachVolume(&AttachVolumeRequest{
+			Zone:     zone,
+			ServerID: serverID,
+			VolumeID: volumeID2,
+		})
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Assert(t, attachVolumeResponse.Server != nil, "Should have server in response")
+		testhelpers.Assert(t, attachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
+		testhelpers.Assert(t, len(attachVolumeResponse.Server.Volumes) == 2, "Server should have two volumes after attaching second volume")
+		testhelpers.Equals(t, volumeID2, attachVolumeResponse.Server.Volumes["1"].ID)
 	})
 
 	t.Run("teardown: delete server and volume", func(t *testing.T) {
@@ -212,6 +238,20 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		err = blockAPI.DeleteVolume(&block.DeleteVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
+		})
+		testhelpers.AssertNoError(t, err)
+
+		_, err = blockAPI.WaitForVolumeAndReferences(&block.WaitForVolumeAndReferencesRequest{
+			VolumeID:             volumeID2,
+			Zone:                 zone,
+			VolumeTerminalStatus: &volumeStatusAvailable,
+		})
+		testhelpers.AssertNoError(t, err)
+
+		// Delete Volume
+		err = blockAPI.DeleteVolume(&block.DeleteVolumeRequest{
+			Zone:     zone,
+			VolumeID: volumeID2,
 		})
 		testhelpers.AssertNoError(t, err)
 	})

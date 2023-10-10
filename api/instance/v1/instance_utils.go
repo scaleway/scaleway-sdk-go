@@ -109,10 +109,19 @@ type AttachVolumeResponse struct {
 func volumesToVolumeTemplates(volumes map[string]*VolumeServer) map[string]*VolumeServerTemplate {
 	volumeTemplates := map[string]*VolumeServerTemplate{}
 	for key, volume := range volumes {
-		volumeTemplates[key] = &VolumeServerTemplate{
-			ID:   &volume.ID,
-			Name: &volume.Name,
+		volumeTemplate := &VolumeServerTemplate{
+			ID: &volume.ID,
 		}
+
+		if volume.Name != "" {
+			volumeTemplate.Name = &volume.Name
+		}
+
+		if volume.VolumeType == VolumeServerVolumeTypeSbsVolume {
+			volumeTemplate.VolumeType = VolumeVolumeTypeSbsVolume
+		}
+
+		volumeTemplates[key] = volumeTemplate
 	}
 	return volumeTemplates
 }
