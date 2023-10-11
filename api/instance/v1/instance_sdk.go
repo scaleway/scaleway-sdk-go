@@ -850,11 +850,12 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 type VolumeVolumeType string
 
 const (
-	VolumeVolumeTypeLSSD      = VolumeVolumeType("l_ssd")
-	VolumeVolumeTypeBSSD      = VolumeVolumeType("b_ssd")
-	VolumeVolumeTypeUnified   = VolumeVolumeType("unified")
-	VolumeVolumeTypeScratch   = VolumeVolumeType("scratch")
-	VolumeVolumeTypeSbsVolume = VolumeVolumeType("sbs_volume")
+	VolumeVolumeTypeLSSD        = VolumeVolumeType("l_ssd")
+	VolumeVolumeTypeBSSD        = VolumeVolumeType("b_ssd")
+	VolumeVolumeTypeUnified     = VolumeVolumeType("unified")
+	VolumeVolumeTypeScratch     = VolumeVolumeType("scratch")
+	VolumeVolumeTypeSbsVolume   = VolumeVolumeType("sbs_volume")
+	VolumeVolumeTypeSbsSnapshot = VolumeVolumeType("sbs_snapshot")
 )
 
 func (enum VolumeVolumeType) String() string {
@@ -1257,18 +1258,18 @@ type PlacementGroupServer struct {
 // PrivateNIC: private nic.
 type PrivateNIC struct {
 	// ID: private NIC unique ID.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// ServerID: instance to which the private NIC is attached.
-	ServerID string `json:"server_id,omitempty"`
+	ServerID string `json:"server_id"`
 	// PrivateNetworkID: private Network the private NIC is attached to.
-	PrivateNetworkID string `json:"private_network_id,omitempty"`
+	PrivateNetworkID string `json:"private_network_id"`
 	// MacAddress: private NIC MAC address.
-	MacAddress string `json:"mac_address,omitempty"`
+	MacAddress string `json:"mac_address"`
 	// State: private NIC state.
 	// Default value: available
-	State PrivateNICState `json:"state,omitempty"`
+	State PrivateNICState `json:"state"`
 	// Tags: private NIC tags.
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 }
 
 // SecurityGroup: security group.
@@ -1433,21 +1434,23 @@ type ServerActionResponse struct {
 // ServerIP: server. ip.
 type ServerIP struct {
 	// ID: unique ID of the IP address.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Address: instance's public IP-Address.
-	Address net.IP `json:"address,omitempty"`
+	Address net.IP `json:"address"`
 	// Gateway: gateway's IP address.
-	Gateway net.IP `json:"gateway,omitempty"`
+	Gateway net.IP `json:"gateway"`
 	// Netmask: cIDR netmask.
-	Netmask string `json:"netmask,omitempty"`
+	Netmask string `json:"netmask"`
 	// Family: IP address family (inet or inet6).
 	// Default value: inet
-	Family ServerIPIPFamily `json:"family,omitempty"`
+	Family ServerIPIPFamily `json:"family"`
 	// Dynamic: true if the IP address is dynamic.
-	Dynamic bool `json:"dynamic,omitempty"`
+	Dynamic bool `json:"dynamic"`
 	// ProvisioningMode: information about this address provisioning mode.
 	// Default value: manual
-	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode,omitempty"`
+	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode"`
+	// Tags: tags associated with the IP.
+	Tags []string `json:"tags"`
 }
 
 // ServerIPv6: server. ipv6.
@@ -2383,8 +2386,8 @@ type UpdateServerRequest struct {
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
-
-	PublicIPs []*ServerIP `json:"public_ips,omitempty"`
+	// PublicIPs: a list of reserved IP IDs to attach to the Instance.
+	PublicIPs []string `json:"public_ips,omitempty"`
 
 	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
 
@@ -2394,7 +2397,7 @@ type UpdateServerRequest struct {
 	// PlacementGroup: placement group ID if Instance must be part of a placement group.
 	PlacementGroup *NullableStringValue `json:"placement_group,omitempty"`
 	// PrivateNics: instance private NICs.
-	PrivateNics []*PrivateNIC `json:"private_nics,omitempty"`
+	PrivateNics []string `json:"private_nics,omitempty"`
 	// CommercialType: set the commercial_type for this Instance.
 	// Warning: This field has some restrictions:
 	// - Cannot be changed if the Instance is not in `stopped` state.
