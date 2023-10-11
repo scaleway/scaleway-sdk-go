@@ -850,11 +850,12 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 type VolumeVolumeType string
 
 const (
-	VolumeVolumeTypeLSSD      = VolumeVolumeType("l_ssd")
-	VolumeVolumeTypeBSSD      = VolumeVolumeType("b_ssd")
-	VolumeVolumeTypeUnified   = VolumeVolumeType("unified")
-	VolumeVolumeTypeScratch   = VolumeVolumeType("scratch")
-	VolumeVolumeTypeSbsVolume = VolumeVolumeType("sbs_volume")
+	VolumeVolumeTypeLSSD        = VolumeVolumeType("l_ssd")
+	VolumeVolumeTypeBSSD        = VolumeVolumeType("b_ssd")
+	VolumeVolumeTypeUnified     = VolumeVolumeType("unified")
+	VolumeVolumeTypeScratch     = VolumeVolumeType("scratch")
+	VolumeVolumeTypeSbsVolume   = VolumeVolumeType("sbs_volume")
+	VolumeVolumeTypeSbsSnapshot = VolumeVolumeType("sbs_snapshot")
 )
 
 func (enum VolumeVolumeType) String() string {
@@ -1448,6 +1449,8 @@ type ServerIP struct {
 	// ProvisioningMode: information about this address provisioning mode.
 	// Default value: manual
 	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode,omitempty"`
+	// Tags: tags associated with the IP.
+	Tags []string `json:"tags,omitempty"`
 }
 
 // ServerIPv6: server. ipv6.
