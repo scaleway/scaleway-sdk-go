@@ -1448,6 +1448,8 @@ type ServerIP struct {
 	// ProvisioningMode: information about this address provisioning mode.
 	// Default value: manual
 	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode,omitempty"`
+	// Tags: tags associated with the IP.
+	Tags []string `json:"tags,omitempty"`
 }
 
 // ServerIPv6: server. ipv6.
