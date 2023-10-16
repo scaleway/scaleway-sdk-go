@@ -714,7 +714,8 @@ type Container struct {
 }
 
 type CreateTriggerRequestMnqNatsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
 
 	Subject string `json:"subject"`
 
@@ -726,7 +727,8 @@ type CreateTriggerRequestMnqNatsClientConfig struct {
 }
 
 type CreateTriggerRequestMnqSqsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
 
 	Queue string `json:"queue"`
 
@@ -936,7 +938,8 @@ type Trigger struct {
 }
 
 type TriggerMnqNatsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
 
 	Subject string `json:"subject"`
 
@@ -945,10 +948,13 @@ type TriggerMnqNatsClientConfig struct {
 	MnqRegion string `json:"mnq_region"`
 
 	MnqCredentialID *string `json:"mnq_credential_id"`
+
+	MnqNatsAccountID string `json:"mnq_nats_account_id"`
 }
 
 type TriggerMnqSqsClientConfig struct {
-	MnqNamespaceID string `json:"mnq_namespace_id"`
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
 
 	Queue string `json:"queue"`
 
