@@ -1448,9 +1448,9 @@ type ServerIP struct {
 	Dynamic bool `json:"dynamic"`
 	// ProvisioningMode: information about this address provisioning mode.
 	// Default value: manual
-	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode"`
+	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode,omitempty"`
 	// Tags: tags associated with the IP.
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // ServerIPv6: server. ipv6.
