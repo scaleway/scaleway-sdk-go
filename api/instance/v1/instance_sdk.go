@@ -1448,9 +1448,9 @@ type ServerIP struct {
 	Dynamic bool `json:"dynamic"`
 	// ProvisioningMode: information about this address provisioning mode.
 	// Default value: manual
-	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode,omitempty"`
+	ProvisioningMode ServerIPProvisioningMode `json:"provisioning_mode"`
 	// Tags: tags associated with the IP.
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 }
 
 // ServerIPv6: server. ipv6.
@@ -2387,7 +2387,7 @@ type UpdateServerRequest struct {
 	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 	// PublicIPs: a list of reserved IP IDs to attach to the Instance.
-	PublicIPs []string `json:"public_ips,omitempty"`
+	PublicIPs *[]string `json:"public_ips,omitempty"`
 
 	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
 
@@ -2397,7 +2397,7 @@ type UpdateServerRequest struct {
 	// PlacementGroup: placement group ID if Instance must be part of a placement group.
 	PlacementGroup *NullableStringValue `json:"placement_group,omitempty"`
 	// PrivateNics: instance private NICs.
-	PrivateNics []string `json:"private_nics,omitempty"`
+	PrivateNics *[]string `json:"private_nics,omitempty"`
 	// CommercialType: set the commercial_type for this Instance.
 	// Warning: This field has some restrictions:
 	// - Cannot be changed if the Instance is not in `stopped` state.
