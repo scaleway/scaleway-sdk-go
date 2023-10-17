@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"reflect"
 	"time"
+
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -34,7 +35,7 @@ func AddToQuery(query url.Values, key string, value interface{}) {
 			query.Add(key, fmt.Sprint(elemValue.Index(i).Interface()))
 		}
 	case elemType == reflect.TypeOf(time.Time{}):
-		query.Add(key, value.(time.Time).Format(time.RFC3339))
+		query.Add(key, value.(*time.Time).Format(time.RFC3339))
 	default:
 		query.Add(key, fmt.Sprint(elemValue.Interface()))
 	}
