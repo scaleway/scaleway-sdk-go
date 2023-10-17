@@ -489,6 +489,8 @@ type Gateway struct {
 	BastionPort uint32 `json:"bastion_port"`
 	// SMTPEnabled: defines whether SMTP traffic is allowed to pass through the gateway.
 	SMTPEnabled bool `json:"smtp_enabled"`
+	// IsLegacy: whether this uses non-IPAM IP configurations.
+	IsLegacy bool `json:"is_legacy"`
 	// Zone: zone of the gateway.
 	Zone scw.Zone `json:"zone"`
 }
@@ -518,6 +520,8 @@ type GatewayNetwork struct {
 	EnableDHCP bool `json:"enable_dhcp"`
 	// Address: address of the Gateway (in CIDR form) to use when DHCP is not used.
 	Address *scw.IPNet `json:"address"`
+	// IpamConfig: iPAM IP configuration used.
+	IpamConfig *IpamConfig `json:"ipam_config"`
 	// Zone: zone of the GatewayNetwork connection.
 	Zone scw.Zone `json:"zone"`
 }
