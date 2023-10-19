@@ -331,6 +331,8 @@ type CockpitEndpoints struct {
 	MetricsURL string `json:"metrics_url"`
 	// LogsURL: URL for logs.
 	LogsURL string `json:"logs_url"`
+	// TracesURL: URL for traces.
+	TracesURL string `json:"traces_url"`
 	// AlertmanagerURL: URL for the alert manager.
 	AlertmanagerURL string `json:"alertmanager_url"`
 	// GrafanaURL: URL for the Grafana dashboard.
