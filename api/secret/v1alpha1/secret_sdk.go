@@ -185,6 +185,8 @@ const (
 	SecretTypeOpaque = SecretType("opaque")
 	// Certificates used by load balancers, the format must be PEM concatenated and contains exactly one PKCS8 private key and the certificate full chain containing all intermediates CA.
 	SecretTypeCertificate = SecretType("certificate")
+	// Flat JSON that allows any number of first level key and a scalar type as a value (string, numeric, boolean).
+	SecretTypeKeyValue = SecretType("key_value")
 )
 
 func (enum SecretType) String() string {
