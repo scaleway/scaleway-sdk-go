@@ -460,7 +460,9 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTriggersRequestOrderBy string
 
 const (
-	ListTriggersRequestOrderByCreatedAtAsc  = ListTriggersRequestOrderBy("created_at_asc")
+	// Order by creation date ascending
+	ListTriggersRequestOrderByCreatedAtAsc = ListTriggersRequestOrderBy("created_at_asc")
+	// Order by creation date descending
 	ListTriggersRequestOrderByCreatedAtDesc = ListTriggersRequestOrderBy("created_at_desc")
 )
 
@@ -652,11 +654,14 @@ func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
 type TriggerInputType string
 
 const (
+	// Unknown input type
 	TriggerInputTypeUnknownInputType = TriggerInputType("unknown_input_type")
 	TriggerInputTypeSqs              = TriggerInputType("sqs")
-	TriggerInputTypeScwSqs           = TriggerInputType("scw_sqs")
-	TriggerInputTypeNats             = TriggerInputType("nats")
-	TriggerInputTypeScwNats          = TriggerInputType("scw_nats")
+	// Scaleway M&Q SQS queue
+	TriggerInputTypeScwSqs = TriggerInputType("scw_sqs")
+	TriggerInputTypeNats   = TriggerInputType("nats")
+	// Scaleway M&Q NATS subject
+	TriggerInputTypeScwNats = TriggerInputType("scw_nats")
 )
 
 func (enum TriggerInputType) String() string {
@@ -685,12 +690,18 @@ func (enum *TriggerInputType) UnmarshalJSON(data []byte) error {
 type TriggerStatus string
 
 const (
+	// Unknown status
 	TriggerStatusUnknownStatus = TriggerStatus("unknown_status")
-	TriggerStatusReady         = TriggerStatus("ready")
-	TriggerStatusDeleting      = TriggerStatus("deleting")
-	TriggerStatusError         = TriggerStatus("error")
-	TriggerStatusCreating      = TriggerStatus("creating")
-	TriggerStatusPending       = TriggerStatus("pending")
+	// Ready status
+	TriggerStatusReady = TriggerStatus("ready")
+	// Deleting status
+	TriggerStatusDeleting = TriggerStatus("deleting")
+	// Error status
+	TriggerStatusError = TriggerStatus("error")
+	// Creating status
+	TriggerStatusCreating = TriggerStatus("creating")
+	// Pending status
+	TriggerStatusPending = TriggerStatus("pending")
 )
 
 func (enum TriggerStatus) String() string {
@@ -716,27 +727,30 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// CreateTriggerRequestMnqNatsClientConfig: create trigger request. mnq nats client config.
 type CreateTriggerRequestMnqNatsClientConfig struct {
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
+	// Subject: name of the NATS subject the trigger should listen to.
 	Subject string `json:"subject"`
-
-	MnqProjectID string `json:"mnq_project_id"`
-
-	MnqRegion string `json:"mnq_region"`
-
+	// MnqNatsAccountID: ID of the M&Q NATS account.
 	MnqNatsAccountID string `json:"mnq_nats_account_id"`
+	// MnqProjectID: ID of the M&Q project.
+	MnqProjectID string `json:"mnq_project_id"`
+	// MnqRegion: region of the M&Q project.
+	MnqRegion string `json:"mnq_region"`
 }
 
+// CreateTriggerRequestMnqSqsClientConfig: create trigger request. mnq sqs client config.
 type CreateTriggerRequestMnqSqsClientConfig struct {
+	// Queue: name of the SQS queue the trigger should listen to.
+	Queue string `json:"queue"`
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
-	Queue string `json:"queue"`
-
+	// MnqProjectID: ID of the M&Q project.
+	// You must have activated SQS on this project.
 	MnqProjectID string `json:"mnq_project_id"`
-
+	// MnqRegion: region in which the M&Q project is activated.
 	MnqRegion string `json:"mnq_region"`
 }
 
@@ -896,10 +910,12 @@ type ListTokensResponse struct {
 	TotalCount uint32 `json:"total_count"`
 }
 
+// ListTriggersResponse: list triggers response.
 type ListTriggersResponse struct {
-	Triggers []*Trigger `json:"triggers"`
-
+	// TotalCount: total count of existing triggers (matching any filters specified).
 	TotalCount uint32 `json:"total_count"`
+	// Triggers: triggers on this page.
+	Triggers []*Trigger `json:"triggers"`
 }
 
 // Log: log.
@@ -1005,56 +1021,62 @@ type Token struct {
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
+// Trigger: trigger.
 type Trigger struct {
+	// ID: ID of the trigger.
 	ID string `json:"id"`
-
+	// Name: name of the trigger.
 	Name string `json:"name"`
-
+	// Description: description of the trigger.
 	Description string `json:"description"`
-	// InputType: default value: unknown_input_type
-	InputType TriggerInputType `json:"input_type"`
-	// Status: default value: unknown_status
-	Status TriggerStatus `json:"status"`
-
-	ErrorMessage *string `json:"error_message"`
-
+	// FunctionID: ID of the function to trigger.
 	FunctionID string `json:"function_id"`
-
+	// InputType: type of the input.
+	// Default value: unknown_input_type
+	InputType TriggerInputType `json:"input_type"`
+	// Status: status of the trigger.
+	// Default value: unknown_status
+	Status TriggerStatus `json:"status"`
+	// ErrorMessage: error message of the trigger.
+	ErrorMessage *string `json:"error_message"`
+	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
 	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
 	ScwSqsConfig *TriggerMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
-
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	SqsConfig *TriggerSqsClientConfig `json:"sqs_config,omitempty"`
-
+	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
 	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
 	ScwNatsConfig *TriggerMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+	// SqsConfig: configuration for an AWS SQS queue.
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *TriggerSqsClientConfig `json:"sqs_config,omitempty"`
 }
 
+// TriggerMnqNatsClientConfig: trigger. mnq nats client config.
 type TriggerMnqNatsClientConfig struct {
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
+	// Subject: name of the NATS subject the trigger listens to.
 	Subject string `json:"subject"`
-
-	MnqProjectID string `json:"mnq_project_id"`
-
-	MnqRegion string `json:"mnq_region"`
-
-	MnqCredentialID *string `json:"mnq_credential_id"`
-
+	// MnqNatsAccountID: ID of the M&Q NATS account.
 	MnqNatsAccountID string `json:"mnq_nats_account_id"`
+	// MnqProjectID: ID of the M&Q project.
+	MnqProjectID string `json:"mnq_project_id"`
+	// MnqRegion: region of the M&Q project.
+	MnqRegion string `json:"mnq_region"`
+	// MnqCredentialID: ID of the M&Q credentials used to subscribe to the NATS subject.
+	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
+// TriggerMnqSqsClientConfig: trigger. mnq sqs client config.
 type TriggerMnqSqsClientConfig struct {
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
+	// Queue: name of the SQS queue the trigger listens to.
 	Queue string `json:"queue"`
-
+	// MnqProjectID: ID of the M&Q project.
 	MnqProjectID string `json:"mnq_project_id"`
-
+	// MnqRegion: region in which the M&Q project is activated.
 	MnqRegion string `json:"mnq_region"`
-
+	// MnqCredentialID: ID of the M&Q credentials used to read from the SQS queue.
 	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
@@ -2499,21 +2521,21 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 type CreateTriggerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Name: name of the trigger.
 	Name string `json:"name"`
-
-	Description *string `json:"description"`
-
+	// FunctionID: ID of the function to trigger.
 	FunctionID string `json:"function_id"`
-
+	// Description: description of the trigger.
+	Description *string `json:"description"`
+	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
 	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
 	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
-
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
-
+	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
 	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
 	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+	// SqsConfig: configuration for an AWS SQS queue.
+	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
 
 func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
@@ -2551,7 +2573,7 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 type GetTriggerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// TriggerID: ID of the trigger to get.
 	TriggerID string `json:"-"`
 }
 
@@ -2589,17 +2611,18 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 type ListTriggersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// Page: page number to return.
 	Page *int32 `json:"-"`
-
+	// PageSize: maximum number of triggers to return per page.
 	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order in which to return results.
+	// Default value: created_at_asc
 	OrderBy ListTriggersRequestOrderBy `json:"-"`
-
+	// FunctionID: ID of the function the triggers belongs to.
 	FunctionID *string `json:"-"`
-
+	// NamespaceID: ID of the namespace the triggers belongs to.
 	NamespaceID *string `json:"-"`
-
+	// ProjectID: ID of the project the triggers belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -2647,13 +2670,13 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 type UpdateTriggerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// TriggerID: ID of the trigger to update.
 	TriggerID string `json:"-"`
-
+	// Name: name of the trigger.
 	Name *string `json:"name"`
-
+	// Description: description of the trigger.
 	Description *string `json:"description"`
-
+	// SqsConfig: configuration for an AWS SQS queue.
 	// Precisely one of SqsConfig must be set.
 	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
@@ -2697,7 +2720,7 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 type DeleteTriggerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
+	// TriggerID: ID of the trigger to delete.
 	TriggerID string `json:"-"`
 }
 
