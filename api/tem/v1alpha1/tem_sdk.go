@@ -87,6 +87,44 @@ func (enum *DomainLastStatusRecordStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DomainReputationStatus string
+
+const (
+	// If unspecified, the status of the domain reputation is unknown by default
+	DomainReputationStatusUnknown = DomainReputationStatus("unknown")
+	// The domain has an excellent reputation
+	DomainReputationStatusExcellent = DomainReputationStatus("excellent")
+	// The domain has a good reputation
+	DomainReputationStatusGood = DomainReputationStatus("good")
+	// The domain has an average reputation. Look at our documentation to find how to improving it
+	DomainReputationStatusAverage = DomainReputationStatus("average")
+	// The domain has a bad reputation. You should check your email activity tab in the Scaleway console and look at our documentation to find how to improving it
+	DomainReputationStatusBad = DomainReputationStatus("bad")
+)
+
+func (enum DomainReputationStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum DomainReputationStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainReputationStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainReputationStatus(DomainReputationStatus(tmp).String())
+	return nil
+}
+
 type DomainStatus string
 
 const (
@@ -354,6 +392,8 @@ type Domain struct {
 	DkimConfig string `json:"dkim_config"`
 	// Statistics: domain's statistics.
 	Statistics *DomainStatistics `json:"statistics"`
+	// Reputation: domain's reputation, available when your domain is checked and has sent enough emails.
+	Reputation *DomainReputation `json:"reputation"`
 
 	Region scw.Region `json:"region"`
 }
@@ -372,7 +412,7 @@ type DomainLastStatus struct {
 
 // DomainLastStatusDkimRecord: domain last status. dkim record.
 type DomainLastStatusDkimRecord struct {
-	// Status: status of the DKIM record's configurartion.
+	// Status: status of the DKIM record's configuration.
 	// Default value: unknown_record_status
 	Status DomainLastStatusRecordStatus `json:"status"`
 	// LastValidAt: time and date the DKIM record was last valid.
@@ -383,13 +423,28 @@ type DomainLastStatusDkimRecord struct {
 
 // DomainLastStatusSpfRecord: domain last status. spf record.
 type DomainLastStatusSpfRecord struct {
-	// Status: status of the SPF record's configurartion.
+	// Status: status of the SPF record's configuration.
 	// Default value: unknown_record_status
 	Status DomainLastStatusRecordStatus `json:"status"`
 	// LastValidAt: time and date the SPF record was last valid.
 	LastValidAt *time.Time `json:"last_valid_at"`
 	// Error: an error text displays in case the record is not valid.
 	Error *string `json:"error"`
+}
+
+// DomainReputation: domain. reputation.
+type DomainReputation struct {
+	// Status: status of your domain reputation.
+	// Default value: unknown
+	Status DomainReputationStatus `json:"status"`
+	// Score: represent a number between 0 and 100 of your domain reputation score.
+	Score uint32 `json:"score"`
+	// ScoredAt: time and date the score was calculated.
+	ScoredAt *time.Time `json:"scored_at"`
+	// PreviousScore: the domain reputation score previously calculated.
+	PreviousScore *uint32 `json:"previous_score"`
+	// PreviousScoredAt: time and date the previous score was calculated.
+	PreviousScoredAt *time.Time `json:"previous_scored_at"`
 }
 
 type DomainStatistics struct {
