@@ -391,7 +391,7 @@ func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*
 type UpdateHumanRequest struct {
 	// HumanID: UUID of the human you want to update.
 	HumanID string `json:"-"`
-
+	// Height: height of the human in meters.
 	Height *float64 `json:"height"`
 
 	ShoeSize *float32 `json:"shoe_size"`
