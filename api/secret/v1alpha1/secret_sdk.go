@@ -183,9 +183,9 @@ const (
 	SecretTypeUnknownSecretType = SecretType("unknown_secret_type")
 	// default type.
 	SecretTypeOpaque = SecretType("opaque")
-	// Certificates used by load balancers, the format must be PEM concatenated and contains exactly one PKCS8 private key and the certificate full chain containing all intermediates CA.
+	// List of concatenated PEM blocks. They can contain certificates, private keys or any other PEM block types.
 	SecretTypeCertificate = SecretType("certificate")
-	// Flat JSON that allows any number of first level key and a scalar type as a value (string, numeric, boolean).
+	// Flat JSON that allows you to set any number of first level key and a scalar type as a value (string, numeric, boolean).
 	SecretTypeKeyValue = SecretType("key_value")
 )
 
