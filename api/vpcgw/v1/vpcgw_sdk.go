@@ -387,6 +387,14 @@ func (enum *PATRuleProtocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// CreateGatewayNetworkRequestIpamConfig: create gateway network request. ipam config.
+type CreateGatewayNetworkRequestIpamConfig struct {
+	// PushDefaultRoute: enabling the default route also enables masquerading.
+	PushDefaultRoute bool `json:"push_default_route"`
+	// IpamIPID: use this IPAM-booked IP ID as the Gateway's IP in this Private Network.
+	IpamIPID *string `json:"ipam_ip_id"`
+}
+
 // DHCP: dhcp.
 type DHCP struct {
 	// ID: ID of the DHCP config.
@@ -564,6 +572,8 @@ type IP struct {
 type IpamConfig struct {
 	// PushDefaultRoute: defines whether the default route is enabled on that Gateway Network.
 	PushDefaultRoute bool `json:"push_default_route"`
+	// IpamIPID: iPAM-booked IP ID as the Gateway's IP in this Private Network.
+	IpamIPID string `json:"ipam_ip_id"`
 }
 
 // ListDHCPEntriesResponse: list dhcp entries response.
@@ -676,6 +686,14 @@ type SetPATRulesRequestRule struct {
 type SetPATRulesResponse struct {
 	// PatRules: list of PAT rules.
 	PatRules []*PATRule `json:"pat_rules"`
+}
+
+// UpdateGatewayNetworkRequestIpamConfig: update gateway network request. ipam config.
+type UpdateGatewayNetworkRequestIpamConfig struct {
+	// PushDefaultRoute: enabling the default route also enables masquerading.
+	PushDefaultRoute *bool `json:"push_default_route"`
+	// IpamIPID: use this IPAM-booked IP ID as the Gateway's IP in this Private Network.
+	IpamIPID *string `json:"ipam_ip_id"`
 }
 
 // Service API
@@ -1145,7 +1163,7 @@ type CreateGatewayNetworkRequest struct {
 	// IpamConfig: auto-configure the GatewayNetwork using Scaleway's IPAM (IP address management service).
 	// Note: all or none of the GatewayNetworks for a single gateway can use the IPAM. DHCP and IPAM configurations cannot be mixed. Some products may require that the Public Gateway uses the IPAM, to ensure correct functionality.
 	// Precisely one of Address, DHCP, DHCPID, IpamConfig must be set.
-	IpamConfig *IpamConfig `json:"ipam_config,omitempty"`
+	IpamConfig *CreateGatewayNetworkRequestIpamConfig `json:"ipam_config,omitempty"`
 }
 
 // CreateGatewayNetwork: attach a Public Gateway to a Private Network.
@@ -1203,7 +1221,7 @@ type UpdateGatewayNetworkRequest struct {
 	// IpamConfig: auto-configure the GatewayNetwork using Scaleway's IPAM (IP address management service).
 	// Note: all or none of the GatewayNetworks for a single gateway can use the IPAM. DHCP and IPAM configurations cannot be mixed. Some products may require that the Public Gateway uses the IPAM, to ensure correct functionality.
 	// Precisely one of Address, DHCPID, IpamConfig must be set.
-	IpamConfig *IpamConfig `json:"ipam_config,omitempty"`
+	IpamConfig *UpdateGatewayNetworkRequestIpamConfig `json:"ipam_config,omitempty"`
 }
 
 // UpdateGatewayNetwork: update a Public Gateway's connection to a Private Network.
