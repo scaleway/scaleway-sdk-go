@@ -355,17 +355,23 @@ type Plan struct {
 	// Default value: unknown_name
 	Name PlanName `json:"name"`
 
-	// RetentionMetricsInterval: retention for metrics.
+	// RetentionMetricsInterval: interval of time during which Scaleway's Cockpit keeps your metrics.
 	RetentionMetricsInterval *scw.Duration `json:"retention_metrics_interval"`
 
-	// RetentionLogsInterval: retention for logs.
+	// RetentionLogsInterval: interval of time during which Scaleway's Cockpit keeps your logs.
 	RetentionLogsInterval *scw.Duration `json:"retention_logs_interval"`
 
-	// SampleIngestionPrice: ingestion price for 1 million samples in cents.
+	// RetentionTracesInterval: interval of time during which Scaleway's Cockpit keeps your traces.
+	RetentionTracesInterval *scw.Duration `json:"retention_traces_interval"`
+
+	// SampleIngestionPrice: ingestion price in cents for 1 million samples.
 	SampleIngestionPrice uint32 `json:"sample_ingestion_price"`
 
-	// LogsIngestionPrice: ingestion price for 1 GB of logs in cents.
+	// LogsIngestionPrice: ingestion price in cents for 1 GB of logs.
 	LogsIngestionPrice uint32 `json:"logs_ingestion_price"`
+
+	// TracesIngestionPrice: ingestion price in cents for 1 GB of traces.
+	TracesIngestionPrice uint32 `json:"traces_ingestion_price"`
 
 	// RetentionPrice: retention price in euros per month.
 	RetentionPrice uint32 `json:"retention_price"`
