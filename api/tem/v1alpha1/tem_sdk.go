@@ -78,22 +78,22 @@ func (enum *DomainLastStatusRecordStatus) UnmarshalJSON(data []byte) error {
 type DomainReputationStatus string
 
 const (
-	// If unspecified, the status of the domain reputation is unknown by default.
-	DomainReputationStatusUnknown = DomainReputationStatus("unknown")
+	// If unspecified, the status of the domain's reputation is unknown by default.
+	DomainReputationStatusUnknownStatus = DomainReputationStatus("unknown_status")
 	// The domain has an excellent reputation.
 	DomainReputationStatusExcellent = DomainReputationStatus("excellent")
 	// The domain has a good reputation.
 	DomainReputationStatusGood = DomainReputationStatus("good")
-	// The domain has an average reputation. Look at our documentation to find how to improving it.
+	// The domain has an average reputation.
 	DomainReputationStatusAverage = DomainReputationStatus("average")
-	// The domain has a bad reputation. You should check your email activity tab in the Scaleway console and look at our documentation to find how to improving it.
+	// The domain has a bad reputation.
 	DomainReputationStatusBad = DomainReputationStatus("bad")
 )
 
 func (enum DomainReputationStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return "unknown_status"
 	}
 	return string(enum)
 }
@@ -128,7 +128,7 @@ const (
 	DomainStatusLocked = DomainStatus("locked")
 	// The domain is revoked.
 	DomainStatusRevoked = DomainStatus("revoked")
-	// The domain is pending for check.
+	// The domain is pending, waiting to be checked.
 	DomainStatusPending = DomainStatus("pending")
 )
 
@@ -344,20 +344,20 @@ type EmailTry struct {
 
 // DomainReputation: domain reputation.
 type DomainReputation struct {
-	// Status: status of your domain reputation.
-	// Default value: unknown
+	// Status: status of your domain's reputation.
+	// Default value: unknown_status
 	Status DomainReputationStatus `json:"status"`
 
-	// Score: represent a number between 0 and 100 of your domain reputation score.
+	// Score: a range from 0 to 100 that determines your domain's reputation score. A score of `0` means a bad domain reputation and a score of `100` means an excellent domain reputation.
 	Score uint32 `json:"score"`
 
 	// ScoredAt: time and date the score was calculated.
 	ScoredAt *time.Time `json:"scored_at"`
 
-	// PreviousScore: the domain reputation score previously calculated.
+	// PreviousScore: the previously-calculated domain's reputation score.
 	PreviousScore *uint32 `json:"previous_score"`
 
-	// PreviousScoredAt: time and date the previous score was calculated.
+	// PreviousScoredAt: time and date the previous reputation score was calculated.
 	PreviousScoredAt *time.Time `json:"previous_scored_at"`
 }
 
@@ -511,7 +511,7 @@ type Domain struct {
 	// Statistics: domain's statistics.
 	Statistics *DomainStatistics `json:"statistics"`
 
-	// Reputation: domain's reputation, available when your domain is checked and has sent enough emails.
+	// Reputation: the domain's reputation is available when your domain is checked and has sent enough emails.
 	Reputation *DomainReputation `json:"reputation"`
 
 	// Region: region to target. If none is passed will use default region from the config.
