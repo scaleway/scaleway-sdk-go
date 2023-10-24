@@ -39,18 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: serverless Functions API.
-type API struct {
-	client *scw.Client
-}
-
-// NewAPI returns a API object from a Scaleway client.
-func NewAPI(client *scw.Client) *API {
-	return &API{
-		client: client,
-	}
-}
-
 type CronStatus string
 
 const (
@@ -460,9 +448,9 @@ func (enum *ListTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListTriggersRequestOrderBy string
 
 const (
-	// Order by creation date ascending
+	// Order by creation date ascending.
 	ListTriggersRequestOrderByCreatedAtAsc = ListTriggersRequestOrderBy("created_at_asc")
-	// Order by creation date descending
+	// Order by creation date descending.
 	ListTriggersRequestOrderByCreatedAtDesc = ListTriggersRequestOrderBy("created_at_desc")
 )
 
@@ -555,35 +543,6 @@ func (enum *NamespaceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type NullValue string
-
-const (
-	NullValueNULLVALUE = NullValue("NULL_VALUE")
-)
-
-func (enum NullValue) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "NULL_VALUE"
-	}
-	return string(enum)
-}
-
-func (enum NullValue) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *NullValue) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = NullValue(NullValue(tmp).String())
-	return nil
-}
-
 type RuntimeStatus string
 
 const (
@@ -654,13 +613,13 @@ func (enum *TokenStatus) UnmarshalJSON(data []byte) error {
 type TriggerInputType string
 
 const (
-	// Unknown input type
+	// Unknown input type.
 	TriggerInputTypeUnknownInputType = TriggerInputType("unknown_input_type")
 	TriggerInputTypeSqs              = TriggerInputType("sqs")
-	// Scaleway M&Q SQS queue
+	// Scaleway M&Q SQS queue.
 	TriggerInputTypeScwSqs = TriggerInputType("scw_sqs")
 	TriggerInputTypeNats   = TriggerInputType("nats")
-	// Scaleway M&Q NATS subject
+	// Scaleway M&Q NATS subject.
 	TriggerInputTypeScwNats = TriggerInputType("scw_nats")
 )
 
@@ -690,17 +649,17 @@ func (enum *TriggerInputType) UnmarshalJSON(data []byte) error {
 type TriggerStatus string
 
 const (
-	// Unknown status
+	// Unknown status.
 	TriggerStatusUnknownStatus = TriggerStatus("unknown_status")
-	// Ready status
+	// Ready status.
 	TriggerStatusReady = TriggerStatus("ready")
-	// Deleting status
+	// Deleting status.
 	TriggerStatusDeleting = TriggerStatus("deleting")
-	// Error status
+	// Error status.
 	TriggerStatusError = TriggerStatus("error")
-	// Creating status
+	// Creating status.
 	TriggerStatusCreating = TriggerStatus("creating")
-	// Pending status
+	// Pending status.
 	TriggerStatusPending = TriggerStatus("pending")
 )
 
@@ -727,33 +686,104 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// CreateTriggerRequestMnqNatsClientConfig: create trigger request. mnq nats client config.
+// SecretHashedValue: secret hashed value.
+type SecretHashedValue struct {
+	Key string `json:"key"`
+
+	HashedValue string `json:"hashed_value"`
+}
+
+// TriggerMnqNatsClientConfig: trigger mnq nats client config.
+type TriggerMnqNatsClientConfig struct {
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
+
+	// Subject: name of the NATS subject the trigger listens to.
+	Subject string `json:"subject"`
+
+	// MnqNatsAccountID: ID of the M&Q NATS account.
+	MnqNatsAccountID string `json:"mnq_nats_account_id"`
+
+	// MnqProjectID: ID of the M&Q project.
+	MnqProjectID string `json:"mnq_project_id"`
+
+	// MnqRegion: region of the M&Q project.
+	MnqRegion string `json:"mnq_region"`
+
+	// MnqCredentialID: ID of the M&Q credentials used to subscribe to the NATS subject.
+	MnqCredentialID *string `json:"mnq_credential_id"`
+}
+
+// TriggerMnqSqsClientConfig: trigger mnq sqs client config.
+type TriggerMnqSqsClientConfig struct {
+	// Deprecated
+	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
+
+	// Queue: name of the SQS queue the trigger listens to.
+	Queue string `json:"queue"`
+
+	// MnqProjectID: ID of the M&Q project.
+	MnqProjectID string `json:"mnq_project_id"`
+
+	// MnqRegion: region in which the M&Q project is activated.
+	MnqRegion string `json:"mnq_region"`
+
+	// MnqCredentialID: ID of the M&Q credentials used to read from the SQS queue.
+	MnqCredentialID *string `json:"mnq_credential_id"`
+}
+
+// TriggerSqsClientConfig: trigger sqs client config.
+type TriggerSqsClientConfig struct {
+	Endpoint string `json:"endpoint"`
+
+	QueueURL string `json:"queue_url"`
+
+	AccessKey string `json:"access_key"`
+
+	SecretKey string `json:"secret_key"`
+}
+
+// Secret: secret.
+type Secret struct {
+	Key string `json:"key"`
+
+	Value *string `json:"value"`
+}
+
+// CreateTriggerRequestMnqNatsClientConfig: create trigger request mnq nats client config.
 type CreateTriggerRequestMnqNatsClientConfig struct {
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
+
 	// Subject: name of the NATS subject the trigger should listen to.
 	Subject string `json:"subject"`
+
 	// MnqNatsAccountID: ID of the M&Q NATS account.
 	MnqNatsAccountID string `json:"mnq_nats_account_id"`
+
 	// MnqProjectID: ID of the M&Q project.
 	MnqProjectID string `json:"mnq_project_id"`
+
 	// MnqRegion: region of the M&Q project.
 	MnqRegion string `json:"mnq_region"`
 }
 
-// CreateTriggerRequestMnqSqsClientConfig: create trigger request. mnq sqs client config.
+// CreateTriggerRequestMnqSqsClientConfig: create trigger request mnq sqs client config.
 type CreateTriggerRequestMnqSqsClientConfig struct {
-	// Queue: name of the SQS queue the trigger should listen to.
-	Queue string `json:"queue"`
 	// Deprecated
 	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-	// MnqProjectID: ID of the M&Q project.
-	// You must have activated SQS on this project.
+
+	// Queue: name of the SQS queue the trigger should listen to.
+	Queue string `json:"queue"`
+
+	// MnqProjectID: you must have activated SQS on this project.
 	MnqProjectID string `json:"mnq_project_id"`
+
 	// MnqRegion: region in which the M&Q project is activated.
 	MnqRegion string `json:"mnq_region"`
 }
 
+// CreateTriggerRequestSqsClientConfig: create trigger request sqs client config.
 type CreateTriggerRequestSqsClientConfig struct {
 	Endpoint string `json:"endpoint"`
 
@@ -768,15 +798,20 @@ type CreateTriggerRequestSqsClientConfig struct {
 type Cron struct {
 	// ID: UUID of the cron.
 	ID string `json:"id"`
+
 	// FunctionID: UUID of the function the cron applies to.
 	FunctionID string `json:"function_id"`
+
 	// Schedule: schedule of the cron.
 	Schedule string `json:"schedule"`
+
 	// Args: arguments to pass with the cron.
 	Args *scw.JSONObject `json:"args"`
+
 	// Status: status of the cron.
 	// Default value: unknown
 	Status CronStatus `json:"status"`
+
 	// Name: name of the cron.
 	Name string `json:"name"`
 }
@@ -785,185 +820,25 @@ type Cron struct {
 type Domain struct {
 	// ID: UUID of the domain.
 	ID string `json:"id"`
+
 	// Hostname: hostname associated with the function.
 	Hostname string `json:"hostname"`
+
 	// FunctionID: UUID of the function the domain is associated with.
 	FunctionID string `json:"function_id"`
+
 	// URL: URL of the function.
 	URL string `json:"url"`
+
 	// Status: state of the doamin.
 	// Default value: unknown
 	Status DomainStatus `json:"status"`
+
 	// ErrorMessage: error message if the domain is in "error" state.
 	ErrorMessage *string `json:"error_message"`
 }
 
-type DownloadURL struct {
-	URL string `json:"url"`
-
-	Headers map[string]*[]string `json:"headers"`
-}
-
-// Function: function.
-type Function struct {
-	// ID: UUID of the function.
-	ID string `json:"id"`
-	// Name: name of the function.
-	Name string `json:"name"`
-	// NamespaceID: UUID of the namespace the function belongs to.
-	NamespaceID string `json:"namespace_id"`
-	// Status: status of the function.
-	// Default value: unknown
-	Status FunctionStatus `json:"status"`
-	// EnvironmentVariables: environment variables of the function.
-	EnvironmentVariables map[string]string `json:"environment_variables"`
-	// MinScale: minimum number of instances to scale the function to.
-	MinScale uint32 `json:"min_scale"`
-	// MaxScale: maximum number of instances to scale the function to.
-	MaxScale uint32 `json:"max_scale"`
-	// Runtime: runtime of the function.
-	// Default value: unknown_runtime
-	Runtime FunctionRuntime `json:"runtime"`
-	// MemoryLimit: memory limit of the function in MB.
-	MemoryLimit uint32 `json:"memory_limit"`
-	// CPULimit: CPU limit of the function.
-	CPULimit uint32 `json:"cpu_limit"`
-	// Timeout: request processing time limit for the function.
-	Timeout *scw.Duration `json:"timeout"`
-	// Handler: handler to use for the function.
-	Handler string `json:"handler"`
-	// ErrorMessage: error message if the function is in "error" state.
-	ErrorMessage *string `json:"error_message"`
-	// BuildMessage: description of the current build step.
-	BuildMessage *string `json:"build_message"`
-	// Privacy: privacy setting of the function.
-	// Default value: unknown_privacy
-	Privacy FunctionPrivacy `json:"privacy"`
-	// Description: description of the function.
-	Description *string `json:"description"`
-	// DomainName: domain name associated with the function.
-	DomainName string `json:"domain_name"`
-	// SecretEnvironmentVariables: secret environment variables of the function.
-	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-	// Region: region in which the function is deployed.
-	Region scw.Region `json:"region"`
-	// HTTPOption: configuration for handling of HTTP and HTTPS requests.
-	// Possible values:
-	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	// Default value: enabled
-	HTTPOption FunctionHTTPOption `json:"http_option"`
-
-	RuntimeMessage string `json:"runtime_message"`
-}
-
-// ListCronsResponse: list crons response.
-type ListCronsResponse struct {
-	// Crons: array of crons.
-	Crons []*Cron `json:"crons"`
-	// TotalCount: total number of crons.
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListDomainsResponse: list domains response.
-type ListDomainsResponse struct {
-	// Domains: array of domains.
-	Domains []*Domain `json:"domains"`
-	// TotalCount: total number of domains.
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListFunctionRuntimesResponse: list function runtimes response.
-type ListFunctionRuntimesResponse struct {
-	// Runtimes: array of runtimes available.
-	Runtimes []*Runtime `json:"runtimes"`
-	// TotalCount: total number of runtimes.
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListFunctionsResponse: list functions response.
-type ListFunctionsResponse struct {
-	// Functions: array of functions.
-	Functions []*Function `json:"functions"`
-	// TotalCount: total number of functions.
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListLogsResponse: list logs response.
-type ListLogsResponse struct {
-	// Logs: array of logs.
-	Logs []*Log `json:"logs"`
-	// TotalCount: total number of logs.
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListNamespacesResponse: list namespaces response.
-type ListNamespacesResponse struct {
-	Namespaces []*Namespace `json:"namespaces"`
-	// TotalCount: total number of namespaces.
-	TotalCount uint32 `json:"total_count"`
-}
-
-type ListTokensResponse struct {
-	Tokens []*Token `json:"tokens"`
-
-	TotalCount uint32 `json:"total_count"`
-}
-
-// ListTriggersResponse: list triggers response.
-type ListTriggersResponse struct {
-	// TotalCount: total count of existing triggers (matching any filters specified).
-	TotalCount uint32 `json:"total_count"`
-	// Triggers: triggers on this page.
-	Triggers []*Trigger `json:"triggers"`
-}
-
-// Log: log.
-type Log struct {
-	// Message: message of the log.
-	Message string `json:"message"`
-	// Timestamp: timestamp of the log.
-	Timestamp *time.Time `json:"timestamp"`
-	// ID: UUID of the log.
-	ID string `json:"id"`
-	// Level: severity of the log (info, debug, error etc.).
-	Level string `json:"level"`
-	// Source: source of the log (core runtime or user code).
-	Source string `json:"source"`
-	// Stream: can be stdout or stderr.
-	// Default value: unknown
-	Stream LogStream `json:"stream"`
-}
-
-// Namespace: namespace.
-type Namespace struct {
-	// ID: UUID of the namespace.
-	ID string `json:"id"`
-	// Name: name of the namespace.
-	Name string `json:"name"`
-	// EnvironmentVariables: environment variables of the namespace.
-	EnvironmentVariables map[string]string `json:"environment_variables"`
-	// OrganizationID: UUID of the Organization the namespace belongs to.
-	OrganizationID string `json:"organization_id"`
-	// ProjectID: UUID of the Project the namespace belongs to.
-	ProjectID string `json:"project_id"`
-	// Status: status of the namespace.
-	// Default value: unknown
-	Status NamespaceStatus `json:"status"`
-	// RegistryNamespaceID: UUID of the registry namespace.
-	RegistryNamespaceID string `json:"registry_namespace_id"`
-	// ErrorMessage: error message if the namespace is in "error" state.
-	ErrorMessage *string `json:"error_message"`
-	// RegistryEndpoint: registry endpoint of the namespace.
-	RegistryEndpoint string `json:"registry_endpoint"`
-	// Description: description of the namespace.
-	Description *string `json:"description"`
-	// SecretEnvironmentVariables: secret environment variables of the namespace.
-	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
-	// Region: region in which the namespace is located.
-	Region scw.Region `json:"region"`
-}
-
+// Runtime: runtime.
 type Runtime struct {
 	Name string `json:"name"`
 
@@ -974,6 +849,7 @@ type Runtime struct {
 	DefaultHandler string `json:"default_handler"`
 
 	CodeSample string `json:"code_sample"`
+
 	// Status: default value: unknown_status
 	Status RuntimeStatus `json:"status"`
 
@@ -986,37 +862,165 @@ type Runtime struct {
 	LogoURL string `json:"logo_url"`
 }
 
-type Secret struct {
-	Key string `json:"key"`
+// Function: function.
+type Function struct {
+	// ID: UUID of the function.
+	ID string `json:"id"`
 
-	Value *string `json:"value"`
+	// Name: name of the function.
+	Name string `json:"name"`
+
+	// NamespaceID: UUID of the namespace the function belongs to.
+	NamespaceID string `json:"namespace_id"`
+
+	// Status: status of the function.
+	// Default value: unknown
+	Status FunctionStatus `json:"status"`
+
+	// EnvironmentVariables: environment variables of the function.
+	EnvironmentVariables map[string]string `json:"environment_variables"`
+
+	// MinScale: minimum number of instances to scale the function to.
+	MinScale uint32 `json:"min_scale"`
+
+	// MaxScale: maximum number of instances to scale the function to.
+	MaxScale uint32 `json:"max_scale"`
+
+	// Runtime: runtime of the function.
+	// Default value: unknown_runtime
+	Runtime FunctionRuntime `json:"runtime"`
+
+	// MemoryLimit: memory limit of the function in MB.
+	MemoryLimit uint32 `json:"memory_limit"`
+
+	// CPULimit: CPU limit of the function.
+	CPULimit uint32 `json:"cpu_limit"`
+
+	// Timeout: request processing time limit for the function.
+	Timeout *scw.Duration `json:"timeout"`
+
+	// Handler: handler to use for the function.
+	Handler string `json:"handler"`
+
+	// ErrorMessage: error message if the function is in "error" state.
+	ErrorMessage *string `json:"error_message"`
+
+	// BuildMessage: description of the current build step.
+	BuildMessage *string `json:"build_message"`
+
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
+	Privacy FunctionPrivacy `json:"privacy"`
+
+	// Description: description of the function.
+	Description *string `json:"description"`
+
+	// DomainName: domain name associated with the function.
+	DomainName string `json:"domain_name"`
+
+	// SecretEnvironmentVariables: secret environment variables of the function.
+	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+
+	// Region: region in which the function is deployed.
+	Region scw.Region `json:"region"`
+
+	// HTTPOption: possible values:
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
+
+	RuntimeMessage string `json:"runtime_message"`
 }
 
-type SecretHashedValue struct {
-	Key string `json:"key"`
+// Log: log.
+type Log struct {
+	// Message: message of the log.
+	Message string `json:"message"`
 
-	HashedValue string `json:"hashed_value"`
+	// Timestamp: timestamp of the log.
+	Timestamp *time.Time `json:"timestamp"`
+
+	// ID: UUID of the log.
+	ID string `json:"id"`
+
+	// Level: severity of the log (info, debug, error etc.).
+	Level string `json:"level"`
+
+	// Source: source of the log (core runtime or user code).
+	Source string `json:"source"`
+
+	// Stream: can be stdout or stderr.
+	// Default value: unknown
+	Stream LogStream `json:"stream"`
+}
+
+// Namespace: namespace.
+type Namespace struct {
+	// ID: UUID of the namespace.
+	ID string `json:"id"`
+
+	// Name: name of the namespace.
+	Name string `json:"name"`
+
+	// EnvironmentVariables: environment variables of the namespace.
+	EnvironmentVariables map[string]string `json:"environment_variables"`
+
+	// OrganizationID: UUID of the Organization the namespace belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: UUID of the Project the namespace belongs to.
+	ProjectID string `json:"project_id"`
+
+	// Status: status of the namespace.
+	// Default value: unknown
+	Status NamespaceStatus `json:"status"`
+
+	// RegistryNamespaceID: UUID of the registry namespace.
+	RegistryNamespaceID string `json:"registry_namespace_id"`
+
+	// ErrorMessage: error message if the namespace is in "error" state.
+	ErrorMessage *string `json:"error_message"`
+
+	// RegistryEndpoint: registry endpoint of the namespace.
+	RegistryEndpoint string `json:"registry_endpoint"`
+
+	// Description: description of the namespace.
+	Description *string `json:"description"`
+
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
+	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+
+	// Region: region in which the namespace is located.
+	Region scw.Region `json:"region"`
 }
 
 // Token: token.
 type Token struct {
 	// ID: UUID of the token.
 	ID string `json:"id"`
+
 	// Token: string of the token.
 	Token string `json:"token"`
+
 	// FunctionID: UUID of the function the token is associated with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
+
 	// NamespaceID: UUID of the namespace the token is assoicated with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
+
 	// Deprecated: PublicKey: public key of the token.
 	PublicKey *string `json:"public_key,omitempty"`
+
 	// Status: status of the token.
 	// Default value: unknown
 	Status TokenStatus `json:"status"`
+
 	// Description: description of the token.
 	Description *string `json:"description"`
+
 	// ExpiresAt: date on which the token expires.
 	ExpiresAt *time.Time `json:"expires_at"`
 }
@@ -1025,112 +1029,871 @@ type Token struct {
 type Trigger struct {
 	// ID: ID of the trigger.
 	ID string `json:"id"`
+
 	// Name: name of the trigger.
 	Name string `json:"name"`
+
 	// Description: description of the trigger.
 	Description string `json:"description"`
+
 	// FunctionID: ID of the function to trigger.
 	FunctionID string `json:"function_id"`
+
 	// InputType: type of the input.
 	// Default value: unknown_input_type
 	InputType TriggerInputType `json:"input_type"`
+
 	// Status: status of the trigger.
 	// Default value: unknown_status
 	Status TriggerStatus `json:"status"`
+
 	// ErrorMessage: error message of the trigger.
 	ErrorMessage *string `json:"error_message"`
+
 	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwSqsConfig *TriggerMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
+
 	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwNatsConfig *TriggerMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+
 	// SqsConfig: configuration for an AWS SQS queue.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	SqsConfig *TriggerSqsClientConfig `json:"sqs_config,omitempty"`
 }
 
-// TriggerMnqNatsClientConfig: trigger. mnq nats client config.
-type TriggerMnqNatsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-	// Subject: name of the NATS subject the trigger listens to.
-	Subject string `json:"subject"`
-	// MnqNatsAccountID: ID of the M&Q NATS account.
-	MnqNatsAccountID string `json:"mnq_nats_account_id"`
-	// MnqProjectID: ID of the M&Q project.
-	MnqProjectID string `json:"mnq_project_id"`
-	// MnqRegion: region of the M&Q project.
-	MnqRegion string `json:"mnq_region"`
-	// MnqCredentialID: ID of the M&Q credentials used to subscribe to the NATS subject.
-	MnqCredentialID *string `json:"mnq_credential_id"`
-}
-
-// TriggerMnqSqsClientConfig: trigger. mnq sqs client config.
-type TriggerMnqSqsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-	// Queue: name of the SQS queue the trigger listens to.
-	Queue string `json:"queue"`
-	// MnqProjectID: ID of the M&Q project.
-	MnqProjectID string `json:"mnq_project_id"`
-	// MnqRegion: region in which the M&Q project is activated.
-	MnqRegion string `json:"mnq_region"`
-	// MnqCredentialID: ID of the M&Q credentials used to read from the SQS queue.
-	MnqCredentialID *string `json:"mnq_credential_id"`
-}
-
-type TriggerSqsClientConfig struct {
-	Endpoint string `json:"endpoint"`
-
-	QueueURL string `json:"queue_url"`
-
-	AccessKey string `json:"access_key"`
-
-	SecretKey string `json:"secret_key"`
-}
-
+// UpdateTriggerRequestSqsClientConfig: update trigger request sqs client config.
 type UpdateTriggerRequestSqsClientConfig struct {
 	AccessKey *string `json:"access_key"`
 
 	SecretKey *string `json:"secret_key"`
 }
 
-// UploadURL: upload url.
-type UploadURL struct {
-	// URL: upload URL to upload the function to.
+// CreateCronRequest: create cron request.
+type CreateCronRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to use the cron with.
+	FunctionID string `json:"function_id"`
+
+	// Schedule: schedule of the cron in UNIX cron format.
+	Schedule string `json:"schedule"`
+
+	// Args: arguments to use with the cron.
+	Args *scw.JSONObject `json:"args,omitempty"`
+
+	// Name: name of the cron.
+	Name *string `json:"name,omitempty"`
+}
+
+// CreateDomainRequest: create domain request.
+type CreateDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Hostname: hostame to create.
+	Hostname string `json:"hostname"`
+
+	// FunctionID: UUID of the function to associate the domain with.
+	FunctionID string `json:"function_id"`
+}
+
+// CreateFunctionRequest: create function request.
+type CreateFunctionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Name: name of the function to create.
+	Name string `json:"name"`
+
+	// NamespaceID: UUID of the namespace the function will be created in.
+	NamespaceID string `json:"namespace_id"`
+
+	// EnvironmentVariables: environment variables of the function.
+	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
+
+	// MinScale: minumum number of instances to scale the function to.
+	MinScale *uint32 `json:"min_scale,omitempty"`
+
+	// MaxScale: maximum number of instances to scale the function to.
+	MaxScale *uint32 `json:"max_scale,omitempty"`
+
+	// Runtime: runtime to use with the function.
+	// Default value: unknown_runtime
+	Runtime FunctionRuntime `json:"runtime"`
+
+	// MemoryLimit: memory limit of the function in MB.
+	MemoryLimit *uint32 `json:"memory_limit,omitempty"`
+
+	// Timeout: request processing time limit for the function.
+	Timeout *scw.Duration `json:"timeout,omitempty"`
+
+	// Handler: handler to use with the function.
+	Handler *string `json:"handler,omitempty"`
+
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
+	Privacy FunctionPrivacy `json:"privacy"`
+
+	// Description: description of the function.
+	Description *string `json:"description,omitempty"`
+
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// HTTPOption: possible values:
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
+}
+
+// CreateNamespaceRequest: create namespace request.
+type CreateNamespaceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Name string `json:"name"`
+
+	// EnvironmentVariables: environment variables of the namespace.
+	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
+
+	// ProjectID: UUID of the project in which the namespace will be created.
+	ProjectID string `json:"project_id"`
+
+	// Description: description of the namespace.
+	Description *string `json:"description,omitempty"`
+
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+}
+
+// CreateTokenRequest: create token request.
+type CreateTokenRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to associate the token with.
+	// Precisely one of FunctionID, NamespaceID must be set.
+	FunctionID *string `json:"function_id,omitempty"`
+
+	// NamespaceID: UUID of the namespace to associate the token with.
+	// Precisely one of FunctionID, NamespaceID must be set.
+	NamespaceID *string `json:"namespace_id,omitempty"`
+
+	// Description: description of the token.
+	Description *string `json:"description,omitempty"`
+
+	// ExpiresAt: date on which the token expires.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+}
+
+// CreateTriggerRequest: create trigger request.
+type CreateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Name: name of the trigger.
+	Name string `json:"name"`
+
+	// FunctionID: ID of the function to trigger.
+	FunctionID string `json:"function_id"`
+
+	// Description: description of the trigger.
+	Description *string `json:"description,omitempty"`
+
+	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
+	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
+
+	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
+	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
+
+	// SqsConfig: configuration for an AWS SQS queue.
+	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
+	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+}
+
+// DeleteCronRequest: delete cron request.
+type DeleteCronRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CronID: UUID of the cron to delete.
+	CronID string `json:"-"`
+}
+
+// DeleteDomainRequest: delete domain request.
+type DeleteDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: UUID of the domain to delete.
+	DomainID string `json:"-"`
+}
+
+// DeleteFunctionRequest: delete function request.
+type DeleteFunctionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to delete.
+	FunctionID string `json:"-"`
+}
+
+// DeleteNamespaceRequest: delete namespace request.
+type DeleteNamespaceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NamespaceID: UUID of the namespace.
+	NamespaceID string `json:"-"`
+}
+
+// DeleteTokenRequest: delete token request.
+type DeleteTokenRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TokenID: UUID of the token to delete.
+	TokenID string `json:"-"`
+}
+
+// DeleteTriggerRequest: delete trigger request.
+type DeleteTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: ID of the trigger to delete.
+	TriggerID string `json:"-"`
+}
+
+// DeployFunctionRequest: deploy function request.
+type DeployFunctionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to deploy.
+	FunctionID string `json:"-"`
+}
+
+// DownloadURL: download url.
+type DownloadURL struct {
 	URL string `json:"url"`
-	// Headers: HTTP headers.
+
 	Headers map[string]*[]string `json:"headers"`
 }
 
-// Service API
+// GetCronRequest: get cron request.
+type GetCronRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
 
-// Regions list localities the api is available in
-func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	// CronID: UUID of the cron to get.
+	CronID string `json:"-"`
 }
 
+// GetDomainRequest: get domain request.
+type GetDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: UUID of the domain to get.
+	DomainID string `json:"-"`
+}
+
+// GetFunctionDownloadURLRequest: get function download url request.
+type GetFunctionDownloadURLRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to get the the download URL for.
+	FunctionID string `json:"-"`
+}
+
+// GetFunctionRequest: get function request.
+type GetFunctionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function.
+	FunctionID string `json:"-"`
+}
+
+// GetFunctionUploadURLRequest: get function upload url request.
+type GetFunctionUploadURLRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to get the upload URL for.
+	FunctionID string `json:"-"`
+
+	// ContentLength: size of the archive to upload in bytes.
+	ContentLength uint64 `json:"content_length"`
+}
+
+// GetNamespaceRequest: get namespace request.
+type GetNamespaceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NamespaceID: UUID of the namespace.
+	NamespaceID string `json:"-"`
+}
+
+// GetTokenRequest: get token request.
+type GetTokenRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TokenID: UUID of the token to get.
+	TokenID string `json:"-"`
+}
+
+// GetTriggerRequest: get trigger request.
+type GetTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: ID of the trigger to get.
+	TriggerID string `json:"-"`
+}
+
+// IssueJWTRequest: issue jwt request.
+type IssueJWTRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Precisely one of FunctionID, NamespaceID must be set.
+	FunctionID *string `json:"function_id,omitempty"`
+
+	// Precisely one of FunctionID, NamespaceID must be set.
+	NamespaceID *string `json:"namespace_id,omitempty"`
+
+	ExpiresAt *time.Time `json:"-"`
+}
+
+// ListCronsRequest: list crons request.
+type ListCronsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of crons per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order of the crons.
+	// Default value: created_at_asc
+	OrderBy ListCronsRequestOrderBy `json:"-"`
+
+	// FunctionID: UUID of the function.
+	FunctionID string `json:"-"`
+}
+
+// ListCronsResponse: list crons response.
+type ListCronsResponse struct {
+	// Crons: array of crons.
+	Crons []*Cron `json:"crons"`
+
+	// TotalCount: total number of crons.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListCronsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListCronsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListCronsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Crons = append(r.Crons, results.Crons...)
+	r.TotalCount += uint32(len(results.Crons))
+	return uint32(len(results.Crons)), nil
+}
+
+// ListDomainsRequest: list domains request.
+type ListDomainsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of domains per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order of the domains.
+	// Default value: created_at_asc
+	OrderBy ListDomainsRequestOrderBy `json:"-"`
+
+	// FunctionID: UUID of the function the domain is assoicated with.
+	FunctionID string `json:"-"`
+}
+
+// ListDomainsResponse: list domains response.
+type ListDomainsResponse struct {
+	// Domains: array of domains.
+	Domains []*Domain `json:"domains"`
+
+	// TotalCount: total number of domains.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Domains = append(r.Domains, results.Domains...)
+	r.TotalCount += uint32(len(results.Domains))
+	return uint32(len(results.Domains)), nil
+}
+
+// ListFunctionRuntimesRequest: list function runtimes request.
+type ListFunctionRuntimesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+}
+
+// ListFunctionRuntimesResponse: list function runtimes response.
+type ListFunctionRuntimesResponse struct {
+	// Runtimes: array of runtimes available.
+	Runtimes []*Runtime `json:"runtimes"`
+
+	// TotalCount: total number of runtimes.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFunctionRuntimesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFunctionRuntimesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListFunctionRuntimesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Runtimes = append(r.Runtimes, results.Runtimes...)
+	r.TotalCount += uint32(len(results.Runtimes))
+	return uint32(len(results.Runtimes)), nil
+}
+
+// ListFunctionsRequest: list functions request.
+type ListFunctionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of functions per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order of the functions.
+	// Default value: created_at_asc
+	OrderBy ListFunctionsRequestOrderBy `json:"-"`
+
+	// NamespaceID: UUID of the namespace the function belongs to.
+	NamespaceID string `json:"-"`
+
+	// Name: name of the function.
+	Name *string `json:"-"`
+
+	// OrganizationID: UUID of the Organziation the function belongs to.
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: UUID of the Project the function belongs to.
+	ProjectID *string `json:"-"`
+}
+
+// ListFunctionsResponse: list functions response.
+type ListFunctionsResponse struct {
+	// Functions: array of functions.
+	Functions []*Function `json:"functions"`
+
+	// TotalCount: total number of functions.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFunctionsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFunctionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListFunctionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Functions = append(r.Functions, results.Functions...)
+	r.TotalCount += uint32(len(results.Functions))
+	return uint32(len(results.Functions)), nil
+}
+
+// ListLogsRequest: list logs request.
+type ListLogsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to get the logs for.
+	FunctionID string `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of logs per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order of the logs.
+	// Default value: timestamp_desc
+	OrderBy ListLogsRequestOrderBy `json:"-"`
+}
+
+// ListLogsResponse: list logs response.
+type ListLogsResponse struct {
+	// Logs: array of logs.
+	Logs []*Log `json:"logs"`
+
+	// TotalCount: total number of logs.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListLogsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListLogsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Logs = append(r.Logs, results.Logs...)
+	r.TotalCount += uint32(len(results.Logs))
+	return uint32(len(results.Logs)), nil
+}
+
+// ListNamespacesRequest: list namespaces request.
 type ListNamespacesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
+
 	// Page: page number.
 	Page *int32 `json:"-"`
+
 	// PageSize: number of namespaces per page.
 	PageSize *uint32 `json:"-"`
+
 	// OrderBy: order of the namespaces.
 	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
+
 	// Name: name of the namespace.
 	Name *string `json:"-"`
+
 	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID *string `json:"-"`
+
 	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID *string `json:"-"`
 }
 
-// ListNamespaces: list all your namespaces.
-// List all existing namespaces in the specified region.
+// ListNamespacesResponse: list namespaces response.
+type ListNamespacesResponse struct {
+	Namespaces []*Namespace `json:"namespaces"`
+
+	// TotalCount: total number of namespaces.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNamespacesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNamespacesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListNamespacesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Namespaces = append(r.Namespaces, results.Namespaces...)
+	r.TotalCount += uint32(len(results.Namespaces))
+	return uint32(len(results.Namespaces)), nil
+}
+
+// ListTokensRequest: list tokens request.
+type ListTokensRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of tokens per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for the tokens.
+	// Default value: created_at_asc
+	OrderBy ListTokensRequestOrderBy `json:"-"`
+
+	// FunctionID: UUID of the function the token is assoicated with.
+	FunctionID *string `json:"-"`
+
+	// NamespaceID: UUID of the namespace the token is associated with.
+	NamespaceID *string `json:"-"`
+}
+
+// ListTokensResponse: list tokens response.
+type ListTokensResponse struct {
+	Tokens []*Token `json:"tokens"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTokensResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tokens = append(r.Tokens, results.Tokens...)
+	r.TotalCount += uint32(len(results.Tokens))
+	return uint32(len(results.Tokens)), nil
+}
+
+// ListTriggersRequest: list triggers request.
+type ListTriggersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of triggers to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order in which to return results.
+	// Default value: created_at_asc
+	OrderBy ListTriggersRequestOrderBy `json:"-"`
+
+	// FunctionID: ID of the function the triggers belongs to.
+	// Precisely one of FunctionID, NamespaceID, ProjectID must be set.
+	FunctionID *string `json:"function_id,omitempty"`
+
+	// NamespaceID: ID of the namespace the triggers belongs to.
+	// Precisely one of FunctionID, NamespaceID, ProjectID must be set.
+	NamespaceID *string `json:"namespace_id,omitempty"`
+
+	// ProjectID: ID of the project the triggers belongs to.
+	// Precisely one of FunctionID, NamespaceID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+}
+
+// ListTriggersResponse: list triggers response.
+type ListTriggersResponse struct {
+	// TotalCount: total count of existing triggers (matching any filters specified).
+	TotalCount uint32 `json:"total_count"`
+
+	// Triggers: triggers on this page.
+	Triggers []*Trigger `json:"triggers"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTriggersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Triggers = append(r.Triggers, results.Triggers...)
+	r.TotalCount += uint32(len(results.Triggers))
+	return uint32(len(results.Triggers)), nil
+}
+
+// UpdateCronRequest: update cron request.
+type UpdateCronRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CronID: UUID of the cron to update.
+	CronID string `json:"-"`
+
+	// FunctionID: UUID of the function to use the cron with.
+	FunctionID *string `json:"function_id,omitempty"`
+
+	// Schedule: schedule of the cron in UNIX cron format.
+	Schedule *string `json:"schedule,omitempty"`
+
+	// Args: arguments to use with the cron.
+	Args *scw.JSONObject `json:"args,omitempty"`
+
+	// Name: name of the cron.
+	Name *string `json:"name,omitempty"`
+}
+
+// UpdateFunctionRequest: update function request.
+type UpdateFunctionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FunctionID: UUID of the function to update.
+	FunctionID string `json:"-"`
+
+	// EnvironmentVariables: environment variables of the function to update.
+	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
+
+	// MinScale: minumum number of instances to scale the function to.
+	MinScale *uint32 `json:"min_scale,omitempty"`
+
+	// MaxScale: maximum number of instances to scale the function to.
+	MaxScale *uint32 `json:"max_scale,omitempty"`
+
+	// Runtime: runtime to use with the function.
+	// Default value: unknown_runtime
+	Runtime FunctionRuntime `json:"runtime"`
+
+	// MemoryLimit: memory limit of the function in MB.
+	MemoryLimit *uint32 `json:"memory_limit,omitempty"`
+
+	// Timeout: processing time limit for the function.
+	Timeout *scw.Duration `json:"timeout,omitempty"`
+
+	// Redeploy: redeploy failed function.
+	Redeploy *bool `json:"redeploy,omitempty"`
+
+	// Handler: handler to use with the function.
+	Handler *string `json:"handler,omitempty"`
+
+	// Privacy: privacy setting of the function.
+	// Default value: unknown_privacy
+	Privacy FunctionPrivacy `json:"privacy"`
+
+	// Description: description of the function.
+	Description *string `json:"description,omitempty"`
+
+	// SecretEnvironmentVariables: secret environment variables of the function.
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// HTTPOption: possible values:
+	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
+	//  - enabled: Serve both HTTP and HTTPS traffic.
+	// Default value: unknown_http_option
+	HTTPOption FunctionHTTPOption `json:"http_option"`
+}
+
+// UpdateNamespaceRequest: update namespace request.
+type UpdateNamespaceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NamespaceID: UUID of the namespapce.
+	NamespaceID string `json:"-"`
+
+	// EnvironmentVariables: environment variables of the namespace.
+	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
+
+	// Description: description of the namespace.
+	Description *string `json:"description,omitempty"`
+
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
+	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+}
+
+// UpdateTriggerRequest: update trigger request.
+type UpdateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: ID of the trigger to update.
+	TriggerID string `json:"-"`
+
+	// Name: name of the trigger.
+	Name *string `json:"name,omitempty"`
+
+	// Description: description of the trigger.
+	Description *string `json:"description,omitempty"`
+
+	// SqsConfig: configuration for an AWS SQS queue.
+	// Precisely one of SqsConfig must be set.
+	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
+}
+
+// UploadURL: upload url.
+type UploadURL struct {
+	// URL: upload URL to upload the function to.
+	URL string `json:"url"`
+
+	// Headers: HTTP headers.
+	Headers map[string]*[]string `json:"headers"`
+}
+
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// ListNamespaces: List all existing namespaces in the specified region.
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
@@ -1157,10 +1920,9 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces",
+		Query:  query,
 	}
 
 	var resp ListNamespacesResponse
@@ -1172,15 +1934,7 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type GetNamespaceRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NamespaceID: UUID of the namespace.
-	NamespaceID string `json:"-"`
-}
-
-// GetNamespace: get a namespace.
-// Get the namespace associated with the specified ID.
+// GetNamespace: Get the namespace associated with the specified ID.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1198,9 +1952,8 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
 	}
 
 	var resp Namespace
@@ -1212,34 +1965,18 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type CreateNamespaceRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	Name string `json:"name"`
-	// EnvironmentVariables: environment variables of the namespace.
-	EnvironmentVariables *map[string]string `json:"environment_variables"`
-	// ProjectID: UUID of the project in which the namespace will be created.
-	ProjectID string `json:"project_id"`
-	// Description: description of the namespace.
-	Description *string `json:"description"`
-	// SecretEnvironmentVariables: secret environment variables of the namespace.
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-}
-
-// CreateNamespace: create a new namespace.
-// Create a new namespace in a specified Organization or Project.
+// CreateNamespace: Create a new namespace in a specified Organization or Project.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if req.Name == "" {
@@ -1251,9 +1988,8 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1270,21 +2006,7 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type UpdateNamespaceRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NamespaceID: UUID of the namespapce.
-	NamespaceID string `json:"-"`
-	// EnvironmentVariables: environment variables of the namespace.
-	EnvironmentVariables *map[string]string `json:"environment_variables"`
-	// Description: description of the namespace.
-	Description *string `json:"description"`
-	// SecretEnvironmentVariables: secret environment variables of the namespace.
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-}
-
-// UpdateNamespace: update an existing namespace.
-// Update the namespace associated with the specified ID.
+// UpdateNamespace: Update the namespace associated with the specified ID.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1302,9 +2024,8 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1321,15 +2042,7 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type DeleteNamespaceRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NamespaceID: UUID of the namespace.
-	NamespaceID string `json:"-"`
-}
-
-// DeleteNamespace: delete an existing namespace.
-// Delete the namespace associated with the specified ID.
+// DeleteNamespace: Delete the namespace associated with the specified ID.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -1347,9 +2060,8 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/namespaces/" + fmt.Sprint(req.NamespaceID) + "",
 	}
 
 	var resp Namespace
@@ -1361,27 +2073,7 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type ListFunctionsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: number of functions per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: order of the functions.
-	// Default value: created_at_asc
-	OrderBy ListFunctionsRequestOrderBy `json:"-"`
-	// NamespaceID: UUID of the namespace the function belongs to.
-	NamespaceID string `json:"-"`
-	// Name: name of the function.
-	Name *string `json:"-"`
-	// OrganizationID: UUID of the Organziation the function belongs to.
-	OrganizationID *string `json:"-"`
-	// ProjectID: UUID of the Project the function belongs to.
-	ProjectID *string `json:"-"`
-}
-
-// ListFunctions: list all your functions.
+// ListFunctions: List all your functions.
 func (s *API) ListFunctions(req *ListFunctionsRequest, opts ...scw.RequestOption) (*ListFunctionsResponse, error) {
 	var err error
 
@@ -1409,10 +2101,9 @@ func (s *API) ListFunctions(req *ListFunctionsRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions",
+		Query:  query,
 	}
 
 	var resp ListFunctionsResponse
@@ -1424,15 +2115,7 @@ func (s *API) ListFunctions(req *ListFunctionsRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type GetFunctionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function.
-	FunctionID string `json:"-"`
-}
-
-// GetFunction: get a function.
-// Get the function associated with the specified ID.
+// GetFunction: Get the function associated with the specified ID.
 func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1450,9 +2133,8 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
 	}
 
 	var resp Function
@@ -1464,45 +2146,7 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type CreateFunctionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Name: name of the function to create.
-	Name string `json:"name"`
-	// NamespaceID: UUID of the namespace the function will be created in.
-	NamespaceID string `json:"namespace_id"`
-	// EnvironmentVariables: environment variables of the function.
-	EnvironmentVariables *map[string]string `json:"environment_variables"`
-	// MinScale: minumum number of instances to scale the function to.
-	MinScale *uint32 `json:"min_scale"`
-	// MaxScale: maximum number of instances to scale the function to.
-	MaxScale *uint32 `json:"max_scale"`
-	// Runtime: runtime to use with the function.
-	// Default value: unknown_runtime
-	Runtime FunctionRuntime `json:"runtime"`
-	// MemoryLimit: memory limit of the function in MB.
-	MemoryLimit *uint32 `json:"memory_limit"`
-	// Timeout: request processing time limit for the function.
-	Timeout *scw.Duration `json:"timeout"`
-	// Handler: handler to use with the function.
-	Handler *string `json:"handler"`
-	// Privacy: privacy setting of the function.
-	// Default value: unknown_privacy
-	Privacy FunctionPrivacy `json:"privacy"`
-	// Description: description of the function.
-	Description *string `json:"description"`
-
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled.
-	// Possible values:
-	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	// Default value: enabled
-	HTTPOption FunctionHTTPOption `json:"http_option"`
-}
-
-// CreateFunction: create a new function.
-// Create a new function in the specified region for a specified Organization or Project.
+// CreateFunction: Create a new function in the specified region for a specified Organization or Project.
 func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1520,9 +2164,8 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1539,45 +2182,7 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type UpdateFunctionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to update.
-	FunctionID string `json:"-"`
-	// EnvironmentVariables: environment variables of the function to update.
-	EnvironmentVariables *map[string]string `json:"environment_variables"`
-	// MinScale: minumum number of instances to scale the function to.
-	MinScale *uint32 `json:"min_scale"`
-	// MaxScale: maximum number of instances to scale the function to.
-	MaxScale *uint32 `json:"max_scale"`
-	// Runtime: runtime to use with the function.
-	// Default value: unknown_runtime
-	Runtime FunctionRuntime `json:"runtime"`
-	// MemoryLimit: memory limit of the function in MB.
-	MemoryLimit *uint32 `json:"memory_limit"`
-	// Timeout: processing time limit for the function.
-	Timeout *scw.Duration `json:"timeout"`
-	// Redeploy: redeploy failed function.
-	Redeploy *bool `json:"redeploy"`
-	// Handler: handler to use with the function.
-	Handler *string `json:"handler"`
-	// Privacy: privacy setting of the function.
-	// Default value: unknown_privacy
-	Privacy FunctionPrivacy `json:"privacy"`
-	// Description: description of the function.
-	Description *string `json:"description"`
-	// SecretEnvironmentVariables: secret environment variables of the function.
-	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
-	// HTTPOption: configure how HTTP and HTTPS requests are handled.
-	// Possible values:
-	//  - redirected: Responds to HTTP request with a 301 redirect to ask the clients to use HTTPS.
-	//  - enabled: Serve both HTTP and HTTPS traffic.
-	// Default value: enabled
-	HTTPOption FunctionHTTPOption `json:"http_option"`
-}
-
-// UpdateFunction: update an existing function.
-// Update the function associated with the specified ID.
+// UpdateFunction: Update the function associated with the specified ID.
 func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1595,9 +2200,8 @@ func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1614,15 +2218,7 @@ func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type DeleteFunctionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to delete.
-	FunctionID string `json:"-"`
-}
-
-// DeleteFunction: delete a function.
-// Delete the function associated with the specified ID.
+// DeleteFunction: Delete the function associated with the specified ID.
 func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1640,9 +2236,8 @@ func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "",
 	}
 
 	var resp Function
@@ -1654,15 +2249,7 @@ func (s *API) DeleteFunction(req *DeleteFunctionRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type DeployFunctionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to deploy.
-	FunctionID string `json:"-"`
-}
-
-// DeployFunction: deploy a function.
-// Deploy a function associated with the specified ID.
+// DeployFunction: Deploy a function associated with the specified ID.
 func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -1680,9 +2267,8 @@ func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/deploy",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/deploy",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1699,13 +2285,7 @@ func (s *API) DeployFunction(req *DeployFunctionRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type ListFunctionRuntimesRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-}
-
-// ListFunctionRuntimes: list function runtimes.
-// List available function runtimes.
+// ListFunctionRuntimes: List available function runtimes.
 func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw.RequestOption) (*ListFunctionRuntimesResponse, error) {
 	var err error
 
@@ -1719,9 +2299,8 @@ func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/runtimes",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/runtimes",
 	}
 
 	var resp ListFunctionRuntimesResponse
@@ -1733,17 +2312,7 @@ func (s *API) ListFunctionRuntimes(req *ListFunctionRuntimesRequest, opts ...scw
 	return &resp, nil
 }
 
-type GetFunctionUploadURLRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to get the upload URL for.
-	FunctionID string `json:"-"`
-	// ContentLength: size of the archive to upload in bytes.
-	ContentLength uint64 `json:"-"`
-}
-
-// GetFunctionUploadURL: get an upload URL of a function.
-// Get an upload URL of a function associated with the specified ID.
+// GetFunctionUploadURL: Get an upload URL of a function associated with the specified ID.
 func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw.RequestOption) (*UploadURL, error) {
 	var err error
 
@@ -1764,10 +2333,9 @@ func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/upload-url",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/upload-url",
+		Query:  query,
 	}
 
 	var resp UploadURL
@@ -1779,15 +2347,7 @@ func (s *API) GetFunctionUploadURL(req *GetFunctionUploadURLRequest, opts ...scw
 	return &resp, nil
 }
 
-type GetFunctionDownloadURLRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to get the the download URL for.
-	FunctionID string `json:"-"`
-}
-
-// GetFunctionDownloadURL: get a download URL of a function.
-// Get a download URL for a function associated with the specified ID.
+// GetFunctionDownloadURL: Get a download URL for a function associated with the specified ID.
 func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ...scw.RequestOption) (*DownloadURL, error) {
 	var err error
 
@@ -1805,9 +2365,8 @@ func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ..
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/download-url",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/download-url",
 	}
 
 	var resp DownloadURL
@@ -1819,22 +2378,7 @@ func (s *API) GetFunctionDownloadURL(req *GetFunctionDownloadURLRequest, opts ..
 	return &resp, nil
 }
 
-type ListCronsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: number of crons per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: order of the crons.
-	// Default value: created_at_asc
-	OrderBy ListCronsRequestOrderBy `json:"-"`
-	// FunctionID: UUID of the function.
-	FunctionID string `json:"-"`
-}
-
-// ListCrons: list all crons.
-// List all the cronjobs in a specified region.
+// ListCrons: List all the cronjobs in a specified region.
 func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*ListCronsResponse, error) {
 	var err error
 
@@ -1859,10 +2403,9 @@ func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*List
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons",
+		Query:  query,
 	}
 
 	var resp ListCronsResponse
@@ -1874,15 +2417,7 @@ func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-type GetCronRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// CronID: UUID of the cron to get.
-	CronID string `json:"-"`
-}
-
-// GetCron: get a cron.
-// Get the cron associated with the specified ID.
+// GetCron: Get the cron associated with the specified ID.
 func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1900,9 +2435,8 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
 	}
 
 	var resp Cron
@@ -1914,21 +2448,7 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 	return &resp, nil
 }
 
-type CreateCronRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to use the cron with.
-	FunctionID string `json:"function_id"`
-	// Schedule: schedule of the cron in UNIX cron format.
-	Schedule string `json:"schedule"`
-	// Args: arguments to use with the cron.
-	Args *scw.JSONObject `json:"args"`
-	// Name: name of the cron.
-	Name *string `json:"name"`
-}
-
-// CreateCron: create a new cron.
-// Create a new cronjob for a function with the specified ID.
+// CreateCron: Create a new cronjob for a function with the specified ID.
 func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1942,9 +2462,8 @@ func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cr
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1961,23 +2480,7 @@ func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-type UpdateCronRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// CronID: UUID of the cron to update.
-	CronID string `json:"-"`
-	// FunctionID: UUID of the function to use the cron with.
-	FunctionID *string `json:"function_id"`
-	// Schedule: schedule of the cron in UNIX cron format.
-	Schedule *string `json:"schedule"`
-	// Args: arguments to use with the cron.
-	Args *scw.JSONObject `json:"args"`
-	// Name: name of the cron.
-	Name *string `json:"name"`
-}
-
-// UpdateCron: update an existing cron.
-// Update the cron associated with the specified ID.
+// UpdateCron: Update the cron associated with the specified ID.
 func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -1995,9 +2498,8 @@ func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cr
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2014,15 +2516,7 @@ func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-type DeleteCronRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// CronID: UUID of the cron to delete.
-	CronID string `json:"-"`
-}
-
-// DeleteCron: delete an existing cron.
-// Delete the cron associated with the specified ID.
+// DeleteCron: Delete the cron associated with the specified ID.
 func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2040,9 +2534,8 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/crons/" + fmt.Sprint(req.CronID) + "",
 	}
 
 	var resp Cron
@@ -2054,22 +2547,7 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-type ListLogsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to get the logs for.
-	FunctionID string `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: number of logs per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: order of the logs.
-	// Default value: timestamp_desc
-	OrderBy ListLogsRequestOrderBy `json:"-"`
-}
-
-// ListLogs: list application logs.
-// List the application logs of the function with the specified ID.
+// ListLogs: List the application logs of the function with the specified ID.
 func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
 	var err error
 
@@ -2097,10 +2575,9 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/logs",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/functions/" + fmt.Sprint(req.FunctionID) + "/logs",
+		Query:  query,
 	}
 
 	var resp ListLogsResponse
@@ -2112,22 +2589,7 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 	return &resp, nil
 }
 
-type ListDomainsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: number of domains per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: order of the domains.
-	// Default value: created_at_asc
-	OrderBy ListDomainsRequestOrderBy `json:"-"`
-	// FunctionID: UUID of the function the domain is assoicated with.
-	FunctionID string `json:"-"`
-}
-
-// ListDomains: list all domain name bindings.
-// List all domain name bindings in a specified region.
+// ListDomains: List all domain name bindings in a specified region.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -2152,10 +2614,9 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
+		Query:  query,
 	}
 
 	var resp ListDomainsResponse
@@ -2167,15 +2628,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type GetDomainRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// DomainID: UUID of the domain to get.
-	DomainID string `json:"-"`
-}
-
-// GetDomain: get a domain name binding.
-// Get a domain name binding for the function with the specified ID.
+// GetDomain: Get a domain name binding for the function with the specified ID.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2193,9 +2646,8 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
 	}
 
 	var resp Domain
@@ -2207,17 +2659,7 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
-type CreateDomainRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Hostname: hostame to create.
-	Hostname string `json:"hostname"`
-	// FunctionID: UUID of the function to associate the domain with.
-	FunctionID string `json:"function_id"`
-}
-
-// CreateDomain: create a domain name binding.
-// Create a domain name binding for the function with the specified ID.
+// CreateDomain: Create a domain name binding for the function with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2231,9 +2673,8 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2250,15 +2691,7 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type DeleteDomainRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// DomainID: UUID of the domain to delete.
-	DomainID string `json:"-"`
-}
-
-// DeleteDomain: delete a domain name binding.
-// Delete a domain name binding for the function with the specified ID.
+// DeleteDomain: Delete a domain name binding for the function with the specified ID.
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2276,9 +2709,8 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
 	}
 
 	var resp Domain
@@ -2290,18 +2722,7 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type IssueJWTRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	FunctionID *string `json:"-"`
-
-	NamespaceID *string `json:"-"`
-
-	ExpiresAt *time.Time `json:"-"`
-}
-
-// Deprecated
+// Deprecated: IssueJWT:
 func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2311,19 +2732,18 @@ func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token,
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "expires_at", req.ExpiresAt)
 	parameter.AddToQuery(query, "function_id", req.FunctionID)
 	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
-	parameter.AddToQuery(query, "expires_at", req.ExpiresAt)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/issue-jwt",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/issue-jwt",
+		Query:  query,
 	}
 
 	var resp Token
@@ -2335,22 +2755,7 @@ func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token,
 	return &resp, nil
 }
 
-type CreateTokenRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FunctionID: UUID of the function to associate the token with.
-	// Precisely one of FunctionID, NamespaceID must be set.
-	FunctionID *string `json:"function_id,omitempty"`
-	// NamespaceID: UUID of the namespace to associate the token with.
-	// Precisely one of FunctionID, NamespaceID must be set.
-	NamespaceID *string `json:"namespace_id,omitempty"`
-	// Description: description of the token.
-	Description *string `json:"description"`
-	// ExpiresAt: date on which the token expires.
-	ExpiresAt *time.Time `json:"expires_at"`
-}
-
-// CreateToken: create a new revocable token.
+// CreateToken: Create a new revocable token.
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2364,9 +2769,8 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2383,14 +2787,7 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type GetTokenRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// TokenID: UUID of the token to get.
-	TokenID string `json:"-"`
-}
-
-// GetToken: get a token.
+// GetToken: Get a token.
 func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2408,9 +2805,8 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
 	}
 
 	var resp Token
@@ -2422,23 +2818,7 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 	return &resp, nil
 }
 
-type ListTokensRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: number of tokens per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: sort order for the tokens.
-	// Default value: created_at_asc
-	OrderBy ListTokensRequestOrderBy `json:"-"`
-	// FunctionID: UUID of the function the token is assoicated with.
-	FunctionID *string `json:"-"`
-	// NamespaceID: UUID of the namespace the token is associated with.
-	NamespaceID *string `json:"-"`
-}
-
-// ListTokens: list all tokens.
+// ListTokens: List all tokens.
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -2464,10 +2844,9 @@ func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*Li
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens",
+		Query:  query,
 	}
 
 	var resp ListTokensResponse
@@ -2479,14 +2858,7 @@ func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-type DeleteTokenRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// TokenID: UUID of the token to delete.
-	TokenID string `json:"-"`
-}
-
-// DeleteToken: delete a token.
+// DeleteToken: Delete a token.
 func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -2504,9 +2876,8 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tokens/" + fmt.Sprint(req.TokenID) + "",
 	}
 
 	var resp Token
@@ -2518,26 +2889,7 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type CreateTriggerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Name: name of the trigger.
-	Name string `json:"name"`
-	// FunctionID: ID of the function to trigger.
-	FunctionID string `json:"function_id"`
-	// Description: description of the trigger.
-	Description *string `json:"description"`
-	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
-	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
-	// SqsConfig: configuration for an AWS SQS queue.
-	// Precisely one of ScwNatsConfig, ScwSqsConfig, SqsConfig must be set.
-	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
-}
-
+// CreateTrigger:
 func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2551,9 +2903,8 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2570,13 +2921,7 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type GetTriggerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// TriggerID: ID of the trigger to get.
-	TriggerID string `json:"-"`
-}
-
+// GetTrigger:
 func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2594,9 +2939,8 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
 	}
 
 	var resp Trigger
@@ -2608,24 +2952,7 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 	return &resp, nil
 }
 
-type ListTriggersRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// Page: page number to return.
-	Page *int32 `json:"-"`
-	// PageSize: maximum number of triggers to return per page.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: order in which to return results.
-	// Default value: created_at_asc
-	OrderBy ListTriggersRequestOrderBy `json:"-"`
-	// FunctionID: ID of the function the triggers belongs to.
-	FunctionID *string `json:"-"`
-	// NamespaceID: ID of the namespace the triggers belongs to.
-	NamespaceID *string `json:"-"`
-	// ProjectID: ID of the project the triggers belongs to.
-	ProjectID *string `json:"-"`
-}
-
+// ListTriggers:
 func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
 	var err error
 
@@ -2637,6 +2964,11 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
 		req.PageSize = &defaultPageSize
+	}
+
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.FunctionID == nil && req.NamespaceID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
 	query := url.Values{}
@@ -2652,10 +2984,9 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers",
+		Query:  query,
 	}
 
 	var resp ListTriggersResponse
@@ -2667,20 +2998,7 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type UpdateTriggerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// TriggerID: ID of the trigger to update.
-	TriggerID string `json:"-"`
-	// Name: name of the trigger.
-	Name *string `json:"name"`
-	// Description: description of the trigger.
-	Description *string `json:"description"`
-	// SqsConfig: configuration for an AWS SQS queue.
-	// Precisely one of SqsConfig must be set.
-	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
-}
-
+// UpdateTrigger:
 func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2698,9 +3016,8 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2717,13 +3034,7 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type DeleteTriggerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// TriggerID: ID of the trigger to delete.
-	TriggerID string `json:"-"`
-}
-
+// DeleteTrigger:
 func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2741,9 +3052,8 @@ func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
 	}
 
 	var resp Trigger
@@ -2753,137 +3063,4 @@ func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNamespacesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNamespacesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListNamespacesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Namespaces = append(r.Namespaces, results.Namespaces...)
-	r.TotalCount += uint32(len(results.Namespaces))
-	return uint32(len(results.Namespaces)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListFunctionsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListFunctionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListFunctionsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Functions = append(r.Functions, results.Functions...)
-	r.TotalCount += uint32(len(results.Functions))
-	return uint32(len(results.Functions)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListCronsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListCronsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListCronsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Crons = append(r.Crons, results.Crons...)
-	r.TotalCount += uint32(len(results.Crons))
-	return uint32(len(results.Crons)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListLogsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLogsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Logs = append(r.Logs, results.Logs...)
-	r.TotalCount += uint32(len(results.Logs))
-	return uint32(len(results.Logs)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDomainsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDomainsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Domains = append(r.Domains, results.Domains...)
-	r.TotalCount += uint32(len(results.Domains))
-	return uint32(len(results.Domains)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTokensResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Tokens = append(r.Tokens, results.Tokens...)
-	r.TotalCount += uint32(len(results.Tokens))
-	return uint32(len(results.Tokens)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTriggersResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTriggersResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTriggersResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Triggers = append(r.Triggers, results.Triggers...)
-	r.TotalCount += uint32(len(results.Triggers))
-	return uint32(len(results.Triggers)), nil
 }

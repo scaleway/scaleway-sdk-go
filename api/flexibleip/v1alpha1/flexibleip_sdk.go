@@ -39,18 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: elastic Metal - Flexible IP API.
-type API struct {
-	client *scw.Client
-}
-
-// NewAPI returns a API object from a Scaleway client.
-func NewAPI(client *scw.Client) *API {
-	return &API{
-		client: client,
-	}
-}
-
 type FlexibleIPStatus string
 
 const (
@@ -182,40 +170,56 @@ func (enum *MACAddressType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// AttachFlexibleIPsResponse: attach flexible i ps response.
-type AttachFlexibleIPsResponse struct {
-	// TotalCount: total count of flexible IPs that are being updated.
-	TotalCount uint32 `json:"total_count"`
-	// FlexibleIPs: list of flexible IPs in an updating state.
-	FlexibleIPs []*FlexibleIP `json:"flexible_ips"`
-}
+// MACAddress: mac address.
+type MACAddress struct {
+	// ID: ID of the flexible IP.
+	ID string `json:"id"`
 
-// DetachFlexibleIPsResponse: detach flexible i ps response.
-type DetachFlexibleIPsResponse struct {
-	// TotalCount: total count of flexible IPs that are being detached.
-	TotalCount uint32 `json:"total_count"`
-	// FlexibleIPs: list of flexible IPs in a detaching state.
-	FlexibleIPs []*FlexibleIP `json:"flexible_ips"`
+	// MacAddress: mAC address of the Virtual MAC.
+	MacAddress string `json:"mac_address"`
+
+	// MacType: type of virtual MAC.
+	// Default value: unknown_type
+	MacType MACAddressType `json:"mac_type"`
+
+	// Status: status of virtual MAC.
+	// Default value: unknown
+	Status MACAddressStatus `json:"status"`
+
+	// UpdatedAt: date on which the virtual MAC was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// CreatedAt: date on which the virtual MAC was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Zone: mAC address IP Availability Zone.
+	Zone scw.Zone `json:"zone"`
 }
 
 // FlexibleIP: flexible ip.
 type FlexibleIP struct {
 	// ID: ID of the flexible IP.
 	ID string `json:"id"`
+
 	// OrganizationID: ID of the Organization the flexible IP is attached to.
 	OrganizationID string `json:"organization_id"`
+
 	// ProjectID: ID of the Project the flexible IP is attached to.
 	ProjectID string `json:"project_id"`
+
 	// Description: flexible IP description.
 	Description string `json:"description"`
+
 	// Tags: flexible IP tags.
 	Tags []string `json:"tags"`
+
 	// UpdatedAt: date on which the flexible IP was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
 	// CreatedAt: date on which the flexible IP was created.
 	CreatedAt *time.Time `json:"created_at"`
-	// Status: flexible IP status.
-	// - ready : flexible IP is created and ready to be attached to a server or to be associated with a virtual MAC.
+
+	// Status: - ready : flexible IP is created and ready to be attached to a server or to be associated with a virtual MAC.
 	// - updating: flexible IP is being attached to a server or a virtual MAC operation is ongoing
 	// - attached: flexible IP is attached to a server
 	// - error: a flexible IP operation resulted in an error
@@ -223,83 +227,290 @@ type FlexibleIP struct {
 	// - locked: the resource of the flexible IP is locked.
 	// Default value: unknown
 	Status FlexibleIPStatus `json:"status"`
+
 	// IPAddress: IP of the flexible IP.
 	IPAddress scw.IPNet `json:"ip_address"`
+
 	// MacAddress: mAC address of the flexible IP.
 	MacAddress *MACAddress `json:"mac_address"`
+
 	// ServerID: ID of the server linked to the flexible IP.
 	ServerID *string `json:"server_id"`
+
 	// Reverse: reverse DNS value.
 	Reverse string `json:"reverse"`
+
 	// Zone: availability Zone of the flexible IP.
 	Zone scw.Zone `json:"zone"`
+}
+
+// AttachFlexibleIPRequest: attach flexible ip request.
+type AttachFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipsIDs: multiple IDs can be provided, but note that flexible IPs must belong to the same MAC group (see details about MAC groups).
+	FipsIDs []string `json:"fips_ids"`
+
+	// ServerID: ID of the server on which to attach the flexible IPs.
+	ServerID string `json:"server_id"`
+}
+
+// AttachFlexibleIPsResponse: attach flexible i ps response.
+type AttachFlexibleIPsResponse struct {
+	// TotalCount: total count of flexible IPs that are being updated.
+	TotalCount uint32 `json:"total_count"`
+
+	// FlexibleIPs: list of flexible IPs in an updating state.
+	FlexibleIPs []*FlexibleIP `json:"flexible_ips"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *AttachFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *AttachFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*AttachFlexibleIPsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.FlexibleIPs = append(r.FlexibleIPs, results.FlexibleIPs...)
+	r.TotalCount += uint32(len(results.FlexibleIPs))
+	return uint32(len(results.FlexibleIPs)), nil
+}
+
+// CreateFlexibleIPRequest: create flexible ip request.
+type CreateFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ProjectID: ID of the project to associate with the Flexible IP.
+	ProjectID string `json:"project_id"`
+
+	// Description: flexible IP description (max. of 255 characters).
+	Description string `json:"description"`
+
+	// Tags: tags to associate to the flexible IP.
+	Tags []string `json:"tags"`
+
+	// ServerID: ID of the server to which the newly created flexible IP will be attached.
+	ServerID *string `json:"server_id,omitempty"`
+
+	// Reverse: value of the reverse DNS.
+	Reverse *string `json:"reverse,omitempty"`
+
+	// IsIPv6: defines whether the flexible IP has an IPv6 address.
+	IsIPv6 bool `json:"is_ipv6"`
+}
+
+// DeleteFlexibleIPRequest: delete flexible ip request.
+type DeleteFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: ID of the flexible IP to delete.
+	FipID string `json:"-"`
+}
+
+// DeleteMACAddrRequest: delete mac addr request.
+type DeleteMACAddrRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: if the flexible IP belongs to a MAC group, the MAC will be removed from both the MAC group and flexible IP.
+	FipID string `json:"-"`
+}
+
+// DetachFlexibleIPRequest: detach flexible ip request.
+type DetachFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipsIDs: list of flexible IP IDs to detach from a server. Multiple IDs can be provided. Note that flexible IPs must belong to the same MAC group.
+	FipsIDs []string `json:"fips_ids"`
+}
+
+// DetachFlexibleIPsResponse: detach flexible i ps response.
+type DetachFlexibleIPsResponse struct {
+	// TotalCount: total count of flexible IPs that are being detached.
+	TotalCount uint32 `json:"total_count"`
+
+	// FlexibleIPs: list of flexible IPs in a detaching state.
+	FlexibleIPs []*FlexibleIP `json:"flexible_ips"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *DetachFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *DetachFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*DetachFlexibleIPsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.FlexibleIPs = append(r.FlexibleIPs, results.FlexibleIPs...)
+	r.TotalCount += uint32(len(results.FlexibleIPs))
+	return uint32(len(results.FlexibleIPs)), nil
+}
+
+// DuplicateMACAddrRequest: duplicate mac addr request.
+type DuplicateMACAddrRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: note that the flexible IPs need to be attached to the same server.
+	FipID string `json:"-"`
+
+	// DuplicateFromFipID: note that flexible IPs need to be attached to the same server.
+	DuplicateFromFipID string `json:"duplicate_from_fip_id"`
+}
+
+// GenerateMACAddrRequest: generate mac addr request.
+type GenerateMACAddrRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: ID of the flexible IP for which to generate a virtual MAC.
+	FipID string `json:"-"`
+
+	// MacType: tODO.
+	// Default value: unknown_type
+	MacType MACAddressType `json:"mac_type"`
+}
+
+// GetFlexibleIPRequest: get flexible ip request.
+type GetFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: ID of the flexible IP.
+	FipID string `json:"-"`
+}
+
+// ListFlexibleIPsRequest: list flexible i ps request.
+type ListFlexibleIPsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// OrderBy: sort order of the returned flexible IPs.
+	// Default value: created_at_asc
+	OrderBy ListFlexibleIPsRequestOrderBy `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of flexible IPs per page.
+	PageSize *uint32 `json:"-"`
+
+	// Tags: filter by tag, only flexible IPs with one or more matching tags will be returned.
+	Tags []string `json:"-"`
+
+	// Status: filter by status, only flexible IPs with this status will be returned.
+	Status []FlexibleIPStatus `json:"-"`
+
+	// ServerIDs: filter by server IDs, only flexible IPs with these server IDs will be returned.
+	ServerIDs []string `json:"-"`
+
+	// OrganizationID: filter by Organization ID, only flexible IPs from this Organization will be returned.
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: filter by Project ID, only flexible IPs from this Project will be returned.
+	ProjectID *string `json:"-"`
 }
 
 // ListFlexibleIPsResponse: list flexible i ps response.
 type ListFlexibleIPsResponse struct {
 	// TotalCount: total count of matching flexible IPs.
 	TotalCount uint32 `json:"total_count"`
+
 	// FlexibleIPs: list of all flexible IPs.
 	FlexibleIPs []*FlexibleIP `json:"flexible_ips"`
 }
 
-// MACAddress: mac address.
-type MACAddress struct {
-	// ID: ID of the flexible IP.
-	ID string `json:"id"`
-	// MacAddress: mAC address of the Virtual MAC.
-	MacAddress string `json:"mac_address"`
-	// MacType: type of virtual MAC.
-	// Default value: unknown_type
-	MacType MACAddressType `json:"mac_type"`
-	// Status: status of virtual MAC.
-	// Default value: unknown
-	Status MACAddressStatus `json:"status"`
-	// UpdatedAt: date on which the virtual MAC was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-	// CreatedAt: date on which the virtual MAC was created.
-	CreatedAt *time.Time `json:"created_at"`
-	// Zone: mAC address IP Availability Zone.
-	Zone scw.Zone `json:"zone"`
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
 }
 
-// Service API
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListFlexibleIPsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
 
-// Zones list localities the api is available in
+	r.FlexibleIPs = append(r.FlexibleIPs, results.FlexibleIPs...)
+	r.TotalCount += uint32(len(results.FlexibleIPs))
+	return uint32(len(results.FlexibleIPs)), nil
+}
+
+// MoveMACAddrRequest: move mac addr request.
+type MoveMACAddrRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	FipID string `json:"-"`
+
+	DstFipID string `json:"dst_fip_id"`
+}
+
+// UpdateFlexibleIPRequest: update flexible ip request.
+type UpdateFlexibleIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// FipID: ID of the flexible IP to update.
+	FipID string `json:"-"`
+
+	// Description: flexible IP description (max. 255 characters).
+	Description *string `json:"description,omitempty"`
+
+	// Tags: tags associated with the flexible IP.
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Reverse: value of the reverse DNS.
+	Reverse *string `json:"reverse,omitempty"`
+}
+
+// Elastic Metal - Flexible IP API.
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1}
 }
 
-type CreateFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// ProjectID: ID of the project to associate with the Flexible IP.
-	ProjectID string `json:"project_id"`
-	// Description: flexible IP description (max. of 255 characters).
-	Description string `json:"description"`
-	// Tags: tags to associate to the flexible IP.
-	Tags []string `json:"tags"`
-	// ServerID: ID of the server to which the newly created flexible IP will be attached.
-	ServerID *string `json:"server_id"`
-	// Reverse: value of the reverse DNS.
-	Reverse *string `json:"reverse"`
-	// IsIPv6: defines whether the flexible IP has an IPv6 address.
-	IsIPv6 bool `json:"is_ipv6"`
-}
-
-// CreateFlexibleIP: create a new flexible IP.
-// Generate a new flexible IP within a given zone, specifying its configuration including Project ID and description.
+// CreateFlexibleIP: Generate a new flexible IP within a given zone, specifying its configuration including Project ID and description.
 func (s *API) CreateFlexibleIP(req *CreateFlexibleIPRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Zone == "" {
 		defaultZone, _ := s.client.GetDefaultZone()
 		req.Zone = defaultZone
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -307,9 +518,8 @@ func (s *API) CreateFlexibleIP(req *CreateFlexibleIPRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips",
 	}
 
 	err = scwReq.SetBody(req)
@@ -326,15 +536,7 @@ func (s *API) CreateFlexibleIP(req *CreateFlexibleIPRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type GetFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP.
-	FipID string `json:"-"`
-}
-
-// GetFlexibleIP: get an existing flexible IP.
-// Retrieve information about an existing flexible IP, specified by its ID and zone. Its full details, including Project ID, description and status, are returned in the response object.
+// GetFlexibleIP: Retrieve information about an existing flexible IP, specified by its ID and zone. Its full details, including Project ID, description and status, are returned in the response object.
 func (s *API) GetFlexibleIP(req *GetFlexibleIPRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -352,9 +554,8 @@ func (s *API) GetFlexibleIP(req *GetFlexibleIPRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
 	}
 
 	var resp FlexibleIP
@@ -366,30 +567,7 @@ func (s *API) GetFlexibleIP(req *GetFlexibleIPRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type ListFlexibleIPsRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// OrderBy: sort order of the returned flexible IPs.
-	// Default value: created_at_asc
-	OrderBy ListFlexibleIPsRequestOrderBy `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: maximum number of flexible IPs per page.
-	PageSize *uint32 `json:"-"`
-	// Tags: filter by tag, only flexible IPs with one or more matching tags will be returned.
-	Tags []string `json:"-"`
-	// Status: filter by status, only flexible IPs with this status will be returned.
-	Status []FlexibleIPStatus `json:"-"`
-	// ServerIDs: filter by server IDs, only flexible IPs with these server IDs will be returned.
-	ServerIDs []string `json:"-"`
-	// OrganizationID: filter by Organization ID, only flexible IPs from this Organization will be returned.
-	OrganizationID *string `json:"-"`
-	// ProjectID: filter by Project ID, only flexible IPs from this Project will be returned.
-	ProjectID *string `json:"-"`
-}
-
-// ListFlexibleIPs: list flexible IPs.
-// List all flexible IPs within a given zone.
+// ListFlexibleIPs: List all flexible IPs within a given zone.
 func (s *API) ListFlexibleIPs(req *ListFlexibleIPsRequest, opts ...scw.RequestOption) (*ListFlexibleIPsResponse, error) {
 	var err error
 
@@ -418,10 +596,9 @@ func (s *API) ListFlexibleIPs(req *ListFlexibleIPsRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips",
+		Query:  query,
 	}
 
 	var resp ListFlexibleIPsResponse
@@ -433,21 +610,7 @@ func (s *API) ListFlexibleIPs(req *ListFlexibleIPsRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type UpdateFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP to update.
-	FipID string `json:"-"`
-	// Description: flexible IP description (max. 255 characters).
-	Description *string `json:"description"`
-	// Tags: tags associated with the flexible IP.
-	Tags *[]string `json:"tags"`
-	// Reverse: value of the reverse DNS.
-	Reverse *string `json:"reverse"`
-}
-
-// UpdateFlexibleIP: update an existing flexible IP.
-// Update the parameters of an existing flexible IP, specified by its ID and zone. These parameters include tags and description.
+// UpdateFlexibleIP: Update the parameters of an existing flexible IP, specified by its ID and zone. These parameters include tags and description.
 func (s *API) UpdateFlexibleIP(req *UpdateFlexibleIPRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -465,9 +628,8 @@ func (s *API) UpdateFlexibleIP(req *UpdateFlexibleIPRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -484,15 +646,7 @@ func (s *API) UpdateFlexibleIP(req *UpdateFlexibleIPRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type DeleteFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP to delete.
-	FipID string `json:"-"`
-}
-
-// DeleteFlexibleIP: delete an existing flexible IP.
-// Delete an existing flexible IP, specified by its ID and zone. Note that deleting a flexible IP is permanent and cannot be undone.
+// DeleteFlexibleIP: Delete an existing flexible IP, specified by its ID and zone. Note that deleting a flexible IP is permanent and cannot be undone.
 func (s *API) DeleteFlexibleIP(req *DeleteFlexibleIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -510,9 +664,8 @@ func (s *API) DeleteFlexibleIP(req *DeleteFlexibleIPRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -522,18 +675,7 @@ func (s *API) DeleteFlexibleIP(req *DeleteFlexibleIPRequest, opts ...scw.Request
 	return nil
 }
 
-type AttachFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipsIDs: list of flexible IP IDs to attach to a server.
-	// Multiple IDs can be provided, but note that flexible IPs must belong to the same MAC group (see details about MAC groups).
-	FipsIDs []string `json:"fips_ids"`
-	// ServerID: ID of the server on which to attach the flexible IPs.
-	ServerID string `json:"server_id"`
-}
-
-// AttachFlexibleIP: attach an existing flexible IP to a server.
-// Attach an existing flexible IP to a specified Elastic Metal server.
+// AttachFlexibleIP: Attach an existing flexible IP to a specified Elastic Metal server.
 func (s *API) AttachFlexibleIP(req *AttachFlexibleIPRequest, opts ...scw.RequestOption) (*AttachFlexibleIPsResponse, error) {
 	var err error
 
@@ -547,9 +689,8 @@ func (s *API) AttachFlexibleIP(req *AttachFlexibleIPRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/attach",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/attach",
 	}
 
 	err = scwReq.SetBody(req)
@@ -566,15 +707,7 @@ func (s *API) AttachFlexibleIP(req *AttachFlexibleIPRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type DetachFlexibleIPRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipsIDs: list of flexible IP IDs to detach from a server. Multiple IDs can be provided. Note that flexible IPs must belong to the same MAC group.
-	FipsIDs []string `json:"fips_ids"`
-}
-
-// DetachFlexibleIP: detach an existing flexible IP from a server.
-// Detach an existing flexible IP from a specified Elastic Metal server.
+// DetachFlexibleIP: Detach an existing flexible IP from a specified Elastic Metal server.
 func (s *API) DetachFlexibleIP(req *DetachFlexibleIPRequest, opts ...scw.RequestOption) (*DetachFlexibleIPsResponse, error) {
 	var err error
 
@@ -588,9 +721,8 @@ func (s *API) DetachFlexibleIP(req *DetachFlexibleIPRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/detach",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/detach",
 	}
 
 	err = scwReq.SetBody(req)
@@ -607,18 +739,7 @@ func (s *API) DetachFlexibleIP(req *DetachFlexibleIPRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type GenerateMACAddrRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP for which to generate a virtual MAC.
-	FipID string `json:"-"`
-	// MacType: tODO.
-	// Default value: unknown_type
-	MacType MACAddressType `json:"mac_type"`
-}
-
-// GenerateMACAddr: generate a virtual MAC address on an existing flexible IP.
-// Generate a virtual MAC (Media Access Control) address on an existing flexible IP.
+// GenerateMACAddr: Generate a virtual MAC (Media Access Control) address on an existing flexible IP.
 func (s *API) GenerateMACAddr(req *GenerateMACAddrRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -636,9 +757,8 @@ func (s *API) GenerateMACAddr(req *GenerateMACAddrRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac",
 	}
 
 	err = scwReq.SetBody(req)
@@ -655,19 +775,7 @@ func (s *API) GenerateMACAddr(req *GenerateMACAddrRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type DuplicateMACAddrRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP on which to duplicate the virtual MAC.
-	// Note that the flexible IPs need to be attached to the same server.
-	FipID string `json:"-"`
-	// DuplicateFromFipID: ID of the flexible IP to duplicate the Virtual MAC from.
-	// Note that flexible IPs need to be attached to the same server.
-	DuplicateFromFipID string `json:"duplicate_from_fip_id"`
-}
-
-// DuplicateMACAddr: duplicate a virtual MAC address to another flexible IP.
-// Duplicate a virtual MAC address from a given flexible IP to another flexible IP attached to the same server.
+// DuplicateMACAddr: Duplicate a virtual MAC address from a given flexible IP to another flexible IP attached to the same server.
 func (s *API) DuplicateMACAddr(req *DuplicateMACAddrRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -685,9 +793,8 @@ func (s *API) DuplicateMACAddr(req *DuplicateMACAddrRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac/duplicate",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac/duplicate",
 	}
 
 	err = scwReq.SetBody(req)
@@ -704,17 +811,7 @@ func (s *API) DuplicateMACAddr(req *DuplicateMACAddrRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type MoveMACAddrRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-
-	FipID string `json:"-"`
-
-	DstFipID string `json:"dst_fip_id"`
-}
-
-// MoveMACAddr: relocate an existing virtual MAC address to a different flexible IP.
-// Relocate a virtual MAC (Media Access Control) address from an existing flexible IP to a different flexible IP.
+// MoveMACAddr: Relocate a virtual MAC (Media Access Control) address from an existing flexible IP to a different flexible IP.
 func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
 	var err error
 
@@ -732,9 +829,8 @@ func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac/move",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac/move",
 	}
 
 	err = scwReq.SetBody(req)
@@ -751,16 +847,7 @@ func (s *API) MoveMACAddr(req *MoveMACAddrRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type DeleteMACAddrRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-	// FipID: ID of the flexible IP from which to delete the virtual MAC.
-	// If the flexible IP belongs to a MAC group, the MAC will be removed from both the MAC group and flexible IP.
-	FipID string `json:"-"`
-}
-
-// DeleteMACAddr: detach a given virtual MAC address from an existing flexible IP.
-// Detach a given MAC (Media Access Control) address from an existing flexible IP.
+// DeleteMACAddr: Detach a given MAC (Media Access Control) address from an existing flexible IP.
 func (s *API) DeleteMACAddr(req *DeleteMACAddrRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -778,9 +865,8 @@ func (s *API) DeleteMACAddr(req *DeleteMACAddrRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/flexible-ip/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/fips/" + fmt.Sprint(req.FipID) + "/mac",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -788,23 +874,4 @@ func (s *API) DeleteMACAddr(req *DeleteMACAddrRequest, opts ...scw.RequestOption
 		return err
 	}
 	return nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListFlexibleIPsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.FlexibleIPs = append(r.FlexibleIPs, results.FlexibleIPs...)
-	r.TotalCount += uint32(len(results.FlexibleIPs))
-	return uint32(len(results.FlexibleIPs)), nil
 }

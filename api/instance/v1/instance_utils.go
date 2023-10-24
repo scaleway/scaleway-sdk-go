@@ -308,32 +308,6 @@ func (r *ListImagesResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListServersTypesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListServersTypesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	if r.Servers == nil {
-		r.Servers = make(map[string]*ServerType, len(results.Servers))
-	}
-
-	for name, serverType := range results.Servers {
-		r.Servers[name] = serverType
-	}
-
-	r.TotalCount += uint32(len(results.Servers))
-	return uint32(len(results.Servers)), nil
-}
-
 func (v *NullableStringValue) UnmarshalJSON(b []byte) error {
 	if string(b) == "null" {
 		v.Null = true
@@ -457,30 +431,4 @@ func (s *API) WaitForMACAddress(req *WaitForMACAddressRequest, opts ...scw.Reque
 // Internal usage only
 func (r *GetServerTypesAvailabilityResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *GetServerTypesAvailabilityResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *GetServerTypesAvailabilityResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*GetServerTypesAvailabilityResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	if r.Servers == nil {
-		r.Servers = make(map[string]*GetServerTypesAvailabilityResponseAvailability, len(results.Servers))
-	}
-
-	for name, serverTypeAvailability := range results.Servers {
-		r.Servers[name] = serverTypeAvailability
-	}
-
-	r.TotalCount += uint32(len(results.Servers))
-	return uint32(len(results.Servers)), nil
 }
