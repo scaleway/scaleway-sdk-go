@@ -39,6 +39,84 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type DiscountDiscountMode string
+
+const (
+	// Unknown discount mode.
+	DiscountDiscountModeUnknownDiscountMode = DiscountDiscountMode("unknown_discount_mode")
+	// A rate discount that reduces each customer bill by the discount value percentage.
+	DiscountDiscountModeDiscountModeRate = DiscountDiscountMode("discount_mode_rate")
+	// A value discount that reduces the amount of the customer bill by the discount value.
+	DiscountDiscountModeDiscountModeValue = DiscountDiscountMode("discount_mode_value")
+	// A fixed sum to be deducted from the user's bills.
+	DiscountDiscountModeDiscountModeSplittable = DiscountDiscountMode("discount_mode_splittable")
+)
+
+func (enum DiscountDiscountMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_discount_mode"
+	}
+	return string(enum)
+}
+
+func (enum DiscountDiscountMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DiscountDiscountMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DiscountDiscountMode(DiscountDiscountMode(tmp).String())
+	return nil
+}
+
+type DiscountFilterType string
+
+const (
+	// Unknown filter type.
+	DiscountFilterTypeUnknownType = DiscountFilterType("unknown_type")
+	// Product category, such as Compute, Network, Observability.
+	DiscountFilterTypeProductCategory = DiscountFilterType("product_category")
+	// Products within the Product category. For example, VPC, Private Networks, and Public Gateways are products in the Network category.
+	DiscountFilterTypeProduct = DiscountFilterType("product")
+	// The offer of a product. For example, "VPC Public Gateway S", "VPC Public Gateway M" for the VPC product.
+	DiscountFilterTypeProductOffer = DiscountFilterType("product_offer")
+	// Identifies the reference based on category, product, range, size, region, and zone. It can sometimes include different product options, such as licenses and monthly payments.
+	DiscountFilterTypeProductReference = DiscountFilterType("product_reference")
+	// Region name like "FR-PAR", "NL-AMS", "PL-WAW".
+	DiscountFilterTypeRegion = DiscountFilterType("region")
+	// Zone name like "FR-PAR-1", "FR-PAR-2", "FR-PAR-3".
+	DiscountFilterTypeZone = DiscountFilterType("zone")
+)
+
+func (enum DiscountFilterType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum DiscountFilterType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DiscountFilterType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DiscountFilterType(DiscountFilterType(tmp).String())
+	return nil
+}
+
 type DownloadInvoiceRequestFileType string
 
 const (
@@ -99,6 +177,38 @@ func (enum *InvoiceType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDiscountsRequestOrderBy string
+
+const (
+	// Order discounts by creation date (descending chronological order).
+	ListDiscountsRequestOrderByCreationDateDesc = ListDiscountsRequestOrderBy("creation_date_desc")
+	// Order discounts by creation date (ascending chronological order).
+	ListDiscountsRequestOrderByCreationDateAsc = ListDiscountsRequestOrderBy("creation_date_asc")
+)
+
+func (enum ListDiscountsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "creation_date_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListDiscountsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDiscountsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDiscountsRequestOrderBy(ListDiscountsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListInvoicesRequestOrderBy string
 
 const (
@@ -141,6 +251,22 @@ func (enum *ListInvoicesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// DiscountCoupon: discount coupon.
+type DiscountCoupon struct {
+	// Description: the description of the coupon.
+	Description *string `json:"description"`
+}
+
+// DiscountFilter: discount filter.
+type DiscountFilter struct {
+	// Type: type of the filter.
+	// Default value: unknown_type
+	Type DiscountFilterType `json:"type"`
+
+	// Value: value of filter, it can be a product/range/region/zone value.
+	Value string `json:"value"`
+}
+
 // GetConsumptionResponseConsumption: get consumption response consumption.
 type GetConsumptionResponseConsumption struct {
 	// Value: monetary value of the consumption.
@@ -157,6 +283,46 @@ type GetConsumptionResponseConsumption struct {
 
 	// OperationPath: unique identifier of the product.
 	OperationPath string `json:"operation_path"`
+}
+
+// Discount: discount.
+type Discount struct {
+	// ID: the ID of the discount.
+	ID string `json:"id"`
+
+	// CreationDate: the creation date of the discount.
+	CreationDate *time.Time `json:"creation_date"`
+
+	// OrganizationID: the organization ID of the discount.
+	OrganizationID string `json:"organization_id"`
+
+	// Description: the description of the discount.
+	Description string `json:"description"`
+
+	// Value: the initial value of the discount.
+	Value float64 `json:"value"`
+
+	// ValueUsed: the value indicating how much of the discount has been used.
+	ValueUsed float64 `json:"value_used"`
+
+	// ValueRemaining: the remaining value of the discount.
+	ValueRemaining float64 `json:"value_remaining"`
+
+	// Mode: the mode of the discount.
+	// Default value: unknown_discount_mode
+	Mode DiscountDiscountMode `json:"mode"`
+
+	// StartDate: the start date of the discount.
+	StartDate *time.Time `json:"start_date"`
+
+	// StopDate: the stop date of the discount.
+	StopDate *time.Time `json:"stop_date"`
+
+	// Coupon: the description of the coupon.
+	Coupon *DiscountCoupon `json:"coupon"`
+
+	// Filters: list of products/ranges/regions/zones to limit the usability of discounts.
+	Filters []*DiscountFilter `json:"filters"`
 }
 
 // Invoice: invoice.
@@ -210,6 +376,50 @@ type GetConsumptionResponse struct {
 
 	// UpdatedAt: last consumption update date.
 	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+// ListDiscountsRequest: list discounts request.
+type ListDiscountsRequest struct {
+	// OrderBy: order discounts in the response by their description.
+	// Default value: creation_date_desc
+	OrderBy ListDiscountsRequestOrderBy `json:"-"`
+
+	// Page: positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+
+	// OrganizationID: ID of the organization.
+	OrganizationID *string `json:"-"`
+}
+
+// ListDiscountsResponse: list discounts response.
+type ListDiscountsResponse struct {
+	// TotalCount: total number of discounts.
+	TotalCount uint64 `json:"total_count"`
+
+	// Discounts: paginated returned discounts.
+	Discounts []*Discount `json:"discounts"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDiscountsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDiscountsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListDiscountsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Discounts = append(r.Discounts, results.Discounts...)
+	r.TotalCount += uint64(len(results.Discounts))
+	return uint64(len(results.Discounts)), nil
 }
 
 // ListInvoicesRequest: list invoices request.
@@ -347,6 +557,31 @@ func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOp
 	}
 
 	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDiscounts: List all discounts for an organization and usable categories/products/offers/references/regions/zones where the discount can be applied.
+func (s *API) ListDiscounts(req *ListDiscountsRequest, opts ...scw.RequestOption) (*ListDiscountsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2alpha1/discounts",
+		Query:  query,
+	}
+
+	var resp ListDiscountsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
