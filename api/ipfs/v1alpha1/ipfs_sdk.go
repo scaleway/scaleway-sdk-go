@@ -39,30 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: iPFS Pinning service API.
-type API struct {
-	client *scw.Client
-}
-
-// NewAPI returns a API object from a Scaleway client.
-func NewAPI(client *scw.Client) *API {
-	return &API{
-		client: client,
-	}
-}
-
-// IpnsAPI: iPFS Naming service API.
-type IpnsAPI struct {
-	client *scw.Client
-}
-
-// NewIpnsAPI returns a IpnsAPI object from a Scaleway client.
-func NewIpnsAPI(client *scw.Client) *IpnsAPI {
-	return &IpnsAPI{
-		client: client,
-	}
-}
-
 type ListNamesRequestOrderBy string
 
 const (
@@ -268,38 +244,44 @@ func (enum *PinStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ExportKeyNameResponse struct {
-	NameID string `json:"name_id"`
-
-	ProjectID string `json:"project_id"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	PublicKey string `json:"public_key"`
-
-	PrivateKey string `json:"private_key"`
+// PinCIDMeta: pin cid meta.
+type PinCIDMeta struct {
+	ID *string `json:"id"`
 }
 
-type ListNamesResponse struct {
-	Names []*Name `json:"names"`
+// PinCID: pin cid.
+type PinCID struct {
+	Cid *string `json:"cid"`
 
-	TotalCount uint64 `json:"total_count"`
+	Name *string `json:"name"`
+
+	Origins []string `json:"origins"`
+
+	Meta *PinCIDMeta `json:"meta"`
 }
 
-type ListPinsResponse struct {
-	TotalCount uint64 `json:"total_count"`
+// PinInfo: pin info.
+type PinInfo struct {
+	ID *string `json:"id"`
 
-	Pins []*Pin `json:"pins"`
+	URL *string `json:"url"`
+
+	Size *uint64 `json:"size"`
+
+	Progress *uint32 `json:"progress"`
+
+	// StatusDetails: default value: unknown_details
+	StatusDetails PinDetails `json:"status_details"`
 }
 
-type ListVolumesResponse struct {
-	Volumes []*Volume `json:"volumes"`
+// PinOptions: pin options.
+type PinOptions struct {
+	RequiredZones []string `json:"required_zones"`
 
-	TotalCount uint64 `json:"total_count"`
+	ReplicationCount uint32 `json:"replication_count"`
 }
 
+// Name: name.
 type Name struct {
 	NameID string `json:"name_id"`
 
@@ -314,16 +296,20 @@ type Name struct {
 	Name string `json:"name"`
 
 	Key string `json:"key"`
+
 	// Status: default value: unknown_status
 	Status NameStatus `json:"status"`
 
 	Value string `json:"value"`
 
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
 
+// Pin: pin.
 type Pin struct {
 	PinID string `json:"pin_id"`
+
 	// Status: default value: unknown_status
 	Status PinStatus `json:"status"`
 
@@ -336,47 +322,13 @@ type Pin struct {
 	Info *PinInfo `json:"info"`
 }
 
-type PinCID struct {
-	Cid *string `json:"cid"`
-
-	Name *string `json:"name"`
-
-	Origins []string `json:"origins"`
-
-	Meta *PinCIDMeta `json:"meta"`
-}
-
-type PinCIDMeta struct {
-	ID *string `json:"id"`
-}
-
-type PinInfo struct {
-	ID *string `json:"id"`
-
-	URL *string `json:"url"`
-
-	Size *uint64 `json:"size"`
-
-	Progress *uint32 `json:"progress"`
-	// StatusDetails: default value: unknown_details
-	StatusDetails PinDetails `json:"status_details"`
-}
-
-type PinOptions struct {
-	RequiredZones []string `json:"required_zones"`
-
-	ReplicationCount uint32 `json:"replication_count"`
-}
-
-type ReplacePinResponse struct {
-	Pin *Pin `json:"pin"`
-}
-
+// Volume: volume.
 type Volume struct {
 	ID string `json:"id"`
 
 	ProjectID string `json:"project_id"`
 
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 
 	CountPin uint64 `json:"count_pin"`
@@ -392,37 +344,413 @@ type Volume struct {
 	Size *uint64 `json:"size"`
 }
 
-// Service API
+// CreatePinByCIDRequest: create pin by cid request.
+type CreatePinByCIDRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
 
-// Regions list localities the api is available in
-func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	// VolumeID: volume ID on which you want to pin your content.
+	VolumeID string `json:"volume_id"`
+
+	// Cid: cID containing the content you want to pin.
+	Cid string `json:"cid"`
+
+	// Origins: node containing the content you want to pin.
+	Origins []string `json:"origins"`
+
+	// Name: pin name.
+	Name *string `json:"name,omitempty"`
+
+	// PinOptions: pin options.
+	PinOptions *PinOptions `json:"pin_options,omitempty"`
 }
 
+// CreatePinByURLRequest: create pin by url request.
+type CreatePinByURLRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VolumeID: volume ID on which you want to pin your content.
+	VolumeID string `json:"volume_id"`
+
+	// URL: URL containing the content you want to pin.
+	URL string `json:"url"`
+
+	// Name: pin name.
+	Name *string `json:"name,omitempty"`
+
+	// PinOptions: pin options.
+	PinOptions *PinOptions `json:"pin_options,omitempty"`
+}
+
+// CreateVolumeRequest: create volume request.
 type CreateVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
+
 	// Name: volume name.
 	Name string `json:"name"`
 }
 
-// CreateVolume: create a new volume.
-// Create a new volume from a Project ID. Volume is identified by an ID and used to host pin references.
+// DeletePinRequest: delete pin request.
+type DeletePinRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PinID: pin ID you want to remove from the volume.
+	PinID string `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"volume_id"`
+}
+
+// DeleteVolumeRequest: delete volume request.
+type DeleteVolumeRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"-"`
+}
+
+// ExportKeyNameResponse: export key name response.
+type ExportKeyNameResponse struct {
+	NameID string `json:"name_id"`
+
+	ProjectID string `json:"project_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	PublicKey string `json:"public_key"`
+
+	PrivateKey string `json:"private_key"`
+}
+
+// GetPinRequest: get pin request.
+type GetPinRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PinID: pin ID of which you want to obtain information.
+	PinID string `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"volume_id"`
+}
+
+// GetVolumeRequest: get volume request.
+type GetVolumeRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"-"`
+}
+
+// IpnsAPICreateNameRequest: ipns api create name request.
+type IpnsAPICreateNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID.
+	ProjectID string `json:"project_id"`
+
+	// Name: name for your records.
+	Name string `json:"name"`
+
+	// Value: value you want to associate with your records, CID or IPNS key.
+	Value string `json:"value"`
+}
+
+// IpnsAPIDeleteNameRequest: ipns api delete name request.
+type IpnsAPIDeleteNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NameID: name ID you wish to delete.
+	NameID string `json:"-"`
+}
+
+// IpnsAPIExportKeyNameRequest: ipns api export key name request.
+type IpnsAPIExportKeyNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NameID: name ID whose keys you want to export.
+	NameID string `json:"-"`
+}
+
+// IpnsAPIGetNameRequest: ipns api get name request.
+type IpnsAPIGetNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NameID: name ID whose information you want to retrieve.
+	NameID string `json:"-"`
+}
+
+// IpnsAPIImportKeyNameRequest: ipns api import key name request.
+type IpnsAPIImportKeyNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID.
+	ProjectID string `json:"project_id"`
+
+	// Name: name for your records.
+	Name string `json:"name"`
+
+	// PrivateKey: base64 private key.
+	PrivateKey string `json:"private_key"`
+
+	// Value: value you want to associate with your records, CID or IPNS key.
+	Value string `json:"value"`
+}
+
+// IpnsAPIListNamesRequest: ipns api list names request.
+type IpnsAPIListNamesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID.
+	OrganizationID *string `json:"-"`
+
+	// OrderBy: sort the order of the returned names.
+	// Default value: created_at_asc
+	OrderBy ListNamesRequestOrderBy `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of names to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// IpnsAPIUpdateNameRequest: ipns api update name request.
+type IpnsAPIUpdateNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// NameID: name ID you wish to update.
+	NameID string `json:"-"`
+
+	// Name: new name you want to associate with your record.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: new tags you want to associate with your record.
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Value: value you want to associate with your records, CID or IPNS key.
+	Value *string `json:"value,omitempty"`
+}
+
+// ListNamesResponse: list names response.
+type ListNamesResponse struct {
+	Names []*Name `json:"names"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNamesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNamesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListNamesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Names = append(r.Names, results.Names...)
+	r.TotalCount += uint64(len(results.Names))
+	return uint64(len(results.Names)), nil
+}
+
+// ListPinsRequest: list pins request.
+type ListPinsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VolumeID: volume ID of which you want to list the pins.
+	VolumeID string `json:"-"`
+
+	// ProjectID: project ID.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID.
+	OrganizationID *string `json:"-"`
+
+	// OrderBy: sort order of the returned Volume.
+	// Default value: created_at_asc
+	OrderBy ListPinsRequestOrderBy `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of volumes to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// Status: list pins by status.
+	// Default value: unknown_status
+	Status PinStatus `json:"-"`
+}
+
+// ListPinsResponse: list pins response.
+type ListPinsResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	Pins []*Pin `json:"pins"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPinsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPinsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPinsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pins = append(r.Pins, results.Pins...)
+	r.TotalCount += uint64(len(results.Pins))
+	return uint64(len(results.Pins)), nil
+}
+
+// ListVolumesRequest: list volumes request.
+type ListVolumesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID, only volumes belonging to this project will be listed.
+	ProjectID string `json:"-"`
+
+	// OrderBy: sort the order of the returned volumes.
+	// Default value: created_at_asc
+	OrderBy ListVolumesRequestOrderBy `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of volumes to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListVolumesResponse: list volumes response.
+type ListVolumesResponse struct {
+	Volumes []*Volume `json:"volumes"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListVolumesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Volumes = append(r.Volumes, results.Volumes...)
+	r.TotalCount += uint64(len(results.Volumes))
+	return uint64(len(results.Volumes)), nil
+}
+
+// ReplacePinRequest: replace pin request.
+type ReplacePinRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PinID: pin ID whose information you wish to replace.
+	PinID string `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"volume_id"`
+
+	// Cid: new CID you want to pin in place of the old one.
+	Cid string `json:"cid"`
+
+	// Name: new name to replace.
+	Name *string `json:"name,omitempty"`
+
+	// Origins: node containing the content you want to pin.
+	Origins []string `json:"origins"`
+
+	// PinOptions: pin options.
+	PinOptions *PinOptions `json:"pin_options,omitempty"`
+}
+
+// ReplacePinResponse: replace pin response.
+type ReplacePinResponse struct {
+	Pin *Pin `json:"pin"`
+}
+
+// UpdateVolumeRequest: update volume request.
+type UpdateVolumeRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VolumeID: volume ID.
+	VolumeID string `json:"-"`
+
+	// Name: volume name.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: tags of the volume.
+	Tags *[]string `json:"tags,omitempty"`
+}
+
+// IPFS Pinning service API.
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
+func (s *API) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// CreateVolume: Create a new volume from a Project ID. Volume is identified by an ID and used to host pin references.
 // Volume is personal (at least to your organization) even if IPFS blocks and CID are available to anyone.
 // Should be the first command you made because every pin must be attached to a volume.
 func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -430,9 +758,8 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes",
 	}
 
 	err = scwReq.SetBody(req)
@@ -449,15 +776,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type GetVolumeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"-"`
-}
-
-// GetVolume: get information about a volume.
-// Retrieve information about a specific volume.
+// GetVolume: Retrieve information about a specific volume.
 func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -475,9 +794,8 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	var resp Volume
@@ -489,33 +807,18 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 	return &resp, nil
 }
 
-type ListVolumesRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: project ID, only volumes belonging to this project will be listed.
-	ProjectID string `json:"-"`
-	// OrderBy: sort the order of the returned volumes.
-	// Default value: created_at_asc
-	OrderBy ListVolumesRequestOrderBy `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: maximum number of volumes to return per page.
-	PageSize *uint32 `json:"-"`
-}
-
-// ListVolumes: list all volumes by a Project ID.
-// Retrieve information about all volumes from a Project ID.
+// ListVolumes: Retrieve information about all volumes from a Project ID.
 func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
@@ -534,10 +837,9 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes",
+		Query:  query,
 	}
 
 	var resp ListVolumesResponse
@@ -549,19 +851,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type UpdateVolumeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"-"`
-	// Name: volume name.
-	Name *string `json:"name"`
-	// Tags: tags of the volume.
-	Tags *[]string `json:"tags"`
-}
-
-// UpdateVolume: update volume information.
-// Update volume information (tag, name...).
+// UpdateVolume: Update volume information (tag, name...).
 func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -579,9 +869,8 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -598,15 +887,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type DeleteVolumeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"-"`
-}
-
-// DeleteVolume: delete an existing volume.
-// Delete a volume by its ID and every pin attached to this volume. This process can take a while to conclude, depending on the size of your pinned content.
+// DeleteVolume: Delete a volume by its ID and every pin attached to this volume. This process can take a while to conclude, depending on the size of your pinned content.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -624,9 +905,8 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -636,21 +916,7 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-type CreatePinByURLRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID on which you want to pin your content.
-	VolumeID string `json:"volume_id"`
-	// URL: URL containing the content you want to pin.
-	URL string `json:"url"`
-	// Name: pin name.
-	Name *string `json:"name"`
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options"`
-}
-
-// CreatePinByURL: create a pin by URL.
-// Will fetch and store the content pointed by the provided URL. The content must be available on the public IPFS network.
+// CreatePinByURL: Will fetch and store the content pointed by the provided URL. The content must be available on the public IPFS network.
 // The content (IPFS blocks) will be host by the pinning service until pin deletion.
 // From that point, any other IPFS peer can fetch and host your content: Make sure to pin public or encrypted content.
 // Many pin requests (from different users) can target the same CID.
@@ -668,9 +934,8 @@ func (s *API) CreatePinByURL(req *CreatePinByURLRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-url",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-url",
 	}
 
 	err = scwReq.SetBody(req)
@@ -687,23 +952,7 @@ func (s *API) CreatePinByURL(req *CreatePinByURLRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type CreatePinByCIDRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID on which you want to pin your content.
-	VolumeID string `json:"volume_id"`
-	// Cid: cID containing the content you want to pin.
-	Cid string `json:"cid"`
-	// Origins: node containing the content you want to pin.
-	Origins []string `json:"origins"`
-	// Name: pin name.
-	Name *string `json:"name"`
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options"`
-}
-
-// CreatePinByCID: create a pin by CID.
-// Will fetch and store the content pointed by the provided CID. The content must be available on the public IPFS network.
+// CreatePinByCID: Will fetch and store the content pointed by the provided CID. The content must be available on the public IPFS network.
 // The content (IPFS blocks) will be host by the pinning service until pin deletion.
 // From that point, any other IPFS peer can fetch and host your content: Make sure to pin public or encrypted content.
 // Many pin requests (from different users) can target the same CID.
@@ -721,9 +970,8 @@ func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-cid",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/create-by-cid",
 	}
 
 	err = scwReq.SetBody(req)
@@ -740,23 +988,7 @@ func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-type ReplacePinRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// PinID: pin ID whose information you wish to replace.
-	PinID string `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"volume_id"`
-	// Cid: new CID you want to pin in place of the old one.
-	Cid string `json:"cid"`
-	// Name: new name to replace.
-	Name *string `json:"name"`
-	// Origins: node containing the content you want to pin.
-	Origins []string `json:"origins"`
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options"`
-}
-
+// ReplacePin:
 func (s *API) ReplacePin(req *ReplacePinRequest, opts ...scw.RequestOption) (*ReplacePinResponse, error) {
 	var err error
 
@@ -774,9 +1006,8 @@ func (s *API) ReplacePin(req *ReplacePinRequest, opts ...scw.RequestOption) (*Re
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "/replace",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "/replace",
 	}
 
 	err = scwReq.SetBody(req)
@@ -793,17 +1024,7 @@ func (s *API) ReplacePin(req *ReplacePinRequest, opts ...scw.RequestOption) (*Re
 	return &resp, nil
 }
 
-type GetPinRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// PinID: pin ID of which you want to obtain information.
-	PinID string `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"-"`
-}
-
-// GetPin: get pin information.
-// Retrieve information about the provided **pin ID**, such as status, last modification, and CID.
+// GetPin: Retrieve information about the provided **pin ID**, such as status, last modification, and CID.
 func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -824,10 +1045,9 @@ func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
+		Query:  query,
 	}
 
 	var resp Pin
@@ -839,29 +1059,7 @@ func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error
 	return &resp, nil
 }
 
-type ListPinsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// VolumeID: volume ID of which you want to list the pins.
-	VolumeID string `json:"-"`
-	// ProjectID: project ID.
-	ProjectID *string `json:"-"`
-	// OrganizationID: organization ID.
-	OrganizationID *string `json:"-"`
-	// OrderBy: sort order of the returned Volume.
-	// Default value: created_at_asc
-	OrderBy ListPinsRequestOrderBy `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: maximum number of volumes to return per page.
-	PageSize *uint32 `json:"-"`
-	// Status: list pins by status.
-	// Default value: unknown_status
-	Status PinStatus `json:"-"`
-}
-
-// ListPins: list all pins within a volume.
-// Retrieve information about all pins within a volume.
+// ListPins: Retrieve information about all pins within a volume.
 func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPinsResponse, error) {
 	var err error
 
@@ -889,10 +1087,9 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins",
+		Query:  query,
 	}
 
 	var resp ListPinsResponse
@@ -904,17 +1101,7 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 	return &resp, nil
 }
 
-type DeletePinRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// PinID: pin ID you want to remove from the volume.
-	PinID string `json:"-"`
-	// VolumeID: volume ID.
-	VolumeID string `json:"-"`
-}
-
-// DeletePin: create an unpin request.
-// An unpin request means that you no longer own the content.
+// DeletePin: An unpin request means that you no longer own the content.
 // This content can therefore be removed and no longer provided on the IPFS network.
 func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -936,10 +1123,9 @@ func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pins/" + fmt.Sprint(req.PinID) + "",
+		Query:  query,
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -949,37 +1135,32 @@ func (s *API) DeletePin(req *DeletePinRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
-// Service IpnsAPI
+type IpnsAPI struct {
+	client *scw.Client
+}
 
-// Regions list localities the api is available in
+// NewIpnsAPI returns a IpnsAPI object from a Scaleway client.
+func NewIpnsAPI(client *scw.Client) *IpnsAPI {
+	return &IpnsAPI{
+		client: client,
+	}
+}
 func (s *IpnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-type IpnsAPICreateNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: project ID.
-	ProjectID string `json:"project_id"`
-	// Name: name for your records.
-	Name string `json:"name"`
-	// Value: value you want to associate with your records, CID or IPNS key.
-	Value string `json:"value"`
-}
-
-// CreateName: create a new name.
-// You can use the `ipns key` command to list and generate more names and their respective keys.
+// CreateName: You can use the `ipns key` command to list and generate more names and their respective keys.
 func (s *IpnsAPI) CreateName(req *IpnsAPICreateNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -987,9 +1168,8 @@ func (s *IpnsAPI) CreateName(req *IpnsAPICreateNameRequest, opts ...scw.RequestO
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1006,15 +1186,7 @@ func (s *IpnsAPI) CreateName(req *IpnsAPICreateNameRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-type IpnsAPIGetNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NameID: name ID whose information you want to retrieve.
-	NameID string `json:"-"`
-}
-
-// GetName: get information about a name.
-// Retrieve information about a specific name.
+// GetName: Retrieve information about a specific name.
 func (s *IpnsAPI) GetName(req *IpnsAPIGetNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
@@ -1032,9 +1204,8 @@ func (s *IpnsAPI) GetName(req *IpnsAPIGetNameRequest, opts ...scw.RequestOption)
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
 	}
 
 	var resp Name
@@ -1046,15 +1217,7 @@ func (s *IpnsAPI) GetName(req *IpnsAPIGetNameRequest, opts ...scw.RequestOption)
 	return &resp, nil
 }
 
-type IpnsAPIDeleteNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NameID: name ID you wish to delete.
-	NameID string `json:"-"`
-}
-
-// DeleteName: delete an existing name.
-// Delete a name by its ID.
+// DeleteName: Delete a name by its ID.
 func (s *IpnsAPI) DeleteName(req *IpnsAPIDeleteNameRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1072,9 +1235,8 @@ func (s *IpnsAPI) DeleteName(req *IpnsAPIDeleteNameRequest, opts ...scw.RequestO
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1084,24 +1246,7 @@ func (s *IpnsAPI) DeleteName(req *IpnsAPIDeleteNameRequest, opts ...scw.RequestO
 	return nil
 }
 
-type IpnsAPIListNamesRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: project ID.
-	ProjectID *string `json:"-"`
-	// OrganizationID: organization ID.
-	OrganizationID *string `json:"-"`
-	// OrderBy: sort the order of the returned names.
-	// Default value: created_at_asc
-	OrderBy ListNamesRequestOrderBy `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: maximum number of names to return per page.
-	PageSize *uint32 `json:"-"`
-}
-
-// ListNames: list all names by a Project ID.
-// Retrieve information about all names from a Project ID.
+// ListNames: Retrieve information about all names from a Project ID.
 func (s *IpnsAPI) ListNames(req *IpnsAPIListNamesRequest, opts ...scw.RequestOption) (*ListNamesResponse, error) {
 	var err error
 
@@ -1127,10 +1272,9 @@ func (s *IpnsAPI) ListNames(req *IpnsAPIListNamesRequest, opts ...scw.RequestOpt
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names",
+		Query:  query,
 	}
 
 	var resp ListNamesResponse
@@ -1142,21 +1286,7 @@ func (s *IpnsAPI) ListNames(req *IpnsAPIListNamesRequest, opts ...scw.RequestOpt
 	return &resp, nil
 }
 
-type IpnsAPIUpdateNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NameID: name ID you wish to update.
-	NameID string `json:"-"`
-	// Name: new name you want to associate with your record.
-	Name *string `json:"name"`
-	// Tags: new tags you want to associate with your record.
-	Tags *[]string `json:"tags"`
-	// Value: value you want to associate with your records, CID or IPNS key.
-	Value *string `json:"value"`
-}
-
-// UpdateName: update name information.
-// Update name information (CID, tag, name...).
+// UpdateName: Update name information (CID, tag, name...).
 func (s *IpnsAPI) UpdateName(req *IpnsAPIUpdateNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
 
@@ -1174,9 +1304,8 @@ func (s *IpnsAPI) UpdateName(req *IpnsAPIUpdateNameRequest, opts ...scw.RequestO
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1193,15 +1322,7 @@ func (s *IpnsAPI) UpdateName(req *IpnsAPIUpdateNameRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-type IpnsAPIExportKeyNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// NameID: name ID whose keys you want to export.
-	NameID string `json:"-"`
-}
-
-// ExportKeyName: export your private key.
-// Export a private key by its ID.
+// ExportKeyName: Export a private key by its ID.
 func (s *IpnsAPI) ExportKeyName(req *IpnsAPIExportKeyNameRequest, opts ...scw.RequestOption) (*ExportKeyNameResponse, error) {
 	var err error
 
@@ -1219,9 +1340,8 @@ func (s *IpnsAPI) ExportKeyName(req *IpnsAPIExportKeyNameRequest, opts ...scw.Re
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "/export-key",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/" + fmt.Sprint(req.NameID) + "/export-key",
 	}
 
 	var resp ExportKeyNameResponse
@@ -1233,32 +1353,18 @@ func (s *IpnsAPI) ExportKeyName(req *IpnsAPIExportKeyNameRequest, opts ...scw.Re
 	return &resp, nil
 }
 
-type IpnsAPIImportKeyNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: project ID.
-	ProjectID string `json:"project_id"`
-	// Name: name for your records.
-	Name string `json:"name"`
-	// PrivateKey: base64 private key.
-	PrivateKey string `json:"private_key"`
-	// Value: value you want to associate with your records, CID or IPNS key.
-	Value string `json:"value"`
-}
-
-// ImportKeyName: import your private key.
-// Import a private key.
+// ImportKeyName: Import a private key.
 func (s *IpnsAPI) ImportKeyName(req *IpnsAPIImportKeyNameRequest, opts ...scw.RequestOption) (*Name, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1266,9 +1372,8 @@ func (s *IpnsAPI) ImportKeyName(req *IpnsAPIImportKeyNameRequest, opts ...scw.Re
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/import-key",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/ipfs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/names/import-key",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1283,61 +1388,4 @@ func (s *IpnsAPI) ImportKeyName(req *IpnsAPIImportKeyNameRequest, opts ...scw.Re
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListVolumesResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListVolumesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Volumes = append(r.Volumes, results.Volumes...)
-	r.TotalCount += uint64(len(results.Volumes))
-	return uint64(len(results.Volumes)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListPinsResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListPinsResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListPinsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Pins = append(r.Pins, results.Pins...)
-	r.TotalCount += uint64(len(results.Pins))
-	return uint64(len(results.Pins)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListNamesResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListNamesResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListNamesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Names = append(r.Names, results.Names...)
-	r.TotalCount += uint64(len(results.Names))
-	return uint64(len(results.Names)), nil
 }

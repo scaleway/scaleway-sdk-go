@@ -39,19 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
-// Cockpit API.
-type API struct {
-	client *scw.Client
-}
-
-// NewAPI returns a API object from a Scaleway client.
-func NewAPI(client *scw.Client) *API {
-	return &API{
-		client: client,
-	}
-}
-
 type CockpitStatus string
 
 const (
@@ -306,1206 +293,355 @@ func (enum *PlanName) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Cockpit: cockpit.
-type Cockpit struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
-	// CreatedAt: date and time of the Cockpit's creation.
-	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: date and time of the Cockpit's last update.
-	UpdatedAt *time.Time `json:"updated_at"`
-	// Endpoints: endpoints of the Cockpit.
-	Endpoints *CockpitEndpoints `json:"endpoints"`
-	// Status: status of the Cockpit.
-	// Default value: unknown_status
-	Status CockpitStatus `json:"status"`
-	// ManagedAlertsEnabled: specifies whether managed alerts are enabled or disabled.
-	ManagedAlertsEnabled bool `json:"managed_alerts_enabled"`
-	// Plan: pricing plan information.
-	Plan *Plan `json:"plan"`
-}
-
-// CockpitEndpoints: cockpit. endpoints.
-type CockpitEndpoints struct {
-	// MetricsURL: URL for metrics.
-	MetricsURL string `json:"metrics_url"`
-	// LogsURL: URL for logs.
-	LogsURL string `json:"logs_url"`
-	// TracesURL: URL for traces.
-	TracesURL string `json:"traces_url"`
-	// AlertmanagerURL: URL for the alert manager.
-	AlertmanagerURL string `json:"alertmanager_url"`
-	// GrafanaURL: URL for the Grafana dashboard.
-	GrafanaURL string `json:"grafana_url"`
-}
-
-// CockpitMetrics: metrics for a given Cockpit.
-// Cockpit metrics.
-type CockpitMetrics struct {
-	// Timeseries: time series array.
-	Timeseries []*scw.TimeSeries `json:"timeseries"`
-}
-
-// ContactPoint: contact point.
-type ContactPoint struct {
-	// Email: contact point configuration.
-	// Precisely one of Email must be set.
-	Email *ContactPointEmail `json:"email,omitempty"`
-}
-
+// ContactPointEmail: contact point email.
 type ContactPointEmail struct {
 	To string `json:"to"`
-}
-
-// Datasource: datasource.
-type Datasource struct {
-	// ID: ID of the datasource.
-	ID string `json:"id"`
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
-	// Name: datasource name.
-	Name string `json:"name"`
-	// URL: datasource URL.
-	URL string `json:"url"`
-	// Type: datasource type.
-	// Default value: unknown_datasource_type
-	Type DatasourceType `json:"type"`
-}
-
-// GrafanaProductDashboard: grafana dashboard.
-// Grafana product dashboard.
-type GrafanaProductDashboard struct {
-	// DashboardName: name of the dashboard.
-	DashboardName string `json:"dashboard_name"`
-	// Title: title of the dashboard.
-	Title string `json:"title"`
-	// URL: URL of the dashboard.
-	URL string `json:"url"`
-	// Tags: tags of the dashboard.
-	Tags []string `json:"tags"`
-	// Variables: variables of the dashboard.
-	Variables []string `json:"variables"`
-}
-
-// GrafanaUser: grafana user.
-type GrafanaUser struct {
-	// ID: ID of the Grafana user.
-	ID uint32 `json:"id"`
-	// Login: username of the Grafana user.
-	Login string `json:"login"`
-	// Role: role assigned to the Grafana user.
-	// Default value: unknown_role
-	Role GrafanaUserRole `json:"role"`
-	// Password: the Grafana user's password.
-	Password *string `json:"password"`
-}
-
-// ListContactPointsResponse: response returned when listing contact points.
-// List contact points response.
-type ListContactPointsResponse struct {
-	// TotalCount: count of all contact points created.
-	TotalCount uint32 `json:"total_count"`
-	// ContactPoints: array of contact points.
-	ContactPoints []*ContactPoint `json:"contact_points"`
-	// HasAdditionalReceivers: specifies whether the contact point has other receivers than the default receiver.
-	HasAdditionalReceivers bool `json:"has_additional_receivers"`
-	// HasAdditionalContactPoints: specifies whether there are unmanaged contact points.
-	HasAdditionalContactPoints bool `json:"has_additional_contact_points"`
-}
-
-// ListDatasourcesResponse: list datasources response.
-type ListDatasourcesResponse struct {
-	// TotalCount: count of all datasources corresponding to the request.
-	TotalCount uint32 `json:"total_count"`
-	// Datasources: list of the datasources within the pagination.
-	Datasources []*Datasource `json:"datasources"`
-}
-
-// ListGrafanaProductDashboardsResponse: response returned when getting a list of dashboards.
-// List grafana product dashboards response.
-type ListGrafanaProductDashboardsResponse struct {
-	// TotalCount: count of grafana dasboards.
-	TotalCount uint64 `json:"total_count"`
-	// Dashboards: information on grafana dashboards.
-	Dashboards []*GrafanaProductDashboard `json:"dashboards"`
-}
-
-// ListGrafanaUsersResponse: response returned when listing Grafana users.
-// List grafana users response.
-type ListGrafanaUsersResponse struct {
-	// TotalCount: count of all Grafana users.
-	TotalCount uint32 `json:"total_count"`
-	// GrafanaUsers: information on all Grafana users.
-	GrafanaUsers []*GrafanaUser `json:"grafana_users"`
-}
-
-// ListPlansResponse: response returned when listing all pricing plans.
-// List plans response.
-type ListPlansResponse struct {
-	// TotalCount: count of all pricing plans.
-	TotalCount uint64 `json:"total_count"`
-	// Plans: information on plans.
-	Plans []*Plan `json:"plans"`
-}
-
-// ListTokensResponse: list tokens response.
-type ListTokensResponse struct {
-	// TotalCount: count of all tokens created.
-	TotalCount uint32 `json:"total_count"`
-	// Tokens: list of all tokens created.
-	Tokens []*Token `json:"tokens"`
-}
-
-// Plan: pricing plan.
-// Plan.
-type Plan struct {
-	// ID: ID of a given pricing plan.
-	ID string `json:"id"`
-	// Name: name of a given pricing plan.
-	// Default value: unknown_name
-	Name PlanName `json:"name"`
-	// RetentionMetricsInterval: retention for metrics.
-	RetentionMetricsInterval *scw.Duration `json:"retention_metrics_interval"`
-	// RetentionLogsInterval: retention for logs.
-	RetentionLogsInterval *scw.Duration `json:"retention_logs_interval"`
-	// SampleIngestionPrice: ingestion price for 1 million samples in cents.
-	SampleIngestionPrice uint32 `json:"sample_ingestion_price"`
-	// LogsIngestionPrice: ingestion price for 1 GB of logs in cents.
-	LogsIngestionPrice uint32 `json:"logs_ingestion_price"`
-	// RetentionPrice: retention price in euros per month.
-	RetentionPrice uint32 `json:"retention_price"`
-}
-
-// SelectPlanResponse: response returned when selecting a pricing plan.
-// Select plan response.
-type SelectPlanResponse struct {
-}
-
-// Token: token.
-type Token struct {
-	// ID: ID of the token.
-	ID string `json:"id"`
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-	// Name: name of the token.
-	Name string `json:"name"`
-	// CreatedAt: date and time of the token's creation.
-	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: date and time of the token's last update.
-	UpdatedAt *time.Time `json:"updated_at"`
-	// Scopes: token's permissions.
-	Scopes *TokenScopes `json:"scopes"`
-	// SecretKey: token's secret key.
-	SecretKey *string `json:"secret_key"`
 }
 
 // TokenScopes: token scopes.
 type TokenScopes struct {
 	// QueryMetrics: permission to fetch metrics.
 	QueryMetrics bool `json:"query_metrics"`
+
 	// WriteMetrics: permission to write metrics.
 	WriteMetrics bool `json:"write_metrics"`
+
 	// SetupMetricsRules: permission to setup metrics rules.
 	SetupMetricsRules bool `json:"setup_metrics_rules"`
+
 	// QueryLogs: permission to fetch logs.
 	QueryLogs bool `json:"query_logs"`
+
 	// WriteLogs: permission to write logs.
 	WriteLogs bool `json:"write_logs"`
+
 	// SetupLogsRules: permission to set up logs rules.
 	SetupLogsRules bool `json:"setup_logs_rules"`
+
 	// SetupAlerts: permission to set up alerts.
 	SetupAlerts bool `json:"setup_alerts"`
+
 	// QueryTraces: permission to fetch traces.
 	QueryTraces bool `json:"query_traces"`
+
 	// WriteTraces: permission to write traces.
 	WriteTraces bool `json:"write_traces"`
 }
 
-// Service API
+// CockpitEndpoints: cockpit endpoints.
+type CockpitEndpoints struct {
+	// MetricsURL: URL for metrics.
+	MetricsURL string `json:"metrics_url"`
 
-type ActivateCockpitRequest struct {
+	// LogsURL: URL for logs.
+	LogsURL string `json:"logs_url"`
+
+	// TracesURL: URL for traces.
+	TracesURL string `json:"traces_url"`
+
+	// AlertmanagerURL: URL for the alert manager.
+	AlertmanagerURL string `json:"alertmanager_url"`
+
+	// GrafanaURL: URL for the Grafana dashboard.
+	GrafanaURL string `json:"grafana_url"`
+}
+
+// Plan: Pricing plan.
+type Plan struct {
+	// ID: ID of a given pricing plan.
+	ID string `json:"id"`
+
+	// Name: name of a given pricing plan.
+	// Default value: unknown_name
+	Name PlanName `json:"name"`
+
+	// RetentionMetricsInterval: retention for metrics.
+	RetentionMetricsInterval *scw.Duration `json:"retention_metrics_interval"`
+
+	// RetentionLogsInterval: retention for logs.
+	RetentionLogsInterval *scw.Duration `json:"retention_logs_interval"`
+
+	// SampleIngestionPrice: ingestion price for 1 million samples in cents.
+	SampleIngestionPrice uint32 `json:"sample_ingestion_price"`
+
+	// LogsIngestionPrice: ingestion price for 1 GB of logs in cents.
+	LogsIngestionPrice uint32 `json:"logs_ingestion_price"`
+
+	// RetentionPrice: retention price in euros per month.
+	RetentionPrice uint32 `json:"retention_price"`
+}
+
+// ContactPoint: Contact point.
+type ContactPoint struct {
+	// Email: contact point configuration.
+	// Precisely one of Email must be set.
+	Email *ContactPointEmail `json:"email,omitempty"`
+}
+
+// Datasource: Datasource.
+type Datasource struct {
+	// ID: ID of the datasource.
+	ID string `json:"id"`
+
 	// ProjectID: ID of the Project the Cockpit belongs to.
 	ProjectID string `json:"project_id"`
-}
 
-// ActivateCockpit: activate the Cockpit of the specified Project ID.
-func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/activate",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cockpit
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetCockpitRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"-"`
-}
-
-// GetCockpit: retrieve the Cockpit of the specified Project ID.
-func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/cockpit",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp Cockpit
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type GetCockpitMetricsRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"-"`
-	// StartDate: desired time range's start date for the metrics.
-	StartDate *time.Time `json:"-"`
-	// EndDate: desired time range's end date for the metrics.
-	EndDate *time.Time `json:"-"`
-	// MetricName: name of the metric requested.
-	MetricName *string `json:"-"`
-}
-
-// GetCockpitMetrics: get metrics from your Cockpit with the specified Project ID.
-func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "start_date", req.StartDate)
-	parameter.AddToQuery(query, "end_date", req.EndDate)
-	parameter.AddToQuery(query, "metric_name", req.MetricName)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/cockpit/metrics",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp CockpitMetrics
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeactivateCockpitRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
-}
-
-// DeactivateCockpit: deactivate the Cockpit of the specified Project ID.
-func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/deactivate",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cockpit
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ResetCockpitGrafanaRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
-}
-
-// ResetCockpitGrafana: reset your Cockpit's Grafana associated with the specified Project ID.
-func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.RequestOption) (*Cockpit, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/reset-grafana",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cockpit
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type CreateDatasourceRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
 	// Name: datasource name.
 	Name string `json:"name"`
+
+	// URL: datasource URL.
+	URL string `json:"url"`
+
 	// Type: datasource type.
 	// Default value: unknown_datasource_type
 	Type DatasourceType `json:"type"`
 }
 
-// CreateDatasource: create a datasource for the specified Project ID and the given type.
-func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.RequestOption) (*Datasource, error) {
-	var err error
+// GrafanaProductDashboard: Grafana dashboard.
+type GrafanaProductDashboard struct {
+	// DashboardName: name of the dashboard.
+	DashboardName string `json:"dashboard_name"`
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
+	// Title: title of the dashboard.
+	Title string `json:"title"`
 
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/datasources",
-		Headers: http.Header{},
-	}
+	// URL: URL of the dashboard.
+	URL string `json:"url"`
 
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
+	// Tags: tags of the dashboard.
+	Tags []string `json:"tags"`
 
-	var resp Datasource
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	// Variables: variables of the dashboard.
+	Variables []string `json:"variables"`
 }
 
-type ListDatasourcesRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: how the response is ordered.
-	// Default value: created_at_asc
-	OrderBy ListDatasourcesRequestOrderBy `json:"-"`
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"-"`
-	// Types: filter by datasource types.
-	Types []DatasourceType `json:"-"`
+// GrafanaUser: Grafana user.
+type GrafanaUser struct {
+	// ID: ID of the Grafana user.
+	ID uint32 `json:"id"`
+
+	// Login: username of the Grafana user.
+	Login string `json:"login"`
+
+	// Role: role assigned to the Grafana user.
+	// Default value: unknown_role
+	Role GrafanaUserRole `json:"role"`
+
+	// Password: the Grafana user's password.
+	Password *string `json:"password"`
 }
 
-// ListDatasources: get a list of datasources for the specified Project ID.
-func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOption) (*ListDatasourcesResponse, error) {
-	var err error
+// Token: token.
+type Token struct {
+	// ID: ID of the token.
+	ID string `json:"id"`
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "types", req.Types)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/datasources",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListDatasourcesResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type CreateTokenRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
+
 	// Name: name of the token.
 	Name string `json:"name"`
+
+	// CreatedAt: date and time of the token's creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time of the token's last update.
+	UpdatedAt *time.Time `json:"updated_at"`
+
 	// Scopes: token's permissions.
 	Scopes *TokenScopes `json:"scopes"`
+
+	// SecretKey: token's secret key.
+	SecretKey *string `json:"secret_key"`
 }
 
-// CreateToken: create a token associated with the specified Project ID.
-func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("token")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/tokens",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Token
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+// ActivateCockpitRequest: activate cockpit request.
+type ActivateCockpitRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
 }
 
-type ListTokensRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: how the response is ordered.
-	// Default value: created_at_asc
-	OrderBy ListTokensRequestOrderBy `json:"-"`
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"-"`
+// Cockpit: Cockpit.
+type Cockpit struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
+
+	// CreatedAt: date and time of the Cockpit's creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time of the Cockpit's last update.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Endpoints: endpoints of the Cockpit.
+	Endpoints *CockpitEndpoints `json:"endpoints"`
+
+	// Status: status of the Cockpit.
+	// Default value: unknown_status
+	Status CockpitStatus `json:"status"`
+
+	// ManagedAlertsEnabled: specifies whether managed alerts are enabled or disabled.
+	ManagedAlertsEnabled bool `json:"managed_alerts_enabled"`
+
+	// Plan: pricing plan information.
+	Plan *Plan `json:"plan"`
 }
 
-// ListTokens: get a list of tokens associated with the specified Project ID.
-func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/tokens",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListTokensResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+// CockpitMetrics: Metrics for a given Cockpit.
+type CockpitMetrics struct {
+	// Timeseries: time series array.
+	Timeseries []*scw.TimeSeries `json:"timeseries"`
 }
 
-type GetTokenRequest struct {
-	// TokenID: ID of the token.
-	TokenID string `json:"-"`
-}
-
-// GetToken: retrieve the token associated with the specified token ID.
-func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
-	var err error
-
-	if fmt.Sprint(req.TokenID) == "" {
-		return nil, errors.New("field TokenID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/tokens/" + fmt.Sprint(req.TokenID) + "",
-		Headers: http.Header{},
-	}
-
-	var resp Token
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteTokenRequest struct {
-	// TokenID: ID of the token.
-	TokenID string `json:"-"`
-}
-
-// DeleteToken: delete the token associated with the specified token ID.
-func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.TokenID) == "" {
-		return errors.New("field TokenID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/cockpit/v1beta1/tokens/" + fmt.Sprint(req.TokenID) + "",
-		Headers: http.Header{},
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
+// CreateContactPointRequest: Request to create a contact point.
 type CreateContactPointRequest struct {
 	// ProjectID: ID of the Project in which to create the contact point.
 	ProjectID string `json:"project_id"`
+
 	// ContactPoint: contact point to create.
-	ContactPoint *ContactPoint `json:"contact_point"`
+	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
 }
 
-// CreateContactPoint: create a contact point to receive alerts for the default receiver.
-func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/contact-points",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ContactPoint
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListContactPointsRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// ProjectID: ID of the Project from which to list the contact points.
-	ProjectID string `json:"-"`
-}
-
-// ListContactPoints: get a list of contact points for the Cockpit associated with the specified Project ID.
-func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/contact-points",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListContactPointsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type DeleteContactPointRequest struct {
-	// ProjectID: ID of the Project.
+// CreateDatasourceRequest: Request to create a datasource.
+type CreateDatasourceRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
 	ProjectID string `json:"project_id"`
-	// ContactPoint: contact point to delete.
-	ContactPoint *ContactPoint `json:"contact_point"`
+
+	// Name: datasource name.
+	Name string `json:"name"`
+
+	// Type: datasource type.
+	// Default value: unknown_datasource_type
+	Type DatasourceType `json:"type"`
 }
 
-// DeleteContactPoint: delete a contact point for the default receiver.
-func (s *API) DeleteContactPoint(req *DeleteContactPointRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/delete-contact-point",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type EnableManagedAlertsRequest struct {
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-}
-
-// EnableManagedAlerts: enable the sending of managed alerts for the specified Project's Cockpit.
-func (s *API) EnableManagedAlerts(req *EnableManagedAlertsRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/enable-managed-alerts",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type DisableManagedAlertsRequest struct {
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-}
-
-// DisableManagedAlerts: disable the sending of managed alerts for the specified Project's Cockpit.
-func (s *API) DisableManagedAlerts(req *DisableManagedAlertsRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/disable-managed-alerts",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type TriggerTestAlertRequest struct {
-	ProjectID string `json:"project_id"`
-}
-
-// TriggerTestAlert: trigger a test alert to all of the Cockpit's receivers.
-func (s *API) TriggerTestAlert(req *TriggerTestAlertRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/trigger-test-alert",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
+// CreateGrafanaUserRequest: Request to create a Grafana user.
 type CreateGrafanaUserRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
+
 	// Login: username of the Grafana user.
 	Login string `json:"login"`
+
 	// Role: role assigned to the Grafana user.
 	// Default value: unknown_role
 	Role GrafanaUserRole `json:"role"`
 }
 
-// CreateGrafanaUser: create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
-func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/grafana-users",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp GrafanaUser
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListGrafanaUsersRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: login_asc
-	OrderBy ListGrafanaUsersRequestOrderBy `json:"-"`
+// CreateTokenRequest: create token request.
+type CreateTokenRequest struct {
 	// ProjectID: ID of the Project.
-	ProjectID string `json:"-"`
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the token.
+	Name string `json:"name"`
+
+	// Scopes: token's permissions.
+	Scopes *TokenScopes `json:"scopes,omitempty"`
 }
 
-// ListGrafanaUsers: get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
-func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/grafana-users",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListGrafanaUsersResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+// DeactivateCockpitRequest: deactivate cockpit request.
+type DeactivateCockpitRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
 }
 
+// DeleteContactPointRequest: Request to delete a contact point.
+type DeleteContactPointRequest struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+
+	// ContactPoint: contact point to delete.
+	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
+}
+
+// DeleteGrafanaUserRequest: Request to delete a Grafana user.
 type DeleteGrafanaUserRequest struct {
 	// GrafanaUserID: ID of the Grafana user.
 	GrafanaUserID uint32 `json:"-"`
+
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
 }
 
-// DeleteGrafanaUser: delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
-func (s *API) DeleteGrafanaUser(req *DeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.GrafanaUserID) == "" {
-		return errors.New("field GrafanaUserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/grafana-users/" + fmt.Sprint(req.GrafanaUserID) + "/delete",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
+// DeleteTokenRequest: delete token request.
+type DeleteTokenRequest struct {
+	// TokenID: ID of the token.
+	TokenID string `json:"-"`
 }
 
-type ResetGrafanaUserPasswordRequest struct {
-	// GrafanaUserID: ID of the Grafana user.
-	GrafanaUserID uint32 `json:"-"`
+// DisableManagedAlertsRequest: Request to disable the sending of managed alerts.
+type DisableManagedAlertsRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
 }
 
-// ResetGrafanaUserPassword: reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
-func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.GrafanaUserID) == "" {
-		return nil, errors.New("field GrafanaUserID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/grafana-users/" + fmt.Sprint(req.GrafanaUserID) + "/reset-password",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp GrafanaUser
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListPlansRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: name_asc
-	OrderBy ListPlansRequestOrderBy `json:"-"`
-}
-
-// ListPlans: get a list of all pricing plans available.
-func (s *API) ListPlans(req *ListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
-	var err error
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/plans",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListPlansResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type SelectPlanRequest struct {
+// EnableManagedAlertsRequest: Request to enable the sending of managed alerts.
+type EnableManagedAlertsRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
-	// PlanID: ID of the pricing plan.
-	PlanID string `json:"plan_id"`
 }
 
-// SelectPlan: select your chosen pricing plan for your Cockpit, specifying the Cockpit's Project ID and the pricing plan's ID in the request.
-func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*SelectPlanResponse, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/cockpit/v1beta1/select-plan",
-		Headers: http.Header{},
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp SelectPlanResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-type ListGrafanaProductDashboardsRequest struct {
-	// ProjectID: ID of the Project.
+// GetCockpitMetricsRequest: Request to get a given Cockpit's metrics.
+type GetCockpitMetricsRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
 	ProjectID string `json:"-"`
-	// Page: page number.
-	Page *int32 `json:"-"`
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-	// Tags: tags to filter the dashboards.
-	Tags []string `json:"-"`
+
+	// StartDate: desired time range's start date for the metrics.
+	StartDate *time.Time `json:"-"`
+
+	// EndDate: desired time range's end date for the metrics.
+	EndDate *time.Time `json:"-"`
+
+	// MetricName: name of the metric requested.
+	MetricName *string `json:"-"`
 }
 
-// ListGrafanaProductDashboards: list product dashboards.
-// Get a list of available product dashboards.
-func (s *API) ListGrafanaProductDashboards(req *ListGrafanaProductDashboardsRequest, opts ...scw.RequestOption) (*ListGrafanaProductDashboardsResponse, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "tags", req.Tags)
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/grafana-product-dashboards",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp ListGrafanaProductDashboardsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+// GetCockpitRequest: get cockpit request.
+type GetCockpitRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"-"`
 }
 
+// GetGrafanaProductDashboardRequest: Request to get a dashboard.
 type GetGrafanaProductDashboardRequest struct {
 	// DashboardName: name of the dashboard.
 	DashboardName string `json:"-"`
+
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"-"`
 }
 
-// GetGrafanaProductDashboard: get a product dashboard.
-// Get a product dashboard specified by the dashboard ID.
-func (s *API) GetGrafanaProductDashboard(req *GetGrafanaProductDashboardRequest, opts ...scw.RequestOption) (*GrafanaProductDashboard, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	if fmt.Sprint(req.DashboardName) == "" {
-		return nil, errors.New("field DashboardName cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/cockpit/v1beta1/grafana-product-dashboards/" + fmt.Sprint(req.DashboardName) + "",
-		Query:   query,
-		Headers: http.Header{},
-	}
-
-	var resp GrafanaProductDashboard
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+// GetTokenRequest: get token request.
+type GetTokenRequest struct {
+	// TokenID: ID of the token.
+	TokenID string `json:"-"`
 }
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListDatasourcesResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
+// ListContactPointsRequest: Request to list all contact points.
+type ListContactPointsRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: ID of the Project from which to list the contact points.
+	ProjectID string `json:"-"`
 }
 
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListDatasourcesResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListDatasourcesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
+// ListContactPointsResponse: Response returned when listing contact points.
+type ListContactPointsResponse struct {
+	// TotalCount: count of all contact points created.
+	TotalCount uint32 `json:"total_count"`
 
-	r.Datasources = append(r.Datasources, results.Datasources...)
-	r.TotalCount += uint32(len(results.Datasources))
-	return uint32(len(results.Datasources)), nil
-}
+	// ContactPoints: array of contact points.
+	ContactPoints []*ContactPoint `json:"contact_points"`
 
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
+	// HasAdditionalReceivers: specifies whether the contact point has other receivers than the default receiver.
+	HasAdditionalReceivers bool `json:"has_additional_receivers"`
 
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTokensResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Tokens = append(r.Tokens, results.Tokens...)
-	r.TotalCount += uint32(len(results.Tokens))
-	return uint32(len(results.Tokens)), nil
+	// HasAdditionalContactPoints: specifies whether there are unmanaged contact points.
+	HasAdditionalContactPoints bool `json:"has_additional_contact_points"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -1527,6 +663,120 @@ func (r *ListContactPointsResponse) UnsafeAppend(res interface{}) (uint32, error
 	return uint32(len(results.ContactPoints)), nil
 }
 
+// ListDatasourcesRequest: list datasources request.
+type ListDatasourcesRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: how the response is ordered.
+	// Default value: created_at_asc
+	OrderBy ListDatasourcesRequestOrderBy `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+
+	// Types: filter by datasource types.
+	Types []DatasourceType `json:"-"`
+}
+
+// ListDatasourcesResponse: list datasources response.
+type ListDatasourcesResponse struct {
+	// TotalCount: count of all datasources corresponding to the request.
+	TotalCount uint32 `json:"total_count"`
+
+	// Datasources: list of the datasources within the pagination.
+	Datasources []*Datasource `json:"datasources"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatasourcesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatasourcesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListDatasourcesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Datasources = append(r.Datasources, results.Datasources...)
+	r.TotalCount += uint32(len(results.Datasources))
+	return uint32(len(results.Datasources)), nil
+}
+
+// ListGrafanaProductDashboardsRequest: Request to get a list of dashboards.
+type ListGrafanaProductDashboardsRequest struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// Tags: tags to filter the dashboards.
+	Tags []string `json:"-"`
+}
+
+// ListGrafanaProductDashboardsResponse: Response returned when getting a list of dashboards.
+type ListGrafanaProductDashboardsResponse struct {
+	// TotalCount: count of grafana dasboards.
+	TotalCount uint64 `json:"total_count"`
+
+	// Dashboards: information on grafana dashboards.
+	Dashboards []*GrafanaProductDashboard `json:"dashboards"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListGrafanaProductDashboardsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListGrafanaProductDashboardsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Dashboards = append(r.Dashboards, results.Dashboards...)
+	r.TotalCount += uint64(len(results.Dashboards))
+	return uint64(len(results.Dashboards)), nil
+}
+
+// ListGrafanaUsersRequest: Request to list all Grafana users.
+type ListGrafanaUsersRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: login_asc
+	OrderBy ListGrafanaUsersRequestOrderBy `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+}
+
+// ListGrafanaUsersResponse: Response returned when listing Grafana users.
+type ListGrafanaUsersResponse struct {
+	// TotalCount: count of all Grafana users.
+	TotalCount uint32 `json:"total_count"`
+
+	// GrafanaUsers: information on all Grafana users.
+	GrafanaUsers []*GrafanaUser `json:"grafana_users"`
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListGrafanaUsersResponse) UnsafeGetTotalCount() uint32 {
@@ -1544,6 +794,27 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint32, error)
 	r.GrafanaUsers = append(r.GrafanaUsers, results.GrafanaUsers...)
 	r.TotalCount += uint32(len(results.GrafanaUsers))
 	return uint32(len(results.GrafanaUsers)), nil
+}
+
+// ListPlansRequest: Request to list all pricing plans.
+type ListPlansRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: name_asc
+	OrderBy ListPlansRequestOrderBy `json:"-"`
+}
+
+// ListPlansResponse: Response returned when listing all pricing plans.
+type ListPlansResponse struct {
+	// TotalCount: count of all pricing plans.
+	TotalCount uint64 `json:"total_count"`
+
+	// Plans: information on plans.
+	Plans []*Plan `json:"plans"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -1565,21 +836,754 @@ func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Plans)), nil
 }
 
+// ListTokensRequest: list tokens request.
+type ListTokensRequest struct {
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: page size.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: how the response is ordered.
+	// Default value: created_at_asc
+	OrderBy ListTokensRequestOrderBy `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+}
+
+// ListTokensResponse: list tokens response.
+type ListTokensResponse struct {
+	// TotalCount: count of all tokens created.
+	TotalCount uint32 `json:"total_count"`
+
+	// Tokens: list of all tokens created.
+	Tokens []*Token `json:"tokens"`
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListGrafanaProductDashboardsResponse) UnsafeGetTotalCount() uint64 {
+func (r *ListTokensResponse) UnsafeGetTotalCount() uint32 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListGrafanaProductDashboardsResponse)
+func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTokensResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
-	r.Dashboards = append(r.Dashboards, results.Dashboards...)
-	r.TotalCount += uint64(len(results.Dashboards))
-	return uint64(len(results.Dashboards)), nil
+	r.Tokens = append(r.Tokens, results.Tokens...)
+	r.TotalCount += uint32(len(results.Tokens))
+	return uint32(len(results.Tokens)), nil
+}
+
+// ResetCockpitGrafanaRequest: reset cockpit grafana request.
+type ResetCockpitGrafanaRequest struct {
+	// ProjectID: ID of the Project the Cockpit belongs to.
+	ProjectID string `json:"project_id"`
+}
+
+// ResetGrafanaUserPasswordRequest: Request to reset a Grafana user's password.
+type ResetGrafanaUserPasswordRequest struct {
+	// GrafanaUserID: ID of the Grafana user.
+	GrafanaUserID uint32 `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+}
+
+// SelectPlanRequest: Request to select a specific pricing plan.
+type SelectPlanRequest struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+
+	// PlanID: ID of the pricing plan.
+	PlanID string `json:"plan_id"`
+}
+
+// SelectPlanResponse: Response returned when selecting a pricing plan.
+type SelectPlanResponse struct {
+}
+
+// TriggerTestAlertRequest: trigger test alert request.
+type TriggerTestAlertRequest struct {
+	ProjectID string `json:"project_id"`
+}
+
+// Cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
+
+// ActivateCockpit: Activate the Cockpit of the specified Project ID.
+func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/activate",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Cockpit
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetCockpit: Retrieve the Cockpit of the specified Project ID.
+func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/cockpit",
+		Query:  query,
+	}
+
+	var resp Cockpit
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetCockpitMetrics: Get metrics from your Cockpit with the specified Project ID.
+func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "metric_name", req.MetricName)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/cockpit/metrics",
+		Query:  query,
+	}
+
+	var resp CockpitMetrics
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeactivateCockpit: Deactivate the Cockpit of the specified Project ID.
+func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/deactivate",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Cockpit
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ResetCockpitGrafana: Reset your Cockpit's Grafana associated with the specified Project ID.
+func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.RequestOption) (*Cockpit, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/reset-grafana",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Cockpit
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateDatasource: Create a datasource for the specified Project ID and the given type.
+func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.RequestOption) (*Datasource, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/datasources",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Datasource
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDatasources: Get a list of datasources for the specified Project ID.
+func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOption) (*ListDatasourcesResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "types", req.Types)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/datasources",
+		Query:  query,
+	}
+
+	var resp ListDatasourcesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateToken: Create a token associated with the specified Project ID.
+func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("token")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/tokens",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Token
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListTokens: Get a list of tokens associated with the specified Project ID.
+func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/tokens",
+		Query:  query,
+	}
+
+	var resp ListTokensResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetToken: Retrieve the token associated with the specified token ID.
+func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	var err error
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return nil, errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/tokens/" + fmt.Sprint(req.TokenID) + "",
+	}
+
+	var resp Token
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteToken: Delete the token associated with the specified token ID.
+func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/cockpit/v1beta1/tokens/" + fmt.Sprint(req.TokenID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CreateContactPoint: Create a contact point to receive alerts for the default receiver.
+func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/contact-points",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ContactPoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListContactPoints: Get a list of contact points for the Cockpit associated with the specified Project ID.
+func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/contact-points",
+		Query:  query,
+	}
+
+	var resp ListContactPointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteContactPoint: Delete a contact point for the default receiver.
+func (s *API) DeleteContactPoint(req *DeleteContactPointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/delete-contact-point",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project's Cockpit.
+func (s *API) EnableManagedAlerts(req *EnableManagedAlertsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/enable-managed-alerts",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project's Cockpit.
+func (s *API) DisableManagedAlerts(req *DisableManagedAlertsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/disable-managed-alerts",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TriggerTestAlert: Trigger a test alert to all of the Cockpit's receivers.
+func (s *API) TriggerTestAlert(req *TriggerTestAlertRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/trigger-test-alert",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CreateGrafanaUser: Create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
+func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/grafana-users",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp GrafanaUser
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListGrafanaUsers: Get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
+func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/grafana-users",
+		Query:  query,
+	}
+
+	var resp ListGrafanaUsersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteGrafanaUser: Delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
+func (s *API) DeleteGrafanaUser(req *DeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.GrafanaUserID) == "" {
+		return errors.New("field GrafanaUserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/grafana-users/" + fmt.Sprint(req.GrafanaUserID) + "/delete",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ResetGrafanaUserPassword: Reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
+func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.GrafanaUserID) == "" {
+		return nil, errors.New("field GrafanaUserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/grafana-users/" + fmt.Sprint(req.GrafanaUserID) + "/reset-password",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp GrafanaUser
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPlans: Get a list of all pricing plans available.
+func (s *API) ListPlans(req *ListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/plans",
+		Query:  query,
+	}
+
+	var resp ListPlansResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SelectPlan: Select your chosen pricing plan for your Cockpit, specifying the Cockpit's Project ID and the pricing plan's ID in the request.
+func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*SelectPlanResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1beta1/select-plan",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SelectPlanResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListGrafanaProductDashboards: Get a list of available product dashboards.
+func (s *API) ListGrafanaProductDashboards(req *ListGrafanaProductDashboardsRequest, opts ...scw.RequestOption) (*ListGrafanaProductDashboardsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "tags", req.Tags)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/grafana-product-dashboards",
+		Query:  query,
+	}
+
+	var resp ListGrafanaProductDashboardsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetGrafanaProductDashboard: Get a product dashboard specified by the dashboard ID.
+func (s *API) GetGrafanaProductDashboard(req *GetGrafanaProductDashboardRequest, opts ...scw.RequestOption) (*GrafanaProductDashboard, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.DashboardName) == "" {
+		return nil, errors.New("field DashboardName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/grafana-product-dashboards/" + fmt.Sprint(req.DashboardName) + "",
+		Query:  query,
+	}
+
+	var resp GrafanaProductDashboard
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }

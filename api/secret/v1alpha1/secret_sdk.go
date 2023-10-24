@@ -39,19 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-// API: secret Manager API.
-// This API allows you to conveniently store, access and share sensitive data.
-type API struct {
-	client *scw.Client
-}
-
-// NewAPI returns a API object from a Scaleway client.
-func NewAPI(client *scw.Client) *API {
-	return &API{
-		client: client,
-	}
-}
-
 type ListFoldersRequestOrderBy string
 
 const (
@@ -181,7 +168,7 @@ type SecretType string
 
 const (
 	SecretTypeUnknownSecretType = SecretType("unknown_secret_type")
-	// default type.
+	// Default type.
 	SecretTypeOpaque = SecretType("opaque")
 	// List of concatenated PEM blocks. They can contain certificates, private keys or any other PEM block types.
 	SecretTypeCertificate = SecretType("certificate")
@@ -244,183 +231,687 @@ func (enum *SecretVersionStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// AccessSecretVersionResponse: access secret version response.
-type AccessSecretVersionResponse struct {
-	// SecretID: ID of the secret.
-	SecretID string `json:"secret_id"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1.
-	Revision uint32 `json:"revision"`
-	// Data: the base64-encoded secret payload of the version.
-	Data []byte `json:"data"`
-	// DataCrc32: the CRC32 checksum of the data as a base-10 integer.
-	// This field is only available if a CRC32 was supplied during the creation of the version.
-	DataCrc32 *uint32 `json:"data_crc32"`
+// PasswordGenerationParams: password generation params.
+type PasswordGenerationParams struct {
+	// Length: length of the password to generate (between 1 and 1024).
+	Length uint32 `json:"length"`
+
+	// NoLowercaseLetters: do not include lower case letters by default in the alphabet.
+	NoLowercaseLetters bool `json:"no_lowercase_letters"`
+
+	// NoUppercaseLetters: do not include upper case letters by default in the alphabet.
+	NoUppercaseLetters bool `json:"no_uppercase_letters"`
+
+	// NoDigits: do not include digits by default in the alphabet.
+	NoDigits bool `json:"no_digits"`
+
+	// AdditionalChars: additional ascii characters to be included in the alphabet.
+	AdditionalChars string `json:"additional_chars"`
 }
 
 // Folder: folder.
 type Folder struct {
 	// ID: ID of the folder.
 	ID string `json:"id"`
+
 	// ProjectID: ID of the Project containing the folder.
 	ProjectID string `json:"project_id"`
+
 	// Name: name of the folder.
 	Name string `json:"name"`
-	// Path: path of the folder.
-	// Location of the folder in the directory structure.
+
+	// Path: location of the folder in the directory structure.
 	Path string `json:"path"`
+
 	// CreatedAt: date and time of the folder's creation.
 	CreatedAt *time.Time `json:"created_at"`
 }
 
-// ListFoldersResponse: list folders response.
-type ListFoldersResponse struct {
-	// Folders: list of folders.
-	Folders []*Folder `json:"folders"`
-	// TotalCount: count of all folders matching the requested criteria.
-	TotalCount uint32 `json:"total_count"`
-}
+// SecretVersion: secret version.
+type SecretVersion struct {
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1.
+	Revision uint32 `json:"revision"`
 
-// ListSecretVersionsResponse: list secret versions response.
-type ListSecretVersionsResponse struct {
-	// Versions: single page of versions.
-	Versions []*SecretVersion `json:"versions"`
-	// TotalCount: number of versions.
-	TotalCount uint32 `json:"total_count"`
-}
+	// SecretID: ID of the secret.
+	SecretID string `json:"secret_id"`
 
-// ListSecretsResponse: list secrets response.
-type ListSecretsResponse struct {
-	// Secrets: single page of secrets matching the requested criteria.
-	Secrets []*Secret `json:"secrets"`
-	// TotalCount: count of all secrets matching the requested criteria.
-	TotalCount uint32 `json:"total_count"`
-}
+	// Status: * `unknown`: the version is in an invalid state.
+	// * `enabled`: the version is accessible.
+	// * `disabled`: the version is not accessible but can be enabled.
+	// * `destroyed`: the version is permanently deleted. It is not possible to recover it.
+	// Default value: unknown
+	Status SecretVersionStatus `json:"status"`
 
-// ListTagsResponse: list tags response.
-type ListTagsResponse struct {
-	// Tags: list of tags.
-	Tags []string `json:"tags"`
-	// TotalCount: count of all tags matching the requested criteria.
-	TotalCount uint32 `json:"total_count"`
-}
+	// CreatedAt: date and time of the version's creation.
+	CreatedAt *time.Time `json:"created_at"`
 
-// PasswordGenerationParams: password generation params.
-type PasswordGenerationParams struct {
-	// Length: length of the password to generate (between 1 and 1024).
-	Length uint32 `json:"length"`
-	// NoLowercaseLetters: do not include lower case letters by default in the alphabet.
-	NoLowercaseLetters bool `json:"no_lowercase_letters"`
-	// NoUppercaseLetters: do not include upper case letters by default in the alphabet.
-	NoUppercaseLetters bool `json:"no_uppercase_letters"`
-	// NoDigits: do not include digits by default in the alphabet.
-	NoDigits bool `json:"no_digits"`
-	// AdditionalChars: additional ascii characters to be included in the alphabet.
-	AdditionalChars string `json:"additional_chars"`
+	// UpdatedAt: last update of the version.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Description: description of the version.
+	Description *string `json:"description"`
+
+	// IsLatest: returns `true` if the version is the latest.
+	IsLatest bool `json:"is_latest"`
 }
 
 // Secret: secret.
 type Secret struct {
 	// ID: ID of the secret.
 	ID string `json:"id"`
+
 	// ProjectID: ID of the Project containing the secret.
 	ProjectID string `json:"project_id"`
+
 	// Name: name of the secret.
 	Name string `json:"name"`
-	// Status: current status of the secret.
-	// * `ready`: the secret can be read, modified and deleted.
+
+	// Status: * `ready`: the secret can be read, modified and deleted.
 	// * `locked`: no action can be performed on the secret. This status can only be applied and removed by Scaleway.
 	// Default value: ready
 	Status SecretStatus `json:"status"`
+
 	// CreatedAt: date and time of the secret's creation.
 	CreatedAt *time.Time `json:"created_at"`
+
 	// UpdatedAt: last update of the secret.
 	UpdatedAt *time.Time `json:"updated_at"`
+
 	// Tags: list of the secret's tags.
 	Tags []string `json:"tags"`
+
 	// VersionCount: number of versions for this secret.
 	VersionCount uint32 `json:"version_count"`
+
 	// Description: updated description of the secret.
 	Description *string `json:"description"`
+
 	// IsManaged: returns `true` for secrets that are managed by another product.
 	IsManaged bool `json:"is_managed"`
+
 	// IsProtected: returns `true` for protected secrets that cannot be deleted.
 	IsProtected bool `json:"is_protected"`
-	// Type: type of the secret.
-	// See `Secret.Type` enum for description of values.
+
+	// Type: see `Secret.Type` enum for description of values.
 	// Default value: unknown_secret_type
 	Type SecretType `json:"type"`
-	// Path: path of the secret.
-	// Location of the secret in the directory structure.
+
+	// Path: location of the secret in the directory structure.
 	Path string `json:"path"`
+
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
 
-// SecretVersion: secret version.
-type SecretVersion struct {
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1.
-	Revision uint32 `json:"revision"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"secret_id"`
-	// Status: current status of the version.
-	// * `unknown`: the version is in an invalid state.
-	// * `enabled`: the version is accessible.
-	// * `disabled`: the version is not accessible but can be enabled.
-	// * `destroyed`: the version is permanently deleted. It is not possible to recover it.
-	// Default value: unknown
-	Status SecretVersionStatus `json:"status"`
-	// CreatedAt: date and time of the version's creation.
-	CreatedAt *time.Time `json:"created_at"`
-	// UpdatedAt: last update of the version.
-	UpdatedAt *time.Time `json:"updated_at"`
-	// Description: description of the version.
-	Description *string `json:"description"`
-	// IsLatest: returns `true` if the version is the latest.
-	IsLatest bool `json:"is_latest"`
+// AccessSecretVersionByNameRequest: access secret version by name request.
+type AccessSecretVersionByNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretName: name of the secret.
+	SecretName string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+
+	// ProjectID: (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
+	ProjectID *string `json:"project_id,omitempty"`
 }
 
-// Service API
+// AccessSecretVersionRequest: access secret version request.
+type AccessSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
 
-// Regions list localities the api is available in
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+}
+
+// AccessSecretVersionResponse: access secret version response.
+type AccessSecretVersionResponse struct {
+	// SecretID: ID of the secret.
+	SecretID string `json:"secret_id"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1.
+	Revision uint32 `json:"revision"`
+
+	// Data: the base64-encoded secret payload of the version.
+	Data []byte `json:"data"`
+
+	// DataCrc32: this field is only available if a CRC32 was supplied during the creation of the version.
+	DataCrc32 *uint32 `json:"data_crc32"`
+}
+
+// AddSecretOwnerRequest: add secret owner request.
+type AddSecretOwnerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Deprecated: ProductName: (Deprecated: use `product` field) Name of the product to add.
+	ProductName *string `json:"product_name,omitempty"`
+
+	// Product: see `Product` enum for description of values.
+	// Default value: unknown
+	Product Product `json:"product"`
+}
+
+// CreateFolderRequest: create folder request.
+type CreateFolderRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project containing the folder.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the folder.
+	Name string `json:"name"`
+
+	// Path: (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path,omitempty"`
+}
+
+// CreateSecretRequest: create secret request.
+type CreateSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project containing the secret.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the secret.
+	Name string `json:"name"`
+
+	// Tags: list of the secret's tags.
+	Tags []string `json:"tags"`
+
+	// Description: description of the secret.
+	Description *string `json:"description,omitempty"`
+
+	// Type: (Optional.) See `Secret.Type` enum for description of values. If not specified, the type is `Opaque`.
+	// Default value: unknown_secret_type
+	Type SecretType `json:"type"`
+
+	// Path: (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path,omitempty"`
+}
+
+// CreateSecretVersionRequest: create secret version request.
+type CreateSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Data: the base64-encoded secret payload of the version.
+	Data []byte `json:"data"`
+
+	// Description: description of the version.
+	Description *string `json:"description,omitempty"`
+
+	// DisablePrevious: (Optional.) If there is no previous version or if the previous version was already disabled, does nothing.
+	DisablePrevious *bool `json:"disable_previous,omitempty"`
+
+	// Deprecated: PasswordGeneration: (Optional.) If specified, a random password will be generated. The `data` and `data_crc32` fields must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
+	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
+
+	// DataCrc32: if specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
+	DataCrc32 *uint32 `json:"data_crc32,omitempty"`
+}
+
+// DeleteFolderRequest: delete folder request.
+type DeleteFolderRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FolderID: ID of the folder.
+	FolderID string `json:"-"`
+}
+
+// DeleteSecretRequest: delete secret request.
+type DeleteSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+}
+
+// DestroySecretVersionRequest: destroy secret version request.
+type DestroySecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+}
+
+// DisableSecretVersionRequest: disable secret version request.
+type DisableSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+}
+
+// EnableSecretVersionRequest: enable secret version request.
+type EnableSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+}
+
+// GeneratePasswordRequest: generate password request.
+type GeneratePasswordRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Description: description of the version.
+	Description *string `json:"description,omitempty"`
+
+	// DisablePrevious: this has no effect if there is no previous version or if the previous version was already disabled.
+	DisablePrevious *bool `json:"disable_previous,omitempty"`
+
+	// Length: length of the password to generate (between 1 and 1024 characters).
+	Length uint32 `json:"length"`
+
+	// NoLowercaseLetters: (Optional.) Exclude lower case letters by default in the password character set.
+	NoLowercaseLetters *bool `json:"no_lowercase_letters,omitempty"`
+
+	// NoUppercaseLetters: (Optional.) Exclude upper case letters by default in the password character set.
+	NoUppercaseLetters *bool `json:"no_uppercase_letters,omitempty"`
+
+	// NoDigits: (Optional.) Exclude digits by default in the password character set.
+	NoDigits *bool `json:"no_digits,omitempty"`
+
+	// AdditionalChars: (Optional.) Additional ASCII characters to be included in the password character set.
+	AdditionalChars *string `json:"additional_chars,omitempty"`
+}
+
+// GetSecretByNameRequest: get secret by name request.
+type GetSecretByNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretName: name of the secret.
+	SecretName string `json:"-"`
+
+	// ProjectID: (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
+	ProjectID *string `json:"project_id,omitempty"`
+}
+
+// GetSecretRequest: get secret request.
+type GetSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+}
+
+// GetSecretVersionByNameRequest: get secret version by name request.
+type GetSecretVersionByNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretName: name of the secret.
+	SecretName string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+
+	// ProjectID: (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
+	ProjectID *string `json:"project_id,omitempty"`
+}
+
+// GetSecretVersionRequest: get secret version request.
+type GetSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+}
+
+// ListFoldersRequest: list folders request.
+type ListFoldersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: filter by Project ID (optional).
+	ProjectID *string `json:"-"`
+
+	// Path: filter by path (optional).
+	Path *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListFoldersRequestOrderBy `json:"-"`
+}
+
+// ListFoldersResponse: list folders response.
+type ListFoldersResponse struct {
+	// Folders: list of folders.
+	Folders []*Folder `json:"folders"`
+
+	// TotalCount: count of all folders matching the requested criteria.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFoldersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFoldersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListFoldersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Folders = append(r.Folders, results.Folders...)
+	r.TotalCount += uint32(len(results.Folders))
+	return uint32(len(results.Folders)), nil
+}
+
+// ListSecretVersionsByNameRequest: list secret versions by name request.
+type ListSecretVersionsByNameRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretName: name of the secret.
+	SecretName string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// Status: filter results by status.
+	Status []SecretVersionStatus `json:"-"`
+
+	// ProjectID: (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
+	ProjectID *string `json:"-"`
+}
+
+// ListSecretVersionsRequest: list secret versions request.
+type ListSecretVersionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// Status: filter results by status.
+	Status []SecretVersionStatus `json:"-"`
+}
+
+// ListSecretVersionsResponse: list secret versions response.
+type ListSecretVersionsResponse struct {
+	// Versions: single page of versions.
+	Versions []*SecretVersion `json:"versions"`
+
+	// TotalCount: number of versions.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSecretVersionsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSecretVersionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSecretVersionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Versions = append(r.Versions, results.Versions...)
+	r.TotalCount += uint32(len(results.Versions))
+	return uint32(len(results.Versions)), nil
+}
+
+// ListSecretsRequest: list secrets request.
+type ListSecretsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: filter by Organization ID (optional).
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: filter by Project ID (optional).
+	ProjectID *string `json:"-"`
+
+	// OrderBy: default value: name_asc
+	OrderBy ListSecretsRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// Tags: list of tags to filter on (optional).
+	Tags []string `json:"-"`
+
+	// Name: filter by secret name (optional).
+	Name *string `json:"-"`
+
+	// IsManaged: filter by managed / not managed (optional).
+	IsManaged *bool `json:"-"`
+
+	// Path: filter by path (optional).
+	Path *string `json:"-"`
+}
+
+// ListSecretsResponse: list secrets response.
+type ListSecretsResponse struct {
+	// Secrets: single page of secrets matching the requested criteria.
+	Secrets []*Secret `json:"secrets"`
+
+	// TotalCount: count of all secrets matching the requested criteria.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSecretsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSecretsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSecretsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Secrets = append(r.Secrets, results.Secrets...)
+	r.TotalCount += uint32(len(results.Secrets))
+	return uint32(len(results.Secrets)), nil
+}
+
+// ListTagsRequest: list tags request.
+type ListTagsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: (Optional.) If not specified, Secret Manager will look for tags in all Projects.
+	ProjectID *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListTagsResponse: list tags response.
+type ListTagsResponse struct {
+	// Tags: list of tags.
+	Tags []string `json:"tags"`
+
+	// TotalCount: count of all tags matching the requested criteria.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListTagsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tags = append(r.Tags, results.Tags...)
+	r.TotalCount += uint32(len(results.Tags))
+	return uint32(len(results.Tags)), nil
+}
+
+// ProtectSecretRequest: protect secret request.
+type ProtectSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret to protect.
+	SecretID string `json:"-"`
+}
+
+// UnprotectSecretRequest: unprotect secret request.
+type UnprotectSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret to unprotect.
+	SecretID string `json:"-"`
+}
+
+// UpdateSecretRequest: update secret request.
+type UpdateSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Name: secret's updated name (optional).
+	Name *string `json:"name,omitempty"`
+
+	// Tags: secret's updated list of tags (optional).
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Description: description of the secret.
+	Description *string `json:"description,omitempty"`
+
+	// Path: (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
+	Path *string `json:"path,omitempty"`
+}
+
+// UpdateSecretVersionRequest: update secret version request.
+type UpdateSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SecretID: ID of the secret.
+	SecretID string `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - a number (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+
+	// Description: description of the version.
+	Description *string `json:"description,omitempty"`
+}
+
+// This API allows you to conveniently store, access and share sensitive data.
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }
 
-type CreateSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: ID of the Project containing the secret.
-	ProjectID string `json:"project_id"`
-	// Name: name of the secret.
-	Name string `json:"name"`
-	// Tags: list of the secret's tags.
-	Tags []string `json:"tags"`
-	// Description: description of the secret.
-	Description *string `json:"description"`
-	// Type: type of the secret.
-	// (Optional.) See `Secret.Type` enum for description of values. If not specified, the type is `Opaque`.
-	// Default value: unknown_secret_type
-	Type SecretType `json:"type"`
-	// Path: path of the secret.
-	// (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
-	Path *string `json:"path"`
-}
-
-// CreateSecret: create a secret.
-// You must specify the `region` to create a secret.
+// CreateSecret: You must specify the `region` to create a secret.
 func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -428,9 +919,8 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets",
 	}
 
 	err = scwReq.SetBody(req)
@@ -447,30 +937,18 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type CreateFolderRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: ID of the Project containing the folder.
-	ProjectID string `json:"project_id"`
-	// Name: name of the folder.
-	Name string `json:"name"`
-	// Path: path of the folder.
-	// (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
-	Path *string `json:"path"`
-}
-
-// CreateFolder: create folder.
+// CreateFolder: Create folder.
 func (s *API) CreateFolder(req *CreateFolderRequest, opts ...scw.RequestOption) (*Folder, error) {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -478,9 +956,8 @@ func (s *API) CreateFolder(req *CreateFolderRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
 	}
 
 	err = scwReq.SetBody(req)
@@ -497,15 +974,7 @@ func (s *API) CreateFolder(req *CreateFolderRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type GetSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-}
-
-// GetSecret: get metadata using the secret's ID.
-// Retrieve the metadata of a secret specified by the `region` and `secret_id` parameters.
+// GetSecret: Retrieve the metadata of a secret specified by the `region` and `secret_id` parameters.
 func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -523,9 +992,8 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
 	}
 
 	var resp Secret
@@ -537,18 +1005,7 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	return &resp, nil
 }
 
-type GetSecretByNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretName: name of the secret.
-	SecretName string `json:"-"`
-	// ProjectID: ID of the Project to target.
-	// (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
-	ProjectID *string `json:"-"`
-}
-
-// Deprecated: GetSecretByName: get metadata using the secret's name.
-// Retrieve the metadata of a secret specified by the `region` and `secret_name` parameters.
+// Deprecated: GetSecretByName: Retrieve the metadata of a secret specified by the `region` and `secret_name` parameters.
 //
 // GetSecretByName usage is now deprecated.
 //
@@ -573,10 +1030,9 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "",
+		Query:  query,
 	}
 
 	var resp Secret
@@ -588,24 +1044,7 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type UpdateSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Name: secret's updated name (optional).
-	Name *string `json:"name"`
-	// Tags: secret's updated list of tags (optional).
-	Tags *[]string `json:"tags"`
-	// Description: description of the secret.
-	Description *string `json:"description"`
-	// Path: path of the folder.
-	// (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
-	Path *string `json:"path"`
-}
-
-// UpdateSecret: update metadata of a secret.
-// Edit a secret's metadata such as name, tag(s) and description. The secret to update is specified by the `secret_id` and `region` parameters.
+// UpdateSecret: Edit a secret's metadata such as name, tag(s) and description. The secret to update is specified by the `secret_id` and `region` parameters.
 func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -623,9 +1062,8 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -642,31 +1080,7 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-type ListSecretsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// OrganizationID: filter by Organization ID (optional).
-	OrganizationID *string `json:"-"`
-	// ProjectID: filter by Project ID (optional).
-	ProjectID *string `json:"-"`
-	// OrderBy: default value: name_asc
-	OrderBy ListSecretsRequestOrderBy `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// Tags: list of tags to filter on (optional).
-	Tags []string `json:"-"`
-	// Name: filter by secret name (optional).
-	Name *string `json:"-"`
-	// IsManaged: filter by managed / not managed (optional).
-	IsManaged *bool `json:"-"`
-	// Path: filter by path (optional).
-	Path *string `json:"-"`
-}
-
-// ListSecrets: list secrets.
-// Retrieve the list of secrets created within an Organization and/or Project. You must specify either the `organization_id` or the `project_id` and the `region`.
+// ListSecrets: Retrieve the list of secrets created within an Organization and/or Project. You must specify either the `organization_id` or the `project_id` and the `region`.
 func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*ListSecretsResponse, error) {
 	var err error
 
@@ -696,10 +1110,9 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets",
+		Query:  query,
 	}
 
 	var resp ListSecretsResponse
@@ -711,23 +1124,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type ListFoldersRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: filter by Project ID (optional).
-	ProjectID *string `json:"-"`
-	// Path: filter by path (optional).
-	Path *string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// OrderBy: default value: created_at_asc
-	OrderBy ListFoldersRequestOrderBy `json:"-"`
-}
-
-// ListFolders: list folders.
-// Retrieve the list of folders created within a Project.
+// ListFolders: Retrieve the list of folders created within a Project.
 func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*ListFoldersResponse, error) {
 	var err error
 
@@ -753,10 +1150,9 @@ func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders",
+		Query:  query,
 	}
 
 	var resp ListFoldersResponse
@@ -768,15 +1164,7 @@ func (s *API) ListFolders(req *ListFoldersRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-type DeleteSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-}
-
-// DeleteSecret: delete a secret.
-// Delete a given secret specified by the `region` and `secret_id` parameters.
+// DeleteSecret: Delete a given secret specified by the `region` and `secret_id` parameters.
 func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -794,9 +1182,8 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -806,14 +1193,7 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-type DeleteFolderRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// FolderID: ID of the folder.
-	FolderID string `json:"-"`
-}
-
-// DeleteFolder: delete a given folder specified by the `region` and `folder_id` parameters.
+// DeleteFolder: Delete a given folder specified by the `region` and `folder_id` parameters.
 func (s *API) DeleteFolder(req *DeleteFolderRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -831,9 +1211,8 @@ func (s *API) DeleteFolder(req *DeleteFolderRequest, opts ...scw.RequestOption) 
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "DELETE",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders/" + fmt.Sprint(req.FolderID) + "",
-		Headers: http.Header{},
+		Method: "DELETE",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/folders/" + fmt.Sprint(req.FolderID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -843,15 +1222,7 @@ func (s *API) DeleteFolder(req *DeleteFolderRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-type ProtectSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret to protect.
-	SecretID string `json:"-"`
-}
-
-// ProtectSecret: protect a secret.
-// Protect a given secret specified by the `secret_id` parameter. A protected secret can be read and modified but cannot be deleted.
+// ProtectSecret: Protect a given secret specified by the `secret_id` parameter. A protected secret can be read and modified but cannot be deleted.
 func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -869,9 +1240,8 @@ func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/protect",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/protect",
 	}
 
 	err = scwReq.SetBody(req)
@@ -888,15 +1258,7 @@ func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-type UnprotectSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret to unprotect.
-	SecretID string `json:"-"`
-}
-
-// UnprotectSecret: unprotect a secret.
-// Unprotect a given secret specified by the `secret_id` parameter. An unprotected secret can be read, modified and deleted.
+// UnprotectSecret: Unprotect a given secret specified by the `secret_id` parameter. An unprotected secret can be read, modified and deleted.
 func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -914,9 +1276,8 @@ func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOp
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/unprotect",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/unprotect",
 	}
 
 	err = scwReq.SetBody(req)
@@ -933,20 +1294,7 @@ func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-type AddSecretOwnerRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Deprecated: ProductName: (Deprecated: use `product` field) Name of the product to add.
-	ProductName *string `json:"product_name,omitempty"`
-	// Product: ID of the product to add.
-	// See `Product` enum for description of values.
-	// Default value: unknown
-	Product Product `json:"product"`
-}
-
-// AddSecretOwner: allow a product to use the secret.
+// AddSecretOwner: Allow a product to use the secret.
 func (s *API) AddSecretOwner(req *AddSecretOwnerRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -964,9 +1312,8 @@ func (s *API) AddSecretOwner(req *AddSecretOwnerRequest, opts ...scw.RequestOpti
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/add-owner",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/add-owner",
 	}
 
 	err = scwReq.SetBody(req)
@@ -981,29 +1328,7 @@ func (s *API) AddSecretOwner(req *AddSecretOwnerRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-type CreateSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Data: the base64-encoded secret payload of the version.
-	Data []byte `json:"data"`
-	// Description: description of the version.
-	Description *string `json:"description"`
-	// DisablePrevious: disable the previous secret version.
-	// (Optional.) If there is no previous version or if the previous version was already disabled, does nothing.
-	DisablePrevious *bool `json:"disable_previous"`
-	// Deprecated: PasswordGeneration: options to generate a password.
-	// (Optional.) If specified, a random password will be generated. The `data` and `data_crc32` fields must be empty. By default, the generator will use upper and lower case letters, and digits. This behavior can be tuned using the generation parameters.
-	// Precisely one of PasswordGeneration must be set.
-	PasswordGeneration *PasswordGenerationParams `json:"password_generation,omitempty"`
-	// DataCrc32: (Optional.) The CRC32 checksum of the data as a base-10 integer.
-	// If specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
-	DataCrc32 *uint32 `json:"data_crc32"`
-}
-
-// CreateSecretVersion: create a version.
-// Create a version of a given secret specified by the `region` and `secret_id` parameters.
+// CreateSecretVersion: Create a version of a given secret specified by the `region` and `secret_id` parameters.
 func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1021,9 +1346,8 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1040,30 +1364,7 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type GeneratePasswordRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Description: description of the version.
-	Description *string `json:"description"`
-	// DisablePrevious: (Optional.) Disable the previous secret version.
-	// This has no effect if there is no previous version or if the previous version was already disabled.
-	DisablePrevious *bool `json:"disable_previous"`
-	// Length: length of the password to generate (between 1 and 1024 characters).
-	Length uint32 `json:"length"`
-	// NoLowercaseLetters: (Optional.) Exclude lower case letters by default in the password character set.
-	NoLowercaseLetters *bool `json:"no_lowercase_letters"`
-	// NoUppercaseLetters: (Optional.) Exclude upper case letters by default in the password character set.
-	NoUppercaseLetters *bool `json:"no_uppercase_letters"`
-	// NoDigits: (Optional.) Exclude digits by default in the password character set.
-	NoDigits *bool `json:"no_digits"`
-	// AdditionalChars: (Optional.) Additional ASCII characters to be included in the password character set.
-	AdditionalChars *string `json:"additional_chars"`
-}
-
-// GeneratePassword: generate a password in a new version.
-// Generate a password for the given secret specified by the `region` and `secret_id` parameters. This will also create a new version of the secret that will store the password.
+// GeneratePassword: Generate a password for the given secret specified by the `region` and `secret_id` parameters. This will also create a new version of the secret that will store the password.
 func (s *API) GeneratePassword(req *GeneratePasswordRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1081,9 +1382,8 @@ func (s *API) GeneratePassword(req *GeneratePasswordRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/generate-password",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/generate-password",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1100,21 +1400,7 @@ func (s *API) GeneratePassword(req *GeneratePasswordRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type GetSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-}
-
-// GetSecretVersion: get metadata of a secret's version using the secret's ID.
-// Retrieve the metadata of a secret's given version specified by the `region`, `secret_id` and `revision` parameters.
+// GetSecretVersion: Retrieve the metadata of a secret's given version specified by the `region`, `secret_id` and `revision` parameters.
 func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1136,9 +1422,8 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "",
 	}
 
 	var resp SecretVersion
@@ -1150,24 +1435,7 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-type GetSecretVersionByNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretName: name of the secret.
-	SecretName string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-	// ProjectID: ID of the Project to target.
-	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
-	ProjectID *string `json:"-"`
-}
-
-// GetSecretVersionByName: get metadata of a secret's version using the secret's name.
-// Retrieve the metadata of a secret's given version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+// GetSecretVersionByName: Retrieve the metadata of a secret's given version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
 func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1192,10 +1460,9 @@ func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ..
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "",
+		Query:  query,
 	}
 
 	var resp SecretVersion
@@ -1207,23 +1474,7 @@ func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ..
 	return &resp, nil
 }
 
-type UpdateSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-	// Description: description of the version.
-	Description *string `json:"description"`
-}
-
-// UpdateSecretVersion: update metadata of a version.
-// Edit the metadata of a secret's given version, specified by the `region`, `secret_id` and `revision` parameters.
+// UpdateSecretVersion: Edit the metadata of a secret's given version, specified by the `region`, `secret_id` and `revision` parameters.
 func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1245,9 +1496,8 @@ func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.R
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "PATCH",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "",
-		Headers: http.Header{},
+		Method: "PATCH",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1264,21 +1514,7 @@ func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type ListSecretVersionsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// Status: filter results by status.
-	Status []SecretVersionStatus `json:"-"`
-}
-
-// ListSecretVersions: list versions of a secret using the secret's ID.
-// Retrieve the list of a given secret's versions specified by the `secret_id` and `region` parameters.
+// ListSecretVersions: Retrieve the list of a given secret's versions specified by the `secret_id` and `region` parameters.
 func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -1306,10 +1542,9 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions",
+		Query:  query,
 	}
 
 	var resp ListSecretVersionsResponse
@@ -1321,24 +1556,7 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-type ListSecretVersionsByNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretName: name of the secret.
-	SecretName string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-	// Status: filter results by status.
-	Status []SecretVersionStatus `json:"-"`
-	// ProjectID: ID of the Project to target.
-	// (Optional.) If not specified, Secret Manager will look for the secret in all Projects.
-	ProjectID *string `json:"-"`
-}
-
-// ListSecretVersionsByName: list versions of a secret using the secret's name.
-// Retrieve the list of a given secret's versions specified by the `secret_name`,`region` and `project_id` parameters.
+// ListSecretVersionsByName: Retrieve the list of a given secret's versions specified by the `secret_name`,`region` and `project_id` parameters.
 func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -1367,10 +1585,9 @@ func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opt
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions",
+		Query:  query,
 	}
 
 	var resp ListSecretVersionsResponse
@@ -1382,21 +1599,7 @@ func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opt
 	return &resp, nil
 }
 
-type EnableSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-}
-
-// EnableSecretVersion: enable a version.
-// Make a specific version accessible. You must specify the `region`, `secret_id` and `revision` parameters.
+// EnableSecretVersion: Make a specific version accessible. You must specify the `region`, `secret_id` and `revision` parameters.
 func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1418,9 +1621,8 @@ func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.R
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/enable",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/enable",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1437,21 +1639,7 @@ func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type DisableSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-}
-
-// DisableSecretVersion: disable a version.
-// Make a specific version inaccessible. You must specify the `region`, `secret_id` and `revision` parameters.
+// DisableSecretVersion: Make a specific version inaccessible. You must specify the `region`, `secret_id` and `revision` parameters.
 func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1473,9 +1661,8 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/disable",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/disable",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1492,21 +1679,7 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 	return &resp, nil
 }
 
-type AccessSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-}
-
-// AccessSecretVersion: access a secret's version using the secret's ID.
-// Access sensitive data in a secret's version specified by the `region`, `secret_id` and `revision` parameters.
+// AccessSecretVersion: Access sensitive data in a secret's version specified by the `region`, `secret_id` and `revision` parameters.
 func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
@@ -1528,9 +1701,8 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
 	}
 
 	var resp AccessSecretVersionResponse
@@ -1542,24 +1714,7 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-type AccessSecretVersionByNameRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretName: name of the secret.
-	SecretName string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-	// ProjectID: ID of the Project to target.
-	// (Optional.) If not specified, Secret Manager will look for the secret version in all Projects.
-	ProjectID *string `json:"-"`
-}
-
-// AccessSecretVersionByName: access a secret's version using the secret's name.
-// Access sensitive data in a secret's version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+// AccessSecretVersionByName: Access sensitive data in a secret's version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
 func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
@@ -1584,10 +1739,9 @@ func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, o
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-name/" + fmt.Sprint(req.SecretName) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
+		Query:  query,
 	}
 
 	var resp AccessSecretVersionResponse
@@ -1599,21 +1753,7 @@ func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, o
 	return &resp, nil
 }
 
-type DestroySecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// SecretID: ID of the secret.
-	SecretID string `json:"-"`
-	// Revision: version number.
-	// The first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
-	// - a number (the revision number)
-	// - "latest" (the latest revision)
-	// - "latest_enabled" (the latest enabled revision).
-	Revision string `json:"-"`
-}
-
-// DestroySecretVersion: delete a version.
-// Delete a secret's version and the sensitive data contained in it. Deleting a version is permanent and cannot be undone.
+// DestroySecretVersion: Delete a secret's version and the sensitive data contained in it. Deleting a version is permanent and cannot be undone.
 func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1635,9 +1775,8 @@ func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "POST",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/destroy",
-		Headers: http.Header{},
+		Method: "POST",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/destroy",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1654,20 +1793,7 @@ func (s *API) DestroySecretVersion(req *DestroySecretVersionRequest, opts ...scw
 	return &resp, nil
 }
 
-type ListTagsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-	// ProjectID: ID of the Project to target.
-	// (Optional.) If not specified, Secret Manager will look for tags in all Projects.
-	ProjectID *string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-}
-
-// ListTags: list tags.
-// List all tags associated with secrets within a given Project.
+// ListTags: List all tags associated with secrets within a given Project.
 func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTagsResponse, error) {
 	var err error
 
@@ -1691,10 +1817,9 @@ func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTa
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method:  "GET",
-		Path:    "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/tags",
-		Query:   query,
-		Headers: http.Header{},
+		Method: "GET",
+		Path:   "/secret-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/tags",
+		Query:  query,
 	}
 
 	var resp ListTagsResponse
@@ -1704,80 +1829,4 @@ func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTa
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListSecretsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListSecretsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListSecretsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Secrets = append(r.Secrets, results.Secrets...)
-	r.TotalCount += uint32(len(results.Secrets))
-	return uint32(len(results.Secrets)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListFoldersResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListFoldersResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListFoldersResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Folders = append(r.Folders, results.Folders...)
-	r.TotalCount += uint32(len(results.Folders))
-	return uint32(len(results.Folders)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListSecretVersionsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListSecretVersionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListSecretVersionsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Versions = append(r.Versions, results.Versions...)
-	r.TotalCount += uint32(len(results.Versions))
-	return uint32(len(results.Versions)), nil
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListTagsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListTagsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Tags = append(r.Tags, results.Tags...)
-	r.TotalCount += uint32(len(results.Tags))
-	return uint32(len(results.Tags)), nil
 }
