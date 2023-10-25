@@ -569,6 +569,39 @@ func (enum *ServerIPProvisioningMode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ServerIPState string
+
+const (
+	ServerIPStateUnknownState = ServerIPState("unknown_state")
+	ServerIPStateDetached     = ServerIPState("detached")
+	ServerIPStateAttached     = ServerIPState("attached")
+	ServerIPStatePending      = ServerIPState("pending")
+	ServerIPStateError        = ServerIPState("error")
+)
+
+func (enum ServerIPState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_state"
+	}
+	return string(enum)
+}
+
+func (enum ServerIPState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerIPState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerIPState(ServerIPState(tmp).String())
+	return nil
+}
+
 type ServerState string
 
 const (
@@ -1115,6 +1148,9 @@ type ServerIP struct {
 
 	// Tags: tags associated with the IP.
 	Tags []string `json:"tags"`
+
+	// State: default value: unknown_state
+	State ServerIPState `json:"state"`
 }
 
 // ServerIPv6: server i pv6.
