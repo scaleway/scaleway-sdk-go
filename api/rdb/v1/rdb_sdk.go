@@ -1376,6 +1376,15 @@ type User struct {
 	IsAdmin bool `json:"is_admin"`
 }
 
+// UpgradeInstanceRequestMajorUpgradeWorkflow: upgrade instance request major upgrade workflow.
+type UpgradeInstanceRequestMajorUpgradeWorkflow struct {
+	// UpgradableVersionID: this will create a new Database Instance with same specifications as the current one and perform a Database Engine upgrade.
+	UpgradableVersionID string `json:"upgradable_version_id"`
+
+	// WithEndpoints: at the end of the migration procedure this option let you migrate all your database endpoint to the upgraded instance.
+	WithEndpoints bool `json:"with_endpoints"`
+}
+
 // AddInstanceACLRulesRequest: add instance acl rules request.
 type AddInstanceACLRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2518,25 +2527,29 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// NodeType: node type of the Database Instance you want to upgrade to.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
 	NodeType *string `json:"node_type,omitempty"`
 
 	// EnableHa: defines whether or not high availability should be enabled on the Database Instance.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 
 	// VolumeSize: increase your block storage volume size.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
 
 	// VolumeType: change your Database Instance storage type.
 	// Default value: lssd
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
 	VolumeType *VolumeType `json:"volume_type,omitempty"`
 
 	// UpgradableVersionID: this will create a new Database Instance with same specifications as the current one and perform a Database Engine upgrade.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
 	UpgradableVersionID *string `json:"upgradable_version_id,omitempty"`
+
+	// MajorUpgradeWorkflow: upgrade your database engine to a new major version including instance endpoints.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	MajorUpgradeWorkflow *UpgradeInstanceRequestMajorUpgradeWorkflow `json:"major_upgrade_workflow,omitempty"`
 }
 
 type API struct {
