@@ -274,13 +274,6 @@ type PinInfo struct {
 	StatusDetails PinDetails `json:"status_details"`
 }
 
-// PinOptions: pin options.
-type PinOptions struct {
-	RequiredZones []string `json:"required_zones"`
-
-	ReplicationCount uint32 `json:"replication_count"`
-}
-
 // Name: name.
 type Name struct {
 	NameID string `json:"name_id"`
@@ -360,9 +353,6 @@ type CreatePinByCIDRequest struct {
 
 	// Name: pin name.
 	Name *string `json:"name,omitempty"`
-
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options,omitempty"`
 }
 
 // CreatePinByURLRequest: create pin by url request.
@@ -378,9 +368,6 @@ type CreatePinByURLRequest struct {
 
 	// Name: pin name.
 	Name *string `json:"name,omitempty"`
-
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options,omitempty"`
 }
 
 // CreateVolumeRequest: create volume request.
@@ -697,9 +684,6 @@ type ReplacePinRequest struct {
 
 	// Origins: node containing the content you want to pin.
 	Origins []string `json:"origins"`
-
-	// PinOptions: pin options.
-	PinOptions *PinOptions `json:"pin_options,omitempty"`
 }
 
 // ReplacePinResponse: replace pin response.
