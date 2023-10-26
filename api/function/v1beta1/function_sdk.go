@@ -2889,7 +2889,7 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateTrigger:
+// CreateTrigger: Create a new trigger for a specified function.
 func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2921,7 +2921,7 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetTrigger:
+// GetTrigger: Get a trigger with a specified ID.
 func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -2952,7 +2952,7 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 	return &resp, nil
 }
 
-// ListTriggers:
+// ListTriggers: List all triggers belonging to a specified Organization or Project.
 func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
 	var err error
 
@@ -2998,7 +2998,7 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UpdateTrigger:
+// UpdateTrigger: Update a trigger with a specified ID.
 func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -3034,7 +3034,7 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteTrigger:
+// DeleteTrigger: Delete a trigger with a specified ID.
 func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
