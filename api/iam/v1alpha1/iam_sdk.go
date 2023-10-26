@@ -233,6 +233,38 @@ func (enum *ListJWTsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListLogsRequestOrderBy string
+
+const (
+	// Creation date ascending.
+	ListLogsRequestOrderByCreatedAtAsc = ListLogsRequestOrderBy("created_at_asc")
+	// Creation date descending.
+	ListLogsRequestOrderByCreatedAtDesc = ListLogsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListLogsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListLogsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListLogsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListLogsRequestOrderBy(ListLogsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPermissionSetsRequestOrderBy string
 
 const (
@@ -418,6 +450,82 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListUsersRequestOrderBy(ListUsersRequestOrderBy(tmp).String())
+	return nil
+}
+
+type LogAction string
+
+const (
+	// Unknown action.
+	LogActionUnknownAction = LogAction("unknown_action")
+	// Created.
+	LogActionCreated = LogAction("created")
+	// Updated.
+	LogActionUpdated = LogAction("updated")
+	// Deleted.
+	LogActionDeleted = LogAction("deleted")
+)
+
+func (enum LogAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_action"
+	}
+	return string(enum)
+}
+
+func (enum LogAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LogAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LogAction(LogAction(tmp).String())
+	return nil
+}
+
+type LogResourceType string
+
+const (
+	// Unknown resource type.
+	LogResourceTypeUnknownResourceType = LogResourceType("unknown_resource_type")
+	// API Key.
+	LogResourceTypeAPIKey = LogResourceType("api_key")
+	// User.
+	LogResourceTypeUser = LogResourceType("user")
+	// Application.
+	LogResourceTypeApplication = LogResourceType("application")
+	// Group.
+	LogResourceTypeGroup = LogResourceType("group")
+	// Policy.
+	LogResourceTypePolicy = LogResourceType("policy")
+)
+
+func (enum LogResourceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_resource_type"
+	}
+	return string(enum)
+}
+
+func (enum LogResourceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LogResourceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LogResourceType(LogResourceType(tmp).String())
 	return nil
 }
 
@@ -656,6 +764,38 @@ type Group struct {
 
 	// ApplicationIDs: iDs of applications attached to this group.
 	ApplicationIDs []string `json:"application_ids"`
+}
+
+// Log: log.
+type Log struct {
+	// ID: log ID.
+	ID string `json:"id"`
+
+	// CreatedAt: creation date of the log.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// IP: IP address of the HTTP request linked to the log.
+	IP net.IP `json:"ip"`
+
+	// UserAgent: user-Agent of the HTTP request linked to the log.
+	UserAgent string `json:"user_agent"`
+
+	// Action: action linked to the log.
+	// Default value: unknown_action
+	Action LogAction `json:"action"`
+
+	// BearerID: ID of the principal at the origin of the log.
+	BearerID string `json:"bearer_id"`
+
+	// OrganizationID: ID of Organization linked to the log.
+	OrganizationID string `json:"organization_id"`
+
+	// ResourceType: type of the resource linked to the log.
+	// Default value: unknown_resource_type
+	ResourceType LogResourceType `json:"resource_type"`
+
+	// ResourceID: ID of the resource linked  to the log.
+	ResourceID string `json:"resource_id"`
 }
 
 // PermissionSet: permission set.
@@ -1028,6 +1168,12 @@ type GetJWTRequest struct {
 	Jti string `json:"-"`
 }
 
+// GetLogRequest: get log request.
+type GetLogRequest struct {
+	// LogID: ID of the log.
+	LogID string `json:"-"`
+}
+
 // GetPolicyRequest: get policy request.
 type GetPolicyRequest struct {
 	// PolicyID: id of policy to search.
@@ -1278,6 +1424,67 @@ func (r *ListJWTsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Jwts = append(r.Jwts, results.Jwts...)
 	r.TotalCount += uint64(len(results.Jwts))
 	return uint64(len(results.Jwts)), nil
+}
+
+// ListLogsRequest: list logs request.
+type ListLogsRequest struct {
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
+	OrderBy ListLogsRequestOrderBy `json:"-"`
+
+	// OrganizationID: filter by Organization ID.
+	OrganizationID string `json:"-"`
+
+	// PageSize: number of results per page. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// Page: page number. Value must be greater to 1.
+	Page *int32 `json:"-"`
+
+	// CreatedAfter: defined whether or not to filter out logs created after this timestamp.
+	CreatedAfter *time.Time `json:"-"`
+
+	// CreatedBefore: defined whether or not to filter out logs created before this timestamp.
+	CreatedBefore *time.Time `json:"-"`
+
+	// Action: defined whether or not to filter out by a specific action.
+	// Default value: unknown_action
+	Action LogAction `json:"-"`
+
+	// ResourceType: defined whether or not to filter out by a specific type of resource.
+	// Default value: unknown_resource_type
+	ResourceType LogResourceType `json:"-"`
+
+	// Search: defined whether or not to filter out log by bearer ID or resource ID.
+	Search *string `json:"-"`
+}
+
+// ListLogsResponse: list logs response.
+type ListLogsResponse struct {
+	// Logs: list of logs.
+	Logs []*Log `json:"logs"`
+
+	// TotalCount: total count of logs.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListLogsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListLogsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Logs = append(r.Logs, results.Logs...)
+	r.TotalCount += uint64(len(results.Logs))
+	return uint64(len(results.Logs)), nil
 }
 
 // ListPermissionSetsRequest: list permission sets request.
@@ -2769,4 +2976,56 @@ func (s *API) DeleteJWT(req *DeleteJWTRequest, opts ...scw.RequestOption) error 
 		return err
 	}
 	return nil
+}
+
+// ListLogs:
+func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "created_after", req.CreatedAfter)
+	parameter.AddToQuery(query, "created_before", req.CreatedBefore)
+	parameter.AddToQuery(query, "action", req.Action)
+	parameter.AddToQuery(query, "resource_type", req.ResourceType)
+	parameter.AddToQuery(query, "search", req.Search)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/logs",
+		Query:  query,
+	}
+
+	var resp ListLogsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetLog:
+func (s *API) GetLog(req *GetLogRequest, opts ...scw.RequestOption) (*Log, error) {
+	var err error
+
+	if fmt.Sprint(req.LogID) == "" {
+		return nil, errors.New("field LogID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/logs/" + fmt.Sprint(req.LogID) + "",
+	}
+
+	var resp Log
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
