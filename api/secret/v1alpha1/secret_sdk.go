@@ -950,7 +950,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // CreateSecret: You must specify the `region` to create a secret.
