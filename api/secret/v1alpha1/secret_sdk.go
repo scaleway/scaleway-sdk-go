@@ -379,9 +379,6 @@ type Secret struct {
 	// Default value: unknown_ephemeral_action
 	EphemeralAction SecretEphemeralAction `json:"ephemeral_action"`
 
-	// IsEphemeral: returns `true` for secrets that are ephemeral.
-	IsEphemeral bool `json:"is_ephemeral"`
-
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
