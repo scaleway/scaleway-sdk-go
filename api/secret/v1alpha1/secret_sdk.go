@@ -134,6 +134,39 @@ func (enum *Product) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SecretEphemeralAction string
+
+const (
+	SecretEphemeralActionUnknownEphemeralAction = SecretEphemeralAction("unknown_ephemeral_action")
+	// After expiration, the secret and all its versions will be deleted.
+	SecretEphemeralActionDeleteSecret = SecretEphemeralAction("delete_secret")
+	// After expiration, all versions of the secret will be disabled.
+	SecretEphemeralActionDisableSecret = SecretEphemeralAction("disable_secret")
+)
+
+func (enum SecretEphemeralAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_ephemeral_action"
+	}
+	return string(enum)
+}
+
+func (enum SecretEphemeralAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SecretEphemeralAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SecretEphemeralAction(SecretEphemeralAction(tmp).String())
+	return nil
+}
+
 type SecretStatus string
 
 const (
@@ -339,6 +372,16 @@ type Secret struct {
 	// Path: location of the secret in the directory structure.
 	Path string `json:"path"`
 
+	// ExpiresAt: (Optional.) Date on which the secret will be deleted or deactivated.
+	ExpiresAt *time.Time `json:"expires_at"`
+
+	// EphemeralAction: see `Secret.EphemeralAction` enum for description of values.
+	// Default value: unknown_ephemeral_action
+	EphemeralAction SecretEphemeralAction `json:"ephemeral_action"`
+
+	// IsEphemeral: returns `true` for secrets that are ephemeral.
+	IsEphemeral bool `json:"is_ephemeral"`
+
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
@@ -445,6 +488,13 @@ type CreateSecretRequest struct {
 
 	// Path: (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
 	Path *string `json:"path,omitempty"`
+
+	// ExpiresAt: (Optional.) Date on which the secret will be deleted or deactivated.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+
+	// EphemeralAction: action to be taken when the secret expires.
+	// Default value: unknown_ephemeral_action
+	EphemeralAction SecretEphemeralAction `json:"ephemeral_action"`
 }
 
 // CreateSecretVersionRequest: create secret version request.
@@ -757,6 +807,9 @@ type ListSecretsRequest struct {
 
 	// Path: filter by path (optional).
 	Path *string `json:"-"`
+
+	// IsEphemeral: filter by ephemeral / not ephemeral (optional).
+	IsEphemeral *bool `json:"-"`
 }
 
 // ListSecretsResponse: list secrets response.
@@ -897,7 +950,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // CreateSecret: You must specify the `region` to create a secret.
@@ -1104,6 +1157,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "is_managed", req.IsManaged)
 	parameter.AddToQuery(query, "path", req.Path)
+	parameter.AddToQuery(query, "is_ephemeral", req.IsEphemeral)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
