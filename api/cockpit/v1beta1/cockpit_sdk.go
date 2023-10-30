@@ -963,6 +963,11 @@ func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOp
 func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
@@ -984,6 +989,11 @@ func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Co
 // GetCockpitMetrics: Get metrics from your Cockpit with the specified Project ID.
 func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
 	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
@@ -1094,6 +1104,16 @@ func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.Request
 func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOption) (*ListDatasourcesResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -1151,6 +1171,16 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 // ListTokens: Get a list of tokens associated with the specified Project ID.
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
@@ -1246,6 +1276,16 @@ func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.Req
 // ListContactPoints: Get a list of contact points for the Cockpit associated with the specified Project ID.
 func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
@@ -1403,6 +1443,16 @@ func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.Reque
 func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -1490,6 +1540,11 @@ func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opt
 func (s *API) ListPlans(req *ListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -1541,6 +1596,16 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Se
 // ListGrafanaProductDashboards: Get a list of available product dashboards.
 func (s *API) ListGrafanaProductDashboards(req *ListGrafanaProductDashboardsRequest, opts ...scw.RequestOption) (*ListGrafanaProductDashboardsResponse, error) {
 	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "project_id", req.ProjectID)

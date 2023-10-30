@@ -452,6 +452,11 @@ func NewAPI(client *scw.Client) *API {
 func (s *API) ListImages(req *ListImagesRequest, opts ...scw.RequestOption) (*ListImagesResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -501,6 +506,11 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*Image,
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "image_id", req.ImageID)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -547,6 +557,16 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 // ListLocalImages: List information about local images in a specific Availability Zone, specified by its `image_id` (UUID format), `version_id` (UUID format) or `image_label`. Only one of these three parameters may be set.
 func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOption) (*ListLocalImagesResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	defaultZone, exist := s.client.GetDefaultZone()
+	if (req.Zone == nil || *req.Zone == "") && exist {
+		req.Zone = &defaultZone
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -598,6 +618,11 @@ func (s *API) GetLocalImage(req *GetLocalImageRequest, opts ...scw.RequestOption
 // ListCategories: Get a list of all existing categories. The output can be paginated.
 func (s *API) ListCategories(req *ListCategoriesRequest, opts ...scw.RequestOption) (*ListCategoriesResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page_size", req.PageSize)

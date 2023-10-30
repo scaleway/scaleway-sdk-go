@@ -493,6 +493,11 @@ func NewAPI(client *scw.Client) *API {
 func (s *API) GetConsumption(req *GetConsumptionRequest, opts ...scw.RequestOption) (*GetConsumptionResponse, error) {
 	var err error
 
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
@@ -514,6 +519,11 @@ func (s *API) GetConsumption(req *GetConsumptionRequest, opts ...scw.RequestOpti
 // ListInvoices: List all your invoices, filtering by `start_date` and `invoice_type`. Each invoice has its own ID.
 func (s *API) ListInvoices(req *ListInvoicesRequest, opts ...scw.RequestOption) (*ListInvoicesResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
@@ -568,6 +578,11 @@ func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOp
 // ListDiscounts: List all discounts for an organization and usable categories/products/offers/references/regions/zones where the discount can be applied.
 func (s *API) ListDiscounts(req *ListDiscountsRequest, opts ...scw.RequestOption) (*ListDiscountsResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
