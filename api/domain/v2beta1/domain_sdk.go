@@ -2827,6 +2827,11 @@ func NewAPI(client *scw.Client) *API {
 func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) (*ListDNSZonesResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
@@ -3399,6 +3404,11 @@ func (s *API) CreateSSLCertificate(req *CreateSSLCertificateRequest, opts ...scw
 func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.RequestOption) (*ListSSLCertificatesResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
 	parameter.AddToQuery(query, "page", req.Page)
@@ -3500,6 +3510,11 @@ func NewRegistrarAPI(client *scw.Client) *RegistrarAPI {
 // You can filter the list of tasks by domain name.
 func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.RequestOption) (*ListTasksResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
@@ -3715,6 +3730,11 @@ func (s *RegistrarAPI) CheckContactsCompatibility(req *RegistrarAPICheckContacts
 func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts ...scw.RequestOption) (*ListContactsResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -3792,6 +3812,11 @@ func (s *RegistrarAPI) UpdateContact(req *RegistrarAPIUpdateContactRequest, opts
 func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -3821,6 +3846,11 @@ func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...
 // ListRenewableDomains: Retrieve the list of domains you own that can be renewed. You can also see the maximum renewal duration in years for your domains that are renewable.
 func (s *RegistrarAPI) ListRenewableDomains(req *RegistrarAPIListRenewableDomainsRequest, opts ...scw.RequestOption) (*ListRenewableDomainsResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
@@ -4108,6 +4138,11 @@ func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDo
 // ListTlds: Retrieve the list of TLDs and offers associated with them.
 func (s *RegistrarAPI) ListTlds(req *RegistrarAPIListTldsRequest, opts ...scw.RequestOption) (*ListTldsResponse, error) {
 	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "tlds", req.Tlds)
