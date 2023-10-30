@@ -18,6 +18,8 @@ const (
 	SMTPPortAlternative  = 2587
 	SMTPSPort            = 465
 	SMTPSPortAlternative = 2465
+
+	MXBlackhole = "blackhole.scw-tem.cloud."
 )
 
 // WaitForDomainRequest is used by WaitForDomain method
