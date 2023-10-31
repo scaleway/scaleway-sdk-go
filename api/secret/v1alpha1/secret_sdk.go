@@ -298,6 +298,9 @@ type Folder struct {
 
 	// CreatedAt: date and time of the folder's creation.
 	CreatedAt *time.Time `json:"created_at"`
+
+	// Region: region of the folder.
+	Region scw.Region `json:"region"`
 }
 
 // SecretVersion: secret version.
