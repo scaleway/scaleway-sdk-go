@@ -1310,11 +1310,11 @@ type VolumeTemplate struct {
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 
 	// Deprecated: Organization: organization ID of the volume.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID of the volume.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 }
 
@@ -1789,11 +1789,11 @@ type CreateIPRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	// Deprecated: Organization: organization ID in which the IP is reserved.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID in which the IP is reserved.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: tags of the IP.
@@ -1834,11 +1834,11 @@ type CreateImageRequest struct {
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
 
 	// Deprecated: Organization: organization ID of the image.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID of the image.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: tags of the image.
@@ -1862,11 +1862,11 @@ type CreatePlacementGroupRequest struct {
 	Name string `json:"name,omitempty"`
 
 	// Deprecated: Organization: organization ID of the placement group.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID of the placement group.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: tags of the placement group.
@@ -1921,11 +1921,11 @@ type CreateSecurityGroupRequest struct {
 	Description string `json:"description,omitempty"`
 
 	// Deprecated: Organization: organization ID the security group belongs to.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID the security group belong to.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: tags of the security group.
@@ -2036,11 +2036,11 @@ type CreateServerRequest struct {
 	Bootscript *string `json:"bootscript,omitempty"`
 
 	// Deprecated: Organization: instance Organization ID.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: instance Project ID.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: instance tags.
@@ -2073,11 +2073,11 @@ type CreateSnapshotRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	// Deprecated: Organization: organization ID of the snapshot.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: project ID of the snapshot.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// VolumeType: overrides the volume_type of the snapshot.
@@ -2111,11 +2111,11 @@ type CreateVolumeRequest struct {
 	Name string `json:"name,omitempty"`
 
 	// Deprecated: Organization: volume Organization ID.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Organization *string `json:"organization,omitempty"`
 
 	// Project: volume Project ID.
-	// Precisely one of Organization, Project must be set.
+	// Precisely one of Project, Organization must be set.
 	Project *string `json:"project,omitempty"`
 
 	// Tags: volume tags.
@@ -3859,14 +3859,14 @@ func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -4259,14 +4259,14 @@ func (s *API) CreateImage(req *CreateImageRequest, opts ...scw.RequestOption) (*
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -4417,14 +4417,14 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -4644,14 +4644,14 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -4825,14 +4825,14 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -5258,14 +5258,14 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if req.Name == "" {
@@ -5588,14 +5588,14 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*Create
 		req.Zone = defaultZone
 	}
 
-	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Organization = &defaultOrganization
+	defaultProject, exist := s.client.GetDefaultProjectID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Project = &defaultProject
 	}
 
-	defaultProject, exist := s.client.GetDefaultProjectID()
-	if exist && req.Organization == nil && req.Project == nil {
-		req.Project = &defaultProject
+	defaultOrganization, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.Project == nil && req.Organization == nil {
+		req.Organization = &defaultOrganization
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
