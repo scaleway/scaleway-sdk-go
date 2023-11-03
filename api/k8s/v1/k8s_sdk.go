@@ -1143,11 +1143,11 @@ type CreateClusterRequest struct {
 	Region scw.Region `json:"-"`
 
 	// Deprecated: OrganizationID: organization ID in which the cluster will be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID in which the cluster will be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Type: type of the cluster (possible values are kapsule, multicloud, kapsule-dedicated-8, kapsule-dedicated-16).
@@ -1868,14 +1868,14 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Name == "" {

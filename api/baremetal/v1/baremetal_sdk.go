@@ -996,11 +996,11 @@ type CreateServerRequest struct {
 	OfferID string `json:"offer_id"`
 
 	// Deprecated: OrganizationID: organization ID with which the server will be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID with which the server will be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Name: name of the server (≠hostname).
@@ -1714,14 +1714,14 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 		req.Zone = defaultZone
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if fmt.Sprint(req.Zone) == "" {

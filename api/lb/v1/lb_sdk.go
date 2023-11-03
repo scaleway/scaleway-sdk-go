@@ -1834,11 +1834,11 @@ type CreateIPRequest struct {
 	Region scw.Region `json:"-"`
 
 	// Deprecated: OrganizationID: organization ID of the Organization where the IP address should be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID of the Project where the IP address should be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Reverse: reverse DNS (domain name) for the IP address.
@@ -1851,11 +1851,11 @@ type CreateLBRequest struct {
 	Region scw.Region `json:"-"`
 
 	// Deprecated: OrganizationID: scaleway Organization to create the Load Balancer in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: scaleway Project to create the Load Balancer in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Name: name for the Load Balancer.
@@ -1913,11 +1913,11 @@ type CreateSubscriberRequest struct {
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 
 	// Deprecated: OrganizationID: organization ID to create the subscriber in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID to create the subscriber in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
@@ -3332,11 +3332,11 @@ type ZonedAPICreateIPRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	// Deprecated: OrganizationID: organization ID of the Organization where the IP address should be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID of the Project where the IP address should be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Reverse: reverse DNS (domain name) for the IP address.
@@ -3349,11 +3349,11 @@ type ZonedAPICreateLBRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	// Deprecated: OrganizationID: scaleway Organization to create the Load Balancer in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: scaleway Project to create the Load Balancer in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Name: name for the Load Balancer.
@@ -3411,11 +3411,11 @@ type ZonedAPICreateSubscriberRequest struct {
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
 
 	// Deprecated: OrganizationID: organization ID to create the subscriber in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: project ID to create the subscriber in.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
@@ -4308,14 +4308,14 @@ func (s *ZonedAPI) CreateLB(req *ZonedAPICreateLBRequest, opts ...scw.RequestOpt
 		req.Zone = defaultZone
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Name == "" {
@@ -4530,14 +4530,14 @@ func (s *ZonedAPI) CreateIP(req *ZonedAPICreateIPRequest, opts ...scw.RequestOpt
 		req.Zone = defaultZone
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -5845,14 +5845,14 @@ func (s *ZonedAPI) CreateSubscriber(req *ZonedAPICreateSubscriberRequest, opts .
 		req.Zone = defaultZone
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
@@ -6267,14 +6267,14 @@ func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, er
 		req.Region = defaultRegion
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Name == "" {
@@ -6489,14 +6489,14 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 		req.Region = defaultRegion
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -7768,14 +7768,14 @@ func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.Request
 		req.Region = defaultRegion
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if fmt.Sprint(req.Region) == "" {
