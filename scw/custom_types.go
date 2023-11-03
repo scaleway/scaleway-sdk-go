@@ -327,6 +327,15 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func NewDurationFromTimeDuration(t time.Duration) *Duration {
+	duration := Duration{
+		Seconds: int64(t.Seconds()),
+	}
+	duration.Nanos = int32(t.Nanoseconds() - (time.Duration(duration.Seconds) * time.Second).Nanoseconds())
+
+	return &duration
+}
+
 // splitFloatString splits a float represented in a string, and returns its units (left-coma part) and nanos (right-coma part).
 // E.g.:
 // "3"     ==> units = 3  | nanos = 0

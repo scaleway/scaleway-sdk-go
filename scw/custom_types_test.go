@@ -678,6 +678,61 @@ func TestDuration_ToTimeDuration(t *testing.T) {
 	}
 }
 
+func TestDuration_FromTimeDuration(t *testing.T) {
+	cases := []struct {
+		name     string
+		duration time.Duration
+		want     *Duration
+	}{
+		{
+			name:     "zero duration",
+			want:     &Duration{Seconds: 0, Nanos: 0},
+			duration: time.Duration(0),
+		},
+		{
+			name:     "seconds only",
+			want:     &Duration{Seconds: 10, Nanos: 0},
+			duration: time.Duration(10) * time.Second,
+		},
+		{
+			name:     "nanoseconds only",
+			want:     &Duration{Seconds: 0, Nanos: 500},
+			duration: time.Duration(500),
+		},
+		{
+			name:     "seconds and nanoseconds",
+			want:     &Duration{Seconds: 10, Nanos: 500},
+			duration: time.Duration(10)*time.Second + time.Duration(500),
+		},
+		{
+			name:     "negative seconds",
+			want:     &Duration{Seconds: -10, Nanos: 0},
+			duration: time.Duration(-10) * time.Second,
+		},
+		{
+			name:     "negative nanoseconds",
+			want:     &Duration{Seconds: 0, Nanos: -500},
+			duration: time.Duration(-500),
+		},
+		{
+			name:     "negative seconds and nanoseconds",
+			want:     &Duration{Seconds: -10, Nanos: -500},
+			duration: time.Duration(-10)*time.Second + time.Duration(-500),
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got := NewDurationFromTimeDuration(c.duration)
+			if got == nil {
+				t.Errorf("got nil, want %v", c.want)
+			} else if got.Seconds != c.want.Seconds && got.Nanos != c.want.Nanos {
+				t.Errorf("got %v, want %v", *got, c.want)
+			}
+		})
+	}
+}
+
 func TestJSONObject_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
