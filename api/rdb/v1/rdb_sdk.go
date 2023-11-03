@@ -1502,11 +1502,11 @@ type CreateInstanceRequest struct {
 	Region scw.Region `json:"-"`
 
 	// Deprecated: OrganizationID: please use project_id instead.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	// ProjectID: the Project ID on which the Database Instance will be created.
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Name: name of the Database Instance.
@@ -3009,14 +3009,14 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 		req.Region = defaultRegion
 	}
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	if req.Name == "" {

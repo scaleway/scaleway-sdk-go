@@ -214,12 +214,12 @@ type CreateHumanRequest struct {
 	EyesColor EyeColors `json:"eyes_color"`
 
 	// Deprecated
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
 	Name string `json:"name"`
 
-	// Precisely one of OrganizationID, ProjectID must be set.
+	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 }
 
@@ -419,14 +419,14 @@ func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human,
 func (s *API) CreateHuman(req *CreateHumanRequest, opts ...scw.RequestOption) (*Human, error) {
 	var err error
 
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
 	}
 
 	scwReq := &scw.ScalewayRequest{
