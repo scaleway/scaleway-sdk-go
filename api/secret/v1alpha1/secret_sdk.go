@@ -108,7 +108,8 @@ func (enum *ListSecretsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type Product string
 
 const (
-	ProductUnknown = Product("unknown")
+	ProductUnknown      = Product("unknown")
+	ProductEdgeServices = Product("edge_services")
 )
 
 func (enum Product) String() string {
