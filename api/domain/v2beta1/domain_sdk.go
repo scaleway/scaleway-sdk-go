@@ -2732,9 +2732,11 @@ type RegistrarAPIUpdateDomainRequest struct {
 	// Precisely one of TechnicalContactID, TechnicalContact must be set.
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 
+	// Deprecated
 	// Precisely one of OwnerContactID, OwnerContact must be set.
 	OwnerContactID *string `json:"owner_contact_id,omitempty"`
 
+	// Deprecated
 	// Precisely one of OwnerContactID, OwnerContact must be set.
 	OwnerContact *NewContact `json:"owner_contact,omitempty"`
 
