@@ -518,6 +518,9 @@ type CreateDatasourceRequest struct {
 	// Type: datasource type.
 	// Default value: unknown_datasource_type
 	Type DatasourceType `json:"type"`
+
+	// IsDefault: specifies that the returned output is the default datasource per type.
+	IsDefault bool `json:"is_default"`
 }
 
 // CreateGrafanaUserRequest: Request to create a Grafana user.
