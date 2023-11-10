@@ -2489,7 +2489,7 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// Deprecated: IssueJWT:
+// Deprecated: IssueJWT: Deprecated in favor of CreateToken.
 func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
