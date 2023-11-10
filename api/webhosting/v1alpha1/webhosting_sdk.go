@@ -409,6 +409,18 @@ type Nameserver struct {
 	IsDefault bool `json:"is_default"`
 }
 
+// ControlPanel: control panel.
+type ControlPanel struct {
+	// Name: control panel name.
+	Name string `json:"name"`
+
+	// Available: define if the control panel type is available to order.
+	Available bool `json:"available"`
+
+	// LogoURL: URL of this control panel's logo.
+	LogoURL string `json:"logo_url"`
+}
+
 // Hosting: hosting.
 type Hosting struct {
 	// ID: ID of the Web Hosting plan.
@@ -464,6 +476,9 @@ type Hosting struct {
 	// OfferEndOfLife: indicates if the hosting offer has reached its end of life.
 	OfferEndOfLife bool `json:"offer_end_of_life"`
 
+	// ControlPanelName: name of the control panel.
+	ControlPanelName string `json:"control_panel_name"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -490,6 +505,9 @@ type Offer struct {
 
 	// EndOfLife: indicates if the offer has reached its end of life.
 	EndOfLife bool `json:"end_of_life"`
+
+	// ControlPanelName: name of the control panel.
+	ControlPanelName string `json:"control_panel_name"`
 }
 
 // CreateHostingRequest: create hosting request.
@@ -556,6 +574,46 @@ type GetHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
+// ListControlPanelsRequest: list control panels request.
+type ListControlPanelsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return, from the paginated results (must be a positive integer).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of control panels to return (must be a positive integer lower or equal to 100).
+	PageSize *uint32 `json:"-"`
+}
+
+// ListControlPanelsResponse: list control panels response.
+type ListControlPanelsResponse struct {
+	// TotalCount: number of control panels returned.
+	TotalCount uint64 `json:"total_count"`
+
+	// ControlPanels: list of control panels.
+	ControlPanels []*ControlPanel `json:"control_panels"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListControlPanelsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListControlPanelsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListControlPanelsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ControlPanels = append(r.ControlPanels, results.ControlPanels...)
+	r.TotalCount += uint64(len(results.ControlPanels))
+	return uint64(len(results.ControlPanels)), nil
+}
+
 // ListHostingsRequest: list hostings request.
 type ListHostingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -585,6 +643,9 @@ type ListHostingsRequest struct {
 
 	// OrganizationID: organization ID to filter for, only Web Hosting plans from this Organization will be returned.
 	OrganizationID *string `json:"-"`
+
+	// ControlPanels: name of the control panel to filter for, only Web Hosting plans from this control panel will be returned.
+	ControlPanels []string `json:"-"`
 }
 
 // ListHostingsResponse: list hostings response.
@@ -682,7 +743,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
 // CreateHosting: Order a Web Hosting plan, specifying the offer type required via the `offer_id` parameter.
@@ -745,6 +806,7 @@ func (s *API) ListHostings(req *ListHostingsRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "control_panels", req.ControlPanels)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -956,6 +1018,43 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	}
 
 	var resp ListOffersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListControlPanels: List the control panels type: cpanel or plesk.
+func (s *API) ListControlPanels(req *ListControlPanelsRequest, opts ...scw.RequestOption) (*ListControlPanelsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/control-panels",
+		Query:  query,
+	}
+
+	var resp ListControlPanelsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
