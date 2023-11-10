@@ -401,6 +401,9 @@ type Datasource struct {
 	// Type: datasource type.
 	// Default value: unknown_datasource_type
 	Type DatasourceType `json:"type"`
+
+	// IsManagedByScaleway: specifies that the datasource receives data from Scaleway products and is managed by Scaleway.
+	IsManagedByScaleway bool `json:"is_managed_by_scaleway"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -689,6 +692,9 @@ type ListDatasourcesRequest struct {
 
 	// Types: filter by datasource types.
 	Types []DatasourceType `json:"-"`
+
+	// IsManagedByScaleway: filter by managed datasources.
+	IsManagedByScaleway *bool `json:"-"`
 }
 
 // ListDatasourcesResponse: list datasources response.
@@ -1123,6 +1129,7 @@ func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "types", req.Types)
+	parameter.AddToQuery(query, "is_managed_by_scaleway", req.IsManagedByScaleway)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
