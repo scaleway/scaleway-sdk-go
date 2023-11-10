@@ -972,7 +972,12 @@ func (s *API) CreatePinByCID(req *CreatePinByCIDRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// ReplacePin:
+// ReplacePin: Deletes the given resource ID and pins the new CID in its place.
+// Will fetch and store the content pointed by the provided CID. The content must be available on the public IPFS network.
+// The content (IPFS blocks) is hosted by the pinning service until the pin is deleted.
+// While the content is available any other IPFS peer can fetch and host your content. For this reason, we recommend that you pin either public or encrypted content.
+// Several different pin requests can target the same CID.
+// A pin is defined by its ID (UUID), its status (queued, pinning, pinned or failed) and target CID.
 func (s *API) ReplacePin(req *ReplacePinRequest, opts ...scw.RequestOption) (*ReplacePinResponse, error) {
 	var err error
 
