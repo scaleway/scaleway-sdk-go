@@ -560,10 +560,10 @@ const (
 	// Unknown input type.
 	TriggerInputTypeUnknownInputType = TriggerInputType("unknown_input_type")
 	TriggerInputTypeSqs              = TriggerInputType("sqs")
-	// Scaleway M&Q SQS queue.
+	// Scaleway Messaging and Queuing SQS queue.
 	TriggerInputTypeScwSqs = TriggerInputType("scw_sqs")
 	TriggerInputTypeNats   = TriggerInputType("nats")
-	// Scaleway M&Q NATS subject.
+	// Scaleway Messaging and Queuing NATS subject.
 	TriggerInputTypeScwNats = TriggerInputType("scw_nats")
 )
 
@@ -645,16 +645,16 @@ type TriggerMnqNatsClientConfig struct {
 	// Subject: name of the NATS subject the trigger listens to.
 	Subject string `json:"subject"`
 
-	// MnqNatsAccountID: ID of the M&Q NATS account.
+	// MnqNatsAccountID: ID of the Messaging and Queuing NATS account.
 	MnqNatsAccountID string `json:"mnq_nats_account_id"`
 
-	// MnqProjectID: ID of the M&Q project.
+	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: region of the M&Q project.
+	// MnqRegion: currently, only the `fr-par` region is available.
 	MnqRegion string `json:"mnq_region"`
 
-	// MnqCredentialID: ID of the M&Q credentials used to subscribe to the NATS subject.
+	// MnqCredentialID: ID of the Messaging and Queuing credentials used to subscribe to the NATS subject.
 	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
@@ -666,13 +666,13 @@ type TriggerMnqSqsClientConfig struct {
 	// Queue: name of the SQS queue the trigger listens to.
 	Queue string `json:"queue"`
 
-	// MnqProjectID: ID of the M&Q project.
+	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: region in which the M&Q project is activated.
+	// MnqRegion: currently, only the `fr-par` region is available.
 	MnqRegion string `json:"mnq_region"`
 
-	// MnqCredentialID: ID of the M&Q credentials used to read from the SQS queue.
+	// MnqCredentialID: ID of the Messaging and Queuing credentials used to read from the SQS queue.
 	MnqCredentialID *string `json:"mnq_credential_id"`
 }
 
@@ -702,13 +702,13 @@ type CreateTriggerRequestMnqNatsClientConfig struct {
 	// Subject: name of the NATS subject the trigger should listen to.
 	Subject string `json:"subject"`
 
-	// MnqNatsAccountID: ID of the M&Q NATS account.
+	// MnqNatsAccountID: ID of the Messaging and Queuing NATS account.
 	MnqNatsAccountID string `json:"mnq_nats_account_id"`
 
-	// MnqProjectID: ID of the M&Q project.
+	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: region of the M&Q project.
+	// MnqRegion: currently, only the `fr-par` region is available.
 	MnqRegion string `json:"mnq_region"`
 }
 
@@ -723,7 +723,7 @@ type CreateTriggerRequestMnqSqsClientConfig struct {
 	// MnqProjectID: you must have activated SQS on this project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: region in which the M&Q project is activated.
+	// MnqRegion: currently, only the `fr-par` region is available.
 	MnqRegion string `json:"mnq_region"`
 }
 
@@ -968,11 +968,11 @@ type Trigger struct {
 	// ErrorMessage: error message of the trigger.
 	ErrorMessage *string `json:"error_message"`
 
-	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
+	// ScwSqsConfig: configuration for a Scaleway Messaging and Queuing SQS queue.
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwSqsConfig *TriggerMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
 
-	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
+	// ScwNatsConfig: configuration for a Scaleway Messaging and Queuing NATS subject.
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwNatsConfig *TriggerMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 
@@ -1132,11 +1132,11 @@ type CreateTriggerRequest struct {
 	// Description: description of the trigger.
 	Description *string `json:"description,omitempty"`
 
-	// ScwSqsConfig: configuration for a Scaleway M&Q SQS queue.
+	// ScwSqsConfig: configuration for a Scaleway Messaging and Queuing SQS queue.
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwSqsConfig *CreateTriggerRequestMnqSqsClientConfig `json:"scw_sqs_config,omitempty"`
 
-	// ScwNatsConfig: configuration for a Scaleway M&Q NATS subject.
+	// ScwNatsConfig: configuration for a Scaleway Messaging and Queuing NATS subject.
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 
