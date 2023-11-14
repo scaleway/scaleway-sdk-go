@@ -71,6 +71,38 @@ func (enum *ListPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+type ListPrivateNetworksWithNicsRequestOrderBy string
+
+const (
+	ListPrivateNetworksWithNicsRequestOrderByCreatedAtAsc  = ListPrivateNetworksWithNicsRequestOrderBy("created_at_asc")
+	ListPrivateNetworksWithNicsRequestOrderByCreatedAtDesc = ListPrivateNetworksWithNicsRequestOrderBy("created_at_desc")
+	ListPrivateNetworksWithNicsRequestOrderByNameAsc       = ListPrivateNetworksWithNicsRequestOrderBy("name_asc")
+	ListPrivateNetworksWithNicsRequestOrderByNameDesc      = ListPrivateNetworksWithNicsRequestOrderBy("name_desc")
+)
+
+func (enum ListPrivateNetworksWithNicsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPrivateNetworksWithNicsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPrivateNetworksWithNicsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPrivateNetworksWithNicsRequestOrderBy(ListPrivateNetworksWithNicsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListVPCsRequestOrderBy string
 
 const (
@@ -103,6 +135,48 @@ func (enum *ListVPCsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PrivateNICStatus string
+
+const (
+	PrivateNICStatusUnknownStatus = PrivateNICStatus("unknown_status")
+	PrivateNICStatusStopped       = PrivateNICStatus("stopped")
+	PrivateNICStatusAvailable     = PrivateNICStatus("available")
+	PrivateNICStatusConfiguring   = PrivateNICStatus("configuring")
+	PrivateNICStatusError         = PrivateNICStatus("error")
+)
+
+func (enum PrivateNICStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum PrivateNICStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PrivateNICStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PrivateNICStatus(PrivateNICStatus(tmp).String())
+	return nil
+}
+
+// PrivateNICMetadata: private nic metadata.
+type PrivateNICMetadata struct {
+	ProductType string `json:"product_type"`
+
+	ResourceType string `json:"resource_type"`
+
+	ResourceID string `json:"resource_id"`
+}
+
 // Subnet: subnet.
 type Subnet struct {
 	// ID: ID of the subnet.
@@ -116,6 +190,27 @@ type Subnet struct {
 
 	// Subnet: subnet CIDR.
 	Subnet scw.IPNet `json:"subnet"`
+}
+
+// PrivateNIC: private nic.
+type PrivateNIC struct {
+	ID string `json:"id"`
+
+	PrivateNetworkID string `json:"private_network_id"`
+
+	ServerID string `json:"server_id"`
+
+	MacAddress string `json:"mac_address"`
+
+	Vlan uint32 `json:"vlan"`
+
+	Metadata *PrivateNICMetadata `json:"metadata"`
+
+	// Status: default value: unknown_status
+	Status PrivateNICStatus `json:"status"`
+
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"zone"`
 }
 
 // PrivateNetwork: private network.
@@ -152,6 +247,13 @@ type PrivateNetwork struct {
 
 	// DHCPEnabled: defines whether managed DHCP is enabled for this Private Network.
 	DHCPEnabled bool `json:"dhcp_enabled"`
+}
+
+// PrivateNetworkWithNics: private network with nics.
+type PrivateNetworkWithNics struct {
+	PrivateNetwork *PrivateNetwork `json:"private_network"`
+
+	PrivateNics []*PrivateNIC `json:"private_nics"`
 }
 
 // VPC: vpc.
@@ -365,6 +467,32 @@ func (r *ListPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, err
 	return uint32(len(results.PrivateNetworks)), nil
 }
 
+// ListPrivateNetworksWithNicsResponse: list private networks with nics response.
+type ListPrivateNetworksWithNicsResponse struct {
+	PrivateNetworks []*PrivateNetworkWithNics `json:"private_networks"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPrivateNetworksWithNicsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPrivateNetworksWithNicsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPrivateNetworksWithNicsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.PrivateNetworks = append(r.PrivateNetworks, results.PrivateNetworks...)
+	r.TotalCount += uint64(len(results.PrivateNetworks))
+	return uint64(len(results.PrivateNetworks)), nil
+}
+
 // ListVPCsRequest: list vp cs request.
 type ListVPCsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -437,6 +565,39 @@ type MigrateZonalPrivateNetworksRequest struct {
 
 	// PrivateNetworkIDs: iDs of the Private Networks to migrate.
 	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
+// PrivateNetworkWithNicsAPIGetPrivateNetworkWithNicsRequest: private network with nics api get private network with nics request.
+type PrivateNetworkWithNicsAPIGetPrivateNetworkWithNicsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	PrivateNetworkID string `json:"-"`
+}
+
+// PrivateNetworkWithNicsAPIListPrivateNetworksWithNicsRequest: private network with nics api list private networks with nics request.
+type PrivateNetworkWithNicsAPIListPrivateNetworksWithNicsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListPrivateNetworksWithNicsRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Name *string `json:"-"`
+
+	Tags []string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	PrivateNetworkIDs []string `json:"-"`
+
+	VpcID *string `json:"-"`
 }
 
 // SetSubnetsRequest: set subnets request.
@@ -1039,6 +1200,92 @@ func (s *API) DeleteSubnets(req *DeleteSubnetsRequest, opts ...scw.RequestOption
 	}
 
 	var resp DeleteSubnetsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type PrivateNetworkWithNicsAPI struct {
+	client *scw.Client
+}
+
+// NewPrivateNetworkWithNicsAPI returns a PrivateNetworkWithNicsAPI object from a Scaleway client.
+func NewPrivateNetworkWithNicsAPI(client *scw.Client) *PrivateNetworkWithNicsAPI {
+	return &PrivateNetworkWithNicsAPI{
+		client: client,
+	}
+}
+
+// ListPrivateNetworksWithNics:
+func (s *PrivateNetworkWithNicsAPI) ListPrivateNetworksWithNics(req *PrivateNetworkWithNicsAPIListPrivateNetworksWithNicsRequest, opts ...scw.RequestOption) (*ListPrivateNetworksWithNicsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks-with-nics",
+		Query:  query,
+	}
+
+	var resp ListPrivateNetworksWithNicsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetPrivateNetworkWithNics:
+func (s *PrivateNetworkWithNicsAPI) GetPrivateNetworkWithNics(req *PrivateNetworkWithNicsAPIGetPrivateNetworkWithNicsRequest, opts ...scw.RequestOption) (*PrivateNetworkWithNics, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks-with-nics/" + fmt.Sprint(req.PrivateNetworkID) + "",
+	}
+
+	var resp PrivateNetworkWithNics
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

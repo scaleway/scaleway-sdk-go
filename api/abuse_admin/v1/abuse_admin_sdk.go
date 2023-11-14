@@ -1,0 +1,424 @@
+// This file was automatically generated. DO NOT EDIT.
+// If you have any remark or suggestion do not hesitate to open an issue.
+
+// Package abuse_admin provides methods and message types of the abuse_admin v1 API.
+package abuse_admin
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
+	abuse_private_v1 "github.com/scaleway/scaleway-sdk-go/api/abuse_private/v1"
+)
+
+// always import dependencies
+var (
+	_ fmt.Stringer
+	_ json.Unmarshaler
+	_ url.URL
+	_ net.IP
+	_ http.Header
+	_ bytes.Reader
+	_ time.Time
+	_ = strings.Join
+
+	_ scw.ScalewayRequest
+	_ marshaler.Duration
+	_ scw.File
+	_ = parameter.AddToQuery
+	_ = namegenerator.GetRandomName
+)
+
+type AbuseAbuseStatus string
+
+const (
+	AbuseAbuseStatusUnknownStatus = AbuseAbuseStatus("unknown_status")
+	AbuseAbuseStatusNew           = AbuseAbuseStatus("new")
+	AbuseAbuseStatusClosed        = AbuseAbuseStatus("closed")
+	AbuseAbuseStatusCancelled     = AbuseAbuseStatus("cancelled")
+	AbuseAbuseStatusValidated     = AbuseAbuseStatus("validated")
+	AbuseAbuseStatusConfirmed     = AbuseAbuseStatus("confirmed")
+	AbuseAbuseStatusReopened      = AbuseAbuseStatus("reopened")
+)
+
+func (enum AbuseAbuseStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum AbuseAbuseStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AbuseAbuseStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AbuseAbuseStatus(AbuseAbuseStatus(tmp).String())
+	return nil
+}
+
+type AbuseService string
+
+const (
+	AbuseServiceUnknownService = AbuseService("unknown_service")
+	AbuseServiceDedibox        = AbuseService("dedibox")
+	AbuseServiceElements       = AbuseService("elements")
+	AbuseServiceMutu           = AbuseService("mutu")
+	AbuseServiceStorage        = AbuseService("storage")
+	AbuseServiceRegistry       = AbuseService("registry")
+	AbuseServiceCloudCompute   = AbuseService("cloud_compute")
+	AbuseServiceLbaas          = AbuseService("lbaas")
+	AbuseServiceBmaas          = AbuseService("bmaas")
+)
+
+func (enum AbuseService) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_service"
+	}
+	return string(enum)
+}
+
+func (enum AbuseService) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AbuseService) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AbuseService(AbuseService(tmp).String())
+	return nil
+}
+
+type ListAbusesRequestOrderBy string
+
+const (
+	ListAbusesRequestOrderByCreatedAtAsc    = ListAbusesRequestOrderBy("created_at_asc")
+	ListAbusesRequestOrderByCreatedAtDesc   = ListAbusesRequestOrderBy("created_at_desc")
+	ListAbusesRequestOrderByValidatedAtAsc  = ListAbusesRequestOrderBy("validated_at_asc")
+	ListAbusesRequestOrderByValidatedAtDesc = ListAbusesRequestOrderBy("validated_at_desc")
+	ListAbusesRequestOrderByResolvedAtAsc   = ListAbusesRequestOrderBy("resolved_at_asc")
+	ListAbusesRequestOrderByResolvedAtDesc  = ListAbusesRequestOrderBy("resolved_at_desc")
+	ListAbusesRequestOrderByObservedAtAsc   = ListAbusesRequestOrderBy("observed_at_asc")
+	ListAbusesRequestOrderByObservedAtDesc  = ListAbusesRequestOrderBy("observed_at_desc")
+)
+
+func (enum ListAbusesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListAbusesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAbusesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAbusesRequestOrderBy(ListAbusesRequestOrderBy(tmp).String())
+	return nil
+}
+
+// Abuse: abuse.
+type Abuse struct {
+	ID string `json:"id"`
+
+	Report *abuse_private_v1.Report `json:"report"`
+
+	// Status: default value: unknown_status
+	Status AbuseAbuseStatus `json:"status"`
+
+	Token *string `json:"token"`
+
+	LegacyID *string `json:"legacy_id"`
+
+	LinkedReports []*abuse_private_v1.Report `json:"linked_reports"`
+
+	OffendingCustomerID *string `json:"offending_customer_id"`
+
+	Details map[string]string `json:"details"`
+
+	// Service: default value: unknown_service
+	Service AbuseService `json:"service"`
+
+	ConfirmedAt *time.Time `json:"confirmed_at"`
+
+	ValidatedAt *time.Time `json:"validated_at"`
+
+	ResolvedAt *time.Time `json:"resolved_at"`
+
+	ResolveDescription *string `json:"resolve_description"`
+
+	ResolveAnswer *string `json:"resolve_answer"`
+
+	Resolver *string `json:"resolver"`
+
+	ObserverIP *string `json:"observer_ip"`
+}
+
+// CreateReportRequest: create report request.
+type CreateReportRequest struct {
+	// OffendingResourceType: default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
+
+	// Type: default value: unknown_type
+	Type abuse_private_v1.ReportType `json:"type"`
+
+	ObserverEmail *string `json:"observer_email,omitempty"`
+
+	ObserverVisible bool `json:"observer_visible"`
+
+	ObserverDescription *string `json:"observer_description,omitempty"`
+
+	ObservedAt *time.Time `json:"observed_at,omitempty"`
+
+	OffendingResource *string `json:"offending_resource,omitempty"`
+
+	AbuseID *string `json:"abuse_id,omitempty"`
+
+	OffendingURL *string `json:"offending_url,omitempty"`
+
+	// CreatorType: default value: unknown_creator_type
+	CreatorType abuse_private_v1.ReportCreatorType `json:"creator_type"`
+
+	CompanyName *string `json:"company_name,omitempty"`
+}
+
+// GetAbuseRequest: get abuse request.
+type GetAbuseRequest struct {
+	AbuseID string `json:"-"`
+}
+
+// ListAbusesRequest: list abuses request.
+type ListAbusesRequest struct {
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListAbusesRequestOrderBy `json:"-"`
+
+	Status []string `json:"-"`
+
+	OffendingCustomerID *string `json:"-"`
+
+	// OffendingResourceType: default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"-"`
+
+	OffendingResource *string `json:"-"`
+
+	Origin *string `json:"-"`
+
+	// Service: default value: unknown_service
+	Service AbuseService `json:"-"`
+
+	// Type: default value: unknown_type
+	Type abuse_private_v1.ReportType `json:"-"`
+}
+
+// ListAbusesResponse: list abuses response.
+type ListAbusesResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	Abuses []*Abuse `json:"abuses"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAbusesResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAbusesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListAbusesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Abuses = append(r.Abuses, results.Abuses...)
+	r.TotalCount += uint32(len(results.Abuses))
+	return uint32(len(results.Abuses)), nil
+}
+
+// UpdateAbuseRequest: update abuse request.
+type UpdateAbuseRequest struct {
+	AbuseID string `json:"-"`
+
+	// Status: default value: unknown_status
+	Status AbuseAbuseStatus `json:"status"`
+
+	ReplyText *string `json:"reply_text,omitempty"`
+
+	// Type: default value: unknown_type
+	Type abuse_private_v1.ReportType `json:"type"`
+
+	// OffendingResourceType: default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
+
+	ObserverEmail *string `json:"observer_email,omitempty"`
+
+	ObserverVisible bool `json:"observer_visible"`
+
+	ObserverDescription *string `json:"observer_description,omitempty"`
+
+	ObservedAt *time.Time `json:"observed_at,omitempty"`
+
+	OffendingResource *string `json:"offending_resource,omitempty"`
+
+	ConfirmedAt *time.Time `json:"confirmed_at,omitempty"`
+
+	ResolveDescription *string `json:"resolve_description,omitempty"`
+
+	Resolver *string `json:"resolver,omitempty"`
+}
+
+// This API allows you to create report, list and update abuses.
+type API struct {
+	client *scw.Client
+}
+
+// NewAPI returns a API object from a Scaleway client.
+func NewAPI(client *scw.Client) *API {
+	return &API{
+		client: client,
+	}
+}
+
+// CreateReport: Create a report.
+func (s *API) CreateReport(req *CreateReportRequest, opts ...scw.RequestOption) (*abuse_private_v1.Report, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/abuse-admin/v1/reports",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp abuse_private_v1.Report
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateAbuse: Update the abuse.
+func (s *API) UpdateAbuse(req *UpdateAbuseRequest, opts ...scw.RequestOption) (*Abuse, error) {
+	var err error
+
+	if fmt.Sprint(req.AbuseID) == "" {
+		return nil, errors.New("field AbuseID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/abuse-admin/v1/abuses/" + fmt.Sprint(req.AbuseID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Abuse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAbuses: List organization abuse.
+func (s *API) ListAbuses(req *ListAbusesRequest, opts ...scw.RequestOption) (*ListAbusesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "offending_customer_id", req.OffendingCustomerID)
+	parameter.AddToQuery(query, "offending_resource_type", req.OffendingResourceType)
+	parameter.AddToQuery(query, "offending_resource", req.OffendingResource)
+	parameter.AddToQuery(query, "origin", req.Origin)
+	parameter.AddToQuery(query, "service", req.Service)
+	parameter.AddToQuery(query, "type", req.Type)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/abuse-admin/v1/abuses",
+		Query:  query,
+	}
+
+	var resp ListAbusesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetAbuse: Get an abuse details.
+func (s *API) GetAbuse(req *GetAbuseRequest, opts ...scw.RequestOption) (*Abuse, error) {
+	var err error
+
+	if fmt.Sprint(req.AbuseID) == "" {
+		return nil, errors.New("field AbuseID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/abuse-admin/v1/abuses/" + fmt.Sprint(req.AbuseID) + "",
+	}
+
+	var resp Abuse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}

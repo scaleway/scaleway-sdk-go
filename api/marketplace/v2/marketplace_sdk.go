@@ -39,6 +39,74 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type FullImageLocalImageType string
+
+const (
+	// Unspecified image type.
+	FullImageLocalImageTypeUnknownType = FullImageLocalImageType("unknown_type")
+	// An image type that can be used to create volumes which are managed via the Instance API.
+	FullImageLocalImageTypeInstanceLocal = FullImageLocalImageType("instance_local")
+	// An image type that can be used to create volumes which are managed via the Scaleway Block Storage (SBS) API.
+	FullImageLocalImageTypeInstanceSbs = FullImageLocalImageType("instance_sbs")
+)
+
+func (enum FullImageLocalImageType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum FullImageLocalImageType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *FullImageLocalImageType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = FullImageLocalImageType(FullImageLocalImageType(tmp).String())
+	return nil
+}
+
+type ListFullImagesRequestOrderBy string
+
+const (
+	ListFullImagesRequestOrderByNameAsc       = ListFullImagesRequestOrderBy("name_asc")
+	ListFullImagesRequestOrderByNameDesc      = ListFullImagesRequestOrderBy("name_desc")
+	ListFullImagesRequestOrderByCreatedAtAsc  = ListFullImagesRequestOrderBy("created_at_asc")
+	ListFullImagesRequestOrderByCreatedAtDesc = ListFullImagesRequestOrderBy("created_at_desc")
+	ListFullImagesRequestOrderByUpdatedAtAsc  = ListFullImagesRequestOrderBy("updated_at_asc")
+	ListFullImagesRequestOrderByUpdatedAtDesc = ListFullImagesRequestOrderBy("updated_at_desc")
+)
+
+func (enum ListFullImagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListFullImagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListFullImagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListFullImagesRequestOrderBy(ListFullImagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListImagesRequestOrderBy string
 
 const (
@@ -167,6 +235,25 @@ func (enum *LocalImageType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// FullImageLocalImage: full image local image.
+type FullImageLocalImage struct {
+	// ID: version you will typically use to define an image in an API call.
+	ID string `json:"id"`
+
+	// CompatibleCommercialTypes: list of all commercial types that are compatible with this local image.
+	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
+
+	// Arch: supported architecture for this local image.
+	Arch string `json:"arch"`
+
+	// Zone: availability Zone where this local image is available.
+	Zone scw.Zone `json:"zone"`
+
+	// Type: the type of the image.
+	// Default value: unknown_type
+	Type FullImageLocalImageType `json:"type"`
+}
+
 // Category: category.
 type Category struct {
 	ID string `json:"id"`
@@ -174,6 +261,39 @@ type Category struct {
 	Name string `json:"name"`
 
 	Description string `json:"description"`
+}
+
+// FullImage: full image.
+type FullImage struct {
+	// ID: UUID of this image.
+	ID string `json:"id"`
+
+	// Name: name of the image.
+	Name string `json:"name"`
+
+	// Description: text description of this image.
+	Description string `json:"description"`
+
+	// Logo: URL of this image's logo.
+	Logo string `json:"logo"`
+
+	// Categories: list of categories this image belongs to.
+	Categories []string `json:"categories"`
+
+	// CreatedAt: creation date of this image.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date of the last modification of this image.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ValidUntil: expiration date of this image.
+	ValidUntil *time.Time `json:"valid_until"`
+
+	// Label: typically an identifier for a distribution (ex. "ubuntu_focal").
+	Label string `json:"label"`
+
+	// LocalImages: list of this image's local images.
+	LocalImages []*FullImageLocalImage `json:"local_images"`
 }
 
 // Image: image.
@@ -246,6 +366,34 @@ type Version struct {
 	PublishedAt *time.Time `json:"published_at"`
 }
 
+// ConsoleAPIListFullImagesRequest: console api list full images request.
+type ConsoleAPIListFullImagesRequest struct {
+	// Page: a positive integer to choose the page to display.
+	Page *int32 `json:"-"`
+
+	// PageSize: a positive integer lower or equal to 100 to select the number of items to display.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: ordering to use.
+	// Default value: name_asc
+	OrderBy ListFullImagesRequestOrderBy `json:"-"`
+
+	// Arch: choose for which machine architecture to return images.
+	Arch *string `json:"-"`
+
+	// Category: choose the category of images to get.
+	Category *string `json:"-"`
+
+	// IncludeEol: choose to include end-of-life images.
+	IncludeEol bool `json:"-"`
+
+	// Zone: filter images to only include those with local images in the specified zone.
+	Zone *scw.Zone `json:"-"`
+
+	// CommercialType: filter images to only include those compatible with a specific commercial type.
+	CommercialType *string `json:"-"`
+}
+
 // GetCategoryRequest: get category request.
 type GetCategoryRequest struct {
 	CategoryID string `json:"-"`
@@ -298,6 +446,32 @@ func (r *ListCategoriesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Categories = append(r.Categories, results.Categories...)
 	r.TotalCount += uint32(len(results.Categories))
 	return uint32(len(results.Categories)), nil
+}
+
+// ListFullImagesResponse: list full images response.
+type ListFullImagesResponse struct {
+	Images []*FullImage `json:"images"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFullImagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFullImagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListFullImagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Images = append(r.Images, results.Images...)
+	r.TotalCount += uint64(len(results.Images))
+	return uint64(len(results.Images)), nil
 }
 
 // ListImagesRequest: list images request.
@@ -657,6 +831,56 @@ func (s *API) GetCategory(req *GetCategoryRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Category
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type ConsoleAPI struct {
+	client *scw.Client
+}
+
+// NewConsoleAPI returns a ConsoleAPI object from a Scaleway client.
+func NewConsoleAPI(client *scw.Client) *ConsoleAPI {
+	return &ConsoleAPI{
+		client: client,
+	}
+}
+
+// ListFullImages: List marketplace images.
+func (s *ConsoleAPI) ListFullImages(req *ConsoleAPIListFullImagesRequest, opts ...scw.RequestOption) (*ListFullImagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	defaultZone, exist := s.client.GetDefaultZone()
+	if (req.Zone == nil || *req.Zone == "") && exist {
+		req.Zone = &defaultZone
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "arch", req.Arch)
+	parameter.AddToQuery(query, "category", req.Category)
+	parameter.AddToQuery(query, "include_eol", req.IncludeEol)
+	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "commercial_type", req.CommercialType)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/marketplace/v2/full-images",
+		Query:  query,
+	}
+
+	var resp ListFullImagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

@@ -199,6 +199,38 @@ func (enum *ListSqsCredentialsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ProtocolType string
+
+const (
+	ProtocolTypeUnknown = ProtocolType("unknown")
+	ProtocolTypeNats    = ProtocolType("nats")
+	ProtocolTypeSqs     = ProtocolType("sqs")
+	ProtocolTypeSns     = ProtocolType("sns")
+)
+
+func (enum ProtocolType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown"
+	}
+	return string(enum)
+}
+
+func (enum ProtocolType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ProtocolType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ProtocolType(ProtocolType(tmp).String())
+	return nil
+}
+
 type SnsInfoStatus string
 
 const (
@@ -298,6 +330,27 @@ type SqsPermissions struct {
 
 	// CanManage: defines whether the credentials bearer can manage the associated SQS queues.
 	CanManage *bool `json:"can_manage"`
+}
+
+// Protocol: protocol.
+type Protocol struct {
+	// Type: protocol type.
+	// Default value: unknown
+	Type ProtocolType `json:"type"`
+
+	// Active: protocol status.
+	Active *bool `json:"active"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	// Credentials: number of credentials for this protocol.
+	Credentials *int32 `json:"credentials"`
+
+	ProjectID string `json:"project_id"`
+
+	// Resources: number of resources, only used for NATS protocol.
+	Resources *int32 `json:"resources"`
 }
 
 // NatsAccount: nats account.
@@ -412,6 +465,20 @@ type SqsCredentials struct {
 
 	// Permissions: permissions associated with these credentials.
 	Permissions *SqsPermissions `json:"permissions"`
+}
+
+// ConsoleAPIGetProtocolsRequest: console api get protocols request.
+type ConsoleAPIGetProtocolsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: get protocols info for this project ID.
+	ProjectID string `json:"project_id"`
+}
+
+// GetProtocolsResponse: get protocols response.
+type GetProtocolsResponse struct {
+	Protocols []*Protocol `json:"protocols"`
 }
 
 // ListNatsAccountsResponse: list nats accounts response.
@@ -866,6 +933,57 @@ type SqsInfo struct {
 
 	// SqsEndpointURL: endpoint of the SQS service for this region and project.
 	SqsEndpointURL string `json:"sqs_endpoint_url"`
+}
+
+// Provides information for the console about all MnQ protocols of a user.
+type ConsoleAPI struct {
+	client *scw.Client
+}
+
+// NewConsoleAPI returns a ConsoleAPI object from a Scaleway client.
+func NewConsoleAPI(client *scw.Client) *ConsoleAPI {
+	return &ConsoleAPI{
+		client: client,
+	}
+}
+func (s *ConsoleAPI) Regions() []scw.Region {
+	return []scw.Region{}
+}
+
+// GetProtocols: Get information about all MnQ protocols.
+func (s *ConsoleAPI) GetProtocols(req *ConsoleAPIGetProtocolsRequest, opts ...scw.RequestOption) (*GetProtocolsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mnq/v1beta1/regions/" + fmt.Sprint(req.Region) + "/protocols",
+		Query:  query,
+	}
+
+	var resp GetProtocolsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // This API allows you to manage Scaleway Messaging and Queueing NATS accounts.

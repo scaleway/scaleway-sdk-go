@@ -1144,6 +1144,18 @@ type DeleteUserRequest struct {
 	UserID string `json:"-"`
 }
 
+// EncodedJWT: encoded jwt.
+type EncodedJWT struct {
+	// Jwt: the renewed JWT.
+	Jwt *JWT `json:"jwt"`
+
+	// Token: the encoded token of the renewed JWT.
+	Token string `json:"token"`
+
+	// RenewToken: the encoded renew token. This token is necessary to renew the JWT again.
+	RenewToken string `json:"renew_token"`
+}
+
 // GetAPIKeyRequest: get api key request.
 type GetAPIKeyRequest struct {
 	// AccessKey: access key to search for.
@@ -1816,6 +1828,15 @@ type SetRulesRequest struct {
 type SetRulesResponse struct {
 	// Rules: rules of the policy.
 	Rules []*Rule `json:"rules"`
+}
+
+// UnauthenticatedAPIRenewJWTRequest: unauthenticated api renew jwt request.
+type UnauthenticatedAPIRenewJWTRequest struct {
+	// Jti: the JWT ID of the JWT to renew.
+	Jti string `json:"-"`
+
+	// RenewToken: the renew token associated to the JWT to renew.
+	RenewToken string `json:"renew_token"`
 }
 
 // UpdateAPIKeyRequest: update api key request.
@@ -3107,6 +3128,44 @@ func (s *API) GetLog(req *GetLogRequest, opts ...scw.RequestOption) (*Log, error
 	}
 
 	var resp Log
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type UnauthenticatedAPI struct {
+	client *scw.Client
+}
+
+// NewUnauthenticatedAPI returns a UnauthenticatedAPI object from a Scaleway client.
+func NewUnauthenticatedAPI(client *scw.Client) *UnauthenticatedAPI {
+	return &UnauthenticatedAPI{
+		client: client,
+	}
+}
+
+// RenewJWT: Renew a JWT.
+func (s *UnauthenticatedAPI) RenewJWT(req *UnauthenticatedAPIRenewJWTRequest, opts ...scw.RequestOption) (*EncodedJWT, error) {
+	var err error
+
+	if fmt.Sprint(req.Jti) == "" {
+		return nil, errors.New("field Jti cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/jwts/" + fmt.Sprint(req.Jti) + "/renew",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp EncodedJWT
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
