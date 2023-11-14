@@ -2129,7 +2129,7 @@ type CreateVolumeRequest struct {
 	// Precisely one of Size, BaseVolume, BaseSnapshot must be set.
 	Size *scw.Size `json:"size,omitempty"`
 
-	// BaseVolume: ID of the volume on which this volume will be based.
+	// Deprecated: BaseVolume: ID of the volume on which this volume will be based.
 	// Precisely one of Size, BaseVolume, BaseSnapshot must be set.
 	BaseVolume *string `json:"base_volume,omitempty"`
 
