@@ -916,6 +916,15 @@ type OrganizationDeactivationLog struct {
 	Details string `json:"details"`
 }
 
+// OrganizationStatus: organization status.
+type OrganizationStatus struct {
+	OrganizationID string `json:"organization_id"`
+
+	Locked bool `json:"locked"`
+
+	NoQuota bool `json:"no_quota"`
+}
+
 // PhoneValidation: phone validation.
 type PhoneValidation struct {
 	// ID: the ID of the phone validation.
@@ -1314,6 +1323,32 @@ func (r *ListOrganizationDeactivationLogsResponse) UnsafeAppend(res interface{})
 	return uint64(len(results.OrganizationDeactivationLogs)), nil
 }
 
+// ListOrganizationsStatusResponse: list organizations status response.
+type ListOrganizationsStatusResponse struct {
+	OrganizationsStatus []*OrganizationStatus `json:"organizations_status"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOrganizationsStatusResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOrganizationsStatusResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOrganizationsStatusResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OrganizationsStatus = append(r.OrganizationsStatus, results.OrganizationsStatus...)
+	r.TotalCount += uint64(len(results.OrganizationsStatus))
+	return uint64(len(results.OrganizationsStatus)), nil
+}
+
 // ListPhoneValidationsResponse: list phone validations response.
 type ListPhoneValidationsResponse struct {
 	// TotalCount: the total number of phone validations.
@@ -1559,6 +1594,15 @@ type OrganizationAPIListOrganizationDeactivationLogsRequest struct {
 
 	// PageSize: number of items per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
+}
+
+// OrganizationAPIListOrganizationsStatusRequest: organization api list organizations status request.
+type OrganizationAPIListOrganizationsStatusRequest struct {
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	UpdatedAfter *time.Time `json:"-"`
 }
 
 // OrganizationAPIListSupportPlansRequest: organization api list support plans request.
@@ -2465,6 +2509,35 @@ func (s *OrganizationAPI) ListOrganizationDeactivationLogs(req *OrganizationAPIL
 	}
 
 	var resp ListOrganizationDeactivationLogsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListOrganizationsStatus:
+func (s *OrganizationAPI) ListOrganizationsStatus(req *OrganizationAPIListOrganizationsStatusRequest, opts ...scw.RequestOption) (*ListOrganizationsStatusResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "updated_after", req.UpdatedAfter)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account-admin/v3/organizations-status",
+		Query:  query,
+	}
+
+	var resp ListOrganizationsStatusResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
