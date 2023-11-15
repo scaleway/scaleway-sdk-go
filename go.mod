@@ -1,4 +1,4 @@
-module github.com/scaleway/scaleway-sdk-go
+module gitlab.infra.online.net/devtools/scaleway-sdk-go-internal
 
 go 1.17
 
