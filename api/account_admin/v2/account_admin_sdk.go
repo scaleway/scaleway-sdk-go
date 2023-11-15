@@ -1416,6 +1416,12 @@ type Organization struct {
 
 	// CorporateIndustry: default value: unknown_corporate_industry
 	CorporateIndustry OrganizationCorporateIndustry `json:"corporate_industry"`
+
+	BillingEmail string `json:"billing_email"`
+
+	SirenNumber string `json:"siren_number"`
+
+	VatNumber string `json:"vat_number"`
 }
 
 // PhoneValidation: phone validation.
