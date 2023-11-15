@@ -924,11 +924,14 @@ type UpdateEndpointRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// EndpointID: UUID of the endpoint you want to get.
 	EndpointID string `json:"-"`
 
+	// PrivateNetwork: private Network details.
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetworkSpec `json:"private_network,omitempty"`
 
+	// PublicNetwork: public network details.
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PublicNetwork *EndpointSpecPublicNetworkSpec `json:"public_network,omitempty"`
 }
