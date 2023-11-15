@@ -1490,7 +1490,11 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// GetSecretVersionByName: Retrieve the metadata of a secret's given version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+// Deprecated: GetSecretVersionByName: Retrieve the metadata of a secret's given version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+//
+// This method is deprecated.
+//
+// Scaleway recommends that you use the `ListSecrets` request with the `name` filter to specify the secret version desired, then use the `GetSecretVersion` request.
 func (s *API) GetSecretVersionByName(req *GetSecretVersionByNameRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
 	var err error
 
@@ -1611,7 +1615,11 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// ListSecretVersionsByName: Retrieve the list of a given secret's versions specified by the `secret_name`,`region` and `project_id` parameters.
+// Deprecated: ListSecretVersionsByName: Retrieve the list of a given secret's versions specified by the `secret_name`,`region` and `project_id` parameters.
+//
+// This method is deprecated.
+//
+// Scaleway recommends that you use the `ListSecrets` request with the `name` filter to specify the secret version desired, then use the `ListSecretVersions` request.
 func (s *API) ListSecretVersionsByName(req *ListSecretVersionsByNameRequest, opts ...scw.RequestOption) (*ListSecretVersionsResponse, error) {
 	var err error
 
@@ -1769,7 +1777,11 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// AccessSecretVersionByName: Access sensitive data in a secret's version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+// Deprecated: AccessSecretVersionByName: Access sensitive data in a secret's version specified by the `region`, `secret_name`, `revision` and `project_id` parameters.
+//
+// This method is deprecated.
+//
+// Scaleway recommends that you use the `ListSecrets` request with the `name` filter to specify the secret version desired, then use the `AccessSecretVersion` request.
 func (s *API) AccessSecretVersionByName(req *AccessSecretVersionByNameRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
 	var err error
 
