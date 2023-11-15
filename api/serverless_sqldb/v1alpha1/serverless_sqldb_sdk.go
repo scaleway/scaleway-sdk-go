@@ -645,7 +645,7 @@ func (s *API) RestoreDatabaseFromBackup(req *RestoreDatabaseFromBackupRequest, o
 		Path:   "/serverless-sqldb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/databases/" + fmt.Sprint(req.DatabaseID) + "/restore",
 	}
 
-	err = scwReq.SetBody(req.BackupID)
+	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
 	}
