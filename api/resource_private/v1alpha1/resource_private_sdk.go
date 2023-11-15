@@ -100,6 +100,8 @@ const (
 	ResourceCountTypeIamGroups                      = ResourceCountType("iam_groups")
 	ResourceCountTypeIamPolicies                    = ResourceCountType("iam_policies")
 	ResourceCountTypeIamPermissionSets              = ResourceCountType("iam_permission_sets")
+	ResourceCountTypeSbsVolume                      = ResourceCountType("sbs_volume")
+	ResourceCountTypeSbsSnapshot                    = ResourceCountType("sbs_snapshot")
 )
 
 func (enum ResourceCountType) String() string {
