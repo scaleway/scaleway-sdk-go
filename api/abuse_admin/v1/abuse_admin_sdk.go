@@ -150,106 +150,145 @@ func (enum *ListAbusesRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // Abuse: abuse.
 type Abuse struct {
-	ID string `json:"id"`
-
-	Report *abuse_private_v1.Report `json:"report"`
-
-	// Status: default value: unknown_status
-	Status AbuseAbuseStatus `json:"status"`
-
-	Token *string `json:"token"`
-
-	LegacyID *string `json:"legacy_id"`
-
-	LinkedReports []*abuse_private_v1.Report `json:"linked_reports"`
-
-	OffendingCustomerID *string `json:"offending_customer_id"`
-
-	Details map[string]string `json:"details"`
-
-	// Service: default value: unknown_service
-	Service AbuseService `json:"service"`
-
+	// ConfirmedAt: tODO.
 	ConfirmedAt *time.Time `json:"confirmed_at"`
 
-	ValidatedAt *time.Time `json:"validated_at"`
+	// Details: tODO.
+	Details map[string]string `json:"details"`
 
-	ResolvedAt *time.Time `json:"resolved_at"`
+	// ID: tODO.
+	ID string `json:"id"`
 
-	ResolveDescription *string `json:"resolve_description"`
+	// LegacyID: tODO.
+	LegacyID *string `json:"legacy_id"`
 
+	// LinkedReports: tODO.
+	LinkedReports []*abuse_private_v1.Report `json:"linked_reports"`
+
+	// ObserverIP: tODO.
+	ObserverIP *string `json:"observer_ip"`
+
+	// OffendingCustomerID: tODO.
+	OffendingCustomerID *string `json:"offending_customer_id"`
+
+	// Report: tODO.
+	Report *abuse_private_v1.Report `json:"report"`
+
+	// ResolveAnswer: tODO.
 	ResolveAnswer *string `json:"resolve_answer"`
 
+	// ResolveDescription: tODO.
+	ResolveDescription *string `json:"resolve_description"`
+
+	// ResolvedAt: tODO.
+	ResolvedAt *time.Time `json:"resolved_at"`
+
+	// Resolver: tODO.
 	Resolver *string `json:"resolver"`
 
-	ObserverIP *string `json:"observer_ip"`
+	// Service: tODO.
+	// Default value: unknown_service
+	Service AbuseService `json:"service"`
+
+	// Status: tODO.
+	// Default value: unknown_status
+	Status AbuseAbuseStatus `json:"status"`
+
+	// Token: tODO.
+	Token *string `json:"token"`
+
+	// ValidatedAt: tODO.
+	ValidatedAt *time.Time `json:"validated_at"`
 }
 
 // CreateReportRequest: create report request.
 type CreateReportRequest struct {
-	// OffendingResourceType: default value: unknown_resource_type
-	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
-
-	// Type: default value: unknown_type
-	Type abuse_private_v1.ReportType `json:"type"`
-
-	ObserverEmail *string `json:"observer_email,omitempty"`
-
-	ObserverVisible bool `json:"observer_visible"`
-
-	ObserverDescription *string `json:"observer_description,omitempty"`
-
-	ObservedAt *time.Time `json:"observed_at,omitempty"`
-
-	OffendingResource *string `json:"offending_resource,omitempty"`
-
 	AbuseID *string `json:"abuse_id,omitempty"`
 
-	OffendingURL *string `json:"offending_url,omitempty"`
+	// CompanyName: tODO.
+	CompanyName *string `json:"company_name,omitempty"`
 
-	// CreatorType: default value: unknown_creator_type
+	// CreatorType: tODO.
+	// Default value: unknown_creator_type
 	CreatorType abuse_private_v1.ReportCreatorType `json:"creator_type"`
 
-	CompanyName *string `json:"company_name,omitempty"`
+	// ObservedAt: tODO.
+	ObservedAt *time.Time `json:"observed_at,omitempty"`
+
+	// ObserverDescription: tODO.
+	ObserverDescription *string `json:"observer_description,omitempty"`
+
+	// ObserverEmail: tODO.
+	ObserverEmail *string `json:"observer_email,omitempty"`
+
+	// ObserverVisible: tODO.
+	ObserverVisible bool `json:"observer_visible"`
+
+	// OffendingResource: tODO.
+	OffendingResource *string `json:"offending_resource,omitempty"`
+
+	// OffendingResourceType: tODO.
+	// Default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
+
+	// OffendingURL: tODO.
+	OffendingURL *string `json:"offending_url,omitempty"`
+
+	// Type: tODO.
+	// Default value: unknown_type
+	Type abuse_private_v1.ReportType `json:"type"`
 }
 
-// GetAbuseRequest: get abuse request.
+// GetAbuseRequest: TODO.
 type GetAbuseRequest struct {
+	// AbuseID: tODO.
 	AbuseID string `json:"-"`
 }
 
 // ListAbusesRequest: list abuses request.
 type ListAbusesRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: created_at_asc
-	OrderBy ListAbusesRequestOrderBy `json:"-"`
-
-	Status []string `json:"-"`
-
+	// OffendingCustomerID: tODO.
 	OffendingCustomerID *string `json:"-"`
 
-	// OffendingResourceType: default value: unknown_resource_type
-	OffendingResourceType abuse_private_v1.ReportResourceType `json:"-"`
-
+	// OffendingResource: tODO.
 	OffendingResource *string `json:"-"`
 
+	// OffendingResourceType: tODO.
+	// Default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"-"`
+
+	// OrderBy: tODO.
+	// Default value: created_at_asc
+	OrderBy ListAbusesRequestOrderBy `json:"-"`
+
+	// Origin: tODO.
 	Origin *string `json:"-"`
 
-	// Service: default value: unknown_service
+	// Page: tODO.
+	Page *int32 `json:"-"`
+
+	// PageSize: tODO.
+	PageSize *uint32 `json:"-"`
+
+	// Service: tODO.
+	// Default value: unknown_service
 	Service AbuseService `json:"-"`
 
-	// Type: default value: unknown_type
+	// Status: tODO.
+	Status []string `json:"-"`
+
+	// Type: tODO.
+	// Default value: unknown_type
 	Type abuse_private_v1.ReportType `json:"-"`
 }
 
-// ListAbusesResponse: list abuses response.
+// ListAbusesResponse: TODO.
 type ListAbusesResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
+	// Abuses: tODO.
 	Abuses []*Abuse `json:"abuses"`
+
+	// TotalCount: tODO.
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -273,34 +312,47 @@ func (r *ListAbusesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // UpdateAbuseRequest: update abuse request.
 type UpdateAbuseRequest struct {
+	// AbuseID: tODO.
 	AbuseID string `json:"-"`
 
-	// Status: default value: unknown_status
-	Status AbuseAbuseStatus `json:"status"`
-
-	ReplyText *string `json:"reply_text,omitempty"`
-
-	// Type: default value: unknown_type
-	Type abuse_private_v1.ReportType `json:"type"`
-
-	// OffendingResourceType: default value: unknown_resource_type
-	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
-
-	ObserverEmail *string `json:"observer_email,omitempty"`
-
-	ObserverVisible bool `json:"observer_visible"`
-
-	ObserverDescription *string `json:"observer_description,omitempty"`
-
-	ObservedAt *time.Time `json:"observed_at,omitempty"`
-
-	OffendingResource *string `json:"offending_resource,omitempty"`
-
+	// ConfirmedAt: tODO.
 	ConfirmedAt *time.Time `json:"confirmed_at,omitempty"`
 
+	// ObservedAt: tODO.
+	ObservedAt *time.Time `json:"observed_at,omitempty"`
+
+	// ObserverDescription: tODO.
+	ObserverDescription *string `json:"observer_description,omitempty"`
+
+	// ObserverEmail: tODO.
+	ObserverEmail *string `json:"observer_email,omitempty"`
+
+	// ObserverVisible: tODO.
+	ObserverVisible bool `json:"observer_visible"`
+
+	// OffendingResource: tODO.
+	OffendingResource *string `json:"offending_resource,omitempty"`
+
+	// OffendingResourceType: tODO.
+	// Default value: unknown_resource_type
+	OffendingResourceType abuse_private_v1.ReportResourceType `json:"offending_resource_type"`
+
+	// ReplyText: tODO.
+	ReplyText *string `json:"reply_text,omitempty"`
+
+	// ResolveDescription: tODO.
 	ResolveDescription *string `json:"resolve_description,omitempty"`
 
+	// Resolver: tODO.
 	Resolver *string `json:"resolver,omitempty"`
+
+	// Status: tODO.
+	// Default value: unknown_status
+	Status AbuseAbuseStatus `json:"status"`
+
+	// Type: tODO.
+	// Default value: unknown_type
+	Type abuse_private_v1.ReportType `json:"type"`
 }
 
 // This API allows you to create report, list and update abuses.
@@ -375,15 +427,15 @@ func (s *API) ListAbuses(req *ListAbusesRequest, opts ...scw.RequestOption) (*Li
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "offending_customer_id", req.OffendingCustomerID)
+	parameter.AddToQuery(query, "offending_resource", req.OffendingResource)
+	parameter.AddToQuery(query, "offending_resource_type", req.OffendingResourceType)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "origin", req.Origin)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "status", req.Status)
-	parameter.AddToQuery(query, "offending_customer_id", req.OffendingCustomerID)
-	parameter.AddToQuery(query, "offending_resource_type", req.OffendingResourceType)
-	parameter.AddToQuery(query, "offending_resource", req.OffendingResource)
-	parameter.AddToQuery(query, "origin", req.Origin)
 	parameter.AddToQuery(query, "service", req.Service)
+	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "type", req.Type)
 
 	scwReq := &scw.ScalewayRequest{
