@@ -197,6 +197,8 @@ type SnapshotSummary struct {
 
 	PurgedAt *time.Time `json:"purged_at"`
 
+	DeletedAt *time.Time `json:"deleted_at"`
+
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
 }
@@ -244,6 +246,8 @@ type VolumeSummary struct {
 	UsedSize *scw.Size `json:"used_size"`
 
 	PurgedAt *time.Time `json:"purged_at"`
+
+	DeletedAt *time.Time `json:"deleted_at"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
@@ -364,6 +368,8 @@ type ListSnapshotsRequest struct {
 	Name *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	IncludeDeleted bool `json:"-"`
 }
 
 // ListSnapshotsResponse: list snapshots response.
@@ -445,6 +451,8 @@ type ListVolumesRequest struct {
 	Name *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	IncludeDeleted bool `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -507,6 +515,8 @@ type Snapshot struct {
 
 	PurgedAt *time.Time `json:"purged_at"`
 
+	DeletedAt *time.Time `json:"deleted_at"`
+
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
 }
@@ -545,6 +555,8 @@ type Volume struct {
 	UsedSize *scw.Size `json:"used_size"`
 
 	PurgedAt *time.Time `json:"purged_at"`
+
+	DeletedAt *time.Time `json:"deleted_at"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
@@ -649,6 +661,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -751,6 +764,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
