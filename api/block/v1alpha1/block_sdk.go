@@ -473,6 +473,9 @@ type Volume struct {
 
 	// Specs: specifications of the volume.
 	Specs *VolumeSpecifications `json:"specs"`
+
+	// LastDetachedAt: last time the volume was detached.
+	LastDetachedAt *time.Time `json:"last_detached_at"`
 }
 
 // CreateSnapshotRequest: create snapshot request.
