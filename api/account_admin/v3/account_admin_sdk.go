@@ -828,6 +828,15 @@ type Account struct {
 
 	// NotifiedAt: the account was last notified at this date.
 	NotifiedAt *time.Time `json:"notified_at"`
+
+	// IP: the IP address used for the account creation.
+	IP net.IP `json:"ip"`
+
+	// Port: the port used for the account creation.
+	Port uint32 `json:"port"`
+
+	// UserAgent: the user agent used for the account creation.
+	UserAgent string `json:"user_agent"`
 }
 
 // BlacklistedDomain: blacklisted domain.
