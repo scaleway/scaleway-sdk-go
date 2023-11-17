@@ -70,6 +70,38 @@ func (enum *Arch) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type AttachServerVolumeRequestVolumeType string
+
+const (
+	AttachServerVolumeRequestVolumeTypeUnknownVolumeType = AttachServerVolumeRequestVolumeType("unknown_volume_type")
+	AttachServerVolumeRequestVolumeTypeLSSD              = AttachServerVolumeRequestVolumeType("l_ssd")
+	AttachServerVolumeRequestVolumeTypeBSSD              = AttachServerVolumeRequestVolumeType("b_ssd")
+	AttachServerVolumeRequestVolumeTypeSbsVolume         = AttachServerVolumeRequestVolumeType("sbs_volume")
+)
+
+func (enum AttachServerVolumeRequestVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_volume_type"
+	}
+	return string(enum)
+}
+
+func (enum AttachServerVolumeRequestVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AttachServerVolumeRequestVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AttachServerVolumeRequestVolumeType(AttachServerVolumeRequestVolumeType(tmp).String())
+	return nil
+}
+
 type BootType string
 
 const (
@@ -1266,6 +1298,108 @@ type VolumeTypeConstraints struct {
 	Max scw.Size `json:"max"`
 }
 
+// Server: server.
+type Server struct {
+	// ID: instance unique ID.
+	ID string `json:"id"`
+
+	// Name: instance name.
+	Name string `json:"name"`
+
+	// Organization: instance Organization ID.
+	Organization string `json:"organization"`
+
+	// Project: instance Project ID.
+	Project string `json:"project"`
+
+	// AllowedActions: list of allowed actions on the Instance.
+	AllowedActions []ServerAction `json:"allowed_actions"`
+
+	// Tags: tags associated with the Instance.
+	Tags []string `json:"tags"`
+
+	// CommercialType: instance commercial type (eg. GP1-M).
+	CommercialType string `json:"commercial_type"`
+
+	// CreationDate: instance creation date.
+	CreationDate *time.Time `json:"creation_date"`
+
+	// DynamicIPRequired: true if a dynamic IPv4 is required.
+	DynamicIPRequired bool `json:"dynamic_ip_required"`
+
+	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode.
+	RoutedIPEnabled bool `json:"routed_ip_enabled"`
+
+	// EnableIPv6: true if IPv6 is enabled.
+	EnableIPv6 bool `json:"enable_ipv6"`
+
+	// Hostname: instance host name.
+	Hostname string `json:"hostname"`
+
+	// Image: information about the Instance image.
+	Image *Image `json:"image"`
+
+	// Protected: defines whether the Instance protection option is activated.
+	Protected bool `json:"protected"`
+
+	// PrivateIP: private IP address of the Instance.
+	PrivateIP *string `json:"private_ip"`
+
+	// PublicIP: information about the public IP.
+	PublicIP *ServerIP `json:"public_ip"`
+
+	// PublicIPs: information about all the public IPs attached to the server.
+	PublicIPs []*ServerIP `json:"public_ips"`
+
+	// MacAddress: the server's MAC address.
+	MacAddress string `json:"mac_address"`
+
+	// ModificationDate: instance modification date.
+	ModificationDate *time.Time `json:"modification_date"`
+
+	// State: instance state.
+	// Default value: running
+	State ServerState `json:"state"`
+
+	// Location: instance location.
+	Location *ServerLocation `json:"location"`
+
+	// IPv6: instance IPv6 address.
+	IPv6 *ServerIPv6 `json:"ipv6"`
+
+	// Deprecated: Bootscript: instance bootscript.
+	Bootscript *Bootscript `json:"bootscript"`
+
+	// BootType: instance boot type.
+	// Default value: local
+	BootType BootType `json:"boot_type"`
+
+	// Volumes: instance volumes.
+	Volumes map[string]*VolumeServer `json:"volumes"`
+
+	// SecurityGroup: instance security group.
+	SecurityGroup *SecurityGroupSummary `json:"security_group"`
+
+	// Maintenances: instance planned maintenance.
+	Maintenances []*ServerMaintenance `json:"maintenances"`
+
+	// StateDetail: detailed information about the Instance state.
+	StateDetail string `json:"state_detail"`
+
+	// Arch: instance architecture.
+	// Default value: x86_64
+	Arch Arch `json:"arch"`
+
+	// PlacementGroup: instance placement group.
+	PlacementGroup *PlacementGroup `json:"placement_group"`
+
+	// PrivateNics: instance private NICs.
+	PrivateNics []*PrivateNIC `json:"private_nics"`
+
+	// Zone: zone in which the Instance is located.
+	Zone scw.Zone `json:"zone"`
+}
+
 // IP: ip.
 type IP struct {
 	ID string `json:"id"`
@@ -1428,108 +1562,6 @@ type VolumeServerTemplate struct {
 
 	// Project: project ID of the volume.
 	Project *string `json:"project,omitempty"`
-}
-
-// Server: server.
-type Server struct {
-	// ID: instance unique ID.
-	ID string `json:"id"`
-
-	// Name: instance name.
-	Name string `json:"name"`
-
-	// Organization: instance Organization ID.
-	Organization string `json:"organization"`
-
-	// Project: instance Project ID.
-	Project string `json:"project"`
-
-	// AllowedActions: list of allowed actions on the Instance.
-	AllowedActions []ServerAction `json:"allowed_actions"`
-
-	// Tags: tags associated with the Instance.
-	Tags []string `json:"tags"`
-
-	// CommercialType: instance commercial type (eg. GP1-M).
-	CommercialType string `json:"commercial_type"`
-
-	// CreationDate: instance creation date.
-	CreationDate *time.Time `json:"creation_date"`
-
-	// DynamicIPRequired: true if a dynamic IPv4 is required.
-	DynamicIPRequired bool `json:"dynamic_ip_required"`
-
-	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode.
-	RoutedIPEnabled bool `json:"routed_ip_enabled"`
-
-	// EnableIPv6: true if IPv6 is enabled.
-	EnableIPv6 bool `json:"enable_ipv6"`
-
-	// Hostname: instance host name.
-	Hostname string `json:"hostname"`
-
-	// Image: information about the Instance image.
-	Image *Image `json:"image"`
-
-	// Protected: defines whether the Instance protection option is activated.
-	Protected bool `json:"protected"`
-
-	// PrivateIP: private IP address of the Instance.
-	PrivateIP *string `json:"private_ip"`
-
-	// PublicIP: information about the public IP.
-	PublicIP *ServerIP `json:"public_ip"`
-
-	// PublicIPs: information about all the public IPs attached to the server.
-	PublicIPs []*ServerIP `json:"public_ips"`
-
-	// MacAddress: the server's MAC address.
-	MacAddress string `json:"mac_address"`
-
-	// ModificationDate: instance modification date.
-	ModificationDate *time.Time `json:"modification_date"`
-
-	// State: instance state.
-	// Default value: running
-	State ServerState `json:"state"`
-
-	// Location: instance location.
-	Location *ServerLocation `json:"location"`
-
-	// IPv6: instance IPv6 address.
-	IPv6 *ServerIPv6 `json:"ipv6"`
-
-	// Deprecated: Bootscript: instance bootscript.
-	Bootscript *Bootscript `json:"bootscript"`
-
-	// BootType: instance boot type.
-	// Default value: local
-	BootType BootType `json:"boot_type"`
-
-	// Volumes: instance volumes.
-	Volumes map[string]*VolumeServer `json:"volumes"`
-
-	// SecurityGroup: instance security group.
-	SecurityGroup *SecurityGroupSummary `json:"security_group"`
-
-	// Maintenances: instance planned maintenance.
-	Maintenances []*ServerMaintenance `json:"maintenances"`
-
-	// StateDetail: detailed information about the Instance state.
-	StateDetail string `json:"state_detail"`
-
-	// Arch: instance architecture.
-	// Default value: x86_64
-	Arch Arch `json:"arch"`
-
-	// PlacementGroup: instance placement group.
-	PlacementGroup *PlacementGroup `json:"placement_group"`
-
-	// PrivateNics: instance private NICs.
-	PrivateNics []*PrivateNIC `json:"private_nics"`
-
-	// Zone: zone in which the Instance is located.
-	Zone scw.Zone `json:"zone"`
 }
 
 // Snapshot: snapshot.
@@ -1781,6 +1813,30 @@ type ApplyBlockMigrationRequest struct {
 
 	// ValidationKey: a value to be retrieved from a call to PlanBlockMigration, to confirm that the volume and/or snapshots specified in said plan should be migrated.
 	ValidationKey string `json:"validation_key,omitempty"`
+}
+
+// AttachServerVolumeRequest: attach server volume request.
+type AttachServerVolumeRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: UUID of the Instance.
+	ServerID string `json:"-"`
+
+	// VolumeID: UUID of the Volume to attach.
+	VolumeID string `json:"volume_id,omitempty"`
+
+	// VolumeType: type of the volume to attach.
+	// Default value: unknown_volume_type
+	VolumeType AttachServerVolumeRequestVolumeType `json:"volume_type,omitempty"`
+
+	// Boot: force the Instance to boot on this volume.
+	Boot *bool `json:"boot,omitempty"`
+}
+
+// AttachServerVolumeResponse: attach server volume response.
+type AttachServerVolumeResponse struct {
+	Server *Server `json:"server"`
 }
 
 // CreateIPRequest: create ip request.
@@ -2237,6 +2293,23 @@ type DeleteVolumeRequest struct {
 
 	// VolumeID: UUID of the volume you want to delete.
 	VolumeID string `json:"-"`
+}
+
+// DetachServerVolumeRequest: detach server volume request.
+type DetachServerVolumeRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: UUID of the Instance.
+	ServerID string `json:"-"`
+
+	// VolumeID: UUID of the Volume to detach.
+	VolumeID string `json:"volume_id,omitempty"`
+}
+
+// DetachServerVolumeResponse: detach server volume response.
+type DetachServerVolumeResponse struct {
+	Server *Server `json:"server"`
 }
 
 // ExportSnapshotRequest: export snapshot request.
@@ -4179,6 +4252,78 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 		return err
 	}
 	return nil
+}
+
+// AttachServerVolume: Attach a volume to a server.
+func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.RequestOption) (*AttachServerVolumeResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/attach-volume",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AttachServerVolumeResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DetachServerVolume: Detach a volume from a server.
+func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.RequestOption) (*DetachServerVolumeResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/detach-volume",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DetachServerVolumeResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListImages: List all existing Instance images.
