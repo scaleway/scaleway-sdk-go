@@ -895,12 +895,6 @@ func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Tokens)), nil
 }
 
-// ResetCockpitGrafanaRequest: reset cockpit grafana request.
-type ResetCockpitGrafanaRequest struct {
-	// ProjectID: ID of the Project the Cockpit belongs to.
-	ProjectID string `json:"project_id"`
-}
-
 // ResetGrafanaUserPasswordRequest: Request to reset a Grafana user's password.
 type ResetGrafanaUserPasswordRequest struct {
 	// GrafanaUserID: ID of the Grafana user.
@@ -1037,34 +1031,6 @@ func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.Reque
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/cockpit/v1beta1/deactivate",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cockpit
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ResetCockpitGrafana: Reset your Cockpit's Grafana associated with the specified Project ID.
-func (s *API) ResetCockpitGrafana(req *ResetCockpitGrafanaRequest, opts ...scw.RequestOption) (*Cockpit, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/cockpit/v1beta1/reset-grafana",
 	}
 
 	err = scwReq.SetBody(req)
