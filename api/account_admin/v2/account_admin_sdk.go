@@ -1339,15 +1339,6 @@ type ScalewayOrganization struct {
 	Creator *ScalewayUser `json:"creator"`
 }
 
-// OrganizationLockingStatus: organization locking status.
-type OrganizationLockingStatus struct {
-	ID string `json:"id"`
-
-	Locked bool `json:"locked"`
-
-	NoQuota bool `json:"no_quota"`
-}
-
 // Organization: organization.
 type Organization struct {
 	ID string `json:"id"`
@@ -1899,41 +1890,6 @@ func (r *ListOrganizationsLinkedToDediboxResponse) UnsafeAppend(res interface{})
 	r.Organizations = append(r.Organizations, results.Organizations...)
 	r.TotalCount += uint32(len(results.Organizations))
 	return uint32(len(results.Organizations)), nil
-}
-
-// ListOrganizationsLockingStatusRequest: list organizations locking status request.
-type ListOrganizationsLockingStatusRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	UpdatedAfter *time.Time `json:"-"`
-}
-
-// ListOrganizationsLockingStatusResponse: list organizations locking status response.
-type ListOrganizationsLockingStatusResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
-	OrganizationsLockingStatus []*OrganizationLockingStatus `json:"organizations_locking_status"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListOrganizationsLockingStatusResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListOrganizationsLockingStatusResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListOrganizationsLockingStatusResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.OrganizationsLockingStatus = append(r.OrganizationsLockingStatus, results.OrganizationsLockingStatus...)
-	r.TotalCount += uint32(len(results.OrganizationsLockingStatus))
-	return uint32(len(results.OrganizationsLockingStatus)), nil
 }
 
 // ListOrganizationsRequest: list organizations request.
@@ -2650,35 +2606,6 @@ func (s *API) ListOrganizations(req *ListOrganizationsRequest, opts ...scw.Reque
 	}
 
 	var resp ListOrganizationsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ListOrganizationsLockingStatus: List organizations locking status.
-func (s *API) ListOrganizationsLockingStatus(req *ListOrganizationsLockingStatusRequest, opts ...scw.RequestOption) (*ListOrganizationsLockingStatusResponse, error) {
-	var err error
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "updated_after", req.UpdatedAfter)
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/account-admin/v2/organizations-locking-status",
-		Query:  query,
-	}
-
-	var resp ListOrganizationsLockingStatusResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
