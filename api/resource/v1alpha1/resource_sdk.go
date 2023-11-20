@@ -840,9 +840,10 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 type SecretInfoType string
 
 const (
-	SecretInfoTypeUnknownType            = SecretInfoType("unknown_type")
-	SecretInfoTypeOpaque                 = SecretInfoType("opaque")
-	SecretInfoTypeNetworkEdgeCertificate = SecretInfoType("network_edge_certificate")
+	SecretInfoTypeUnknownType = SecretInfoType("unknown_type")
+	SecretInfoTypeOpaque      = SecretInfoType("opaque")
+	SecretInfoTypeCertificate = SecretInfoType("certificate")
+	SecretInfoTypeKeyValue    = SecretInfoType("key_value")
 )
 
 func (enum SecretInfoType) String() string {
@@ -1380,6 +1381,8 @@ type SecretInfo struct {
 
 	// Type: default value: unknown_type
 	Type SecretInfoType `json:"type"`
+
+	Path string `json:"path"`
 }
 
 // ServerlessContainerInfo: serverless container info.
