@@ -737,6 +737,9 @@ type Application struct {
 
 	// NbAPIKeys: number of API keys attributed to the application.
 	NbAPIKeys uint32 `json:"nb_api_keys"`
+
+	// Tags: tags associated with the user.
+	Tags []string `json:"tags"`
 }
 
 // Group: group.
@@ -764,6 +767,9 @@ type Group struct {
 
 	// ApplicationIDs: iDs of applications attached to this group.
 	ApplicationIDs []string `json:"application_ids"`
+
+	// Tags: tags associated to the group.
+	Tags []string `json:"tags"`
 }
 
 // Log: log.
@@ -848,6 +854,9 @@ type Policy struct {
 
 	// NbPermissionSets: number of permission sets of the policy.
 	NbPermissionSets uint32 `json:"nb_permission_sets"`
+
+	// Tags: tags associated with the policy.
+	Tags []string `json:"tags"`
 
 	// UserID: ID of the user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
@@ -974,6 +983,9 @@ type User struct {
 
 	// AccountRootUserID: ID of the account root user associated with the user.
 	AccountRootUserID string `json:"account_root_user_id"`
+
+	// Tags: tags associated with the user.
+	Tags []string `json:"tags"`
 }
 
 // AddGroupMemberRequest: add group member request.
@@ -1037,6 +1049,9 @@ type CreateApplicationRequest struct {
 
 	// Description: description of the application (max length is 200 characters).
 	Description string `json:"description"`
+
+	// Tags: tags associated with the application (maximum of 10 tags).
+	Tags []string `json:"tags"`
 }
 
 // CreateGroupRequest: create group request.
@@ -1049,6 +1064,9 @@ type CreateGroupRequest struct {
 
 	// Description: description of the group to create (max length is 200 chars).
 	Description string `json:"description"`
+
+	// Tags: tags associated with the group (maximum of 10 tags).
+	Tags []string `json:"tags"`
 }
 
 // CreatePolicyRequest: create policy request.
@@ -1064,6 +1082,9 @@ type CreatePolicyRequest struct {
 
 	// Rules: rules of the policy to create.
 	Rules []*RuleSpecs `json:"rules"`
+
+	// Tags: tags associated with the policy (maximum of 10 tags).
+	Tags []string `json:"tags"`
 
 	// UserID: ID of user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
@@ -1101,6 +1122,9 @@ type CreateUserRequest struct {
 
 	// Email: email of the user.
 	Email string `json:"email"`
+
+	// Tags: tags associated with the user.
+	Tags []string `json:"tags"`
 }
 
 // DeleteAPIKeyRequest: delete api key request.
@@ -1295,6 +1319,9 @@ type ListApplicationsRequest struct {
 
 	// ApplicationIDs: filter by list of IDs.
 	ApplicationIDs []string `json:"-"`
+
+	// Tag: filter by tags containing a given string.
+	Tag *string `json:"-"`
 }
 
 // ListApplicationsResponse: list applications response.
@@ -1351,6 +1378,9 @@ type ListGroupsRequest struct {
 
 	// GroupIDs: filter by a list of group IDs.
 	GroupIDs []string `json:"-"`
+
+	// Tag: filter by tags containing a given string.
+	Tag *string `json:"-"`
 }
 
 // ListGroupsResponse: list groups response.
@@ -1563,6 +1593,9 @@ type ListPoliciesRequest struct {
 
 	// PolicyName: name of the policy to fetch.
 	PolicyName *string `json:"-"`
+
+	// Tag: filter by tags containing a given string.
+	Tag *string `json:"-"`
 }
 
 // ListPoliciesResponse: list policies response.
@@ -1750,6 +1783,9 @@ type ListUsersRequest struct {
 
 	// Mfa: filter by MFA status.
 	Mfa *bool `json:"-"`
+
+	// Tag: filter by tags containing a given string.
+	Tag *string `json:"-"`
 }
 
 // ListUsersResponse: list users response.
@@ -1840,6 +1876,9 @@ type UpdateApplicationRequest struct {
 
 	// Description: new description for the application (max length is 200 chars).
 	Description *string `json:"description,omitempty"`
+
+	// Tags: new tags for the application (maximum of 10 tags).
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateGroupRequest: update group request.
@@ -1852,6 +1891,9 @@ type UpdateGroupRequest struct {
 
 	// Description: new description for the group (max length is 200 chars).
 	Description *string `json:"description,omitempty"`
+
+	// Tags: new tags for the group (maximum of 10 tags).
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
@@ -1864,6 +1906,9 @@ type UpdatePolicyRequest struct {
 
 	// Description: new description of policy (max length is 200 characters).
 	Description *string `json:"description,omitempty"`
+
+	// Tags: new tags for the policy (maximum of 10 tags).
+	Tags *[]string `json:"tags,omitempty"`
 
 	// UserID: new ID of user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
@@ -2055,6 +2100,7 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "user_ids", req.UserIDs)
 	parameter.AddToQuery(query, "mfa", req.Mfa)
+	parameter.AddToQuery(query, "tag", req.Tag)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2163,6 +2209,7 @@ func (s *API) ListApplications(req *ListApplicationsRequest, opts ...scw.Request
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "editable", req.Editable)
 	parameter.AddToQuery(query, "application_ids", req.ApplicationIDs)
+	parameter.AddToQuery(query, "tag", req.Tag)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2303,6 +2350,7 @@ func (s *API) ListGroups(req *ListGroupsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "application_ids", req.ApplicationIDs)
 	parameter.AddToQuery(query, "user_ids", req.UserIDs)
 	parameter.AddToQuery(query, "group_ids", req.GroupIDs)
+	parameter.AddToQuery(query, "tag", req.Tag)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2553,6 +2601,7 @@ func (s *API) ListPolicies(req *ListPoliciesRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "application_ids", req.ApplicationIDs)
 	parameter.AddToQuery(query, "no_principal", req.NoPrincipal)
 	parameter.AddToQuery(query, "policy_name", req.PolicyName)
+	parameter.AddToQuery(query, "tag", req.Tag)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
