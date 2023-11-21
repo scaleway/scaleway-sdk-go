@@ -19,8 +19,8 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	lb_v1 "github.com/scaleway/scaleway-sdk-go/api/lb/v1"
 	rdb_v1 "github.com/scaleway/scaleway-sdk-go/api/rdb/v1"
+	lb_v1 "github.com/scaleway/scaleway-sdk-go/api/lb/v1"
 )
 
 // always import dependencies
