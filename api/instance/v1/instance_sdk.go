@@ -2182,15 +2182,11 @@ type CreateVolumeRequest struct {
 	VolumeType VolumeVolumeType `json:"volume_type,omitempty"`
 
 	// Size: volume disk size, must be a multiple of 512.
-	// Precisely one of Size, BaseVolume, BaseSnapshot must be set.
+	// Precisely one of Size, BaseSnapshot must be set.
 	Size *scw.Size `json:"size,omitempty"`
 
-	// Deprecated: BaseVolume: ID of the volume on which this volume will be based.
-	// Precisely one of Size, BaseVolume, BaseSnapshot must be set.
-	BaseVolume *string `json:"base_volume,omitempty"`
-
 	// BaseSnapshot: ID of the snapshot on which this volume will be based.
-	// Precisely one of Size, BaseVolume, BaseSnapshot must be set.
+	// Precisely one of Size, BaseSnapshot must be set.
 	BaseSnapshot *string `json:"base_snapshot,omitempty"`
 }
 
