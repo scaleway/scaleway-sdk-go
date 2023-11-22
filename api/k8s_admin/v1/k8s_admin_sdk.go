@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
-	"github.com/scaleway/scaleway-sdk-go/namegenerator"
-	"github.com/scaleway/scaleway-sdk-go/scw"
-	k8s_v1 "github.com/scaleway/scaleway-sdk-go/api/k8s/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/internal/marshaler"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/internal/parameter"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/namegenerator"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/scw"
+	k8s_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/k8s_admin/v1/api/k8s/v1"
 )
 
 // always import dependencies

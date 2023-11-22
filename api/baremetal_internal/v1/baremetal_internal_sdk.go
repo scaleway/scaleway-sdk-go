@@ -14,13 +14,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
-	"github.com/scaleway/scaleway-sdk-go/namegenerator"
-	"github.com/scaleway/scaleway-sdk-go/scw"
-	trustandsafety_private_v1beta1 "github.com/scaleway/scaleway-sdk-go/api/trustandsafety_private/v1beta1"
-	baremetal_v1 "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/internal/marshaler"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/internal/parameter"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/namegenerator"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/scw"
+	trustandsafety_private_v1beta1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/api/trustandsafety_private/v1beta1"
+	baremetal_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/baremetal_internal/v1/api/baremetal/v1"
 )
 
 // always import dependencies
