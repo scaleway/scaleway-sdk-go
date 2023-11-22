@@ -587,6 +587,9 @@ type ListSnapshotsRequest struct {
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
+
 	// Page: page number.
 	Page *int32 `json:"-"`
 
@@ -679,6 +682,9 @@ type ListVolumesRequest struct {
 
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
+
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -868,6 +874,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
@@ -1044,6 +1051,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)
