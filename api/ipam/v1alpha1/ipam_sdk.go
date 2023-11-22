@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/marshaler"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // always import dependencies
@@ -85,6 +85,7 @@ const (
 	ResourceTypeVpcGateway          = ResourceType("vpc_gateway")
 	ResourceTypeVpcGatewayNetwork   = ResourceType("vpc_gateway_network")
 	ResourceTypeK8sNode             = ResourceType("k8s_node")
+	ResourceTypeK8sCluster          = ResourceType("k8s_cluster")
 	ResourceTypeRdbInstance         = ResourceType("rdb_instance")
 	ResourceTypeRedisCluster        = ResourceType("redis_cluster")
 	ResourceTypeBaremetalServer     = ResourceType("baremetal_server")

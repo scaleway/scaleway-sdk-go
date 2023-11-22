@@ -14,13 +14,13 @@ import (
 	"strings"
 	"time"
 
-	baremetal_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/baremetal/v1"
-	trustandsafety_private_v1beta1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/trustandsafety_private/v1beta1"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/marshaler"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
+	baremetal_v1 "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
+	trustandsafety_private_v1beta1 "github.com/scaleway/scaleway-sdk-go/api/trustandsafety_private/v1beta1"
 )
 
 // always import dependencies
