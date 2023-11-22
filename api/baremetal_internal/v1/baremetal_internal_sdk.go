@@ -19,8 +19,8 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	baremetal_v1 "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
 	trustandsafety_private_v1beta1 "github.com/scaleway/scaleway-sdk-go/api/trustandsafety_private/v1beta1"
+	baremetal_v1 "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
 )
 
 // always import dependencies
