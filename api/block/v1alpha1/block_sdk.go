@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/block/v1alpha1/internal/errors"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/block/v1alpha1/internal/marshaler"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/block/v1alpha1/internal/parameter"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/block/v1alpha1/namegenerator"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/block/v1alpha1/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // always import dependencies
@@ -587,6 +587,9 @@ type ListSnapshotsRequest struct {
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
+
 	// Page: page number.
 	Page *int32 `json:"-"`
 
@@ -679,6 +682,9 @@ type ListVolumesRequest struct {
 
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
+
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -868,6 +874,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
@@ -1044,6 +1051,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)

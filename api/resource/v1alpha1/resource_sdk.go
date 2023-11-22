@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/resource/v1alpha1/internal/marshaler"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/resource/v1alpha1/internal/parameter"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/resource/v1alpha1/namegenerator"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/resource/v1alpha1/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // always import dependencies

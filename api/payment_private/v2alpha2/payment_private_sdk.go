@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/payment_private/v2alpha2/internal/errors"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/payment_private/v2alpha2/internal/marshaler"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/payment_private/v2alpha2/internal/parameter"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/payment_private/v2alpha2/namegenerator"
-	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/payment_private/v2alpha2/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
+	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // always import dependencies
