@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
 )
 
 // TestLoadConfig tests config getters return correct values

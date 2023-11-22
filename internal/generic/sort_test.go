@@ -3,7 +3,7 @@ package generic
 import (
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
 )
 
 func Test_SortSliceByField(t *testing.T) {

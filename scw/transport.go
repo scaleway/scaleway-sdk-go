@@ -5,8 +5,8 @@ import (
 	"net/http/httputil"
 	"sync/atomic"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
 )
 
 type requestLoggerTransport struct {

@@ -3,9 +3,9 @@ package e2e
 import (
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/api/test/v1"
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/test/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 )
 
 var (

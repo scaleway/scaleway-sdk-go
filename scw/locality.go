@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/logger"
-	"github.com/scaleway/scaleway-sdk-go/validation"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/validation"
 )
 
 // localityPartsSeparator is the separator used in Zone and Region

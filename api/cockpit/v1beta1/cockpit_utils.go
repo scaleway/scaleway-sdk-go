@@ -3,9 +3,9 @@ package cockpit
 import (
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/async"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/async"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 )
 
 const (

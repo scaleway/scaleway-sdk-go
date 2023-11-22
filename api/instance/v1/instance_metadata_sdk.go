@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
 )
 
 var (

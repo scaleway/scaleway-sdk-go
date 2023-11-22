@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
 )
 
 const flakiness = 500 * time.Millisecond

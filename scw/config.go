@@ -11,13 +11,13 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
 )
 
 const (
-	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
+	documentationLink       = "https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/blob/master/scw/README.md"
 	defaultConfigPermission = 0600
 
 	// Reserved name for the default profile.
@@ -25,10 +25,10 @@ const (
 )
 
 const configFileTemplate = `# Scaleway configuration file
-# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+# https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway SDK Go (https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal)
 # - Scaleway CLI (>2.0.0) (https://github.com/scaleway/scaleway-cli)
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 

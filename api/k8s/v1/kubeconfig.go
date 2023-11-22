@@ -3,8 +3,8 @@ package k8s
 import (
 	"io/ioutil"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 	"gopkg.in/yaml.v2"
 )
 

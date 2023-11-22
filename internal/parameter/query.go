@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 )
 
 // AddToQuery add a key/value pair to an URL query

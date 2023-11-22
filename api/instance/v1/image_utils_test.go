@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers/httprecorder"
 )
 
 func TestWaitForImage(t *testing.T) {

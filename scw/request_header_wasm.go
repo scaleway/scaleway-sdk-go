@@ -5,7 +5,7 @@ package scw
 import (
 	"net/http"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
 )
 
 // getAllHeaders constructs a http.Header object and aggregates all headers into the object.

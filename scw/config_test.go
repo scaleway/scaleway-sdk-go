@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
 )
 
 const emptyFile = ""
@@ -586,10 +586,10 @@ func TestConfig_ConfigFile(t *testing.T) {
 	t.Run("empty", run(&testCase{
 		config: &Config{},
 		result: `# Scaleway configuration file
-# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+# https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway SDK Go (https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal)
 # - Scaleway CLI (>2.0.0) (https://github.com/scaleway/scaleway-cli)
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
@@ -664,10 +664,10 @@ func TestConfig_ConfigFile(t *testing.T) {
 				AccessKey: s(v2ValidAccessKey),
 			}},
 		result: `# Scaleway configuration file
-# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+# https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway SDK Go (https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal)
 # - Scaleway CLI (>2.0.0) (https://github.com/scaleway/scaleway-cli)
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 
@@ -756,10 +756,10 @@ access_key: SCW1234567890ABCDEFG
 			},
 		},
 		result: `# Scaleway configuration file
-# https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
+# https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/tree/master/scw#scaleway-config
 
 # This configuration file can be used with:
-# - Scaleway SDK Go (https://github.com/scaleway/scaleway-sdk-go)
+# - Scaleway SDK Go (https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal)
 # - Scaleway CLI (>2.0.0) (https://github.com/scaleway/scaleway-cli)
 # - Scaleway Terraform Provider (https://www.terraform.io/docs/providers/scaleway/index.html)
 

@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v1"
-	"github.com/scaleway/scaleway-sdk-go/internal/async"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/validation"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/marketplace/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/async"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/validation"
 )
 
 const (

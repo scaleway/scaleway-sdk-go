@@ -22,7 +22,7 @@ Scaleway is a single way to create, deploy and scale your infrastructure in the 
 ## Installation
 
 ```bash
-go get github.com/scaleway/scaleway-sdk-go
+go get gitlab.infra.online.net/devtools/scaleway-sdk-go-internal
 ```
 
 ## Getting Started
@@ -33,9 +33,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
-	"github.com/scaleway/scaleway-sdk-go/scw"
-	"github.com/scaleway/scaleway-sdk-go/utils"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/instance/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/utils"
 )
 
 func main() {

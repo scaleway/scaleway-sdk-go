@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
 )
 
 // ScalewayRequest contains all the contents related to performing a request on the Scaleway API.

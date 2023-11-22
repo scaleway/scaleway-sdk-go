@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/validation"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/validation"
 )
 
 // ClientOption is a function which applies options to a settings object.

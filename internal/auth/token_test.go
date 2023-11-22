@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
 )
 
 func TestToken_Headers(t *testing.T) {

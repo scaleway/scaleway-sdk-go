@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
 )
 
 // Environment variables

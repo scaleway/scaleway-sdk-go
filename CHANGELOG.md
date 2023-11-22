@@ -4,24 +4,24 @@
 
 ### Features
 
-* **account**: add project id to ssh key object ([#447](https://github.com/scaleway/scaleway-sdk-go/pull/447))
-* **account**: add project_id in ssh-key ([#438](https://github.com/scaleway/scaleway-sdk-go/pull/438))
+* **account**: add project id to ssh key object ([#447](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/447))
+* **account**: add project_id in ssh-key ([#438](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/438))
 
-* **baremetal**: add RetryInterval variable ([#357](https://github.com/scaleway/scaleway-sdk-go/pull/357))
-* **baremetal**: add boot type in start server ([#500](https://github.com/scaleway/scaleway-sdk-go/pull/500))
-* **baremetal**: add install in create server ([#499](https://github.com/scaleway/scaleway-sdk-go/pull/499))
-* **baremetal**: add ping status in server ([#390](https://github.com/scaleway/scaleway-sdk-go/pull/390))
-* **baremetal**: add project-id to ipfailover v1alpha1 ([#559](https://github.com/scaleway/scaleway-sdk-go/pull/559))
-* **baremetal**: add server helpers func in v1 ([#397](https://github.com/scaleway/scaleway-sdk-go/pull/397))
-* **baremetal**: add support for projects ([#535](https://github.com/scaleway/scaleway-sdk-go/pull/535))
-* **baremetal**: add v1 ([#396](https://github.com/scaleway/scaleway-sdk-go/pull/396))
+* **baremetal**: add RetryInterval variable ([#357](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/357))
+* **baremetal**: add boot type in start server ([#500](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/500))
+* **baremetal**: add install in create server ([#499](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/499))
+* **baremetal**: add ping status in server ([#390](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/390))
+* **baremetal**: add project-id to ipfailover v1alpha1 ([#559](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/559))
+* **baremetal**: add server helpers func in v1 ([#397](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/397))
+* **baremetal**: add support for projects ([#535](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/535))
+* **baremetal**: add v1 ([#396](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/396))
 
-* **config**: add support for default profile ([#478](https://github.com/scaleway/scaleway-sdk-go/pull/478))
-* **config**: move telemetry config in profile ([#427](https://github.com/scaleway/scaleway-sdk-go/pull/427))
+* **config**: add support for default profile ([#478](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/478))
+* **config**: move telemetry config in profile ([#427](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/427))
 
-* **core**: add GetSecretKey and GetAccessKey ([#386](https://github.com/scaleway/scaleway-sdk-go/pull/386))
+* **core**: add GetSecretKey and GetAccessKey ([#386](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/386))
 
-* **domain**: add domain registration process on DomainSummary ([#560](https://github.com/scaleway/scaleway-sdk-go/pull/560))
+* **domain**: add domain registration process on DomainSummary ([#560](https://gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/pull/560))
 * **domain**: add external domain support ([#401](https://github.com/scaleway/scaleway-sdk-go/pull/401))
 * **domain**: add new task types ([#415](https://github.com/scaleway/scaleway-sdk-go/pull/415))
 * **domain**: add new types in messages and email validated in domain contact ([#423](https://github.com/scaleway/scaleway-sdk-go/pull/423))

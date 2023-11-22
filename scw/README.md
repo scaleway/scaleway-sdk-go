@@ -16,7 +16,7 @@ default_zone: fr-par-1
 
 ## Config file path
 
-The function [`GetConfigPath`](https://godoc.org/github.com/scaleway/scaleway-sdk-go/scw#GetConfigPath) will try to locate the config file in the following ways:
+The function [`GetConfigPath`](https://godoc.org/gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw#GetConfigPath) will try to locate the config file in the following ways:
 
 1. Custom directory: `$SCW_CONFIG_PATH`
 2. [XDG base directory](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html): `$XDG_CONFIG_HOME/scw/config.yaml`
@@ -25,7 +25,7 @@ The function [`GetConfigPath`](https://godoc.org/github.com/scaleway/scaleway-sd
 
 ## Reading config order
 
-[ClientOption](https://godoc.org/github.com/scaleway/scaleway-sdk-go/scw#ClientOption) ordering will decide the order in which the config should apply:
+[ClientOption](https://godoc.org/gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw#ClientOption) ordering will decide the order in which the config should apply:
 
 ```go
 p, _ := scw.MustLoadConfig().GetActiveProfile()

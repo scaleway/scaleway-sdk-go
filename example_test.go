@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
-	"github.com/scaleway/scaleway-sdk-go/api/lb/v1"
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/instance/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/lb/v1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 )
 
 func Example_apiClient() {

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/auth"
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
-	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/auth"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/logger"
 )
 
 const (

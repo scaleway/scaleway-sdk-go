@@ -4,10 +4,10 @@ import (
 	goerrors "errors"
 	"time"
 
-	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
-	"github.com/scaleway/scaleway-sdk-go/internal/async"
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/scw"
+	block "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/block/v1alpha1"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/async"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/errors"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
 )
 
 // WaitForImageRequest is used by WaitForImage method.

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/testhelpers"
 )
 
 func TestHasResponseErrorWithStatus200(t *testing.T) {
