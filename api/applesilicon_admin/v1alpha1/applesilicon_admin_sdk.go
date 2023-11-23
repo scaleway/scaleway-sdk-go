@@ -206,92 +206,92 @@ func (enum *WorkflowTaskStatus) UnmarshalJSON(data []byte) error {
 type RelayBoard struct {
 	ID string `json:"id"`
 
-	Name string `json:"name"`
-
 	Mac string `json:"mac"`
+
+	Name string `json:"name"`
 
 	Port uint32 `json:"port"`
 }
 
 // Mac: mac.
 type Mac struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	// Status: default value: unknown_status
-	Status MacStatus `json:"status"`
-
-	IP net.IP `json:"ip"`
-
-	MacAddress string `json:"mac_address"`
-
-	SerialNumber string `json:"serial_number"`
-
 	ControllerIP string `json:"controller_ip"`
 
 	ControllerMac string `json:"controller_mac"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	ID string `json:"id"`
+
+	IP net.IP `json:"ip"`
+
+	LastHeartbeatAt *time.Time `json:"last_heartbeat_at"`
+
+	MacAddress string `json:"mac_address"`
+
+	Maintenance bool `json:"maintenance"`
+
+	Name string `json:"name"`
 
 	RelayBoard *RelayBoard `json:"relay_board"`
 
 	RelayBoardRelay uint32 `json:"relay_board_relay"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	SerialNumber string `json:"serial_number"`
+
+	// Status: default value: unknown_status
+	Status MacStatus `json:"status"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	LastHeartbeatAt *time.Time `json:"last_heartbeat_at"`
-
-	Maintenance bool `json:"maintenance"`
 }
 
 // Server: server.
 type Server struct {
+	BillingStartedAt *time.Time `json:"billing_started_at"`
+
+	DeletableAt *time.Time `json:"deletable_at"`
+
 	ID string `json:"id"`
 
 	Mac *Mac `json:"mac"`
 
 	Name string `json:"name"`
 
-	ProjectID string `json:"project_id"`
-
 	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
 
 	StartedAt *time.Time `json:"started_at"`
 
-	BillingStartedAt *time.Time `json:"billing_started_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
 	StoppedAt *time.Time `json:"stopped_at"`
 
-	DeletableAt *time.Time `json:"deletable_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Workflow: workflow.
 type Workflow struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	Type string `json:"type"`
+	ErrorMessage string `json:"error_message"`
+
+	ID string `json:"id"`
 
 	MacID string `json:"mac_id"`
 
+	Retry uint32 `json:"retry"`
+
+	TaskAcquiredAt *time.Time `json:"task_acquired_at"`
+
 	TaskIndex int32 `json:"task_index"`
 
-	TaskTotalCount int32 `json:"task_total_count"`
+	TaskPlannedAt *time.Time `json:"task_planned_at"`
 
 	// TaskStatus: default value: unknown_task_status
 	TaskStatus WorkflowTaskStatus `json:"task_status"`
 
-	Retry uint32 `json:"retry"`
+	TaskTotalCount int32 `json:"task_total_count"`
 
-	ErrorMessage string `json:"error_message"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	TaskAcquiredAt *time.Time `json:"task_acquired_at"`
-
-	TaskPlannedAt *time.Time `json:"task_planned_at"`
+	Type string `json:"type"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 }
@@ -301,13 +301,13 @@ type CreateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	MacID string `json:"mac_id"`
+
 	Name string `json:"name"`
 
 	ProjectID string `json:"project_id"`
 
 	Type string `json:"type"`
-
-	MacID string `json:"mac_id"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -363,9 +363,9 @@ type ListMacsRequest struct {
 
 // ListMacsResponse: list macs response.
 type ListMacsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Macs []*Mac `json:"macs"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -392,10 +392,16 @@ type ListServersRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	CreatedBefore *time.Time `json:"-"`
+
+	DeletedAfter *time.Time `json:"-"`
+
+	IncludeDeleted *bool `json:"-"`
+
+	MacID *string `json:"-"`
+
 	// OrderBy: default value: created_at_asc
 	OrderBy ListServersRequestOrderBy `json:"-"`
-
-	ProjectID *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
 
@@ -403,20 +409,14 @@ type ListServersRequest struct {
 
 	PageSize *uint32 `json:"-"`
 
-	MacID *string `json:"-"`
-
-	CreatedBefore *time.Time `json:"-"`
-
-	DeletedAfter *time.Time `json:"-"`
-
-	IncludeDeleted *bool `json:"-"`
+	ProjectID *string `json:"-"`
 }
 
 // ListServersResponse: list servers response.
 type ListServersResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Servers []*Server `json:"servers"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -443,14 +443,14 @@ type ListWorkflowsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	MacID *string `json:"-"`
+
 	// OrderBy: default value: created_at_asc
 	OrderBy ListWorkflowsRequestOrderBy `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	MacID *string `json:"-"`
 
 	ServerID *string `json:"-"`
 }
@@ -486,13 +486,13 @@ type TriggerAgentUpdateRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	AgentURL string `json:"agent_url"`
+
 	// Precisely one of AllRunningServers, ServerIDs must be set.
 	AllRunningServers *bool `json:"all_running_servers,omitempty"`
 
 	// Precisely one of AllRunningServers, ServerIDs must be set.
 	ServerIDs *[]string `json:"server_ids,omitempty"`
-
-	AgentURL string `json:"agent_url"`
 }
 
 // TriggerAgentUpdateResponse: trigger agent update response.
@@ -519,6 +519,9 @@ func NewAPI(client *scw.Client) *API {
 	return &API{
 		client: client,
 	}
+}
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar3}
 }
 
 // GetServiceInfo:
@@ -632,15 +635,15 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "mac_id", req.MacID)
 	parameter.AddToQuery(query, "created_before", req.CreatedBefore)
 	parameter.AddToQuery(query, "deleted_after", req.DeletedAfter)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
+	parameter.AddToQuery(query, "mac_id", req.MacID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -877,10 +880,10 @@ func (s *API) ListWorkflows(req *ListWorkflowsRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "mac_id", req.MacID)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "mac_id", req.MacID)
 	parameter.AddToQuery(query, "server_id", req.ServerID)
 
 	if fmt.Sprint(req.Zone) == "" {
