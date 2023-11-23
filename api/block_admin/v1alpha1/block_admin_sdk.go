@@ -148,45 +148,60 @@ type SnapshotParentVolume struct {
 
 // VolumeSpecifications: volume specifications.
 type VolumeSpecifications struct {
+	// PerfIops: the maximum IO/s expected, according to the different options available in stock (`5000 | 15000`).
 	PerfIops *uint32 `json:"perf_iops"`
 
-	// Class: default value: unknown_storage_class
+	// Class: the storage class of the volume.
+	// Default value: unknown_storage_class
 	Class block_v1alpha1.StorageClass `json:"class"`
 }
 
 // AuditLog: audit log.
 type AuditLog struct {
-	ID string `json:"id"`
-
 	Action string `json:"action"`
+
+	CreatedAt *time.Time `json:"created_at"`
 
 	Detail *scw.JSONObject `json:"detail"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	ID string `json:"id"`
 }
 
 // SnapshotSummary: snapshot summary.
 type SnapshotSummary struct {
+	// ID: UUID of the snapshot.
 	ID string `json:"id"`
 
+	// Name: name of the snapshot.
 	Name string `json:"name"`
 
+	// ParentVolume: if the parent volume has been deleted, value is null.
 	ParentVolume *SnapshotParentVolume `json:"parent_volume"`
 
+	// Size: size of the snapshot in bytes.
 	Size scw.Size `json:"size"`
 
+	// ProjectID: UUID of the project the snapshot belongs to.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: creation date of the snapshot.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last modification date of the properties of a snapshot.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Status: default value: unknown_status
+	// Status: current status of the snapshot (available, in_use, ...).
+	// Default value: unknown_status
 	Status block_v1alpha1.SnapshotStatus `json:"status"`
 
+	// Tags: list of tags assigned to the volume.
 	Tags []string `json:"tags"`
 
-	// Class: default value: unknown_storage_class
+	// Zone: snapshot Availability Zone.
+	Zone scw.Zone `json:"zone"`
+
+	// Class: storage class of the snapshot.
+	// Default value: unknown_storage_class
 	Class block_v1alpha1.StorageClass `json:"class"`
 
 	OrganizationID string `json:"organization_id"`
@@ -195,59 +210,60 @@ type SnapshotSummary struct {
 
 	UsedSize *scw.Size `json:"used_size"`
 
-	PurgedAt *time.Time `json:"purged_at"`
-
 	DeletedAt *time.Time `json:"deleted_at"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"zone"`
+	PurgedAt *time.Time `json:"purged_at"`
 }
 
 // VolumeType: volume type.
 type VolumeType struct {
+	// Type: volume type.
 	Type string `json:"type"`
 
-	Specs *VolumeSpecifications `json:"specs"`
-
+	// Pricing: price of the volume billed in GB/hour.
 	Pricing *scw.Money `json:"pricing"`
 
+	// SnapshotPricing: price of the snapshot billed in GB/hour.
 	SnapshotPricing *scw.Money `json:"snapshot_pricing"`
+
+	// Specs: volume specifications of the volume type.
+	Specs *VolumeSpecifications `json:"specs"`
 }
 
 // VolumeSummary: volume summary.
 type VolumeSummary struct {
+	CephName *string `json:"ceph_name"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	DeletedAt *time.Time `json:"deleted_at"`
+
 	ID string `json:"id"`
 
 	Name string `json:"name"`
 
-	Type string `json:"type"`
+	OrganizationID string `json:"organization_id"`
 
-	Size scw.Size `json:"size"`
+	ParentSnapshotID *string `json:"parent_snapshot_id"`
 
 	ProjectID string `json:"project_id"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	PurgedAt *time.Time `json:"purged_at"`
 
-	UpdatedAt *time.Time `json:"updated_at"`
+	Size scw.Size `json:"size"`
 
-	ParentSnapshotID *string `json:"parent_snapshot_id"`
+	Specs *VolumeSpecifications `json:"specs"`
 
 	// Status: default value: unknown_status
 	Status block_v1alpha1.VolumeStatus `json:"status"`
 
 	Tags []string `json:"tags"`
 
-	Specs *VolumeSpecifications `json:"specs"`
+	Type string `json:"type"`
 
-	OrganizationID string `json:"organization_id"`
-
-	CephName *string `json:"ceph_name"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	UsedSize *scw.Size `json:"used_size"`
-
-	PurgedAt *time.Time `json:"purged_at"`
-
-	DeletedAt *time.Time `json:"deleted_at"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
@@ -255,18 +271,24 @@ type VolumeSummary struct {
 
 // Reference: reference.
 type Reference struct {
+	// ID: UUID of the reference.
 	ID string `json:"id"`
 
+	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
 	ProductResourceType string `json:"product_resource_type"`
 
+	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
 	ProductResourceID string `json:"product_resource_id"`
 
+	// CreatedAt: creation date of the reference.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// Type: default value: unknown_type
+	// Type: type of reference (link, exclusive, read_only).
+	// Default value: unknown_type
 	Type block_v1alpha1.ReferenceType `json:"type"`
 
-	// Status: default value: unknown_status
+	// Status: status of reference (attaching, attached, detaching).
+	// Default value: unknown_status
 	Status block_v1alpha1.ReferenceStatus `json:"status"`
 }
 
@@ -275,6 +297,7 @@ type DeleteSnapshotRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// SnapshotID: UUID of the snapshot.
 	SnapshotID string `json:"-"`
 }
 
@@ -283,6 +306,7 @@ type DeleteVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// VolumeID: UUID of the volume.
 	VolumeID string `json:"-"`
 }
 
@@ -297,6 +321,7 @@ type GetSnapshotRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// SnapshotID: UUID of the snapshot.
 	SnapshotID string `json:"-"`
 }
 
@@ -305,6 +330,7 @@ type GetVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// VolumeID: UUID of the volume.
 	VolumeID string `json:"-"`
 }
 
@@ -315,12 +341,12 @@ type ListAuditLogsRequest struct {
 
 	ResourceID string `json:"-"`
 
+	// OrderBy: default value: created_at_asc
+	OrderBy ListAuditLogsRequestOrderBy `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: created_at_asc
-	OrderBy ListAuditLogsRequestOrderBy `json:"-"`
 }
 
 // ListAuditLogsResponse: list audit logs response.
@@ -354,17 +380,23 @@ type ListSnapshotsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria to use when ordering the list.
+	// Default value: created_at_asc
 	OrderBy ListSnapshotsRequestOrderBy `json:"-"`
 
+	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: page size, defines how many entries are returned in one page, must be lower or equal to 100.
 	PageSize *uint32 `json:"-"`
 
+	// VolumeID: filter snapshots by the ID of the original volume.
 	VolumeID *string `json:"-"`
 
+	// Name: filter snapshots by their names.
 	Name *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
@@ -374,8 +406,10 @@ type ListSnapshotsRequest struct {
 
 // ListSnapshotsResponse: list snapshots response.
 type ListSnapshotsResponse struct {
+	// Snapshots: paginated returned list of snapshots.
 	Snapshots []*SnapshotSummary `json:"snapshots"`
 
+	// TotalCount: total number of snpashots in the project.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -403,15 +437,19 @@ type ListVolumeTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	PageSize *uint32 `json:"-"`
-
+	// Page: page number.
 	Page *int32 `json:"-"`
+
+	// PageSize: page size, defines how many entries are returned in one page, must be lower or equal to 100.
+	PageSize *uint32 `json:"-"`
 }
 
 // ListVolumeTypesResponse: list volume types response.
 type ListVolumeTypesResponse struct {
+	// VolumeTypes: returns paginated list of volume-types.
 	VolumeTypes []*VolumeType `json:"volume_types"`
 
+	// TotalCount: total number of volume-types currently available in stock.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -439,15 +477,20 @@ type ListVolumesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria to use when ordering the list.
+	// Default value: created_at_asc
 	OrderBy ListVolumesRequestOrderBy `json:"-"`
 
+	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: page size, defines how many entries are returned in one page, must be lower or equal to 100.
 	PageSize *uint32 `json:"-"`
 
+	// Name: filter the return volumes by their names.
 	Name *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
@@ -457,8 +500,10 @@ type ListVolumesRequest struct {
 
 // ListVolumesResponse: list volumes response.
 type ListVolumesResponse struct {
+	// Volumes: paginated returned list of volumes.
 	Volumes []*VolumeSummary `json:"volumes"`
 
+	// TotalCount: total number of volumes in the project.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -483,69 +528,95 @@ func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 
 // Snapshot: snapshot.
 type Snapshot struct {
+	// ID: UUID of the snapshot.
 	ID string `json:"id"`
 
+	// Name: name of the snapshot.
 	Name string `json:"name"`
 
+	// ParentVolume: if the parent volume was deleted, value is null.
 	ParentVolume *SnapshotParentVolume `json:"parent_volume"`
 
+	// Size: size in bytes of the snapshot.
 	Size scw.Size `json:"size"`
 
+	// ProjectID: UUID of the project the snapshot belongs to.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: creation date of the snapshot.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last modification date of the properties of a snapshot.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// References: list of the references to the snapshot.
 	References []*Reference `json:"references"`
 
-	// Status: default value: unknown_status
+	// Status: current status of the snapshot (available, in_use, ...).
+	// Default value: unknown_status
 	Status block_v1alpha1.SnapshotStatus `json:"status"`
 
+	// Tags: list of tags assigned to the volume.
 	Tags []string `json:"tags"`
 
-	// Class: default value: unknown_storage_class
+	// Zone: snapshot zone.
+	Zone scw.Zone `json:"zone"`
+
+	// Class: storage class of the snapshot.
+	// Default value: unknown_storage_class
 	Class block_v1alpha1.StorageClass `json:"class"`
-
-	OrganizationID string `json:"organization_id"`
-
-	CephName *string `json:"ceph_name"`
-
-	UsedSize *scw.Size `json:"used_size"`
-
-	PurgedAt *time.Time `json:"purged_at"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"zone"`
+	UsedSize *scw.Size `json:"used_size"`
+
+	CephName *string `json:"ceph_name"`
+
+	OrganizationID string `json:"organization_id"`
+
+	PurgedAt *time.Time `json:"purged_at"`
 }
 
 // Volume: volume.
 type Volume struct {
+	// ID: UUID of the volume.
 	ID string `json:"id"`
 
+	// Name: name of the volume.
 	Name string `json:"name"`
 
+	// Type: volume type.
 	Type string `json:"type"`
 
+	// Size: volume size in bytes.
 	Size scw.Size `json:"size"`
 
+	// ProjectID: UUID of the project to which the volume belongs.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: creation date of the volume.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last update of the properties of a volume.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// References: list of the references to the volume.
 	References []*Reference `json:"references"`
 
+	// ParentSnapshotID: when a volume is created from a snapshot, is the UUID of the snapshot from which the volume has been created.
 	ParentSnapshotID *string `json:"parent_snapshot_id"`
 
-	// Status: default value: unknown_status
+	// Status: current status of the volume (available, in_use, ...).
+	// Default value: unknown_status
 	Status block_v1alpha1.VolumeStatus `json:"status"`
 
+	// Tags: list of tags assigned to the volume.
 	Tags []string `json:"tags"`
 
+	// Zone: volume zone.
+	Zone scw.Zone `json:"zone"`
+
+	// Specs: specifications of the volume.
 	Specs *VolumeSpecifications `json:"specs"`
 
 	OrganizationID string `json:"organization_id"`
@@ -554,12 +625,9 @@ type Volume struct {
 
 	UsedSize *scw.Size `json:"used_size"`
 
-	PurgedAt *time.Time `json:"purged_at"`
-
 	DeletedAt *time.Time `json:"deleted_at"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"zone"`
+	PurgedAt *time.Time `json:"purged_at"`
 }
 
 type API struct {
@@ -618,8 +686,8 @@ func (s *API) ListVolumeTypes(req *ListVolumeTypesRequest, opts ...scw.RequestOp
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -860,9 +928,9 @@ func (s *API) ListAuditLogs(req *ListAuditLogsRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")

@@ -19,8 +19,8 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
-	std "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/std"
 	domain_v2beta1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/domain/v2beta1"
+	std "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/std"
 )
 
 // always import dependencies
