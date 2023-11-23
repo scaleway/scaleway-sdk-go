@@ -266,28 +266,30 @@ func (enum *ListTLSStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type PipelineErrorCode string
 
 const (
-	PipelineErrorCodeUnknownCode          = PipelineErrorCode("unknown_code")
-	PipelineErrorCodeDNSInvalidFormat     = PipelineErrorCode("dns_invalid_format")
-	PipelineErrorCodeDNSInvalidTld        = PipelineErrorCode("dns_invalid_tld")
-	PipelineErrorCodeDNSForbiddenScwCloud = PipelineErrorCode("dns_forbidden_scw_cloud")
-	PipelineErrorCodeDNSDomainDontExist   = PipelineErrorCode("dns_domain_dont_exist")
-	PipelineErrorCodeDNSCnameDontExist    = PipelineErrorCode("dns_cname_dont_exist")
-	PipelineErrorCodeDNSCnameResolve      = PipelineErrorCode("dns_cname_resolve")
-	PipelineErrorCodeDNSFqdnAlreadyInUse  = PipelineErrorCode("dns_fqdn_already_in_use")
-	PipelineErrorCodeTLSCertDeleted       = PipelineErrorCode("tls_cert_deleted")
-	PipelineErrorCodeTLSCertExpired       = PipelineErrorCode("tls_cert_expired")
-	PipelineErrorCodeTLSCertInvalidFormat = PipelineErrorCode("tls_cert_invalid_format")
-	PipelineErrorCodeTLSCertMissing       = PipelineErrorCode("tls_cert_missing")
-	PipelineErrorCodeTLSChainOrder        = PipelineErrorCode("tls_chain_order")
-	PipelineErrorCodeTLSKeyInvalidFormat  = PipelineErrorCode("tls_key_invalid_format")
-	PipelineErrorCodeTLSKeyMissing        = PipelineErrorCode("tls_key_missing")
-	PipelineErrorCodeTLSKeyTooMany        = PipelineErrorCode("tls_key_too_many")
-	PipelineErrorCodeTLSPairMismatch      = PipelineErrorCode("tls_pair_mismatch")
-	PipelineErrorCodeTLSRootInconsistent  = PipelineErrorCode("tls_root_inconsistent")
-	PipelineErrorCodeTLSRootIncorrect     = PipelineErrorCode("tls_root_incorrect")
-	PipelineErrorCodeTLSRootMissing       = PipelineErrorCode("tls_root_missing")
-	PipelineErrorCodeTLSSanMismatch       = PipelineErrorCode("tls_san_mismatch")
-	PipelineErrorCodeTLSSelfSigned        = PipelineErrorCode("tls_self_signed")
+	PipelineErrorCodeUnknownCode               = PipelineErrorCode("unknown_code")
+	PipelineErrorCodeDNSInvalidFormat          = PipelineErrorCode("dns_invalid_format")
+	PipelineErrorCodeDNSInvalidTld             = PipelineErrorCode("dns_invalid_tld")
+	PipelineErrorCodeDNSForbiddenScwCloud      = PipelineErrorCode("dns_forbidden_scw_cloud")
+	PipelineErrorCodeDNSDomainDontExist        = PipelineErrorCode("dns_domain_dont_exist")
+	PipelineErrorCodeDNSCnameDontExist         = PipelineErrorCode("dns_cname_dont_exist")
+	PipelineErrorCodeDNSCnameResolve           = PipelineErrorCode("dns_cname_resolve")
+	PipelineErrorCodeDNSFqdnAlreadyInUse       = PipelineErrorCode("dns_fqdn_already_in_use")
+	PipelineErrorCodeTLSCertDeleted            = PipelineErrorCode("tls_cert_deleted")
+	PipelineErrorCodeTLSCertExpired            = PipelineErrorCode("tls_cert_expired")
+	PipelineErrorCodeTLSCertInvalidFormat      = PipelineErrorCode("tls_cert_invalid_format")
+	PipelineErrorCodeTLSCertMissing            = PipelineErrorCode("tls_cert_missing")
+	PipelineErrorCodeTLSChainOrder             = PipelineErrorCode("tls_chain_order")
+	PipelineErrorCodeTLSKeyInvalidFormat       = PipelineErrorCode("tls_key_invalid_format")
+	PipelineErrorCodeTLSKeyMissing             = PipelineErrorCode("tls_key_missing")
+	PipelineErrorCodeTLSKeyTooMany             = PipelineErrorCode("tls_key_too_many")
+	PipelineErrorCodeTLSManagedDomainRateLimit = PipelineErrorCode("tls_managed_domain_rate_limit")
+	PipelineErrorCodeTLSManagedInternal        = PipelineErrorCode("tls_managed_internal")
+	PipelineErrorCodeTLSPairMismatch           = PipelineErrorCode("tls_pair_mismatch")
+	PipelineErrorCodeTLSRootInconsistent       = PipelineErrorCode("tls_root_inconsistent")
+	PipelineErrorCodeTLSRootIncorrect          = PipelineErrorCode("tls_root_incorrect")
+	PipelineErrorCodeTLSRootMissing            = PipelineErrorCode("tls_root_missing")
+	PipelineErrorCodeTLSSanMismatch            = PipelineErrorCode("tls_san_mismatch")
+	PipelineErrorCodeTLSSelfSigned             = PipelineErrorCode("tls_self_signed")
 )
 
 func (enum PipelineErrorCode) String() string {
@@ -614,6 +616,8 @@ type TLSStage struct {
 
 	ProjectID string `json:"project_id"`
 
+	ManagedCertificate bool `json:"managed_certificate"`
+
 	// Precisely one of CacheStageID, BackendStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
 
@@ -718,6 +722,8 @@ type CreateTLSStageRequest struct {
 	ProjectID string `json:"project_id"`
 
 	Secrets []*TLSSecret `json:"secrets"`
+
+	ManagedCertificate *bool `json:"managed_certificate,omitempty"`
 
 	// Precisely one of CacheStageID, BackendStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
@@ -1094,6 +1100,8 @@ type UpdateTLSStageRequest struct {
 	TLSStageID string `json:"-"`
 
 	TLSSecretsConfig *TLSSecretsConfig `json:"tls_secrets_config,omitempty"`
+
+	ManagedCertificate *bool `json:"managed_certificate,omitempty"`
 
 	// Precisely one of CacheStageID, BackendStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
