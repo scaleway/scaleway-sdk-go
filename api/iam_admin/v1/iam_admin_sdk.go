@@ -278,9 +278,7 @@ func (enum *ListGroupsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListInternalOrganizationsRequestOrderBy string
 
 const (
-	// Creation date ascending.
-	ListInternalOrganizationsRequestOrderByCreatedAtAsc = ListInternalOrganizationsRequestOrderBy("created_at_asc")
-	// Creation date descending.
+	ListInternalOrganizationsRequestOrderByCreatedAtAsc  = ListInternalOrganizationsRequestOrderBy("created_at_asc")
 	ListInternalOrganizationsRequestOrderByCreatedAtDesc = ListInternalOrganizationsRequestOrderBy("created_at_desc")
 )
 
@@ -790,276 +788,347 @@ type InternalOrganizationInternalUser struct {
 
 // RuleSpecs: rule specs.
 type RuleSpecs struct {
+	// PermissionSetNames: names of permission sets bound to the rule.
 	PermissionSetNames *[]string `json:"permission_set_names"`
 
+	// ProjectIDs: list of Project IDs the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	ProjectIDs *[]string `json:"project_ids,omitempty"`
 
+	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 }
 
 // JWT: jwt.
 type JWT struct {
+	// Jti: jWT ID.
 	Jti string `json:"jti"`
 
+	// IssuerID: ID of the user who issued the JWT.
 	IssuerID string `json:"issuer_id"`
 
+	// AudienceID: ID of the user targeted by the JWT.
 	AudienceID string `json:"audience_id"`
+
+	// CreatedAt: creation date of the JWT.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the JWT.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ExpiresAt: expiration date of the JWT.
+	ExpiresAt *time.Time `json:"expires_at"`
+
+	// IP: IP address used during the creation of the JWT.
+	IP net.IP `json:"ip"`
+
+	// UserAgent: user-agent used during the creation of the JWT.
+	UserAgent string `json:"user_agent"`
 
 	Staff bool `json:"staff"`
 
 	Renewable bool `json:"renewable"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	ExpiresAt *time.Time `json:"expires_at"`
-
-	IP net.IP `json:"ip"`
-
-	UserAgent string `json:"user_agent"`
 }
 
 // PermissionSet: permission set.
 type PermissionSet struct {
+	// ID: id of the permission set.
 	ID string `json:"id"`
 
+	// Name: name of the permission set.
 	Name string `json:"name"`
 
-	Description string `json:"description"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// ScopeType: default value: unknown_scope_type
+	// ScopeType: scope of the permission set.
+	// Default value: unknown_scope_type
 	ScopeType PermissionSetScopeType `json:"scope_type"`
 
-	NbPermissions uint32 `json:"nb_permissions"`
+	// Description: description of the permission set.
+	Description string `json:"description"`
 
+	// Categories: categories of the permission set.
 	Categories *[]string `json:"categories"`
+
+	// CreatedAt: when the permission set was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: when the permission set was updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// NbPermissions: number or permissions inside the permission set.
+	NbPermissions uint32 `json:"nb_permissions"`
 }
 
 // Permission: permission.
 type Permission struct {
-	Name string `json:"name"`
-
-	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
-	ProjectIDs *[]string `json:"project_ids,omitempty"`
-
-	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
-	OrganizationID *string `json:"organization_id,omitempty"`
-
-	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
+	// Precisely one of AccountRootUserID, AllOrganizations, OrganizationID, ProjectIDs must be set.
 	AccountRootUserID *string `json:"account_root_user_id,omitempty"`
 
-	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
+	// Precisely one of AccountRootUserID, AllOrganizations, OrganizationID, ProjectIDs must be set.
 	AllOrganizations *bool `json:"all_organizations,omitempty"`
+
+	Name string `json:"name"`
+
+	// Precisely one of AccountRootUserID, AllOrganizations, OrganizationID, ProjectIDs must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+
+	// Precisely one of AccountRootUserID, AllOrganizations, OrganizationID, ProjectIDs must be set.
+	ProjectIDs *[]string `json:"project_ids,omitempty"`
 }
 
 // APIKey: api key.
 type APIKey struct {
+	// AccessKey: access key of the API key.
 	AccessKey string `json:"access_key"`
 
+	// SecretKey: secret key of the API Key.
 	SecretKey *string `json:"secret_key"`
 
+	// ApplicationID: ID of application that bears the API key.
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
+
+	// UserID: ID of user that bears the API key.
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+
+	// Description: description of API key.
 	Description string `json:"description"`
 
+	// CreatedAt: date and time of API key creation.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date and time of last API key update.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// ExpiredAt: date and time of API key expiration.
 	ExpiredAt *time.Time `json:"expired_at"`
 
+	// DefaultProjectID: default Project ID specified for this API key.
 	DefaultProjectID string `json:"default_project_id"`
 
+	// Editable: defines whether or not the API key is editable.
+	Editable bool `json:"editable"`
+
+	// IsStaff: if an API key comes from staff.
 	IsStaff bool `json:"is_staff"`
 
 	// Category: default value: unknown_category
 	Category APIKeyCategory `json:"category"`
 
-	Editable bool `json:"editable"`
-
 	Visible bool `json:"visible"`
-
-	// Precisely one of UserID, ApplicationID must be set.
-	UserID *string `json:"user_id,omitempty"`
-
-	// Precisely one of UserID, ApplicationID must be set.
-	ApplicationID *string `json:"application_id,omitempty"`
 }
 
 // Application: application.
 type Application struct {
+	// ID: ID of the application.
 	ID string `json:"id"`
 
+	// Name: name of the application.
 	Name string `json:"name"`
 
+	// Description: description of the application.
 	Description string `json:"description"`
 
+	// CreatedAt: date and time application was created.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date and time of last application update.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"organization_id"`
 
+	// Editable: defines whether or not the application is editable.
 	Editable bool `json:"editable"`
 
-	Visible bool `json:"visible"`
-
+	// NbAPIKeys: number of API keys attributed to the application.
 	NbAPIKeys uint32 `json:"nb_api_keys"`
+
+	// Visible: whether an application is visible or not.
+	Visible bool `json:"visible"`
 }
 
 // CustomerLevel: customer level.
 type CustomerLevel struct {
+	CreatedAt *time.Time `json:"created_at"`
+
 	ID string `json:"id"`
 
 	Name string `json:"name"`
-
-	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Group: group.
 type Group struct {
+	// ID: ID of the group.
 	ID string `json:"id"`
 
+	// CreatedAt: date and time of group creation.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date and time of last group update.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// OrganizationID: ID of Organization linked to the group.
 	OrganizationID string `json:"organization_id"`
 
+	// Name: name of the group.
 	Name string `json:"name"`
 
+	// Description: description of the group.
 	Description string `json:"description"`
 
+	// UserIDs: iDs of users attached to this group.
 	UserIDs []string `json:"user_ids"`
 
+	// ApplicationIDs: iDs of applications attached to this group.
 	ApplicationIDs []string `json:"application_ids"`
 }
 
 // InternalOrganization: internal organization.
 type InternalOrganization struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
 	Creator *InternalOrganizationInternalUser `json:"creator"`
 
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
+	ID string `json:"id"`
 
 	PermissionSetIDs []string `json:"permission_set_ids"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Limit: limit.
 type Limit struct {
+	CustomerLevelID string `json:"customer_level_id"`
+
+	CustomerLevelName string `json:"customer_level_name"`
+
+	// Precisely one of Disabled, Limit, Unlimited must be set.
+	Disabled *bool `json:"disabled,omitempty"`
+
 	ID string `json:"id"`
+
+	// Precisely one of Disabled, Limit, Unlimited must be set.
+	Limit *uint64 `json:"limit,omitempty"`
 
 	QuotumID string `json:"quotum_id"`
 
 	QuotumName string `json:"quotum_name"`
 
-	CustomerLevelID string `json:"customer_level_id"`
-
-	CustomerLevelName string `json:"customer_level_name"`
-
-	// Precisely one of Limit, Unlimited, Disabled must be set.
-	Limit *uint64 `json:"limit,omitempty"`
-
-	// Precisely one of Limit, Unlimited, Disabled must be set.
+	// Precisely one of Disabled, Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
-
-	// Precisely one of Limit, Unlimited, Disabled must be set.
-	Disabled *bool `json:"disabled,omitempty"`
 }
 
 // Log: log.
 type Log struct {
+	// ID: log ID.
 	ID string `json:"id"`
 
+	// CreatedAt: creation date of the log.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// IP: IP address of the HTTP request linked to the log.
 	IP net.IP `json:"ip"`
 
+	// UserAgent: user-Agent of the HTTP request linked to the log.
 	UserAgent string `json:"user_agent"`
 
-	Country string `json:"country"`
-
-	// Action: default value: unknown_action
+	// Action: action linked to the log.
+	// Default value: unknown_action
 	Action LogAction `json:"action"`
 
+	// FromPrincipalID: ID of the principal at the origin of the log.
 	FromPrincipalID string `json:"from_principal_id"`
 
+	// OrganizationID: ID of Organization linked to the log.
 	OrganizationID string `json:"organization_id"`
 
-	// ResourceType: default value: unknown_resource_type
+	// ResourceType: type of the resource linked to the log.
+	// Default value: unknown_resource_type
 	ResourceType LogResourceType `json:"resource_type"`
 
+	// ResourceID: ID of the resource linked  to the log.
 	ResourceID string `json:"resource_id"`
 
 	Data *scw.JSONObject `json:"data"`
 
 	Visible bool `json:"visible"`
+
+	Country string `json:"country"`
 }
 
 // Organization: organization.
 type Organization struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
 	CustomerClass string `json:"customer_class"`
 
-	Locked bool `json:"locked"`
+	ID string `json:"id"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	Locked bool `json:"locked"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Policy: policy.
 type Policy struct {
+	// ID: id of the policy.
 	ID string `json:"id"`
 
+	// Name: name of the policy.
 	Name string `json:"name"`
 
+	// Description: description of the policy.
+	Description string `json:"description"`
+
+	// OrganizationID: organization ID of the policy.
 	OrganizationID string `json:"organization_id"`
 
+	// CreatedAt: date and time of policy creation.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date and time of last policy update.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// Editable: defines whether or not a policy is editable.
 	Editable bool `json:"editable"`
 
+	Visible bool `json:"visible"`
+
+	// NbRules: number of rules of the policy.
 	NbRules uint32 `json:"nb_rules"`
 
+	// NbScopes: number of policy scopes.
 	NbScopes uint32 `json:"nb_scopes"`
 
+	// NbPermissionSets: number of permission sets of the policy.
 	NbPermissionSets uint32 `json:"nb_permission_sets"`
 
+	// UserID: ID of the user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	UserID *string `json:"user_id,omitempty"`
 
+	// GroupID: ID of the group attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	GroupID *string `json:"group_id,omitempty"`
 
+	// ApplicationID: ID of the application attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
+	// NoPrincipal: defines whether or not a policy is attributed to a principal.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
-
-	Description string `json:"description"`
-
-	Visible bool `json:"visible"`
 }
 
 // Quotum: quotum.
 type Quotum struct {
 	ID string `json:"id"`
 
+	// Name: name of the quota.
 	Name string `json:"name"`
 
 	CreatedAt *time.Time `json:"created_at"`
@@ -1069,16 +1138,21 @@ type Quotum struct {
 
 // Rule: rule.
 type Rule struct {
+	// ID: id of rule.
 	ID string `json:"id"`
 
+	// PermissionSetNames: names of permission sets bound to the rule.
 	PermissionSetNames *[]string `json:"permission_set_names"`
 
+	// ProjectIDs: list of Project IDs the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
 	ProjectIDs *[]string `json:"project_ids,omitempty"`
 
+	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
 
+	// AccountRootUserID: ID of account root user the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID, AllOrganizations must be set.
 	AccountRootUserID *string `json:"account_root_user_id,omitempty"`
 
@@ -1088,43 +1162,60 @@ type Rule struct {
 
 // SSHKey: ssh key.
 type SSHKey struct {
+	// ID: ID of SSH key.
 	ID string `json:"id"`
 
+	// Name: name of SSH key.
 	Name string `json:"name"`
 
+	// PublicKey: public key of SSH key.
 	PublicKey string `json:"public_key"`
 
+	// Fingerprint: fingerprint of the SSH key.
 	Fingerprint string `json:"fingerprint"`
 
+	// CreatedAt: creation date of SSH key.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last update date of SSH key.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// OrganizationID: ID of Organization linked to the SSH key.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: ID of Project linked to the SSH key.
 	ProjectID string `json:"project_id"`
 
+	// Disabled: SSH key status.
 	Disabled bool `json:"disabled"`
 }
 
 // User: user.
 type User struct {
+	// ID: ID of user.
 	ID string `json:"id"`
 
-	AccountRootUserID *string `json:"account_root_user_id"`
-
+	// Email: email of user.
 	Email string `json:"email"`
 
+	// CreatedAt: date user was created.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date of last user update.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"organization_id"`
 
+	// Deletable: deletion status of user. Owners cannot be deleted.
 	Deletable bool `json:"deletable"`
 
-	// Status: default value: unknown_status
+	// Status: status of user invitation.
+	// Default value: unknown_status
 	Status UserStatus `json:"status"`
+
+	// AccountRootUserID: ID of the account root user associated with the user.
+	AccountRootUserID *string `json:"account_root_user_id"`
 }
 
 // AddCustomerLevelPermissionSetRequest: add customer level permission set request.
@@ -1143,22 +1234,26 @@ type AddInternalOrganizationPermissionSetRequest struct {
 
 // AddOrganizationCustomerLevelRequest: add organization customer level request.
 type AddOrganizationCustomerLevelRequest struct {
-	OrganizationID string `json:"organization_id"`
-
 	CustomerLevelID string `json:"customer_level_id"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 // CreateAPIKeyRequest: create api key request.
 type CreateAPIKeyRequest struct {
-	// Precisely one of UserID, ApplicationID must be set.
-	UserID *string `json:"user_id,omitempty"`
-
-	// Precisely one of UserID, ApplicationID must be set.
+	// ApplicationID: ID of the application.
+	// Precisely one of ApplicationID, UserID must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
-	Description string `json:"description"`
+	// UserID: ID of the user.
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
 
+	// ExpiresAt: expiration date of the API key.
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+
+	// Description: description of the API key (max length is 200 characters).
+	Description string `json:"description"`
 
 	Editable bool `json:"editable"`
 
@@ -1174,10 +1269,13 @@ type CreateCustomerLevelRequest struct {
 
 // CreateGroupRequest: create group request.
 type CreateGroupRequest struct {
+	// OrganizationID: ID of Organization linked to the group.
 	OrganizationID string `json:"organization_id"`
 
+	// Name: name of the group to create (max length is 64 chars). MUST be unique inside an Organization.
 	Name string `json:"name"`
 
+	// Description: description of the group to create (max length is 200 chars).
 	Description string `json:"description"`
 }
 
@@ -1185,55 +1283,63 @@ type CreateGroupRequest struct {
 type CreateLimitRequest struct {
 	CustomerLevelID string `json:"customer_level_id"`
 
-	QuotumID string `json:"quotum_id"`
+	// Precisely one of Disabled, Limit, Unlimited must be set.
+	Disabled *bool `json:"disabled,omitempty"`
 
-	// Precisely one of Limit, Unlimited, Disabled must be set.
+	// Precisely one of Disabled, Limit, Unlimited must be set.
 	Limit *uint64 `json:"limit,omitempty"`
 
-	// Precisely one of Limit, Unlimited, Disabled must be set.
-	Unlimited *bool `json:"unlimited,omitempty"`
+	QuotumID string `json:"quotum_id"`
 
-	// Precisely one of Limit, Unlimited, Disabled must be set.
-	Disabled *bool `json:"disabled,omitempty"`
+	// Precisely one of Disabled, Limit, Unlimited must be set.
+	Unlimited *bool `json:"unlimited,omitempty"`
 }
 
 // CreatePolicyRequest: create policy request.
 type CreatePolicyRequest struct {
+	// Name: name of the policy to create (max length is 64 characters).
 	Name string `json:"name"`
 
-	OrganizationID string `json:"organization_id"`
-
-	Rules []*RuleSpecs `json:"rules"`
-
+	// Description: description of the policy to create (max length is 200 characters).
 	Description string `json:"description"`
 
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// Rules: rules of the policy to create.
+	Rules []*RuleSpecs `json:"rules"`
+
+	// UserID: ID of user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	UserID *string `json:"user_id,omitempty"`
 
+	// GroupID: ID of group attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	GroupID *string `json:"group_id,omitempty"`
 
+	// ApplicationID: ID of application attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
+	// NoPrincipal: defines whether or not a policy is attributed to a principal.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
 }
 
 // CreateProductAPIKeyRequest: create product api key request.
 type CreateProductAPIKeyRequest struct {
-	ResourceID string `json:"resource_id"`
+	Description string `json:"description"`
+
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+
+	PermissionSetNames []string `json:"permission_set_names"`
 
 	// ProductName: default value: unknown_product_name
 	ProductName CreateProductAPIKeyRequestProductName `json:"product_name"`
 
 	ProjectID string `json:"project_id"`
 
-	PermissionSetNames []string `json:"permission_set_names"`
-
-	Description string `json:"description"`
-
-	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	ResourceID string `json:"resource_id"`
 }
 
 // CreateQuotumRequest: create quotum request.
@@ -1243,20 +1349,25 @@ type CreateQuotumRequest struct {
 
 // CreateSSHKeyRequest: create ssh key request.
 type CreateSSHKeyRequest struct {
+	// Name: name of the SSH key. Max length is 1000.
 	Name string `json:"name"`
 
+	// PublicKey: SSH public key. Currently only the ssh-rsa, ssh-dss (DSA), ssh-ed25519 and ecdsa keys with NIST curves are supported. Max length is 65000.
 	PublicKey string `json:"public_key"`
 
+	// ProjectID: project the resource is attributed to.
 	ProjectID string `json:"project_id"`
 }
 
 // DeleteAPIKeyRequest: delete api key request.
 type DeleteAPIKeyRequest struct {
+	// AccessKey: access key to delete.
 	AccessKey string `json:"-"`
 }
 
 // DeleteApplicationRequest: delete application request.
 type DeleteApplicationRequest struct {
+	// ApplicationID: ID of the application to delete.
 	ApplicationID string `json:"-"`
 }
 
@@ -1274,6 +1385,7 @@ type DeleteCustomerLevelRequest struct {
 
 // DeleteGroupRequest: delete group request.
 type DeleteGroupRequest struct {
+	// GroupID: ID of the group to delete.
 	GroupID string `json:"-"`
 }
 
@@ -1286,6 +1398,7 @@ type DeleteInternalOrganizationPermissionSetRequest struct {
 
 // DeleteJWTRequest: delete jwt request.
 type DeleteJWTRequest struct {
+	// Jti: jWT ID of the JWT to delete.
 	Jti string `json:"-"`
 }
 
@@ -1296,13 +1409,14 @@ type DeleteLimitRequest struct {
 
 // DeleteOrganizationCustomerLevelRequest: delete organization customer level request.
 type DeleteOrganizationCustomerLevelRequest struct {
-	OrganizationID string `json:"-"`
-
 	CustomerLevelID string `json:"-"`
+
+	OrganizationID string `json:"-"`
 }
 
 // DeletePolicyRequest: delete policy request.
 type DeletePolicyRequest struct {
+	// PolicyID: id of policy to delete.
 	PolicyID string `json:"-"`
 }
 
@@ -1332,16 +1446,19 @@ type EncodedJWT struct {
 
 // GetAPIKeyRequest: get api key request.
 type GetAPIKeyRequest struct {
+	// AccessKey: access key to search for.
 	AccessKey string `json:"-"`
 }
 
 // GetApplicationRequest: get application request.
 type GetApplicationRequest struct {
+	// ApplicationID: ID of the application to find.
 	ApplicationID string `json:"-"`
 }
 
 // GetGroupRequest: get group request.
 type GetGroupRequest struct {
+	// GroupID: ID of the group.
 	GroupID string `json:"-"`
 }
 
@@ -1357,6 +1474,7 @@ type GetJWTRequest struct {
 
 // GetLogRequest: get log request.
 type GetLogRequest struct {
+	// LogID: ID of the log.
 	LogID string `json:"-"`
 }
 
@@ -1374,11 +1492,11 @@ type GetPermissionSetResponse struct {
 
 // GetPermissionsRequest: get permissions request.
 type GetPermissionsRequest struct {
-	// Precisely one of PrincipalID, AuthID must be set.
-	PrincipalID *string `json:"principal_id,omitempty"`
-
-	// Precisely one of PrincipalID, AuthID must be set.
+	// Precisely one of AuthID, PrincipalID must be set.
 	AuthID *string `json:"auth_id,omitempty"`
+
+	// Precisely one of AuthID, PrincipalID must be set.
+	PrincipalID *string `json:"principal_id,omitempty"`
 }
 
 // GetPermissionsResponse: get permissions response.
@@ -1388,48 +1506,60 @@ type GetPermissionsResponse struct {
 
 // GetPolicyRequest: get policy request.
 type GetPolicyRequest struct {
+	// PolicyID: id of policy to search.
 	PolicyID string `json:"-"`
 }
 
 // GetSSHKeyRequest: get ssh key request.
 type GetSSHKeyRequest struct {
+	// SSHKeyID: ID of the SSH key.
 	SSHKeyID string `json:"-"`
 }
 
 // GetUserRequest: get user request.
 type GetUserRequest struct {
+	// UserID: ID of the user to find.
 	UserID string `json:"-"`
 }
 
 // ListAPIKeysRequest: list api keys request.
 type ListAPIKeysRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
 	OrderBy ListAPIKeysRequestOrderBy `json:"-"`
 
+	// Page: page number. Value must be greater or equal to 1.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// OrganizationID: ID of Organization.
 	OrganizationID *string `json:"-"`
 
+	// ApplicationID: ID of application that bears the API key.
+	// Precisely one of ApplicationID, UserID must be set.
+	ApplicationID *string `json:"application_id,omitempty"`
+
+	// UserID: ID of user that bears the API key.
+	// Precisely one of ApplicationID, UserID must be set.
+	UserID *string `json:"user_id,omitempty"`
+
+	// Editable: defines whether to filter out editable API keys or not.
 	Editable *bool `json:"-"`
 
 	Visible *bool `json:"-"`
 
 	// Category: default value: unknown_category
 	Category APIKeyCategory `json:"-"`
-
-	// Precisely one of UserID, ApplicationID must be set.
-	UserID *string `json:"user_id,omitempty"`
-
-	// Precisely one of UserID, ApplicationID must be set.
-	ApplicationID *string `json:"application_id,omitempty"`
 }
 
 // ListAPIKeysResponse: list api keys response.
 type ListAPIKeysResponse struct {
+	// APIKeys: list of API keys.
 	APIKeys []*APIKey `json:"api_keys"`
 
+	// TotalCount: total count of API Keys.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1454,26 +1584,35 @@ func (r *ListAPIKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListApplicationsRequest: list applications request.
 type ListApplicationsRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
 	OrderBy ListApplicationsRequestOrderBy `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// Page: page number. Value must be greater than 1.
+	Page *int32 `json:"-"`
+
+	// Name: name of the application to filter.
 	Name *string `json:"-"`
 
+	// OrganizationID: ID of the Organization to filter.
 	OrganizationID *string `json:"-"`
 
+	// Editable: defines whether to filter out editable applications or not.
 	Editable *bool `json:"-"`
 
+	// Visible: defines whether to filter out visible applications or not.
 	Visible *bool `json:"-"`
 }
 
 // ListApplicationsResponse: list applications response.
 type ListApplicationsResponse struct {
+	// Applications: list of applications.
 	Applications []*Application `json:"applications"`
 
+	// TotalCount: total count of applications.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1498,16 +1637,16 @@ func (r *ListApplicationsResponse) UnsafeAppend(res interface{}) (uint32, error)
 
 // ListCustomerLevelsRequest: list customer levels request.
 type ListCustomerLevelsRequest struct {
+	CustomerLevelNames []string `json:"-"`
+
 	// OrderBy: default value: name_asc
 	OrderBy ListCustomerLevelsRequestOrderBy `json:"-"`
+
+	OrganizationID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	OrganizationID *string `json:"-"`
-
-	CustomerLevelNames []string `json:"-"`
 }
 
 // ListCustomerLevelsResponse: list customer levels response.
@@ -1538,28 +1677,37 @@ func (r *ListCustomerLevelsResponse) UnsafeAppend(res interface{}) (uint64, erro
 
 // ListGroupsRequest: list groups request.
 type ListGroupsRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of groups.
+	// Default value: created_at_asc
 	OrderBy ListGroupsRequestOrderBy `json:"-"`
 
+	// Page: requested page number. Value must be greater or equal to 1.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of items per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
 	OrganizationID *string `json:"-"`
 
+	// Name: name of group to find.
 	Name *string `json:"-"`
 
+	// ApplicationID: filter by a list of application IDs.
 	// Precisely one of ApplicationID, UserID must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
+	// UserID: filter by a list of user IDs.
 	// Precisely one of ApplicationID, UserID must be set.
 	UserID *string `json:"user_id,omitempty"`
 }
 
 // ListGroupsResponse: list groups response.
 type ListGroupsResponse struct {
+	// Groups: list of groups.
 	Groups []*Group `json:"groups"`
 
+	// TotalCount: total count of groups.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1620,14 +1768,18 @@ func (r *ListInternalOrganizationsResponse) UnsafeAppend(res interface{}) (uint6
 
 // ListJWTsRequest: list jw ts request.
 type ListJWTsRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
 	OrderBy ListJWTsRequestOrderBy `json:"-"`
 
+	// AudienceID: ID of the user to search.
 	AudienceID *string `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
+
+	// Page: page number. Value must be greater to 1.
+	Page *int32 `json:"-"`
 }
 
 // ListJWTsResponse: list jw ts response.
@@ -1658,16 +1810,16 @@ func (r *ListJWTsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListLimitsRequest: list limits request.
 type ListLimitsRequest struct {
+	CustomerLevelID *string `json:"-"`
+
 	// OrderBy: default value: quotum_name_asc
 	OrderBy ListLimitsRequestOrderBy `json:"-"`
+
+	OrganizationID *string `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	OrganizationID *string `json:"-"`
-
-	CustomerLevelID *string `json:"-"`
 
 	QuotumID *string `json:"-"`
 }
@@ -1700,38 +1852,48 @@ func (r *ListLimitsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 
 // ListLogsRequest: list logs request.
 type ListLogsRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
+
+	// PageSize: number of results per page. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// Page: page number. Value must be greater to 1.
+	Page *int32 `json:"-"`
+
+	// CreatedAfter: defined whether or not to filter out logs created after this timestamp.
 	CreatedAfter *time.Time `json:"-"`
 
+	// CreatedBefore: defined whether or not to filter out logs created before this timestamp.
 	CreatedBefore *time.Time `json:"-"`
+
+	// Action: defined whether or not to filter out by a specific action.
+	// Default value: unknown_action
+	Action LogAction `json:"-"`
+
+	// ResourceType: defined whether or not to filter out by a specific type of resource.
+	// Default value: unknown_resource_type
+	ResourceType LogResourceType `json:"-"`
 
 	IP *string `json:"-"`
 
 	Country *string `json:"-"`
 
-	// Action: default value: unknown_action
-	Action LogAction `json:"-"`
-
 	FromPrincipalID *string `json:"-"`
 
-	OrganizationID *string `json:"-"`
-
-	// ResourceType: default value: unknown_resource_type
-	ResourceType LogResourceType `json:"-"`
-
 	ResourceID *string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
 }
 
 // ListLogsResponse: list logs response.
 type ListLogsResponse struct {
+	// Logs: list of logs.
 	Logs []*Log `json:"logs"`
 
+	// TotalCount: total count of logs.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -1756,14 +1918,14 @@ func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 
 // ListOrganizationsRequest: list organizations request.
 type ListOrganizationsRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
+	CustomerLevelID *string `json:"-"`
 
 	// OrderBy: default value: created_at_asc
 	OrderBy ListOrganizationsRequestOrderBy `json:"-"`
 
-	CustomerLevelID *string `json:"-"`
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
 }
 
 // ListOrganizationsResponse: list organizations response.
@@ -1794,13 +1956,17 @@ func (r *ListOrganizationsResponse) UnsafeAppend(res interface{}) (uint64, error
 
 // ListPermissionSetsRequest: list permission sets request.
 type ListPermissionSetsRequest struct {
-	// OrderBy: default value: name_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: name_asc
 	OrderBy ListPermissionSetsRequestOrderBy `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// Page: page number. Value must be greater than 1.
+	Page *int32 `json:"-"`
+
+	// OrganizationID: filter by Organization ID.
 	OrganizationID *string `json:"-"`
 
 	PermissionSetNames []string `json:"-"`
@@ -1812,8 +1978,10 @@ type ListPermissionSetsRequest struct {
 
 // ListPermissionSetsResponse: list permission sets response.
 type ListPermissionSetsResponse struct {
+	// PermissionSets: list of permission sets.
 	PermissionSets []*PermissionSet `json:"permission_sets"`
 
+	// TotalCount: total count of permission sets.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1838,36 +2006,48 @@ func (r *ListPermissionSetsResponse) UnsafeAppend(res interface{}) (uint32, erro
 
 // ListPoliciesRequest: list policies request.
 type ListPoliciesRequest struct {
-	// OrderBy: default value: policy_name_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: policy_name_asc
 	OrderBy ListPoliciesRequestOrderBy `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// Page: page number. Value must be greater than 1.
+	Page *int32 `json:"-"`
+
+	// OrganizationID: ID of the Organization to filter.
 	OrganizationID *string `json:"-"`
 
+	// Editable: defines whether or not filter out editable policies.
 	Editable *bool `json:"-"`
 
-	Visible *bool `json:"-"`
-
-	// Precisely one of GroupID, UserID, ApplicationID, NoPrincipal must be set.
-	GroupID *string `json:"group_id,omitempty"`
-
-	// Precisely one of GroupID, UserID, ApplicationID, NoPrincipal must be set.
+	// UserID: defines whether or not to filter by list of user IDs.
+	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	UserID *string `json:"user_id,omitempty"`
 
-	// Precisely one of GroupID, UserID, ApplicationID, NoPrincipal must be set.
+	// GroupID: defines whether or not to filter by list of group IDs.
+	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
+	GroupID *string `json:"group_id,omitempty"`
+
+	// ApplicationID: filter by a list of application IDs.
+	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
-	// Precisely one of GroupID, UserID, ApplicationID, NoPrincipal must be set.
+	// NoPrincipal: defines whether or not the policy is attributed to a principal.
+	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
+
+	// Visible: defines if the policy is visible or not.
+	Visible *bool `json:"-"`
 }
 
 // ListPoliciesResponse: list policies response.
 type ListPoliciesResponse struct {
+	// Policies: list of policies.
 	Policies []*Policy `json:"policies"`
 
+	// TotalCount: total count of policies.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1892,18 +2072,23 @@ func (r *ListPoliciesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListQuotaRequest: list quota request.
 type ListQuotaRequest struct {
-	// OrderBy: default value: name_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: name_asc
 	OrderBy ListQuotaRequestOrderBy `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
+
+	// Page: page number. Value must be greater than 1.
+	Page *int32 `json:"-"`
 }
 
 // ListQuotaResponse: list quota response.
 type ListQuotaResponse struct {
+	// Quota: list of quota.
 	Quota []*Quotum `json:"quota"`
 
+	// TotalCount: total count of quota.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -1928,17 +2113,22 @@ func (r *ListQuotaResponse) UnsafeAppend(res interface{}) (uint64, error) {
 
 // ListRulesRequest: list rules request.
 type ListRulesRequest struct {
+	// PolicyID: id of policy to search.
 	PolicyID *string `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
+
+	// Page: page number. Value must be greater than 1.
+	Page *int32 `json:"-"`
 }
 
 // ListRulesResponse: list rules response.
 type ListRulesResponse struct {
+	// Rules: rules of the policy.
 	Rules []*Rule `json:"rules"`
 
+	// TotalCount: total count of rules.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -1963,26 +2153,35 @@ func (r *ListRulesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListSSHKeysRequest: list ssh keys request.
 type ListSSHKeysRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of the SSH keys.
+	// Default value: created_at_asc
 	OrderBy ListSSHKeysRequestOrderBy `json:"-"`
 
+	// Page: requested page number. Value must be greater or equal to 1.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of items per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
-	Name *string `json:"-"`
-
+	// OrganizationID: filter by Organization ID.
 	OrganizationID *string `json:"-"`
 
+	// Name: name of group to find.
+	Name *string `json:"-"`
+
+	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// Disabled: defines whether to include disabled SSH keys or not.
 	Disabled *bool `json:"-"`
 }
 
 // ListSSHKeysResponse: list ssh keys response.
 type ListSSHKeysResponse struct {
+	// SSHKeys: list of SSH keys.
 	SSHKeys []*SSHKey `json:"ssh_keys"`
 
+	// TotalCount: total count of SSH keys.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -2007,22 +2206,29 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListUsersRequest: list users request.
 type ListUsersRequest struct {
-	// OrderBy: default value: created_at_asc
+	// OrderBy: criteria for sorting results.
+	// Default value: created_at_asc
 	OrderBy ListUsersRequestOrderBy `json:"-"`
 
-	Page *int32 `json:"-"`
-
+	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
 
+	// Page: page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// OrganizationID: ID of the Organization to filter.
 	OrganizationID *string `json:"-"`
 
+	// AccountRootUserID: user ID of the root account.
 	AccountRootUserID *string `json:"-"`
 }
 
 // ListUsersResponse: list users response.
 type ListUsersResponse struct {
+	// Users: list of users.
 	Users []*User `json:"users"`
 
+	// TotalCount: total count of users.
 	TotalCount uint32 `json:"total_count"`
 }
 
@@ -2047,9 +2253,9 @@ func (r *ListUsersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // OrganizationCustomerLevels: organization customer levels.
 type OrganizationCustomerLevels struct {
-	OrganizationID string `json:"organization_id"`
-
 	CustomerLevelIDs []string `json:"customer_level_ids"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 // SetCustomerLevelPermissionSetsRequest: set customer level permission sets request.
@@ -2068,20 +2274,23 @@ type SetInternalOrganizationPermissionSetsRequest struct {
 
 // SetOrganizationCustomerLevelsRequest: set organization customer levels request.
 type SetOrganizationCustomerLevelsRequest struct {
-	OrganizationID string `json:"organization_id"`
-
 	CustomerLevelIDs []string `json:"customer_level_ids"`
+
+	OrganizationID string `json:"organization_id"`
 }
 
 // SetRulesRequest: set rules request.
 type SetRulesRequest struct {
+	// PolicyID: id of policy to update.
 	PolicyID string `json:"policy_id"`
 
+	// Rules: rules of the policy to set.
 	Rules []*RuleSpecs `json:"rules"`
 }
 
 // SetRulesResponse: set rules response.
 type SetRulesResponse struct {
+	// Rules: rules of the policy.
 	Rules []*Rule `json:"rules"`
 }
 
@@ -2094,23 +2303,31 @@ type UnauthenticatedAPIRenewJWTRequest struct {
 
 // UpdateAPIKeyRequest: update api key request.
 type UpdateAPIKeyRequest struct {
+	// AccessKey: access key to update.
 	AccessKey string `json:"-"`
 
+	// DefaultProjectID: new default Project ID to set.
 	DefaultProjectID *string `json:"default_project_id,omitempty"`
 
+	// Description: new description to update.
 	Description *string `json:"description,omitempty"`
 
+	// Editable: whether the access key is editable.
 	Editable *bool `json:"editable,omitempty"`
 
+	// Visible: make the api key visible or not.
 	Visible *bool `json:"visible,omitempty"`
 }
 
 // UpdateApplicationRequest: update application request.
 type UpdateApplicationRequest struct {
+	// ApplicationID: ID of the application to update.
 	ApplicationID string `json:"-"`
 
+	// Name: new name for the application (max length is 64 chars).
 	Name *string `json:"name,omitempty"`
 
+	// Description: new description for the application (max length is 200 chars).
 	Description *string `json:"description,omitempty"`
 
 	Editable *bool `json:"editable,omitempty"`
@@ -2120,10 +2337,13 @@ type UpdateApplicationRequest struct {
 
 // UpdateGroupRequest: update group request.
 type UpdateGroupRequest struct {
+	// GroupID: ID of the group to update.
 	GroupID string `json:"-"`
 
+	// Name: new name for the group (max length is 64 chars). MUST be unique inside an Organization.
 	Name *string `json:"name,omitempty"`
 
+	// Description: new description for the group (max length is 200 chars).
 	Description *string `json:"description,omitempty"`
 }
 
@@ -2131,35 +2351,42 @@ type UpdateGroupRequest struct {
 type UpdateLimitRequest struct {
 	LimitID string `json:"-"`
 
-	// Precisely one of Limit, Unlimited, Disabled must be set.
+	// Precisely one of Disabled, Limit, Unlimited must be set.
+	Disabled *bool `json:"disabled,omitempty"`
+
+	// Precisely one of Disabled, Limit, Unlimited must be set.
 	Limit *uint64 `json:"limit,omitempty"`
 
-	// Precisely one of Limit, Unlimited, Disabled must be set.
+	// Precisely one of Disabled, Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
-
-	// Precisely one of Limit, Unlimited, Disabled must be set.
-	Disabled *bool `json:"disabled,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
 type UpdatePolicyRequest struct {
+	// PolicyID: id of policy to update.
 	PolicyID string `json:"-"`
 
+	// Name: new name for the policy (max length is 64 characters).
 	Name *string `json:"name,omitempty"`
 
+	// Description: new description of policy (max length is 200 characters).
+	Description *string `json:"description,omitempty"`
+
+	// UserID: new ID of user attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	UserID *string `json:"user_id,omitempty"`
 
+	// GroupID: new ID of group attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	GroupID *string `json:"group_id,omitempty"`
 
+	// ApplicationID: new ID of application attributed to the policy.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
 
+	// NoPrincipal: defines whether or not the policy is attributed to a principal.
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
-
-	Description *string `json:"description,omitempty"`
 }
 
 // UpdateQuotumRequest: update quotum request.
@@ -2173,8 +2400,10 @@ type UpdateQuotumRequest struct {
 type UpdateSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 
+	// Name: name of the SSH key. Max length is 1000.
 	Name *string `json:"name,omitempty"`
 
+	// Disabled: enable or disable the SSH key.
 	Disabled *bool `json:"disabled,omitempty"`
 }
 
@@ -2240,11 +2469,11 @@ func (s *API) ListCustomerLevels(req *ListCustomerLevelsRequest, opts ...scw.Req
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "customer_level_names", req.CustomerLevelNames)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "customer_level_names", req.CustomerLevelNames)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2427,8 +2656,8 @@ func (s *API) DeleteOrganizationCustomerLevel(req *DeleteOrganizationCustomerLev
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "customer_level_id", req.CustomerLevelID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
@@ -2456,8 +2685,8 @@ func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*List
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2554,11 +2783,11 @@ func (s *API) ListLimits(req *ListLimitsRequest, opts ...scw.RequestOption) (*Li
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "customer_level_id", req.CustomerLevelID)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "customer_level_id", req.CustomerLevelID)
 	parameter.AddToQuery(query, "quotum_id", req.QuotumID)
 
 	scwReq := &scw.ScalewayRequest{
@@ -2659,8 +2888,8 @@ func (s *API) ListSSHKeys(req *ListSSHKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "disabled", req.Disabled)
 
@@ -2686,6 +2915,10 @@ func (s *API) CreateSSHKey(req *CreateSSHKeyRequest, opts ...scw.RequestOption) 
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("key")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2729,7 +2962,7 @@ func (s *API) GetSSHKey(req *GetSSHKeyRequest, opts ...scw.RequestOption) (*SSHK
 	return &resp, nil
 }
 
-// UpdateSSHKey:
+// UpdateSSHKey: Update the parameters of an SSH key, including `name` and `disable`.
 func (s *API) UpdateSSHKey(req *UpdateSSHKeyRequest, opts ...scw.RequestOption) (*SSHKey, error) {
 	var err error
 
@@ -2787,8 +3020,8 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "account_root_user_id", req.AccountRootUserID)
 
@@ -2840,8 +3073,8 @@ func (s *API) ListApplications(req *ListApplicationsRequest, opts ...scw.Request
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "editable", req.Editable)
@@ -2973,6 +3206,10 @@ func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*
 		req.OrganizationID = defaultOrganizationID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("grp")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/iam-admin/v1/groups",
@@ -3072,13 +3309,13 @@ func (s *API) ListPolicies(req *ListPoliciesRequest, opts ...scw.RequestOption) 
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "editable", req.Editable)
 	parameter.AddToQuery(query, "visible", req.Visible)
-	parameter.AddToQuery(query, "group_id", req.GroupID)
 	parameter.AddToQuery(query, "user_id", req.UserID)
+	parameter.AddToQuery(query, "group_id", req.GroupID)
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
 	parameter.AddToQuery(query, "no_principal", req.NoPrincipal)
 
@@ -3104,6 +3341,10 @@ func (s *API) CreatePolicy(req *CreatePolicyRequest, opts ...scw.RequestOption) 
 	if req.OrganizationID == "" {
 		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
 		req.OrganizationID = defaultOrganizationID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("pol")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -3228,8 +3469,8 @@ func (s *API) ListRules(req *ListRulesRequest, opts ...scw.RequestOption) (*List
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "policy_id", req.PolicyID)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -3257,8 +3498,8 @@ func (s *API) ListPermissionSets(req *ListPermissionSetsRequest, opts ...scw.Req
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "permission_set_names", req.PermissionSetNames)
 	parameter.AddToQuery(query, "permission_set_ids", req.PermissionSetIDs)
@@ -3306,8 +3547,8 @@ func (s *API) GetPermissions(req *GetPermissionsRequest, opts ...scw.RequestOpti
 	var err error
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "principal_id", req.PrincipalID)
 	parameter.AddToQuery(query, "auth_id", req.AuthID)
+	parameter.AddToQuery(query, "principal_id", req.PrincipalID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -3341,8 +3582,8 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "editable", req.Editable)
 	parameter.AddToQuery(query, "visible", req.Visible)
 	parameter.AddToQuery(query, "category", req.Category)
-	parameter.AddToQuery(query, "user_id", req.UserID)
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
+	parameter.AddToQuery(query, "user_id", req.UserID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -3511,8 +3752,8 @@ func (s *API) ListJWTs(req *ListJWTsRequest, opts ...scw.RequestOption) (*ListJW
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "audience_id", req.AudienceID)
-	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -3732,10 +3973,10 @@ func (s *API) ListOrganizations(req *ListOrganizationsRequest, opts ...scw.Reque
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "customer_level_id", req.CustomerLevelID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "customer_level_id", req.CustomerLevelID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -3763,17 +4004,17 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "created_after", req.CreatedAfter)
 	parameter.AddToQuery(query, "created_before", req.CreatedBefore)
+	parameter.AddToQuery(query, "action", req.Action)
+	parameter.AddToQuery(query, "resource_type", req.ResourceType)
 	parameter.AddToQuery(query, "ip", req.IP)
 	parameter.AddToQuery(query, "country", req.Country)
-	parameter.AddToQuery(query, "action", req.Action)
 	parameter.AddToQuery(query, "from_principal_id", req.FromPrincipalID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "resource_type", req.ResourceType)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
