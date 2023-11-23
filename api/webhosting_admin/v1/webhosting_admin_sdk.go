@@ -231,64 +231,79 @@ type Blacklist struct {
 
 // Hosting: hosting.
 type Hosting struct {
+	// ID: ID of the Web Hosting plan.
 	ID string `json:"id"`
 
+	// OrganizationID: ID of the Scaleway Organization the Web Hosting plan belongs to.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
 
+	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// CreatedAt: date on which the Web Hosting plan was created.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// Status: default value: unknown_status
+	// Status: status of the Web Hosting plan.
+	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
+	// PlatformHostname: hostname of the host platform.
 	PlatformHostname string `json:"platform_hostname"`
 
+	// PlatformNumber: number of the host platform.
 	PlatformNumber *int32 `json:"platform_number"`
 
+	// OfferID: ID of the active offer for the Web Hosting plan.
 	OfferID string `json:"offer_id"`
 
+	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
 
+	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
 
+	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
+	// Options: array of any options activated for the Web Hosting plan.
 	Options []*HostingOption `json:"options"`
 
-	// DNSStatus: default value: unknown_dns_status
+	// DNSStatus: DNS status of the Web Hosting plan.
+	// Default value: unknown_dns_status
 	DNSStatus HostingDNSStatus `json:"dns_status"`
 
 	PlatformIP string `json:"platform_ip"`
 
+	// OfferEndOfLife: indicates if the hosting offer has reached its end of life.
 	OfferEndOfLife bool `json:"offer_end_of_life"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
 
 // Platform: platform.
 type Platform struct {
-	ID string `json:"id"`
-
-	PlatformNumber int32 `json:"platform_number"`
+	CanProvisionHostings bool `json:"can_provision_hostings"`
 
 	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// Status: default value: unknown_status
-	Status PlatformStatus `json:"status"`
 
 	ErrorMessage string `json:"error_message"`
 
 	Hostname string `json:"hostname"`
 
-	CanProvisionHostings bool `json:"can_provision_hostings"`
+	ID string `json:"id"`
 
 	IP string `json:"ip"`
+
+	PlatformNumber int32 `json:"platform_number"`
+
+	// Status: default value: unknown_status
+	Status PlatformStatus `json:"status"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // BlacklistAPIBlockIncomingEmailsFromDomainRequest: blacklist api block incoming emails from domain request.
@@ -449,28 +464,38 @@ type ListHostingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Page: page number to return, from the paginated results (must be a positive integer).
 	Page *int32 `json:"-"`
 
+	// PageSize: number of Web Hosting plans to return (must be a positive integer lower or equal to 100).
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order for Web Hosting plans in the response.
+	// Default value: created_at_asc
 	OrderBy ListHostingsRequestOrderBy `json:"-"`
 
+	// Tags: tags to filter for, only Web Hosting plans with matching tags will be returned.
 	Tags *[]string `json:"-"`
 
+	// Statuses: statuses to filter for, only Web Hosting plans with matching statuses will be returned.
 	Statuses []HostingStatus `json:"-"`
 
+	// Domain: domain to filter for, only Web Hosting plans associated with this domain will be returned.
 	Domain *string `json:"-"`
 
+	// ProjectID: project ID to filter for, only Web Hosting plans from this Project will be returned.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: organization ID to filter for, only Web Hosting plans from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 }
 
 // ListHostingsResponse: list hostings response.
 type ListHostingsResponse struct {
+	// TotalCount: number of Web Hosting plans returned.
 	TotalCount uint32 `json:"total_count"`
 
+	// Hostings: list of Web Hosting plans.
 	Hostings []*Hosting `json:"hostings"`
 }
 
@@ -498,28 +523,28 @@ type ListPlatformsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	Page *int32 `json:"-"`
+	CanProvisionHostings *bool `json:"-"`
 
-	PageSize *uint32 `json:"-"`
+	Hostname *string `json:"-"`
 
 	// OrderBy: default value: created_at_asc
 	OrderBy ListPlatformsRequestOrderBy `json:"-"`
 
-	PlatformNumber *int32 `json:"-"`
+	Page *int32 `json:"-"`
 
-	Hostname *string `json:"-"`
+	PageSize *uint32 `json:"-"`
+
+	PlatformNumber *int32 `json:"-"`
 
 	// Status: default value: unknown_status
 	Status PlatformStatus `json:"-"`
-
-	CanProvisionHostings *bool `json:"-"`
 }
 
 // ListPlatformsResponse: list platforms response.
 type ListPlatformsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Platforms []*Platform `json:"platforms"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -579,11 +604,11 @@ type ResetHostingPasswordRequest struct {
 
 // ResetHostingPasswordResponse: reset hosting password response.
 type ResetHostingPasswordResponse struct {
-	Username string `json:"username"`
+	DashboardURL string `json:"dashboard_url"`
 
 	Password string `json:"password"`
 
-	DashboardURL string `json:"dashboard_url"`
+	Username string `json:"username"`
 }
 
 // SuspendOutgoingEmailsFromUserRequest: suspend outgoing emails from user request.
@@ -929,13 +954,13 @@ func (s *API) ListPlatforms(req *ListPlatformsRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "can_provision_hostings", req.CanProvisionHostings)
+	parameter.AddToQuery(query, "hostname", req.Hostname)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "platform_number", req.PlatformNumber)
-	parameter.AddToQuery(query, "hostname", req.Hostname)
 	parameter.AddToQuery(query, "status", req.Status)
-	parameter.AddToQuery(query, "can_provision_hostings", req.CanProvisionHostings)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -987,7 +1012,7 @@ func (s *API) GetPlatform(req *GetPlatformRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetHosting:
+// GetHosting: Get the details of one of your existing Web Hosting plans, specified by its `hosting_id`.
 func (s *API) GetHosting(req *GetHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
@@ -1018,7 +1043,7 @@ func (s *API) GetHosting(req *GetHostingRequest, opts ...scw.RequestOption) (*Ho
 	return &resp, nil
 }
 
-// ListHostings:
+// ListHostings: List all of your existing Web Hosting plans. Various filters are available to limit the results, including filtering by domain, status, tag and Project ID.
 func (s *API) ListHostings(req *ListHostingsRequest, opts ...scw.RequestOption) (*ListHostingsResponse, error) {
 	var err error
 
@@ -1061,7 +1086,7 @@ func (s *API) ListHostings(req *ListHostingsRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// DeleteHosting:
+// DeleteHosting: Delete a Web Hosting plan, specified by its `hosting_id`. Note that deletion is not immediate: it will take place at the end of the calendar month, after which time your Web Hosting plan and all its data (files and emails) will be irreversibly lost.
 func (s *API) DeleteHosting(req *DeleteHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	var err error
 
