@@ -1070,8 +1070,10 @@ const (
 	TaskTypeUpdateHost = TaskType("update_host")
 	// Delete domain's hostname.
 	TaskTypeDeleteHost = TaskType("delete_host")
-	// Move a domain to another project.
+	// Move a domain to another Project.
 	TaskTypeMoveProject = TaskType("move_project")
+	// Transfer a domain from Online to Scaleway Domains and DNS.
+	TaskTypeTransferOnlineDomain = TaskType("transfer_online_domain")
 )
 
 func (enum TaskType) String() string {
