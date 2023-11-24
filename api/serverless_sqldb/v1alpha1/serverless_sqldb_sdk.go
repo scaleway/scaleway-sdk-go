@@ -45,6 +45,7 @@ const (
 	DatabaseBackupStatusUnknownStatus = DatabaseBackupStatus("unknown_status")
 	DatabaseBackupStatusError         = DatabaseBackupStatus("error")
 	DatabaseBackupStatusReady         = DatabaseBackupStatus("ready")
+	DatabaseBackupStatusLocked        = DatabaseBackupStatus("locked")
 )
 
 func (enum DatabaseBackupStatus) String() string {
@@ -79,6 +80,7 @@ const (
 	DatabaseStatusReady         = DatabaseStatus("ready")
 	DatabaseStatusDeleting      = DatabaseStatus("deleting")
 	DatabaseStatusRestoring     = DatabaseStatus("restoring")
+	DatabaseStatusLocked        = DatabaseStatus("locked")
 )
 
 func (enum DatabaseStatus) String() string {
@@ -171,7 +173,7 @@ type DatabaseBackup struct {
 	// ID: UUID that uniquely identifies a Serverless SQL Database backup.
 	ID string `json:"id"`
 
-	// Status: status of the Serverless SQL Database backup. One of `unknown_status` | `error` | `ready`.
+	// Status: status of the Serverless SQL Database backup. One of `unknown_status` | `error` | `ready` | `locked`.
 	// Default value: unknown_status
 	Status DatabaseBackupStatus `json:"status"`
 
@@ -208,7 +210,7 @@ type Database struct {
 	// Name: name of the database.
 	Name string `json:"name"`
 
-	// Status: status of the Serverless SQL Ddatabase. One of `unknown_status` | `ready` | `creating` | `deleting` | `error` | `restoring`.
+	// Status: status of the Serverless SQL Ddatabase. One of `unknown_status` | `ready` | `creating` | `deleting` | `error` | `restoring` | `locked`.
 	// Default value: unknown_status
 	Status DatabaseStatus `json:"status"`
 

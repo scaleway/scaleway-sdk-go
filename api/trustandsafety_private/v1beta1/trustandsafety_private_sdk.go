@@ -164,6 +164,8 @@ const (
 	ResourceTypeEdgPipeline                   = ResourceType("edg_pipeline")
 	ResourceTypeIpfsNames                     = ResourceType("ipfs_names")
 	ResourceTypeQaasSessions                  = ResourceType("qaas_sessions")
+	ResourceTypeServerlessSqldbDatabase       = ResourceType("serverless_sqldb_database")
+	ResourceTypeServerlessSqldbBackup         = ResourceType("serverless_sqldb_backup")
 )
 
 func (enum ResourceType) String() string {
