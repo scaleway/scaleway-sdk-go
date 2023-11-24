@@ -100,49 +100,49 @@ type MasterStatusPodContainer struct {
 
 // Cluster: cluster.
 type Cluster struct {
-	PublicCluster *k8s_v1.Cluster `json:"public_cluster"`
+	EtcdID *string `json:"etcd_id"`
 
 	LockReason string `json:"lock_reason"`
 
-	SeedID *string `json:"seed_id"`
-
-	EtcdID *string `json:"etcd_id"`
-
 	MemoryLimits *ClusterMemoryLimits `json:"memory_limits"`
+
+	PublicCluster *k8s_v1.Cluster `json:"public_cluster"`
+
+	SeedID *string `json:"seed_id"`
 }
 
 // Etcd: etcd.
 type Etcd struct {
+	Capacity uint32 `json:"capacity"`
+
 	ID string `json:"id"`
+
+	Members []string `json:"members"`
 
 	Name string `json:"name"`
 
-	Type string `json:"type"`
-
-	Capacity uint32 `json:"capacity"`
-
-	Usage uint32 `json:"usage"`
-
 	Provisionable bool `json:"provisionable"`
 
-	Members []string `json:"members"`
+	Type string `json:"type"`
+
+	Usage uint32 `json:"usage"`
 }
 
 // Seed: seed.
 type Seed struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
 	Capacity uint32 `json:"capacity"`
 
-	Usage uint32 `json:"usage"`
+	ClusterTypes []string `json:"cluster_types"`
 
-	Provisionable bool `json:"provisionable"`
+	ID string `json:"id"`
 
 	KubeServer string `json:"kube_server"`
 
-	ClusterTypes []string `json:"cluster_types"`
+	Name string `json:"name"`
+
+	Provisionable bool `json:"provisionable"`
+
+	Usage uint32 `json:"usage"`
 }
 
 // MasterStatusPod: master status pod.
@@ -166,9 +166,9 @@ type CreateClusterRequest struct {
 
 	CreateCluster *k8s_v1.CreateClusterRequest `json:"create_cluster,omitempty"`
 
-	SeedID *string `json:"seed_id,omitempty"`
-
 	EtcdID *string `json:"etcd_id,omitempty"`
+
+	SeedID *string `json:"seed_id,omitempty"`
 }
 
 // EmptySeedRequest: empty seed request.
@@ -228,12 +228,12 @@ type GetNodeMetadataRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-
 	InstanceID string `json:"-"`
 
 	SourcePort uint32 `json:"-"`
+
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
 }
 
 // GetSeedRequest: get seed request.
@@ -249,36 +249,36 @@ type ListClustersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: created_at_asc
-	OrderBy ListClustersRequestOrderBy `json:"-"`
-
-	Name *string `json:"-"`
-
-	OrganizationID *string `json:"-"`
-
-	ProjectID *string `json:"-"`
-
-	// Status: default value: unknown
-	Status k8s_v1.ClusterStatus `json:"-"`
-
-	SeedID *string `json:"-"`
-
 	EtcdID *string `json:"-"`
 
 	IncludeDeleted bool `json:"-"`
 
+	Name *string `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListClustersRequestOrderBy `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
 	PrivateNetworkID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	SeedID *string `json:"-"`
+
+	// Status: default value: unknown
+	Status k8s_v1.ClusterStatus `json:"-"`
 }
 
 // ListClustersResponse: list clusters response.
 type ListClustersResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Clusters []*Cluster `json:"clusters"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -305,11 +305,11 @@ type ListEtcdsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	Name *string `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	Name *string `json:"-"`
 
 	Provisionable *bool `json:"-"`
 
@@ -318,9 +318,9 @@ type ListEtcdsRequest struct {
 
 // ListEtcdsResponse: list etcds response.
 type ListEtcdsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Etcds []*Etcd `json:"etcds"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -347,20 +347,20 @@ type ListSeedsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	Name *string `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	Name *string `json:"-"`
 
 	Provisionable *bool `json:"-"`
 }
 
 // ListSeedsResponse: list seeds response.
 type ListSeedsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
 	Seeds []*Seed `json:"seeds"`
+
+	TotalCount uint32 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -456,17 +456,17 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "status", req.Status)
-	parameter.AddToQuery(query, "seed_id", req.SeedID)
 	parameter.AddToQuery(query, "etcd_id", req.EtcdID)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "seed_id", req.SeedID)
+	parameter.AddToQuery(query, "status", req.Status)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -740,9 +740,9 @@ func (s *API) GetNodeMetadata(req *GetNodeMetadataRequest, opts ...scw.RequestOp
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "zone", req.Zone)
 	parameter.AddToQuery(query, "instance_id", req.InstanceID)
 	parameter.AddToQuery(query, "source_port", req.SourcePort)
+	parameter.AddToQuery(query, "zone", req.Zone)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -778,9 +778,9 @@ func (s *API) ListSeeds(req *ListSeedsRequest, opts ...scw.RequestOption) (*List
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "provisionable", req.Provisionable)
 
 	if fmt.Sprint(req.Region) == "" {
@@ -884,9 +884,9 @@ func (s *API) ListEtcds(req *ListEtcdsRequest, opts ...scw.RequestOption) (*List
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "provisionable", req.Provisionable)
 	parameter.AddToQuery(query, "type", req.Type)
 
