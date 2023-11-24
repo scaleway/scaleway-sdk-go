@@ -110,44 +110,44 @@ type Usage struct {
 
 // Bucket: bucket.
 type Bucket struct {
-	Name string `json:"name"`
+	// Backend: default value: unknown_backend
+	Backend Backend `json:"backend"`
 
 	Bytes float64 `json:"bytes"`
 
-	Objects float64 `json:"objects"`
-
-	Status string `json:"status"`
-
-	Dtime string `json:"dtime"`
-
-	Mtime string `json:"mtime"`
-
 	DamagedObjects int64 `json:"damaged_objects"`
 
-	MissingChuncks int64 `json:"missing_chuncks"`
-
-	StorageUsageStandard int64 `json:"storage_usage_standard"`
-
-	StorageUsageGlacier int64 `json:"storage_usage_glacier"`
-
-	OpenioMeta1Status string `json:"openio_meta1_status"`
-
-	OpenioMeta2Status string `json:"openio_meta2_status"`
-
-	HasLifecycleRules bool `json:"has_lifecycle_rules"`
-
-	LifecycleIsHealthy bool `json:"lifecycle_is_healthy"`
-
 	Deleted bool `json:"deleted"`
+
+	Dtime string `json:"dtime"`
 
 	Frozen bool `json:"frozen"`
 
 	HasFrozenObjects bool `json:"has_frozen_objects"`
 
-	// Backend: default value: unknown_backend
-	Backend Backend `json:"backend"`
+	HasLifecycleRules bool `json:"has_lifecycle_rules"`
+
+	LifecycleIsHealthy bool `json:"lifecycle_is_healthy"`
+
+	MissingChuncks int64 `json:"missing_chuncks"`
+
+	Mtime string `json:"mtime"`
+
+	Name string `json:"name"`
+
+	Objects float64 `json:"objects"`
+
+	OpenioMeta1Status string `json:"openio_meta1_status"`
+
+	OpenioMeta2Status string `json:"openio_meta2_status"`
+
+	Status string `json:"status"`
+
+	StorageUsageGlacier int64 `json:"storage_usage_glacier"`
 
 	StorageUsageOnezoneIa int64 `json:"storage_usage_onezone_ia"`
+
+	StorageUsageStandard int64 `json:"storage_usage_standard"`
 }
 
 // PeerMeta2: peer meta2.
@@ -159,11 +159,11 @@ type PeerMeta2 struct {
 
 // Bandwidth: bandwidth.
 type Bandwidth struct {
+	Bandwidth int64 `json:"bandwidth"`
+
 	Date string `json:"date"`
 
 	IPType string `json:"ip_type"`
-
-	Bandwidth int64 `json:"bandwidth"`
 }
 
 // ListUsagesPerBucketResponseBucket: list usages per bucket response bucket.
@@ -183,13 +183,13 @@ type GetBucketRequest struct {
 
 // GetBucketResponse: get bucket response.
 type GetBucketResponse struct {
-	OrganizationID string `json:"organization_id"`
-
 	Bucket *Bucket `json:"bucket"`
 
-	Peers []*PeerMeta2 `json:"peers"`
-
 	IsSync bool `json:"is_sync"`
+
+	OrganizationID string `json:"organization_id"`
+
+	Peers []*PeerMeta2 `json:"peers"`
 }
 
 // GetUsageRequest: get usage request.
