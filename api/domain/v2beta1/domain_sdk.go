@@ -524,6 +524,38 @@ func (enum *HostStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LinkedProduct string
+
+const (
+	// If unspecified, no Scaleway product uses the resources.
+	LinkedProductUnknownProduct = LinkedProduct("unknown_product")
+	// Resources are used by Scaleway VPC.
+	LinkedProductVpc = LinkedProduct("vpc")
+)
+
+func (enum LinkedProduct) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_product"
+	}
+	return string(enum)
+}
+
+func (enum LinkedProduct) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LinkedProduct) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LinkedProduct(LinkedProduct(tmp).String())
+	return nil
+}
+
 type ListContactsRequestRole string
 
 const (
@@ -1518,6 +1550,8 @@ type DNSZone struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	ProjectID string `json:"project_id"`
+
+	LinkedProducts []LinkedProduct `json:"linked_products"`
 }
 
 // DomainDNSSEC: domain dnssec.
@@ -1842,6 +1876,8 @@ type Domain struct {
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
 
 	Tld *Tld `json:"tld"`
+
+	LinkedProducts []LinkedProduct `json:"linked_products"`
 }
 
 // ExportRawDNSZoneRequest: export raw dns zone request.
