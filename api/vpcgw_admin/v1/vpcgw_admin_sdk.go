@@ -104,18 +104,18 @@ func (enum *ListInstancesRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // Instance: instance.
 type Instance struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
 	GatewayID *string `json:"gateway_id"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	ID string `json:"id"`
 
-	UpdatedAt *time.Time `json:"updated_at"`
+	ImageVersion string `json:"image_version"`
 
 	// Status: default value: unknown
 	Status InstanceStatus `json:"status"`
 
-	ImageVersion string `json:"image_version"`
+	UpdatedAt *time.Time `json:"updated_at"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
@@ -126,14 +126,14 @@ type ListInstancesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	GatewayID *string `json:"-"`
+
 	// OrderBy: default value: created_at_asc
 	OrderBy ListInstancesRequestOrderBy `json:"-"`
 
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	GatewayID *string `json:"-"`
 }
 
 // ListInstancesResponse: list instances response.
@@ -191,10 +191,10 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "gateway_id", req.GatewayID)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "gateway_id", req.GatewayID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
