@@ -45,6 +45,7 @@ type GetPrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// PrivateNetworkID: private Network ID.
 	PrivateNetworkID string `json:"-"`
 }
 
@@ -102,7 +103,7 @@ func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// GetPrivateNetwork:
+// GetPrivateNetwork: Retrieve information about an existing Private Network, specified by its Private Network ID. Its full details are returned in the response object.
 func (s *API) GetPrivateNetwork(req *GetPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
 	var err error
 
