@@ -218,35 +218,38 @@ func (enum *UpdateClusterRequestStatus) UnmarshalJSON(data []byte) error {
 
 // ACLRule: acl rule.
 type ACLRule struct {
+	// ID: ID of the rule.
 	ID string `json:"id"`
 
+	// IP: iPv4 network address of the rule.
 	IP *scw.IPNet `json:"ip"`
 
+	// Description: description of the rule.
 	Description *string `json:"description"`
 }
 
 // ClusterSetting: cluster setting.
 type ClusterSetting struct {
-	Value string `json:"value"`
-
 	Name string `json:"name"`
+
+	Value string `json:"value"`
 }
 
 // Node: node.
 type Node struct {
-	ID string `json:"id"`
-
 	ClusterID string `json:"cluster_id"`
 
 	ComputeID string `json:"compute_id"`
 
-	Name string `json:"name"`
-
 	ComputeType string `json:"compute_type"`
 
-	PublicIP net.IP `json:"public_ip"`
-
 	DeletedAt *time.Time `json:"deleted_at"`
+
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	PublicIP net.IP `json:"public_ip"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
@@ -254,74 +257,89 @@ type Node struct {
 
 // Deployment: deployment.
 type Deployment struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
-	// Status: default value: unknown
-	Status DeploymentStatus `json:"status"`
+	ID string `json:"id"`
 
 	LatestMessage string `json:"latest_message"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	// Status: default value: unknown
+	Status DeploymentStatus `json:"status"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // ClusterEvent: cluster event.
 type ClusterEvent struct {
-	ID string `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
 
 	Event string `json:"event"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	ID string `json:"id"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Cluster: cluster.
 type Cluster struct {
+	// ID: UUID of the Database Instance.
 	ID string `json:"id"`
 
+	// Name: name of the Database Instance.
 	Name string `json:"name"`
 
+	// ProjectID: project ID the Database Instance belongs to.
 	ProjectID string `json:"project_id"`
 
 	OrganizationID string `json:"organization_id"`
 
-	// Status: default value: unknown
+	// Status: status of the Database Instance.
+	// Default value: unknown
 	Status ClusterStatus `json:"status"`
 
+	// Version: redis™ engine version of the Database Instance.
 	Version string `json:"version"`
 
-	Username string `json:"username"`
-
+	// Endpoints: list of Database Instance endpoints.
 	Endpoints []*redis_v1.Endpoint `json:"endpoints"`
 
+	// Tags: list of tags applied to the Database Instance.
 	Tags []string `json:"tags"`
 
 	Nodes []*Node `json:"nodes"`
 
+	// NodeType: node type of the Database Instance.
 	NodeType string `json:"node_type"`
 
-	TLSEnabled bool `json:"tls_enabled"`
-
-	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
-
-	ACLRules []*ACLRule `json:"acl_rules"`
-
-	ClusterSize uint32 `json:"cluster_size"`
-
+	// CreatedAt: creation date (Format ISO 8601).
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: update date (Format ISO 8601).
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// TLSEnabled: defines whether or not TLS is enabled.
+	TLSEnabled bool `json:"tls_enabled"`
+
+	// ClusterSettings: list of Database Instance settings.
+	ClusterSettings []*ClusterSetting `json:"cluster_settings"`
+
+	// ACLRules: list of ACL rules.
+	ACLRules []*ACLRule `json:"acl_rules"`
+
+	// ClusterSize: number of nodes of the Database Instance cluster.
+	ClusterSize uint32 `json:"cluster_size"`
+
+	// Zone: zone of the Database Instance.
+	Zone scw.Zone `json:"zone"`
+
+	// Username: name of the user associated to the cluster.
+	Username string `json:"username"`
 
 	AvailableAt *time.Time `json:"available_at"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
 
 	LockReason string `json:"lock_reason"`
-
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"zone"`
 }
 
 // Resource: resource.
@@ -457,9 +475,9 @@ type ListClustersRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	IncludeStatuses []ClusterStatus `json:"-"`
-
 	ExcludeStatuses []ClusterStatus `json:"-"`
+
+	IncludeStatuses []ClusterStatus `json:"-"`
 
 	// OrderBy: default value: created_at_asc
 	OrderBy ListClustersRequestOrderBy `json:"-"`
@@ -708,7 +726,7 @@ func (s *API) HotNodeReplace(req *HotNodeReplaceRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteCluster:
+// DeleteCluster: Delete a Redis™ Database Instance (Redis™ cluster), specified by the `region` and `cluster_id` parameters. Deleting a Database Instance is permanent, and cannot be undone. Note that upon deletion all your data will be lost.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -739,7 +757,7 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetCluster:
+// GetCluster: Retrieve information about a Redis™ Database Instance (Redis™ cluster). Specify the `cluster_id` and `region` in your request to get information such as `id`, `status`, `version`, `tls_enabled`, `cluster_settings`, `upgradable_versions` and `endpoints` about your cluster in the response.
 func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -785,8 +803,8 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "include_statuses", req.IncludeStatuses)
 	parameter.AddToQuery(query, "exclude_statuses", req.ExcludeStatuses)
+	parameter.AddToQuery(query, "include_statuses", req.IncludeStatuses)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -893,7 +911,7 @@ func (s *API) ListClusterDeployments(req *ListClusterDeploymentsRequest, opts ..
 	return &resp, nil
 }
 
-// UpdateCluster:
+// UpdateCluster: Update the parameters of a Redis™ Database Instance (Redis™ cluster), including `name`, `tags`, `user_name` and `password`.
 func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
