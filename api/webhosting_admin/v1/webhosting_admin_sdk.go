@@ -280,6 +280,9 @@ type Hosting struct {
 	// OfferEndOfLife: indicates if the hosting offer has reached its end of life.
 	OfferEndOfLife bool `json:"offer_end_of_life"`
 
+	// ControlPanelName: name of the control panel.
+	ControlPanelName string `json:"control_panel_name"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -304,6 +307,8 @@ type Platform struct {
 	Status PlatformStatus `json:"status"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	ControlPanelName string `json:"control_panel_name"`
 }
 
 // BlacklistAPIBlockIncomingEmailsFromDomainRequest: blacklist api block incoming emails from domain request.
