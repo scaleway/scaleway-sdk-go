@@ -382,9 +382,9 @@ type FunctionDebugDataPodContainer struct {
 
 // SecretHashedValue: secret hashed value.
 type SecretHashedValue struct {
-	Key string `json:"key"`
-
 	HashedValue string `json:"hashed_value"`
+
+	Key string `json:"key"`
 }
 
 // NamespaceCluster: namespace cluster.
@@ -427,139 +427,156 @@ type FunctionDebugDataPod struct {
 
 // Cluster: cluster.
 type Cluster struct {
+	Billable bool `json:"billable"`
+
+	CanProvision bool `json:"can_provision"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	Environment string `json:"environment"`
+
+	ErrorMessage *string `json:"error_message"`
+
+	EtcdID *string `json:"etcd_id"`
+
 	ID string `json:"id"`
 
 	KapsuleID *string `json:"kapsule_id"`
 
+	KapsuleType *string `json:"kapsule_type"`
+
+	LoadBalancerIP *string `json:"load_balancer_ip"`
+
 	Name string `json:"name"`
+
+	ProvisionedAt *time.Time `json:"provisioned_at"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	SeedID *string `json:"seed_id"`
 
 	// Status: default value: unknown
 	Status ClusterStatus `json:"status"`
 
-	Environment string `json:"environment"`
-
-	LoadBalancerIP *string `json:"load_balancer_ip"`
-
-	CanProvision bool `json:"can_provision"`
-
-	Billable bool `json:"billable"`
-
 	Version uint32 `json:"version"`
-
-	EtcdID *string `json:"etcd_id"`
-
-	SeedID *string `json:"seed_id"`
-
-	ErrorMessage *string `json:"error_message"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	ProvisionedAt *time.Time `json:"provisioned_at"`
-
-	KapsuleType *string `json:"kapsule_type"`
-
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"region"`
 }
 
 // Function: function.
 type Function struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	NamespaceID string `json:"namespace_id"`
-
-	// Status: default value: unknown
-	Status FunctionStatus `json:"status"`
-
-	EnvironmentVariables map[string]string `json:"environment_variables"`
-
-	MinScale uint32 `json:"min_scale"`
-
-	MaxScale uint32 `json:"max_scale"`
-
-	Runtime string `json:"runtime"`
-
-	MemoryLimit uint32 `json:"memory_limit"`
-
 	CPULimit uint32 `json:"cpu_limit"`
 
-	Timeout *scw.Duration `json:"timeout"`
-
-	Handler string `json:"handler"`
-
-	ErrorMessage *string `json:"error_message"`
-
-	// Privacy: default value: unknown_privacy
-	Privacy FunctionPrivacy `json:"privacy"`
+	CreatedAt *time.Time `json:"created_at"`
 
 	Description *string `json:"description"`
 
 	DomainName string `json:"domain_name"`
 
-	CreatedAt *time.Time `json:"created_at"`
+	EnvironmentVariables map[string]string `json:"environment_variables"`
 
-	UpdatedAt *time.Time `json:"updated_at"`
+	ErrorMessage *string `json:"error_message"`
 
-	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+	Handler string `json:"handler"`
 
-	RuntimeMessage string `json:"runtime_message"`
+	ID string `json:"id"`
 
-	RegistryImage string `json:"registry_image"`
+	MaxScale uint32 `json:"max_scale"`
+
+	MemoryLimit uint32 `json:"memory_limit"`
+
+	MinScale uint32 `json:"min_scale"`
+
+	Name string `json:"name"`
+
+	NamespaceID string `json:"namespace_id"`
+
+	// Privacy: default value: unknown_privacy
+	Privacy FunctionPrivacy `json:"privacy"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
+
+	RegistryImage string `json:"registry_image"`
+
+	Runtime string `json:"runtime"`
+
+	RuntimeMessage string `json:"runtime_message"`
+
+	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
+
+	// Status: default value: unknown
+	Status FunctionStatus `json:"status"`
+
+	Timeout *scw.Duration `json:"timeout"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Log: log.
 type Log struct {
-	ID string `json:"id"`
-
+	// Message: message of the log.
 	Message string `json:"message"`
 
+	// Timestamp: timestamp of the log.
 	Timestamp *time.Time `json:"timestamp"`
 
+	// ID: UUID of the log.
+	ID string `json:"id"`
+
+	// Level: severity of the log (info, debug, error etc.).
 	Level string `json:"level"`
 
+	// Source: source of the log (core runtime or user code).
 	Source string `json:"source"`
 
-	// Stream: default value: unknown
+	// Stream: can be stdout or stderr.
+	// Default value: unknown
 	Stream LogStream `json:"stream"`
 }
 
 // Namespace: namespace.
 type Namespace struct {
+	// ID: UUID of the namespace.
 	ID string `json:"id"`
 
+	// Name: name of the namespace.
 	Name string `json:"name"`
 
+	// EnvironmentVariables: environment variables of the namespace.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Status: default value: unknown
+	// Status: status of the namespace.
+	// Default value: unknown
 	Status NamespaceStatus `json:"status"`
 
+	// RegistryNamespaceID: UUID of the registry namespace.
 	RegistryNamespaceID string `json:"registry_namespace_id"`
 
+	// ErrorMessage: error message if the namespace is in "error" state.
 	ErrorMessage *string `json:"error_message"`
 
+	// RegistryEndpoint: registry endpoint of the namespace.
 	RegistryEndpoint string `json:"registry_endpoint"`
 
+	// Description: description of the namespace.
 	Description *string `json:"description"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Cluster *NamespaceCluster `json:"cluster"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region in which the namespace is located.
 	Region scw.Region `json:"region"`
 }
 
@@ -580,9 +597,9 @@ type CreateClusterRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	Version uint32 `json:"version"`
-
 	KapsuleType *string `json:"kapsule_type,omitempty"`
+
+	Version uint32 `json:"version"`
 }
 
 // DeleteClusterRequest: delete cluster request.
@@ -595,11 +612,11 @@ type DeleteClusterRequest struct {
 
 // FunctionDebugData: function debug data.
 type FunctionDebugData struct {
+	Build *FunctionDebugDataBuild `json:"build"`
+
 	Ksvc *FunctionDebugDataKsvc `json:"ksvc"`
 
 	Pods []*FunctionDebugDataPod `json:"pods"`
-
-	Build *FunctionDebugDataBuild `json:"build"`
 }
 
 // GetClusterRequest: get cluster request.
@@ -631,6 +648,7 @@ type GetNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// NamespaceID: UUID of the namespace.
 	NamespaceID string `json:"-"`
 }
 
@@ -639,14 +657,14 @@ type ListClustersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
+	Name *string `json:"-"`
 
 	// OrderBy: default value: created_at_asc
 	OrderBy ListClustersRequestOrderBy `json:"-"`
 
-	Name *string `json:"-"`
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
 }
 
 // ListClustersResponse: list clusters response.
@@ -680,19 +698,26 @@ type ListFunctionsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of functions per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the functions.
+	// Default value: created_at_asc
 	OrderBy ListFunctionsRequestOrderBy `json:"-"`
 
+	// NamespaceID: UUID of the namespace the function belongs to.
 	NamespaceID string `json:"-"`
 
+	// Name: name of the function.
 	Name *string `json:"-"`
 
+	// OrganizationID: UUID of the Organziation the function belongs to.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: UUID of the Project the function belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -727,13 +752,17 @@ type ListLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// FunctionID: UUID of the function to get the logs for.
 	FunctionID string `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of logs per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: timestamp_desc
+	// OrderBy: order of the logs.
+	// Default value: timestamp_desc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 }
 
@@ -768,17 +797,23 @@ type ListNamespacesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of namespaces per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the namespaces.
+	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
 
+	// Name: name of the namespace.
 	Name *string `json:"-"`
 
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -848,13 +883,13 @@ type UpdateClusterRequest struct {
 
 	ClusterID string `json:"-"`
 
-	Upgrade *bool `json:"upgrade,omitempty"`
-
-	Version *uint32 `json:"version,omitempty"`
+	Billable *bool `json:"billable,omitempty"`
 
 	CanProvision *bool `json:"can_provision,omitempty"`
 
-	Billable *bool `json:"billable,omitempty"`
+	Upgrade *bool `json:"upgrade,omitempty"`
+
+	Version *uint32 `json:"version,omitempty"`
 }
 
 type API struct {
@@ -1104,10 +1139,10 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
