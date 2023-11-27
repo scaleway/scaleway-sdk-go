@@ -312,9 +312,9 @@ type ContainerDebugDataPodContainer struct {
 
 // SecretHashedValue: secret hashed value.
 type SecretHashedValue struct {
-	Key string `json:"key"`
-
 	HashedValue string `json:"hashed_value"`
+
+	Key string `json:"key"`
 }
 
 // NamespaceCluster: namespace cluster.
@@ -348,101 +348,133 @@ type ContainerDebugDataPod struct {
 
 // Container: container.
 type Container struct {
+	// ID: UUID of the container.
 	ID string `json:"id"`
 
+	// Name: name of the container.
 	Name string `json:"name"`
 
+	// NamespaceID: UUID of the namespace the container belongs to.
 	NamespaceID string `json:"namespace_id"`
 
-	// Status: default value: unknown
+	// Status: status of the container.
+	// Default value: unknown
 	Status ContainerStatus `json:"status"`
 
+	// EnvironmentVariables: environment variables of the container.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// MinScale: minimum number of instances to scale the container to.
 	MinScale uint32 `json:"min_scale"`
 
+	// MaxScale: maximum number of instances to scale the container to.
 	MaxScale uint32 `json:"max_scale"`
 
+	// MemoryLimit: memory limit of the container in MB.
 	MemoryLimit uint32 `json:"memory_limit"`
 
+	// CPULimit: CPU limit of the container in mvCPU.
 	CPULimit uint32 `json:"cpu_limit"`
 
+	// Timeout: processing time limit for the container.
 	Timeout *scw.Duration `json:"timeout"`
 
+	// ErrorMessage: last error message of the container.
 	ErrorMessage *string `json:"error_message"`
 
-	// Privacy: default value: unknown_privacy
+	// Privacy: privacy setting of the container.
+	// Default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
+	// Description: description of the container.
 	Description *string `json:"description"`
 
+	// RegistryImage: name of the registry image (e.g. "rg.fr-par.scw.cloud/something/image:tag").
 	RegistryImage string `json:"registry_image"`
 
+	// MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency uint32 `json:"max_concurrency"`
 
+	// DomainName: domain name attributed to the contaioner.
 	DomainName string `json:"domain_name"`
 
-	// Protocol: default value: unknown_protocol
+	// Protocol: protocol the container uses.
+	// Default value: unknown_protocol
 	Protocol ContainerProtocol `json:"protocol"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// SecretEnvironmentVariables: secret environment variables of the container.
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
 }
 
 // Log: log.
 type Log struct {
-	ID string `json:"id"`
-
 	Message string `json:"message"`
 
 	Timestamp *time.Time `json:"timestamp"`
 
+	ID string `json:"id"`
+
+	// Level: contains the severity of the log (info, debug, error, ...).
 	Level string `json:"level"`
 
+	// Source: source of the log (core runtime or user code).
 	Source string `json:"source"`
 
-	// Stream: default value: unknown
+	// Stream: can be stdout or stderr.
+	// Default value: unknown
 	Stream LogStream `json:"stream"`
 }
 
 // Namespace: namespace.
 type Namespace struct {
+	// ID: UUID of the namespace.
 	ID string `json:"id"`
 
+	// Name: name of the namespace.
 	Name string `json:"name"`
 
+	// EnvironmentVariables: environment variables of the namespace.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Status: default value: unknown
+	// Status: status of the namespace.
+	// Default value: unknown
 	Status NamespaceStatus `json:"status"`
 
+	// RegistryNamespaceID: UUID of the registry namespace.
 	RegistryNamespaceID string `json:"registry_namespace_id"`
 
+	// ErrorMessage: last error message of the namesace.
 	ErrorMessage *string `json:"error_message"`
 
+	// RegistryEndpoint: registry endpoint of the namespace.
 	RegistryEndpoint string `json:"registry_endpoint"`
 
+	// Description: description of the endpoint.
 	Description *string `json:"description"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*SecretHashedValue `json:"secret_environment_variables"`
 
 	Cluster *NamespaceCluster `json:"cluster"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region in which the namespace will be created.
 	Region scw.Region `json:"region"`
 }
 
@@ -466,6 +498,7 @@ type GetContainerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ContainerID: UUID of the container to get.
 	ContainerID string `json:"-"`
 }
 
@@ -474,6 +507,7 @@ type GetNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// NamespaceID: UUID of the namespace to get.
 	NamespaceID string `json:"-"`
 }
 
@@ -482,19 +516,26 @@ type ListContainersRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of containers per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the containers.
+	// Default value: created_at_asc
 	OrderBy ListContainersRequestOrderBy `json:"-"`
 
+	// NamespaceID: UUID of the namespace the container belongs to.
 	NamespaceID string `json:"-"`
 
+	// Name: name of the container.
 	Name *string `json:"-"`
 
+	// OrganizationID: UUID of the Organization the container belongs to.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: UUID of the Project the container belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -529,13 +570,17 @@ type ListLogsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ContainerID: UUID of the container.
 	ContainerID string `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of logs per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: timestamp_desc
+	// OrderBy: order of the logs.
+	// Default value: timestamp_desc
 	OrderBy ListLogsRequestOrderBy `json:"-"`
 }
 
@@ -570,17 +615,23 @@ type ListNamespacesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: number of namespaces per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: order of the namespaces.
+	// Default value: created_at_asc
 	OrderBy ListNamespacesRequestOrderBy `json:"-"`
 
+	// Name: name of the namespaces.
 	Name *string `json:"-"`
 
+	// OrganizationID: UUID of the Organization the namespace belongs to.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: UUID of the Project the namespace belongs to.
 	ProjectID *string `json:"-"`
 }
 
@@ -624,7 +675,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{}
 }
 
-// ListNamespaces:
+// ListNamespaces: List all namespaces in a specified region.
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
@@ -665,7 +716,7 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// GetNamespace:
+// GetNamespace: Get the namespace associated with the specified ID.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -696,7 +747,7 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// ListContainers:
+// ListContainers: List all containers for a specified region.
 func (s *API) ListContainers(req *ListContainersRequest, opts ...scw.RequestOption) (*ListContainersResponse, error) {
 	var err error
 
@@ -738,7 +789,7 @@ func (s *API) ListContainers(req *ListContainersRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// GetContainer:
+// GetContainer: Get the container associated with the specified ID.
 func (s *API) GetContainer(req *GetContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -800,7 +851,7 @@ func (s *API) GetContainerDebugData(req *GetContainerDebugDataRequest, opts ...s
 	return &resp, nil
 }
 
-// ListLogs:
+// ListLogs: List the logs of the container with the specified ID.
 func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
 	var err error
 
