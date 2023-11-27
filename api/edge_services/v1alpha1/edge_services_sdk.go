@@ -275,6 +275,7 @@ const (
 	PipelineErrorCodeDNSCnameResolve           = PipelineErrorCode("dns_cname_resolve")
 	PipelineErrorCodeDNSFqdnAlreadyInUse       = PipelineErrorCode("dns_fqdn_already_in_use")
 	PipelineErrorCodeTLSCertDeleted            = PipelineErrorCode("tls_cert_deleted")
+	PipelineErrorCodeTLSCertDisabled           = PipelineErrorCode("tls_cert_disabled")
 	PipelineErrorCodeTLSCertExpired            = PipelineErrorCode("tls_cert_expired")
 	PipelineErrorCodeTLSCertInvalidFormat      = PipelineErrorCode("tls_cert_invalid_format")
 	PipelineErrorCodeTLSCertMissing            = PipelineErrorCode("tls_cert_missing")
