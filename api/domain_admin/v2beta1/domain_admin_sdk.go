@@ -846,13 +846,13 @@ type ContactQuestion struct {
 
 // DSRecord: ds record.
 type DSRecord struct {
-	KeyID uint32 `json:"key_id"`
-
 	// Algorithm: default value: rsamd5
 	Algorithm DSRecordAlgorithm `json:"algorithm"`
 
 	// Precisely one of Digest, PublicKey must be set.
 	Digest *DSRecordDigest `json:"digest,omitempty"`
+
+	KeyID uint32 `json:"key_id"`
 
 	// Precisely one of Digest, PublicKey must be set.
 	PublicKey *DSRecordPublicKey `json:"public_key,omitempty"`
@@ -891,66 +891,68 @@ type RecordWeightedConfig struct {
 
 // Contact: contact.
 type Contact struct {
-	ID string `json:"id"`
+	AddressLine1 string `json:"address_line_1"`
 
-	// LegalForm: default value: legal_form_unknown
-	LegalForm ContactLegalForm `json:"legal_form"`
+	AddressLine2 string `json:"address_line_2"`
 
-	Firstname string `json:"firstname"`
+	City string `json:"city"`
 
-	Lastname string `json:"lastname"`
+	CompanyIDentificationCode string `json:"company_identification_code"`
 
 	CompanyName string `json:"company_name"`
+
+	Country string `json:"country"`
 
 	Email string `json:"email"`
 
 	EmailAlt string `json:"email_alt"`
 
-	PhoneNumber string `json:"phone_number"`
+	// EmailStatus: default value: email_status_unknown
+	EmailStatus ContactEmailStatus `json:"email_status"`
+
+	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
+
+	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
+
+	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 
 	FaxNumber string `json:"fax_number"`
 
-	AddressLine1 string `json:"address_line_1"`
+	Firstname string `json:"firstname"`
 
-	AddressLine2 string `json:"address_line_2"`
-
-	Zip string `json:"zip"`
-
-	City string `json:"city"`
-
-	Country string `json:"country"`
-
-	VatIDentificationCode string `json:"vat_identification_code"`
-
-	CompanyIDentificationCode string `json:"company_identification_code"`
+	ID string `json:"id"`
 
 	// Lang: default value: unknown_language_code
 	Lang std.LanguageCode `json:"lang"`
 
-	Resale bool `json:"resale"`
+	Lastname string `json:"lastname"`
+
+	// LegalForm: default value: legal_form_unknown
+	LegalForm ContactLegalForm `json:"legal_form"`
+
+	PhoneNumber string `json:"phone_number"`
 
 	// Deprecated
 	Questions *[]*ContactQuestion `json:"questions,omitempty"`
 
-	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
-
-	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
-
-	WhoisOptIn bool `json:"whois_opt_in"`
-
-	// EmailStatus: default value: email_status_unknown
-	EmailStatus ContactEmailStatus `json:"email_status"`
+	Resale bool `json:"resale"`
 
 	State string `json:"state"`
 
-	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
+	VatIDentificationCode string `json:"vat_identification_code"`
+
+	WhoisOptIn bool `json:"whois_opt_in"`
+
+	Zip string `json:"zip"`
 }
 
 // DNSZone: dns zone.
 type DNSZone struct {
 	Domain string `json:"domain"`
 
-	Subdomain string `json:"subdomain"`
+	Internal bool `json:"internal"`
+
+	Message *string `json:"message"`
 
 	Ns []string `json:"ns"`
 
@@ -960,16 +962,14 @@ type DNSZone struct {
 
 	OrganizationID string `json:"organization_id"`
 
+	ProjectID string `json:"project_id"`
+
 	// Status: default value: unknown
 	Status DNSZoneStatus `json:"status"`
 
-	Message *string `json:"message"`
+	Subdomain string `json:"subdomain"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	Internal bool `json:"internal"`
-
-	ProjectID string `json:"project_id"`
 }
 
 // DomainDNSSEC: domain dnssec.
@@ -997,7 +997,17 @@ type DomainRegistrationStatusTransfer struct {
 
 // Record: record.
 type Record struct {
+	Comment *string `json:"comment"`
+
 	Data string `json:"data"`
+
+	// Precisely one of GeoIPConfig, HTTPServiceConfig, ViewConfig, WeightedConfig must be set.
+	GeoIPConfig *RecordGeoIPConfig `json:"geo_ip_config,omitempty"`
+
+	// Precisely one of GeoIPConfig, HTTPServiceConfig, ViewConfig, WeightedConfig must be set.
+	HTTPServiceConfig *RecordHTTPServiceConfig `json:"http_service_config,omitempty"`
+
+	ID string `json:"id"`
 
 	Name string `json:"name"`
 
@@ -1008,55 +1018,45 @@ type Record struct {
 	// Type: default value: unknown
 	Type RecordType `json:"type"`
 
-	Comment *string `json:"comment"`
-
-	// Precisely one of GeoIPConfig, HTTPServiceConfig, WeightedConfig, ViewConfig must be set.
-	GeoIPConfig *RecordGeoIPConfig `json:"geo_ip_config,omitempty"`
-
-	// Precisely one of GeoIPConfig, HTTPServiceConfig, WeightedConfig, ViewConfig must be set.
-	HTTPServiceConfig *RecordHTTPServiceConfig `json:"http_service_config,omitempty"`
-
-	// Precisely one of GeoIPConfig, HTTPServiceConfig, WeightedConfig, ViewConfig must be set.
-	WeightedConfig *RecordWeightedConfig `json:"weighted_config,omitempty"`
-
-	// Precisely one of GeoIPConfig, HTTPServiceConfig, WeightedConfig, ViewConfig must be set.
+	// Precisely one of GeoIPConfig, HTTPServiceConfig, ViewConfig, WeightedConfig must be set.
 	ViewConfig *RecordViewConfig `json:"view_config,omitempty"`
 
-	ID string `json:"id"`
+	// Precisely one of GeoIPConfig, HTTPServiceConfig, ViewConfig, WeightedConfig must be set.
+	WeightedConfig *RecordWeightedConfig `json:"weighted_config,omitempty"`
 }
 
 // DomainSummary: domain summary.
 type DomainSummary struct {
-	Domain string `json:"domain"`
-
 	// AutoRenewStatus: default value: feature_status_unknown
 	AutoRenewStatus DomainFeatureStatus `json:"auto_renew_status"`
 
+	CreatedAt *time.Time `json:"created_at"`
+
+	DNSZonesCount uint32 `json:"dns_zones_count"`
+
 	// DnssecStatus: default value: feature_status_unknown
 	DnssecStatus DomainFeatureStatus `json:"dnssec_status"`
+
+	Domain string `json:"domain"`
 
 	EppCode []string `json:"epp_code"`
 
 	ExpiredAt *time.Time `json:"expired_at"`
 
-	UpdatedAt *time.Time `json:"updated_at"`
+	IsExternal bool `json:"is_external"`
 
-	SyncedAt *time.Time `json:"synced_at"`
+	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
 
 	Registrar string `json:"registrar"`
 
 	// Status: default value: status_unknown
 	Status DomainStatus `json:"status"`
 
-	IsExternal bool `json:"is_external"`
+	SyncedAt *time.Time `json:"synced_at"`
 
-	DNSZonesCount uint32 `json:"dns_zones_count"`
-
-	OrganizationID string `json:"organization_id"`
-
-	ProjectID string `json:"project_id"`
-
-	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // InstancesSource: instances source.
@@ -1068,46 +1068,46 @@ type InstancesSource struct {
 
 // ReverseIP: reverse ip.
 type ReverseIP struct {
-	IP net.IP `json:"ip"`
-
 	Hostname string `json:"hostname"`
 
-	// Status: default value: unknown_status
-	Status ReverseIPStatus `json:"status"`
-
-	MasterDNSPublic string `json:"master_dns_public"`
+	IP net.IP `json:"ip"`
 
 	MasterDNSInternal string `json:"master_dns_internal"`
 
+	MasterDNSPublic string `json:"master_dns_public"`
+
 	// Scope: default value: unknown_scope
 	Scope ReverseIPScope `json:"scope"`
+
+	// Status: default value: unknown_status
+	Status ReverseIPStatus `json:"status"`
 }
 
 // SSLCertificate: ssl certificate.
 type SSLCertificate struct {
-	DNSZone string `json:"dns_zone"`
-
 	AlternativeDNSZones []string `json:"alternative_dns_zones"`
-
-	// Status: default value: unknown_status
-	Status SSLCertificateStatus `json:"status"`
-
-	PrivateKey string `json:"private_key"`
 
 	CertificateChain string `json:"certificate_chain"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
+	DNSZone string `json:"dns_zone"`
+
 	ExpiredAt *time.Time `json:"expired_at"`
+
+	PrivateKey string `json:"private_key"`
+
+	// Status: default value: unknown_status
+	Status SSLCertificateStatus `json:"status"`
 }
 
 // Slave: slave.
 type Slave struct {
 	Configuration string `json:"configuration"`
 
-	Name string `json:"name"`
-
 	Driver string `json:"driver"`
+
+	Name string `json:"name"`
 
 	URI string `json:"uri"`
 }
@@ -1116,24 +1116,24 @@ type Slave struct {
 type AddInstancesSourceRequest struct {
 	Az string `json:"-"`
 
-	URL string `json:"url"`
-
 	Token string `json:"token"`
+
+	URL string `json:"url"`
 }
 
 // AddSlaveRequest: add slave request.
 type AddSlaveRequest struct {
 	Configuration string `json:"-"`
 
-	Name string `json:"name"`
-
 	Driver string `json:"driver"`
-
-	URI string `json:"uri"`
 
 	Login string `json:"login"`
 
+	Name string `json:"name"`
+
 	Password string `json:"password"`
+
+	URI string `json:"uri"`
 }
 
 // CancelTaskRequest: cancel task request.
@@ -1184,43 +1184,43 @@ type DeleteTaskResponse struct {
 
 // Domain: domain.
 type Domain struct {
-	Domain string `json:"domain"`
-
-	OrganizationID string `json:"organization_id"`
-
-	ProjectID string `json:"project_id"`
+	AdministrativeContact *Contact `json:"administrative_contact"`
 
 	// AutoRenewStatus: default value: feature_status_unknown
 	AutoRenewStatus DomainFeatureStatus `json:"auto_renew_status"`
 
+	DNSZones []*DNSZone `json:"dns_zones"`
+
 	Dnssec *DomainDNSSEC `json:"dnssec"`
+
+	Domain string `json:"domain"`
 
 	EppCode []string `json:"epp_code"`
 
 	ExpiredAt *time.Time `json:"expired_at"`
 
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	Registrar string `json:"registrar"`
+	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
+	ExternalDomainRegistrationStatus *DomainRegistrationStatusExternalDomain `json:"external_domain_registration_status,omitempty"`
 
 	IsExternal bool `json:"is_external"`
+
+	OrganizationID string `json:"organization_id"`
+
+	OwnerContact *Contact `json:"owner_contact"`
+
+	ProjectID string `json:"project_id"`
+
+	Registrar string `json:"registrar"`
 
 	// Status: default value: status_unknown
 	Status DomainStatus `json:"status"`
 
-	DNSZones []*DNSZone `json:"dns_zones"`
-
-	OwnerContact *Contact `json:"owner_contact"`
-
 	TechnicalContact *Contact `json:"technical_contact"`
-
-	AdministrativeContact *Contact `json:"administrative_contact"`
-
-	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
-	ExternalDomainRegistrationStatus *DomainRegistrationStatusExternalDomain `json:"external_domain_registration_status,omitempty"`
 
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // GetDomainRequest: get domain request.
@@ -1237,10 +1237,10 @@ type GetSSLCertificateRequest struct {
 type ImportRawDNSZoneRequest struct {
 	DNSZone string `json:"-"`
 
+	Content string `json:"content"`
+
 	// Format: default value: unknown_raw_format
 	Format RawFormat `json:"format"`
-
-	Content string `json:"content"`
 
 	ProjectID string `json:"project_id"`
 }
@@ -1251,18 +1251,24 @@ type ImportRawDNSZoneResponse struct {
 
 // ListDNSZoneRecordsRequest: list dns zone records request.
 type ListDNSZoneRecordsRequest struct {
+	// DNSZone: DNS zone on which to filter the returned DNS zone records.
 	DNSZone string `json:"-"`
 
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: name_asc
+	// OrderBy: sort order of the returned DNS zone records.
+	// Default value: name_asc
 	OrderBy ListDNSZoneRecordsRequestOrderBy `json:"-"`
 
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of DNS zone records per page.
+	PageSize *uint32 `json:"-"`
+
+	// Name: name on which to filter the returned DNS zone records.
 	Name string `json:"-"`
 
-	// Type: default value: unknown
+	// Type: record type on which to filter the returned DNS zone records.
+	// Default value: unknown
 	Type RecordType `json:"-"`
 }
 
@@ -1294,20 +1300,27 @@ func (r *ListDNSZoneRecordsResponse) UnsafeAppend(res interface{}) (uint32, erro
 
 // ListDNSZonesRequest: list dns zones request.
 type ListDNSZonesRequest struct {
-	Page *int32 `json:"-"`
+	// OrganizationID: organization ID on which to filter the returned DNS zones.
+	OrganizationID *string `json:"-"`
 
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: domain_asc
-	OrderBy ListDNSZonesRequestOrderBy `json:"-"`
-
-	Domain string `json:"-"`
-
-	DNSZone string `json:"-"`
-
+	// ProjectID: project ID on which to filter the returned DNS zones.
 	ProjectID *string `json:"-"`
 
-	OrganizationID *string `json:"-"`
+	// OrderBy: sort order of the returned DNS zones.
+	// Default value: domain_asc
+	OrderBy ListDNSZonesRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of DNS zones to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// Domain: domain on which to filter the returned DNS zones.
+	Domain string `json:"-"`
+
+	// DNSZone: DNS zone on which to filter the returned DNS zones.
+	DNSZone string `json:"-"`
 }
 
 // ListDNSZonesResponse: list dns zones response.
@@ -1338,25 +1351,25 @@ func (r *ListDNSZonesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListDomainsRequest: list domains request.
 type ListDomainsRequest struct {
-	Page *int32 `json:"-"`
+	Domain *string `json:"-"`
 
-	PageSize *uint32 `json:"-"`
+	IsExternal *bool `json:"-"`
 
 	// OrderBy: default value: domain_asc
 	OrderBy ListDomainsRequestOrderBy `json:"-"`
 
-	Domain *string `json:"-"`
+	OrganizationID *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	ProjectID *string `json:"-"`
 
 	Registrar *string `json:"-"`
 
 	// Status: default value: status_unknown
 	Status DomainStatus `json:"-"`
-
-	ProjectID *string `json:"-"`
-
-	OrganizationID *string `json:"-"`
-
-	IsExternal *bool `json:"-"`
 }
 
 // ListDomainsResponse: list domains response.
@@ -1420,11 +1433,11 @@ func (r *ListInstancesSourcesResponse) UnsafeAppend(res interface{}) (uint32, er
 
 // ListReverseIPsRequest: list reverse i ps request.
 type ListReverseIPsRequest struct {
-	Searches []string `json:"-"`
-
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
+
+	Searches []string `json:"-"`
 }
 
 // ListReverseIPsResponse: list reverse i ps response.
@@ -1455,11 +1468,11 @@ func (r *ListReverseIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListSSLCertificatesRequest: list ssl certificates request.
 type ListSSLCertificatesRequest struct {
+	DNSZone string `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
-
-	DNSZone string `json:"-"`
 
 	ProjectID *string `json:"-"`
 }
@@ -1527,22 +1540,22 @@ func (r *ListSlavesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListTasksRequest: list tasks request.
 type ListTasksRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
+	Domain *string `json:"-"`
 
 	// OrderBy: default value: updated_at_asc
 	OrderBy ListTasksRequestOrderBy `json:"-"`
 
-	Domain *string `json:"-"`
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
 
 	ProjectID *string `json:"-"`
 
-	// Type: default value: unknown
-	Type domain_v2beta1.TaskType `json:"-"`
-
 	// Status: default value: unavailable
 	Status domain_v2beta1.TaskStatus `json:"-"`
+
+	// Type: default value: unknown
+	Type domain_v2beta1.TaskType `json:"-"`
 }
 
 // ListTasksResponse: list tasks response.
@@ -1600,6 +1613,24 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
+// GetServiceInfo:
+func (s *API) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/domain-admin/v2beta1",
+	}
+
+	var resp scw.ServiceInfo
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListDomains: Returns a list of all domains.
 // You can filter the list by:
 //   - Domain name (domain)
@@ -1619,15 +1650,15 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "is_external", req.IsExternal)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "registrar", req.Registrar)
 	parameter.AddToQuery(query, "status", req.Status)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "is_external", req.IsExternal)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -1676,13 +1707,13 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -1709,9 +1740,9 @@ func (s *API) ListDNSZoneRecords(req *ListDNSZoneRecordsRequest, opts ...scw.Req
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "type", req.Type)
 
@@ -1749,13 +1780,13 @@ func (s *API) ListTasks(req *ListTasksRequest, opts ...scw.RequestOption) (*List
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "domain", req.Domain)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -1834,9 +1865,9 @@ func (s *API) ListReverseIPs(req *ListReverseIPsRequest, opts ...scw.RequestOpti
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "searches", req.Searches)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "searches", req.Searches)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2152,9 +2183,9 @@ func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.R
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "dns_zone", req.DNSZone)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	scwReq := &scw.ScalewayRequest{
