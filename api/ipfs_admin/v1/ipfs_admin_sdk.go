@@ -276,62 +276,62 @@ type PinInfo struct {
 
 // Pin: pin.
 type Pin struct {
-	PinID string `json:"pin_id"`
-
-	// Status: default value: unknown_status
-	Status PinStatus `json:"status"`
+	Cid *PinCID `json:"cid"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
-	Cid *PinCID `json:"cid"`
-
 	Delegates []string `json:"delegates"`
-
-	Info *PinInfo `json:"info"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
 
 	DeletingAt *time.Time `json:"deleting_at"`
 
-	VolumeID string `json:"volume_id"`
+	Info *PinInfo `json:"info"`
 
 	OrganizationID string `json:"organization_id"`
 
+	PinID string `json:"pin_id"`
+
 	ProjectID string `json:"project_id"`
+
+	// Status: default value: unknown_status
+	Status PinStatus `json:"status"`
 
 	// StatusProvide: default value: unknown_provide
 	StatusProvide PinProvide `json:"status_provide"`
+
+	VolumeID string `json:"volume_id"`
 }
 
 // Volume: volume.
 type Volume struct {
+	CountPin uint64 `json:"count_pin"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	DeletedAt *time.Time `json:"deleted_at"`
+
+	DeletingAt *time.Time `json:"deleting_at"`
+
 	ID string `json:"id"`
+
+	// LockStatus: default value: unlocked
+	LockStatus VolumeLockStatus `json:"lock_status"`
+
+	Name string `json:"name"`
+
+	OrganizationID string `json:"organization_id"`
 
 	ProjectID string `json:"project_id"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 
-	CountPin uint64 `json:"count_pin"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
+	Size *uint32 `json:"size"`
 
 	Tags []string `json:"tags"`
 
-	Name string `json:"name"`
-
-	Size *uint32 `json:"size"`
-
-	OrganizationID string `json:"organization_id"`
-
-	DeletingAt *time.Time `json:"deleting_at"`
-
-	DeletedAt *time.Time `json:"deleted_at"`
-
-	// LockStatus: default value: unlocked
-	LockStatus VolumeLockStatus `json:"lock_status"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // BanCIDRequest: ban cid request.
@@ -347,6 +347,7 @@ type GetPinRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// PinID: pin ID of which you want to obtain information.
 	PinID string `json:"-"`
 }
 
@@ -355,6 +356,7 @@ type GetVolumeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// VolumeID: volume ID.
 	VolumeID string `json:"-"`
 }
 
@@ -363,22 +365,29 @@ type ListPinsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// VolumeID: volume ID of which you want to list the pins.
 	VolumeID *string `json:"-"`
 
 	Cid *string `json:"-"`
 
+	// ProjectID: project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: organization ID.
 	OrganizationID *string `json:"-"`
 
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of the returned Volume.
+	// Default value: created_at_asc
 	OrderBy ListPinsRequestOrderBy `json:"-"`
 
-	// Status: default value: unknown_status
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of volumes to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// Status: list pins by status.
+	// Default value: unknown_status
 	Status PinStatus `json:"-"`
 }
 
@@ -413,16 +422,20 @@ type ListVolumesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: project ID, only volumes belonging to this project will be listed.
 	ProjectID *string `json:"-"`
 
-	OrganizationID *string `json:"-"`
+	// OrderBy: sort the order of the returned volumes.
+	// Default value: created_at_asc
+	OrderBy ListVolumesRequestOrderBy `json:"-"`
 
+	// Page: page number.
 	Page *int32 `json:"-"`
 
+	// PageSize: maximum number of volumes to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
-	OrderBy ListVolumesRequestOrderBy `json:"-"`
+	OrganizationID *string `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -497,7 +510,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetPin:
+// GetPin: Retrieve information about the provided **pin ID**, such as status, last modification, and CID.
 func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error) {
 	var err error
 
@@ -528,7 +541,7 @@ func (s *API) GetPin(req *GetPinRequest, opts ...scw.RequestOption) (*Pin, error
 	return &resp, nil
 }
 
-// ListPins:
+// ListPins: Retrieve information about all pins within a volume.
 func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPinsResponse, error) {
 	var err error
 
@@ -547,9 +560,9 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 	parameter.AddToQuery(query, "cid", req.Cid)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "status", req.Status)
 
 	if fmt.Sprint(req.Region) == "" {
@@ -571,7 +584,7 @@ func (s *API) ListPins(req *ListPinsRequest, opts ...scw.RequestOption) (*ListPi
 	return &resp, nil
 }
 
-// GetVolume:
+// GetVolume: Retrieve information about a specific volume.
 func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
 	var err error
 
@@ -602,7 +615,7 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 	return &resp, nil
 }
 
-// ListVolumes:
+// ListVolumes: Retrieve information about all volumes from a Project ID.
 func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*ListVolumesResponse, error) {
 	var err error
 
@@ -618,10 +631,10 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
