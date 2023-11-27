@@ -640,8 +640,8 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-func (s *API) Regions() []scw.Region {
-	return []scw.Region{}
+func (s *API) Zones() []scw.Zone {
+	return []scw.Zone{}
 }
 
 // GetServiceInfo:
