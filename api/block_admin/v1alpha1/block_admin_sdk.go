@@ -641,7 +641,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{}
+	return []scw.Zone{scw.ZoneFrPar1}
 }
 
 // GetServiceInfo:
