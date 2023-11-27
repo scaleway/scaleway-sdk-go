@@ -42,9 +42,9 @@ var (
 
 // AdminLB: admin lb.
 type AdminLB struct {
-	LB *lb_v1.LB `json:"lb"`
-
 	ActiveInstanceID string `json:"active_instance_id"`
+
+	LB *lb_v1.LB `json:"lb"`
 
 	MonitoringStatus string `json:"monitoring_status"`
 
@@ -136,17 +136,17 @@ type ZonedAPICreateHeadlessLBRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	Name string `json:"name"`
+	ClusterSize uint32 `json:"cluster_size"`
 
 	Description string `json:"description"`
+
+	Name string `json:"name"`
+
+	ProjectID string `json:"project_id"`
 
 	Tags []string `json:"tags"`
 
 	Type string `json:"type"`
-
-	ProjectID string `json:"project_id"`
-
-	ClusterSize uint32 `json:"cluster_size"`
 }
 
 // ZonedAPIGetLBRequest: zoned api get lb request.
