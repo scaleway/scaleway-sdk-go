@@ -133,6 +133,37 @@ func (enum *ListVersionsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LocalImageType string
+
+const (
+	LocalImageTypeUnknownType   = LocalImageType("unknown_type")
+	LocalImageTypeInstanceLocal = LocalImageType("instance_local")
+	LocalImageTypeInstanceSbs   = LocalImageType("instance_sbs")
+)
+
+func (enum LocalImageType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum LocalImageType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LocalImageType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LocalImageType(LocalImageType(tmp).String())
+	return nil
+}
+
 // Category: category.
 type Category struct {
 	ID string `json:"id"`
@@ -177,6 +208,9 @@ type LocalImage struct {
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
 
 	Label string `json:"label"`
+
+	// Type: default value: unknown_type
+	Type LocalImageType `json:"type"`
 }
 
 // Version: version.
@@ -226,6 +260,9 @@ type CreateLocalImageRequest struct {
 	Arch string `json:"arch"`
 
 	CompatibleCommercialTypes []string `json:"compatible_commercial_types"`
+
+	// Type: default value: unknown_type
+	Type LocalImageType `json:"type"`
 }
 
 // CreateVersionRequest: create version request.
@@ -372,6 +409,9 @@ type ListLocalImagesRequest struct {
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone *scw.Zone `json:"-"`
+
+	// Type: default value: unknown_type
+	Type LocalImageType `json:"-"`
 }
 
 // ListLocalImagesResponse: list local images response.
@@ -476,6 +516,9 @@ type UpdateLocalImageRequest struct {
 	Arch *string `json:"arch,omitempty"`
 
 	CompatibleCommercialTypes *[]string `json:"compatible_commercial_types,omitempty"`
+
+	// Type: default value: unknown_type
+	Type LocalImageType `json:"type"`
 }
 
 // UpdateVersionRequest: update version request.
@@ -781,6 +824,7 @@ func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "image_id", req.ImageID)
 	parameter.AddToQuery(query, "version_id", req.VersionID)
 	parameter.AddToQuery(query, "image_label", req.ImageLabel)
