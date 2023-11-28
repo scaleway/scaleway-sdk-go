@@ -218,7 +218,7 @@ type DeleteJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobDefinitionID string `json:"-"`
 }
 
 // GetJobDefinitionRequest: get job definition request.
@@ -226,7 +226,7 @@ type GetJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobDefinitionID string `json:"-"`
 }
 
 // GetJobRunRequest: get job run request.
@@ -234,7 +234,7 @@ type GetJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobRunID string `json:"-"`
 }
 
 // GetServiceInfoRequest: get service info request.
@@ -296,7 +296,7 @@ type ListJobRunsRequest struct {
 	// OrderBy: default value: created_at_asc
 	OrderBy ListJobRunsRequestOrderBy `json:"-"`
 
-	ID *string `json:"-"`
+	JobDefinitionID *string `json:"-"`
 
 	ProjectID *string `json:"-"`
 }
@@ -332,7 +332,7 @@ type StartJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobDefinitionID string `json:"-"`
 }
 
 // StopJobRunRequest: stop job run request.
@@ -340,7 +340,7 @@ type StopJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobRunID string `json:"-"`
 }
 
 // UpdateJobDefinitionRequest: update job definition request.
@@ -348,7 +348,7 @@ type UpdateJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	ID string `json:"-"`
+	JobDefinitionID string `json:"-"`
 
 	Name *string `json:"name,omitempty"`
 
@@ -463,13 +463,13 @@ func (s *API) GetJobDefinition(req *GetJobDefinitionRequest, opts ...scw.Request
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.ID) + "",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "",
 	}
 
 	var resp JobDefinition
@@ -533,13 +533,13 @@ func (s *API) UpdateJobDefinition(req *UpdateJobDefinitionRequest, opts ...scw.R
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.ID) + "",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -569,13 +569,13 @@ func (s *API) DeleteJobDefinition(req *DeleteJobDefinitionRequest, opts ...scw.R
 		return errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return errors.New("field JobDefinitionID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.ID) + "",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -598,13 +598,13 @@ func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.Req
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.ID) + "/start",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/start",
 	}
 
 	err = scwReq.SetBody(req)
@@ -634,13 +634,13 @@ func (s *API) GetJobRun(req *GetJobRunRequest, opts ...scw.RequestOption) (*JobR
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobRunID) == "" {
+		return nil, errors.New("field JobRunID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-runs/" + fmt.Sprint(req.ID) + "",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-runs/" + fmt.Sprint(req.JobRunID) + "",
 	}
 
 	var resp JobRun
@@ -665,13 +665,13 @@ func (s *API) StopJobRun(req *StopJobRunRequest, opts ...scw.RequestOption) (*Jo
 		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ID) == "" {
-		return nil, errors.New("field ID cannot be empty in request")
+	if fmt.Sprint(req.JobRunID) == "" {
+		return nil, errors.New("field JobRunID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-runs/" + fmt.Sprint(req.ID) + "/stop",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-runs/" + fmt.Sprint(req.JobRunID) + "/stop",
 	}
 
 	err = scwReq.SetBody(req)
@@ -706,7 +706,7 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "id", req.ID)
+	parameter.AddToQuery(query, "job_definition_id", req.JobDefinitionID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
