@@ -556,6 +556,15 @@ type Hosting struct {
 	// ControlPanelName: name of the control panel.
 	ControlPanelName string `json:"control_panel_name"`
 
+	// PlatformGroup: group of the hosting's host server/platform.
+	PlatformGroup string `json:"platform_group"`
+
+	// IPv4: iPv4 address of the hosting's host server.
+	IPv4 string `json:"ipv4"`
+
+	// IPv6: iPv6 address of the hosting's host server.
+	IPv6 string `json:"ipv6"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
