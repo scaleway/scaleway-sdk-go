@@ -1321,6 +1321,12 @@ type ExternalNode struct {
 	KubeletConfig string `json:"kubelet_config"`
 
 	ExternalIP string `json:"external_ip"`
+
+	ContainerdVersion string `json:"containerd_version"`
+
+	RuncVersion string `json:"runc_version"`
+
+	CniPluginsVersion string `json:"cni_plugins_version"`
 }
 
 // GetClusterKubeConfigRequest: get cluster kube config request.
