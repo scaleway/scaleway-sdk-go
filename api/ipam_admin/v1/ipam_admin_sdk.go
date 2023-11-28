@@ -484,9 +484,6 @@ type ListIPsRequest struct {
 	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
 	ResourceName *string `json:"-"`
 
-	// Deprecated
-	Source *Source `json:"-"`
-
 	// Precisely one of Zonal, PrivateNetworkID, ZonalNat, Regional, SubnetID must be set.
 	ZonalNat *string `json:"zonal_nat,omitempty"`
 
@@ -998,7 +995,6 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "resource_name", req.ResourceName)
-	parameter.AddToQuery(query, "source", req.Source)
 	parameter.AddToQuery(query, "tag_values", req.TagValues)
 	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
