@@ -3019,7 +3019,7 @@ func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// GetQuotum: Retrieve information about a resource quota, speficified by the `quotum_name` parameter. The quota's `limit`, or whether it is unlimited, is returned in the response.
+// GetQuotum: Retrieve information about a resource quota, specified by the `quotum_name` parameter. The quota's `limit`, or whether it is unlimited, is returned in the response.
 func (s *API) GetQuotum(req *GetQuotumRequest, opts ...scw.RequestOption) (*Quotum, error) {
 	var err error
 
@@ -3123,7 +3123,7 @@ func (s *API) DeleteJWT(req *DeleteJWTRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
-// ListLogs:
+// ListLogs: List logs available for given Organization. You must define the `organization_id` in the query path of your request.
 func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
 	var err error
 
@@ -3163,7 +3163,7 @@ func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLo
 	return &resp, nil
 }
 
-// GetLog:
+// GetLog: Retrieve information about a log, specified by the `log_id` parameter. The log's full details, including `id`, `ip`, `user_agent`, `action`, `bearer_id`, `resource_type` and `resource_id` are returned in the response.
 func (s *API) GetLog(req *GetLogRequest, opts ...scw.RequestOption) (*Log, error) {
 	var err error
 
