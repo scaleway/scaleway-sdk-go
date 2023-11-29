@@ -1020,7 +1020,7 @@ type SampleAPIListSamplesRequest struct {
 	OrderBy ListSamplesRequestOrderBy `json:"-"`
 
 	// ProjectIDs: project IDs to filter for. The results will be limited to any project with an ID in this array.
-	ProjectIDs *[]string `json:"-"`
+	ProjectIDs []string `json:"-"`
 
 	// ProbeTimeAfter: only keep samples whose probe times are after this time. This boundary is included in the interval.
 	ProbeTimeAfter *time.Time `json:"-"`
@@ -1029,10 +1029,10 @@ type SampleAPIListSamplesRequest struct {
 	ProbeTimeBefore *time.Time `json:"-"`
 
 	// Skus: sKU to filter for. The results will be limited to any sample with an SKU specified in this array.
-	Skus *[]string `json:"-"`
+	Skus []string `json:"-"`
 
 	// ResourceIDs: resource IDs to filter for. The results will be limited to any resource with an ID in this array.
-	ResourceIDs *[]string `json:"-"`
+	ResourceIDs []string `json:"-"`
 
 	// Origins: origins to filter for. The results will be limited to any origin specified in this array.
 	Origins []SampleOrigin `json:"-"`
