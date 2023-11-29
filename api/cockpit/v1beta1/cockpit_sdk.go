@@ -384,25 +384,25 @@ type ContactPoint struct {
 	Email *ContactPointEmail `json:"email,omitempty"`
 }
 
-// Datasource: Datasource.
+// Datasource: Data source.
 type Datasource struct {
-	// ID: ID of the datasource.
+	// ID: ID of the data source.
 	ID string `json:"id"`
 
 	// ProjectID: ID of the Project the Cockpit belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Name: datasource name.
+	// Name: data source name.
 	Name string `json:"name"`
 
-	// URL: datasource URL.
+	// URL: data source URL.
 	URL string `json:"url"`
 
-	// Type: datasource type.
+	// Type: data source type.
 	// Default value: unknown_datasource_type
 	Type DatasourceType `json:"type"`
 
-	// IsManagedByScaleway: specifies that the datasource receives data from Scaleway products and is managed by Scaleway.
+	// IsManagedByScaleway: specifies that the data source receives data from Scaleway products and is managed by Scaleway.
 	IsManagedByScaleway bool `json:"is_managed_by_scaleway"`
 }
 
@@ -510,19 +510,19 @@ type CreateContactPointRequest struct {
 	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
 }
 
-// CreateDatasourceRequest: Request to create a datasource.
+// CreateDatasourceRequest: Request to create a data source.
 type CreateDatasourceRequest struct {
 	// ProjectID: ID of the Project the Cockpit belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Name: datasource name.
+	// Name: data source name.
 	Name string `json:"name"`
 
-	// Type: datasource type.
+	// Type: data source type.
 	// Default value: unknown_datasource_type
 	Type DatasourceType `json:"type"`
 
-	// IsDefault: specifies that the returned output is the default datasource per type.
+	// IsDefault: specifies that the returned output is the default data source per type.
 	IsDefault bool `json:"is_default"`
 }
 
@@ -564,6 +564,12 @@ type DeleteContactPointRequest struct {
 
 	// ContactPoint: contact point to delete.
 	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
+}
+
+// DeleteDatasourceRequest: Request to delete a data source.
+type DeleteDatasourceRequest struct {
+	// DatasourceID: ID of the data source.
+	DatasourceID string `json:"-"`
 }
 
 // DeleteGrafanaUserRequest: Request to delete a Grafana user.
@@ -1073,6 +1079,26 @@ func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.Request
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// DeleteDatasource: Delete the datasource associated with the specified datasource ID.
+func (s *API) DeleteDatasource(req *DeleteDatasourceRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.DatasourceID) == "" {
+		return errors.New("field DatasourceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/cockpit/v1beta1/datasources/" + fmt.Sprint(req.DatasourceID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ListDatasources: Get a list of datasources for the specified Project ID.
