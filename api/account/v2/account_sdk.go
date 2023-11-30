@@ -358,6 +358,66 @@ func (enum *ListSupportPlansRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type OrganizationCorporateIndustry string
+
+const (
+	// Unknown corporate industry.
+	OrganizationCorporateIndustryUnknownCorporateIndustry = OrganizationCorporateIndustry("unknown_corporate_industry")
+	// Consulting & Services.
+	OrganizationCorporateIndustryConsultingServices = OrganizationCorporateIndustry("consulting_services")
+	// Cybersecurity & software.
+	OrganizationCorporateIndustryCybersecuritySoftware = OrganizationCorporateIndustry("cybersecurity_software")
+	// E-commerce & retail.
+	OrganizationCorporateIndustryEcommerceRetail = OrganizationCorporateIndustry("ecommerce_retail")
+	// Education.
+	OrganizationCorporateIndustryEducation = OrganizationCorporateIndustry("education")
+	// Energy.
+	OrganizationCorporateIndustryEnergy = OrganizationCorporateIndustry("energy")
+	// Financial Services & Insurance.
+	OrganizationCorporateIndustryFinancialServicesInsurance = OrganizationCorporateIndustry("financial_services_insurance")
+	// Gaming & Entertainment.
+	OrganizationCorporateIndustryGamingEntertainment = OrganizationCorporateIndustry("gaming_entertainment")
+	// Hospitality & Leisure.
+	OrganizationCorporateIndustryHospitalityLeisure = OrganizationCorporateIndustry("hospitality_leisure")
+	// Lifescience, Healthcare & Pharmaceuticals.
+	OrganizationCorporateIndustryLifescienceHealthcarePharmaceuticals = OrganizationCorporateIndustry("lifescience_healthcare_pharmaceuticals")
+	// Manufacturing.
+	OrganizationCorporateIndustryManufacturing = OrganizationCorporateIndustry("manufacturing")
+	// Media - Press & TV.
+	OrganizationCorporateIndustryMediaPressTv = OrganizationCorporateIndustry("media_press_tv")
+	// Public Sector.
+	OrganizationCorporateIndustryPublicSector = OrganizationCorporateIndustry("public_sector")
+	// Telecommunications.
+	OrganizationCorporateIndustryTelecommunications = OrganizationCorporateIndustry("telecommunications")
+	// Technology.
+	OrganizationCorporateIndustryTechnology = OrganizationCorporateIndustry("technology")
+	// Other.
+	OrganizationCorporateIndustryOther = OrganizationCorporateIndustry("other")
+)
+
+func (enum OrganizationCorporateIndustry) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_corporate_industry"
+	}
+	return string(enum)
+}
+
+func (enum OrganizationCorporateIndustry) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OrganizationCorporateIndustry) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OrganizationCorporateIndustry(OrganizationCorporateIndustry(tmp).String())
+	return nil
+}
+
 type OrganizationCurrency string
 
 const (
@@ -1125,6 +1185,10 @@ type Organization struct {
 
 	// IsStartup: set to true if the organization is identified as a startup.
 	IsStartup bool `json:"is_startup"`
+
+	// CorporateIndustry: corporate industry of the organization.
+	// Default value: unknown_corporate_industry
+	CorporateIndustry OrganizationCorporateIndustry `json:"corporate_industry"`
 }
 
 // OrganizationAPICreateSupportPlanRequest: organization api create support plan request.
