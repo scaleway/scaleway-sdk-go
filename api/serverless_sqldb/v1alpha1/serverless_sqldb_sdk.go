@@ -237,6 +237,9 @@ type Database struct {
 
 	// Started: whether your Serverless SQL Database is running or not.
 	Started bool `json:"started"`
+
+	// EngineMajorVersion: the major version of the underlying database engine.
+	EngineMajorVersion uint32 `json:"engine_major_version"`
 }
 
 // CreateDatabaseRequest: create database request.
