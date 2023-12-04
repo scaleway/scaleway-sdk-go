@@ -42,15 +42,16 @@ var (
 type Arch string
 
 const (
-	ArchX86_64 = Arch("x86_64")
-	ArchArm    = Arch("arm")
-	ArchArm64  = Arch("arm64")
+	ArchUnknownArch = Arch("unknown_arch")
+	ArchX86_64      = Arch("x86_64")
+	ArchArm         = Arch("arm")
+	ArchArm64       = Arch("arm64")
 )
 
 func (enum Arch) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "x86_64"
+		return "unknown_arch"
 	}
 	return string(enum)
 }
@@ -481,7 +482,6 @@ func (enum *SecurityGroupRuleProtocol) UnmarshalJSON(data []byte) error {
 type SecurityGroupState string
 
 const (
-	SecurityGroupStateUnknownState = SecurityGroupState("unknown_state")
 	SecurityGroupStateAvailable    = SecurityGroupState("available")
 	SecurityGroupStateSyncing      = SecurityGroupState("syncing")
 	SecurityGroupStateSyncingError = SecurityGroupState("syncing_error")
@@ -490,7 +490,7 @@ const (
 func (enum SecurityGroupState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return "available"
 	}
 	return string(enum)
 }
@@ -979,7 +979,7 @@ type Bootscript struct {
 	Title string `json:"title"`
 
 	// Arch: bootscript architecture.
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	// Zone: zone in which the bootscript is located.
@@ -1066,7 +1066,7 @@ type Image struct {
 
 	Name string `json:"name"`
 
-	// Arch: default value: x86_64
+	// Arch: default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	CreationDate *time.Time `json:"creation_date"`
@@ -1392,7 +1392,7 @@ type Server struct {
 	StateDetail string `json:"state_detail"`
 
 	// Arch: instance architecture.
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	// PlacementGroup: instance placement group.
@@ -1507,7 +1507,7 @@ type SecurityGroup struct {
 	Stateful bool `json:"stateful"`
 
 	// State: security group state.
-	// Default value: unknown_state
+	// Default value: available
 	State SecurityGroupState `json:"state"`
 
 	// Zone: zone in which the security group is located.
@@ -1720,7 +1720,7 @@ type ServerType struct {
 	RAM uint64 `json:"ram"`
 
 	// Arch: CPU architecture.
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	// Baremetal: true if it is a baremetal Instance.
@@ -1887,7 +1887,7 @@ type CreateImageRequest struct {
 	RootVolume string `json:"root_volume,omitempty"`
 
 	// Arch: architecture of the image.
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch,omitempty"`
 
 	// Deprecated: DefaultBootscript: default bootscript of the image.
@@ -3267,7 +3267,7 @@ type SetImageRequest struct {
 
 	Name string `json:"name"`
 
-	// Arch: default value: x86_64
+	// Arch: default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	CreationDate *time.Time `json:"creation_date,omitempty"`
@@ -3395,7 +3395,7 @@ type UpdateImageRequest struct {
 	Name *string `json:"name,omitempty"`
 
 	// Arch: architecture of the image.
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch,omitempty"`
 
 	// ExtraVolumes: additional snapshots of the image, with extra_volumeKey being the position of the snapshot in the image.
@@ -3493,7 +3493,7 @@ type UpdateSecurityGroupRequest struct {
 
 	// InboundDefaultPolicy: default inbound policy.
 	// Default value: unknown_policy
-	InboundDefaultPolicy *SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
+	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
 
 	// Tags: tags of the security group.
 	Tags *[]string `json:"tags,omitempty"`
@@ -3506,7 +3506,7 @@ type UpdateSecurityGroupRequest struct {
 
 	// OutboundDefaultPolicy: default outbound policy.
 	// Default value: unknown_policy
-	OutboundDefaultPolicy *SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
+	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 
 	// Stateful: true to set the security group as stateful.
 	Stateful *bool `json:"stateful,omitempty"`
@@ -3543,10 +3543,10 @@ type UpdateSecurityGroupRuleRequest struct {
 	// IPRange: range of IP addresses these rules apply to.
 	IPRange *scw.IPNet `json:"ip_range,omitempty"`
 
-	// DestPortFrom: beginning of the range of ports this rule applies to (inclusive).
+	// DestPortFrom: beginning of the range of ports this rule applies to (inclusive). If 0 is provided, unset the parameter.
 	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
 
-	// DestPortTo: end of the range of ports this rule applies to (inclusive).
+	// DestPortTo: end of the range of ports this rule applies to (inclusive). If 0 is provided, unset the parameter.
 	DestPortTo *uint32 `json:"dest_port_to,omitempty"`
 
 	// Position: position of this rule in the security group rules list.
@@ -3843,7 +3843,7 @@ type setServerRequest struct {
 	StateDetail string `json:"state_detail"`
 
 	// Arch: instance architecture (refers to the CPU architecture used for the Instance, e.g. x86_64, arm64).
-	// Default value: x86_64
+	// Default value: unknown_arch
 	Arch Arch `json:"arch"`
 
 	// PlacementGroup: instance placement group.
