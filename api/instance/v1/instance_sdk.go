@@ -355,14 +355,15 @@ func (enum *PrivateNICState) UnmarshalJSON(data []byte) error {
 type SecurityGroupPolicy string
 
 const (
-	SecurityGroupPolicyAccept = SecurityGroupPolicy("accept")
-	SecurityGroupPolicyDrop   = SecurityGroupPolicy("drop")
+	SecurityGroupPolicyUnknownPolicy = SecurityGroupPolicy("unknown_policy")
+	SecurityGroupPolicyAccept        = SecurityGroupPolicy("accept")
+	SecurityGroupPolicyDrop          = SecurityGroupPolicy("drop")
 )
 
 func (enum SecurityGroupPolicy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "accept"
+		return "unknown_policy"
 	}
 	return string(enum)
 }
@@ -385,14 +386,15 @@ func (enum *SecurityGroupPolicy) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleAction string
 
 const (
-	SecurityGroupRuleActionAccept = SecurityGroupRuleAction("accept")
-	SecurityGroupRuleActionDrop   = SecurityGroupRuleAction("drop")
+	SecurityGroupRuleActionUnknownAction = SecurityGroupRuleAction("unknown_action")
+	SecurityGroupRuleActionAccept        = SecurityGroupRuleAction("accept")
+	SecurityGroupRuleActionDrop          = SecurityGroupRuleAction("drop")
 )
 
 func (enum SecurityGroupRuleAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "accept"
+		return "unknown_action"
 	}
 	return string(enum)
 }
@@ -415,14 +417,15 @@ func (enum *SecurityGroupRuleAction) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleDirection string
 
 const (
-	SecurityGroupRuleDirectionInbound  = SecurityGroupRuleDirection("inbound")
-	SecurityGroupRuleDirectionOutbound = SecurityGroupRuleDirection("outbound")
+	SecurityGroupRuleDirectionUnknownDirection = SecurityGroupRuleDirection("unknown_direction")
+	SecurityGroupRuleDirectionInbound          = SecurityGroupRuleDirection("inbound")
+	SecurityGroupRuleDirectionOutbound         = SecurityGroupRuleDirection("outbound")
 )
 
 func (enum SecurityGroupRuleDirection) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "inbound"
+		return "unknown_direction"
 	}
 	return string(enum)
 }
@@ -445,16 +448,17 @@ func (enum *SecurityGroupRuleDirection) UnmarshalJSON(data []byte) error {
 type SecurityGroupRuleProtocol string
 
 const (
-	SecurityGroupRuleProtocolTCP  = SecurityGroupRuleProtocol("TCP")
-	SecurityGroupRuleProtocolUDP  = SecurityGroupRuleProtocol("UDP")
-	SecurityGroupRuleProtocolICMP = SecurityGroupRuleProtocol("ICMP")
-	SecurityGroupRuleProtocolANY  = SecurityGroupRuleProtocol("ANY")
+	SecurityGroupRuleProtocolUnknownProtocol = SecurityGroupRuleProtocol("unknown_protocol")
+	SecurityGroupRuleProtocolTCP             = SecurityGroupRuleProtocol("TCP")
+	SecurityGroupRuleProtocolUDP             = SecurityGroupRuleProtocol("UDP")
+	SecurityGroupRuleProtocolICMP            = SecurityGroupRuleProtocol("ICMP")
+	SecurityGroupRuleProtocolANY             = SecurityGroupRuleProtocol("ANY")
 )
 
 func (enum SecurityGroupRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "TCP"
+		return "unknown_protocol"
 	}
 	return string(enum)
 }
@@ -477,6 +481,7 @@ func (enum *SecurityGroupRuleProtocol) UnmarshalJSON(data []byte) error {
 type SecurityGroupState string
 
 const (
+	SecurityGroupStateUnknownState = SecurityGroupState("unknown_state")
 	SecurityGroupStateAvailable    = SecurityGroupState("available")
 	SecurityGroupStateSyncing      = SecurityGroupState("syncing")
 	SecurityGroupStateSyncingError = SecurityGroupState("syncing_error")
@@ -485,7 +490,7 @@ const (
 func (enum SecurityGroupState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return "unknown_state"
 	}
 	return string(enum)
 }
@@ -1467,11 +1472,11 @@ type SecurityGroup struct {
 	EnableDefaultSecurity bool `json:"enable_default_security"`
 
 	// InboundDefaultPolicy: default inbound policy.
-	// Default value: accept
+	// Default value: unknown_policy
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
 
 	// OutboundDefaultPolicy: default outbound policy.
-	// Default value: accept
+	// Default value: unknown_policy
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 
 	// Organization: security group Organization ID.
@@ -1502,7 +1507,7 @@ type SecurityGroup struct {
 	Stateful bool `json:"stateful"`
 
 	// State: security group state.
-	// Default value: available
+	// Default value: unknown_state
 	State SecurityGroupState `json:"state"`
 
 	// Zone: zone in which the security group is located.
@@ -1513,13 +1518,13 @@ type SecurityGroup struct {
 type SecurityGroupRule struct {
 	ID string `json:"id"`
 
-	// Protocol: default value: TCP
+	// Protocol: default value: unknown_protocol
 	Protocol SecurityGroupRuleProtocol `json:"protocol"`
 
-	// Direction: default value: inbound
+	// Direction: default value: unknown_direction
 	Direction SecurityGroupRuleDirection `json:"direction"`
 
-	// Action: default value: accept
+	// Action: default value: unknown_action
 	Action SecurityGroupRuleAction `json:"action"`
 
 	IPRange scw.IPNet `json:"ip_range"`
@@ -1754,15 +1759,15 @@ type SetSecurityGroupRulesRequestRule struct {
 	ID *string `json:"id"`
 
 	// Action: action to apply when the rule matches a packet.
-	// Default value: accept
+	// Default value: unknown_action
 	Action SecurityGroupRuleAction `json:"action"`
 
 	// Protocol: protocol family this rule applies to.
-	// Default value: TCP
+	// Default value: unknown_protocol
 	Protocol SecurityGroupRuleProtocol `json:"protocol"`
 
 	// Direction: direction the rule applies to.
-	// Default value: inbound
+	// Default value: unknown_direction
 	Direction SecurityGroupRuleDirection `json:"direction"`
 
 	// IPRange: range of IP addresses these rules apply to.
@@ -1789,6 +1794,12 @@ type NullableStringValue struct {
 	Null bool `json:"null,omitempty"`
 
 	Value string `json:"value,omitempty"`
+}
+
+// VolumeImageUpdateTemplate: volume image update template.
+type VolumeImageUpdateTemplate struct {
+	// ID: UUID of the snapshot.
+	ID string `json:"id,omitempty"`
 }
 
 // SecurityGroupTemplate: security group template.
@@ -1820,17 +1831,13 @@ type AttachServerVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// ServerID: UUID of the Instance.
 	ServerID string `json:"-"`
 
-	// VolumeID: UUID of the Volume to attach.
 	VolumeID string `json:"volume_id,omitempty"`
 
-	// VolumeType: type of the volume to attach.
-	// Default value: unknown_volume_type
+	// VolumeType: default value: unknown_volume_type
 	VolumeType AttachServerVolumeRequestVolumeType `json:"volume_type,omitempty"`
 
-	// Boot: force the Instance to boot on this volume.
 	Boot *bool `json:"boot,omitempty"`
 }
 
@@ -1999,11 +2006,11 @@ type CreateSecurityGroupRequest struct {
 	Stateful bool `json:"stateful,omitempty"`
 
 	// InboundDefaultPolicy: default policy for inbound rules.
-	// Default value: accept
+	// Default value: unknown_policy
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
 
 	// OutboundDefaultPolicy: default policy for outbound rules.
-	// Default value: accept
+	// Default value: unknown_policy
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
 
 	// EnableDefaultSecurity: true to block SMTP on IPv4 and IPv6. This feature is read only, please open a support ticket if you need to make it configurable.
@@ -2023,13 +2030,13 @@ type CreateSecurityGroupRuleRequest struct {
 	// SecurityGroupID: UUID of the security group.
 	SecurityGroupID string `json:"-"`
 
-	// Protocol: default value: TCP
+	// Protocol: default value: unknown_protocol
 	Protocol SecurityGroupRuleProtocol `json:"protocol,omitempty"`
 
-	// Direction: default value: inbound
+	// Direction: default value: unknown_direction
 	Direction SecurityGroupRuleDirection `json:"direction,omitempty"`
 
-	// Action: default value: accept
+	// Action: default value: unknown_action
 	Action SecurityGroupRuleAction `json:"action,omitempty"`
 
 	IPRange scw.IPNet `json:"ip_range,omitempty"`
@@ -2296,10 +2303,8 @@ type DetachServerVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// ServerID: UUID of the Instance.
 	ServerID string `json:"-"`
 
-	// VolumeID: UUID of the Volume to detach.
 	VolumeID string `json:"volume_id,omitempty"`
 }
 
@@ -3378,6 +3383,36 @@ type UpdateIPResponse struct {
 	IP *IP `json:"ip"`
 }
 
+// UpdateImageRequest: update image request.
+type UpdateImageRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ImageID: UUID of the image.
+	ImageID string `json:"-"`
+
+	// Name: name of the image.
+	Name *string `json:"name,omitempty"`
+
+	// Arch: architecture of the image.
+	// Default value: x86_64
+	Arch Arch `json:"arch,omitempty"`
+
+	// ExtraVolumes: additional snapshots of the image, with extra_volumeKey being the position of the snapshot in the image.
+	ExtraVolumes map[string]*VolumeImageUpdateTemplate `json:"extra_volumes,omitempty"`
+
+	// Tags: tags of the image.
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Public: true to set the image as public.
+	Public *bool `json:"public,omitempty"`
+}
+
+// UpdateImageResponse: update image response.
+type UpdateImageResponse struct {
+	Image *Image `json:"image"`
+}
+
 // UpdatePlacementGroupRequest: update placement group request.
 type UpdatePlacementGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -3439,6 +3474,90 @@ type UpdatePrivateNICRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
+// UpdateSecurityGroupRequest: update security group request.
+type UpdateSecurityGroupRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// SecurityGroupID: UUID of the security group.
+	SecurityGroupID string `json:"-"`
+
+	// Name: name of the security group.
+	Name *string `json:"name,omitempty"`
+
+	// Description: description of the security group.
+	Description *string `json:"description,omitempty"`
+
+	// EnableDefaultSecurity: true to block SMTP on IPv4 and IPv6. This feature is read only, please open a support ticket if you need to make it configurable.
+	EnableDefaultSecurity *bool `json:"enable_default_security,omitempty"`
+
+	// InboundDefaultPolicy: default inbound policy.
+	// Default value: unknown_policy
+	InboundDefaultPolicy *SecurityGroupPolicy `json:"inbound_default_policy,omitempty"`
+
+	// Tags: tags of the security group.
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Deprecated: OrganizationDefault: please use project_default instead.
+	OrganizationDefault *bool `json:"organization_default,omitempty"`
+
+	// ProjectDefault: true use this security group for future Instances created in this project.
+	ProjectDefault *bool `json:"project_default,omitempty"`
+
+	// OutboundDefaultPolicy: default outbound policy.
+	// Default value: unknown_policy
+	OutboundDefaultPolicy *SecurityGroupPolicy `json:"outbound_default_policy,omitempty"`
+
+	// Stateful: true to set the security group as stateful.
+	Stateful *bool `json:"stateful,omitempty"`
+}
+
+// UpdateSecurityGroupResponse: update security group response.
+type UpdateSecurityGroupResponse struct {
+	SecurityGroup *SecurityGroup `json:"security_group"`
+}
+
+// UpdateSecurityGroupRuleRequest: update security group rule request.
+type UpdateSecurityGroupRuleRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// SecurityGroupID: UUID of the security group.
+	SecurityGroupID string `json:"-"`
+
+	// SecurityGroupRuleID: UUID of the rule.
+	SecurityGroupRuleID string `json:"-"`
+
+	// Protocol: protocol family this rule applies to.
+	// Default value: unknown_protocol
+	Protocol SecurityGroupRuleProtocol `json:"protocol,omitempty"`
+
+	// Direction: direction the rule applies to.
+	// Default value: unknown_direction
+	Direction SecurityGroupRuleDirection `json:"direction,omitempty"`
+
+	// Action: action to apply when the rule matches a packet.
+	// Default value: unknown_action
+	Action SecurityGroupRuleAction `json:"action,omitempty"`
+
+	// IPRange: range of IP addresses these rules apply to.
+	IPRange *scw.IPNet `json:"ip_range,omitempty"`
+
+	// DestPortFrom: beginning of the range of ports this rule applies to (inclusive).
+	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
+
+	// DestPortTo: end of the range of ports this rule applies to (inclusive).
+	DestPortTo *uint32 `json:"dest_port_to,omitempty"`
+
+	// Position: position of this rule in the security group rules list.
+	Position *uint32 `json:"position,omitempty"`
+}
+
+// UpdateSecurityGroupRuleResponse: update security group rule response.
+type UpdateSecurityGroupRuleResponse struct {
+	Rule *SecurityGroupRule `json:"rule"`
+}
+
 // UpdateServerRequest: update server request.
 type UpdateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -3493,6 +3612,26 @@ type UpdateServerResponse struct {
 	Server *Server `json:"server"`
 }
 
+// UpdateSnapshotRequest: update snapshot request.
+type UpdateSnapshotRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// SnapshotID: UUID of the snapshot.
+	SnapshotID string `json:"-"`
+
+	// Name: name of the snapshot.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: tags of the snapshot.
+	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateSnapshotResponse: update snapshot response.
+type UpdateSnapshotResponse struct {
+	Snapshot *Snapshot `json:"snapshot"`
+}
+
 // UpdateVolumeRequest: update volume request.
 type UpdateVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -3526,7 +3665,7 @@ type setSecurityGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// ID: ID of the security group (will be ignored).
+	// ID: UUID of the security group.
 	ID string `json:"-"`
 
 	// Name: name of the security group.
@@ -3548,11 +3687,11 @@ type setSecurityGroupRequest struct {
 	EnableDefaultSecurity bool `json:"enable_default_security"`
 
 	// InboundDefaultPolicy: default inbound policy.
-	// Default value: accept
+	// Default value: unknown_policy
 	InboundDefaultPolicy SecurityGroupPolicy `json:"inbound_default_policy"`
 
 	// OutboundDefaultPolicy: default outbound policy.
-	// Default value: accept
+	// Default value: unknown_policy
 	OutboundDefaultPolicy SecurityGroupPolicy `json:"outbound_default_policy"`
 
 	// Organization: security groups Organization ID.
@@ -3590,13 +3729,13 @@ type setSecurityGroupRuleRequest struct {
 
 	ID string `json:"id"`
 
-	// Protocol: default value: TCP
+	// Protocol: default value: unknown_protocol
 	Protocol SecurityGroupRuleProtocol `json:"protocol"`
 
-	// Direction: default value: inbound
+	// Direction: default value: unknown_direction
 	Direction SecurityGroupRuleDirection `json:"direction"`
 
-	// Action: default value: accept
+	// Action: default value: unknown_action
 	Action SecurityGroupRuleAction `json:"action"`
 
 	IPRange scw.IPNet `json:"ip_range"`
@@ -4250,7 +4389,7 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 	return nil
 }
 
-// AttachServerVolume: Attach a volume to a server.
+// AttachServerVolume:
 func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.RequestOption) (*AttachServerVolumeResponse, error) {
 	var err error
 
@@ -4286,7 +4425,7 @@ func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// DetachServerVolume: Detach a volume from a server.
+// DetachServerVolume:
 func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.RequestOption) (*DetachServerVolumeResponse, error) {
 	var err error
 
@@ -4483,6 +4622,42 @@ func (s *API) setImage(req *SetImageRequest, opts ...scw.RequestOption) (*setIma
 	return &resp, nil
 }
 
+// UpdateImage: Update the properties of an image.
+func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*UpdateImageResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ImageID) == "" {
+		return nil, errors.New("field ImageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/images/" + fmt.Sprint(req.ImageID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateImageResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // DeleteImage: Delete the image with the specified ID.
 func (s *API) DeleteImage(req *DeleteImageRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -4626,7 +4801,7 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// setSnapshot: Replace all snapshot properties with a snapshot message.
+// setSnapshot: Replace all the properties of a snapshot.
 func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*setSnapshotResponse, error) {
 	var err error
 
@@ -4664,6 +4839,42 @@ func (s *API) setSnapshot(req *setSnapshotRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp setSnapshotResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateSnapshot: Update the properties of a snapshot.
+func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOption) (*UpdateSnapshotResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateSnapshotResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -5109,6 +5320,42 @@ func (s *API) setSecurityGroup(req *setSecurityGroupRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+// UpdateSecurityGroup: Update the properties of security group.
+func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.RequestOption) (*UpdateSecurityGroupResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateSecurityGroupResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListDefaultSecurityGroupRules: Lists the default rules applied to all the security groups.
 func (s *API) ListDefaultSecurityGroupRules(req *ListDefaultSecurityGroupRulesRequest, opts ...scw.RequestOption) (*ListSecurityGroupRulesResponse, error) {
 	var err error
@@ -5312,7 +5559,7 @@ func (s *API) GetSecurityGroupRule(req *GetSecurityGroupRuleRequest, opts ...scw
 	return &resp, nil
 }
 
-// setSecurityGroupRule: Update the rule of a specified security group ID.
+// setSecurityGroupRule: Replace all the properties of a rule from a specified security group.
 func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw.RequestOption) (*setSecurityGroupRuleResponse, error) {
 	var err error
 
@@ -5344,6 +5591,46 @@ func (s *API) setSecurityGroupRule(req *setSecurityGroupRuleRequest, opts ...scw
 	}
 
 	var resp setSecurityGroupRuleResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateSecurityGroupRule: Update the properties of a rule from a specified security group.
+func (s *API) UpdateSecurityGroupRule(req *UpdateSecurityGroupRuleRequest, opts ...scw.RequestOption) (*UpdateSecurityGroupRuleResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupID) == "" {
+		return nil, errors.New("field SecurityGroupID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecurityGroupRuleID) == "" {
+		return nil, errors.New("field SecurityGroupRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/security_groups/" + fmt.Sprint(req.SecurityGroupID) + "/rules/" + fmt.Sprint(req.SecurityGroupRuleID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateSecurityGroupRuleResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
