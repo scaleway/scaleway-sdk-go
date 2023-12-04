@@ -85,6 +85,7 @@ const (
 	ResourceTypeVpcGateway          = ResourceType("vpc_gateway")
 	ResourceTypeVpcGatewayNetwork   = ResourceType("vpc_gateway_network")
 	ResourceTypeK8sNode             = ResourceType("k8s_node")
+	ResourceTypeK8sCluster          = ResourceType("k8s_cluster")
 	ResourceTypeRdbInstance         = ResourceType("rdb_instance")
 	ResourceTypeRedisCluster        = ResourceType("redis_cluster")
 	ResourceTypeBaremetalServer     = ResourceType("baremetal_server")

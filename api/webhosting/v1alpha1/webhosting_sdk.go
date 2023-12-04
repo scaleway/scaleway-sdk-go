@@ -479,6 +479,15 @@ type Hosting struct {
 	// ControlPanelName: name of the control panel.
 	ControlPanelName string `json:"control_panel_name"`
 
+	// PlatformGroup: group of the hosting's host server/platform.
+	PlatformGroup string `json:"platform_group"`
+
+	// IPv4: iPv4 address of the hosting's host server.
+	IPv4 string `json:"ipv4"`
+
+	// IPv6: iPv6 address of the hosting's host server.
+	IPv6 string `json:"ipv6"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -693,6 +702,9 @@ type ListOffersRequest struct {
 
 	// HostingID: ID of a Web Hosting plan, to check compatibility with returned offers (in case of wanting to update the plan).
 	HostingID *string `json:"-"`
+
+	// ControlPanels: name of the control panel to filter for.
+	ControlPanels []string `json:"-"`
 }
 
 // ListOffersResponse: list offers response.
@@ -1006,6 +1018,7 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "without_options", req.WithoutOptions)
 	parameter.AddToQuery(query, "only_options", req.OnlyOptions)
 	parameter.AddToQuery(query, "hosting_id", req.HostingID)
+	parameter.AddToQuery(query, "control_panels", req.ControlPanels)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
