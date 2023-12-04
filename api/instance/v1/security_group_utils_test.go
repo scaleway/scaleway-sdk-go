@@ -36,8 +36,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		Name:                  scw.StringPtr("new_name"),
 		Description:           scw.StringPtr("new_description"),
 		Stateful:              scw.BoolPtr(false),
-		InboundDefaultPolicy:  &drop,
-		OutboundDefaultPolicy: &accept,
+		InboundDefaultPolicy:  drop,
+		OutboundDefaultPolicy: accept,
 		// Keep false here, switch it to true is too dangerous for the one who update the test cassette.
 		ProjectDefault: scw.BoolPtr(false),
 		Tags:           scw.StringsPtr([]string{"foo", "bar"}),
