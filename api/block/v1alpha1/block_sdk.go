@@ -345,10 +345,10 @@ type Reference struct {
 	// ID: UUID of the reference.
 	ID string `json:"id"`
 
-	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
+	// ProductResourceType: type of resource to which the reference is associated.
 	ProductResourceType string `json:"product_resource_type"`
 
-	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
+	// ProductResourceID: UUID of the product resource it refers to (according to the product_resource_type).
 	ProductResourceID string `json:"product_resource_id"`
 
 	// CreatedAt: creation date of the reference.
