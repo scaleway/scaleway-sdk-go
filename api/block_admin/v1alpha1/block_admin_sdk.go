@@ -402,6 +402,10 @@ type ListSnapshotsRequest struct {
 	OrganizationID *string `json:"-"`
 
 	IncludeDeleted bool `json:"-"`
+
+	// Status: filter snapshots by their status.
+	// Default value: unknown_status
+	Status block_v1alpha1.SnapshotStatus `json:"-"`
 }
 
 // ListSnapshotsResponse: list snapshots response.
@@ -496,6 +500,10 @@ type ListVolumesRequest struct {
 	OrganizationID *string `json:"-"`
 
 	IncludeDeleted bool `json:"-"`
+
+	// Status: filter the volumes returned by their status.
+	// Default value: unknown_status
+	Status block_v1alpha1.VolumeStatus `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -730,6 +738,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
+	parameter.AddToQuery(query, "status", req.Status)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -833,6 +842,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
+	parameter.AddToQuery(query, "status", req.Status)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
