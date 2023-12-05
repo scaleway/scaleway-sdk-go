@@ -91,9 +91,10 @@ const (
 	// Serverless Containers.
 	CreateProductAPIKeyRequestProductNameServerlessContainers = CreateProductAPIKeyRequestProductName("serverless_containers")
 	// VPC.
-	CreateProductAPIKeyRequestProductNameVpc  = CreateProductAPIKeyRequestProductName("vpc")
-	CreateProductAPIKeyRequestProductNameEdge = CreateProductAPIKeyRequestProductName("edge")
-	CreateProductAPIKeyRequestProductNameSbs  = CreateProductAPIKeyRequestProductName("sbs")
+	CreateProductAPIKeyRequestProductNameVpc        = CreateProductAPIKeyRequestProductName("vpc")
+	CreateProductAPIKeyRequestProductNameEdge       = CreateProductAPIKeyRequestProductName("edge")
+	CreateProductAPIKeyRequestProductNameSbs        = CreateProductAPIKeyRequestProductName("sbs")
+	CreateProductAPIKeyRequestProductNameWebhosting = CreateProductAPIKeyRequestProductName("webhosting")
 )
 
 func (enum CreateProductAPIKeyRequestProductName) String() string {
