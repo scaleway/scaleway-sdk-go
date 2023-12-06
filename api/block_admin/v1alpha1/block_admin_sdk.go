@@ -208,6 +208,12 @@ type SnapshotSummary struct {
 
 	CephName *string `json:"ceph_name"`
 
+	// Namespace: ceph namespace of the volume.
+	Namespace string `json:"namespace"`
+
+	// Pool: ceph pool of the volume.
+	Pool string `json:"pool"`
+
 	UsedSize *scw.Size `json:"used_size"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
@@ -267,6 +273,10 @@ type VolumeSummary struct {
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
+
+	Namespace string `json:"namespace"`
+
+	Pool string `json:"pool"`
 }
 
 // Reference: reference.
@@ -574,6 +584,12 @@ type Snapshot struct {
 
 	CephName *string `json:"ceph_name"`
 
+	// Namespace: ceph namespace of the volume.
+	Namespace string `json:"namespace"`
+
+	// Pool: ceph pool of the volume.
+	Pool string `json:"pool"`
+
 	OrganizationID string `json:"organization_id"`
 
 	PurgedAt *time.Time `json:"purged_at"`
@@ -626,6 +642,12 @@ type Volume struct {
 	CephName *string `json:"ceph_name"`
 
 	UsedSize *scw.Size `json:"used_size"`
+
+	// Namespace: ceph namespace of the volume.
+	Namespace string `json:"namespace"`
+
+	// Pool: ceph pool of the volume.
+	Pool string `json:"pool"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
 
