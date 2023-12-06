@@ -334,12 +334,6 @@ type GetServerRequest struct {
 	ServerID string `json:"-"`
 }
 
-// GetServiceInfoRequest: get service info request.
-type GetServiceInfoRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-}
-
 // InstallMacRequest: install mac request.
 type InstallMacRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -522,33 +516,6 @@ func NewAPI(client *scw.Client) *API {
 }
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar3}
-}
-
-// GetServiceInfo:
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/apple-silicon-admin/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // TriggerAgentUpdate:

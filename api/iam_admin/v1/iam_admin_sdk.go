@@ -2419,24 +2419,6 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetServiceInfo:
-func (s *API) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/iam-admin/v1",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // CreateCustomerLevel:
 func (s *API) CreateCustomerLevel(req *CreateCustomerLevelRequest, opts ...scw.RequestOption) (*CustomerLevel, error) {
 	var err error

@@ -565,24 +565,6 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetServiceInfo:
-func (s *API) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/payment-admin/v2alpha1",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // SendMagicCode:
 func (s *API) SendMagicCode(req *SendMagicCodeRequest, opts ...scw.RequestOption) (*MagicCode, error) {
 	var err error

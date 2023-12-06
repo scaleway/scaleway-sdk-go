@@ -1613,24 +1613,6 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetServiceInfo:
-func (s *API) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/domain-admin/v2beta1",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // ListDomains: Returns a list of all domains.
 // You can filter the list by:
 //   - Domain name (domain)

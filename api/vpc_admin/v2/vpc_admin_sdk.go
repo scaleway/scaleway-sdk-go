@@ -49,12 +49,6 @@ type GetPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
-// GetServiceInfoRequest: get service info request.
-type GetServiceInfoRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-}
-
 // PrivateNetwork: private network.
 type PrivateNetwork struct {
 	PrivateNetwork *vpc_v2.PrivateNetwork `json:"private_network"`
@@ -74,33 +68,6 @@ func NewAPI(client *scw.Client) *API {
 	return &API{
 		client: client,
 	}
-}
-
-// GetServiceInfo:
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/vpc-admin/v2/regions/" + fmt.Sprint(req.Region) + "",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // GetPrivateNetwork: Retrieve information about an existing Private Network, specified by its Private Network ID. Its full details are returned in the response object.

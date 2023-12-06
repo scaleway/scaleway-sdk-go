@@ -705,24 +705,6 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetServiceInfo:
-func (s *API) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/payment-admin/v1",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // ListAccountingLines: List accounting lines.
 func (s *API) ListAccountingLines(req *ListAccountingLinesRequest, opts ...scw.RequestOption) (*ListAccountingLinesResponse, error) {
 	var err error

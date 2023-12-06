@@ -652,12 +652,6 @@ type GetEmailRequest struct {
 	EmailID string `json:"-"`
 }
 
-// GetServiceInfoRequest: get service info request.
-type GetServiceInfoRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-}
-
 // GetStatisticsRequest: get statistics request.
 type GetStatisticsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -856,33 +850,6 @@ func NewAPI(client *scw.Client) *API {
 }
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
-}
-
-// GetServiceInfo:
-func (s *API) GetServiceInfo(req *GetServiceInfoRequest, opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/transactional-email-admin/v1alpha1/regions/" + fmt.Sprint(req.Region) + "",
-	}
-
-	var resp scw.ServiceInfo
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // GetEmail: Get information about an email.
