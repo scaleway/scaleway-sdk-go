@@ -128,18 +128,6 @@ type GetImageResponse struct {
 	Image *Image `json:"image"`
 }
 
-// GetVersionRequest: get version request.
-type GetVersionRequest struct {
-	ImageID string `json:"-"`
-
-	VersionID string `json:"-"`
-}
-
-// GetVersionResponse: get version response.
-type GetVersionResponse struct {
-	Version *Version `json:"version"`
-}
-
 // ListImagesRequest: list images request.
 type ListImagesRequest struct {
 	// PerPage: a positive integer lower or equal to 100 to select the number of items to display.
@@ -173,37 +161,6 @@ func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Images = append(r.Images, results.Images...)
 	r.TotalCount += uint32(len(results.Images))
 	return uint32(len(results.Images)), nil
-}
-
-// ListVersionsRequest: list versions request.
-type ListVersionsRequest struct {
-	ImageID string `json:"-"`
-}
-
-// ListVersionsResponse: list versions response.
-type ListVersionsResponse struct {
-	Versions []*Version `json:"versions"`
-
-	TotalCount uint32 `json:"total_count"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListVersionsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListVersionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListVersionsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Versions = append(r.Versions, results.Versions...)
-	r.TotalCount += uint32(len(results.Versions))
-	return uint32(len(results.Versions)), nil
 }
 
 // Marketplace API.
@@ -255,54 +212,6 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*GetIma
 	}
 
 	var resp GetImageResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ListVersions:
-func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
-	var err error
-
-	if fmt.Sprint(req.ImageID) == "" {
-		return nil, errors.New("field ImageID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "/versions",
-	}
-
-	var resp ListVersionsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// GetVersion:
-func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*GetVersionResponse, error) {
-	var err error
-
-	if fmt.Sprint(req.ImageID) == "" {
-		return nil, errors.New("field ImageID cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.VersionID) == "" {
-		return nil, errors.New("field VersionID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/marketplace/v1/images/" + fmt.Sprint(req.ImageID) + "/versions/" + fmt.Sprint(req.VersionID) + "",
-	}
-
-	var resp GetVersionResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
