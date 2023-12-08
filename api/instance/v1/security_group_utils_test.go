@@ -36,8 +36,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 		Name:                  scw.StringPtr("new_name"),
 		Description:           scw.StringPtr("new_description"),
 		Stateful:              scw.BoolPtr(false),
-		InboundDefaultPolicy:  &drop,
-		OutboundDefaultPolicy: &accept,
+		InboundDefaultPolicy:  drop,
+		OutboundDefaultPolicy: accept,
 		// Keep false here, switch it to true is too dangerous for the one who update the test cassette.
 		ProjectDefault: scw.BoolPtr(false),
 		Tags:           scw.StringsPtr([]string{"foo", "bar"}),
@@ -103,19 +103,16 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		group, rule, cleanUp := bootstrap(t)
 		defer cleanUp()
 
-		action := SecurityGroupRuleActionDrop
-		protocol := SecurityGroupRuleProtocolUDP
-		direction := SecurityGroupRuleDirectionOutbound
 		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
-			Action:              &action,
+			Action:              SecurityGroupRuleActionDrop,
 			IPRange:             &scw.IPNet{IPNet: *ipNet},
 			DestPortFrom:        scw.Uint32Ptr(1),
 			DestPortTo:          scw.Uint32Ptr(2048),
-			Protocol:            &protocol,
-			Direction:           &direction,
+			Protocol:            SecurityGroupRuleProtocolUDP,
+			Direction:           SecurityGroupRuleDirectionOutbound,
 		})
 
 		testhelpers.AssertNoError(t, err)
@@ -131,20 +128,16 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		group, rule, cleanUp := bootstrap(t)
 		defer cleanUp()
 
-		action := SecurityGroupRuleActionDrop
-		protocol := SecurityGroupRuleProtocolUDP
-		direction := SecurityGroupRuleDirectionOutbound
-
 		_, ipNet, _ := net.ParseCIDR("1.1.1.1/32")
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
-			Action:              &action,
+			Action:              SecurityGroupRuleActionDrop,
 			IPRange:             &scw.IPNet{IPNet: *ipNet},
 			DestPortFrom:        scw.Uint32Ptr(22),
 			DestPortTo:          scw.Uint32Ptr(22),
-			Protocol:            &protocol,
-			Direction:           &direction,
+			Protocol:            SecurityGroupRuleProtocolUDP,
+			Direction:           SecurityGroupRuleDirectionOutbound,
 		})
 
 		testhelpers.AssertNoError(t, err)
@@ -160,12 +153,10 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		group, rule, cleanUp := bootstrap(t)
 		defer cleanUp()
 
-		protocol := SecurityGroupRuleProtocolICMP
-
 		updateResponse, err := instanceAPI.UpdateSecurityGroupRule(&UpdateSecurityGroupRuleRequest{
 			SecurityGroupID:     group.ID,
 			SecurityGroupRuleID: rule.ID,
-			Protocol:            &protocol,
+			Protocol:            SecurityGroupRuleProtocolICMP,
 		})
 
 		testhelpers.AssertNoError(t, err)
