@@ -177,6 +177,9 @@ type DatabaseBackup struct {
 	// Default value: unknown_status
 	Status DatabaseBackupStatus `json:"status"`
 
+	// OrganizationID: the ID of your Scaleway organization.
+	OrganizationID string `json:"organization_id"`
+
 	// ProjectID: UUID of the Scaleway project.
 	ProjectID string `json:"project_id"`
 
@@ -217,6 +220,9 @@ type Database struct {
 	// Endpoint: endpoint of the database.
 	Endpoint string `json:"endpoint"`
 
+	// OrganizationID: the ID of your Scaleway organization.
+	OrganizationID string `json:"organization_id"`
+
 	// ProjectID: project ID the database belongs to.
 	ProjectID string `json:"project_id"`
 
@@ -246,9 +252,6 @@ type Database struct {
 type CreateDatabaseRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
-	// OrganizationID: the ID of your Scaleway organization.
-	OrganizationID string `json:"organization_id"`
 
 	// ProjectID: the ID of your Scaleway project.
 	ProjectID string `json:"project_id"`
@@ -307,11 +310,8 @@ type ListDatabaseBackupsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: UUID of the Scaleway project.
-	ProjectID *string `json:"-"`
-
 	// DatabaseID: filter by the UUID of the Serverless SQL Database.
-	DatabaseID *string `json:"-"`
+	DatabaseID string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -357,11 +357,8 @@ type ListDatabasesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// OrganizationID: UUID of the Scaleway Organization.
-	OrganizationID *string `json:"-"`
-
 	// ProjectID: UUID of the Scaleway project.
-	ProjectID *string `json:"-"`
+	ProjectID string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -454,11 +451,6 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
-	}
-
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
 	}
 
 	if req.ProjectID == "" {
@@ -560,13 +552,17 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 		req.Region = defaultRegion
 	}
 
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
 		req.PageSize = &defaultPageSize
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -710,7 +706,6 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "database_id", req.DatabaseID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
