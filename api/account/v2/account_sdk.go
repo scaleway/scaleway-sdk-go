@@ -561,6 +561,8 @@ const (
 	OrganizationWarningReasonTrustedLevelSecurityCheck = OrganizationWarningReason("trusted_level_security_check")
 	// Online invoice payment failure.
 	OrganizationWarningReasonOnlineInvoicePaymentFailure = OrganizationWarningReason("online_invoice_payment_failure")
+	// Validate email address.
+	OrganizationWarningReasonValidateEmail = OrganizationWarningReason("validate_email")
 )
 
 func (enum OrganizationWarningReason) String() string {
