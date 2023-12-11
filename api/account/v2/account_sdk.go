@@ -1293,30 +1293,6 @@ type OrganizationAPIUpdateOrganizationRequest struct {
 	MfaEnforced *bool `json:"mfa_enforced,omitempty"`
 }
 
-// PhoneValidation: phone validation.
-type PhoneValidation struct {
-	// ID: the ID of the phone validation.
-	ID string `json:"id"`
-}
-
-// PhoneValidationAPISendPhoneValidationRequest: phone validation api send phone validation request.
-type PhoneValidationAPISendPhoneValidationRequest struct {
-	// UserID: the ID of the user.
-	UserID string `json:"user_id"`
-
-	// PhoneNumber: the phone number to validate.
-	PhoneNumber string `json:"phone_number"`
-}
-
-// PhoneValidationAPIValidatePhoneValidationRequest: phone validation api validate phone validation request.
-type PhoneValidationAPIValidatePhoneValidationRequest struct {
-	// PhoneValidationID: the ID of the phone validation.
-	PhoneValidationID string `json:"-"`
-
-	// Code: the code to validate the phone numbers.
-	Code string `json:"code"`
-}
-
 // UnauthenticatedOrganizationAPIValidateAddressUpdateRequest: unauthenticated organization api validate address update request.
 type UnauthenticatedOrganizationAPIValidateAddressUpdateRequest struct {
 	// OrganizationID: ID of the organization.
@@ -1999,66 +1975,6 @@ func (s *OrganizationAPI) SendMFAEnableReminderEmail(req *OrganizationAPISendMFA
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/account/v2/organizations/" + fmt.Sprint(req.OrganizationID) + "/send-mfa-enable-reminder-email",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// This API allows you to validate phone numbers.
-type PhoneValidationAPI struct {
-	client *scw.Client
-}
-
-// NewPhoneValidationAPI returns a PhoneValidationAPI object from a Scaleway client.
-func NewPhoneValidationAPI(client *scw.Client) *PhoneValidationAPI {
-	return &PhoneValidationAPI{
-		client: client,
-	}
-}
-
-// SendPhoneValidation: Send Phone Validation.
-func (s *PhoneValidationAPI) SendPhoneValidation(req *PhoneValidationAPISendPhoneValidationRequest, opts ...scw.RequestOption) (*PhoneValidation, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account/v2/phone-validations",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp PhoneValidation
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ValidatePhoneValidation: Validate Phone Number.
-func (s *PhoneValidationAPI) ValidatePhoneValidation(req *PhoneValidationAPIValidatePhoneValidationRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.PhoneValidationID) == "" {
-		return errors.New("field PhoneValidationID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account/v2/phone-validations/" + fmt.Sprint(req.PhoneValidationID) + "/validate",
 	}
 
 	err = scwReq.SetBody(req)

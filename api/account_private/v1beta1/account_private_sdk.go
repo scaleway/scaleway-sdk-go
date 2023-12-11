@@ -329,13 +329,6 @@ type ConsoleAPIRemoveUserFromOrganizationRequest struct {
 	Email string `json:"-"`
 }
 
-// ConsoleAPISendPhoneValidationRequest: console api send phone validation request.
-type ConsoleAPISendPhoneValidationRequest struct {
-	UserID string `json:"user_id"`
-
-	PhoneNumber string `json:"phone_number"`
-}
-
 // ConsoleAPISendTOSRequest: console api send tos request.
 type ConsoleAPISendTOSRequest struct {
 	OrganizationID string `json:"-"`
@@ -352,13 +345,6 @@ type ConsoleAPIUpdateOrganizationUserRequest struct {
 	// Role: new role.
 	// Default value: unknown
 	Role OrganizationUserRole `json:"role"`
-}
-
-// ConsoleAPIValidatePhoneValidationRequest: console api validate phone validation request.
-type ConsoleAPIValidatePhoneValidationRequest struct {
-	PhoneValidationID string `json:"-"`
-
-	Code string `json:"code"`
 }
 
 // KYCApiListIdentityVerificationsRequest: kyc api list identity verifications request.
@@ -410,11 +396,6 @@ func (r *ListIdentityVerificationsResponse) UnsafeAppend(res interface{}) (uint3
 // ListOrganizationUsersResponse: list organization users response.
 type ListOrganizationUsersResponse struct {
 	OrganizationUsers []*OrganizationUser `json:"organization_users"`
-}
-
-// PhoneValidation: phone validation.
-type PhoneValidation struct {
-	ID string `json:"id"`
 }
 
 // RemoveUserFromOrganizationsResponse: remove user from organizations response.
@@ -611,54 +592,6 @@ func (s *ConsoleAPI) CheckPermissions(req *ConsoleAPICheckPermissionsRequest, op
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// SendPhoneValidation:
-func (s *ConsoleAPI) SendPhoneValidation(req *ConsoleAPISendPhoneValidationRequest, opts ...scw.RequestOption) (*PhoneValidation, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account-private/v1beta1/phone-validations",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp PhoneValidation
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ValidatePhoneValidation:
-func (s *ConsoleAPI) ValidatePhoneValidation(req *ConsoleAPIValidatePhoneValidationRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.PhoneValidationID) == "" {
-		return errors.New("field PhoneValidationID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account-private/v1beta1/phone-validations/" + fmt.Sprint(req.PhoneValidationID) + "/validate",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // Account Private KYC API.

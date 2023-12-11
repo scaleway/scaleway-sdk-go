@@ -270,38 +270,6 @@ func (enum *ListOrganizationsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListPhoneValidationsRequestOrderBy string
-
-const (
-	// Sent date ascending.
-	ListPhoneValidationsRequestOrderBySentAtAsc = ListPhoneValidationsRequestOrderBy("sent_at_asc")
-	// Sent date descending.
-	ListPhoneValidationsRequestOrderBySentAtDesc = ListPhoneValidationsRequestOrderBy("sent_at_desc")
-)
-
-func (enum ListPhoneValidationsRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "sent_at_asc"
-	}
-	return string(enum)
-}
-
-func (enum ListPhoneValidationsRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListPhoneValidationsRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListPhoneValidationsRequestOrderBy(ListPhoneValidationsRequestOrderBy(tmp).String())
-	return nil
-}
-
 type ListProjectsRequestOrderBy string
 
 const (
@@ -1415,21 +1383,6 @@ type Organization struct {
 	VatNumber string `json:"vat_number"`
 }
 
-// PhoneValidation: phone validation.
-type PhoneValidation struct {
-	ID string `json:"id"`
-
-	PhoneNumber string `json:"phone_number"`
-
-	Code string `json:"code"`
-
-	CarrierType string `json:"carrier_type"`
-
-	SentAt *time.Time `json:"sent_at"`
-
-	ValidatedAt *time.Time `json:"validated_at"`
-}
-
 // Project: project.
 type Project struct {
 	ID string `json:"id"`
@@ -1962,44 +1915,6 @@ func (r *ListOrganizationsResponse) UnsafeAppend(res interface{}) (uint32, error
 	return uint32(len(results.Organizations)), nil
 }
 
-// ListPhoneValidationsRequest: list phone validations request.
-type ListPhoneValidationsRequest struct {
-	UserID string `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: sent_at_asc
-	OrderBy ListPhoneValidationsRequestOrderBy `json:"-"`
-}
-
-// ListPhoneValidationsResponse: list phone validations response.
-type ListPhoneValidationsResponse struct {
-	TotalCount uint32 `json:"total_count"`
-
-	PhoneValidations []*PhoneValidation `json:"phone_validations"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListPhoneValidationsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListPhoneValidationsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListPhoneValidationsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.PhoneValidations = append(r.PhoneValidations, results.PhoneValidations...)
-	r.TotalCount += uint32(len(results.PhoneValidations))
-	return uint32(len(results.PhoneValidations)), nil
-}
-
 // ListProjectsRequest: list projects request.
 type ListProjectsRequest struct {
 	// UpdatedAfter: return only the projects updated after this time.
@@ -2492,11 +2407,6 @@ type UpdateOrganizationRequest struct {
 
 	// ActiveTamNote: note of the last contact.
 	ActiveTamNote *string `json:"active_tam_note,omitempty"`
-}
-
-// ValidatePhoneValidationRequest: validate phone validation request.
-type ValidatePhoneValidationRequest struct {
-	PhoneValidationID string `json:"-"`
 }
 
 // Account Admin API.
@@ -3035,61 +2945,6 @@ func (s *API) SendTOSEmail(req *SendTOSEmailRequest, opts ...scw.RequestOption) 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/account-admin/v2/organizations/" + fmt.Sprint(req.OrganizationID) + "/send-tos-email",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// ListPhoneValidations:
-func (s *API) ListPhoneValidations(req *ListPhoneValidationsRequest, opts ...scw.RequestOption) (*ListPhoneValidationsResponse, error) {
-	var err error
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "user_id", req.UserID)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/account-admin/v2/phone-validations",
-		Query:  query,
-	}
-
-	var resp ListPhoneValidationsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// ValidatePhoneValidation:
-func (s *API) ValidatePhoneValidation(req *ValidatePhoneValidationRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if fmt.Sprint(req.PhoneValidationID) == "" {
-		return errors.New("field PhoneValidationID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account-admin/v2/phone-validations/" + fmt.Sprint(req.PhoneValidationID) + "/validate",
 	}
 
 	err = scwReq.SetBody(req)
