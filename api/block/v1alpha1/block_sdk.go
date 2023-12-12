@@ -573,6 +573,8 @@ type ImportSnapshotFromS3Request struct {
 	ProjectID string `json:"project_id"`
 
 	Tags []string `json:"tags"`
+
+	Size *scw.Size `json:"size,omitempty"`
 }
 
 // ListSnapshotsRequest: list snapshots request.
