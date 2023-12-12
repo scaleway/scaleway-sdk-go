@@ -185,6 +185,10 @@ type JobRun struct {
 
 	ErrorMessage string `json:"error_message"`
 
+	CPULimit uint32 `json:"cpu_limit"`
+
+	MemoryLimit uint32 `json:"memory_limit"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
