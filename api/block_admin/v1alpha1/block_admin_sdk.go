@@ -156,6 +156,29 @@ type VolumeSpecifications struct {
 	Class block_v1alpha1.StorageClass `json:"class"`
 }
 
+// Reference: reference.
+type Reference struct {
+	// ID: UUID of the reference.
+	ID string `json:"id"`
+
+	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
+	ProductResourceType string `json:"product_resource_type"`
+
+	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
+	ProductResourceID string `json:"product_resource_id"`
+
+	// CreatedAt: creation date of the reference.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Type: type of reference (link, exclusive, read_only).
+	// Default value: unknown_type
+	Type block_v1alpha1.ReferenceType `json:"type"`
+
+	// Status: status of reference (attaching, attached, detaching).
+	// Default value: unknown_status
+	Status block_v1alpha1.ReferenceStatus `json:"status"`
+}
+
 // AuditLog: audit log.
 type AuditLog struct {
 	Action string `json:"action"`
@@ -236,70 +259,63 @@ type VolumeType struct {
 	Specs *VolumeSpecifications `json:"specs"`
 }
 
-// VolumeSummary: volume summary.
-type VolumeSummary struct {
-	CephName *string `json:"ceph_name"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	DeletedAt *time.Time `json:"deleted_at"`
-
+// Volume: volume.
+type Volume struct {
+	// ID: UUID of the volume.
 	ID string `json:"id"`
 
+	// Name: name of the volume.
 	Name string `json:"name"`
+
+	// Type: volume type.
+	Type string `json:"type"`
+
+	// Size: volume size in bytes.
+	Size scw.Size `json:"size"`
+
+	// ProjectID: UUID of the project to which the volume belongs.
+	ProjectID string `json:"project_id"`
+
+	// CreatedAt: creation date of the volume.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update of the properties of a volume.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// References: list of the references to the volume.
+	References []*Reference `json:"references"`
+
+	// ParentSnapshotID: when a volume is created from a snapshot, is the UUID of the snapshot from which the volume has been created.
+	ParentSnapshotID *string `json:"parent_snapshot_id"`
+
+	// Status: current status of the volume (available, in_use, ...).
+	// Default value: unknown_status
+	Status block_v1alpha1.VolumeStatus `json:"status"`
+
+	// Tags: list of tags assigned to the volume.
+	Tags []string `json:"tags"`
+
+	// Zone: volume zone.
+	Zone scw.Zone `json:"zone"`
+
+	// Specs: specifications of the volume.
+	Specs *VolumeSpecifications `json:"specs"`
 
 	OrganizationID string `json:"organization_id"`
 
-	ParentSnapshotID *string `json:"parent_snapshot_id"`
-
-	ProjectID string `json:"project_id"`
-
-	PurgedAt *time.Time `json:"purged_at"`
-
-	Size scw.Size `json:"size"`
-
-	Specs *VolumeSpecifications `json:"specs"`
-
-	// Status: default value: unknown_status
-	Status block_v1alpha1.VolumeStatus `json:"status"`
-
-	Tags []string `json:"tags"`
-
-	Type string `json:"type"`
-
-	UpdatedAt *time.Time `json:"updated_at"`
+	CephName *string `json:"ceph_name"`
 
 	UsedSize *scw.Size `json:"used_size"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"zone"`
-
+	// Namespace: ceph namespace of the volume.
 	Namespace string `json:"namespace"`
 
+	// Pool: ceph pool of the volume.
 	Pool string `json:"pool"`
-}
 
-// Reference: reference.
-type Reference struct {
-	// ID: UUID of the reference.
-	ID string `json:"id"`
+	DeletedAt *time.Time `json:"deleted_at"`
 
-	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
-	ProductResourceType string `json:"product_resource_type"`
-
-	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
-	ProductResourceID string `json:"product_resource_id"`
-
-	// CreatedAt: creation date of the reference.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// Type: type of reference (link, exclusive, read_only).
-	// Default value: unknown_type
-	Type block_v1alpha1.ReferenceType `json:"type"`
-
-	// Status: status of reference (attaching, attached, detaching).
-	// Default value: unknown_status
-	Status block_v1alpha1.ReferenceStatus `json:"status"`
+	PurgedAt *time.Time `json:"purged_at"`
 }
 
 // DeleteSnapshotRequest: delete snapshot request.
@@ -513,7 +529,7 @@ type ListVolumesRequest struct {
 // ListVolumesResponse: list volumes response.
 type ListVolumesResponse struct {
 	// Volumes: paginated returned list of volumes.
-	Volumes []*VolumeSummary `json:"volumes"`
+	Volumes []*Volume `json:"volumes"`
 
 	// TotalCount: total number of volumes in the project.
 	TotalCount uint64 `json:"total_count"`
@@ -591,65 +607,6 @@ type Snapshot struct {
 	Pool string `json:"pool"`
 
 	OrganizationID string `json:"organization_id"`
-
-	PurgedAt *time.Time `json:"purged_at"`
-}
-
-// Volume: volume.
-type Volume struct {
-	// ID: UUID of the volume.
-	ID string `json:"id"`
-
-	// Name: name of the volume.
-	Name string `json:"name"`
-
-	// Type: volume type.
-	Type string `json:"type"`
-
-	// Size: volume size in bytes.
-	Size scw.Size `json:"size"`
-
-	// ProjectID: UUID of the project to which the volume belongs.
-	ProjectID string `json:"project_id"`
-
-	// CreatedAt: creation date of the volume.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last update of the properties of a volume.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// References: list of the references to the volume.
-	References []*Reference `json:"references"`
-
-	// ParentSnapshotID: when a volume is created from a snapshot, is the UUID of the snapshot from which the volume has been created.
-	ParentSnapshotID *string `json:"parent_snapshot_id"`
-
-	// Status: current status of the volume (available, in_use, ...).
-	// Default value: unknown_status
-	Status block_v1alpha1.VolumeStatus `json:"status"`
-
-	// Tags: list of tags assigned to the volume.
-	Tags []string `json:"tags"`
-
-	// Zone: volume zone.
-	Zone scw.Zone `json:"zone"`
-
-	// Specs: specifications of the volume.
-	Specs *VolumeSpecifications `json:"specs"`
-
-	OrganizationID string `json:"organization_id"`
-
-	CephName *string `json:"ceph_name"`
-
-	UsedSize *scw.Size `json:"used_size"`
-
-	// Namespace: ceph namespace of the volume.
-	Namespace string `json:"namespace"`
-
-	// Pool: ceph pool of the volume.
-	Pool string `json:"pool"`
-
-	DeletedAt *time.Time `json:"deleted_at"`
 
 	PurgedAt *time.Time `json:"purged_at"`
 }
