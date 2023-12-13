@@ -1044,6 +1044,15 @@ type NodeTypeVolumeType struct {
 	Class StorageClass `json:"class"`
 }
 
+// SnapshotVolumeType: snapshot volume type.
+type SnapshotVolumeType struct {
+	// Type: default value: lssd
+	Type VolumeType `json:"type"`
+
+	// Class: default value: unknown_storage_class
+	Class StorageClass `json:"class"`
+}
+
 // ACLRuleRequest: acl rule request.
 type ACLRuleRequest struct {
 	IP scw.IPNet `json:"ip"`
@@ -1362,6 +1371,9 @@ type Snapshot struct {
 
 	// NodeType: source node type.
 	NodeType string `json:"node_type"`
+
+	// VolumeType: type of volume where data is stored (lssd, bssd or sbs).
+	VolumeType *SnapshotVolumeType `json:"volume_type"`
 
 	// Region: region of this snapshot.
 	Region scw.Region `json:"region"`
