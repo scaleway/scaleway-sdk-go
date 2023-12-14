@@ -1869,6 +1869,11 @@ type UserAPIListPhoneValidationsRequest struct {
 	OrderBy ListPhoneValidationsRequestOrderBy `json:"-"`
 }
 
+// UserAPINotifyAccountRequest: user api notify account request.
+type UserAPINotifyAccountRequest struct {
+	AccountID string `json:"-"`
+}
+
 // UserAPISetMailingListSubscriptionsRequest: user api set mailing list subscriptions request.
 type UserAPISetMailingListSubscriptionsRequest struct {
 	// UserID: the ID of the user.
@@ -2886,6 +2891,31 @@ func (s *UserAPI) GetAccount(req *UserAPIGetAccountRequest, opts ...scw.RequestO
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// NotifyAccount: Force sending the validation email without rate-limiting constraints.
+func (s *UserAPI) NotifyAccount(req *UserAPINotifyAccountRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.AccountID) == "" {
+		return errors.New("field AccountID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account-admin/v3/accounts/" + fmt.Sprint(req.AccountID) + "/notify",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ListInvitations: List invitations.
