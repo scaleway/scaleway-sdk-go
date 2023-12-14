@@ -554,6 +554,22 @@ func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Volumes)), nil
 }
 
+// SetSnapshotAsPurgedRequest: set snapshot as purged request.
+type SetSnapshotAsPurgedRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	SnapshotID string `json:"-"`
+}
+
+// SetVolumeAsPurgedRequest: set volume as purged request.
+type SetVolumeAsPurgedRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	VolumeID string `json:"-"`
+}
+
 // Snapshot: snapshot.
 type Snapshot struct {
 	// ID: UUID of the snapshot.
@@ -909,4 +925,72 @@ func (s *API) ListAuditLogs(req *ListAuditLogsRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// SetVolumeAsPurged:
+func (s *API) SetVolumeAsPurged(req *SetVolumeAsPurgedRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VolumeID) == "" {
+		return errors.New("field VolumeID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/block-admin/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "/set-as-purged",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetSnapshotAsPurged:
+func (s *API) SetSnapshotAsPurged(req *SetSnapshotAsPurgedRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/block-admin/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "/set-as-purged",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
