@@ -72,7 +72,7 @@ type WaitForDatabaseBackupRequest struct {
 
 // WaitForDatabaseBackup waits for the backup to be in a "terminal state" before returning.
 // This function can be used to wait for a backup to be ready for example.
-func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...scw.RequestOption) (*Database, error) {
+func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -88,7 +88,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 		DatabaseBackupStatusLocked: {},
 	}
 
-	database, err := async.WaitSync(&async.WaitSyncConfig{
+	backup, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
 				BackupID: req.BackupID,
@@ -106,7 +106,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for database backup failed")
+		return nil, errors.Wrap(err, "waiting for backup backup failed")
 	}
-	return database.(*Database), nil
+	return backup.(*DatabaseBackup), nil
 }
