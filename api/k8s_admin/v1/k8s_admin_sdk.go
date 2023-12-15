@@ -152,6 +152,37 @@ type MasterStatusPod struct {
 	Containers []*MasterStatusPodContainer `json:"containers"`
 }
 
+// NodeMetadataNodeMetadataV1Alpha1: node metadata node metadata v1 alpha1.
+type NodeMetadataNodeMetadataV1Alpha1 struct {
+	NodeID string `json:"node_id"`
+
+	NodeName string `json:"node_name"`
+
+	ClusterURL string `json:"cluster_url"`
+
+	ClusterCa string `json:"cluster_ca"`
+
+	NodeToken string `json:"node_token"`
+
+	CredentialProviderConfig string `json:"credential_provider_config"`
+
+	PoolVersion string `json:"pool_version"`
+
+	KubeletConfig string `json:"kubelet_config"`
+
+	ComponentsVersions map[string]string `json:"components_versions"`
+
+	PrivateNetworkMode string `json:"private_network_mode"`
+
+	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
+
+	FullIsolation bool `json:"full_isolation"`
+
+	HasGpu bool `json:"has_gpu"`
+
+	ExternalIP string `json:"external_ip"`
+}
+
 // UpdateClusterRequestMemoryLimits: update cluster request memory limits.
 type UpdateClusterRequestMemoryLimits struct {
 	APIServer *string `json:"api_server"`
@@ -234,6 +265,8 @@ type GetNodeMetadataRequest struct {
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
+
+	APIVersion *string `json:"-"`
 }
 
 // GetSeedRequest: get seed request.
@@ -404,7 +437,11 @@ type MoveClusterResponse struct {
 
 // NodeMetadata: node metadata.
 type NodeMetadata struct {
-	ClusterID string `json:"cluster_id"`
+	APIVersion string `json:"api_version"`
+
+	Kind string `json:"kind"`
+
+	SpecV1alpha1 *NodeMetadataNodeMetadataV1Alpha1 `json:"spec_v1alpha1"`
 }
 
 // SetClusterTypeRequest: set cluster type request.
@@ -743,6 +780,7 @@ func (s *API) GetNodeMetadata(req *GetNodeMetadataRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "instance_id", req.InstanceID)
 	parameter.AddToQuery(query, "source_port", req.SourcePort)
 	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "api_version", req.APIVersion)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
