@@ -144,6 +144,12 @@ type SnapshotParentVolume struct {
 
 	// Status: default value: unknown_status
 	Status block_v1alpha1.VolumeStatus `json:"status"`
+
+	CephName string `json:"ceph_name"`
+
+	CephNamespace string `json:"ceph_namespace"`
+
+	CephPool string `json:"ceph_pool"`
 }
 
 // VolumeSpecifications: volume specifications.
@@ -231,12 +237,6 @@ type SnapshotSummary struct {
 
 	CephName *string `json:"ceph_name"`
 
-	// Namespace: ceph namespace of the volume.
-	Namespace string `json:"namespace"`
-
-	// Pool: ceph pool of the volume.
-	Pool string `json:"pool"`
-
 	UsedSize *scw.Size `json:"used_size"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
@@ -303,15 +303,17 @@ type Volume struct {
 
 	OrganizationID string `json:"organization_id"`
 
+	// CephName: ceph name of the volume.
 	CephName *string `json:"ceph_name"`
 
+	// UsedSize: used size of the volume, computed daily or hourly.
 	UsedSize *scw.Size `json:"used_size"`
 
-	// Namespace: ceph namespace of the volume.
-	Namespace string `json:"namespace"`
+	// CephNamespace: ceph namespace of the volume.
+	CephNamespace string `json:"ceph_namespace"`
 
-	// Pool: ceph pool of the volume.
-	Pool string `json:"pool"`
+	// CephPool: ceph pool of the volume.
+	CephPool string `json:"ceph_pool"`
 
 	DeletedAt *time.Time `json:"deleted_at"`
 
@@ -615,12 +617,6 @@ type Snapshot struct {
 	UsedSize *scw.Size `json:"used_size"`
 
 	CephName *string `json:"ceph_name"`
-
-	// Namespace: ceph namespace of the volume.
-	Namespace string `json:"namespace"`
-
-	// Pool: ceph pool of the volume.
-	Pool string `json:"pool"`
 
 	OrganizationID string `json:"organization_id"`
 
