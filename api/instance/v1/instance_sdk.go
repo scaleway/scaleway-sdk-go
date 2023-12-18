@@ -1188,6 +1188,9 @@ type ServerIP struct {
 
 	// State: default value: unknown_state
 	State ServerIPState `json:"state"`
+
+	// IpamID: the ip_id of an IPAM ip if the ip is created from IPAM, null if not.
+	IpamID string `json:"ipam_id"`
 }
 
 // ServerIPv6: server i pv6.
@@ -1428,6 +1431,8 @@ type IP struct {
 	State IPState `json:"state"`
 
 	Prefix scw.IPNet `json:"prefix"`
+
+	IpamID string `json:"ipam_id"`
 
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
