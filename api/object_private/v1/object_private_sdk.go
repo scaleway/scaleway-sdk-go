@@ -118,10 +118,8 @@ type BucketInfo struct {
 
 	CurrentSegments float64 `json:"current_segments"`
 
-	// Deprecated: Backend: default value: unknown_backend
-	Backend *BucketInfoBackend `json:"backend,omitempty"`
-
-	BucketPolicy *string `json:"bucket_policy"`
+	// Backend: default value: unknown_backend
+	Backend BucketInfoBackend `json:"backend"`
 }
 
 // BucketMetrics: bucket metrics.
