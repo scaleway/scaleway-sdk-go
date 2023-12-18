@@ -1843,6 +1843,9 @@ type CreateIPRequest struct {
 
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse,omitempty"`
+
+	// IsIPv6: if true, creates a Flexible IP with an ipv6 address.
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // CreateLBRequest: create lb request.
@@ -1869,6 +1872,12 @@ type CreateLBRequest struct {
 
 	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
+
+	// AssignFlexibleIPv6: defines whether to automatically assign a flexible public IPv6 to the Load Balancer. Default value is `false` (do not assign).
+	AssignFlexibleIPv6 *bool `json:"assign_flexible_ipv6,omitempty"`
+
+	// IPIDs: list of IP IDs to attach to the Load Balancer.
+	IPIDs []string `json:"ip_ids"`
 
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
@@ -3016,6 +3025,9 @@ type UpdateIPRequest struct {
 
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse,omitempty"`
+
+	// LBID: ID of the server on which to attach the flexible IP.
+	LBID *string `json:"lb_id,omitempty"`
 }
 
 // UpdateLBRequest: update lb request.
@@ -3341,6 +3353,9 @@ type ZonedAPICreateIPRequest struct {
 
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse,omitempty"`
+
+	// IsIPv6: if true, creates a Flexible IP with an ipv6 address.
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // ZonedAPICreateLBRequest: zoned api create lb request.
@@ -3367,6 +3382,12 @@ type ZonedAPICreateLBRequest struct {
 
 	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
+
+	// AssignFlexibleIPv6: defines whether to automatically assign a flexible public IPv6 to the Load Balancer. Default value is `false` (do not assign).
+	AssignFlexibleIPv6 *bool `json:"assign_flexible_ipv6,omitempty"`
+
+	// IPIDs: list of IP IDs to attach to the Load Balancer.
+	IPIDs []string `json:"ip_ids"`
 
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
@@ -4184,6 +4205,9 @@ type ZonedAPIUpdateIPRequest struct {
 
 	// Reverse: reverse DNS (domain name) for the IP address.
 	Reverse *string `json:"reverse,omitempty"`
+
+	// LBID: ID of the server on which to attach the flexible IP.
+	LBID *string `json:"lb_id,omitempty"`
 }
 
 // ZonedAPIUpdateLBRequest: zoned api update lb request.

@@ -847,6 +847,8 @@ type ConsoleAPICreateFullLBRequest struct {
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
 
 	IPIDs []string `json:"ip_ids"`
+
+	AssignFlexibleIPv6 *bool `json:"assign_flexible_ipv6,omitempty"`
 }
 
 func (m *ConsoleAPICreateFullLBRequest) UnmarshalJSON(b []byte) error {
@@ -1210,6 +1212,8 @@ type ZonedConsoleAPICreateFullLBRequest struct {
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
 
 	IPIDs []string `json:"ip_ids"`
+
+	AssignFlexibleIPv6 *bool `json:"assign_flexible_ipv6,omitempty"`
 }
 
 func (m *ZonedConsoleAPICreateFullLBRequest) UnmarshalJSON(b []byte) error {
