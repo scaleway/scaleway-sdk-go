@@ -39,6 +39,39 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type EphemeralPolicyAction string
+
+const (
+	EphemeralPolicyActionUnknownAction = EphemeralPolicyAction("unknown_action")
+	// The version is deleted once it expires.
+	EphemeralPolicyActionDelete = EphemeralPolicyAction("delete")
+	// The version is disabled once it expires.
+	EphemeralPolicyActionDisable = EphemeralPolicyAction("disable")
+)
+
+func (enum EphemeralPolicyAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_action"
+	}
+	return string(enum)
+}
+
+func (enum EphemeralPolicyAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *EphemeralPolicyAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = EphemeralPolicyAction(EphemeralPolicyAction(tmp).String())
+	return nil
+}
+
 type ListFoldersRequestOrderBy string
 
 const (
@@ -132,39 +165,6 @@ func (enum *Product) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = Product(Product(tmp).String())
-	return nil
-}
-
-type SecretEphemeralAction string
-
-const (
-	SecretEphemeralActionUnknownEphemeralAction = SecretEphemeralAction("unknown_ephemeral_action")
-	// After expiration, the secret and all its versions will be deleted.
-	SecretEphemeralActionDeleteSecret = SecretEphemeralAction("delete_secret")
-	// After expiration, all versions of the secret will be disabled.
-	SecretEphemeralActionDisableSecret = SecretEphemeralAction("disable_secret")
-)
-
-func (enum SecretEphemeralAction) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_ephemeral_action"
-	}
-	return string(enum)
-}
-
-func (enum SecretEphemeralAction) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *SecretEphemeralAction) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = SecretEphemeralAction(SecretEphemeralAction(tmp).String())
 	return nil
 }
 
@@ -265,6 +265,32 @@ func (enum *SecretVersionStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// EphemeralStatus: ephemeral status.
+type EphemeralStatus struct {
+	// ExpiresAt: (Optional.) If not specified, the version does not have an expiration date.
+	ExpiresAt *time.Time `json:"expires_at"`
+
+	// ExpiresOnceAccessed: (Optional.) If not specified, the version can be accessed an unlimited amount of times.
+	ExpiresOnceAccessed *bool `json:"expires_once_accessed"`
+
+	// Action: see `EphemeralPolicy.Action` enum for a description of values.
+	// Default value: unknown_action
+	Action EphemeralPolicyAction `json:"action"`
+}
+
+// EphemeralPolicy: ephemeral policy.
+type EphemeralPolicy struct {
+	// TimeToLive: time frame, from one second and up to one year, during which the secret's versions are valid.
+	TimeToLive *scw.Duration `json:"time_to_live"`
+
+	// ExpiresOnceAccessed: returns `true` if the version expires after a single user access.
+	ExpiresOnceAccessed *bool `json:"expires_once_accessed"`
+
+	// Action: see the `EphemeralPolicy.Action` enum for a description of values.
+	// Default value: unknown_action
+	Action EphemeralPolicyAction `json:"action"`
+}
+
 // PasswordGenerationParams: password generation params.
 type PasswordGenerationParams struct {
 	// Length: length of the password to generate (between 1 and 1024).
@@ -330,6 +356,9 @@ type SecretVersion struct {
 
 	// IsLatest: returns `true` if the version is the latest.
 	IsLatest bool `json:"is_latest"`
+
+	// EphemeralStatus: returns the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
+	EphemeralStatus *EphemeralStatus `json:"ephemeral_status"`
 }
 
 // Secret: secret.
@@ -376,12 +405,8 @@ type Secret struct {
 	// Path: location of the secret in the directory structure.
 	Path string `json:"path"`
 
-	// ExpiresAt: (Optional.) Date on which the secret will be deleted or deactivated.
-	ExpiresAt *time.Time `json:"expires_at"`
-
-	// EphemeralAction: see `Secret.EphemeralAction` enum for description of values.
-	// Default value: unknown_ephemeral_action
-	EphemeralAction SecretEphemeralAction `json:"ephemeral_action"`
+	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
+	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template"`
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
@@ -490,12 +515,8 @@ type CreateSecretRequest struct {
 	// Path: (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
 	Path *string `json:"path,omitempty"`
 
-	// ExpiresAt: (Optional.) Date on which the secret will be deleted or deactivated.
-	ExpiresAt *time.Time `json:"expires_at,omitempty"`
-
-	// EphemeralAction: action to be taken when the secret expires.
-	// Default value: unknown_ephemeral_action
-	EphemeralAction SecretEphemeralAction `json:"ephemeral_action"`
+	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
+	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template,omitempty"`
 }
 
 // CreateSecretVersionRequest: create secret version request.
@@ -919,6 +940,9 @@ type UpdateSecretRequest struct {
 
 	// Path: (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
 	Path *string `json:"path,omitempty"`
+
+	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire.
+	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template,omitempty"`
 }
 
 // UpdateSecretVersionRequest: update secret version request.
@@ -937,6 +961,9 @@ type UpdateSecretVersionRequest struct {
 
 	// Description: description of the version.
 	Description *string `json:"description,omitempty"`
+
+	// EphemeralStatus: (Optional.) Status that defines the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
+	EphemeralStatus *EphemeralStatus `json:"ephemeral_status,omitempty"`
 }
 
 // This API allows you to conveniently store, access and share sensitive data.
@@ -1098,7 +1125,7 @@ func (s *API) GetSecretByName(req *GetSecretByNameRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// UpdateSecret: Edit a secret's metadata such as name, tag(s) and description. The secret to update is specified by the `secret_id` and `region` parameters.
+// UpdateSecret: Edit a secret's metadata such as name, tag(s), description and ephemeral policy. The secret to update is specified by the `secret_id` and `region` parameters.
 func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
