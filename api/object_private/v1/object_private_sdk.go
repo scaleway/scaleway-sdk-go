@@ -349,7 +349,7 @@ func (s *API) DeleteBucket(req *DeleteBucketRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-// GetBucketMetrics:
+// Deprecated: GetBucketMetrics:
 func (s *API) GetBucketMetrics(req *GetBucketMetricsRequest, opts ...scw.RequestOption) (*BucketMetrics, error) {
 	var err error
 
