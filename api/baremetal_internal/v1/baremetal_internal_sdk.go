@@ -19,8 +19,8 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
-	baremetal_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/baremetal/v1"
 	trustandsafety_private_v1beta1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/trustandsafety_private/v1beta1"
+	baremetal_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/baremetal/v1"
 )
 
 // always import dependencies
@@ -224,6 +224,40 @@ func (enum *ListOSRequestStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListOSRequestStatus(ListOSRequestStatus(tmp).String())
+	return nil
+}
+
+type ListOffersRequestOrderBy string
+
+const (
+	ListOffersRequestOrderByNameAsc             = ListOffersRequestOrderBy("name_asc")
+	ListOffersRequestOrderByNameDesc            = ListOffersRequestOrderBy("name_desc")
+	ListOffersRequestOrderByCommercialRangeAsc  = ListOffersRequestOrderBy("commercial_range_asc")
+	ListOffersRequestOrderByCommercialRangeDesc = ListOffersRequestOrderBy("commercial_range_desc")
+	ListOffersRequestOrderByStockAsc            = ListOffersRequestOrderBy("stock_asc")
+	ListOffersRequestOrderByStockDesc           = ListOffersRequestOrderBy("stock_desc")
+)
+
+func (enum ListOffersRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListOffersRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListOffersRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListOffersRequestOrderBy(ListOffersRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -883,8 +917,6 @@ type Offer struct {
 
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	ProductID string `json:"product_id"`
-
 	PersistentMemories []*PersistentMemory `json:"persistent_memories"`
 
 	RaidControllers []*RaidController `json:"raid_controllers"`
@@ -903,6 +935,10 @@ type Offer struct {
 	SharedBandwidth bool `json:"shared_bandwidth"`
 
 	Tags []string `json:"tags"`
+
+	ProductIDs []string `json:"product_ids"`
+
+	CompatibleOsIDs []string `json:"compatible_os_ids"`
 }
 
 // Partitioning: partitioning.
@@ -1759,6 +1795,11 @@ type ListOffersRequest struct {
 
 	// SubscriptionPeriod: default value: unknown_subscription_period
 	SubscriptionPeriod OfferSubscriptionPeriod `json:"-"`
+
+	// OrderBy: default value: name_asc
+	OrderBy ListOffersRequestOrderBy `json:"-"`
+
+	CommercialRange *string `json:"-"`
 }
 
 // ListOffersResponse: list offers response.
@@ -2830,6 +2871,8 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "quota_name", req.QuotaName)
 	parameter.AddToQuery(query, "subscription_period", req.SubscriptionPeriod)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "commercial_range", req.CommercialRange)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
