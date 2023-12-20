@@ -40,6 +40,44 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type AccountStatus string
+
+const (
+	// Unknown status.
+	AccountStatusUnknownStatus = AccountStatus("unknown_status")
+	// Default status, waiting for user validation.
+	AccountStatusWaiting = AccountStatus("waiting")
+	// The user has validated the request.
+	AccountStatusValidated = AccountStatus("validated")
+	// The account creation was deleted from the admin endpoint.
+	AccountStatusDeleted = AccountStatus("deleted")
+	// The account creation has expired.
+	AccountStatusExpired = AccountStatus("expired")
+)
+
+func (enum AccountStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum AccountStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AccountStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AccountStatus(AccountStatus(tmp).String())
+	return nil
+}
+
 type ContractType string
 
 const (
@@ -837,6 +875,10 @@ type Account struct {
 
 	// UserAgent: the user agent used for the account creation.
 	UserAgent string `json:"user_agent"`
+
+	// Status: the current status of the account creation.
+	// Default value: unknown_status
+	Status AccountStatus `json:"status"`
 }
 
 // BlacklistedDomain: blacklisted domain.
