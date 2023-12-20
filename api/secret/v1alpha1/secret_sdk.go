@@ -265,8 +265,8 @@ func (enum *SecretVersionStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// EphemeralStatus: ephemeral status.
-type EphemeralStatus struct {
+// EphemeralProperties: ephemeral properties.
+type EphemeralProperties struct {
 	// ExpiresAt: (Optional.) If not specified, the version does not have an expiration date.
 	ExpiresAt *time.Time `json:"expires_at"`
 
@@ -357,8 +357,8 @@ type SecretVersion struct {
 	// IsLatest: returns `true` if the version is the latest.
 	IsLatest bool `json:"is_latest"`
 
-	// EphemeralStatus: returns the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
-	EphemeralStatus *EphemeralStatus `json:"ephemeral_status"`
+	// EphemeralProperties: returns the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
+	EphemeralProperties *EphemeralProperties `json:"ephemeral_properties"`
 }
 
 // Secret: secret.
@@ -405,8 +405,8 @@ type Secret struct {
 	// Path: location of the secret in the directory structure.
 	Path string `json:"path"`
 
-	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
-	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template"`
+	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
+	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy"`
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
@@ -515,8 +515,8 @@ type CreateSecretRequest struct {
 	// Path: (Optional.) Location of the secret in the directory structure. If not specified, the path is `/`.
 	Path *string `json:"path,omitempty"`
 
-	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
-	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template,omitempty"`
+	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
+	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy,omitempty"`
 }
 
 // CreateSecretVersionRequest: create secret version request.
@@ -941,8 +941,8 @@ type UpdateSecretRequest struct {
 	// Path: (Optional.) Location of the folder in the directory structure. If not specified, the path is `/`.
 	Path *string `json:"path,omitempty"`
 
-	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire.
-	EphemeralPolicyTemplate *EphemeralPolicy `json:"ephemeral_policy_template,omitempty"`
+	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire.
+	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy,omitempty"`
 }
 
 // UpdateSecretVersionRequest: update secret version request.
@@ -962,8 +962,8 @@ type UpdateSecretVersionRequest struct {
 	// Description: description of the version.
 	Description *string `json:"description,omitempty"`
 
-	// EphemeralStatus: (Optional.) Status that defines the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
-	EphemeralStatus *EphemeralStatus `json:"ephemeral_status,omitempty"`
+	// EphemeralProperties: (Optional.) Properties that defines the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
+	EphemeralProperties *EphemeralProperties `json:"ephemeral_properties,omitempty"`
 }
 
 // This API allows you to conveniently store, access and share sensitive data.

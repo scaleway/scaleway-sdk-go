@@ -108,8 +108,8 @@ type CreateManagedSecretRequest struct {
 	// Path: location of the secret in the directory structure.
 	Path *string `json:"path,omitempty"`
 
-	// EphemeralPolicyTemplate: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
-	EphemeralPolicyTemplate *secret_v1alpha1.EphemeralPolicy `json:"ephemeral_policy_template,omitempty"`
+	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
+	EphemeralPolicy *secret_v1alpha1.EphemeralPolicy `json:"ephemeral_policy,omitempty"`
 }
 
 // CreateManagedSecretResponse: create managed secret response.
