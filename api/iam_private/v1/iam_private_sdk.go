@@ -229,9 +229,13 @@ type SwitchJWTOrganizationResponse struct {
 
 	RenewToken string `json:"renew_token"`
 
-	Jti string `json:"jti"`
+	// Deprecated
+	Jti *string `json:"jti,omitempty"`
 
-	UserID string `json:"user_id"`
+	// Deprecated
+	UserID *string `json:"user_id,omitempty"`
+
+	Jwt *iam_v1alpha1.JWT `json:"jwt"`
 }
 
 type ConsoleAPI struct {
