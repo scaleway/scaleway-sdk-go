@@ -134,6 +134,20 @@ func (enum *ListJobRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// CronSchedule: cron schedule.
+type CronSchedule struct {
+	Schedule string `json:"schedule"`
+
+	Timezone string `json:"timezone"`
+}
+
+// CreateJobDefinitionRequestCronScheduleConfig: create job definition request cron schedule config.
+type CreateJobDefinitionRequestCronScheduleConfig struct {
+	Schedule string `json:"schedule"`
+
+	Timezone string `json:"timezone"`
+}
+
 // JobDefinition: job definition.
 type JobDefinition struct {
 	ID string `json:"id"`
@@ -159,6 +173,8 @@ type JobDefinition struct {
 	Description string `json:"description"`
 
 	JobTimeout *scw.Duration `json:"job_timeout"`
+
+	CronSchedule *CronSchedule `json:"cron_schedule"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
@@ -193,6 +209,13 @@ type JobRun struct {
 	Region scw.Region `json:"region"`
 }
 
+// UpdateJobDefinitionRequestCronScheduleConfig: update job definition request cron schedule config.
+type UpdateJobDefinitionRequestCronScheduleConfig struct {
+	Schedule *string `json:"schedule"`
+
+	Timezone *string `json:"timezone"`
+}
+
 // CreateJobDefinitionRequest: create job definition request.
 type CreateJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -224,6 +247,8 @@ type CreateJobDefinitionRequest struct {
 
 	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
+
+	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
 // DeleteJobDefinitionRequest: delete job definition request.
@@ -386,6 +411,8 @@ type UpdateJobDefinitionRequest struct {
 
 	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
+
+	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
 // Serverless Jobs API.
