@@ -134,6 +134,20 @@ func (enum *ListJobRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// CronSchedule: cron schedule.
+type CronSchedule struct {
+	Schedule string `json:"schedule"`
+
+	Timezone string `json:"timezone"`
+}
+
+// CreateJobDefinitionRequestCronScheduleConfig: create job definition request cron schedule config.
+type CreateJobDefinitionRequestCronScheduleConfig struct {
+	Schedule string `json:"schedule"`
+
+	Timezone string `json:"timezone"`
+}
+
 // JobDefinition: job definition.
 type JobDefinition struct {
 	ID string `json:"id"`
@@ -159,6 +173,8 @@ type JobDefinition struct {
 	Description string `json:"description"`
 
 	JobTimeout *scw.Duration `json:"job_timeout"`
+
+	CronSchedule *CronSchedule `json:"cron_schedule"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
@@ -193,28 +209,46 @@ type JobRun struct {
 	Region scw.Region `json:"region"`
 }
 
+// UpdateJobDefinitionRequestCronScheduleConfig: update job definition request cron schedule config.
+type UpdateJobDefinitionRequestCronScheduleConfig struct {
+	Schedule *string `json:"schedule"`
+
+	Timezone *string `json:"timezone"`
+}
+
 // CreateJobDefinitionRequest: create job definition request.
 type CreateJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// Name: name of the job definition.
 	Name string `json:"name"`
 
+	// CPULimit: CPU limit of the job.
 	CPULimit uint32 `json:"cpu_limit"`
 
+	// MemoryLimit: memory limit of the job.
 	MemoryLimit uint32 `json:"memory_limit"`
 
+	// ImageURI: image to use for the job.
 	ImageURI string `json:"image_uri"`
 
+	// Command: startup command.
 	Command string `json:"command"`
 
+	// ProjectID: UUID of the Scaleway Project containing the job.
 	ProjectID string `json:"project_id"`
 
+	// EnvironmentVariables: environment variables of the job.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// Description: description of the job.
 	Description string `json:"description"`
 
+	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
+
+	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
 // DeleteJobDefinitionRequest: delete job definition request.
@@ -222,6 +256,7 @@ type DeleteJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition to delete.
 	JobDefinitionID string `json:"-"`
 }
 
@@ -230,6 +265,7 @@ type GetJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition to get.
 	JobDefinitionID string `json:"-"`
 }
 
@@ -238,6 +274,7 @@ type GetJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobRunID: UUID of the job run to get.
 	JobRunID string `json:"-"`
 }
 
@@ -330,6 +367,7 @@ type StartJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition to start.
 	JobDefinitionID string `json:"-"`
 }
 
@@ -338,6 +376,7 @@ type StopJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobRunID: UUID of the job run to stop.
 	JobRunID string `json:"-"`
 }
 
@@ -346,23 +385,34 @@ type UpdateJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition to update.
 	JobDefinitionID string `json:"-"`
 
+	// Name: name of the job definition.
 	Name *string `json:"name,omitempty"`
 
+	// CPULimit: CPU limit of the job.
 	CPULimit *uint32 `json:"cpu_limit,omitempty"`
 
+	// MemoryLimit: memory limit of the job.
 	MemoryLimit *uint32 `json:"memory_limit,omitempty"`
 
+	// ImageURI: image to use for the job.
 	ImageURI *string `json:"image_uri,omitempty"`
 
+	// Command: startup command.
 	Command *string `json:"command,omitempty"`
 
+	// EnvironmentVariables: environment variables of the job.
 	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
 
+	// Description: description of the job.
 	Description *string `json:"description,omitempty"`
 
+	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
+
+	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
 // Serverless Jobs API.
@@ -380,7 +430,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateJobDefinition:
+// CreateJobDefinition: Create a new job definition in a specified Project.
 func (s *API) CreateJobDefinition(req *CreateJobDefinitionRequest, opts ...scw.RequestOption) (*JobDefinition, error) {
 	var err error
 
@@ -421,7 +471,7 @@ func (s *API) CreateJobDefinition(req *CreateJobDefinitionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// GetJobDefinition:
+// GetJobDefinition: Get a job definition by its unique identifier.
 func (s *API) GetJobDefinition(req *GetJobDefinitionRequest, opts ...scw.RequestOption) (*JobDefinition, error) {
 	var err error
 
@@ -452,7 +502,7 @@ func (s *API) GetJobDefinition(req *GetJobDefinitionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ListJobDefinitions:
+// ListJobDefinitions: List all your job definitions with filters.
 func (s *API) ListJobDefinitions(req *ListJobDefinitionsRequest, opts ...scw.RequestOption) (*ListJobDefinitionsResponse, error) {
 	var err error
 
@@ -491,7 +541,7 @@ func (s *API) ListJobDefinitions(req *ListJobDefinitionsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// UpdateJobDefinition:
+// UpdateJobDefinition: Update an existing job definition associated with the specified unique identifier.
 func (s *API) UpdateJobDefinition(req *UpdateJobDefinitionRequest, opts ...scw.RequestOption) (*JobDefinition, error) {
 	var err error
 
@@ -527,7 +577,7 @@ func (s *API) UpdateJobDefinition(req *UpdateJobDefinitionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// DeleteJobDefinition:
+// DeleteJobDefinition: Delete an exsisting job definition by its unique identifier.
 func (s *API) DeleteJobDefinition(req *DeleteJobDefinitionRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -556,7 +606,7 @@ func (s *API) DeleteJobDefinition(req *DeleteJobDefinitionRequest, opts ...scw.R
 	return nil
 }
 
-// StartJobDefinition:
+// StartJobDefinition: Run an existing job definition by its unique identifier. This will create a new job run.
 func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.RequestOption) (*JobRun, error) {
 	var err error
 
@@ -592,7 +642,7 @@ func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// GetJobRun:
+// GetJobRun: Get a job run by its unique identifier.
 func (s *API) GetJobRun(req *GetJobRunRequest, opts ...scw.RequestOption) (*JobRun, error) {
 	var err error
 
@@ -623,7 +673,7 @@ func (s *API) GetJobRun(req *GetJobRunRequest, opts ...scw.RequestOption) (*JobR
 	return &resp, nil
 }
 
-// StopJobRun:
+// StopJobRun: Stop a job run by its unique identifier.
 func (s *API) StopJobRun(req *StopJobRunRequest, opts ...scw.RequestOption) (*JobRun, error) {
 	var err error
 
@@ -659,7 +709,7 @@ func (s *API) StopJobRun(req *StopJobRunRequest, opts ...scw.RequestOption) (*Jo
 	return &resp, nil
 }
 
-// ListJobRuns:
+// ListJobRuns: List all job runs with filters.
 func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*ListJobRunsResponse, error) {
 	var err error
 
