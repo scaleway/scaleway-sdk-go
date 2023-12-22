@@ -1818,6 +1818,11 @@ type UserAPIConfirmPhoneValidationRequest struct {
 	PhoneValidationID string `json:"-"`
 }
 
+// UserAPIDeleteAccountRequest: user api delete account request.
+type UserAPIDeleteAccountRequest struct {
+	AccountID string `json:"-"`
+}
+
 // UserAPIDisableMFAOTPRequest: user api disable mfaotp request.
 type UserAPIDisableMFAOTPRequest struct {
 	// UserID: the ID of the user to disable the mfa for.
@@ -2951,6 +2956,26 @@ func (s *UserAPI) NotifyAccount(req *UserAPINotifyAccountRequest, opts ...scw.Re
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteAccount: Delete an account request.
+func (s *UserAPI) DeleteAccount(req *UserAPIDeleteAccountRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.AccountID) == "" {
+		return errors.New("field AccountID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/account-admin/v3/accounts/" + fmt.Sprint(req.AccountID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
