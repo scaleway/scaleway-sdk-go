@@ -506,8 +506,11 @@ type DataSource struct {
 	// Default value: unknown_origin
 	Origin DataSourceOrigin `json:"origin"`
 
-	// RetentionPeriod: retention period of the data source.
-	RetentionPeriod *scw.Duration `json:"retention_period"`
+	// CreatedAt: creation date of the data source.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the data source.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -1213,7 +1216,8 @@ type RegionalAPIListUsagesRequest struct {
 
 	Types []DataSourceType `json:"-"`
 
-	Intervals []UsageInterval `json:"-"`
+	// Interval: default value: unknown_interval
+	Interval UsageInterval `json:"-"`
 }
 
 // RegionalAPITriggerTestAlertRequest: Request to trigger a test alert.
@@ -1750,7 +1754,7 @@ func (s *RegionalAPI) ListUsages(req *RegionalAPIListUsagesRequest, opts ...scw.
 	parameter.AddToQuery(query, "data_source_ids", req.DataSourceIDs)
 	parameter.AddToQuery(query, "origins", req.Origins)
 	parameter.AddToQuery(query, "types", req.Types)
-	parameter.AddToQuery(query, "intervals", req.Intervals)
+	parameter.AddToQuery(query, "interval", req.Interval)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
