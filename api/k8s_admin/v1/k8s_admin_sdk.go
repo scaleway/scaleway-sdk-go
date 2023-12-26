@@ -172,6 +172,10 @@ type NodeMetadataNodeMetadataV1Alpha1 struct {
 
 	ComponentsVersions map[string]string `json:"components_versions"`
 
+	NodeLabels map[string]string `json:"node_labels"`
+
+	NodeTaints map[string]string `json:"node_taints"`
+
 	PrivateNetworkMode string `json:"private_network_mode"`
 
 	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
