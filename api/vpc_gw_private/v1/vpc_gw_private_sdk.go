@@ -19,8 +19,8 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
-	vpcgw_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/vpcgw/v1"
 	vpc_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/vpc/v1"
+	vpcgw_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/vpcgw/v1"
 )
 
 // always import dependencies
