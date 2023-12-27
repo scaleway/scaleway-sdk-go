@@ -98,6 +98,15 @@ type MasterStatusPodContainer struct {
 	MemoryUsage string `json:"memory_usage"`
 }
 
+// NodeMetadataCoreV1Taint: node metadata core v1 taint.
+type NodeMetadataCoreV1Taint struct {
+	Key string `json:"key"`
+
+	Value string `json:"value"`
+
+	Effect string `json:"effect"`
+}
+
 // Cluster: cluster.
 type Cluster struct {
 	EtcdID *string `json:"etcd_id"`
@@ -174,7 +183,7 @@ type NodeMetadataNodeMetadataV1Alpha1 struct {
 
 	NodeLabels map[string]string `json:"node_labels"`
 
-	NodeTaints map[string]string `json:"node_taints"`
+	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
 
 	PrivateNetworkMode string `json:"private_network_mode"`
 
