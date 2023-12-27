@@ -1368,6 +1368,9 @@ type UnauthenticatedUserAPILoginRequest struct {
 
 	// Captcha: captcha to log in with.
 	Captcha *string `json:"captcha,omitempty"`
+
+	// RedirectURL: URL to redirect to.
+	RedirectURL string `json:"redirect_url"`
 }
 
 // UnauthenticatedUserAPIRejectEmailUpdateRequest: unauthenticated user api reject email update request.
