@@ -1329,6 +1329,8 @@ type ExternalNode struct {
 	CniPluginsVersion string `json:"cni_plugins_version"`
 
 	NodeLabels map[string]string `json:"node_labels"`
+
+	NodeTaints map[string]string `json:"node_taints"`
 }
 
 // GetClusterKubeConfigRequest: get cluster kube config request.
