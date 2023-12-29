@@ -131,6 +131,15 @@ type Resource struct {
 	Name *string `json:"name"`
 }
 
+// Reverse: reverse.
+type Reverse struct {
+	// Hostname: reverse domain name.
+	Hostname string `json:"hostname"`
+
+	// Address: IP corresponding to the hostname.
+	Address *scw.IPNet `json:"address"`
+}
+
 // Source: source.
 type Source struct {
 	// Zonal: this source is global.
@@ -174,6 +183,9 @@ type IP struct {
 
 	// Tags: tags for the IP.
 	Tags []string `json:"tags"`
+
+	// Reverses: array of reverses associated with the IP.
+	Reverses []*Reverse `json:"reverses"`
 
 	// Region: region of the IP.
 	Region scw.Region `json:"region"`
@@ -309,6 +321,9 @@ type UpdateIPRequest struct {
 
 	// Tags: tags for the IP.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Reverses: array of reverse domain names associated with an IP in the subnet of the current IP.
+	Reverses []*Reverse `json:"reverses"`
 }
 
 // This API allows you to manage IP addresses with Scaleway's IP Address Management tool.
