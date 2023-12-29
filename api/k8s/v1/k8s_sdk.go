@@ -876,6 +876,15 @@ type CreatePoolRequestUpgradePolicy struct {
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
+// ExternalNodeCoreV1Taint: external node core v1 taint.
+type ExternalNodeCoreV1Taint struct {
+	Key string `json:"key"`
+
+	Value string `json:"value"`
+
+	Effect string `json:"effect"`
+}
+
 // ClusterType: cluster type.
 type ClusterType struct {
 	// Name: cluster type name.
@@ -1330,7 +1339,7 @@ type ExternalNode struct {
 
 	NodeLabels map[string]string `json:"node_labels"`
 
-	NodeTaints map[string]string `json:"node_taints"`
+	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
 }
 
 // GetClusterKubeConfigRequest: get cluster kube config request.
