@@ -482,6 +482,9 @@ type ContactPoint struct {
 	// Email: contact point configuration.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
+
+	// Region: contact point region.
+	Region scw.Region `json:"region"`
 }
 
 // DataSource: Datasource.
@@ -511,6 +514,9 @@ type DataSource struct {
 
 	// UpdatedAt: last update date of the data source.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: data source region.
+	Region scw.Region `json:"region"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -609,6 +615,9 @@ type Token struct {
 
 	// SecretKey: token's secret key returned only at token creation.
 	SecretKey *string `json:"secret_key"`
+
+	// Region: token's region.
+	Region scw.Region `json:"region"`
 }
 
 // Usage: usage.
@@ -630,6 +639,9 @@ type Usage struct {
 	Interval UsageInterval `json:"interval"`
 
 	QuantityOverInterval uint64 `json:"quantity_over_interval"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
 }
 
 // AlertManager: Alert manager.
@@ -642,6 +654,9 @@ type AlertManager struct {
 
 	// ManagedAlertsEnabled: specifies whether managed alerts are enabled.
 	ManagedAlertsEnabled bool `json:"managed_alerts_enabled"`
+
+	// Region: alert manager region.
+	Region scw.Region `json:"region"`
 }
 
 // GlobalAPICreateGrafanaUserRequest: Request to create a Grafana user.
@@ -1006,8 +1021,9 @@ type RegionalAPICreateContactPointRequest struct {
 	// ProjectID: ID of the Project in which to create the contact point.
 	ProjectID string `json:"project_id"`
 
-	// ContactPoint: contact point to create.
-	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
+	// Email: email address of the contact point.
+	// Precisely one of Email must be set.
+	Email *ContactPointEmail `json:"email,omitempty"`
 }
 
 // RegionalAPICreateDataSourceRequest: Request to create a data source.
