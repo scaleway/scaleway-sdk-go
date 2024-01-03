@@ -39,6 +39,137 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type DownloadInvoiceRequestFileType string
+
+const (
+	DownloadInvoiceRequestFileTypePdf = DownloadInvoiceRequestFileType("pdf")
+)
+
+func (enum DownloadInvoiceRequestFileType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "pdf"
+	}
+	return string(enum)
+}
+
+func (enum DownloadInvoiceRequestFileType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DownloadInvoiceRequestFileType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DownloadInvoiceRequestFileType(DownloadInvoiceRequestFileType(tmp).String())
+	return nil
+}
+
+type ExportInvoicesRequestFileType string
+
+const (
+	ExportInvoicesRequestFileTypeCsv = ExportInvoicesRequestFileType("csv")
+)
+
+func (enum ExportInvoicesRequestFileType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "csv"
+	}
+	return string(enum)
+}
+
+func (enum ExportInvoicesRequestFileType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ExportInvoicesRequestFileType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ExportInvoicesRequestFileType(ExportInvoicesRequestFileType(tmp).String())
+	return nil
+}
+
+type ExportInvoicesRequestOrderBy string
+
+const (
+	ExportInvoicesRequestOrderByInvoiceNumberDesc = ExportInvoicesRequestOrderBy("invoice_number_desc")
+	ExportInvoicesRequestOrderByInvoiceNumberAsc  = ExportInvoicesRequestOrderBy("invoice_number_asc")
+	ExportInvoicesRequestOrderByStartDateDesc     = ExportInvoicesRequestOrderBy("start_date_desc")
+	ExportInvoicesRequestOrderByStartDateAsc      = ExportInvoicesRequestOrderBy("start_date_asc")
+	ExportInvoicesRequestOrderByIssuedDateDesc    = ExportInvoicesRequestOrderBy("issued_date_desc")
+	ExportInvoicesRequestOrderByIssuedDateAsc     = ExportInvoicesRequestOrderBy("issued_date_asc")
+	ExportInvoicesRequestOrderByDueDateDesc       = ExportInvoicesRequestOrderBy("due_date_desc")
+	ExportInvoicesRequestOrderByDueDateAsc        = ExportInvoicesRequestOrderBy("due_date_asc")
+	ExportInvoicesRequestOrderByTotalUntaxedDesc  = ExportInvoicesRequestOrderBy("total_untaxed_desc")
+	ExportInvoicesRequestOrderByTotalUntaxedAsc   = ExportInvoicesRequestOrderBy("total_untaxed_asc")
+	ExportInvoicesRequestOrderByTotalTaxedDesc    = ExportInvoicesRequestOrderBy("total_taxed_desc")
+	ExportInvoicesRequestOrderByTotalTaxedAsc     = ExportInvoicesRequestOrderBy("total_taxed_asc")
+	ExportInvoicesRequestOrderByInvoiceTypeDesc   = ExportInvoicesRequestOrderBy("invoice_type_desc")
+	ExportInvoicesRequestOrderByInvoiceTypeAsc    = ExportInvoicesRequestOrderBy("invoice_type_asc")
+)
+
+func (enum ExportInvoicesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "invoice_number_desc"
+	}
+	return string(enum)
+}
+
+func (enum ExportInvoicesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ExportInvoicesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ExportInvoicesRequestOrderBy(ExportInvoicesRequestOrderBy(tmp).String())
+	return nil
+}
+
+type InvoiceType string
+
+const (
+	InvoiceTypeUnknownType = InvoiceType("unknown_type")
+	InvoiceTypePeriodic    = InvoiceType("periodic")
+	InvoiceTypePurchase    = InvoiceType("purchase")
+)
+
+func (enum InvoiceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum InvoiceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InvoiceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InvoiceType(InvoiceType(tmp).String())
+	return nil
+}
+
 type ListConsumptionsRequestOrderBy string
 
 const (
@@ -72,6 +203,48 @@ func (enum *ListConsumptionsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListConsumptionsRequestOrderBy(ListConsumptionsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListInvoicesRequestOrderBy string
+
+const (
+	ListInvoicesRequestOrderByInvoiceNumberDesc = ListInvoicesRequestOrderBy("invoice_number_desc")
+	ListInvoicesRequestOrderByInvoiceNumberAsc  = ListInvoicesRequestOrderBy("invoice_number_asc")
+	ListInvoicesRequestOrderByStartDateDesc     = ListInvoicesRequestOrderBy("start_date_desc")
+	ListInvoicesRequestOrderByStartDateAsc      = ListInvoicesRequestOrderBy("start_date_asc")
+	ListInvoicesRequestOrderByIssuedDateDesc    = ListInvoicesRequestOrderBy("issued_date_desc")
+	ListInvoicesRequestOrderByIssuedDateAsc     = ListInvoicesRequestOrderBy("issued_date_asc")
+	ListInvoicesRequestOrderByDueDateDesc       = ListInvoicesRequestOrderBy("due_date_desc")
+	ListInvoicesRequestOrderByDueDateAsc        = ListInvoicesRequestOrderBy("due_date_asc")
+	ListInvoicesRequestOrderByTotalUntaxedDesc  = ListInvoicesRequestOrderBy("total_untaxed_desc")
+	ListInvoicesRequestOrderByTotalUntaxedAsc   = ListInvoicesRequestOrderBy("total_untaxed_asc")
+	ListInvoicesRequestOrderByTotalTaxedDesc    = ListInvoicesRequestOrderBy("total_taxed_desc")
+	ListInvoicesRequestOrderByTotalTaxedAsc     = ListInvoicesRequestOrderBy("total_taxed_asc")
+	ListInvoicesRequestOrderByInvoiceTypeDesc   = ListInvoicesRequestOrderBy("invoice_type_desc")
+	ListInvoicesRequestOrderByInvoiceTypeAsc    = ListInvoicesRequestOrderBy("invoice_type_asc")
+)
+
+func (enum ListInvoicesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "invoice_number_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListInvoicesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListInvoicesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListInvoicesRequestOrderBy(ListInvoicesRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -132,6 +305,60 @@ type ListConsumptionsResponseConsumption struct {
 	CategoryName string `json:"category_name"`
 }
 
+// Invoice: invoice.
+type Invoice struct {
+	// ID: invoice ID.
+	ID string `json:"id"`
+
+	OrganizationID string `json:"organization_id"`
+
+	OrganizationName string `json:"organization_name"`
+
+	// StartDate: start date of the billing period.
+	StartDate *time.Time `json:"start_date"`
+
+	StopDate *time.Time `json:"stop_date"`
+
+	// BillingPeriod: the billing period of the invoice in the YYYY-MM format.
+	BillingPeriod *time.Time `json:"billing_period"`
+
+	// IssuedDate: date when the invoice was sent to the customer.
+	IssuedDate *time.Time `json:"issued_date"`
+
+	// DueDate: payment time limit, set according to the Organization's payment conditions.
+	DueDate *time.Time `json:"due_date"`
+
+	// TotalUntaxed: total amount, untaxed.
+	TotalUntaxed *scw.Money `json:"total_untaxed"`
+
+	// TotalTaxed: total amount, taxed.
+	TotalTaxed *scw.Money `json:"total_taxed"`
+
+	// TotalTax: the total tax amount of the invoice.
+	TotalTax *scw.Money `json:"total_tax"`
+
+	// TotalDiscount: the total discount amount of the invoice.
+	TotalDiscount *scw.Money `json:"total_discount"`
+
+	// TotalUndiscount: the total amount of the invoice before applying the discount.
+	TotalUndiscount *scw.Money `json:"total_undiscount"`
+
+	// Type: type of invoice, either periodic or purchase.
+	// Default value: unknown_type
+	Type InvoiceType `json:"type"`
+
+	// State: the state of the Invoice.
+	State string `json:"state"`
+
+	// Number: invoice number.
+	Number int32 `json:"number"`
+
+	SellerName string `json:"seller_name"`
+
+	// CustomerName: customer name associated to this organization.
+	CustomerName string `json:"customer_name"`
+}
+
 // ListTaxesResponseTax: list taxes response tax.
 type ListTaxesResponseTax struct {
 	// Description: description of the tax applied.
@@ -145,6 +372,52 @@ type ListTaxesResponseTax struct {
 
 	// TotalTaxValue: the total tax value of the consumption.
 	TotalTaxValue *float64 `json:"total_tax_value"`
+}
+
+// DownloadInvoiceRequest: download invoice request.
+type DownloadInvoiceRequest struct {
+	// InvoiceID: invoice ID.
+	InvoiceID string `json:"-"`
+
+	// FileType: file type. PDF by default.
+	// Default value: pdf
+	FileType DownloadInvoiceRequestFileType `json:"-"`
+}
+
+// ExportInvoicesRequest: export invoices request.
+type ExportInvoicesRequest struct {
+	// OrganizationID: organization ID. If specified, only invoices from this Organization will be returned.
+	OrganizationID *string `json:"-"`
+
+	// BillingPeriodStartAfter: return only invoice with start date greater than billing_period_start.
+	BillingPeriodStartAfter *time.Time `json:"-"`
+
+	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
+	BillingPeriodStartBefore *time.Time `json:"-"`
+
+	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
+	// Default value: unknown_type
+	InvoiceType InvoiceType `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: how invoices are ordered in the response.
+	// Default value: invoice_number_desc
+	OrderBy ExportInvoicesRequestOrderBy `json:"-"`
+
+	// FileType: file format for exporting the invoice list.
+	// Default value: csv
+	FileType ExportInvoicesRequestFileType `json:"-"`
+}
+
+// GetInvoiceRequest: get invoice request.
+type GetInvoiceRequest struct {
+	// InvoiceID: invoice ID.
+	InvoiceID string `json:"-"`
 }
 
 // ListConsumptionsRequest: list consumptions request.
@@ -206,6 +479,60 @@ func (r *ListConsumptionsResponse) UnsafeAppend(res interface{}) (uint64, error)
 	r.Consumptions = append(r.Consumptions, results.Consumptions...)
 	r.TotalCount += uint64(len(results.Consumptions))
 	return uint64(len(results.Consumptions)), nil
+}
+
+// ListInvoicesRequest: list invoices request.
+type ListInvoicesRequest struct {
+	// OrganizationID: organization ID. If specified, only invoices from this Organization will be returned.
+	OrganizationID *string `json:"-"`
+
+	// BillingPeriodStartAfter: return only invoice with start date greater than billing_period_start.
+	BillingPeriodStartAfter *time.Time `json:"-"`
+
+	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
+	BillingPeriodStartBefore *time.Time `json:"-"`
+
+	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
+	// Default value: unknown_type
+	InvoiceType InvoiceType `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: how invoices are ordered in the response.
+	// Default value: invoice_number_desc
+	OrderBy ListInvoicesRequestOrderBy `json:"-"`
+}
+
+// ListInvoicesResponse: list invoices response.
+type ListInvoicesResponse struct {
+	// TotalCount: total number of invoices.
+	TotalCount uint64 `json:"total_count"`
+
+	// Invoices: paginated returned invoices.
+	Invoices []*Invoice `json:"invoices"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListInvoicesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListInvoicesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListInvoicesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Invoices = append(r.Invoices, results.Invoices...)
+	r.TotalCount += uint64(len(results.Invoices))
+	return uint64(len(results.Invoices)), nil
 }
 
 // ListTaxesRequest: list taxes request.
@@ -341,6 +668,121 @@ func (s *API) ListTaxes(req *ListTaxesRequest, opts ...scw.RequestOption) (*List
 	}
 
 	var resp ListTaxesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListInvoices: List all your invoices, filtering by `start_date` and `invoice_type`. Each invoice has its own ID.
+func (s *API) ListInvoices(req *ListInvoicesRequest, opts ...scw.RequestOption) (*ListInvoicesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "billing_period_start_after", req.BillingPeriodStartAfter)
+	parameter.AddToQuery(query, "billing_period_start_before", req.BillingPeriodStartBefore)
+	parameter.AddToQuery(query, "invoice_type", req.InvoiceType)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/invoices",
+		Query:  query,
+	}
+
+	var resp ListInvoicesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ExportInvoices: Export invoices in a CSV file.
+func (s *API) ExportInvoices(req *ExportInvoicesRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "billing_period_start_after", req.BillingPeriodStartAfter)
+	parameter.AddToQuery(query, "billing_period_start_before", req.BillingPeriodStartBefore)
+	parameter.AddToQuery(query, "invoice_type", req.InvoiceType)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "file_type", req.FileType)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/export-invoices",
+		Query:  query,
+	}
+
+	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetInvoice: Get a specific invoice, specified by its ID.
+func (s *API) GetInvoice(req *GetInvoiceRequest, opts ...scw.RequestOption) (*Invoice, error) {
+	var err error
+
+	if fmt.Sprint(req.InvoiceID) == "" {
+		return nil, errors.New("field InvoiceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/invoices/" + fmt.Sprint(req.InvoiceID) + "",
+	}
+
+	var resp Invoice
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DownloadInvoice: Download a specific invoice, specified by its ID.
+func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "file_type", req.FileType)
+
+	if fmt.Sprint(req.InvoiceID) == "" {
+		return nil, errors.New("field InvoiceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/invoices/" + fmt.Sprint(req.InvoiceID) + "/download",
+		Query:  query,
+	}
+
+	var resp scw.File
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
