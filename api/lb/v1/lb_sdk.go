@@ -524,6 +524,37 @@ func (enum *ListFrontendsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListIPsRequestIPType string
+
+const (
+	ListIPsRequestIPTypeAll  = ListIPsRequestIPType("all")
+	ListIPsRequestIPTypeIPv4 = ListIPsRequestIPType("ipv4")
+	ListIPsRequestIPTypeIPv6 = ListIPsRequestIPType("ipv6")
+)
+
+func (enum ListIPsRequestIPType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "all"
+	}
+	return string(enum)
+}
+
+func (enum ListIPsRequestIPType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListIPsRequestIPType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListIPsRequestIPType(ListIPsRequestIPType(tmp).String())
+	return nil
+}
+
 type ListLBsRequestOrderBy string
 
 const (
@@ -2363,6 +2394,10 @@ type ListIPsRequest struct {
 
 	// ProjectID: project ID to filter for, only Load Balancer IP addresses from this Project will be returned.
 	ProjectID *string `json:"-"`
+
+	// IPType: IP type to filter for.
+	// Default value: all
+	IPType ListIPsRequestIPType `json:"-"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -3727,6 +3762,10 @@ type ZonedAPIListIPsRequest struct {
 
 	// ProjectID: project ID to filter for, only Load Balancer IP addresses from this Project will be returned.
 	ProjectID *string `json:"-"`
+
+	// IPType: IP type to filter for.
+	// Default value: all
+	IPType ListIPsRequestIPType `json:"-"`
 }
 
 // ZonedAPIListLBPrivateNetworksRequest: zoned api list lb private networks request.
@@ -4525,6 +4564,7 @@ func (s *ZonedAPI) ListIPs(req *ZonedAPIListIPsRequest, opts ...scw.RequestOptio
 	parameter.AddToQuery(query, "ip_address", req.IPAddress)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "ip_type", req.IPType)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -6484,6 +6524,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "ip_address", req.IPAddress)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "ip_type", req.IPType)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
