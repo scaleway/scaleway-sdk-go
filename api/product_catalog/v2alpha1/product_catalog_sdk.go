@@ -100,6 +100,8 @@ type EstimateCostRequest struct {
 	Currency string `json:"currency"`
 
 	Items []*EstimateCostRequestItem `json:"items"`
+
+	PriceRounded bool `json:"price_rounded"`
 }
 
 // EstimateCostResponse: estimate cost response.
