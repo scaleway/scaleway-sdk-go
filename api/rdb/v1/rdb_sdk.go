@@ -988,6 +988,9 @@ type ReadReplica struct {
 
 	// SameZone: whether the replica is in the same availability zone as the main instance nodes or not.
 	SameZone bool `json:"same_zone"`
+
+	// InstanceID: UUID of the Database Instance.
+	InstanceID string `json:"instance_id"`
 }
 
 // UpgradableVersion: upgradable version.
