@@ -196,6 +196,38 @@ func (enum *ListIPsRequestVersion) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListOSRequestOrderBy string
+
+const (
+	ListOSRequestOrderByNameAsc     = ListOSRequestOrderBy("name_asc")
+	ListOSRequestOrderByNameDesc    = ListOSRequestOrderBy("name_desc")
+	ListOSRequestOrderByVersionAsc  = ListOSRequestOrderBy("version_asc")
+	ListOSRequestOrderByVersionDesc = ListOSRequestOrderBy("version_desc")
+)
+
+func (enum ListOSRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "name_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListOSRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListOSRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListOSRequestOrderBy(ListOSRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListOSRequestStatus string
 
 const (
@@ -1730,6 +1762,42 @@ func (r *ListMemoriesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Memories)), nil
 }
 
+// ListOSNamesRequest: list os names request.
+type ListOSNamesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListOSNamesResponse: list os names response.
+type ListOSNamesResponse struct {
+	OsNames []string `json:"os_names"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOSNamesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOSNamesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOSNamesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OsNames = append(r.OsNames, results.OsNames...)
+	r.TotalCount += uint64(len(results.OsNames))
+	return uint64(len(results.OsNames)), nil
+}
+
 // ListOSRequest: list os request.
 type ListOSRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1747,6 +1815,13 @@ type ListOSRequest struct {
 
 	// Name: filter OS by name.
 	Name *string `json:"-"`
+
+	// Version: filter OS by version.
+	Version *string `json:"-"`
+
+	// OrderBy: order the response.
+	// Default value: name_asc
+	OrderBy ListOSRequestOrderBy `json:"-"`
 }
 
 // ListOSResponse: list os response.
@@ -1775,6 +1850,152 @@ func (r *ListOSResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Os = append(r.Os, results.Os...)
 	r.TotalCount += uint32(len(results.Os))
 	return uint32(len(results.Os)), nil
+}
+
+// ListOSVersionsRequest: list os versions request.
+type ListOSVersionsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListOSVersionsResponse: list os versions response.
+type ListOSVersionsResponse struct {
+	OsVersions []string `json:"os_versions"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOSVersionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOSVersionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOSVersionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OsVersions = append(r.OsVersions, results.OsVersions...)
+	r.TotalCount += uint64(len(results.OsVersions))
+	return uint64(len(results.OsVersions)), nil
+}
+
+// ListOfferCommercialRangesRequest: list offer commercial ranges request.
+type ListOfferCommercialRangesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListOfferCommercialRangesResponse: list offer commercial ranges response.
+type ListOfferCommercialRangesResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	CommercialRanges []string `json:"commercial_ranges"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOfferCommercialRangesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOfferCommercialRangesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOfferCommercialRangesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.CommercialRanges = append(r.CommercialRanges, results.CommercialRanges...)
+	r.TotalCount += uint64(len(results.CommercialRanges))
+	return uint64(len(results.CommercialRanges)), nil
+}
+
+// ListOfferNamesRequest: list offer names request.
+type ListOfferNamesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListOfferNamesResponse: list offer names response.
+type ListOfferNamesResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	OfferNames []string `json:"offer_names"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOfferNamesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOfferNamesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOfferNamesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OfferNames = append(r.OfferNames, results.OfferNames...)
+	r.TotalCount += uint64(len(results.OfferNames))
+	return uint64(len(results.OfferNames)), nil
+}
+
+// ListOfferOptionsRequest: list offer options request.
+type ListOfferOptionsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	OfferID string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListOfferOptionsResponse: list offer options response.
+type ListOfferOptionsResponse struct {
+	OfferOptions []*OfferOptionOffer `json:"offer_options"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOfferOptionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOfferOptionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOfferOptionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OfferOptions = append(r.OfferOptions, results.OfferOptions...)
+	r.TotalCount += uint64(len(results.OfferOptions))
+	return uint64(len(results.OfferOptions)), nil
 }
 
 // ListOffersRequest: list offers request.
@@ -2850,6 +3071,80 @@ func (s *API) MigrateServersWithOffer(req *MigrateServersWithOfferRequest, opts 
 	return &resp, nil
 }
 
+// ListOfferCommercialRanges:
+func (s *API) ListOfferCommercialRanges(req *ListOfferCommercialRangesRequest, opts ...scw.RequestOption) (*ListOfferCommercialRangesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal-internal/v1/zones/" + fmt.Sprint(req.Zone) + "/offers-commercial-ranges",
+		Query:  query,
+	}
+
+	var resp ListOfferCommercialRangesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListOfferNames:
+func (s *API) ListOfferNames(req *ListOfferNamesRequest, opts ...scw.RequestOption) (*ListOfferNamesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal-internal/v1/zones/" + fmt.Sprint(req.Zone) + "/offers-names",
+		Query:  query,
+	}
+
+	var resp ListOfferNamesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListOffers:
 func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*ListOffersResponse, error) {
 	var err error
@@ -2992,6 +3287,121 @@ func (s *API) UpdateOffer(req *UpdateOfferRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+// ListOfferOptions:
+func (s *API) ListOfferOptions(req *ListOfferOptionsRequest, opts ...scw.RequestOption) (*ListOfferOptionsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OfferID) == "" {
+		return nil, errors.New("field OfferID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal-internal/v1/zones/" + fmt.Sprint(req.Zone) + "/offers/" + fmt.Sprint(req.OfferID) + "/options",
+		Query:  query,
+	}
+
+	var resp ListOfferOptionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListOSNames:
+func (s *API) ListOSNames(req *ListOSNamesRequest, opts ...scw.RequestOption) (*ListOSNamesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal-internal/v1/zones/" + fmt.Sprint(req.Zone) + "/os-names",
+		Query:  query,
+	}
+
+	var resp ListOSNamesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListOSVersions:
+func (s *API) ListOSVersions(req *ListOSVersionsRequest, opts ...scw.RequestOption) (*ListOSVersionsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal-internal/v1/zones/" + fmt.Sprint(req.Zone) + "/os-version",
+		Query:  query,
+	}
+
+	var resp ListOSVersionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListOS: List all OS, could filter by name or status.
 func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResponse, error) {
 	var err error
@@ -3011,6 +3421,8 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "version", req.Version)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
