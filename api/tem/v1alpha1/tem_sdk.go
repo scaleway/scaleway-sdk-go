@@ -393,6 +393,15 @@ type CreateEmailRequestAttachment struct {
 	Content []byte `json:"content"`
 }
 
+// CreateEmailRequestHeader: create email request header.
+type CreateEmailRequestHeader struct {
+	// Key: email header key.
+	Key string `json:"key"`
+
+	// Value: email header value.
+	Value string `json:"value"`
+}
+
 // Email: email.
 type Email struct {
 	// ID: technical ID of the email.
@@ -585,6 +594,9 @@ type CreateEmailRequest struct {
 
 	// SendBefore: maximum date to deliver the email.
 	SendBefore *time.Time `json:"send_before,omitempty"`
+
+	// AdditionalHeaders: array of additional headers as key-value.
+	AdditionalHeaders []*CreateEmailRequestHeader `json:"additional_headers"`
 }
 
 // CreateEmailResponse: create email response.
