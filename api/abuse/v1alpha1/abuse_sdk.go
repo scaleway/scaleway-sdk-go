@@ -140,6 +140,110 @@ func (enum *CaseType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ComplaintClass string
+
+const (
+	ComplaintClassUnknownClass = ComplaintClass("unknown_class")
+	ComplaintClassActivity     = ComplaintClass("activity")
+	ComplaintClassContent      = ComplaintClass("content")
+)
+
+func (enum ComplaintClass) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_class"
+	}
+	return string(enum)
+}
+
+func (enum ComplaintClass) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ComplaintClass) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ComplaintClass(ComplaintClass(tmp).String())
+	return nil
+}
+
+type ComplaintStatus string
+
+const (
+	ComplaintStatusUnknownStatus = ComplaintStatus("unknown_status")
+	ComplaintStatusNew           = ComplaintStatus("new")
+	ComplaintStatusForwarded     = ComplaintStatus("forwarded")
+	ComplaintStatusProcessing    = ComplaintStatus("processing")
+	ComplaintStatusNotSupported  = ComplaintStatus("not_supported")
+	ComplaintStatusError         = ComplaintStatus("error")
+)
+
+func (enum ComplaintStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum ComplaintStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ComplaintStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ComplaintStatus(ComplaintStatus(tmp).String())
+	return nil
+}
+
+type ComplaintType string
+
+const (
+	ComplaintTypeUnknownType = ComplaintType("unknown_type")
+	ComplaintTypeBruteforce  = ComplaintType("bruteforce")
+	ComplaintTypeBotnet      = ComplaintType("botnet")
+	ComplaintTypeCopyright   = ComplaintType("copyright")
+	ComplaintTypeDdos        = ComplaintType("ddos")
+	ComplaintTypeIllicit     = ComplaintType("illicit")
+	ComplaintTypeMalware     = ComplaintType("malware")
+	ComplaintTypePhishing    = ComplaintType("phishing")
+	ComplaintTypeSpam        = ComplaintType("spam")
+	ComplaintTypeVirus       = ComplaintType("virus")
+	ComplaintTypeIptv        = ComplaintType("iptv")
+)
+
+func (enum ComplaintType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum ComplaintType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ComplaintType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ComplaintType(ComplaintType(tmp).String())
+	return nil
+}
+
 type ListCaseReportsRequestOrderBy string
 
 const (
@@ -262,6 +366,67 @@ type Case struct {
 	Type CaseType `json:"type"`
 }
 
+// Complaint: complaint.
+type Complaint struct {
+	// ID: iD.
+	ID string `json:"id"`
+
+	// Evidence: content of the compalint explaining why the complaint is made.
+	Evidence string `json:"evidence"`
+
+	// ObservedAt: datetime at which the infrigement as been seen.
+	ObservedAt *time.Time `json:"observed_at"`
+
+	// ObserverEmail: email of the person or the entity creating the complaint.
+	ObserverEmail string `json:"observer_email"`
+
+	// ObserverName: optional name of the the person or the entity creating the complaint (optional in case of CSAM).
+	ObserverName *string `json:"observer_name"`
+
+	// ResourceValue: representation of the resource targeted by the complaint.
+	ResourceValue string `json:"resource_value"`
+
+	// Status: status.
+	// Default value: unknown_status
+	Status ComplaintStatus `json:"status"`
+
+	// Type: type of the abuse related to the complaint.
+	// Default value: unknown_type
+	Type ComplaintType `json:"type"`
+
+	// Class: class of the abuse related to the complaint.
+	// Default value: unknown_class
+	Class ComplaintClass `json:"class"`
+
+	// ReportedAt: datetime at which the complaint has been made.
+	ReportedAt *time.Time `json:"reported_at"`
+}
+
+// ComplaintAPICreateComplaintRequest: complaint api create complaint request.
+type ComplaintAPICreateComplaintRequest struct {
+	// Captcha: value of the captcha challenge.
+	Captcha string `json:"captcha"`
+
+	// Evidence: content of the compalint explaining why the complaint is made.
+	Evidence *string `json:"evidence,omitempty"`
+
+	// ObservedAt: datetime at which the infrigement as been seen.
+	ObservedAt *time.Time `json:"observed_at,omitempty"`
+
+	// ObserverEmail: email of the person or the entity creating the complaint.
+	ObserverEmail string `json:"observer_email"`
+
+	// ObserverName: optional name of the the person or the entity creating the complaint (optional in case of CSAM).
+	ObserverName *string `json:"observer_name,omitempty"`
+
+	// ResourceValue: representation of the resource targeted by the complaint.
+	ResourceValue string `json:"resource_value"`
+
+	// Type: type of the abuse related to the complaint.
+	// Default value: unknown_type
+	Type ComplaintType `json:"type"`
+}
+
 // ListCaseReportsResponse: list case reports response.
 type ListCaseReportsResponse struct {
 	// Reports: list of reports.
@@ -354,6 +519,41 @@ type WorkflowAPIListCasesRequest struct {
 
 	// OrganizationID: filter by organization ID.
 	OrganizationID string `json:"-"`
+}
+
+// This API is used to create complaints.
+type ComplaintAPI struct {
+	client *scw.Client
+}
+
+// NewComplaintAPI returns a ComplaintAPI object from a Scaleway client.
+func NewComplaintAPI(client *scw.Client) *ComplaintAPI {
+	return &ComplaintAPI{
+		client: client,
+	}
+}
+
+// CreateComplaint: Create complaint.
+func (s *ComplaintAPI) CreateComplaint(req *ComplaintAPICreateComplaintRequest, opts ...scw.RequestOption) (*Complaint, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/abuse/v1alpha1/complaints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Complaint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // This API allow to list and display data related to Cases and Reports.
