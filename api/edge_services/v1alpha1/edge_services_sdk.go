@@ -633,6 +633,8 @@ type TLSSecretsConfig struct {
 
 // CheckDomainRequest: check domain request.
 type CheckDomainRequest struct {
+	ProjectID string `json:"project_id"`
+
 	Fqdn string `json:"fqdn"`
 
 	Cname string `json:"cname"`
@@ -1775,6 +1777,11 @@ func (s *API) DeleteBackendStage(req *DeleteBackendStageRequest, opts ...scw.Req
 // CheckDomain:
 func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*CheckDomainResponse, error) {
 	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
