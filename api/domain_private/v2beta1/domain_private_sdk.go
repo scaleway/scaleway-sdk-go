@@ -19,6 +19,7 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	std "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/std"
 	domain_v2beta1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/domain/v2beta1"
 )
 
@@ -313,6 +314,9 @@ type FormFieldCountry struct {
 	Name string `json:"name"`
 
 	Continent *FormField `json:"continent"`
+
+	// CountryCode: default value: unknown_country_code
+	CountryCode std.CountryCode `json:"country_code"`
 }
 
 // ListFrModesResponseFrMode: list fr modes response fr mode.
@@ -381,6 +385,9 @@ type FormFieldState struct {
 	Name string `json:"name"`
 
 	Continent *FormField `json:"continent"`
+
+	// CountryCode: default value: unknown_country_code
+	CountryCode std.CountryCode `json:"country_code"`
 }
 
 // RDAP: rdap.
@@ -454,6 +461,9 @@ type ConsoleAPIListRegionsRequest struct {
 // ConsoleAPIListStatesRequest: console api list states request.
 type ConsoleAPIListStatesRequest struct {
 	Continent *string `json:"-"`
+
+	// CountryCode: default value: unknown_country_code
+	CountryCode std.CountryCode `json:"-"`
 }
 
 // CreateMessageRequest: create message request.
@@ -968,7 +978,7 @@ func (s *ConsoleAPI) GetRdap(req *ConsoleAPIGetRdapRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-// ListRegions: List regions available.
+// Deprecated: ListRegions: List regions available.
 func (s *ConsoleAPI) ListRegions(req *ConsoleAPIListRegionsRequest, opts ...scw.RequestOption) (*ListRegionsResponse, error) {
 	var err error
 
@@ -1035,6 +1045,7 @@ func (s *ConsoleAPI) ListStates(req *ConsoleAPIListStatesRequest, opts ...scw.Re
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "continent", req.Continent)
+	parameter.AddToQuery(query, "country_code", req.CountryCode)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
