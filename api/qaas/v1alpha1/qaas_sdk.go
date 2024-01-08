@@ -360,16 +360,19 @@ type Session struct {
 	// PlatformID: platform ID for which the session has been created.
 	PlatformID string `json:"platform_id"`
 
-	// CreatedAt: time at which the session has been created.
+	// CreatedAt: the time at which the session was created.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// StartedAt: time at which the session has been started.
+	// StartedAt: the time at which the session started.
 	StartedAt *time.Time `json:"started_at"`
 
-	// UpdateAt: time at which the session has been updated.
-	UpdateAt *time.Time `json:"update_at"`
+	// UpdatedAt: the time at which the session was updated.
+	UpdatedAt *time.Time `json:"updated_at"`
 
-	// MaxIDleDuration: maximum idle duration before the session ends.
+	// TerminatedAt: the time at which the session was terminated.
+	TerminatedAt *time.Time `json:"terminated_at"`
+
+	// MaxIDleDuration: maximum idle time before the session ends.
 	MaxIDleDuration *scw.Duration `json:"max_idle_duration"`
 
 	// MaxDuration: maximum duration before the session ends.
@@ -441,6 +444,12 @@ type CreateSessionRequest struct {
 
 	// DeduplicationID: deduplication ID of the session.
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
+}
+
+// DeleteJobRequest: delete job request.
+type DeleteJobRequest struct {
+	// JobID: unique ID of the job.
+	JobID string `json:"-"`
 }
 
 // DeleteSessionRequest: delete session request.
@@ -630,6 +639,12 @@ func (r *ListSessionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Sessions)), nil
 }
 
+// TerminateSessionRequest: terminate session request.
+type TerminateSessionRequest struct {
+	// SessionID: unique ID of the session.
+	SessionID string `json:"-"`
+}
+
 // UpdateJobRequest: update job request.
 type UpdateJobRequest struct {
 	// JobID: unique ID of the job.
@@ -653,7 +668,7 @@ type UpdateSessionRequest struct {
 	// MaxIDleDuration: maximum idle duration before the session ends.
 	MaxIDleDuration *scw.Duration `json:"max_idle_duration,omitempty"`
 
-	// MaxDuration: maximum duration before the session ends.
+	// MaxDuration: maximum time before the session ends.
 	MaxDuration *scw.Duration `json:"max_duration,omitempty"`
 
 	// Tags: tags of the session.
@@ -806,6 +821,26 @@ func (s *API) CancelJob(req *CancelJobRequest, opts ...scw.RequestOption) (*Job,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// DeleteJob: Delete the job corresponding to the provided **job ID**.
+func (s *API) DeleteJob(req *DeleteJobRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.JobID) == "" {
+		return errors.New("field JobID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/qaas/v1alpha1/job/" + fmt.Sprint(req.JobID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetJobCircuit: Retrieve the circuit of the provided **job ID**.
@@ -999,7 +1034,34 @@ func (s *API) UpdateSession(req *UpdateSessionRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteSession: Delete a session by its unique ID and cancel all its attached jobs.
+// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs.
+func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
+	var err error
+
+	if fmt.Sprint(req.SessionID) == "" {
+		return nil, errors.New("field SessionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/qaas/v1alpha1/sessions/" + fmt.Sprint(req.SessionID) + "/terminate",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Session
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteSession: Delete a session by its unique ID and delete all its attached jobs.
 func (s *API) DeleteSession(req *DeleteSessionRequest, opts ...scw.RequestOption) error {
 	var err error
 
