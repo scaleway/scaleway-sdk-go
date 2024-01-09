@@ -879,6 +879,10 @@ type Account struct {
 	// Status: the current status of the account creation.
 	// Default value: unknown_status
 	Status AccountStatus `json:"status"`
+
+	// CountryCode: the country of the IP address used for the account creation.
+	// Default value: unknown_country_code
+	CountryCode std.CountryCode `json:"country_code"`
 }
 
 // BlacklistedDomain: blacklisted domain.
