@@ -1349,6 +1349,9 @@ type GetClusterKubeConfigRequest struct {
 
 	// ClusterID: cluster ID for which to download the kubeconfig.
 	ClusterID string `json:"-"`
+
+	// Redacted: hide the legacy token from the kubeconfig.
+	Redacted *bool `json:"redacted,omitempty"`
 }
 
 // GetClusterRequest: get cluster request.
@@ -2170,6 +2173,9 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 		req.Region = defaultRegion
 	}
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "redacted", req.Redacted)
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -2181,6 +2187,7 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/kubeconfig",
+		Query:  query,
 	}
 
 	var resp scw.File
