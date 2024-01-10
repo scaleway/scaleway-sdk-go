@@ -833,7 +833,7 @@ func (s *API) DeleteJob(req *DeleteJobRequest, opts ...scw.RequestOption) error 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/qaas/v1alpha1/job/" + fmt.Sprint(req.JobID) + "",
+		Path:   "/qaas/v1alpha1/jobs/" + fmt.Sprint(req.JobID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
