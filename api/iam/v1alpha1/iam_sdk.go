@@ -1266,7 +1266,7 @@ type ListAPIKeysRequest struct {
 	// Expired: defines whether to filter out expired API keys or not.
 	Expired *bool `json:"-"`
 
-	// AccessKey: filter by access key.
+	// Deprecated: AccessKey: filter by access key (deprecated in favor of `access_keys`).
 	AccessKey *string `json:"-"`
 
 	// Description: filter by description.
@@ -1278,6 +1278,9 @@ type ListAPIKeysRequest struct {
 	// BearerType: filter by type of bearer.
 	// Default value: unknown_bearer_type
 	BearerType BearerType `json:"-"`
+
+	// AccessKeys: filter by a list of access keys.
+	AccessKeys []string `json:"-"`
 }
 
 // ListAPIKeysResponse: list api keys response.
@@ -1608,6 +1611,9 @@ type ListPoliciesRequest struct {
 
 	// Tag: filter by tags containing a given string.
 	Tag *string `json:"-"`
+
+	// PolicyIDs: filter by a list of IDs.
+	PolicyIDs []string `json:"-"`
 }
 
 // ListPoliciesResponse: list policies response.
@@ -2659,6 +2665,7 @@ func (s *API) ListPolicies(req *ListPoliciesRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "no_principal", req.NoPrincipal)
 	parameter.AddToQuery(query, "policy_name", req.PolicyName)
 	parameter.AddToQuery(query, "tag", req.Tag)
+	parameter.AddToQuery(query, "policy_ids", req.PolicyIDs)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2910,6 +2917,7 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "description", req.Description)
 	parameter.AddToQuery(query, "bearer_id", req.BearerID)
 	parameter.AddToQuery(query, "bearer_type", req.BearerType)
+	parameter.AddToQuery(query, "access_keys", req.AccessKeys)
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
 	parameter.AddToQuery(query, "user_id", req.UserID)
 
