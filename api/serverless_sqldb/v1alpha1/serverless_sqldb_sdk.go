@@ -310,6 +310,12 @@ type ListDatabaseBackupsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// OrganizationID: filter by the UUID of the Scaleway organization.
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: filter by the UUID of the Scaleway project.
+	ProjectID *string `json:"-"`
+
 	// DatabaseID: filter by the UUID of the Serverless SQL Database.
 	DatabaseID string `json:"-"`
 
@@ -356,6 +362,9 @@ func (r *ListDatabaseBackupsResponse) UnsafeAppend(res interface{}) (uint64, err
 type ListDatabasesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
+
+	// OrganizationID: filter by the UUID of the Scaleway organization.
+	OrganizationID *string `json:"-"`
 
 	// ProjectID: UUID of the Scaleway project.
 	ProjectID string `json:"-"`
@@ -563,6 +572,7 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
@@ -706,6 +716,8 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "database_id", req.DatabaseID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
