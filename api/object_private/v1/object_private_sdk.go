@@ -103,6 +103,42 @@ func (enum *BucketInfoStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SetBucketUsecaseRequestUsecase string
+
+const (
+	SetBucketUsecaseRequestUsecaseUnknownUsecase   = SetBucketUsecaseRequestUsecase("unknown_usecase")
+	SetBucketUsecaseRequestUsecaseAiAndMl          = SetBucketUsecaseRequestUsecase("ai_and_ml")
+	SetBucketUsecaseRequestUsecaseBigData          = SetBucketUsecaseRequestUsecase("big_data")
+	SetBucketUsecaseRequestUsecaseBackupAndArchive = SetBucketUsecaseRequestUsecase("backup_and_archive")
+	SetBucketUsecaseRequestUsecaseStaticWebsite    = SetBucketUsecaseRequestUsecase("static_website")
+	SetBucketUsecaseRequestUsecaseMediaDiffusion   = SetBucketUsecaseRequestUsecase("media_diffusion")
+	SetBucketUsecaseRequestUsecaseWebApp           = SetBucketUsecaseRequestUsecase("web_app")
+	SetBucketUsecaseRequestUsecaseFileTransfer     = SetBucketUsecaseRequestUsecase("file_transfer")
+)
+
+func (enum SetBucketUsecaseRequestUsecase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_usecase"
+	}
+	return string(enum)
+}
+
+func (enum SetBucketUsecaseRequestUsecase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SetBucketUsecaseRequestUsecase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SetBucketUsecaseRequestUsecase(SetBucketUsecaseRequestUsecase(tmp).String())
+	return nil
+}
+
 // BucketInfo: bucket info.
 type BucketInfo struct {
 	CurrentSize float64 `json:"current_size"`
@@ -214,6 +250,19 @@ type GetProjectInfoResponse struct {
 	QuotaObjects float64 `json:"quota_objects"`
 
 	QuotaBuckets float64 `json:"quota_buckets"`
+}
+
+// SetBucketUsecaseRequest: set bucket usecase request.
+type SetBucketUsecaseRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	BucketName string `json:"-"`
+
+	ProjectID string `json:"project_id"`
+
+	// Usecase: default value: unknown_usecase
+	Usecase SetBucketUsecaseRequestUsecase `json:"usecase"`
 }
 
 type API struct {
@@ -384,4 +433,43 @@ func (s *API) GetBucketMetrics(req *GetBucketMetricsRequest, opts ...scw.Request
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// SetBucketUsecase:
+func (s *API) SetBucketUsecase(req *SetBucketUsecaseRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BucketName) == "" {
+		return errors.New("field BucketName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/object-private/v1/regions/" + fmt.Sprint(req.Region) + "/buckets/" + fmt.Sprint(req.BucketName) + "/usecase",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
