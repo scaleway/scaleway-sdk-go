@@ -1221,6 +1221,8 @@ type ServerLocation struct {
 // ServerMaintenance: server maintenance.
 type ServerMaintenance struct {
 	Reason string `json:"reason"`
+
+	StartDate *time.Time `json:"start_date"`
 }
 
 // VolumeServer: volume server.
