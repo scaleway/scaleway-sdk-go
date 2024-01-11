@@ -44,9 +44,9 @@ type DataSourceOrigin string
 const (
 	// Unknown data source origin.
 	DataSourceOriginUnknownOrigin = DataSourceOrigin("unknown_origin")
-	// Data source which received data from Scaleway Products.
+	// Data source managed by Scaleway, used to store and query metrics and logs from Scaleway resources.
 	DataSourceOriginScaleway = DataSourceOrigin("scaleway")
-	// Data source which received data from external sources.
+	// Data source created by the user, used to store and query metrics, logs and traces from user's sources.
 	DataSourceOriginExternal = DataSourceOrigin("external")
 )
 
@@ -78,11 +78,11 @@ type DataSourceType string
 const (
 	// Unknown data source type.
 	DataSourceTypeUnknownType = DataSourceType("unknown_type")
-	// Metrics data source.
+	// Metrics data source type, used to store and query metrics using Grafana Mimir.
 	DataSourceTypeMetrics = DataSourceType("metrics")
-	// Logs data source.
+	// Logs data source type, used to store and query logs using Grafana Loki.
 	DataSourceTypeLogs = DataSourceType("logs")
-	// Traces data source.
+	// Traces data source type, used to store and query traces using Grafana Tempo.
 	DataSourceTypeTraces = DataSourceType("traces")
 )
 
@@ -368,21 +368,21 @@ const (
 	TokenScopeUnknownScope = TokenScope("unknown_scope")
 	// Permission to read data from metrics data sources.
 	TokenScopeReadOnlyMetrics = TokenScope("read_only_metrics")
-	// Permission to write data to metrics data sources.
+	// Permission to write data in metrics data sources.
 	TokenScopeWriteOnlyMetrics = TokenScope("write_only_metrics")
-	// Permission to setup prometheus rules to metrics data sources.
+	// Permission to read and write prometheus rules in metrics data sources.
 	TokenScopeFullAccessMetricsRules = TokenScope("full_access_metrics_rules")
 	// Permission to read data from logs data sources.
 	TokenScopeReadOnlyLogs = TokenScope("read_only_logs")
-	// Permission to write data to logs data sources.
+	// Permission to write data in logs data sources.
 	TokenScopeWriteOnlyLogs = TokenScope("write_only_logs")
-	// Permission to setup prometheus rules to logs data sources.
+	// Permission to read and write prometheus rules in logs data sources.
 	TokenScopeFullAccessLogsRules = TokenScope("full_access_logs_rules")
-	// Permission to configure the alert manager.
+	// Permission to read and write the Alert manager API.
 	TokenScopeFullAccessAlertManager = TokenScope("full_access_alert_manager")
 	// Permission to read data from traces data sources.
 	TokenScopeReadOnlyTraces = TokenScope("read_only_traces")
-	// Permission to write data to traces data sources.
+	// Permission to write data in traces data sources.
 	TokenScopeWriteOnlyTraces = TokenScope("write_only_traces")
 )
 
@@ -479,20 +479,20 @@ type ContactPointEmail struct {
 
 // ContactPoint: Contact point.
 type ContactPoint struct {
-	// Email: contact point configuration.
+	// Email: email address to send alerts to.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 
-	// Region: contact point region.
+	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
 
-// DataSource: Datasource.
+// DataSource: Data source.
 type DataSource struct {
 	// ID: ID of the data source.
 	ID string `json:"id"`
 
-	// ProjectID: ID of the Project the Cockpit belongs to.
+	// ProjectID: ID of the Project the data source belongs to.
 	ProjectID string `json:"project_id"`
 
 	// Name: data source name.
@@ -509,31 +509,31 @@ type DataSource struct {
 	// Default value: unknown_origin
 	Origin DataSourceOrigin `json:"origin"`
 
-	// CreatedAt: creation date of the data source.
+	// CreatedAt: date the data source was created.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: last update date of the data source.
+	// UpdatedAt: date the data source was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Region: data source region.
+	// Region: region the data source is located in.
 	Region scw.Region `json:"region"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
 type GrafanaProductDashboard struct {
-	// Name: name of the dashboard.
+	// Name: dashboard name.
 	Name string `json:"name"`
 
-	// Title: title of the dashboard.
+	// Title: dashboard title.
 	Title string `json:"title"`
 
-	// URL: URL of the dashboard.
+	// URL: dashboard URL.
 	URL string `json:"url"`
 
-	// Tags: tags of the dashboard.
+	// Tags: dashboard tags.
 	Tags []string `json:"tags"`
 
-	// Variables: variables of the dashboard.
+	// Variables: dashboard variables.
 	Variables []string `json:"variables"`
 }
 
@@ -549,7 +549,7 @@ type GrafanaUser struct {
 	// Default value: unknown_role
 	Role GrafanaUserRole `json:"role"`
 
-	// Password: password of the Grafana user.
+	// Password: grafana user's password.
 	Password *string `json:"password"`
 }
 
@@ -584,7 +584,7 @@ type PlanType struct {
 	MonthlyPrice uint32 `json:"monthly_price"`
 }
 
-// Plan: Matching pricing plan with project.
+// Plan: Matching pricing plan with Project.
 type Plan struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
@@ -593,30 +593,30 @@ type Plan struct {
 	PlanTypeID string `json:"plan_type_id"`
 }
 
-// Token: token.
+// Token: Token.
 type Token struct {
 	// ID: ID of the token.
 	ID string `json:"id"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project the token belongs to.
 	ProjectID string `json:"project_id"`
 
 	// Name: name of the token.
 	Name string `json:"name"`
 
-	// CreatedAt: date and time of the token's creation.
+	// CreatedAt: token creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: date and time of the token's last update.
+	// UpdatedAt: dtae the token was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Scopes: token's permissions.
+	// Scopes: token permission scopes.
 	Scopes []TokenScope `json:"scopes"`
 
-	// SecretKey: token's secret key returned only at token creation.
+	// SecretKey: token secret key.
 	SecretKey *string `json:"secret_key"`
 
-	// Region: token's region.
+	// Region: region the token is located in.
 	Region scw.Region `json:"region"`
 }
 
@@ -644,27 +644,27 @@ type Usage struct {
 	Region scw.Region `json:"region"`
 }
 
-// AlertManager: Alert manager.
+// AlertManager: Alert manager information.
 type AlertManager struct {
 	// AlertManagerURL: alert manager URL.
 	AlertManagerURL string `json:"alert_manager_url"`
 
-	// AlertManagerEnabled: specifies whether the alert manager is enabled.
+	// AlertManagerEnabled: the Alert manager is enabled.
 	AlertManagerEnabled bool `json:"alert_manager_enabled"`
 
-	// ManagedAlertsEnabled: specifies whether managed alerts are enabled.
+	// ManagedAlertsEnabled: managed alerts are enabled.
 	ManagedAlertsEnabled bool `json:"managed_alerts_enabled"`
 
-	// Region: alert manager region.
+	// Region: regions the Alert manager is enabled in.
 	Region scw.Region `json:"region"`
 }
 
-// GlobalAPICreateGrafanaUserRequest: Request to create a Grafana user.
+// GlobalAPICreateGrafanaUserRequest: Create a Grafana user.
 type GlobalAPICreateGrafanaUserRequest struct {
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project in which to create the Grafana user.
 	ProjectID string `json:"project_id"`
 
-	// Login: username of the Grafana user.
+	// Login: username of the Grafana user. Note that the `admin` username is not available for creation.
 	Login string `json:"login"`
 
 	// Role: role assigned to the Grafana user.
@@ -672,33 +672,33 @@ type GlobalAPICreateGrafanaUserRequest struct {
 	Role GrafanaUserRole `json:"role"`
 }
 
-// GlobalAPIDeleteGrafanaUserRequest: Request to delete a Grafana user.
+// GlobalAPIDeleteGrafanaUserRequest: Delete a Grafana user.
 type GlobalAPIDeleteGrafanaUserRequest struct {
 	// GrafanaUserID: ID of the Grafana user.
 	GrafanaUserID uint32 `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to target.
 	ProjectID string `json:"-"`
 }
 
-// GlobalAPIGetGrafanaProductDashboardRequest: Request to get a dashboard.
+// GlobalAPIGetGrafanaProductDashboardRequest: Retrieve a specific dashboard.
 type GlobalAPIGetGrafanaProductDashboardRequest struct {
 	// DashboardName: name of the dashboard.
 	DashboardName string `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project the dashboard belongs to.
 	ProjectID string `json:"-"`
 }
 
-// GlobalAPIGetGrafanaRequest: Request to get a Grafana instance.
+// GlobalAPIGetGrafanaRequest: Request a Grafana.
 type GlobalAPIGetGrafanaRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"-"`
 }
 
-// GlobalAPIListGrafanaProductDashboardsRequest: Request to get a list of dashboards.
+// GlobalAPIListGrafanaProductDashboardsRequest: Retrieve a list of available product dashboards.
 type GlobalAPIListGrafanaProductDashboardsRequest struct {
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to target.
 	ProjectID string `json:"-"`
 
 	// Page: page number.
@@ -707,11 +707,11 @@ type GlobalAPIListGrafanaProductDashboardsRequest struct {
 	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
 
-	// Tags: tags to filter the dashboards.
+	// Tags: tags to filter for.
 	Tags []string `json:"-"`
 }
 
-// GlobalAPIListGrafanaUsersRequest: Request to list all Grafana users.
+// GlobalAPIListGrafanaUsersRequest: List all Grafana users.
 type GlobalAPIListGrafanaUsersRequest struct {
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -719,15 +719,15 @@ type GlobalAPIListGrafanaUsersRequest struct {
 	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: order by.
+	// OrderBy: order of the Grafana users.
 	// Default value: login_asc
 	OrderBy ListGrafanaUsersRequestOrderBy `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to target.
 	ProjectID string `json:"-"`
 }
 
-// GlobalAPIListPlanTypesRequest: Request to list all pricing plans.
+// GlobalAPIListPlanTypesRequest: Retrieve a list of available pricing plans.
 type GlobalAPIListPlanTypesRequest struct {
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -739,7 +739,7 @@ type GlobalAPIListPlanTypesRequest struct {
 	OrderBy ListPlanTypesRequestOrderBy `json:"-"`
 }
 
-// GlobalAPIListPlansRequest: Request to list all pricing plans.
+// GlobalAPIListPlansRequest: Retrieve a list of available pricing plans.
 type GlobalAPIListPlansRequest struct {
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -747,7 +747,7 @@ type GlobalAPIListPlansRequest struct {
 	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: order by.
+	// OrderBy: order of the plans.
 	// Default value: name_asc
 	OrderBy ListPlansRequestOrderBy `json:"-"`
 
@@ -755,16 +755,16 @@ type GlobalAPIListPlansRequest struct {
 	ProjectID *string `json:"-"`
 }
 
-// GlobalAPIResetGrafanaUserPasswordRequest: Request to reset a Grafana user's password.
+// GlobalAPIResetGrafanaUserPasswordRequest: Reset a Grafana user's password.
 type GlobalAPIResetGrafanaUserPasswordRequest struct {
 	// GrafanaUserID: ID of the Grafana user.
 	GrafanaUserID uint32 `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to target.
 	ProjectID string `json:"project_id"`
 }
 
-// GlobalAPISelectPlanRequest: Request to select a specific pricing plan.
+// GlobalAPISelectPlanRequest: Select a specific pricing plan.
 type GlobalAPISelectPlanRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
@@ -773,30 +773,30 @@ type GlobalAPISelectPlanRequest struct {
 	PlanTypeID string `json:"plan_type_id"`
 }
 
-// GlobalAPISyncGrafanaDataSourcesRequest: Request to synchronize all data-sources created in the Regional API.
+// GlobalAPISyncGrafanaDataSourcesRequest: Trigger the synchronization of all data sources created in the relevant regions.
 type GlobalAPISyncGrafanaDataSourcesRequest struct {
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to target.
 	ProjectID string `json:"project_id"`
 }
 
 // Grafana: Grafana user.
 type Grafana struct {
-	// GrafanaURL: URL of the Grafana instance.
+	// GrafanaURL: URL to access your Cockpit's Grafana.
 	GrafanaURL string `json:"grafana_url"`
 }
 
 // ListContactPointsResponse: Response returned when listing contact points.
 type ListContactPointsResponse struct {
-	// TotalCount: count of all contact points created.
+	// TotalCount: total count of contact points associated with the default receiver.
 	TotalCount uint64 `json:"total_count"`
 
-	// ContactPoints: array of contact points.
+	// ContactPoints: list of contact points associated with the default receiver.
 	ContactPoints []*ContactPoint `json:"contact_points"`
 
-	// HasAdditionalReceivers: specifies whether the contact point has other receivers than the default receiver.
+	// HasAdditionalReceivers: indicates whether the Alert manager has other receivers than the default one.
 	HasAdditionalReceivers bool `json:"has_additional_receivers"`
 
-	// HasAdditionalContactPoints: specifies whether there are unmanaged contact points.
+	// HasAdditionalContactPoints: indicates whether there are unmanaged contact points on the default receiver.
 	HasAdditionalContactPoints bool `json:"has_additional_contact_points"`
 }
 
@@ -821,10 +821,10 @@ func (r *ListContactPointsResponse) UnsafeAppend(res interface{}) (uint64, error
 
 // ListDataSourcesResponse: Response returned when listing data sources.
 type ListDataSourcesResponse struct {
-	// TotalCount: count of all datasources corresponding to the request.
+	// TotalCount: total count of data sources matching the request.
 	TotalCount uint64 `json:"total_count"`
 
-	// DataSources: list of the datasources within the pagination.
+	// DataSources: data sources matching the request within the pagination.
 	DataSources []*DataSource `json:"data_sources"`
 }
 
@@ -847,12 +847,12 @@ func (r *ListDataSourcesResponse) UnsafeAppend(res interface{}) (uint64, error) 
 	return uint64(len(results.DataSources)), nil
 }
 
-// ListGrafanaProductDashboardsResponse: Response returned when getting a list of dashboards.
+// ListGrafanaProductDashboardsResponse: Output returned when listing dashboards.
 type ListGrafanaProductDashboardsResponse struct {
-	// TotalCount: count of grafana dashboards.
+	// TotalCount: total count of Grafana dashboards.
 	TotalCount uint64 `json:"total_count"`
 
-	// Dashboards: information on grafana dashboards.
+	// Dashboards: grafana dashboards information.
 	Dashboards []*GrafanaProductDashboard `json:"dashboards"`
 }
 
@@ -875,12 +875,12 @@ func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res interface{}) (ui
 	return uint64(len(results.Dashboards)), nil
 }
 
-// ListGrafanaUsersResponse: Response returned when listing Grafana users.
+// ListGrafanaUsersResponse: Ouptut returned when listing Grafana users.
 type ListGrafanaUsersResponse struct {
-	// TotalCount: count of all Grafana users.
+	// TotalCount: total count of Grafana users.
 	TotalCount uint64 `json:"total_count"`
 
-	// GrafanaUsers: information on all Grafana users.
+	// GrafanaUsers: grafana users information.
 	GrafanaUsers []*GrafanaUser `json:"grafana_users"`
 }
 
@@ -903,12 +903,12 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error)
 	return uint64(len(results.GrafanaUsers)), nil
 }
 
-// ListPlanTypesResponse: Response returned when listing all pricing plans.
+// ListPlanTypesResponse: Output returned when listing pricing plans.
 type ListPlanTypesResponse struct {
-	// TotalCount: count of all pricing plans.
+	// TotalCount: total count of available pricing plans.
 	TotalCount uint64 `json:"total_count"`
 
-	// PlanTypes: information on plan types.
+	// PlanTypes: plan types information.
 	PlanTypes []*PlanType `json:"plan_types"`
 }
 
@@ -931,12 +931,12 @@ func (r *ListPlanTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.PlanTypes)), nil
 }
 
-// ListPlansResponse: Response returned when listing all pricing plans.
+// ListPlansResponse: Output returned when listing available pricing plans.
 type ListPlansResponse struct {
-	// TotalCount: count of all pricing plans.
+	// TotalCount: total count of available pricing plans.
 	TotalCount uint64 `json:"total_count"`
 
-	// Plans: information on plans.
+	// Plans: information on available pricing plans.
 	Plans []*Plan `json:"plans"`
 }
 
@@ -959,12 +959,12 @@ func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Plans)), nil
 }
 
-// ListTokensResponse: list tokens response.
+// ListTokensResponse: Response returned when listing tokens.
 type ListTokensResponse struct {
-	// TotalCount: count of all tokens created.
+	// TotalCount: total count of tokens matching the request.
 	TotalCount uint64 `json:"total_count"`
 
-	// Tokens: list of all tokens created.
+	// Tokens: tokens matching the request within the pagination.
 	Tokens []*Token `json:"tokens"`
 }
 
@@ -1013,25 +1013,25 @@ func (r *ListUsagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Usages)), nil
 }
 
-// RegionalAPICreateContactPointRequest: Request to create a contact point.
+// RegionalAPICreateContactPointRequest: Create a contact point.
 type RegionalAPICreateContactPointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project in which to create the contact point.
+	// ProjectID: ID of the Project to create the contact point in.
 	ProjectID string `json:"project_id"`
 
-	// Email: email address of the contact point.
+	// Email: email address of the contact point to create.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 }
 
-// RegionalAPICreateDataSourceRequest: Request to create a data source.
+// RegionalAPICreateDataSourceRequest: Create a data source.
 type RegionalAPICreateDataSourceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project the Cockpit belongs to.
+	// ProjectID: ID of the Project the data source belongs to.
 	ProjectID string `json:"project_id"`
 
 	// Name: data source name.
@@ -1042,61 +1042,61 @@ type RegionalAPICreateDataSourceRequest struct {
 	Type DataSourceType `json:"type"`
 }
 
-// RegionalAPICreateTokenRequest: regional api create token request.
+// RegionalAPICreateTokenRequest: Create a token.
 type RegionalAPICreateTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project the token belongs to.
 	ProjectID string `json:"project_id"`
 
 	// Name: name of the token.
 	Name string `json:"name"`
 
-	// TokenScopes: token's permission scopes.
+	// TokenScopes: token permission scopes.
 	TokenScopes []TokenScope `json:"token_scopes"`
 }
 
-// RegionalAPIDeleteContactPointRequest: Request to delete a contact point.
+// RegionalAPIDeleteContactPointRequest: Delete a contact point.
 type RegionalAPIDeleteContactPointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project containing the contact point to delete.
 	ProjectID string `json:"project_id"`
 
 	// ContactPoint: contact point to delete.
 	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
 }
 
-// RegionalAPIDeleteDataSourceRequest: Request to delete a data source.
+// RegionalAPIDeleteDataSourceRequest: Delete a data source.
 type RegionalAPIDeleteDataSourceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DataSourceID: ID of the data source.
+	// DataSourceID: ID of the data source to delete.
 	DataSourceID string `json:"-"`
 }
 
-// RegionalAPIDeleteTokenRequest: regional api delete token request.
+// RegionalAPIDeleteTokenRequest: Delete a token.
 type RegionalAPIDeleteTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// TokenID: ID of the token.
+	// TokenID: ID of the token to delete.
 	TokenID string `json:"-"`
 }
 
-// RegionalAPIDisableAlertManagerRequest: Request to disable the alert manager.
+// RegionalAPIDisableAlertManagerRequest: Disable the Alert manager.
 type RegionalAPIDisableAlertManagerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to disable the Alert manager in.
 	ProjectID string `json:"project_id"`
 }
 
-// RegionalAPIDisableManagedAlertsRequest: Request to disable the sending of managed alerts.
+// RegionalAPIDisableManagedAlertsRequest: Disable the sending of managed alerts.
 type RegionalAPIDisableManagedAlertsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
@@ -1105,110 +1105,110 @@ type RegionalAPIDisableManagedAlertsRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// RegionalAPIEnableAlertManagerRequest: Request to enable the alert manager.
+// RegionalAPIEnableAlertManagerRequest: Enable the Alert manager.
 type RegionalAPIEnableAlertManagerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to enable the Alert manager in.
 	ProjectID string `json:"project_id"`
 }
 
-// RegionalAPIEnableManagedAlertsRequest: Request to enable the sending of managed alerts.
+// RegionalAPIEnableManagedAlertsRequest: Enable the sending of managed alerts.
 type RegionalAPIEnableManagedAlertsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to enable the sending of managed alerts in.
 	ProjectID string `json:"project_id"`
 }
 
-// RegionalAPIGetAlertManagerRequest: Request to get the alert manager.
+// RegionalAPIGetAlertManagerRequest: Get the Alert manager.
 type RegionalAPIGetAlertManagerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: project ID of the requested Alert manager.
 	ProjectID string `json:"project_id"`
 }
 
-// RegionalAPIGetDataSourceRequest: Request to get a data source.
+// RegionalAPIGetDataSourceRequest: Retrieve a data source.
 type RegionalAPIGetDataSourceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DataSourceID: ID of the data source.
+	// DataSourceID: ID of the relevant data source.
 	DataSourceID string `json:"-"`
 }
 
-// RegionalAPIGetTokenRequest: regional api get token request.
+// RegionalAPIGetTokenRequest: Get a token.
 type RegionalAPIGetTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// TokenID: ID of the token.
+	// TokenID: token ID.
 	TokenID string `json:"-"`
 }
 
-// RegionalAPIListContactPointsRequest: Request to list all contact points.
+// RegionalAPIListContactPointsRequest: List contact points.
 type RegionalAPIListContactPointsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Page: page number.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
-	// PageSize: page size.
+	// PageSize: total count of contact points to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// ProjectID: ID of the Project from which to list the contact points.
+	// ProjectID: ID of the Project containing the contact points to list.
 	ProjectID string `json:"-"`
 }
 
-// RegionalAPIListDataSourcesRequest: Request to list all data sources.
+// RegionalAPIListDataSourcesRequest: List data sources.
 type RegionalAPIListDataSourcesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Page: page number.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
-	// PageSize: page size.
+	// PageSize: number of data sources to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: how the response is ordered.
+	// OrderBy: sort order for data sources in the response.
 	// Default value: created_at_asc
 	OrderBy ListDataSourcesRequestOrderBy `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
 	ProjectID *string `json:"-"`
 
-	// Origins: filter by data source origins.
+	// Origins: origins to filter for, only data sources with matching origins will be returned.
 	Origins []DataSourceOrigin `json:"-"`
 
-	// Types: filter by data source types.
+	// Types: types to filter for, only data sources with matching types will be returned.
 	Types []DataSourceType `json:"-"`
 }
 
-// RegionalAPIListTokensRequest: regional api list tokens request.
+// RegionalAPIListTokensRequest: List tokens.
 type RegionalAPIListTokensRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Page: page number.
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
-	// PageSize: page size.
+	// PageSize: number of tokens to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: how the response is ordered.
+	// OrderBy: order in which to return results.
 	// Default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project the tokens belong to.
 	ProjectID *string `json:"-"`
 
-	// TokenScopes: filter by token scopes.
+	// TokenScopes: token scopes to filter for.
 	TokenScopes []TokenScope `json:"-"`
 }
 
@@ -1241,11 +1241,11 @@ type RegionalAPITriggerTestAlertRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
+	// ProjectID: ID of the Project to disable the sending of managed alerts in.
 	ProjectID string `json:"project_id"`
 }
 
-// The Global Cockpit API allows you to manage your Cockpit instance.
+// The Cockpit Global API allows you to manage your Cockpit's Grafana and plans.
 type GlobalAPI struct {
 	client *scw.Client
 }
@@ -1256,11 +1256,9 @@ func NewGlobalAPI(client *scw.Client) *GlobalAPI {
 		client: client,
 	}
 }
-func (s *GlobalAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
-}
 
-// GetGrafana: Retrieve the Cockpit of the specified Project ID.
+// GetGrafana: Retrieve information on your Cockpit's Grafana, specified by the ID of the Project the Cockpit belongs to.
+// The output returned displays the URL to access your Cockpit's Grafana.
 func (s *GlobalAPI) GetGrafana(req *GlobalAPIGetGrafanaRequest, opts ...scw.RequestOption) (*Grafana, error) {
 	var err error
 
@@ -1287,7 +1285,7 @@ func (s *GlobalAPI) GetGrafana(req *GlobalAPIGetGrafanaRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// SyncGrafanaDataSources: Synchronize all data sources created in the Regional API.
+// SyncGrafanaDataSources: Trigger the synchronization of all your data sources and the alert manager in the relevant regions. The alert manager will only be synchronized if you have enabled it.
 func (s *GlobalAPI) SyncGrafanaDataSources(req *GlobalAPISyncGrafanaDataSourcesRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1313,7 +1311,8 @@ func (s *GlobalAPI) SyncGrafanaDataSources(req *GlobalAPISyncGrafanaDataSourcesR
 	return nil
 }
 
-// CreateGrafanaUser: Create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
+// CreateGrafanaUser: Create a Grafana user to connect to your Cockpit's Grafana. Upon creation, your user password displays only once, so make sure that you save it.
+// Each Grafana user is associated with a role: viewer or editor. A viewer can only view dashboards, whereas an editor can create and edit dashboards. Note that the `admin` username is not available for creation.
 func (s *GlobalAPI) CreateGrafanaUser(req *GlobalAPICreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
@@ -1341,7 +1340,7 @@ func (s *GlobalAPI) CreateGrafanaUser(req *GlobalAPICreateGrafanaUserRequest, op
 	return &resp, nil
 }
 
-// ListGrafanaUsers: Get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
+// ListGrafanaUsers: List all Grafana users created in your Cockpit's Grafana. By default, the Grafana users returned in the list are ordered in ascending order.
 func (s *GlobalAPI) ListGrafanaUsers(req *GlobalAPIListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
 	var err error
 
@@ -1376,7 +1375,7 @@ func (s *GlobalAPI) ListGrafanaUsers(req *GlobalAPIListGrafanaUsersRequest, opts
 	return &resp, nil
 }
 
-// DeleteGrafanaUser: Delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
+// DeleteGrafanaUser: Delete a Grafana user from your Cockpit's Grafana, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
 func (s *GlobalAPI) DeleteGrafanaUser(req *GlobalAPIDeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1405,7 +1404,8 @@ func (s *GlobalAPI) DeleteGrafanaUser(req *GlobalAPIDeleteGrafanaUserRequest, op
 	return nil
 }
 
-// ResetGrafanaUserPassword: Reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
+// ResetGrafanaUserPassword: Reset the password of a Grafana user, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
+// A new password regenerates and only displays once. Make sure that you save it.
 func (s *GlobalAPI) ResetGrafanaUserPassword(req *GlobalAPIResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
@@ -1437,7 +1437,7 @@ func (s *GlobalAPI) ResetGrafanaUserPassword(req *GlobalAPIResetGrafanaUserPassw
 	return &resp, nil
 }
 
-// ListGrafanaProductDashboards: Get a list of available product dashboards.
+// ListGrafanaProductDashboards: Retrieve a list of available dashboards in Grafana, for all Scaleway resources which are integrated with Cockpit.
 func (s *GlobalAPI) ListGrafanaProductDashboards(req *GlobalAPIListGrafanaProductDashboardsRequest, opts ...scw.RequestOption) (*ListGrafanaProductDashboardsResponse, error) {
 	var err error
 
@@ -1472,7 +1472,7 @@ func (s *GlobalAPI) ListGrafanaProductDashboards(req *GlobalAPIListGrafanaProduc
 	return &resp, nil
 }
 
-// GetGrafanaProductDashboard: Get a product dashboard specified by the dashboard ID.
+// GetGrafanaProductDashboard: Retrieve information about the dashboard of a Scaleway resource in Grafana, specified by the ID of the Project the Cockpit belongs to, and the name of the dashboard.
 func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDashboardRequest, opts ...scw.RequestOption) (*GrafanaProductDashboard, error) {
 	var err error
 
@@ -1503,7 +1503,7 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 	return &resp, nil
 }
 
-// ListPlanTypes: Get a list of all pricing plans available.
+// ListPlanTypes: Retrieve a list of available pricing plan types.
 func (s *GlobalAPI) ListPlanTypes(req *GlobalAPIListPlanTypesRequest, opts ...scw.RequestOption) (*ListPlanTypesResponse, error) {
 	var err error
 
@@ -1532,7 +1532,7 @@ func (s *GlobalAPI) ListPlanTypes(req *GlobalAPIListPlanTypesRequest, opts ...sc
 	return &resp, nil
 }
 
-// SelectPlan: Select your chosen pricing plan for your Cockpit, specifying the Cockpit's Project ID and the pricing plan's ID in the request.
+// SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
 func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1560,7 +1560,7 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// ListPlans: Get a list of all pricing plans available.
+// ListPlans: Retrieve a list of your current pricing plan types, specified by the ID of the relevant Project (optional). By default the pricing plans returned in the list are ordered by name in ascending order.
 func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1590,7 +1590,7 @@ func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.Reques
 	return &resp, nil
 }
 
-// Regional Cockpit's API allows you to create datasources and tokens to store and query Metrics, Logs & Traces. Cockpit comes with a regional Alertmanager as well to send Alerts to your contact points. Scaleway Products which are integrated with Cockpit send Metrics and Logs for your Projects and propose managed alerts.
+// The Cockpit Regional API allows you to create data sources and tokens to store and query metrics, logs, and traces. With Cockpit, you can also push metrics and logs for the Scaleway resources integrated into it, and send alerts to your contact points when your resources may require your attention, using the regional Alert manager.
 type RegionalAPI struct {
 	client *scw.Client
 }
@@ -1605,7 +1605,12 @@ func (s *RegionalAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateDataSource: Create a data source for the specified Project ID and the given type.
+// CreateDataSource: You must specify the data source type upon creation. Available data source types include:
+//   - metrics
+//   - logs
+//   - traces
+//
+// The name of the data source will then be used as reference to name the associated Grafana data source.
 func (s *RegionalAPI) CreateDataSource(req *RegionalAPICreateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
 
@@ -1642,7 +1647,7 @@ func (s *RegionalAPI) CreateDataSource(req *RegionalAPICreateDataSourceRequest, 
 	return &resp, nil
 }
 
-// GetDataSource: Retrieve the data source associated with the specified datasource ID.
+// GetDataSource: Retrieve information about a given data source, specified by the data source ID. The data source's information such as its name, type, URL, origin, and retention period, is returned.
 func (s *RegionalAPI) GetDataSource(req *RegionalAPIGetDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
 
@@ -1673,7 +1678,7 @@ func (s *RegionalAPI) GetDataSource(req *RegionalAPIGetDataSourceRequest, opts .
 	return &resp, nil
 }
 
-// DeleteDataSource: Delete the data source associated with the specified datasource ID.
+// DeleteDataSource: Delete a given data source, specified by the data source ID. Note that deleting a data source is irreversible, and cannot be undone.
 func (s *RegionalAPI) DeleteDataSource(req *RegionalAPIDeleteDataSourceRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1702,7 +1707,8 @@ func (s *RegionalAPI) DeleteDataSource(req *RegionalAPIDeleteDataSourceRequest, 
 	return nil
 }
 
-// ListDataSources: Get a list of data sources for the specified Project ID.
+// ListDataSources: Retrieve the list of data sources available in the specified region. By default, the data sources returned in the list are ordered by creation date, in ascending order.
+// You can list data sources by Project, type and origin.
 func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, opts ...scw.RequestOption) (*ListDataSourcesResponse, error) {
 	var err error
 
@@ -1743,7 +1749,8 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	return &resp, nil
 }
 
-// ListUsages: Get a list of data sources for the specified Project ID.
+// ListUsages: Retrieve the list of your data source ingestion volume usage. By default, data source usage returned in the list is ordered by data source creation date, in ascending order.
+// You can list data sources by Project, type, origin, interval, and using the data source ID.
 func (s *RegionalAPI) ListUsages(req *RegionalAPIListUsagesRequest, opts ...scw.RequestOption) (*ListUsagesResponse, error) {
 	var err error
 
@@ -1791,7 +1798,8 @@ func (s *RegionalAPI) ListUsages(req *RegionalAPIListUsagesRequest, opts ...scw.
 	return &resp, nil
 }
 
-// CreateToken: Create a token associated with the specified Project ID.
+// CreateToken: Give your token the relevant scopes to ensure it has the right permissions to interact with your data sources and the Alert manager. Make sure that you create your token in the same regions as the data sources you want to use them for.
+// Upon creation, your token's secret key display only once. Make sure that you save it.
 func (s *RegionalAPI) CreateToken(req *RegionalAPICreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -1803,10 +1811,6 @@ func (s *RegionalAPI) CreateToken(req *RegionalAPICreateTokenRequest, opts ...sc
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
-	}
-
-	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("token")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -1832,7 +1836,8 @@ func (s *RegionalAPI) CreateToken(req *RegionalAPICreateTokenRequest, opts ...sc
 	return &resp, nil
 }
 
-// ListTokens: Get a list of tokens associated with the specified Project ID.
+// ListTokens: Retrieve a list of all tokens in the specified region. By default, tokens returned in the list are ordered by creation date, in ascending order.
+// You can filter data sources by Project ID and token scopes.
 func (s *RegionalAPI) ListTokens(req *RegionalAPIListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -1872,7 +1877,7 @@ func (s *RegionalAPI) ListTokens(req *RegionalAPIListTokensRequest, opts ...scw.
 	return &resp, nil
 }
 
-// GetToken: Retrieve the token associated with the specified token ID.
+// GetToken: Retrieve information about a given token, specified by the token ID. The token's information such as its scopes, is returned.
 func (s *RegionalAPI) GetToken(req *RegionalAPIGetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -1903,7 +1908,7 @@ func (s *RegionalAPI) GetToken(req *RegionalAPIGetTokenRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// DeleteToken: Delete the token associated with the specified token ID.
+// DeleteToken: Delete a given token, specified by the token ID. Deleting a token is irreversible and cannot be undone.
 func (s *RegionalAPI) DeleteToken(req *RegionalAPIDeleteTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1932,7 +1937,8 @@ func (s *RegionalAPI) DeleteToken(req *RegionalAPIDeleteTokenRequest, opts ...sc
 	return nil
 }
 
-// GetAlertManager: Create a contact point to receive alerts for the default receiver.
+// GetAlertManager: Retrieve information about the Alert manager which is unique per Project and region. By default the Alert manager is disabled.
+// The output returned displays a URL to access the Alert manager, and whether the Alert manager and managed alerts are enabled.
 func (s *RegionalAPI) GetAlertManager(req *RegionalAPIGetAlertManagerRequest, opts ...scw.RequestOption) (*AlertManager, error) {
 	var err error
 
@@ -1968,7 +1974,7 @@ func (s *RegionalAPI) GetAlertManager(req *RegionalAPIGetAlertManagerRequest, op
 	return &resp, nil
 }
 
-// EnableAlertManager: Create a contact point to receive alerts for the default receiver.
+// EnableAlertManager: Enabling the Alert manager allows you to enable managed alerts and create contact points in the specified Project and region to be notified when your Scaleway resources may require your attention.
 func (s *RegionalAPI) EnableAlertManager(req *RegionalAPIEnableAlertManagerRequest, opts ...scw.RequestOption) (*AlertManager, error) {
 	var err error
 
@@ -2005,7 +2011,7 @@ func (s *RegionalAPI) EnableAlertManager(req *RegionalAPIEnableAlertManagerReque
 	return &resp, nil
 }
 
-// DisableAlertManager: Create a contact point to receive alerts for the default receiver.
+// DisableAlertManager: Disabling the Alert manager deletes the contact points you have created and disables managed alerts in the specified Project and region.
 func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerRequest, opts ...scw.RequestOption) (*AlertManager, error) {
 	var err error
 
@@ -2042,7 +2048,9 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	return &resp, nil
 }
 
-// CreateContactPoint: Create a contact point to receive alerts for the default receiver.
+// CreateContactPoint: Contact points are email addresses associated with the default receiver, that the Alert manager sends alerts to.
+// The source of the alerts are logs and metrics data sources within the same Project and region as the Alert manager.
+// If you need to receive alerts for other receivers, you can create additional contact points in Grafana. Make sure that you select the Scaleway Alert manager.
 func (s *RegionalAPI) CreateContactPoint(req *RegionalAPICreateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
 	var err error
 
@@ -2079,7 +2087,7 @@ func (s *RegionalAPI) CreateContactPoint(req *RegionalAPICreateContactPointReque
 	return &resp, nil
 }
 
-// ListContactPoints: Get a list of contact points for the Cockpit associated with the specified Project ID.
+// ListContactPoints: Retrieve a list of contact points for the specified Project. The response lists all contact points and receivers created in Grafana or via the API.
 func (s *RegionalAPI) ListContactPoints(req *RegionalAPIListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
 	var err error
 
@@ -2122,7 +2130,7 @@ func (s *RegionalAPI) ListContactPoints(req *RegionalAPIListContactPointsRequest
 	return &resp, nil
 }
 
-// DeleteContactPoint: Delete a contact point for the default receiver.
+// DeleteContactPoint: Delete a contact point on the default receiver.
 func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2157,7 +2165,7 @@ func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointReque
 	return nil
 }
 
-// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project's Cockpit.
+// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project. Managed alerts are predefined alerts that apply to Scaleway recources integrated with Cockpit by default.
 func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
 	var err error
 
@@ -2194,7 +2202,7 @@ func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsReq
 	return &resp, nil
 }
 
-// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project's Cockpit.
+// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project.
 func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
 	var err error
 
@@ -2231,7 +2239,7 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 	return &resp, nil
 }
 
-// TriggerTestAlert: Trigger a test alert to all of the Cockpit's receivers.
+// TriggerTestAlert: Send a test alert to the Alert manager to make sure your contact points get notified.
 func (s *RegionalAPI) TriggerTestAlert(req *RegionalAPITriggerTestAlertRequest, opts ...scw.RequestOption) error {
 	var err error
 

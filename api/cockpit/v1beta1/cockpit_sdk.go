@@ -928,7 +928,7 @@ type TriggerTestAlertRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// Cockpit's API allows you to activate your Cockpit on your Projects. Scaleway's Cockpit stores metrics and logs and provides a dedicated Grafana for dashboarding to visualize them.
+// The Cockpit API allows you to activate your Cockpit to store metrics and logs. It also provides you with a dedicated Grafana for dashboarding to visualize your metrics and logs.
 type API struct {
 	client *scw.Client
 }
@@ -940,7 +940,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// ActivateCockpit: Activate the Cockpit of the specified Project ID.
+// ActivateCockpit: Activate the Cockpit of a given Project specified by the Project ID.
 func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -968,7 +968,7 @@ func (s *API) ActivateCockpit(req *ActivateCockpitRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// GetCockpit: Retrieve the Cockpit of the specified Project ID.
+// GetCockpit: Retrieve the Cockpit of a given Project specified by the Project ID.
 func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -995,7 +995,7 @@ func (s *API) GetCockpit(req *GetCockpitRequest, opts ...scw.RequestOption) (*Co
 	return &resp, nil
 }
 
-// GetCockpitMetrics: Get metrics from your Cockpit with the specified Project ID.
+// GetCockpitMetrics: Retrieve metrics from your Cockpit specified by the ID of the Project the Cockpit belongs to.
 func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
 	var err error
 
@@ -1025,7 +1025,7 @@ func (s *API) GetCockpitMetrics(req *GetCockpitMetricsRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// DeactivateCockpit: Deactivate the Cockpit of the specified Project ID.
+// DeactivateCockpit: Deactivate the Cockpit of a given Project specified by the Project ID.
 func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.RequestOption) (*Cockpit, error) {
 	var err error
 
@@ -1053,7 +1053,7 @@ func (s *API) DeactivateCockpit(req *DeactivateCockpitRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// CreateDatasource: Create a datasource for the specified Project ID and the given type.
+// CreateDatasource: Create a data source for a given Project specified by the Project ID and the data source type.
 func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.RequestOption) (*Datasource, error) {
 	var err error
 
@@ -1081,7 +1081,7 @@ func (s *API) CreateDatasource(req *CreateDatasourceRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteDatasource: Delete the datasource associated with the specified datasource ID.
+// DeleteDatasource: Delete a given data source specified by the data source ID.
 func (s *API) DeleteDatasource(req *DeleteDatasourceRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1101,7 +1101,7 @@ func (s *API) DeleteDatasource(req *DeleteDatasourceRequest, opts ...scw.Request
 	return nil
 }
 
-// ListDatasources: Get a list of datasources for the specified Project ID.
+// ListDatasources: Get a list of data sources for the specified Project ID.
 func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOption) (*ListDatasourcesResponse, error) {
 	var err error
 
@@ -1138,7 +1138,7 @@ func (s *API) ListDatasources(req *ListDatasourcesRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// CreateToken: Create a token associated with the specified Project ID.
+// CreateToken: Create a token in a given Project specified by the Project ID.
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -1170,7 +1170,7 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// ListTokens: Get a list of tokens associated with the specified Project ID.
+// ListTokens: Get a list of tokens in a given Project specified by the Project ID.
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -1205,7 +1205,7 @@ func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// GetToken: Retrieve the token associated with the specified token ID.
+// GetToken: Retrieve a given token specified by the token ID.
 func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -1227,7 +1227,7 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 	return &resp, nil
 }
 
-// DeleteToken: Delete the token associated with the specified token ID.
+// DeleteToken: Delete a given token specified by the token ID.
 func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1247,7 +1247,7 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) er
 	return nil
 }
 
-// CreateContactPoint: Create a contact point to receive alerts for the default receiver.
+// CreateContactPoint: Create a contact point associated with the default receiver, to receive alerts.
 func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
 	var err error
 
@@ -1275,7 +1275,7 @@ func (s *API) CreateContactPoint(req *CreateContactPointRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// ListContactPoints: Get a list of contact points for the Cockpit associated with the specified Project ID.
+// ListContactPoints: Get a list of contact points created for a given Cockpit, specified by the ID of the Project the Cockpit belongs to.
 func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.RequestOption) (*ListContactPointsResponse, error) {
 	var err error
 
@@ -1309,7 +1309,7 @@ func (s *API) ListContactPoints(req *ListContactPointsRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// DeleteContactPoint: Delete a contact point for the default receiver.
+// DeleteContactPoint: Delete a contact point associated with the default receiver.
 func (s *API) DeleteContactPoint(req *DeleteContactPointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1335,7 +1335,7 @@ func (s *API) DeleteContactPoint(req *DeleteContactPointRequest, opts ...scw.Req
 	return nil
 }
 
-// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project's Cockpit.
+// EnableManagedAlerts: Enable the sending of managed alerts for a given Cockpit, specified by the ID of the Project the Cockpit belongs to.
 func (s *API) EnableManagedAlerts(req *EnableManagedAlertsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1361,7 +1361,7 @@ func (s *API) EnableManagedAlerts(req *EnableManagedAlertsRequest, opts ...scw.R
 	return nil
 }
 
-// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project's Cockpit.
+// DisableManagedAlerts: Disable the sending of managed alerts for a given Cockpit, specified by the ID of the Project the Cockpit belongs to.
 func (s *API) DisableManagedAlerts(req *DisableManagedAlertsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1387,7 +1387,7 @@ func (s *API) DisableManagedAlerts(req *DisableManagedAlertsRequest, opts ...scw
 	return nil
 }
 
-// TriggerTestAlert: Trigger a test alert to all of the Cockpit's receivers.
+// TriggerTestAlert: Send a test alert to make sure your contact points get notified when an actual alert is triggered.
 func (s *API) TriggerTestAlert(req *TriggerTestAlertRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1413,7 +1413,7 @@ func (s *API) TriggerTestAlert(req *TriggerTestAlertRequest, opts ...scw.Request
 	return nil
 }
 
-// CreateGrafanaUser: Create a Grafana user for your Cockpit's Grafana instance. Make sure you save the automatically-generated password and the Grafana user ID.
+// CreateGrafanaUser: Create a Grafana user for your Cockpit's Grafana. Make sure you save the automatically-generated password and the Grafana user ID.
 func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
@@ -1441,7 +1441,7 @@ func (s *API) CreateGrafanaUser(req *CreateGrafanaUserRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// ListGrafanaUsers: Get a list of Grafana users who are able to connect to the Cockpit's Grafana instance.
+// ListGrafanaUsers: Get a list of all Grafana users created in your Cockpit's Grafana.
 func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
 	var err error
 
@@ -1476,7 +1476,7 @@ func (s *API) ListGrafanaUsers(req *ListGrafanaUsersRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteGrafanaUser: Delete a Grafana user from a Grafana instance, specified by the Cockpit's Project ID and the Grafana user ID.
+// DeleteGrafanaUser: Delete a Grafana user from your Cockpit's Grafana, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
 func (s *API) DeleteGrafanaUser(req *DeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1506,7 +1506,7 @@ func (s *API) DeleteGrafanaUser(req *DeleteGrafanaUserRequest, opts ...scw.Reque
 	return nil
 }
 
-// ResetGrafanaUserPassword: Reset a Grafana user's password specified by the Cockpit's Project ID and the Grafana user ID.
+// ResetGrafanaUserPassword: Reset the password of a Grafana user, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
 func (s *API) ResetGrafanaUserPassword(req *ResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
 
