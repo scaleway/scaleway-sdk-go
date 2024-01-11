@@ -205,6 +205,10 @@ type JobRun struct {
 
 	MemoryLimit uint32 `json:"memory_limit"`
 
+	Command string `json:"command"`
+
+	EnvironmentVariables map[string]string `json:"environment_variables"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
@@ -369,6 +373,15 @@ type StartJobDefinitionRequest struct {
 
 	// JobDefinitionID: UUID of the job definition to start.
 	JobDefinitionID string `json:"-"`
+
+	// Command: contextual startup command for this specific job run.
+	Command *string `json:"command,omitempty"`
+
+	// EnvironmentVariables: contextual environment variables for this specific job run.
+	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
+
+	// Replicas: number of jobs to run.
+	Replicas *uint32 `json:"replicas,omitempty"`
 }
 
 // StopJobRunRequest: stop job run request.
