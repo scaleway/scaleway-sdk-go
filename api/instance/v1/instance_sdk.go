@@ -1186,11 +1186,12 @@ type ServerIP struct {
 	// Tags: tags associated with the IP.
 	Tags []string `json:"tags"`
 
-	// State: default value: unknown_state
-	State ServerIPState `json:"state"`
-
 	// IpamID: the ip_id of an IPAM ip if the ip is created from IPAM, null if not.
 	IpamID string `json:"ipam_id"`
+
+	// State: IP address state.
+	// Default value: unknown_state
+	State ServerIPState `json:"state"`
 }
 
 // ServerIPv6: server i pv6.

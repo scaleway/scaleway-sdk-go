@@ -185,6 +185,9 @@ func (enum *ListCouponsRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // CouponDiscount: coupon discount.
 type CouponDiscount struct {
+	// Deprecated
+	Description *string `json:"description,omitempty"`
+
 	// StartDate: the start date, cannot be set with billing period.
 	StartDate *time.Time `json:"start_date"`
 
@@ -197,9 +200,6 @@ type CouponDiscount struct {
 	// Mode: discount's mode can be rate, value, or splittable.
 	// Default value: unknown
 	Mode CouponDiscountDiscountMode `json:"mode"`
-
-	// Deprecated
-	Description *string `json:"description,omitempty"`
 
 	// BillingPeriodCount: the billing period range to which the discount is appliable.
 	BillingPeriodCount *uint32 `json:"billing_period_count"`
