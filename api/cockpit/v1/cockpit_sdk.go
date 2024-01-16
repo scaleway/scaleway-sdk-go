@@ -647,7 +647,7 @@ type Usage struct {
 // AlertManager: Alert manager information.
 type AlertManager struct {
 	// AlertManagerURL: alert manager URL.
-	AlertManagerURL string `json:"alert_manager_url"`
+	AlertManagerURL *string `json:"alert_manager_url"`
 
 	// AlertManagerEnabled: the Alert manager is enabled.
 	AlertManagerEnabled bool `json:"alert_manager_enabled"`
@@ -1065,8 +1065,9 @@ type RegionalAPIDeleteContactPointRequest struct {
 	// ProjectID: ID of the Project containing the contact point to delete.
 	ProjectID string `json:"project_id"`
 
-	// ContactPoint: contact point to delete.
-	ContactPoint *ContactPoint `json:"contact_point,omitempty"`
+	// Email: email address of the contact point to delete.
+	// Precisely one of Email must be set.
+	Email *ContactPointEmail `json:"email,omitempty"`
 }
 
 // RegionalAPIDeleteDataSourceRequest: Delete a data source.
