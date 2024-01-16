@@ -40,6 +40,38 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type PrivateNetworkStatus string
+
+const (
+	PrivateNetworkStatusUnknownStatus = PrivateNetworkStatus("unknown_status")
+	PrivateNetworkStatusReady         = PrivateNetworkStatus("ready")
+	PrivateNetworkStatusPending       = PrivateNetworkStatus("pending")
+	PrivateNetworkStatusError         = PrivateNetworkStatus("error")
+)
+
+func (enum PrivateNetworkStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum PrivateNetworkStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PrivateNetworkStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PrivateNetworkStatus(PrivateNetworkStatus(tmp).String())
+	return nil
+}
+
 // AdminLB: admin lb.
 type AdminLB struct {
 	ActiveInstanceID string `json:"active_instance_id"`
@@ -101,6 +133,22 @@ type ListLBsResponse struct {
 	PageSize *uint32 `json:"page_size"`
 }
 
+// PrivateNetwork: private network.
+type PrivateNetwork struct {
+	LB *lb_v1.LB `json:"lb"`
+
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// Status: default value: unknown_status
+	Status PrivateNetworkStatus `json:"status"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	IpamIDs []string `json:"ipam_ids"`
+}
+
 // SearchRequest: search request.
 type SearchRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -131,6 +179,16 @@ type ZonedAPIAddSSHKeyRequest struct {
 	PublicKey string `json:"public_key"`
 }
 
+// ZonedAPIAttachPrivateNetworkRequest: zoned api attach private network request.
+type ZonedAPIAttachPrivateNetworkRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	PrivateNetworkID string `json:"-"`
+
+	LBID string `json:"-"`
+}
+
 // ZonedAPICreateHeadlessLBRequest: zoned api create headless lb request.
 type ZonedAPICreateHeadlessLBRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -147,6 +205,16 @@ type ZonedAPICreateHeadlessLBRequest struct {
 	Tags []string `json:"tags"`
 
 	Type string `json:"type"`
+}
+
+// ZonedAPIDetachPrivateNetworkRequest: zoned api detach private network request.
+type ZonedAPIDetachPrivateNetworkRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	PrivateNetworkID string `json:"-"`
+
+	LBID string `json:"-"`
 }
 
 // ZonedAPIGetLBRequest: zoned api get lb request.
@@ -559,4 +627,82 @@ func (s *ZonedAPI) CreateHeadlessLB(req *ZonedAPICreateHeadlessLBRequest, opts .
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// AttachPrivateNetwork:
+func (s *ZonedAPI) AttachPrivateNetwork(req *ZonedAPIAttachPrivateNetworkRequest, opts ...scw.RequestOption) (*PrivateNetwork, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/lb-admin/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/attach",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNetwork
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DetachPrivateNetwork:
+func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return errors.New("field LBID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/lb-admin/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/detach",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
