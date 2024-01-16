@@ -76,66 +76,6 @@ func (enum *CaptchaProviderName) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type CreateUserRequestProfessionalOrganizationCorporateIndustry string
-
-const (
-	// Unknown corporate industry.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryUnknownCorporateIndustry = CreateUserRequestProfessionalOrganizationCorporateIndustry("unknown_corporate_industry")
-	// Consulting & Services.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryConsultingServices = CreateUserRequestProfessionalOrganizationCorporateIndustry("consulting_services")
-	// Cybersecurity & software.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryCybersecuritySoftware = CreateUserRequestProfessionalOrganizationCorporateIndustry("cybersecurity_software")
-	// E-commerce & retail.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryEcommerceRetail = CreateUserRequestProfessionalOrganizationCorporateIndustry("ecommerce_retail")
-	// Education.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryEducation = CreateUserRequestProfessionalOrganizationCorporateIndustry("education")
-	// Energy.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryEnergy = CreateUserRequestProfessionalOrganizationCorporateIndustry("energy")
-	// Financial Services & Insurance.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryFinancialServicesInsurance = CreateUserRequestProfessionalOrganizationCorporateIndustry("financial_services_insurance")
-	// Gaming & Entertainment.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryGamingEntertainment = CreateUserRequestProfessionalOrganizationCorporateIndustry("gaming_entertainment")
-	// Hospitality & Leisure.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryHospitalityLeisure = CreateUserRequestProfessionalOrganizationCorporateIndustry("hospitality_leisure")
-	// Lifescience, Healthcare & Pharmaceuticals.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryLifescienceHealthcarePharmaceuticals = CreateUserRequestProfessionalOrganizationCorporateIndustry("lifescience_healthcare_pharmaceuticals")
-	// Manufacturing.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryManufacturing = CreateUserRequestProfessionalOrganizationCorporateIndustry("manufacturing")
-	// Media - Press & TV.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryMediaPressTv = CreateUserRequestProfessionalOrganizationCorporateIndustry("media_press_tv")
-	// Public Sector.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryPublicSector = CreateUserRequestProfessionalOrganizationCorporateIndustry("public_sector")
-	// Telecommunications.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryTelecommunications = CreateUserRequestProfessionalOrganizationCorporateIndustry("telecommunications")
-	// Technology.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryTechnology = CreateUserRequestProfessionalOrganizationCorporateIndustry("technology")
-	// Other.
-	CreateUserRequestProfessionalOrganizationCorporateIndustryOther = CreateUserRequestProfessionalOrganizationCorporateIndustry("other")
-)
-
-func (enum CreateUserRequestProfessionalOrganizationCorporateIndustry) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_corporate_industry"
-	}
-	return string(enum)
-}
-
-func (enum CreateUserRequestProfessionalOrganizationCorporateIndustry) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *CreateUserRequestProfessionalOrganizationCorporateIndustry) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = CreateUserRequestProfessionalOrganizationCorporateIndustry(CreateUserRequestProfessionalOrganizationCorporateIndustry(tmp).String())
-	return nil
-}
-
 type GDPRRequestStatus string
 
 const (
@@ -634,19 +574,6 @@ func (enum *SupportPlanLevel) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// UserOrganizationSummary: user organization summary.
-type UserOrganizationSummary struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	IsOwner bool `json:"is_owner"`
-
-	Locked bool `json:"locked"`
-
-	MfaEnforced bool `json:"mfa_enforced"`
-}
-
 // OrganizationCurrentSupportPlanTechnicalAccountManager: organization current support plan technical account manager.
 type OrganizationCurrentSupportPlanTechnicalAccountManager struct {
 	ID string `json:"id"`
@@ -660,55 +587,17 @@ type OrganizationCurrentSupportPlanTechnicalAccountManager struct {
 	PhoneNumber string `json:"phone_number"`
 }
 
-// CreateUserRequestPersonalOrganization: create user request personal organization.
-type CreateUserRequestPersonalOrganization struct {
-}
+// UserOrganizationSummary: user organization summary.
+type UserOrganizationSummary struct {
+	ID string `json:"id"`
 
-// CreateUserRequestProfessionalOrganization: create user request professional organization.
-type CreateUserRequestProfessionalOrganization struct {
-	OrganizationName string `json:"organization_name"`
+	Name string `json:"name"`
 
-	IsStartup bool `json:"is_startup"`
+	IsOwner bool `json:"is_owner"`
 
-	// CorporateIndustry: default value: unknown_corporate_industry
-	CorporateIndustry CreateUserRequestProfessionalOrganizationCorporateIndustry `json:"corporate_industry"`
-}
+	Locked bool `json:"locked"`
 
-// User: user.
-type User struct {
-	// AccountRootUserID: ID of the user.
-	AccountRootUserID string `json:"account_root_user_id"`
-
-	// FirstName: first name of the user.
-	FirstName string `json:"first_name"`
-
-	// LastName: last name of the user.
-	LastName string `json:"last_name"`
-
-	// Email: email of the user.
-	Email string `json:"email"`
-
-	// PhoneNumber: phone number of the user.
-	PhoneNumber string `json:"phone_number"`
-
-	// CreatedAt: creation date of the user.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last modification date of the user.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// MfaEnabled: multi-factor authentication enabled for the user.
-	MfaEnabled bool `json:"mfa_enabled"`
-
-	// Locale: locale.
-	// Default value: unknown_language_code
-	Locale std.LanguageCode `json:"locale"`
-
-	// HasPassword: set to true if the user has set a password.
-	HasPassword bool `json:"has_password"`
-
-	// Organizations: organizations of the user.
-	Organizations []*UserOrganizationSummary `json:"organizations"`
+	MfaEnforced bool `json:"mfa_enforced"`
 }
 
 // SupportPlan: support plan.
@@ -880,6 +769,43 @@ type OrganizationWarning struct {
 	Closed bool `json:"closed"`
 }
 
+// User: user.
+type User struct {
+	// AccountRootUserID: ID of the user.
+	AccountRootUserID string `json:"account_root_user_id"`
+
+	// FirstName: first name of the user.
+	FirstName string `json:"first_name"`
+
+	// LastName: last name of the user.
+	LastName string `json:"last_name"`
+
+	// Email: email of the user.
+	Email string `json:"email"`
+
+	// PhoneNumber: phone number of the user.
+	PhoneNumber string `json:"phone_number"`
+
+	// CreatedAt: creation date of the user.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last modification date of the user.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// MfaEnabled: multi-factor authentication enabled for the user.
+	MfaEnabled bool `json:"mfa_enabled"`
+
+	// Locale: locale.
+	// Default value: unknown_language_code
+	Locale std.LanguageCode `json:"locale"`
+
+	// HasPassword: set to true if the user has set a password.
+	HasPassword bool `json:"has_password"`
+
+	// Organizations: organizations of the user.
+	Organizations []*UserOrganizationSummary `json:"organizations"`
+}
+
 // CaptchaProvider: captcha provider.
 type CaptchaProvider struct {
 	// Name: default value: unknown_name
@@ -896,15 +822,6 @@ type CreateProjectRequest struct {
 
 	// Description: description of the Project.
 	Description *string `json:"description,omitempty"`
-}
-
-// CreateUserResponse: create user response.
-type CreateUserResponse struct {
-	// User: user created.
-	User *User `json:"user"`
-
-	// Secret: secret authenticating the user.
-	Secret string `json:"secret"`
 }
 
 // DeleteProjectRequest: delete project request.
@@ -1312,37 +1229,6 @@ type UnauthenticatedOrganizationAPIValidateContractsRequest struct {
 
 	// ContractIDs: iDs of the contracts to validate.
 	ContractIDs []string `json:"contract_ids"`
-}
-
-// UnauthenticatedUserAPICreateUserRequest: unauthenticated user api create user request.
-type UnauthenticatedUserAPICreateUserRequest struct {
-	// Email: email of the user.
-	Email string `json:"email"`
-
-	// FirstName: first name of the user.
-	FirstName string `json:"first_name"`
-
-	// LastName: last name of the user.
-	LastName string `json:"last_name"`
-
-	// Locale: locale.
-	// Default value: unknown_language_code
-	Locale std.LanguageCode `json:"locale"`
-
-	// PersonalOrganization: organization type. Personal is the default value.
-	// Precisely one of PersonalOrganization, ProfessionalOrganization must be set.
-	PersonalOrganization *CreateUserRequestPersonalOrganization `json:"personal_organization,omitempty"`
-
-	// ProfessionalOrganization: organization type. If this is a corporate account, it might be tagged as professional.
-	// Precisely one of PersonalOrganization, ProfessionalOrganization must be set.
-	ProfessionalOrganization *CreateUserRequestProfessionalOrganization `json:"professional_organization,omitempty"`
-
-	// Captcha: captcha validation code. This is required as an anti-fraud measure.
-	Captcha string `json:"captcha"`
-
-	// CaptchaProviderName: captcha provider name.
-	// Default value: unknown_name
-	CaptchaProviderName CaptchaProviderName `json:"captcha_provider_name"`
 }
 
 // UnauthenticatedUserAPIGetCaptchaProviderRequest: unauthenticated user api get captcha provider request.
@@ -2179,29 +2065,6 @@ func (s *UnauthenticatedUserAPI) ResetPassword(req *UnauthenticatedUserAPIResetP
 		return err
 	}
 	return nil
-}
-
-// CreateUser: Create a new user.
-func (s *UnauthenticatedUserAPI) CreateUser(req *UnauthenticatedUserAPICreateUserRequest, opts ...scw.RequestOption) (*CreateUserResponse, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account/v2/users",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp CreateUserResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // GetCaptchaProvider: Get a Captcha provider.
