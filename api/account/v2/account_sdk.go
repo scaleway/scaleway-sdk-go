@@ -1268,15 +1268,6 @@ type UnauthenticatedUserAPIRejectEmailUpdateRequest struct {
 	Token string `json:"token"`
 }
 
-// UnauthenticatedUserAPIResetPasswordRequest: unauthenticated user api reset password request.
-type UnauthenticatedUserAPIResetPasswordRequest struct {
-	// Token: token received to reset the password.
-	Token string `json:"token"`
-
-	// Password: new password.
-	Password string `json:"password"`
-}
-
 // UnauthenticatedUserAPISendResetPasswordEmailRequest: unauthenticated user api send reset password email request.
 type UnauthenticatedUserAPISendResetPasswordEmailRequest struct {
 	// Email: email associated to the user account.
@@ -2032,27 +2023,6 @@ func (s *UnauthenticatedUserAPI) SendResetPasswordEmail(req *UnauthenticatedUser
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/account/v2/send-reset-password-email",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// ResetPassword: Reset password.
-func (s *UnauthenticatedUserAPI) ResetPassword(req *UnauthenticatedUserAPIResetPasswordRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/account/v2/reset-password",
 	}
 
 	err = scwReq.SetBody(req)
