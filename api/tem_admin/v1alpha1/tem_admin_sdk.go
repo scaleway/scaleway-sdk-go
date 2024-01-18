@@ -461,6 +461,19 @@ type DomainLastStatusDkimRecord struct {
 	Error *string `json:"error"`
 }
 
+// DomainLastStatusDmarcRecord: domain last status dmarc record.
+type DomainLastStatusDmarcRecord struct {
+	// Status: status of the DMARC record's configuration.
+	// Default value: unknown_record_status
+	Status DomainLastStatusRecordStatus `json:"status"`
+
+	// LastValidAt: time and date the DMARC record was last valid.
+	LastValidAt *time.Time `json:"last_valid_at"`
+
+	// Error: an error text displays in case the record is not valid.
+	Error *string `json:"error"`
+}
+
 // DomainLastStatusSpfRecord: domain last status spf record.
 type DomainLastStatusSpfRecord struct {
 	// Status: status of the SPF record's configurartion.
@@ -624,6 +637,9 @@ type DomainLastStatus struct {
 
 	// DkimRecord: the DKIM record verification data.
 	DkimRecord *DomainLastStatusDkimRecord `json:"dkim_record"`
+
+	// DmarcRecord: the DMARC record verification data.
+	DmarcRecord *DomainLastStatusDmarcRecord `json:"dmarc_record"`
 }
 
 // GetDomainLastStatusRequest: get domain last status request.
