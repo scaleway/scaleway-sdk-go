@@ -198,7 +198,7 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for read replcia failed")
+		return nil, errors.Wrap(err, "waiting for read replica failed")
 	}
 	return readReplica.(*ReadReplica), nil
 }
