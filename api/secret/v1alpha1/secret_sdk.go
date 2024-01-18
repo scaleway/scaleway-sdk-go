@@ -517,6 +517,9 @@ type CreateSecretRequest struct {
 
 	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
 	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy,omitempty"`
+
+	// IsProtected: a protected secret cannot be deleted.
+	IsProtected bool `json:"is_protected"`
 }
 
 // CreateSecretVersionRequest: create secret version request.
