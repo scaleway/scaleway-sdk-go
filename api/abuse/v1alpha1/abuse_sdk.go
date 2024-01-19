@@ -42,9 +42,12 @@ var (
 type CaseClass string
 
 const (
+	// Unknown class.
 	CaseClassUnknownClass = CaseClass("unknown_class")
-	CaseClassActivity     = CaseClass("activity")
-	CaseClassContent      = CaseClass("content")
+	// The family of Case type is activity.
+	CaseClassActivity = CaseClass("activity")
+	// The family of Case type is content.
+	CaseClassContent = CaseClass("content")
 )
 
 func (enum CaseClass) String() string {
@@ -73,9 +76,12 @@ func (enum *CaseClass) UnmarshalJSON(data []byte) error {
 type CaseStatus string
 
 const (
+	// Unknown status.
 	CaseStatusUnknownStatus = CaseStatus("unknown_status")
-	CaseStatusOpen          = CaseStatus("open")
-	CaseStatusClosed        = CaseStatus("closed")
+	// Case is open and active.
+	CaseStatusOpen = CaseStatus("open")
+	// Case is closed.
+	CaseStatusClosed = CaseStatus("closed")
 )
 
 func (enum CaseStatus) String() string {
@@ -104,17 +110,28 @@ func (enum *CaseStatus) UnmarshalJSON(data []byte) error {
 type CaseType string
 
 const (
+	// Unknown type.
 	CaseTypeUnknownType = CaseType("unknown_type")
-	CaseTypeBruteforce  = CaseType("bruteforce")
-	CaseTypeBotnet      = CaseType("botnet")
-	CaseTypeCopyright   = CaseType("copyright")
-	CaseTypeDdos        = CaseType("ddos")
-	CaseTypeIllicit     = CaseType("illicit")
-	CaseTypeMalware     = CaseType("malware")
-	CaseTypePhishing    = CaseType("phishing")
-	CaseTypeSpam        = CaseType("spam")
-	CaseTypeVirus       = CaseType("virus")
-	CaseTypeIptv        = CaseType("iptv")
+	// Case is about bruteforce.
+	CaseTypeBruteforce = CaseType("bruteforce")
+	// Case is about botnet.
+	CaseTypeBotnet = CaseType("botnet")
+	// Case is about copyright.
+	CaseTypeCopyright = CaseType("copyright")
+	// Case is about ddos.
+	CaseTypeDdos = CaseType("ddos")
+	// Case is about illicit.
+	CaseTypeIllicit = CaseType("illicit")
+	// Case is about malware.
+	CaseTypeMalware = CaseType("malware")
+	// Case is about phishing.
+	CaseTypePhishing = CaseType("phishing")
+	// Case is about spam.
+	CaseTypeSpam = CaseType("spam")
+	// Case is about virus.
+	CaseTypeVirus = CaseType("virus")
+	// Case is about iptv.
+	CaseTypeIptv = CaseType("iptv")
 )
 
 func (enum CaseType) String() string {
@@ -247,8 +264,14 @@ func (enum *ComplaintType) UnmarshalJSON(data []byte) error {
 type ListCaseReportsRequestOrderBy string
 
 const (
+	// Reported date descending.
 	ListCaseReportsRequestOrderByReportedAtDesc = ListCaseReportsRequestOrderBy("reported_at_desc")
-	ListCaseReportsRequestOrderByReportedAtAsc  = ListCaseReportsRequestOrderBy("reported_at_asc")
+	// Reported date ascending.
+	ListCaseReportsRequestOrderByReportedAtAsc = ListCaseReportsRequestOrderBy("reported_at_asc")
+	// Observed date descending.
+	ListCaseReportsRequestOrderByObservedAtDesc = ListCaseReportsRequestOrderBy("observed_at_desc")
+	// Observed date ascending.
+	ListCaseReportsRequestOrderByObservedAtAsc = ListCaseReportsRequestOrderBy("observed_at_asc")
 )
 
 func (enum ListCaseReportsRequestOrderBy) String() string {
@@ -277,16 +300,30 @@ func (enum *ListCaseReportsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListCasesRequestOrderBy string
 
 const (
+	// Date of the last reported report in the case descending.
 	ListCasesRequestOrderByLastReportedAtDesc = ListCasesRequestOrderBy("last_reported_at_desc")
-	ListCasesRequestOrderByLastReportedAtAsc  = ListCasesRequestOrderBy("last_reported_at_asc")
-	ListCasesRequestOrderByReportCountAsc     = ListCasesRequestOrderBy("report_count_asc")
-	ListCasesRequestOrderByReportCountDesc    = ListCasesRequestOrderBy("report_count_desc")
-	ListCasesRequestOrderByResourceAsc        = ListCasesRequestOrderBy("resource_asc")
-	ListCasesRequestOrderByResourceDesc       = ListCasesRequestOrderBy("resource_desc")
-	ListCasesRequestOrderByReportedAtAsc      = ListCasesRequestOrderBy("reported_at_asc")
-	ListCasesRequestOrderByReportedAtDesc     = ListCasesRequestOrderBy("reported_at_desc")
-	ListCasesRequestOrderByCaseIDAsc          = ListCasesRequestOrderBy("case_id_asc")
-	ListCasesRequestOrderByCaseIDDesc         = ListCasesRequestOrderBy("case_id_desc")
+	// Date of the last reported report in the case ascending.
+	ListCasesRequestOrderByLastReportedAtAsc = ListCasesRequestOrderBy("last_reported_at_asc")
+	// Number of report per case ascending.
+	ListCasesRequestOrderByReportCountAsc = ListCasesRequestOrderBy("report_count_asc")
+	// Number of report per case descending.
+	ListCasesRequestOrderByReportCountDesc = ListCasesRequestOrderBy("report_count_desc")
+	// Resource ID ascending.
+	ListCasesRequestOrderByResourceAsc = ListCasesRequestOrderBy("resource_asc")
+	// Resource ID descending.
+	ListCasesRequestOrderByResourceDesc = ListCasesRequestOrderBy("resource_desc")
+	// Reported date ascending.
+	ListCasesRequestOrderByReportedAtAsc = ListCasesRequestOrderBy("reported_at_asc")
+	// Reported date descending.
+	ListCasesRequestOrderByReportedAtDesc = ListCasesRequestOrderBy("reported_at_desc")
+	// Case ID ascending.
+	ListCasesRequestOrderByCaseIDAsc = ListCasesRequestOrderBy("case_id_asc")
+	// Case ID descending.
+	ListCasesRequestOrderByCaseIDDesc = ListCasesRequestOrderBy("case_id_desc")
+	// Observed date ascending.
+	ListCasesRequestOrderByObservedAtAsc = ListCasesRequestOrderBy("observed_at_asc")
+	// Observed date descending.
+	ListCasesRequestOrderByObservedAtDesc = ListCasesRequestOrderBy("observed_at_desc")
 )
 
 func (enum ListCasesRequestOrderBy) String() string {
@@ -332,6 +369,9 @@ type Report struct {
 	// ReportedAt: datetime at which the report has been received.
 	ReportedAt *time.Time `json:"reported_at"`
 
+	// ObservedAt: datetime at which the infringement as been seen.
+	ObservedAt *time.Time `json:"observed_at"`
+
 	// Content: content of the report.
 	Content string `json:"content"`
 }
@@ -353,6 +393,9 @@ type Case struct {
 
 	// ReportedAt: datetime at which the first report related to the case has been received.
 	ReportedAt *time.Time `json:"reported_at"`
+
+	// ObservedAt: datetime at which the infringement as been seen.
+	ObservedAt *time.Time `json:"observed_at"`
 
 	// Resource: resource targeted by the case.
 	Resource *Resource `json:"resource"`
