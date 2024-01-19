@@ -414,16 +414,16 @@ type Complaint struct {
 	// ID: iD.
 	ID string `json:"id"`
 
-	// Evidence: content of the compalint explaining why the complaint is made.
+	// Evidence: content of the complaint explaining why the complaint is made.
 	Evidence string `json:"evidence"`
 
-	// ObservedAt: datetime at which the infrigement as been seen.
+	// ObservedAt: datetime at which the infringement as been seen.
 	ObservedAt *time.Time `json:"observed_at"`
 
 	// ObserverEmail: email of the person or the entity creating the complaint.
 	ObserverEmail string `json:"observer_email"`
 
-	// ObserverName: optional name of the the person or the entity creating the complaint (optional in case of CSAM).
+	// ObserverName: optional name of the person or the entity creating the complaint (optional in case of CSAM).
 	ObserverName *string `json:"observer_name"`
 
 	// ResourceValue: representation of the resource targeted by the complaint.
@@ -450,16 +450,16 @@ type ComplaintAPICreateComplaintRequest struct {
 	// Captcha: value of the captcha challenge.
 	Captcha string `json:"captcha"`
 
-	// Evidence: content of the compalint explaining why the complaint is made.
+	// Evidence: content of the complaint explaining why the complaint is made.
 	Evidence *string `json:"evidence,omitempty"`
 
-	// ObservedAt: datetime at which the infrigement as been seen.
+	// ObservedAt: datetime at which the infringement as been seen.
 	ObservedAt *time.Time `json:"observed_at,omitempty"`
 
 	// ObserverEmail: email of the person or the entity creating the complaint.
 	ObserverEmail string `json:"observer_email"`
 
-	// ObserverName: optional name of the the person or the entity creating the complaint (optional in case of CSAM).
+	// ObserverName: optional name of the person or the entity creating the complaint (optional in case of CSAM).
 	ObserverName *string `json:"observer_name,omitempty"`
 
 	// ResourceValue: representation of the resource targeted by the complaint.
