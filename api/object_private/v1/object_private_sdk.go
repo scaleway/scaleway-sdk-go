@@ -139,6 +139,13 @@ func (enum *SetBucketUsecaseRequestUsecase) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// BucketInfoBucketPolicyInfo: bucket info bucket policy info.
+type BucketInfoBucketPolicyInfo struct {
+	LastModified *time.Time `json:"last_modified"`
+
+	BucketPolicy *string `json:"bucket_policy"`
+}
+
 // BucketInfo: bucket info.
 type BucketInfo struct {
 	CurrentSize float64 `json:"current_size"`
@@ -157,7 +164,10 @@ type BucketInfo struct {
 	// Deprecated: Backend: default value: unknown_backend
 	Backend *BucketInfoBackend `json:"backend,omitempty"`
 
-	BucketPolicy *string `json:"bucket_policy"`
+	// Deprecated
+	BucketPolicy *string `json:"bucket_policy,omitempty"`
+
+	BucketPolicyInfo *BucketInfoBucketPolicyInfo `json:"bucket_policy_info"`
 }
 
 // BucketMetrics: bucket metrics.
