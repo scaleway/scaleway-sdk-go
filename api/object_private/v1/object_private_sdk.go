@@ -103,39 +103,39 @@ func (enum *BucketInfoStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type SetBucketUsecaseRequestUsecase string
+type BucketUsecase string
 
 const (
-	SetBucketUsecaseRequestUsecaseUnknownUsecase   = SetBucketUsecaseRequestUsecase("unknown_usecase")
-	SetBucketUsecaseRequestUsecaseAiAndMl          = SetBucketUsecaseRequestUsecase("ai_and_ml")
-	SetBucketUsecaseRequestUsecaseBigData          = SetBucketUsecaseRequestUsecase("big_data")
-	SetBucketUsecaseRequestUsecaseBackupAndArchive = SetBucketUsecaseRequestUsecase("backup_and_archive")
-	SetBucketUsecaseRequestUsecaseStaticWebsite    = SetBucketUsecaseRequestUsecase("static_website")
-	SetBucketUsecaseRequestUsecaseMediaDiffusion   = SetBucketUsecaseRequestUsecase("media_diffusion")
-	SetBucketUsecaseRequestUsecaseWebApp           = SetBucketUsecaseRequestUsecase("web_app")
-	SetBucketUsecaseRequestUsecaseFileTransfer     = SetBucketUsecaseRequestUsecase("file_transfer")
+	BucketUsecaseUnknownBucketUsecase = BucketUsecase("unknown_bucket_usecase")
+	BucketUsecaseAiAndMl              = BucketUsecase("ai_and_ml")
+	BucketUsecaseBigData              = BucketUsecase("big_data")
+	BucketUsecaseBackupAndArchive     = BucketUsecase("backup_and_archive")
+	BucketUsecaseStaticWebsite        = BucketUsecase("static_website")
+	BucketUsecaseMediaDiffusion       = BucketUsecase("media_diffusion")
+	BucketUsecaseWebApp               = BucketUsecase("web_app")
+	BucketUsecaseFileTransfer         = BucketUsecase("file_transfer")
 )
 
-func (enum SetBucketUsecaseRequestUsecase) String() string {
+func (enum BucketUsecase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_usecase"
+		return "unknown_bucket_usecase"
 	}
 	return string(enum)
 }
 
-func (enum SetBucketUsecaseRequestUsecase) MarshalJSON() ([]byte, error) {
+func (enum BucketUsecase) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *SetBucketUsecaseRequestUsecase) UnmarshalJSON(data []byte) error {
+func (enum *BucketUsecase) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = SetBucketUsecaseRequestUsecase(SetBucketUsecaseRequestUsecase(tmp).String())
+	*enum = BucketUsecase(BucketUsecase(tmp).String())
 	return nil
 }
 
@@ -168,6 +168,9 @@ type BucketInfo struct {
 	BucketPolicy *string `json:"bucket_policy,omitempty"`
 
 	BucketPolicyInfo *BucketInfoBucketPolicyInfo `json:"bucket_policy_info"`
+
+	// Usecase: default value: unknown_bucket_usecase
+	Usecase BucketUsecase `json:"usecase"`
 }
 
 // BucketMetrics: bucket metrics.
@@ -271,8 +274,8 @@ type SetBucketUsecaseRequest struct {
 
 	ProjectID string `json:"project_id"`
 
-	// Usecase: default value: unknown_usecase
-	Usecase SetBucketUsecaseRequestUsecase `json:"usecase"`
+	// Usecase: default value: unknown_bucket_usecase
+	Usecase BucketUsecase `json:"usecase"`
 }
 
 type API struct {
