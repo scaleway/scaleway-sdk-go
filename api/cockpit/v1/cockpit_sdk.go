@@ -240,14 +240,14 @@ func (enum *ListPlanTypesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPlansRequestOrderBy string
 
 const (
-	ListPlansRequestOrderByNameAsc  = ListPlansRequestOrderBy("name_asc")
-	ListPlansRequestOrderByNameDesc = ListPlansRequestOrderBy("name_desc")
+	ListPlansRequestOrderByProjectIDAsc  = ListPlansRequestOrderBy("project_id_asc")
+	ListPlansRequestOrderByProjectIDDesc = ListPlansRequestOrderBy("project_id_desc")
 )
 
 func (enum ListPlansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return "project_id_asc"
 	}
 	return string(enum)
 }
@@ -748,7 +748,7 @@ type GlobalAPIListPlansRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	// OrderBy: order of the plans.
-	// Default value: name_asc
+	// Default value: project_id_asc
 	OrderBy ListPlansRequestOrderBy `json:"-"`
 
 	// ProjectID: ID of the Project.
