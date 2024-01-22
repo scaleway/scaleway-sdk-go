@@ -1049,6 +1049,15 @@ type UnauthenticatedUserAPIResetPasswordRequest struct {
 	Password string `json:"password"`
 }
 
+// UnauthenticatedUserAPISendPasswordlessAuthRequest: unauthenticated user api send passwordless auth request.
+type UnauthenticatedUserAPISendPasswordlessAuthRequest struct {
+	// Email: email address to send the passwordless auth to.
+	Email string `json:"email"`
+
+	// RedirectURL: URL to redirect to after login.
+	RedirectURL string `json:"redirect_url"`
+}
+
 // UnauthenticatedUserAPIValidateEmailRequest: unauthenticated user api validate email request.
 type UnauthenticatedUserAPIValidateEmailRequest struct {
 	// Email: email address to validate.
@@ -1782,6 +1791,27 @@ func (s *UnauthenticatedUserAPI) ResetPassword(req *UnauthenticatedUserAPIResetP
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/account/v3/reset-password",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SendPasswordlessAuth: Send passwordless auth.
+func (s *UnauthenticatedUserAPI) SendPasswordlessAuth(req *UnauthenticatedUserAPISendPasswordlessAuthRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/send-passwordless-auth",
 	}
 
 	err = scwReq.SetBody(req)
