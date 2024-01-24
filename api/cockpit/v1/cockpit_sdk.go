@@ -207,47 +207,17 @@ func (enum *ListGrafanaUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListPlanTypesRequestOrderBy string
-
-const (
-	ListPlanTypesRequestOrderByNameAsc  = ListPlanTypesRequestOrderBy("name_asc")
-	ListPlanTypesRequestOrderByNameDesc = ListPlanTypesRequestOrderBy("name_desc")
-)
-
-func (enum ListPlanTypesRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "name_asc"
-	}
-	return string(enum)
-}
-
-func (enum ListPlanTypesRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListPlanTypesRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListPlanTypesRequestOrderBy(ListPlanTypesRequestOrderBy(tmp).String())
-	return nil
-}
-
 type ListPlansRequestOrderBy string
 
 const (
-	ListPlansRequestOrderByProjectIDAsc  = ListPlansRequestOrderBy("project_id_asc")
-	ListPlansRequestOrderByProjectIDDesc = ListPlansRequestOrderBy("project_id_desc")
+	ListPlansRequestOrderByNameAsc  = ListPlansRequestOrderBy("name_asc")
+	ListPlansRequestOrderByNameDesc = ListPlansRequestOrderBy("name_desc")
 )
 
 func (enum ListPlansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "project_id_asc"
+		return "name_asc"
 	}
 	return string(enum)
 }
@@ -329,16 +299,16 @@ func (enum *ListUsagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type PlanTypeName string
+type PlanName string
 
 const (
-	PlanTypeNameUnknownName = PlanTypeName("unknown_name")
-	PlanTypeNameFree        = PlanTypeName("free")
-	PlanTypeNamePremium     = PlanTypeName("premium")
-	PlanTypeNameCustom      = PlanTypeName("custom")
+	PlanNameUnknownName = PlanName("unknown_name")
+	PlanNameFree        = PlanName("free")
+	PlanNamePremium     = PlanName("premium")
+	PlanNameExpert      = PlanName("expert")
 )
 
-func (enum PlanTypeName) String() string {
+func (enum PlanName) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown_name"
@@ -346,18 +316,18 @@ func (enum PlanTypeName) String() string {
 	return string(enum)
 }
 
-func (enum PlanTypeName) MarshalJSON() ([]byte, error) {
+func (enum PlanName) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *PlanTypeName) UnmarshalJSON(data []byte) error {
+func (enum *PlanName) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = PlanTypeName(PlanTypeName(tmp).String())
+	*enum = PlanName(PlanName(tmp).String())
 	return nil
 }
 
@@ -553,14 +523,11 @@ type GrafanaUser struct {
 	Password *string `json:"password"`
 }
 
-// PlanType: Type of pricing plan.
-type PlanType struct {
-	// ID: ID of a given pricing plan.
-	ID string `json:"id"`
-
+// Plan: Type of pricing plan.
+type Plan struct {
 	// Name: name of a given pricing plan.
 	// Default value: unknown_name
-	Name PlanTypeName `json:"name"`
+	Name PlanName `json:"name"`
 
 	// RetentionMetricsInterval: interval of time during which Scaleway's Cockpit keeps your metrics.
 	RetentionMetricsInterval *scw.Duration `json:"retention_metrics_interval"`
@@ -582,15 +549,6 @@ type PlanType struct {
 
 	// MonthlyPrice: retention price in euros per month.
 	MonthlyPrice uint32 `json:"monthly_price"`
-}
-
-// Plan: Matching pricing plan with Project.
-type Plan struct {
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-
-	// PlanTypeID: ID of the pricing plan.
-	PlanTypeID string `json:"plan_type_id"`
 }
 
 // Token: Token.
@@ -681,6 +639,12 @@ type GlobalAPIDeleteGrafanaUserRequest struct {
 	ProjectID string `json:"-"`
 }
 
+// GlobalAPIGetCurrentPlanRequest: Retrieve a pricing plan for the given Project.
+type GlobalAPIGetCurrentPlanRequest struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+}
+
 // GlobalAPIGetGrafanaProductDashboardRequest: Retrieve a specific dashboard.
 type GlobalAPIGetGrafanaProductDashboardRequest struct {
 	// DashboardName: name of the dashboard.
@@ -727,18 +691,6 @@ type GlobalAPIListGrafanaUsersRequest struct {
 	ProjectID string `json:"-"`
 }
 
-// GlobalAPIListPlanTypesRequest: Retrieve a list of available pricing plans.
-type GlobalAPIListPlanTypesRequest struct {
-	// Page: page number.
-	Page *int32 `json:"-"`
-
-	// PageSize: page size.
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: name_asc
-	OrderBy ListPlanTypesRequestOrderBy `json:"-"`
-}
-
 // GlobalAPIListPlansRequest: Retrieve a list of available pricing plans.
 type GlobalAPIListPlansRequest struct {
 	// Page: page number.
@@ -747,12 +699,8 @@ type GlobalAPIListPlansRequest struct {
 	// PageSize: page size.
 	PageSize *uint32 `json:"-"`
 
-	// OrderBy: order of the plans.
-	// Default value: project_id_asc
+	// OrderBy: default value: name_asc
 	OrderBy ListPlansRequestOrderBy `json:"-"`
-
-	// ProjectID: ID of the Project.
-	ProjectID *string `json:"-"`
 }
 
 // GlobalAPIResetGrafanaUserPasswordRequest: Reset a Grafana user's password.
@@ -769,8 +717,9 @@ type GlobalAPISelectPlanRequest struct {
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
 
-	// PlanTypeID: ID of the pricing plan.
-	PlanTypeID string `json:"plan_type_id"`
+	// PlanName: name of the pricing plan.
+	// Default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
 }
 
 // GlobalAPISyncGrafanaDataSourcesRequest: Trigger the synchronization of all data sources created in the relevant regions.
@@ -903,40 +852,12 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error)
 	return uint64(len(results.GrafanaUsers)), nil
 }
 
-// ListPlanTypesResponse: Output returned when listing pricing plans.
-type ListPlanTypesResponse struct {
-	// TotalCount: total count of available pricing plans.
-	TotalCount uint64 `json:"total_count"`
-
-	// PlanTypes: plan types information.
-	PlanTypes []*PlanType `json:"plan_types"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListPlanTypesResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListPlanTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListPlanTypesResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.PlanTypes = append(r.PlanTypes, results.PlanTypes...)
-	r.TotalCount += uint64(len(results.PlanTypes))
-	return uint64(len(results.PlanTypes)), nil
-}
-
-// ListPlansResponse: Output returned when listing available pricing plans.
+// ListPlansResponse: Output returned when listing pricing plans.
 type ListPlansResponse struct {
 	// TotalCount: total count of available pricing plans.
 	TotalCount uint64 `json:"total_count"`
 
-	// Plans: information on available pricing plans.
+	// Plans: plan types information.
 	Plans []*Plan `json:"plans"`
 }
 
@@ -1504,8 +1425,8 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 	return &resp, nil
 }
 
-// ListPlanTypes: Retrieve a list of available pricing plan types.
-func (s *GlobalAPI) ListPlanTypes(req *GlobalAPIListPlanTypesRequest, opts ...scw.RequestOption) (*ListPlanTypesResponse, error) {
+// ListPlans: Retrieve a list of available pricing plan types.
+func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
@@ -1520,11 +1441,11 @@ func (s *GlobalAPI) ListPlanTypes(req *GlobalAPIListPlanTypesRequest, opts ...sc
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/cockpit/v1/plan-types",
+		Path:   "/cockpit/v1/plans",
 		Query:  query,
 	}
 
-	var resp ListPlanTypesResponse
+	var resp ListPlansResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1561,28 +1482,25 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// ListPlans: Retrieve a list of your current pricing plan types, specified by the ID of the relevant Project (optional). By default the pricing plans returned in the list are ordered by name in ascending order.
-func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
+// GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
+func (s *GlobalAPI) GetCurrentPlan(req *GlobalAPIGetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/cockpit/v1/plans",
+		Path:   "/cockpit/v1/current-plan",
 		Query:  query,
 	}
 
-	var resp ListPlansResponse
+	var resp Plan
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
