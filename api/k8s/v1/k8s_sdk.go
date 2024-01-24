@@ -250,40 +250,6 @@ func (enum *ClusterTypeResiliency) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Managed Ingress Controllers are deprecated. Use the Easy Deploy feature instead.
-type Ingress string
-
-const (
-	IngressUnknownIngress = Ingress("unknown_ingress")
-	IngressNone           = Ingress("none")
-	IngressNginx          = Ingress("nginx")
-	IngressTraefik        = Ingress("traefik")
-	IngressTraefik2       = Ingress("traefik2")
-)
-
-func (enum Ingress) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_ingress"
-	}
-	return string(enum)
-}
-
-func (enum Ingress) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *Ingress) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = Ingress(Ingress(tmp).String())
-	return nil
-}
-
 type ListClustersRequestOrderBy string
 
 const (
@@ -931,9 +897,6 @@ type Version struct {
 	// AvailableCnis: supported Container Network Interface (CNI) plugins for this version.
 	AvailableCnis []CNI `json:"available_cnis"`
 
-	// Deprecated: AvailableIngresses: supported Ingress Controllers for this version.
-	AvailableIngresses *[]Ingress `json:"available_ingresses,omitempty"`
-
 	// AvailableContainerRuntimes: supported container runtimes for this version.
 	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes"`
 
@@ -998,13 +961,6 @@ type Cluster struct {
 
 	// AutoscalerConfig: autoscaler config for the cluster.
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
-
-	// Deprecated: DashboardEnabled: defines whether the Kubernetes dashboard is enabled for the cluster.
-	DashboardEnabled *bool `json:"dashboard_enabled,omitempty"`
-
-	// Deprecated: Ingress: managed Ingress controller used in the cluster (deprecated feature).
-	// Default value: unknown_ingress
-	Ingress *Ingress `json:"ingress,omitempty"`
 
 	// AutoUpgrade: auto upgrade configuration of the cluster.
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
@@ -1180,13 +1136,6 @@ type CreateClusterRequest struct {
 	// Cni: container Network Interface (CNI) plugin running in the cluster.
 	// Default value: unknown_cni
 	Cni CNI `json:"cni"`
-
-	// Deprecated: EnableDashboard: defines whether the Kubernetes Dashboard is enabled in the cluster.
-	EnableDashboard *bool `json:"enable_dashboard,omitempty"`
-
-	// Deprecated: Ingress: ingress Controller running in the cluster (deprecated feature).
-	// Default value: unknown_ingress
-	Ingress *Ingress `json:"ingress,omitempty"`
 
 	// Pools: pools created along with the cluster.
 	Pools []*CreateClusterRequestPoolConfig `json:"pools"`
@@ -1741,13 +1690,6 @@ type UpdateClusterRequest struct {
 
 	// AutoscalerConfig: new autoscaler config for the cluster.
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config,omitempty"`
-
-	// Deprecated: EnableDashboard: new value for the Kubernetes Dashboard enablement.
-	EnableDashboard *bool `json:"enable_dashboard,omitempty"`
-
-	// Deprecated: Ingress: new Ingress Controller for the cluster (deprecated feature).
-	// Default value: unknown_ingress
-	Ingress *Ingress `json:"ingress,omitempty"`
 
 	// AutoUpgrade: new auto upgrade configuration for the cluster. Note that all fields need to be set.
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade,omitempty"`
