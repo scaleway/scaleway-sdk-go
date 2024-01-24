@@ -39,62 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type ResourceLocality string
-
-const (
-	// Unknown locality.
-	ResourceLocalityUnknownLocality = ResourceLocality("unknown_locality")
-	// Global.
-	ResourceLocalityGlobal = ResourceLocality("global")
-	// Regional resource in fr-par.
-	ResourceLocalityFrPar = ResourceLocality("fr_par")
-	// Zoned resource in fr-par-1.
-	ResourceLocalityFrPar1 = ResourceLocality("fr_par_1")
-	// Zoned resource in fr-par-2.
-	ResourceLocalityFrPar2 = ResourceLocality("fr_par_2")
-	// Zoned resource in fr-par-3.
-	ResourceLocalityFrPar3 = ResourceLocality("fr_par_3")
-	// Regional resource in nl-ams.
-	ResourceLocalityNlAms = ResourceLocality("nl_ams")
-	// Zoned resource in nl-ams-1.
-	ResourceLocalityNlAms1 = ResourceLocality("nl_ams_1")
-	// Zoned resource in nl-ams-2.
-	ResourceLocalityNlAms2 = ResourceLocality("nl_ams_2")
-	// Zoned resource in nl-ams-3.
-	ResourceLocalityNlAms3 = ResourceLocality("nl_ams_3")
-	// Regional resource in pl-waw.
-	ResourceLocalityPlWaw = ResourceLocality("pl_waw")
-	// Zoned resource in pl-waw-1.
-	ResourceLocalityPlWaw1 = ResourceLocality("pl_waw_1")
-	// Zoned resource in pl-waw-2.
-	ResourceLocalityPlWaw2 = ResourceLocality("pl_waw_2")
-	// Zoned resource in pl-waw-3.
-	ResourceLocalityPlWaw3 = ResourceLocality("pl_waw_3")
-)
-
-func (enum ResourceLocality) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_locality"
-	}
-	return string(enum)
-}
-
-func (enum ResourceLocality) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ResourceLocality) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ResourceLocality(ResourceLocality(tmp).String())
-	return nil
-}
-
 type ResourceType string
 
 const (
@@ -168,8 +112,7 @@ type Resource struct {
 	Type ResourceType `json:"type"`
 
 	// Locality: locality the resource is in.
-	// Default value: unknown_locality
-	Locality ResourceLocality `json:"locality"`
+	Locality string `json:"locality"`
 }
 
 // SearchResourcesRequest: search resources request.
