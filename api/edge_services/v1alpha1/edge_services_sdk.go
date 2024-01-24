@@ -476,6 +476,39 @@ func (enum *PurgeRequestStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type StageType string
+
+const (
+	StageTypeUnknownType = StageType("unknown_type")
+	StageTypeBackend     = StageType("backend")
+	StageTypeCache       = StageType("cache")
+	StageTypeTLS         = StageType("tls")
+	StageTypeDNS         = StageType("dns")
+)
+
+func (enum StageType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum StageType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *StageType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = StageType(StageType(tmp).String())
+	return nil
+}
+
 // ScalewayS3BackendConfig: scaleway s3 backend config.
 type ScalewayS3BackendConfig struct {
 	BucketName *string `json:"bucket_name"`
@@ -515,6 +548,14 @@ type CheckPEMChainRequestSecretChain struct {
 	SecretID string `json:"secret_id"`
 
 	SecretRegion string `json:"secret_region"`
+}
+
+// Stage: stage.
+type Stage struct {
+	// Type: default value: unknown_type
+	Type StageType `json:"type"`
+
+	ID string `json:"id"`
 }
 
 // BackendStage: backend stage.
@@ -704,6 +745,8 @@ type CreatePipelineRequest struct {
 	Name string `json:"name"`
 
 	Description string `json:"description"`
+
+	Stages []*Stage `json:"stages"`
 
 	// Precisely one of DNSStageID must be set.
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
@@ -1093,6 +1136,8 @@ type UpdatePipelineRequest struct {
 	Name *string `json:"name,omitempty"`
 
 	Description *string `json:"description,omitempty"`
+
+	Stages []*Stage `json:"stages"`
 
 	// Precisely one of DNSStageID must be set.
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
