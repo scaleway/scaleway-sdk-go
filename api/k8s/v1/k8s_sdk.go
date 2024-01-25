@@ -912,6 +912,9 @@ type ClusterType struct {
 
 	// Dedicated: returns information if this offer uses dedicated resources.
 	Dedicated bool `json:"dedicated"`
+
+	// AuditLogsSupported: true if the offer allows activation of the audit log functionality. Please note that audit logs are sent to Cockpit.
+	AuditLogsSupported bool `json:"audit_logs_supported"`
 }
 
 // Version: version.
