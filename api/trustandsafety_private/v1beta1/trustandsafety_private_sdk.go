@@ -51,6 +51,7 @@ const (
 	LockReasonFlood                 = LockReason("flood")
 	LockReasonCriticalSecurityIssue = LockReason("critical_security_issue")
 	LockReasonSecurityIssue         = LockReason("security_issue")
+	LockReasonUltraSecurityIssue    = LockReason("ultra_security_issue")
 )
 
 func (enum LockReason) String() string {
