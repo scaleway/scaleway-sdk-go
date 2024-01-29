@@ -19,6 +19,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 )
 
 // always import dependencies
@@ -541,6 +542,10 @@ type CreateHostingRequest struct {
 
 	// OptionIDs: iDs of any selected additional options for the Web Hosting plan.
 	OptionIDs []string `json:"option_ids"`
+
+	// Language: default language for the control panel interface.
+	// Default value: unknown_language_code
+	Language std.LanguageCode `json:"language"`
 }
 
 // DNSRecords: dns records.
