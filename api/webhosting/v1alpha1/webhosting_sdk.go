@@ -19,6 +19,7 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
+	std "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/std"
 )
 
 // always import dependencies
@@ -618,6 +619,10 @@ type CreateHostingRequest struct {
 
 	// OptionIDs: iDs of any selected additional options for the Web Hosting plan.
 	OptionIDs []string `json:"option_ids"`
+
+	// Language: default language for the control panel interface.
+	// Default value: unknown_language_code
+	Language std.LanguageCode `json:"language"`
 }
 
 // DNSRecords: dns records.
