@@ -1005,7 +1005,7 @@ func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// ListDiscounts:
+// ListDiscounts: List all discounts for your organization and usable categories, products, offers, references, regions and zones where the discount can be applied.
 func (s *API) ListDiscounts(req *ListDiscountsRequest, opts ...scw.RequestOption) (*ListDiscountsResponse, error) {
 	var err error
 
