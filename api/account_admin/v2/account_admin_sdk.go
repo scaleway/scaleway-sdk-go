@@ -683,8 +683,6 @@ const (
 	OrganizationWarningReasonValidateKyc = OrganizationWarningReason("validate_kyc")
 	// Online invoice payment failure.
 	OrganizationWarningReasonOnlineInvoicePaymentFailure = OrganizationWarningReason("online_invoice_payment_failure")
-	// Ultra security issue.
-	OrganizationWarningReasonUltraSecurityIssue = OrganizationWarningReason("ultra_security_issue")
 )
 
 func (enum OrganizationWarningReason) String() string {

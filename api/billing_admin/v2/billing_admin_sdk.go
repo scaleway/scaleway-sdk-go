@@ -82,7 +82,6 @@ const (
 	InvoiceMetadataTypeSalesContactEmail     = InvoiceMetadataType("sales_contact_email")
 	InvoiceMetadataTypeCatalogID             = InvoiceMetadataType("catalog_id")
 	InvoiceMetadataTypePaymentTerm           = InvoiceMetadataType("payment_term")
-	InvoiceMetadataTypeOrganizationName      = InvoiceMetadataType("organization_name")
 )
 
 func (enum InvoiceMetadataType) String() string {

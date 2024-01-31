@@ -717,8 +717,6 @@ const (
 	WarningReasonGdprDelete = WarningReason("gdpr_delete")
 	// Online invoice payment failure.
 	WarningReasonOnlineInvoicePaymentFailure = WarningReason("online_invoice_payment_failure")
-	// Ultra security issue.
-	WarningReasonUltraSecurityIssue = WarningReason("ultra_security_issue")
 )
 
 func (enum WarningReason) String() string {

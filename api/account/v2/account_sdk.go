@@ -503,8 +503,6 @@ const (
 	OrganizationWarningReasonOnlineInvoicePaymentFailure = OrganizationWarningReason("online_invoice_payment_failure")
 	// Validate email address.
 	OrganizationWarningReasonValidateEmail = OrganizationWarningReason("validate_email")
-	// Ultra security issue.
-	OrganizationWarningReasonUltraSecurityIssue = OrganizationWarningReason("ultra_security_issue")
 )
 
 func (enum OrganizationWarningReason) String() string {
