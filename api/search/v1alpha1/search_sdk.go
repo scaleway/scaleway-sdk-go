@@ -111,8 +111,17 @@ type Resource struct {
 	// Default value: unknown_type
 	Type ResourceType `json:"type"`
 
-	// Locality: locality the resource is in.
-	Locality string `json:"locality"`
+	// Global: locality the resource is in if this is a global resource.
+	// Precisely one of Global, Zone, Region must be set.
+	Global *bool `json:"global,omitempty"`
+
+	// Zone: locality the resource is in if this is a zonal resource.
+	// Precisely one of Global, Zone, Region must be set.
+	Zone *scw.Zone `json:"zone,omitempty"`
+
+	// Region: locality the resource is in if this is a regional resource.
+	// Precisely one of Global, Zone, Region must be set.
+	Region *scw.Region `json:"region,omitempty"`
 }
 
 // SearchResourcesRequest: search resources request.
