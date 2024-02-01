@@ -1061,6 +1061,18 @@ type WorkflowAPIListCasesRequest struct {
 
 	// ObservedBefore: filter before observed_at field.
 	ObservedBefore *time.Time `json:"-"`
+
+	// Type: filter by type of case.
+	// Default value: unknown_type
+	Type CaseType `json:"-"`
+
+	// Class: filter by class of case.
+	// Default value: unknown_class
+	Class CaseClass `json:"-"`
+
+	// CloseReason: filter by close reason of case.
+	// Default value: unknown_close_reason
+	CloseReason CaseCloseReason `json:"-"`
 }
 
 // WorkflowAPIListPlaybooksRequest: workflow api list playbooks request.
@@ -1228,6 +1240,9 @@ func (s *WorkflowAPI) ListCases(req *WorkflowAPIListCasesRequest, opts ...scw.Re
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "observed_after", req.ObservedAfter)
 	parameter.AddToQuery(query, "observed_before", req.ObservedBefore)
+	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "class", req.Class)
+	parameter.AddToQuery(query, "close_reason", req.CloseReason)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",

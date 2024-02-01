@@ -986,6 +986,15 @@ type Group struct {
 
 	// ApplicationIDs: iDs of applications attached to this group.
 	ApplicationIDs []string `json:"application_ids"`
+
+	// Editable: defines whether or not the group is editable.
+	Editable bool `json:"editable"`
+
+	// Visible: defines whether or not the group is visible.
+	Visible bool `json:"visible"`
+
+	// Managed: defines whether or not the group is managed.
+	Managed bool `json:"managed"`
 }
 
 // InternalOrganization: internal organization.
@@ -1701,6 +1710,15 @@ type ListGroupsRequest struct {
 	// UserID: filter by a list of user IDs.
 	// Precisely one of ApplicationID, UserID must be set.
 	UserID *string `json:"user_id,omitempty"`
+
+	// Editable: defines whether to filter out editable groups or not.
+	Editable *bool `json:"-"`
+
+	// Visible: defines whether to filter out visible groups or not.
+	Visible *bool `json:"-"`
+
+	// Managed: defines whether to filter out managed groups or not.
+	Managed *bool `json:"-"`
 }
 
 // ListGroupsResponse: list groups response.
@@ -3162,6 +3180,9 @@ func (s *API) ListGroups(req *ListGroupsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "editable", req.Editable)
+	parameter.AddToQuery(query, "visible", req.Visible)
+	parameter.AddToQuery(query, "managed", req.Managed)
 	parameter.AddToQuery(query, "application_id", req.ApplicationID)
 	parameter.AddToQuery(query, "user_id", req.UserID)
 
