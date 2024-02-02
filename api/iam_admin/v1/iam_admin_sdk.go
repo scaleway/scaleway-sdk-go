@@ -2364,6 +2364,15 @@ type UpdateGroupRequest struct {
 
 	// Description: new description for the group (max length is 200 chars).
 	Description *string `json:"description,omitempty"`
+
+	// Editable: defines whether or not the group is editable.
+	Editable *bool `json:"editable,omitempty"`
+
+	// Visible: defines whether or not the group is visible.
+	Visible *bool `json:"visible,omitempty"`
+
+	// Managed: defines whether or not the group is managed.
+	Managed *bool `json:"managed,omitempty"`
 }
 
 // UpdateLimitRequest: update limit request.
