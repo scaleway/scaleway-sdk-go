@@ -118,10 +118,6 @@ const (
 	CaseTypeBotnet = CaseType("botnet")
 	// Case is about copyright.
 	CaseTypeCopyright = CaseType("copyright")
-	// Case is about ddos.
-	CaseTypeDdos = CaseType("ddos")
-	// Case is about illicit.
-	CaseTypeIllicit = CaseType("illicit")
 	// Case is about malware.
 	CaseTypeMalware = CaseType("malware")
 	// Case is about phishing.
@@ -132,6 +128,44 @@ const (
 	CaseTypeVirus = CaseType("virus")
 	// Case is about iptv.
 	CaseTypeIptv = CaseType("iptv")
+	// Case is about animal welfare.
+	CaseTypeAnimalWelfare = CaseType("animal_welfare")
+	// Case is about consumer information infringements.
+	CaseTypeConsumerInformationInfringement = CaseType("consumer_information_infringement")
+	// Case is about child sexual abuse material (CSAM).
+	CaseTypeCsam = CaseType("csam")
+	// Case is about denial of service (DOS).
+	CaseTypeDos = CaseType("dos")
+	// Case is about data protection and privacy violation (GDPR).
+	CaseTypeGdpr = CaseType("gdpr")
+	// Case is about illegal or harmful speech.
+	CaseTypeIllegalHarmfulSpeech = CaseType("illegal_harmful_speech")
+	// Case is about protection of minors.
+	CaseTypeMinorsProtection = CaseType("minors_protection")
+	// Case is about negative effects on civic discourse or elections.
+	CaseTypeNegativeEffectsCivic = CaseType("negative_effects_civic")
+	// Case is about unsafe, non-compliant or prohibited products.
+	CaseTypeNonCompliantProduct = CaseType("non_compliant_product")
+	// Case is about non-consensual behaviour.
+	CaseTypeNonConsensualBehaviour = CaseType("non_consensual_behaviour")
+	// Case is about open relay.
+	CaseTypeOpenRelay = CaseType("open_relay")
+	// Case is about pornography or sexualised content.
+	CaseTypePornographySexualisedContent = CaseType("pornography_sexualised_content")
+	// Case is about risk for public security.
+	CaseTypeRiskPublicSecurity = CaseType("risk_public_security")
+	// Case is about scams and/or fraud.
+	CaseTypeScamFraud = CaseType("scam_fraud")
+	// Case is about security hole.
+	CaseTypeSecurityHole = CaseType("security_hole")
+	// Case is about self harm.
+	CaseTypeSelfHarm = CaseType("self_harm")
+	// Case is about spamvertisement.
+	CaseTypeSpamvertisement = CaseType("spamvertisement")
+	// Case is about violence.
+	CaseTypeViolence = CaseType("violence")
+	// Case is about another type not listed.
+	CaseTypeOther = CaseType("other")
 )
 
 func (enum CaseType) String() string {
@@ -225,17 +259,34 @@ func (enum *ComplaintStatus) UnmarshalJSON(data []byte) error {
 type ComplaintType string
 
 const (
-	ComplaintTypeUnknownType = ComplaintType("unknown_type")
-	ComplaintTypeBruteforce  = ComplaintType("bruteforce")
-	ComplaintTypeBotnet      = ComplaintType("botnet")
-	ComplaintTypeCopyright   = ComplaintType("copyright")
-	ComplaintTypeDdos        = ComplaintType("ddos")
-	ComplaintTypeIllicit     = ComplaintType("illicit")
-	ComplaintTypeMalware     = ComplaintType("malware")
-	ComplaintTypePhishing    = ComplaintType("phishing")
-	ComplaintTypeSpam        = ComplaintType("spam")
-	ComplaintTypeVirus       = ComplaintType("virus")
-	ComplaintTypeIptv        = ComplaintType("iptv")
+	ComplaintTypeUnknownType                     = ComplaintType("unknown_type")
+	ComplaintTypeBruteforce                      = ComplaintType("bruteforce")
+	ComplaintTypeBotnet                          = ComplaintType("botnet")
+	ComplaintTypeCopyright                       = ComplaintType("copyright")
+	ComplaintTypeMalware                         = ComplaintType("malware")
+	ComplaintTypePhishing                        = ComplaintType("phishing")
+	ComplaintTypeSpam                            = ComplaintType("spam")
+	ComplaintTypeVirus                           = ComplaintType("virus")
+	ComplaintTypeIptv                            = ComplaintType("iptv")
+	ComplaintTypeAnimalWelfare                   = ComplaintType("animal_welfare")
+	ComplaintTypeConsumerInformationInfringement = ComplaintType("consumer_information_infringement")
+	ComplaintTypeCsam                            = ComplaintType("csam")
+	ComplaintTypeDos                             = ComplaintType("dos")
+	ComplaintTypeGdpr                            = ComplaintType("gdpr")
+	ComplaintTypeIllegalHarmfulSpeech            = ComplaintType("illegal_harmful_speech")
+	ComplaintTypeMinorsProtection                = ComplaintType("minors_protection")
+	ComplaintTypeNegativeEffectsCivic            = ComplaintType("negative_effects_civic")
+	ComplaintTypeNonCompliantProduct             = ComplaintType("non_compliant_product")
+	ComplaintTypeNonConsensualBehaviour          = ComplaintType("non_consensual_behaviour")
+	ComplaintTypeOpenRelay                       = ComplaintType("open_relay")
+	ComplaintTypePornographySexualisedContent    = ComplaintType("pornography_sexualised_content")
+	ComplaintTypeRiskPublicSecurity              = ComplaintType("risk_public_security")
+	ComplaintTypeScamFraud                       = ComplaintType("scam_fraud")
+	ComplaintTypeSecurityHole                    = ComplaintType("security_hole")
+	ComplaintTypeSelfHarm                        = ComplaintType("self_harm")
+	ComplaintTypeSpamvertisement                 = ComplaintType("spamvertisement")
+	ComplaintTypeViolence                        = ComplaintType("violence")
+	ComplaintTypeOther                           = ComplaintType("other")
 )
 
 func (enum ComplaintType) String() string {

@@ -126,10 +126,6 @@ const (
 	ComplaintTypeBotnet = ComplaintType("botnet")
 	// Complaint is about copyright.
 	ComplaintTypeCopyright = ComplaintType("copyright")
-	// Complaint is about ddos.
-	ComplaintTypeDdos = ComplaintType("ddos")
-	// Complaint is about illicit.
-	ComplaintTypeIllicit = ComplaintType("illicit")
 	// Complaint is about malware.
 	ComplaintTypeMalware = ComplaintType("malware")
 	// Complaint is about phishing.
@@ -140,6 +136,44 @@ const (
 	ComplaintTypeVirus = ComplaintType("virus")
 	// Complaint is about iptv.
 	ComplaintTypeIptv = ComplaintType("iptv")
+	// Complaint is about animal welfare.
+	ComplaintTypeAnimalWelfare = ComplaintType("animal_welfare")
+	// Complaint is about consumer information infringements.
+	ComplaintTypeConsumerInformationInfringement = ComplaintType("consumer_information_infringement")
+	// Complaint is about child sexual abuse material (CSAM).
+	ComplaintTypeCsam = ComplaintType("csam")
+	// Complaint is about denial of service (DOS).
+	ComplaintTypeDos = ComplaintType("dos")
+	// Complaint is about data protection and privacy violation (GDPR).
+	ComplaintTypeGdpr = ComplaintType("gdpr")
+	// Complaint is about illegal or harmful speech.
+	ComplaintTypeIllegalHarmfulSpeech = ComplaintType("illegal_harmful_speech")
+	// Complaint is about protection of minors.
+	ComplaintTypeMinorsProtection = ComplaintType("minors_protection")
+	// Complaint is about negative effects on civic discourse or elections.
+	ComplaintTypeNegativeEffectsCivic = ComplaintType("negative_effects_civic")
+	// Complaint is about unsafe, non-compliant or prohibited products.
+	ComplaintTypeNonCompliantProduct = ComplaintType("non_compliant_product")
+	// Complaint is about non-consensual behaviour.
+	ComplaintTypeNonConsensualBehaviour = ComplaintType("non_consensual_behaviour")
+	// Complaint is about open relay.
+	ComplaintTypeOpenRelay = ComplaintType("open_relay")
+	// Complaint is about pornography or sexualised content.
+	ComplaintTypePornographySexualisedContent = ComplaintType("pornography_sexualised_content")
+	// Complaint is about risk for public security.
+	ComplaintTypeRiskPublicSecurity = ComplaintType("risk_public_security")
+	// Complaint is about scams and/or fraud.
+	ComplaintTypeScamFraud = ComplaintType("scam_fraud")
+	// Complaint is about security hole.
+	ComplaintTypeSecurityHole = ComplaintType("security_hole")
+	// Complaint is about self harm.
+	ComplaintTypeSelfHarm = ComplaintType("self_harm")
+	// Complaint is about spamvertisement.
+	ComplaintTypeSpamvertisement = ComplaintType("spamvertisement")
+	// Complaint is about violence.
+	ComplaintTypeViolence = ComplaintType("violence")
+	// Complaint is about another type not listed.
+	ComplaintTypeOther = ComplaintType("other")
 )
 
 func (enum ComplaintType) String() string {

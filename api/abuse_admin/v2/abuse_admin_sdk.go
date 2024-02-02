@@ -158,10 +158,6 @@ const (
 	CaseTypeBotnet = CaseType("botnet")
 	// Case complaint is about copyright.
 	CaseTypeCopyright = CaseType("copyright")
-	// Case complaint is about ddos.
-	CaseTypeDdos = CaseType("ddos")
-	// Case complaint is about illicit.
-	CaseTypeIllicit = CaseType("illicit")
 	// Case complaint is about malware.
 	CaseTypeMalware = CaseType("malware")
 	// Case complaint is about phishing.
@@ -172,6 +168,44 @@ const (
 	CaseTypeVirus = CaseType("virus")
 	// Case complaint is about iptv.
 	CaseTypeIptv = CaseType("iptv")
+	// Case complaint is about animal welfare.
+	CaseTypeAnimalWelfare = CaseType("animal_welfare")
+	// Case complaint is about consumer information infringements.
+	CaseTypeConsumerInformationInfringement = CaseType("consumer_information_infringement")
+	// Case complaint is about child sexual abuse material (CSAM).
+	CaseTypeCsam = CaseType("csam")
+	// Case complaint is about denial of service (DOS).
+	CaseTypeDos = CaseType("dos")
+	// Case complaint is about data protection and privacy violation (GDPR).
+	CaseTypeGdpr = CaseType("gdpr")
+	// Case complaint is about illegal or harmful speech.
+	CaseTypeIllegalHarmfulSpeech = CaseType("illegal_harmful_speech")
+	// Case complaint is about protection of minors.
+	CaseTypeMinorsProtection = CaseType("minors_protection")
+	// Case complaint is about negative effects on civic discourse or elections.
+	CaseTypeNegativeEffectsCivic = CaseType("negative_effects_civic")
+	// Case complaint is about unsafe, non-compliant or prohibited products.
+	CaseTypeNonCompliantProduct = CaseType("non_compliant_product")
+	// Case complaint is about non-consensual behaviour.
+	CaseTypeNonConsensualBehaviour = CaseType("non_consensual_behaviour")
+	// Case complaint is about open relay.
+	CaseTypeOpenRelay = CaseType("open_relay")
+	// Case complaint is about pornography or sexualised content.
+	CaseTypePornographySexualisedContent = CaseType("pornography_sexualised_content")
+	// Case complaint is about risk for public security.
+	CaseTypeRiskPublicSecurity = CaseType("risk_public_security")
+	// Case complaint is about scams and/or fraud.
+	CaseTypeScamFraud = CaseType("scam_fraud")
+	// Case complaint is about security hole.
+	CaseTypeSecurityHole = CaseType("security_hole")
+	// Case complaint is about self harm.
+	CaseTypeSelfHarm = CaseType("self_harm")
+	// Case complaint is about spamvertisement.
+	CaseTypeSpamvertisement = CaseType("spamvertisement")
+	// Case complaint is about violence.
+	CaseTypeViolence = CaseType("violence")
+	// Case complaint is about another type not listed.
+	CaseTypeOther = CaseType("other")
 )
 
 func (enum CaseType) String() string {
