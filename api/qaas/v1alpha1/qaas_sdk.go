@@ -157,6 +157,8 @@ const (
 	ListSessionsRequestOrderByStartedAtDesc = ListSessionsRequestOrderBy("started_at_desc")
 	ListSessionsRequestOrderByStatusAsc     = ListSessionsRequestOrderBy("status_asc")
 	ListSessionsRequestOrderByStatusDesc    = ListSessionsRequestOrderBy("status_desc")
+	ListSessionsRequestOrderByCreatedAtDesc = ListSessionsRequestOrderBy("created_at_desc")
+	ListSessionsRequestOrderByCreatedAtAsc  = ListSessionsRequestOrderBy("created_at_asc")
 )
 
 func (enum ListSessionsRequestOrderBy) String() string {
