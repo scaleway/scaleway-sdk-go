@@ -207,6 +207,9 @@ type IP struct {
 	// Address: iPv4 or IPv6 address in CIDR notation.
 	Address scw.IPNet `json:"address"`
 
+	// OrganizationID: scaleway Organization the IP belongs to.
+	OrganizationID string `json:"organization_id"`
+
 	// ProjectID: scaleway Project the IP belongs to.
 	ProjectID string `json:"project_id"`
 
