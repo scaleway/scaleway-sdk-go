@@ -462,64 +462,33 @@ func (enum *InstanceVolumeInfoType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type KmsKeyInfoOrigin string
+type KmsKeyInfoAlgorithm string
 
 const (
-	KmsKeyInfoOriginUnknownOrigin = KmsKeyInfoOrigin("unknown_origin")
-	KmsKeyInfoOriginScalewayKms   = KmsKeyInfoOrigin("scaleway_kms")
-	KmsKeyInfoOriginExternal      = KmsKeyInfoOrigin("external")
+	KmsKeyInfoAlgorithmUnknownAlgorithm = KmsKeyInfoAlgorithm("unknown_algorithm")
+	KmsKeyInfoAlgorithmAes256Gcm        = KmsKeyInfoAlgorithm("aes_256_gcm")
 )
 
-func (enum KmsKeyInfoOrigin) String() string {
+func (enum KmsKeyInfoAlgorithm) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_origin"
+		return "unknown_algorithm"
 	}
 	return string(enum)
 }
 
-func (enum KmsKeyInfoOrigin) MarshalJSON() ([]byte, error) {
+func (enum KmsKeyInfoAlgorithm) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *KmsKeyInfoOrigin) UnmarshalJSON(data []byte) error {
+func (enum *KmsKeyInfoAlgorithm) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = KmsKeyInfoOrigin(KmsKeyInfoOrigin(tmp).String())
-	return nil
-}
-
-type KmsKeyInfoSpec string
-
-const (
-	KmsKeyInfoSpecUnknownSpec = KmsKeyInfoSpec("unknown_spec")
-	KmsKeyInfoSpecAes256Gcm   = KmsKeyInfoSpec("aes_256_gcm")
-)
-
-func (enum KmsKeyInfoSpec) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_spec"
-	}
-	return string(enum)
-}
-
-func (enum KmsKeyInfoSpec) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *KmsKeyInfoSpec) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = KmsKeyInfoSpec(KmsKeyInfoSpec(tmp).String())
+	*enum = KmsKeyInfoAlgorithm(KmsKeyInfoAlgorithm(tmp).String())
 	return nil
 }
 
@@ -558,8 +527,8 @@ func (enum *KmsKeyInfoState) UnmarshalJSON(data []byte) error {
 type KmsKeyInfoUsage string
 
 const (
-	KmsKeyInfoUsageUnknownUsage   = KmsKeyInfoUsage("unknown_usage")
-	KmsKeyInfoUsageEncryptDecrypt = KmsKeyInfoUsage("encrypt_decrypt")
+	KmsKeyInfoUsageUnknownUsage        = KmsKeyInfoUsage("unknown_usage")
+	KmsKeyInfoUsageSymmetricEncryption = KmsKeyInfoUsage("symmetric_encryption")
 )
 
 func (enum KmsKeyInfoUsage) String() string {
@@ -1430,14 +1399,11 @@ type K8SPoolInfo struct {
 
 // KmsKeyInfo: kms key info.
 type KmsKeyInfo struct {
-	// Spec: default value: unknown_spec
-	Spec KmsKeyInfoSpec `json:"spec"`
-
 	// Usage: default value: unknown_usage
 	Usage KmsKeyInfoUsage `json:"usage"`
 
-	// Origin: default value: unknown_origin
-	Origin KmsKeyInfoOrigin `json:"origin"`
+	// Algorithm: default value: unknown_algorithm
+	Algorithm KmsKeyInfoAlgorithm `json:"algorithm"`
 
 	// State: default value: unknown_state
 	State KmsKeyInfoState `json:"state"`
