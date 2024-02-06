@@ -269,6 +269,7 @@ const (
 	PipelineErrorCodeUnknownCode               = PipelineErrorCode("unknown_code")
 	PipelineErrorCodeDNSInvalidFormat          = PipelineErrorCode("dns_invalid_format")
 	PipelineErrorCodeDNSInvalidTld             = PipelineErrorCode("dns_invalid_tld")
+	PipelineErrorCodeDNSForbiddenRootDomain    = PipelineErrorCode("dns_forbidden_root_domain")
 	PipelineErrorCodeDNSForbiddenScwCloud      = PipelineErrorCode("dns_forbidden_scw_cloud")
 	PipelineErrorCodeDNSDomainDontExist        = PipelineErrorCode("dns_domain_dont_exist")
 	PipelineErrorCodeDNSCnameDontExist         = PipelineErrorCode("dns_cname_dont_exist")
