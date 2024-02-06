@@ -450,7 +450,7 @@ type EmailTry struct {
 
 // DomainLastStatusDkimRecord: domain last status dkim record.
 type DomainLastStatusDkimRecord struct {
-	// Status: status of the DKIM record's configurartion.
+	// Status: status of the DKIM record's configuration.
 	// Default value: unknown_record_status
 	Status DomainLastStatusRecordStatus `json:"status"`
 
@@ -476,7 +476,7 @@ type DomainLastStatusDmarcRecord struct {
 
 // DomainLastStatusSpfRecord: domain last status spf record.
 type DomainLastStatusSpfRecord struct {
-	// Status: status of the SPF record's configurartion.
+	// Status: status of the SPF record's configuration.
 	// Default value: unknown_record_status
 	Status DomainLastStatusRecordStatus `json:"status"`
 
@@ -853,6 +853,18 @@ type UnblockDomainRequest struct {
 	DomainID string `json:"-"`
 }
 
+// UpdateDomainRequest: update domain request.
+type UpdateDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: ID of the domain to update.
+	DomainID string `json:"-"`
+
+	// PoolID: (Optional) Pool ID to update with.
+	PoolID *string `json:"pool_id,omitempty"`
+}
+
 // Tem-admin.
 type API struct {
 	client *scw.Client
@@ -1187,6 +1199,41 @@ func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.R
 	}
 
 	var resp DomainLastStatus
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateDomain:
+func (s *API) UpdateDomain(req *UpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "pool_id", req.PoolID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainID) == "" {
+		return nil, errors.New("field DomainID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/transactional-email-admin/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
+		Query:  query,
+	}
+
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
