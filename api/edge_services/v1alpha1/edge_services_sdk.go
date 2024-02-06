@@ -510,6 +510,25 @@ func (enum *StageType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ScalewayLB: scaleway lb.
+type ScalewayLB struct {
+	ID string `json:"id"`
+
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"zone"`
+
+	FrontendID string `json:"frontend_id"`
+
+	IsSsl *bool `json:"is_ssl"`
+}
+
+// ScalewayLBBackendConfig: scaleway lb backend config.
+type ScalewayLBBackendConfig struct {
+	LBs []*ScalewayLB `json:"lbs"`
+
+	IsProxyProtocol *bool `json:"is_proxy_protocol"`
+}
+
 // ScalewayS3BackendConfig: scaleway s3 backend config.
 type ScalewayS3BackendConfig struct {
 	BucketName *string `json:"bucket_name"`
@@ -567,8 +586,11 @@ type BackendStage struct {
 
 	ProjectID string `json:"project_id"`
 
-	// Precisely one of ScalewayS3Config must be set.
-	ScalewayS3Config *ScalewayS3BackendConfig `json:"scaleway_s3_config,omitempty"`
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 }
 
 // CacheStage: cache stage.
@@ -709,8 +731,11 @@ type CheckPEMChainResponse struct {
 type CreateBackendStageRequest struct {
 	ProjectID string `json:"project_id"`
 
-	// Precisely one of ScalewayS3 must be set.
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 }
 
 // CreateCacheStageRequest: create cache stage request.
@@ -1100,8 +1125,11 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 type UpdateBackendStageRequest struct {
 	BackendStageID string `json:"-"`
 
-	// Precisely one of ScalewayS3 must be set.
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
