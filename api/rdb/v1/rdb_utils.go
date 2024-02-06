@@ -136,7 +136,8 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.Req
 	logs, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
-				Region: req.Region,
+				Region:        req.Region,
+				InstanceLogID: req.InstanceLogID,
 			}, opts...)
 
 			if err != nil {
