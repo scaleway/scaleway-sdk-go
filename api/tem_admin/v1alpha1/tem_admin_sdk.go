@@ -403,6 +403,42 @@ func (enum *ListEmailsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListPoolsRequestOrderBy string
+
+const (
+	// Order by creation date (descending chronological order).
+	ListPoolsRequestOrderByCreatedAtDesc = ListPoolsRequestOrderBy("created_at_desc")
+	// Order by creation date (ascending chronological order).
+	ListPoolsRequestOrderByCreatedAtAsc = ListPoolsRequestOrderBy("created_at_asc")
+	// Order by pool name (ascending alphabetical order).
+	ListPoolsRequestOrderByNameAsc = ListPoolsRequestOrderBy("name_asc")
+	// Order by pool name (descending alphabetical order).
+	ListPoolsRequestOrderByNameDesc = ListPoolsRequestOrderBy("name_desc")
+)
+
+func (enum ListPoolsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListPoolsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPoolsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPoolsRequestOrderBy(ListPoolsRequestOrderBy(tmp).String())
+	return nil
+}
+
 // DomainReputation: domain reputation.
 type DomainReputation struct {
 	// Status: status of your domain's reputation.
@@ -591,6 +627,33 @@ type Email struct {
 
 	// Flags: flags categorize emails. They allow you to obtain more information about recurring errors, for example.
 	Flags []EmailFlag `json:"flags"`
+}
+
+// Pool: pool.
+type Pool struct {
+	// ID: ID of the pool.
+	ID string `json:"id"`
+
+	// SenderID: sender ID of the pool.
+	SenderID string `json:"sender_id"`
+
+	// Name: name of the pool.
+	Name string `json:"name"`
+
+	// Zone: zone of the pool.
+	Zone scw.Zone `json:"zone"`
+
+	// ProductionIPs: primary list of IPs to target first when sending pool emails.
+	ProductionIPs []string `json:"production_ips"`
+
+	// RetryIPs: secondary list of IPs to target next, when sending pool emails.
+	RetryIPs []string `json:"retry_ips"`
+
+	// CreatedAt: creation date of the pool.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update of the pool.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // BlockDomainRequest: block domain request.
@@ -812,6 +875,53 @@ func (r *ListEmailsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Emails = append(r.Emails, results.Emails...)
 	r.TotalCount += uint32(len(results.Emails))
 	return uint32(len(results.Emails)), nil
+}
+
+// ListPoolsRequest: list pools request.
+type ListPoolsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of pools per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order of the pools.
+	// Default value: created_at_desc
+	OrderBy ListPoolsRequestOrderBy `json:"-"`
+
+	// Zone: order of the pools filtered by their zone name.
+	Zone scw.Zone `json:"-"`
+}
+
+// ListPoolsResponse: list pools response.
+type ListPoolsResponse struct {
+	// TotalCount: total count of pools matching the requested criteria (without pagination).
+	TotalCount uint64 `json:"total_count"`
+
+	// Pools: list of pools.
+	Pools []*Pool `json:"pools"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPoolsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pools = append(r.Pools, results.Pools...)
+	r.TotalCount += uint64(len(results.Pools))
+	return uint64(len(results.Pools)), nil
 }
 
 // RevokeDomainRequest: revoke domain request.
@@ -1306,6 +1416,50 @@ func (s *API) UnblockDomain(req *UnblockDomainRequest, opts ...scw.RequestOption
 	}
 
 	var resp Domain
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPools: List of pools with their attached flexible IP.
+func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*ListPoolsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "zone", req.Zone)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email-admin/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pools",
+		Query:  query,
+	}
+
+	var resp ListPoolsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
