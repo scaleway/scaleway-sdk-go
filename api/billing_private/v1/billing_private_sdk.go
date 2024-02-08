@@ -158,6 +158,21 @@ type ConsumptionGroupLine struct {
 	Value *scw.Money `json:"value"`
 }
 
+// Consumption: consumption.
+type Consumption struct {
+	// TotalAmount: the total amount of the consumption.
+	TotalAmount float32 `json:"total_amount"`
+
+	// TotalUntaxed: the total untaxed amount of the consumption.
+	TotalUntaxed float32 `json:"total_untaxed"`
+
+	// TotalDiscounted: the total discount amount of the consumption.
+	TotalDiscounted float32 `json:"total_discounted"`
+
+	// Currency: the currency of the consumption.
+	Currency string `json:"currency"`
+}
+
 // ConsumptionGroup: consumption group.
 type ConsumptionGroup struct {
 	// Category: consumption category.
@@ -189,6 +204,24 @@ type ConsumptionReport struct {
 	StopDate *time.Time `json:"stop_date"`
 }
 
+// ListConsumptionsByCategoryResponseConsumptionByCategory: list consumptions by category response consumption by category.
+type ListConsumptionsByCategoryResponseConsumptionByCategory struct {
+	CategoryName string `json:"category_name"`
+
+	Consumption *Consumption `json:"consumption"`
+}
+
+// ListConsumptionsByProjectResponseConsumptionByProject: list consumptions by project response consumption by project.
+type ListConsumptionsByProjectResponseConsumptionByProject struct {
+	CategoryName string `json:"category_name"`
+
+	ProductName string `json:"product_name"`
+
+	ProjectID string `json:"project_id"`
+
+	Consumption *Consumption `json:"consumption"`
+}
+
 // OfferActivation: offer activation.
 type OfferActivation struct {
 	// OrganizationID: organization_id of the offer activation.
@@ -213,6 +246,13 @@ type OfferActivation struct {
 	Unit string `json:"unit"`
 }
 
+// ListProductsByCategoryResponseProductsByCategory: list products by category response products by category.
+type ListProductsByCategoryResponseProductsByCategory struct {
+	CategoryName string `json:"category_name"`
+
+	ProductNames []string `json:"product_names"`
+}
+
 // ConsoleAPICreateOfferActivationRequest: console api create offer activation request.
 type ConsoleAPICreateOfferActivationRequest struct {
 	// OrganizationID: organization_id of the offer activation.
@@ -233,6 +273,20 @@ type ConsoleAPIDownloadConsumptionReportRequest struct {
 	// FileType: file type of the report.
 	// Default value: pdf
 	FileType DownloadConsumptionReportRequestFileType `json:"-"`
+}
+
+// ConsoleAPIGetConsumptionRequest: console api get consumption request.
+type ConsoleAPIGetConsumptionRequest struct {
+	// OrganizationID: get consumption for this organization ID.
+	OrganizationID string `json:"-"`
+
+	// BillingPeriod: get consumption on this billing_period.
+	// Precisely one of BillingPeriod, Year must be set.
+	BillingPeriod *string `json:"billing_period,omitempty"`
+
+	// Year: get consumption on this year.
+	// Precisely one of BillingPeriod, Year must be set.
+	Year *int64 `json:"year,omitempty"`
 }
 
 // ConsoleAPIGetCurrentConsumptionRequest: console api get current consumption request.
@@ -268,6 +322,48 @@ type ConsoleAPIListConsumptionReportsRequest struct {
 	StartedBefore *time.Time `json:"-"`
 }
 
+// ConsoleAPIListConsumptionsByCategoryRequest: console api list consumptions by category request.
+type ConsoleAPIListConsumptionsByCategoryRequest struct {
+	// OrganizationID: get consumption for this organization ID aggregated by category.
+	OrganizationID string `json:"-"`
+
+	// CategoryName: filter the consumption list by category name.
+	CategoryName *string `json:"-"`
+
+	// ProductName: filter the consumption list by product name.
+	ProductName *string `json:"-"`
+
+	// ProjectID: filter the consumption list by project ID.
+	ProjectID *string `json:"-"`
+
+	// Year: filter the consumption list by year.
+	Year int64 `json:"-"`
+}
+
+// ConsoleAPIListConsumptionsByProjectRequest: console api list consumptions by project request.
+type ConsoleAPIListConsumptionsByProjectRequest struct {
+	// OrganizationID: get consumption for this organization ID aggregated by project.
+	OrganizationID string `json:"-"`
+
+	// CategoryName: filter the consumption list by category name.
+	CategoryName *string `json:"-"`
+
+	// ProductName: filter the consumption list by product name.
+	ProductName *string `json:"-"`
+
+	// ProjectID: filter the consumption list by project ID.
+	ProjectID *string `json:"-"`
+
+	// Year: filter the consumption list by year.
+	Year int64 `json:"-"`
+
+	// Page: positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+}
+
 // ConsoleAPIListOfferActivationsRequest: console api list offer activations request.
 type ConsoleAPIListOfferActivationsRequest struct {
 	// OrderBy: the sort order for the returned offer activations.
@@ -285,6 +381,12 @@ type ConsoleAPIListOfferActivationsRequest struct {
 
 	// OfferSku: offer sku to filter for.
 	OfferSku *string `json:"-"`
+}
+
+// ConsoleAPIListProductsByCategoryRequest: console api list products by category request.
+type ConsoleAPIListProductsByCategoryRequest struct {
+	// OrganizationID: get products consumed by this organization ID, over the last five years, aggregated by category.
+	OrganizationID string `json:"-"`
 }
 
 // CurrentConsumption: current consumption.
@@ -324,6 +426,62 @@ func (r *ListConsumptionReportsResponse) UnsafeAppend(res interface{}) (uint32, 
 	return uint32(len(results.ConsumptionReports)), nil
 }
 
+// ListConsumptionsByCategoryResponse: list consumptions by category response.
+type ListConsumptionsByCategoryResponse struct {
+	// TotalCount: total number of returned items.
+	TotalCount int64 `json:"total_count"`
+
+	// ConsumptionByCategory: list of consumptions aggregated by category.
+	ConsumptionByCategory []*ListConsumptionsByCategoryResponseConsumptionByCategory `json:"consumption_by_category"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListConsumptionsByCategoryResponse) UnsafeGetTotalCount() int64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListConsumptionsByCategoryResponse) UnsafeAppend(res interface{}) (int64, error) {
+	results, ok := res.(*ListConsumptionsByCategoryResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ConsumptionByCategory = append(r.ConsumptionByCategory, results.ConsumptionByCategory...)
+	r.TotalCount += int64(len(results.ConsumptionByCategory))
+	return int64(len(results.ConsumptionByCategory)), nil
+}
+
+// ListConsumptionsByProjectResponse: list consumptions by project response.
+type ListConsumptionsByProjectResponse struct {
+	// TotalCount: total number of returned items.
+	TotalCount int64 `json:"total_count"`
+
+	// ConsumptionByProject: list of consumptions aggregated by project.
+	ConsumptionByProject []*ListConsumptionsByProjectResponseConsumptionByProject `json:"consumption_by_project"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListConsumptionsByProjectResponse) UnsafeGetTotalCount() int64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListConsumptionsByProjectResponse) UnsafeAppend(res interface{}) (int64, error) {
+	results, ok := res.(*ListConsumptionsByProjectResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ConsumptionByProject = append(r.ConsumptionByProject, results.ConsumptionByProject...)
+	r.TotalCount += int64(len(results.ConsumptionByProject))
+	return int64(len(results.ConsumptionByProject)), nil
+}
+
 // ListOfferActivationsResponse: list offer activations response.
 type ListOfferActivationsResponse struct {
 	// OfferActivations: offerActivations that match filters.
@@ -350,6 +508,34 @@ func (r *ListOfferActivationsResponse) UnsafeAppend(res interface{}) (uint64, er
 	r.OfferActivations = append(r.OfferActivations, results.OfferActivations...)
 	r.TotalCount += uint64(len(results.OfferActivations))
 	return uint64(len(results.OfferActivations)), nil
+}
+
+// ListProductsByCategoryResponse: list products by category response.
+type ListProductsByCategoryResponse struct {
+	// TotalCount: total number of returned items.
+	TotalCount int64 `json:"total_count"`
+
+	// ProductsByCategory: list of product names aggregated by category.
+	ProductsByCategory []*ListProductsByCategoryResponseProductsByCategory `json:"products_by_category"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListProductsByCategoryResponse) UnsafeGetTotalCount() int64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListProductsByCategoryResponse) UnsafeAppend(res interface{}) (int64, error) {
+	results, ok := res.(*ListProductsByCategoryResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ProductsByCategory = append(r.ProductsByCategory, results.ProductsByCategory...)
+	r.TotalCount += int64(len(results.ProductsByCategory))
+	return int64(len(results.ProductsByCategory)), nil
 }
 
 // OfferEligibility: offer eligibility.
@@ -536,6 +722,131 @@ func (s *ConsoleAPI) GetOfferEligibility(req *ConsoleAPIGetOfferEligibilityReque
 	}
 
 	var resp OfferEligibility
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetConsumption:
+func (s *ConsoleAPI) GetConsumption(req *ConsoleAPIGetConsumptionRequest, opts ...scw.RequestOption) (*Consumption, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "billing_period", req.BillingPeriod)
+	parameter.AddToQuery(query, "year", req.Year)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing-private/v1/consumption",
+		Query:  query,
+	}
+
+	var resp Consumption
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListProductsByCategory:
+func (s *ConsoleAPI) ListProductsByCategory(req *ConsoleAPIListProductsByCategoryRequest, opts ...scw.RequestOption) (*ListProductsByCategoryResponse, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing-private/v1/products-by-category",
+		Query:  query,
+	}
+
+	var resp ListProductsByCategoryResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListConsumptionsByCategory:
+func (s *ConsoleAPI) ListConsumptionsByCategory(req *ConsoleAPIListConsumptionsByCategoryRequest, opts ...scw.RequestOption) (*ListConsumptionsByCategoryResponse, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "category_name", req.CategoryName)
+	parameter.AddToQuery(query, "product_name", req.ProductName)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "year", req.Year)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing-private/v1/consumptions-by-category",
+		Query:  query,
+	}
+
+	var resp ListConsumptionsByCategoryResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListConsumptionsByProject:
+func (s *ConsoleAPI) ListConsumptionsByProject(req *ConsoleAPIListConsumptionsByProjectRequest, opts ...scw.RequestOption) (*ListConsumptionsByProjectResponse, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "category_name", req.CategoryName)
+	parameter.AddToQuery(query, "product_name", req.ProductName)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "year", req.Year)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing-private/v1/consumptions-by-project",
+		Query:  query,
+	}
+
+	var resp ListConsumptionsByProjectResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
