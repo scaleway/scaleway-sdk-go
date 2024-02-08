@@ -458,6 +458,10 @@ type Case struct {
 	// Type: type of the abuse related to the case.
 	// Default value: unknown_type
 	Type CaseType `json:"type"`
+
+	// EstimatedClosingAt: datetime at which the report will be automatically closed if no new reports are received (estimated).
+	// Precisely one of EstimatedClosingAt must be set.
+	EstimatedClosingAt *time.Time `json:"estimated_closing_at,omitempty"`
 }
 
 // Complaint: complaint.
@@ -613,6 +617,10 @@ type WorkflowAPIListCasesRequest struct {
 
 	// OrganizationID: filter by organization ID.
 	OrganizationID string `json:"-"`
+
+	// Status: filter by status.
+	// Default value: unknown_status
+	Status CaseStatus `json:"-"`
 }
 
 // This API is used to create complaints.
@@ -681,6 +689,7 @@ func (s *WorkflowAPI) ListCases(req *WorkflowAPIListCasesRequest, opts ...scw.Re
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "status", req.Status)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
