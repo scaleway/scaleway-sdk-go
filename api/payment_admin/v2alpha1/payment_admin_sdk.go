@@ -174,6 +174,73 @@ func (enum *ImportedPaymentMethodPaymentMethod) UnmarshalJSON(data []byte) error
 	return nil
 }
 
+type InvoiceState string
+
+const (
+	InvoiceStateUnknownState = InvoiceState("unknown_state")
+	InvoiceStateDraft        = InvoiceState("draft")
+	InvoiceStateOutdated     = InvoiceState("outdated")
+	InvoiceStateStopped      = InvoiceState("stopped")
+	InvoiceStateIncomplete   = InvoiceState("incomplete")
+	InvoiceStateIssuing      = InvoiceState("issuing")
+	InvoiceStateIssued       = InvoiceState("issued")
+	InvoiceStateCancelled    = InvoiceState("cancelled")
+)
+
+func (enum InvoiceState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_state"
+	}
+	return string(enum)
+}
+
+func (enum InvoiceState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InvoiceState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InvoiceState(InvoiceState(tmp).String())
+	return nil
+}
+
+type InvoiceType string
+
+const (
+	InvoiceTypeUnknownType = InvoiceType("unknown_type")
+	InvoiceTypePeriodic    = InvoiceType("periodic")
+	InvoiceTypePurchase    = InvoiceType("purchase")
+)
+
+func (enum InvoiceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum InvoiceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InvoiceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InvoiceType(InvoiceType(tmp).String())
+	return nil
+}
+
 type ListMagicCodesRequestOrderBy string
 
 const (
@@ -340,6 +407,41 @@ type MagicCode struct {
 	OrganizationID string `json:"organization_id"`
 
 	TryCount uint32 `json:"try_count"`
+}
+
+// Invoice: invoice.
+type Invoice struct {
+	// ID: the ID of the invoice.
+	ID string `json:"id"`
+
+	// Type: the type of invoice.
+	// Default value: unknown_type
+	Type InvoiceType `json:"type"`
+
+	// State: the state of the invoice.
+	// Default value: unknown_state
+	State InvoiceState `json:"state"`
+
+	// OrganizationID: the ID of the organization associated to that invoice.
+	OrganizationID string `json:"organization_id"`
+
+	// StartDate: the invoice start date.
+	StartDate *time.Time `json:"start_date"`
+
+	// StopDate: the invoice stop date.
+	StopDate *time.Time `json:"stop_date"`
+
+	// DueDate: the invoice due date.
+	DueDate *time.Time `json:"due_date"`
+
+	// Number: the invoice number.
+	Number *int32 `json:"number"`
+
+	// TotalTaxed: the total amount of the invoice including taxes.
+	TotalTaxed *scw.Money `json:"total_taxed"`
+
+	// Currency: the currency of the invoice.
+	Currency string `json:"currency"`
 }
 
 // AccountingLine: accounting line.
@@ -517,6 +619,12 @@ type SendOnlineNotificationRequest struct {
 type SendOnlineNotificationResponse struct {
 	// StatusCode: the status code of the Online endpoint that received the notification.
 	StatusCode uint32 `json:"status_code"`
+}
+
+// SyncAccountingLineWithInvoiceRequest: sync accounting line with invoice request.
+type SyncAccountingLineWithInvoiceRequest struct {
+	// Invoice: the invoice to sync the accounting line with.
+	Invoice *Invoice `json:"invoice,omitempty"`
 }
 
 // UpdateAccountingLineRequest: update accounting line request.
@@ -842,6 +950,29 @@ func (s *API) UpdateAccountingLine(req *UpdateAccountingLineRequest, opts ...scw
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
 		Path:   "/payment-admin/v2alpha1/accounting-lines/" + fmt.Sprint(req.AccountingLineID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AccountingLine
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SyncAccountingLineWithInvoice:
+func (s *API) SyncAccountingLineWithInvoice(req *SyncAccountingLineWithInvoiceRequest, opts ...scw.RequestOption) (*AccountingLine, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/payment-admin/v2alpha1/accounting-lines/sync",
 	}
 
 	err = scwReq.SetBody(req)
