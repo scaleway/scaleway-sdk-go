@@ -179,6 +179,37 @@ func (enum *InvoiceState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type InvoiceType string
+
+const (
+	InvoiceTypeUnknownType = InvoiceType("unknown_type")
+	InvoiceTypePeriodic    = InvoiceType("periodic")
+	InvoiceTypePurchase    = InvoiceType("purchase")
+)
+
+func (enum InvoiceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum InvoiceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InvoiceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InvoiceType(InvoiceType(tmp).String())
+	return nil
+}
+
 type ListInvoicesMetadataRequestOrderBy string
 
 const (
@@ -588,6 +619,10 @@ type Invoice struct {
 	// State: the state of the invoice.
 	// Default value: unknown_state
 	State InvoiceState `json:"state"`
+
+	// Type: the type of the invoice.
+	// Default value: unknown_type
+	Type InvoiceType `json:"type"`
 
 	// BillingPeriod: the billing period of the invoice in the format YYYY-MM.
 	BillingPeriod string `json:"billing_period"`
