@@ -276,7 +276,7 @@ func (s *ConsoleAPI) ListContainerResources(req *ConsoleAPIListContainerResource
 	return &resp, nil
 }
 
-// GetApplicationMetrics:
+// Deprecated: GetApplicationMetrics:
 func (s *ConsoleAPI) GetApplicationMetrics(req *ConsoleAPIGetApplicationMetricsRequest, opts ...scw.RequestOption) (*ApplicationMetricsResponse, error) {
 	var err error
 
