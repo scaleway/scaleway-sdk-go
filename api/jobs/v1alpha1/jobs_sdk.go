@@ -42,13 +42,14 @@ var (
 type JobRunState string
 
 const (
-	JobRunStateUnknownState = JobRunState("unknown_state")
-	JobRunStateQueued       = JobRunState("queued")
-	JobRunStateScheduled    = JobRunState("scheduled")
-	JobRunStateRunning      = JobRunState("running")
-	JobRunStateSucceeded    = JobRunState("succeeded")
-	JobRunStateFailed       = JobRunState("failed")
-	JobRunStateCanceled     = JobRunState("canceled")
+	JobRunStateUnknownState  = JobRunState("unknown_state")
+	JobRunStateQueued        = JobRunState("queued")
+	JobRunStateScheduled     = JobRunState("scheduled")
+	JobRunStateRunning       = JobRunState("running")
+	JobRunStateSucceeded     = JobRunState("succeeded")
+	JobRunStateFailed        = JobRunState("failed")
+	JobRunStateCanceled      = JobRunState("canceled")
+	JobRunStateInternalError = JobRunState("internal_error")
 )
 
 func (enum JobRunState) String() string {
@@ -384,6 +385,11 @@ type StartJobDefinitionRequest struct {
 	Replicas *uint32 `json:"replicas,omitempty"`
 }
 
+// StartJobDefinitionResponse: start job definition response.
+type StartJobDefinitionResponse struct {
+	JobRuns []*JobRun `json:"job_runs"`
+}
+
 // StopJobRunRequest: stop job run request.
 type StopJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -620,7 +626,7 @@ func (s *API) DeleteJobDefinition(req *DeleteJobDefinitionRequest, opts ...scw.R
 }
 
 // StartJobDefinition: Run an existing job definition by its unique identifier. This will create a new job run.
-func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.RequestOption) (*JobRun, error) {
+func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.RequestOption) (*StartJobDefinitionResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -646,7 +652,7 @@ func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.Req
 		return nil, err
 	}
 
-	var resp JobRun
+	var resp StartJobDefinitionResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
