@@ -683,6 +683,8 @@ type TLSStage struct {
 
 	ManagedCertificate bool `json:"managed_certificate"`
 
+	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
+
 	// Precisely one of CacheStageID, BackendStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
 
