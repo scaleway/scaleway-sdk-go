@@ -177,6 +177,8 @@ type JobDefinition struct {
 
 	CronSchedule *CronSchedule `json:"cron_schedule"`
 
+	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
@@ -210,6 +212,8 @@ type JobRun struct {
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
@@ -232,8 +236,11 @@ type CreateJobDefinitionRequest struct {
 	// CPULimit: CPU limit of the job.
 	CPULimit uint32 `json:"cpu_limit"`
 
-	// MemoryLimit: memory limit of the job.
+	// MemoryLimit: memory limit of the job (in MiB).
 	MemoryLimit uint32 `json:"memory_limit"`
+
+	// LocalStorageCapacity: local storage capacity of the job (in MiB).
+	LocalStorageCapacity *uint32 `json:"local_storage_capacity,omitempty"`
 
 	// ImageURI: image to use for the job.
 	ImageURI string `json:"image_uri"`
@@ -413,8 +420,11 @@ type UpdateJobDefinitionRequest struct {
 	// CPULimit: CPU limit of the job.
 	CPULimit *uint32 `json:"cpu_limit,omitempty"`
 
-	// MemoryLimit: memory limit of the job.
+	// MemoryLimit: memory limit of the job (in MiB).
 	MemoryLimit *uint32 `json:"memory_limit,omitempty"`
+
+	// LocalStorageCapacity: local storage capacity of the job (in MiB).
+	LocalStorageCapacity *uint32 `json:"local_storage_capacity,omitempty"`
 
 	// ImageURI: image to use for the job.
 	ImageURI *string `json:"image_uri,omitempty"`
