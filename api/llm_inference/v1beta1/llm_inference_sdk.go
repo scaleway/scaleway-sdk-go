@@ -558,6 +558,8 @@ type ListDeploymentsRequest struct {
 
 	OrganizationID *string `json:"-"`
 
+	Tags []string `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
@@ -738,6 +740,7 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "deployment_id", req.DeploymentID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
