@@ -113,6 +113,42 @@ func (enum *CaseCloseReason) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CaseOrigin string
+
+const (
+	// Unknown origin.
+	CaseOriginUnknownOrigin = CaseOrigin("unknown_origin")
+	// Complaint has been submitted through the webform.
+	CaseOriginWebform = CaseOrigin("webform")
+	// Complaint has been submitted through the abuse mailbox.
+	CaseOriginMailbox = CaseOrigin("mailbox")
+	// Complaint has been manually submitted.
+	CaseOriginManual = CaseOrigin("manual")
+)
+
+func (enum CaseOrigin) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_origin"
+	}
+	return string(enum)
+}
+
+func (enum CaseOrigin) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CaseOrigin) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CaseOrigin(CaseOrigin(tmp).String())
+	return nil
+}
+
 type CaseStatus string
 
 const (
@@ -122,6 +158,8 @@ const (
 	CaseStatusOpen = CaseStatus("open")
 	// The case is closed.
 	CaseStatusClosed = CaseStatus("closed")
+	// The case doesn't have an assigned playbook.
+	CaseStatusNoPlaybookAssigned = CaseStatus("no_playbook_assigned")
 )
 
 func (enum CaseStatus) String() string {
@@ -697,6 +735,88 @@ type WebhookCredential struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// Playbook: playbook.
+type Playbook struct {
+	// ID: ID of the object.
+	ID string `json:"id"`
+
+	// Name: name of the playbook.
+	Name string `json:"name"`
+
+	// Description: description of the playbook.
+	Description string `json:"description"`
+
+	// Enabled: define if the object is enable or not.
+	Enabled bool `json:"enabled"`
+
+	// CreatedAt: creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// OpenedCaseCount: number of open cases associated with this playbook.
+	OpenedCaseCount uint32 `json:"opened_case_count"`
+}
+
+// Step: step.
+type Step struct {
+	// ID: ID of the object.
+	ID string `json:"id"`
+
+	// Name: name of the step.
+	Name string `json:"name"`
+
+	// Enabled: define if the object is enable or not.
+	Enabled bool `json:"enabled"`
+
+	// PlaybookID: id of the playbook to which the step is linked.
+	PlaybookID string `json:"playbook_id"`
+
+	// CreatedAt: creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// OpenedCaseCount: number of opened cases associated with this step.
+	OpenedCaseCount uint32 `json:"opened_case_count"`
+}
+
+// Transition: transition.
+type Transition struct {
+	// ID: ID of the object.
+	ID string `json:"id"`
+
+	// Name: name of the transition.
+	Name string `json:"name"`
+
+	// Enabled: define if the object is enable or not.
+	Enabled bool `json:"enabled"`
+
+	// StepSourceID: step source of the transition.
+	StepSourceID string `json:"step_source_id"`
+
+	// StepDestinationID: step destination of the transition.
+	StepDestinationID string `json:"step_destination_id"`
+
+	// Type: type of the transition.
+	// Default value: unknown_type
+	Type TransitionType `json:"type"`
+
+	// Precondition: condition which need to be valid to allow automatic transition.
+	Precondition string `json:"precondition"`
+
+	// CreatedAt: creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Description: description of the transition.
+	Description string `json:"description"`
+}
+
 // Case: case.
 type Case struct {
 	// ID: iD.
@@ -750,27 +870,14 @@ type Case struct {
 
 	// OrganizationCaseCount: number of cases for the case owner.
 	OrganizationCaseCount uint32 `json:"organization_case_count"`
-}
 
-// Playbook: playbook.
-type Playbook struct {
-	// ID: ID of the object.
-	ID string `json:"id"`
+	// EstimatedClosingAt: if available teh date at which the case will be automatically resolved.
+	// Precisely one of EstimatedClosingAt must be set.
+	EstimatedClosingAt *time.Time `json:"estimated_closing_at,omitempty"`
 
-	// Name: name of the playbook.
-	Name string `json:"name"`
-
-	// Description: description of the playbook.
-	Description string `json:"description"`
-
-	// Enabled: define if the object is enable or not.
-	Enabled bool `json:"enabled"`
-
-	// CreatedAt: creation date.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last update date.
-	UpdatedAt *time.Time `json:"updated_at"`
+	// Origin: origin of the complaint.
+	// Default value: unknown_origin
+	Origin CaseOrigin `json:"origin"`
 }
 
 // Report: report.
@@ -789,58 +896,6 @@ type Report struct {
 
 	// SenderEmail: sender email.
 	SenderEmail string `json:"sender_email"`
-
-	// CreatedAt: creation date.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last update date.
-	UpdatedAt *time.Time `json:"updated_at"`
-}
-
-// Step: step.
-type Step struct {
-	// ID: ID of the object.
-	ID string `json:"id"`
-
-	// Name: name of the step.
-	Name string `json:"name"`
-
-	// Enabled: define if the object is enable or not.
-	Enabled bool `json:"enabled"`
-
-	// PlaybookID: id of the playbook to which the step is linked.
-	PlaybookID string `json:"playbook_id"`
-
-	// CreatedAt: creation date.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last update date.
-	UpdatedAt *time.Time `json:"updated_at"`
-}
-
-// Transition: transition.
-type Transition struct {
-	// ID: ID of the object.
-	ID string `json:"id"`
-
-	// Name: name of the transition.
-	Name string `json:"name"`
-
-	// Enabled: define if the object is enable or not.
-	Enabled bool `json:"enabled"`
-
-	// StepSourceID: step source of the transition.
-	StepSourceID string `json:"step_source_id"`
-
-	// StepDestinationID: step destination of the transition.
-	StepDestinationID string `json:"step_destination_id"`
-
-	// Type: type of the transition.
-	// Default value: unknown_type
-	Type TransitionType `json:"type"`
-
-	// Precondition: condition which need to be valid to allow automatic transition.
-	Precondition string `json:"precondition"`
 
 	// CreatedAt: creation date.
 	CreatedAt *time.Time `json:"created_at"`
@@ -878,6 +933,18 @@ type Webhook struct {
 
 	// UpdatedAt: last update date.
 	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+// GetPlaybookResponse: get playbook response.
+type GetPlaybookResponse struct {
+	// Playbook: playbook with the provided ID.
+	Playbook *Playbook `json:"playbook"`
+
+	// Steps: list of steps belonging to the playbook.
+	Steps []*Step `json:"steps"`
+
+	// Transitions: list of transitions belonging to the playbook.
+	Transitions []*Transition `json:"transitions"`
 }
 
 // ListCasesResponse: list cases response.
@@ -1069,6 +1136,12 @@ type WorkflowAPIGetCaseRequest struct {
 	CaseID string `json:"-"`
 }
 
+// WorkflowAPIGetPlaybookRequest: workflow api get playbook request.
+type WorkflowAPIGetPlaybookRequest struct {
+	// PlaybookID: ID of the playbook to retrieve.
+	PlaybookID string `json:"-"`
+}
+
 // WorkflowAPIGetReportRequest: workflow api get report request.
 type WorkflowAPIGetReportRequest struct {
 	// ReportID: ID of the report to retrieve.
@@ -1107,6 +1180,22 @@ type WorkflowAPIListCasesRequest struct {
 	// CloseReason: filter by close reason of case.
 	// Default value: unknown_close_reason
 	CloseReason CaseCloseReason `json:"-"`
+
+	// Origin: filter by origin of case.
+	// Default value: unknown_origin
+	Origin CaseOrigin `json:"-"`
+
+	// WaitForAction: filter cases which need a manual trigger.
+	WaitForAction *bool `json:"-"`
+
+	// ResourceValue: filter cases by the value of the attached resource.
+	ResourceValue *string `json:"-"`
+
+	// PlaybookID: filter cases by their playbook id.
+	PlaybookID *string `json:"-"`
+
+	// StepID: filter cases by their step id.
+	StepID *string `json:"-"`
 }
 
 // WorkflowAPIListPlaybooksRequest: workflow api list playbooks request.
@@ -1277,6 +1366,11 @@ func (s *WorkflowAPI) ListCases(req *WorkflowAPIListCasesRequest, opts ...scw.Re
 	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "class", req.Class)
 	parameter.AddToQuery(query, "close_reason", req.CloseReason)
+	parameter.AddToQuery(query, "origin", req.Origin)
+	parameter.AddToQuery(query, "wait_for_action", req.WaitForAction)
+	parameter.AddToQuery(query, "resource_value", req.ResourceValue)
+	parameter.AddToQuery(query, "playbook_id", req.PlaybookID)
+	parameter.AddToQuery(query, "step_id", req.StepID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -1564,6 +1658,28 @@ func (s *WorkflowAPI) ListPlaybooks(req *WorkflowAPIListPlaybooksRequest, opts .
 	}
 
 	var resp ListPlaybooksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetPlaybook: Get detailed playbook including steps and transitions.
+func (s *WorkflowAPI) GetPlaybook(req *WorkflowAPIGetPlaybookRequest, opts ...scw.RequestOption) (*GetPlaybookResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.PlaybookID) == "" {
+		return nil, errors.New("field PlaybookID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/abuse_admin/v2/playbooks/" + fmt.Sprint(req.PlaybookID) + "",
+	}
+
+	var resp GetPlaybookResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
