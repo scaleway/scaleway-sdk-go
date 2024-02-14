@@ -41,6 +41,8 @@ var (
 
 // ExportCatalogCSVRequest: export catalog csv request.
 type ExportCatalogCSVRequest struct {
+	// LastExportDate: this is an optional date which is the last export date of the catalog.
+	LastExportDate *time.Time `json:"-"`
 }
 
 // Product Catalog Admin API endpoints.
@@ -59,9 +61,13 @@ func NewAPI(client *scw.Client) *API {
 func (s *API) ExportCatalogCSV(req *ExportCatalogCSVRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "last_export_date", req.LastExportDate)
+
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/product-catalog-admin/v1alpha1/export-csv",
+		Query:  query,
 	}
 
 	var resp scw.File
