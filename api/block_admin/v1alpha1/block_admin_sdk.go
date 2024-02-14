@@ -134,6 +134,29 @@ func (enum *ListVolumesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Reference: reference.
+type Reference struct {
+	// ID: UUID of the reference.
+	ID string `json:"id"`
+
+	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
+	ProductResourceType string `json:"product_resource_type"`
+
+	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
+	ProductResourceID string `json:"product_resource_id"`
+
+	// CreatedAt: creation date of the reference.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Type: type of reference (link, exclusive, read_only).
+	// Default value: unknown_type
+	Type block_v1alpha1.ReferenceType `json:"type"`
+
+	// Status: status of reference (attaching, attached, detaching).
+	// Default value: unknown_status
+	Status block_v1alpha1.ReferenceStatus `json:"status"`
+}
+
 // SnapshotParentVolume: snapshot parent volume.
 type SnapshotParentVolume struct {
 	ID string `json:"id"`
@@ -162,29 +185,6 @@ type VolumeSpecifications struct {
 	Class block_v1alpha1.StorageClass `json:"class"`
 }
 
-// Reference: reference.
-type Reference struct {
-	// ID: UUID of the reference.
-	ID string `json:"id"`
-
-	// ProductResourceType: type of resoruce to which the reference is associated (snapshot or volume).
-	ProductResourceType string `json:"product_resource_type"`
-
-	// ProductResourceID: UUID of the volume or the snapshot it refers to (according to the product_resource_type).
-	ProductResourceID string `json:"product_resource_id"`
-
-	// CreatedAt: creation date of the reference.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// Type: type of reference (link, exclusive, read_only).
-	// Default value: unknown_type
-	Type block_v1alpha1.ReferenceType `json:"type"`
-
-	// Status: status of reference (attaching, attached, detaching).
-	// Default value: unknown_status
-	Status block_v1alpha1.ReferenceStatus `json:"status"`
-}
-
 // AuditLog: audit log.
 type AuditLog struct {
 	Action string `json:"action"`
@@ -196,18 +196,18 @@ type AuditLog struct {
 	ID string `json:"id"`
 }
 
-// SnapshotSummary: snapshot summary.
-type SnapshotSummary struct {
+// Snapshot: snapshot.
+type Snapshot struct {
 	// ID: UUID of the snapshot.
 	ID string `json:"id"`
 
 	// Name: name of the snapshot.
 	Name string `json:"name"`
 
-	// ParentVolume: if the parent volume has been deleted, value is null.
+	// ParentVolume: if the parent volume was deleted, value is null.
 	ParentVolume *SnapshotParentVolume `json:"parent_volume"`
 
-	// Size: size of the snapshot in bytes.
+	// Size: size in bytes of the snapshot.
 	Size scw.Size `json:"size"`
 
 	// ProjectID: UUID of the project the snapshot belongs to.
@@ -219,6 +219,9 @@ type SnapshotSummary struct {
 	// UpdatedAt: last modification date of the properties of a snapshot.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// References: list of the references to the snapshot.
+	References []*Reference `json:"references"`
+
 	// Status: current status of the snapshot (available, in_use, ...).
 	// Default value: unknown_status
 	Status block_v1alpha1.SnapshotStatus `json:"status"`
@@ -226,20 +229,20 @@ type SnapshotSummary struct {
 	// Tags: list of tags assigned to the volume.
 	Tags []string `json:"tags"`
 
-	// Zone: snapshot Availability Zone.
+	// Zone: snapshot zone.
 	Zone scw.Zone `json:"zone"`
 
 	// Class: storage class of the snapshot.
 	// Default value: unknown_storage_class
 	Class block_v1alpha1.StorageClass `json:"class"`
 
-	OrganizationID string `json:"organization_id"`
-
-	CephName *string `json:"ceph_name"`
+	DeletedAt *time.Time `json:"deleted_at"`
 
 	UsedSize *scw.Size `json:"used_size"`
 
-	DeletedAt *time.Time `json:"deleted_at"`
+	CephName *string `json:"ceph_name"`
+
+	OrganizationID string `json:"organization_id"`
 
 	PurgedAt *time.Time `json:"purged_at"`
 }
@@ -433,7 +436,7 @@ type ListSnapshotsRequest struct {
 // ListSnapshotsResponse: list snapshots response.
 type ListSnapshotsResponse struct {
 	// Snapshots: paginated returned list of snapshots.
-	Snapshots []*SnapshotSummary `json:"snapshots"`
+	Snapshots []*Snapshot `json:"snapshots"`
 
 	// TotalCount: total number of snpashots in the project.
 	TotalCount uint64 `json:"total_count"`
@@ -570,57 +573,6 @@ type SetVolumeAsPurgedRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	VolumeID string `json:"-"`
-}
-
-// Snapshot: snapshot.
-type Snapshot struct {
-	// ID: UUID of the snapshot.
-	ID string `json:"id"`
-
-	// Name: name of the snapshot.
-	Name string `json:"name"`
-
-	// ParentVolume: if the parent volume was deleted, value is null.
-	ParentVolume *SnapshotParentVolume `json:"parent_volume"`
-
-	// Size: size in bytes of the snapshot.
-	Size scw.Size `json:"size"`
-
-	// ProjectID: UUID of the project the snapshot belongs to.
-	ProjectID string `json:"project_id"`
-
-	// CreatedAt: creation date of the snapshot.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last modification date of the properties of a snapshot.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// References: list of the references to the snapshot.
-	References []*Reference `json:"references"`
-
-	// Status: current status of the snapshot (available, in_use, ...).
-	// Default value: unknown_status
-	Status block_v1alpha1.SnapshotStatus `json:"status"`
-
-	// Tags: list of tags assigned to the volume.
-	Tags []string `json:"tags"`
-
-	// Zone: snapshot zone.
-	Zone scw.Zone `json:"zone"`
-
-	// Class: storage class of the snapshot.
-	// Default value: unknown_storage_class
-	Class block_v1alpha1.StorageClass `json:"class"`
-
-	DeletedAt *time.Time `json:"deleted_at"`
-
-	UsedSize *scw.Size `json:"used_size"`
-
-	CephName *string `json:"ceph_name"`
-
-	OrganizationID string `json:"organization_id"`
-
-	PurgedAt *time.Time `json:"purged_at"`
 }
 
 type API struct {
