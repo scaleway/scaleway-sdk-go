@@ -704,6 +704,10 @@ type UpdateDeploymentRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	Endpoints []*Endpoint `json:"endpoints"`
+
+	MinSize *uint32 `json:"min_size,omitempty"`
+
+	MaxSize *uint32 `json:"max_size,omitempty"`
 }
 
 // Inference API.
