@@ -581,6 +581,30 @@ type ContractSignature struct {
 	Contract *Contract `json:"contract"`
 }
 
+// ListCountriesResponseCountry: list countries response country.
+type ListCountriesResponseCountry struct {
+	// Name: name of the country.
+	Name string `json:"name"`
+
+	// Code: two letters representing the country.
+	Code string `json:"code"`
+
+	// Flag: flag representation of the country.
+	Flag string `json:"flag"`
+
+	// VatNumberRequired: true if the country should have a VAT identification number, false otherwise.
+	VatNumberRequired bool `json:"vat_number_required"`
+}
+
+// ListCountrySubdivisionsResponseSubdivision: list country subdivisions response subdivision.
+type ListCountrySubdivisionsResponseSubdivision struct {
+	// Name: subdivision name.
+	Name string `json:"name"`
+
+	// Code: subdivision code is a few numbers and/or letters completing the ISO 3166-1 code of the country.
+	Code string `json:"code"`
+}
+
 // Invitation: invitation.
 type Invitation struct {
 	// ID: ID of the invitation.
@@ -697,6 +721,16 @@ type ContractAPIValidateContractSignatureRequest struct {
 	ContractSignatureID string `json:"-"`
 }
 
+// IsoCodeAPIListCountriesRequest: iso code api list countries request.
+type IsoCodeAPIListCountriesRequest struct {
+}
+
+// IsoCodeAPIListCountrySubdivisionsRequest: iso code api list country subdivisions request.
+type IsoCodeAPIListCountrySubdivisionsRequest struct {
+	// CountryCode: the country code.
+	CountryCode string `json:"-"`
+}
+
 // ListContractSignaturesResponse: list contract signatures response.
 type ListContractSignaturesResponse struct {
 	// TotalCount: the total number of contract signatures.
@@ -723,6 +757,18 @@ func (r *ListContractSignaturesResponse) UnsafeAppend(res interface{}) (uint64, 
 	r.ContractSignatures = append(r.ContractSignatures, results.ContractSignatures...)
 	r.TotalCount += uint64(len(results.ContractSignatures))
 	return uint64(len(results.ContractSignatures)), nil
+}
+
+// ListCountriesResponse: list countries response.
+type ListCountriesResponse struct {
+	// Countries: list of countries.
+	Countries []*ListCountriesResponseCountry `json:"countries"`
+}
+
+// ListCountrySubdivisionsResponse: list country subdivisions response.
+type ListCountrySubdivisionsResponse struct {
+	// Subdivisions: list of subdivisions for a country code.
+	Subdivisions []*ListCountrySubdivisionsResponseSubdivision `json:"subdivisions"`
 }
 
 // ListInvitationsResponse: list invitations response.
@@ -1311,6 +1357,76 @@ func (s *ContractAPI) ListContractSignatures(req *ContractAPIListContractSignatu
 	}
 
 	var resp ListContractSignaturesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// The IsoCode API list countries or subdivisions of a country.
+type IsoCodeAPI struct {
+	client *scw.Client
+}
+
+// NewIsoCodeAPI returns a IsoCodeAPI object from a Scaleway client.
+func NewIsoCodeAPI(client *scw.Client) *IsoCodeAPI {
+	return &IsoCodeAPI{
+		client: client,
+	}
+}
+
+// GetServiceInfo:
+func (s *IsoCodeAPI) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account/v3/iso-codes",
+	}
+
+	var resp scw.ServiceInfo
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListCountries: List all countries from ISO 3166-1 alpha-2.
+func (s *IsoCodeAPI) ListCountries(req *IsoCodeAPIListCountriesRequest, opts ...scw.RequestOption) (*ListCountriesResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account/v3/iso-codes/countries",
+	}
+
+	var resp ListCountriesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListCountrySubdivisions: Method to list all subdivisions (from ISO 3166-2 alpha-2) for a country code.
+func (s *IsoCodeAPI) ListCountrySubdivisions(req *IsoCodeAPIListCountrySubdivisionsRequest, opts ...scw.RequestOption) (*ListCountrySubdivisionsResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.CountryCode) == "" {
+		return nil, errors.New("field CountryCode cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account/v3/iso-codes/countries/" + fmt.Sprint(req.CountryCode) + "/subdivisions",
+	}
+
+	var resp ListCountrySubdivisionsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
