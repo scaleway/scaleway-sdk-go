@@ -387,6 +387,60 @@ type ImportedPaymentMethod struct {
 	DeviceID string `json:"device_id"`
 }
 
+// AccountingLine: accounting line.
+type AccountingLine struct {
+	// ID: the ID of the accounting line.
+	ID string `json:"id"`
+
+	// CreationDate: the creation date of the accounting line.
+	CreationDate *time.Time `json:"creation_date"`
+
+	// ModificationDate: the modification date of the accounting line.
+	ModificationDate *time.Time `json:"modification_date"`
+
+	// Organization: the special default organization of the accounting line.
+	Organization *AccountingLineOrganization `json:"organization"`
+
+	// ThirdParty: the third party organization of the accounting line.
+	ThirdParty *AccountingLineOrganization `json:"third_party"`
+
+	// State: the state of the accounting line.
+	// Default value: unknown_state
+	State AccountingLineState `json:"state"`
+
+	// Description: the description of the accounting line.
+	Description string `json:"description"`
+
+	// Amount: the amount of the accounting line.
+	Amount *scw.Money `json:"amount"`
+
+	// Category: the category of the accounting line.
+	// Default value: unknown_category
+	Category AccountingLineCategory `json:"category"`
+
+	// PaymentMode: the payment mode of the accounting line.
+	// Default value: unknown_payment_mode
+	PaymentMode AccountingLinePaymentMode `json:"payment_mode"`
+
+	// TryCount: the try count of the accounting line.
+	TryCount uint32 `json:"try_count"`
+
+	// InvoiceNumber: the invoice number of the accounting line.
+	InvoiceNumber int32 `json:"invoice_number"`
+
+	// InvoiceStartDate: the invoice start date of the accounting line.
+	InvoiceStartDate *time.Time `json:"invoice_start_date"`
+
+	// InvoiceStopDate: the invoice stop date of the accounting line.
+	InvoiceStopDate *time.Time `json:"invoice_stop_date"`
+
+	// EventSentDate: the event sent date of the accounting line.
+	EventSentDate *time.Time `json:"event_sent_date"`
+
+	// EventResponseDate: the event response date of the accounting line.
+	EventResponseDate *time.Time `json:"event_response_date"`
+}
+
 // MagicCode: magic code.
 type MagicCode struct {
 	ID string `json:"id"`
@@ -444,58 +498,10 @@ type Invoice struct {
 	Currency string `json:"currency"`
 }
 
-// AccountingLine: accounting line.
-type AccountingLine struct {
-	// ID: the ID of the accounting line.
-	ID string `json:"id"`
-
-	// CreationDate: the creation date of the accounting line.
-	CreationDate *time.Time `json:"creation_date"`
-
-	// ModificationDate: the modification date of the accounting line.
-	ModificationDate *time.Time `json:"modification_date"`
-
-	// Organization: the special default organization of the accounting line.
-	Organization *AccountingLineOrganization `json:"organization"`
-
-	// ThirdParty: the third party organization of the accounting line.
-	ThirdParty *AccountingLineOrganization `json:"third_party"`
-
-	// State: the state of the accounting line.
-	// Default value: unknown_state
-	State AccountingLineState `json:"state"`
-
-	// Description: the description of the accounting line.
-	Description string `json:"description"`
-
-	// Amount: the amount of the accounting line.
-	Amount *scw.Money `json:"amount"`
-
-	// Category: the category of the accounting line.
-	// Default value: unknown_category
-	Category AccountingLineCategory `json:"category"`
-
-	// PaymentMode: the payment mode of the accounting line.
-	// Default value: unknown_payment_mode
-	PaymentMode AccountingLinePaymentMode `json:"payment_mode"`
-
-	// TryCount: the try count of the accounting line.
-	TryCount uint32 `json:"try_count"`
-
-	// InvoiceNumber: the invoice number of the accounting line.
-	InvoiceNumber int32 `json:"invoice_number"`
-
-	// InvoiceStartDate: the invoice start date of the accounting line.
-	InvoiceStartDate *time.Time `json:"invoice_start_date"`
-
-	// InvoiceStopDate: the invoice stop date of the accounting line.
-	InvoiceStopDate *time.Time `json:"invoice_stop_date"`
-
-	// EventSentDate: the event sent date of the accounting line.
-	EventSentDate *time.Time `json:"event_sent_date"`
-
-	// EventResponseDate: the event response date of the accounting line.
-	EventResponseDate *time.Time `json:"event_response_date"`
+// DeleteAccountingLinesRequest: delete accounting lines request.
+type DeleteAccountingLinesRequest struct {
+	// AccountingLineIDs: a list of accounting line IDs to be deleted.
+	AccountingLineIDs []string `json:"accounting_line_ids"`
 }
 
 // GetAccountingLineRequest: get accounting line request.
@@ -514,6 +520,55 @@ type ImportPaymentMethodsRequest struct {
 type ImportPaymentMethodsResponse struct {
 	// ImportedPaymentMethod: an array of all payment methods imported.
 	ImportedPaymentMethod []*ImportedPaymentMethod `json:"imported_payment_method"`
+}
+
+// ListAccountingLinesRequest: list accounting lines request.
+type ListAccountingLinesRequest struct {
+	// Page: a positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: a positive integer lower or equal to 1000 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+
+	// AccountingLineIDs: a list of accounting line IDs to filter by.
+	AccountingLineIDs []string `json:"-"`
+
+	// OrganizationIDs: a list of organization IDs to filter by.
+	OrganizationIDs []string `json:"-"`
+
+	// InvoiceIDs: a list of invoice IDs to filter by.
+	InvoiceIDs []string `json:"-"`
+
+	// States: a list of accounting line states to filter by.
+	States []AccountingLineState `json:"-"`
+}
+
+// ListAccountingLinesResponse: list accounting lines response.
+type ListAccountingLinesResponse struct {
+	// TotalCount: the total number of accounting lines.
+	TotalCount uint64 `json:"total_count"`
+
+	// AccountingLines: the paginated returned accounting lines.
+	AccountingLines []*AccountingLine `json:"accounting_lines"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAccountingLinesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAccountingLinesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListAccountingLinesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.AccountingLines = append(r.AccountingLines, results.AccountingLines...)
+	r.TotalCount += uint64(len(results.AccountingLines))
+	return uint64(len(results.AccountingLines)), nil
 }
 
 // ListMagicCodesRequest: list magic codes request.
@@ -1005,6 +1060,59 @@ func (s *API) UpdatePaymentMode(req *UpdatePaymentModeRequest, opts ...scw.Reque
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
 		Path:   "/payment-admin/v2alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/payment-mode",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListAccountingLines: List accounting lines.
+func (s *API) ListAccountingLines(req *ListAccountingLinesRequest, opts ...scw.RequestOption) (*ListAccountingLinesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "accounting_line_ids", req.AccountingLineIDs)
+	parameter.AddToQuery(query, "organization_ids", req.OrganizationIDs)
+	parameter.AddToQuery(query, "invoice_ids", req.InvoiceIDs)
+	parameter.AddToQuery(query, "states", req.States)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/payment-admin/v2alpha1/accounting-lines",
+		Query:  query,
+	}
+
+	var resp ListAccountingLinesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteAccountingLines: Delete accounting lines.
+func (s *API) DeleteAccountingLines(req *DeleteAccountingLinesRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/payment-admin/v2alpha1/delete-accounting-lines",
 	}
 
 	err = scwReq.SetBody(req)
