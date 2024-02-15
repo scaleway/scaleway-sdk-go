@@ -175,8 +175,8 @@ type EndpointPrivateNetworkDetails struct {
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
-// EndpointPublicDetails: endpoint public details.
-type EndpointPublicDetails struct {
+// EndpointPublicAccessDetails: endpoint public access details.
+type EndpointPublicAccessDetails struct {
 }
 
 // ModelS3Model: model s3 model.
@@ -206,7 +206,7 @@ type Endpoint struct {
 	URL string `json:"url"`
 
 	// Precisely one of PublicAccess, PrivateNetwork must be set.
-	PublicAccess *EndpointPublicDetails `json:"public_access,omitempty"`
+	PublicAccess *EndpointPublicAccessDetails `json:"public_access,omitempty"`
 
 	// Precisely one of PublicAccess, PrivateNetwork must be set.
 	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
@@ -552,8 +552,6 @@ type ListDeploymentsRequest struct {
 
 	Name *string `json:"-"`
 
-	DeploymentID *string `json:"-"`
-
 	ProjectID *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
@@ -741,7 +739,6 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "deployment_id", req.DeploymentID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "tags", req.Tags)
