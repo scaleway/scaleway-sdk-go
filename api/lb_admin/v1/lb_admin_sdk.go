@@ -187,6 +187,8 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 
 	LBID string `json:"-"`
+
+	IpamIDs []string `json:"ipam_ids"`
 }
 
 // ZonedAPICreateHeadlessLBRequest: zoned api create headless lb request.
