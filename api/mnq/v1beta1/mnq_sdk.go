@@ -880,7 +880,7 @@ func NewNatsAPI(client *scw.Client) *NatsAPI {
 	}
 }
 func (s *NatsAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
 // CreateNatsAccount: Create a NATS account associated with a Project.
@@ -1206,7 +1206,7 @@ func NewSnsAPI(client *scw.Client) *SnsAPI {
 	}
 }
 func (s *SnsAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
 // ActivateSns: Activate SNS for the specified Project ID. SNS must be activated before any usage. Activating SNS does not trigger any billing, and you can deactivate at any time.
@@ -1507,7 +1507,7 @@ func NewSqsAPI(client *scw.Client) *SqsAPI {
 	}
 }
 func (s *SqsAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
 // ActivateSqs: Activate SQS for the specified Project ID. SQS must be activated before any usage such as creating credentials and queues. Activating SQS does not trigger any billing, and you can deactivate at any time.
