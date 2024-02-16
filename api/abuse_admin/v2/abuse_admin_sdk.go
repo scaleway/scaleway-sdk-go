@@ -19,8 +19,8 @@ import (
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/internal/parameter"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/namegenerator"
 	"gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/scw"
-	resource_v1alpha1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/resource/v1alpha1"
 	trustandsafety_private_v1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/trustandsafety_private/v1"
+	resource_v1alpha1 "gitlab.infra.online.net/devtools/scaleway-sdk-go-internal/api/resource/v1alpha1"
 )
 
 // always import dependencies
