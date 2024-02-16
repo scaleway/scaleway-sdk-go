@@ -674,8 +674,11 @@ type Gateway struct {
 	// SMTPEnabled: defines whether SMTP traffic is allowed to pass through the gateway.
 	SMTPEnabled bool `json:"smtp_enabled"`
 
-	// IsLegacy: whether this uses non-IPAM IP configurations.
+	// IsLegacy: defines whether the gateway uses non-IPAM IP configurations.
 	IsLegacy bool `json:"is_legacy"`
+
+	// IPMobilityEnabled: defines whether the gateway uses routed IPs (IP mobility) instead of NAT IPs.
+	IPMobilityEnabled bool `json:"ip_mobility_enabled"`
 
 	// Zone: zone of the gateway.
 	Zone scw.Zone `json:"zone"`
@@ -921,6 +924,15 @@ type DeletePATRuleRequest struct {
 
 	// PatRuleID: ID of the PAT rule to delete.
 	PatRuleID string `json:"-"`
+}
+
+// EnableIPMobilityRequest: enable ip mobility request.
+type EnableIPMobilityRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// GatewayID: ID of the gateway to upgrade to IP mobility.
+	GatewayID string `json:"-"`
 }
 
 // GetDHCPEntryRequest: get dhcp entry request.
@@ -1774,6 +1786,42 @@ func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOpti
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/vpc-gw/v1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/upgrade",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Gateway
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableIPMobility: Upgrade a Public Gateway to IP mobility (move from NAT IP to routed IP). This is idempotent: repeated calls after the first will return no error but have no effect.
+func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.RequestOption) (*Gateway, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return nil, errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc-gw/v1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/enable-ip-mobility",
 	}
 
 	err = scwReq.SetBody(req)
