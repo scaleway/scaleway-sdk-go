@@ -60,3 +60,19 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	}
 	return server.(*Server), nil
 }
+
+func (s *API) WaitForPossibleDeletion(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	server, err := s.WaitForServer(&WaitForServerRequest{
+		ServerID:      req.ServerID,
+		Zone:          req.Zone,
+		Timeout:       scw.TimeDurationPtr(defaultTimeout),
+		RetryInterval: scw.TimeDurationPtr(defaultRetryInterval),
+	}, opts...,
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for server failed")
+	}
+	timeToDelete := *server.DeletableAt
+	time.Sleep(timeToDelete.Sub(time.Now()))
+	return server, nil
+}
