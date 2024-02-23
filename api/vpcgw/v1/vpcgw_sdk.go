@@ -1803,7 +1803,7 @@ func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOpti
 }
 
 // EnableIPMobility: Upgrade a Public Gateway to IP mobility (move from NAT IP to routed IP). This is idempotent: repeated calls after the first will return no error but have no effect.
-func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.RequestOption) (*Gateway, error) {
+func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Zone == "" {
@@ -1812,11 +1812,11 @@ func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.Request
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
+		return errors.New("field Zone cannot be empty in request")
 	}
 
 	if fmt.Sprint(req.GatewayID) == "" {
-		return nil, errors.New("field GatewayID cannot be empty in request")
+		return errors.New("field GatewayID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -1826,16 +1826,14 @@ func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.Request
 
 	err = scwReq.SetBody(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var resp Gateway
-
-	err = s.client.Do(scwReq, &resp, opts...)
+	err = s.client.Do(scwReq, nil, opts...)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &resp, nil
+	return nil
 }
 
 // ListGatewayNetworks: List the connections between Public Gateways and Private Networks (a connection = a GatewayNetwork). You can choose to filter by `gateway-id` to list all Private Networks attached to the specified Public Gateway, or by `private_network_id` to list all Public Gateways attached to the specified Private Network. Other query parameters are also available. The result is an array of GatewayNetwork objects, each giving details of the connection between a given Public Gateway and a given Private Network.
