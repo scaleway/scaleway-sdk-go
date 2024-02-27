@@ -181,10 +181,17 @@ func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.Request
 		retryInterval = *req.RetryInterval
 	}
 
-	terminalStatus := map[ClusterStatus]struct{}{
+	terminalClusterStatus := map[ClusterStatus]struct{}{
 		ClusterStatusPoolRequired: {},
 		ClusterStatusReady:        {},
 	}
+
+	terminalPoolStatus := map[PoolStatus]struct{}{
+		PoolStatusReady:   {},
+		PoolStatusWarning: {},
+	}
+
+	optsWithAllPages := append(opts, scw.WithAllPages())
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
@@ -196,8 +203,27 @@ func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.Request
 				return nil, false, err
 			}
 
-			_, isTerminal := terminalStatus[cluster.Status]
-			return cluster, isTerminal, nil
+			_, isTerminal := terminalClusterStatus[cluster.Status]
+			if !isTerminal {
+				return cluster, false, nil
+			}
+
+			pools, err := s.ListPools(&ListPoolsRequest{
+				Region:    req.Region,
+				ClusterID: req.ClusterID,
+			}, optsWithAllPages...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			for _, pool := range pools.Pools {
+				_, isTerminal = terminalPoolStatus[pool.Status]
+				if !isTerminal {
+					return cluster, false, nil
+				}
+			}
+
+			return cluster, true, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
