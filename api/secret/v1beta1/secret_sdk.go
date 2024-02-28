@@ -734,6 +734,47 @@ func (r *ListSecretsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Secrets)), nil
 }
 
+// ListTagsRequest: list tags request.
+type ListTagsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project to target.
+	ProjectID string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListTagsResponse: list tags response.
+type ListTagsResponse struct {
+	// Tags: list of tags.
+	Tags []string `json:"tags"`
+
+	// TotalCount: count of all tags matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListTagsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Tags = append(r.Tags, results.Tags...)
+	r.TotalCount += uint64(len(results.Tags))
+	return uint64(len(results.Tags)), nil
+}
+
 // ProtectSecretRequest: protect secret request.
 type ProtectSecretRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1428,6 +1469,49 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 	}
 
 	var resp SecretVersion
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListTags: List all tags associated with secrets within a given Project.
+func (s *API) ListTags(req *ListTagsRequest, opts ...scw.RequestOption) (*ListTagsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/tags",
+		Query:  query,
+	}
+
+	var resp ListTagsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
