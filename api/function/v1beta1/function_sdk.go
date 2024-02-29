@@ -695,9 +695,6 @@ type SecretHashedValue struct {
 
 // TriggerMnqNatsClientConfig: trigger mnq nats client config.
 type TriggerMnqNatsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
 	// Subject: name of the NATS subject the trigger listens to.
 	Subject string `json:"subject"`
 
@@ -707,7 +704,7 @@ type TriggerMnqNatsClientConfig struct {
 	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: currently, only the `fr-par` region is available.
+	// MnqRegion: currently, only the `fr-par` and `nl-ams` regions are available.
 	MnqRegion string `json:"mnq_region"`
 
 	// MnqCredentialID: ID of the Messaging and Queuing credentials used to subscribe to the NATS subject.
@@ -716,16 +713,13 @@ type TriggerMnqNatsClientConfig struct {
 
 // TriggerMnqSqsClientConfig: trigger mnq sqs client config.
 type TriggerMnqSqsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
 	// Queue: name of the SQS queue the trigger listens to.
 	Queue string `json:"queue"`
 
 	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: currently, only the `fr-par` region is available.
+	// MnqRegion: currently, only the `fr-par` and `nl-ams` regions are available.
 	MnqRegion string `json:"mnq_region"`
 
 	// MnqCredentialID: ID of the Messaging and Queuing credentials used to read from the SQS queue.
@@ -752,9 +746,6 @@ type Secret struct {
 
 // CreateTriggerRequestMnqNatsClientConfig: create trigger request mnq nats client config.
 type CreateTriggerRequestMnqNatsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
 	// Subject: name of the NATS subject the trigger should listen to.
 	Subject string `json:"subject"`
 
@@ -764,22 +755,19 @@ type CreateTriggerRequestMnqNatsClientConfig struct {
 	// MnqProjectID: ID of the Messaging and Queuing project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: currently, only the `fr-par` region is available.
+	// MnqRegion: currently, only the `fr-par` and `nl-ams` regions are available.
 	MnqRegion string `json:"mnq_region"`
 }
 
 // CreateTriggerRequestMnqSqsClientConfig: create trigger request mnq sqs client config.
 type CreateTriggerRequestMnqSqsClientConfig struct {
-	// Deprecated
-	MnqNamespaceID *string `json:"mnq_namespace_id,omitempty"`
-
 	// Queue: name of the SQS queue the trigger should listen to.
 	Queue string `json:"queue"`
 
 	// MnqProjectID: you must have activated SQS on this project.
 	MnqProjectID string `json:"mnq_project_id"`
 
-	// MnqRegion: currently, only the `fr-par` region is available.
+	// MnqRegion: currently, only the `fr-par` and `nl-ams` regions are available.
 	MnqRegion string `json:"mnq_region"`
 }
 
