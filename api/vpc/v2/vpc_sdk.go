@@ -185,6 +185,9 @@ type VPC struct {
 
 	// PrivateNetworkCount: number of Private Networks within this VPC.
 	PrivateNetworkCount uint32 `json:"private_network_count"`
+
+	// RoutingEnabled: defines whether the VPC routes traffic between its Private Networks.
+	RoutingEnabled bool `json:"routing_enabled"`
 }
 
 // AddSubnetsRequest: add subnets request.
@@ -238,6 +241,9 @@ type CreateVPCRequest struct {
 
 	// Tags: tags for the VPC.
 	Tags []string `json:"tags"`
+
+	// EnableRouting: enable routing between Private Networks in the VPC.
+	EnableRouting bool `json:"enable_routing"`
 }
 
 // DeletePrivateNetworkRequest: delete private network request.
@@ -394,6 +400,9 @@ type ListVPCsRequest struct {
 
 	// IsDefault: defines whether to filter only for VPCs which are the default one for their Project.
 	IsDefault *bool `json:"-"`
+
+	// RoutingEnabled: defines whether to filter only for VPCs which route traffic between their Private Networks.
+	RoutingEnabled *bool `json:"-"`
 }
 
 // ListVPCsResponse: list vp cs response.
@@ -524,6 +533,7 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "is_default", req.IsDefault)
+	parameter.AddToQuery(query, "routing_enabled", req.RoutingEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
