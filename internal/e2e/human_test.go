@@ -43,6 +43,7 @@ func newE2EClient(withAuthInClient bool) (*test.API, string, string, error) {
 }
 
 func TestAuthInRequest(t *testing.T) {
+	t.Skip("Skipping test while api-test not yet deployed")
 	client, accessKey, secretKey, err := newE2EClient(false)
 	testhelpers.AssertNoError(t, err)
 
@@ -52,6 +53,7 @@ func TestAuthInRequest(t *testing.T) {
 }
 
 func TestHuman(t *testing.T) {
+	t.Skip("Skipping test while api-test not yet deployed")
 	client, _, _, err := newE2EClient(true)
 	testhelpers.AssertNoError(t, err)
 

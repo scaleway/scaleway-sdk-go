@@ -9,6 +9,7 @@ import (
 )
 
 func TestStandardErrors(t *testing.T) {
+	t.Skip("Skipping test while api-test not yet deployed")
 	client, _, _, err := newE2EClient(true)
 	testhelpers.AssertNoError(t, err)
 
