@@ -374,6 +374,17 @@ type OfferProduct struct {
 	MaxAddonDomains int32 `json:"max_addon_domains"`
 }
 
+// CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
+type CreateHostingRequestDomainConfiguration struct {
+	UpdateNameservers bool `json:"update_nameservers"`
+
+	UpdateWebRecord bool `json:"update_web_record"`
+
+	UpdateMailRecord bool `json:"update_mail_record"`
+
+	UpdateAllRecords bool `json:"update_all_records"`
+}
+
 // DNSRecord: dns record.
 type DNSRecord struct {
 	// Name: record name.
@@ -546,6 +557,9 @@ type CreateHostingRequest struct {
 	// Language: default language for the control panel interface.
 	// Default value: unknown_language_code
 	Language std.LanguageCode `json:"language"`
+
+	// DomainConfiguration: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements.
+	DomainConfiguration *CreateHostingRequestDomainConfiguration `json:"domain_configuration,omitempty"`
 }
 
 // DNSRecords: dns records.
