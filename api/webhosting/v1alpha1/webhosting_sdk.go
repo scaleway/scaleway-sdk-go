@@ -500,6 +500,9 @@ type Hosting struct {
 	// IPv6: iPv6 address of the hosting's host server.
 	IPv6 string `json:"ipv6"`
 
+	// Protected: whether the hosting is protected or not.
+	Protected bool `json:"protected"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -760,6 +763,9 @@ type UpdateHostingRequest struct {
 
 	// OfferID: ID of the new offer for the Web Hosting plan.
 	OfferID *string `json:"offer_id,omitempty"`
+
+	// Protected: whether the hosting is protected or not.
+	Protected *bool `json:"protected,omitempty"`
 }
 
 // Web Hosting API.
