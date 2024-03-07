@@ -209,8 +209,14 @@ const (
 	SecretTypeOpaque = SecretType("opaque")
 	// List of concatenated PEM blocks. They can contain certificates, private keys or any other PEM block types.
 	SecretTypeCertificate = SecretType("certificate")
-	// Flat JSON that allows you to set any number of first level key and a scalar type as a value (string, numeric, boolean).
+	// Flat JSON that allows you to set as many first level keys and scalar types as values (string, numeric, boolean) as you need.
 	SecretTypeKeyValue = SecretType("key_value")
+	// Flat JSON that allows you to set a username and a password.
+	SecretTypeBasicCredentials = SecretType("basic_credentials")
+	// Flat JSON that allows you to set an engine, username, password, host, database name, and port.
+	SecretTypeDatabaseCredentials = SecretType("database_credentials")
+	// Flat JSON that allows you to set an SSH key.
+	SecretTypeSSHKey = SecretType("ssh_key")
 )
 
 func (enum SecretType) String() string {
@@ -704,6 +710,10 @@ type ListSecretsRequest struct {
 
 	// Ephemeral: filter by ephemeral / not ephemeral (optional).
 	Ephemeral *bool `json:"-"`
+
+	// Type: filter by secret type (optional).
+	// Default value: unknown_type
+	Type SecretType `json:"-"`
 }
 
 // ListSecretsResponse: list secrets response.
@@ -1010,6 +1020,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "path", req.Path)
 	parameter.AddToQuery(query, "ephemeral", req.Ephemeral)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
