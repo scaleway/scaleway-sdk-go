@@ -327,6 +327,15 @@ func (enum *ListEmailsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// DomainRecordsDMARC: domain records dmarc.
+type DomainRecordsDMARC struct {
+	// Name: name of the DMARC TXT record.
+	Name string `json:"name"`
+
+	// Value: value of the DMARC TXT record.
+	Value string `json:"value"`
+}
+
 // EmailTry: email try.
 type EmailTry struct {
 	// Rank: rank number of this attempt to send the email.
@@ -340,6 +349,12 @@ type EmailTry struct {
 
 	// Message: the SMTP message received. If the attempt did not reach an SMTP server, the message returned explains what happened.
 	Message string `json:"message"`
+}
+
+// DomainRecords: domain records.
+type DomainRecords struct {
+	// Dmarc: dMARC TXT record specification.
+	Dmarc *DomainRecordsDMARC `json:"dmarc"`
 }
 
 // DomainReputation: domain reputation.
@@ -535,6 +550,9 @@ type Domain struct {
 
 	// Reputation: the domain's reputation is available when your domain is checked and has sent enough emails.
 	Reputation *DomainReputation `json:"reputation"`
+
+	// Records: list of records to configure to validate a domain.
+	Records *DomainRecords `json:"records"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
