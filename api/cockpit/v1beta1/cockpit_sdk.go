@@ -265,9 +265,13 @@ type PlanName string
 
 const (
 	PlanNameUnknownName = PlanName("unknown_name")
-	PlanNameFree        = PlanName("free")
-	PlanNamePremium     = PlanName("premium")
-	PlanNameCustom      = PlanName("custom")
+	// The free plan is the default plan.
+	PlanNameFree = PlanName("free")
+	// The premium plan with a longer retention.
+	PlanNamePremium = PlanName("premium")
+	PlanNameCustom  = PlanName("custom")
+	// The expert plan with the longest retention.
+	PlanNameExpert = PlanName("expert")
 )
 
 func (enum PlanName) String() string {
