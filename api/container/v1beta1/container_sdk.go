@@ -331,36 +331,6 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ListLogsRequestOrderBy string
-
-const (
-	ListLogsRequestOrderByTimestampDesc = ListLogsRequestOrderBy("timestamp_desc")
-	ListLogsRequestOrderByTimestampAsc  = ListLogsRequestOrderBy("timestamp_asc")
-)
-
-func (enum ListLogsRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "timestamp_desc"
-	}
-	return string(enum)
-}
-
-func (enum ListLogsRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListLogsRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListLogsRequestOrderBy(ListLogsRequestOrderBy(tmp).String())
-	return nil
-}
-
 type ListNamespacesRequestOrderBy string
 
 const (
@@ -452,37 +422,6 @@ func (enum *ListTriggersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListTriggersRequestOrderBy(ListTriggersRequestOrderBy(tmp).String())
-	return nil
-}
-
-type LogStream string
-
-const (
-	LogStreamUnknown = LogStream("unknown")
-	LogStreamStdout  = LogStream("stdout")
-	LogStreamStderr  = LogStream("stderr")
-)
-
-func (enum LogStream) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown"
-	}
-	return string(enum)
-}
-
-func (enum LogStream) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *LogStream) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = LogStream(LogStream(tmp).String())
 	return nil
 }
 
@@ -840,25 +779,6 @@ type Domain struct {
 
 	// ErrorMessage: last error message of the domain.
 	ErrorMessage *string `json:"error_message"`
-}
-
-// Log: log.
-type Log struct {
-	Message string `json:"message"`
-
-	Timestamp *time.Time `json:"timestamp"`
-
-	ID string `json:"id"`
-
-	// Level: contains the severity of the log (info, debug, error, ...).
-	Level string `json:"level"`
-
-	// Source: source of the log (core runtime or user code).
-	Source string `json:"source"`
-
-	// Stream: can be stdout or stderr.
-	// Default value: unknown
-	Stream LogStream `json:"stream"`
 }
 
 // Namespace: namespace.
@@ -1412,51 +1332,6 @@ func (r *ListDomainsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Domains = append(r.Domains, results.Domains...)
 	r.TotalCount += uint32(len(results.Domains))
 	return uint32(len(results.Domains)), nil
-}
-
-// ListLogsRequest: list logs request.
-type ListLogsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ContainerID: UUID of the container.
-	ContainerID string `json:"-"`
-
-	// Page: page number.
-	Page *int32 `json:"-"`
-
-	// PageSize: number of logs per page.
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: order of the logs.
-	// Default value: timestamp_desc
-	OrderBy ListLogsRequestOrderBy `json:"-"`
-}
-
-// ListLogsResponse: list logs response.
-type ListLogsResponse struct {
-	Logs []*Log `json:"logs"`
-
-	TotalCount uint32 `json:"total_count"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListLogsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListLogsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Logs = append(r.Logs, results.Logs...)
-	r.TotalCount += uint32(len(results.Logs))
-	return uint32(len(results.Logs)), nil
 }
 
 // ListNamespacesRequest: list namespaces request.
@@ -2294,48 +2169,6 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	}
 
 	var resp Cron
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// Deprecated: ListLogs: Deprecated (replaced by [Cockpit](https://www.scaleway.com/en/developers/api/cockpit/)). List the logs of the container with the specified ID.
-func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ContainerID) == "" {
-		return nil, errors.New("field ContainerID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/containers/v1beta1/regions/" + fmt.Sprint(req.Region) + "/containers/" + fmt.Sprint(req.ContainerID) + "/logs",
-		Query:  query,
-	}
-
-	var resp ListLogsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
