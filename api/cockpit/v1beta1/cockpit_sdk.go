@@ -269,9 +269,8 @@ const (
 	PlanNameFree = PlanName("free")
 	// The premium plan with a longer retention.
 	PlanNamePremium = PlanName("premium")
-	PlanNameCustom  = PlanName("custom")
-	// The expert plan with the longest retention.
-	PlanNameExpert = PlanName("expert")
+	// The custom plan.
+	PlanNameCustom = PlanName("custom")
 )
 
 func (enum PlanName) String() string {
