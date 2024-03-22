@@ -71,6 +71,40 @@ func (enum *ListPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+type ListRoutesWithNexthopRequestOrderBy string
+
+const (
+	ListRoutesWithNexthopRequestOrderByCreatedAtAsc    = ListRoutesWithNexthopRequestOrderBy("created_at_asc")
+	ListRoutesWithNexthopRequestOrderByCreatedAtDesc   = ListRoutesWithNexthopRequestOrderBy("created_at_desc")
+	ListRoutesWithNexthopRequestOrderByDestinationAsc  = ListRoutesWithNexthopRequestOrderBy("destination_asc")
+	ListRoutesWithNexthopRequestOrderByDestinationDesc = ListRoutesWithNexthopRequestOrderBy("destination_desc")
+	ListRoutesWithNexthopRequestOrderByPrefixLenAsc    = ListRoutesWithNexthopRequestOrderBy("prefix_len_asc")
+	ListRoutesWithNexthopRequestOrderByPrefixLenDesc   = ListRoutesWithNexthopRequestOrderBy("prefix_len_desc")
+)
+
+func (enum ListRoutesWithNexthopRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListRoutesWithNexthopRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListRoutesWithNexthopRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListRoutesWithNexthopRequestOrderBy(ListRoutesWithNexthopRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListVPCsRequestOrderBy string
 
 const (
@@ -100,6 +134,38 @@ func (enum *ListVPCsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListVPCsRequestOrderBy(ListVPCsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type RouteWithNexthopResourceType string
+
+const (
+	RouteWithNexthopResourceTypeUnknownType         = RouteWithNexthopResourceType("unknown_type")
+	RouteWithNexthopResourceTypeVpcGatewayNetwork   = RouteWithNexthopResourceType("vpc_gateway_network")
+	RouteWithNexthopResourceTypeInstancePrivateNic  = RouteWithNexthopResourceType("instance_private_nic")
+	RouteWithNexthopResourceTypeBaremetalPrivateNic = RouteWithNexthopResourceType("baremetal_private_nic")
+)
+
+func (enum RouteWithNexthopResourceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum RouteWithNexthopResourceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RouteWithNexthopResourceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RouteWithNexthopResourceType(RouteWithNexthopResourceType(tmp).String())
 	return nil
 }
 
@@ -152,6 +218,44 @@ type PrivateNetwork struct {
 
 	// DHCPEnabled: defines whether managed DHCP is enabled for this Private Network.
 	DHCPEnabled bool `json:"dhcp_enabled"`
+}
+
+// Route: route.
+type Route struct {
+	ID string `json:"id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	VpcID string `json:"vpc_id"`
+
+	Destination scw.IPNet `json:"destination"`
+
+	NexthopResourceID *string `json:"nexthop_resource_id"`
+
+	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id"`
+
+	Tags []string `json:"tags"`
+
+	Description string `json:"description"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+}
+
+// RouteWithNexthop: route with nexthop.
+type RouteWithNexthop struct {
+	// Route: route.
+	Route *Route `json:"route"`
+
+	// NexthopIP: IP of the route's next hop.
+	NexthopIP *net.IP `json:"nexthop_ip"`
+
+	// NexthopName: name of the route's next hop.
+	NexthopName *string `json:"nexthop_name"`
+
+	// NexthopResourceType: resource type of the route's next hop.
+	// Default value: unknown_type
+	NexthopResourceType RouteWithNexthopResourceType `json:"nexthop_resource_type"`
 }
 
 // VPC: vpc.
@@ -371,6 +475,34 @@ func (r *ListPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint32, err
 	return uint32(len(results.PrivateNetworks)), nil
 }
 
+// ListRoutesWithNexthopResponse: list routes with nexthop response.
+type ListRoutesWithNexthopResponse struct {
+	// Routes: list of routes.
+	Routes []*RouteWithNexthop `json:"routes"`
+
+	// TotalCount: total number of routes.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRoutesWithNexthopResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRoutesWithNexthopResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListRoutesWithNexthopResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Routes = append(r.Routes, results.Routes...)
+	r.TotalCount += uint64(len(results.Routes))
+	return uint64(len(results.Routes)), nil
+}
+
 // ListVPCsRequest: list vp cs request.
 type ListVPCsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -446,6 +578,44 @@ type MigrateZonalPrivateNetworksRequest struct {
 
 	// PrivateNetworkIDs: iDs of the Private Networks to migrate.
 	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
+// RoutesWithNexthopAPIListRoutesWithNexthopRequest: routes with nexthop api list routes with nexthop request.
+type RoutesWithNexthopAPIListRoutesWithNexthopRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: sort order of the returned routes.
+	// Default value: created_at_asc
+	OrderBy ListRoutesWithNexthopRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of routes to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// VpcID: vPC to filter for. Only routes within this VPC will be returned.
+	VpcID *string `json:"-"`
+
+	// NexthopResourceID: next hop resource ID to filter for. Only routes with a matching next hop resource ID will be returned.
+	NexthopResourceID *string `json:"-"`
+
+	// NexthopPrivateNetworkID: next hop private network ID to filter for. Only routes with a matching next hop private network ID will be returned.
+	NexthopPrivateNetworkID *string `json:"-"`
+
+	// NexthopResourceType: next hop resource type to filter for. Only Routes with a matching next hop resource type will be returned.
+	// Default value: unknown_type
+	NexthopResourceType RouteWithNexthopResourceType `json:"-"`
+
+	// Contains: only routes whose destination is contained in this subnet will be returned.
+	Contains *scw.IPNet `json:"-"`
+
+	// Tags: tags to filter for, only routes with one or more matching tags will be returned.
+	Tags []string `json:"-"`
+
+	// IsIPv6: only routes with an IPv6 destination will be returned.
+	IsIPv6 *bool `json:"-"`
 }
 
 // SetSubnetsRequest: set subnets request.
@@ -1049,6 +1219,62 @@ func (s *API) DeleteSubnets(req *DeleteSubnetsRequest, opts ...scw.RequestOption
 	}
 
 	var resp DeleteSubnetsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type RoutesWithNexthopAPI struct {
+	client *scw.Client
+}
+
+// NewRoutesWithNexthopAPI returns a RoutesWithNexthopAPI object from a Scaleway client.
+func NewRoutesWithNexthopAPI(client *scw.Client) *RoutesWithNexthopAPI {
+	return &RoutesWithNexthopAPI{
+		client: client,
+	}
+}
+
+// ListRoutesWithNexthop: Return routes with associated next hop data.
+func (s *RoutesWithNexthopAPI) ListRoutesWithNexthop(req *RoutesWithNexthopAPIListRoutesWithNexthopRequest, opts ...scw.RequestOption) (*ListRoutesWithNexthopResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+	parameter.AddToQuery(query, "nexthop_resource_id", req.NexthopResourceID)
+	parameter.AddToQuery(query, "nexthop_private_network_id", req.NexthopPrivateNetworkID)
+	parameter.AddToQuery(query, "nexthop_resource_type", req.NexthopResourceType)
+	parameter.AddToQuery(query, "contains", req.Contains)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/routes-with-nexthop",
+		Query:  query,
+	}
+
+	var resp ListRoutesWithNexthopResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
