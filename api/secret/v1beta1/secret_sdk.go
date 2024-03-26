@@ -474,6 +474,9 @@ type BrowseSecretsRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
+
+	// Tags: filter secrets by tags.
+	Tags []string `json:"-"`
 }
 
 // BrowseSecretsResponse: browse secrets response.
@@ -1061,6 +1064,7 @@ func (s *API) BrowseSecrets(req *BrowseSecretsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "prefix", req.Prefix)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
