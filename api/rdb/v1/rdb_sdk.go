@@ -507,6 +507,7 @@ const (
 	MaintenanceStatusPending  = MaintenanceStatus("pending")
 	MaintenanceStatusDone     = MaintenanceStatus("done")
 	MaintenanceStatusCanceled = MaintenanceStatus("canceled")
+	MaintenanceStatusOngoing  = MaintenanceStatus("ongoing")
 )
 
 func (enum MaintenanceStatus) String() string {
@@ -969,6 +970,9 @@ type Maintenance struct {
 	// Status: status of the maintenance.
 	// Default value: unknown
 	Status MaintenanceStatus `json:"status"`
+
+	// ForcedAt: time when Scaleway-side maintenance will be applied.
+	ForcedAt *time.Time `json:"forced_at"`
 }
 
 // ReadReplica: read replica.
@@ -1434,6 +1438,15 @@ type AddInstanceSettingsRequest struct {
 type AddInstanceSettingsResponse struct {
 	// Settings: settings available on the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
+}
+
+// ApplyInstanceMaintenanceRequest: apply instance maintenance request.
+type ApplyInstanceMaintenanceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance you want to apply maintenance.
+	InstanceID string `json:"-"`
 }
 
 // CloneInstanceRequest: clone instance request.
@@ -4615,6 +4628,42 @@ func (s *API) MigrateEndpoint(req *MigrateEndpointRequest, opts ...scw.RequestOp
 	}
 
 	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ApplyInstanceMaintenance: Apply maintenance tasks to your Database Instance. This will trigger pending maintenance tasks to start in your Database Instance and can generate service interruption. Maintenance tasks can be applied between `starts_at` and `stops_at` times, and are run directly by Scaleway at `forced_at` timestamp.
+func (s *API) ApplyInstanceMaintenance(req *ApplyInstanceMaintenanceRequest, opts ...scw.RequestOption) (*Maintenance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/rdb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/apply-maintenance",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Maintenance
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
