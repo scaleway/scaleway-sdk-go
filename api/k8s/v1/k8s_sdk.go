@@ -116,6 +116,8 @@ const (
 	CNIFlannel = CNI("flannel")
 	// Kilo CNI will be configured (https://github.com/squat/kilo/). Note that this CNI is only available for Kosmos clusters.
 	CNIKilo = CNI("kilo")
+	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
+	CNINone = CNI("none")
 )
 
 func (enum CNI) String() string {
