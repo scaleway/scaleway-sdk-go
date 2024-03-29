@@ -214,6 +214,8 @@ type JobRun struct {
 
 	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
 
+	StartedAt *time.Time `json:"started_at"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
