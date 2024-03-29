@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	defaultRetryInterval = 2 * time.Second
-	defaultTimeout       = 5 * time.Minute
+	defaultRetryInterval = 15 * time.Second
+	defaultTimeout       = 30 * time.Minute
 )
 
 type WaitForDeploymentRequest struct {
