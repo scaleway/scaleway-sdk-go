@@ -13,11 +13,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
     - name: Run unit tests
@@ -32,11 +32,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
     - name: Test to build binary
@@ -50,11 +50,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
     - name: Test to build binary
