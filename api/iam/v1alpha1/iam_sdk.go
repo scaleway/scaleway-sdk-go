@@ -1667,6 +1667,9 @@ type ListQuotaRequest struct {
 
 	// OrganizationID: filter by Organization ID.
 	OrganizationID string `json:"-"`
+
+	// QuotumNames: list of quotum names to filter from.
+	QuotumNames []string `json:"-"`
 }
 
 // ListQuotaResponse: list quota response.
@@ -3047,6 +3050,7 @@ func (s *API) ListQuota(req *ListQuotaRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "quotum_names", req.QuotumNames)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
