@@ -15,9 +15,9 @@ Scaleway is a single way to create, deploy and scale your infrastructure in the 
 ## Documentation
 
 - [Godoc](https://pkg.go.dev/github.com/scaleway/scaleway-sdk-go?tab=doc)
-- [Developers website](https://developers.scaleway.com) (API documentation)
+- [Developers website](https://www.scaleway.com/en/developers/) (API documentation)
 - [Products availability guide](https://www.scaleway.com/en/docs/console/my-account/reference-content/products-availability/)
-- [The community tools](https://developers.scaleway.com/en/community-tools/#official-repos)
+- [The community tools](https://www.scaleway.com/en/developers/#official-repos)
 
 ## Installation
 
