@@ -870,7 +870,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateSecret: You must specify the `region` to create a secret.
+// CreateSecret: Create a secret in a given region specified by the `region` parameter.
 func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
