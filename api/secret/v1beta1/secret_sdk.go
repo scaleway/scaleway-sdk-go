@@ -400,7 +400,7 @@ type Secret struct {
 	// Protected: returns `true` for protected secrets that cannot be deleted.
 	Protected bool `json:"protected"`
 
-	// Type: see `Secret.Type` enum for description of values.
+	// Type: see the `Secret.Type` enum for a description of values.
 	// Default value: unknown_type
 	Type SecretType `json:"type"`
 
@@ -442,6 +442,10 @@ type AccessSecretVersionResponse struct {
 
 	// DataCrc32: this field is only available if a CRC32 was supplied during the creation of the version.
 	DataCrc32 *uint32 `json:"data_crc32"`
+
+	// Type: see the `Secret.Type` enum for a description of values.
+	// Default value: unknown_type
+	Type SecretType `json:"type"`
 }
 
 // AddSecretOwnerRequest: add secret owner request.
@@ -527,7 +531,7 @@ type CreateSecretRequest struct {
 	// Description: description of the secret.
 	Description *string `json:"description,omitempty"`
 
-	// Type: (Optional.) See `Secret.Type` enum for description of values. If not specified, the type is `Opaque`.
+	// Type: (Optional.) See the `Secret.Type` enum for a description of values. If not specified, the type is `Opaque`.
 	// Default value: unknown_type
 	Type SecretType `json:"type"`
 
