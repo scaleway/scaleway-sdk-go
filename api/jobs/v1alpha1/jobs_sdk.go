@@ -137,8 +137,10 @@ func (enum *ListJobRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // CronSchedule: cron schedule.
 type CronSchedule struct {
+	// Schedule: uNIX cron schedule to run job (e.g., '* * * * *').
 	Schedule string `json:"schedule"`
 
+	// Timezone: timezone for the cron schedule, in tz database format (e.g., 'Europe/Paris').
 	Timezone string `json:"timezone"`
 }
 
@@ -247,7 +249,7 @@ type CreateJobDefinitionRequest struct {
 	// ImageURI: image to use for the job.
 	ImageURI string `json:"image_uri"`
 
-	// Command: startup command.
+	// Command: startup command. If empty or not defined, the image's default command is used.
 	Command string `json:"command"`
 
 	// ProjectID: UUID of the Scaleway Project containing the job.
