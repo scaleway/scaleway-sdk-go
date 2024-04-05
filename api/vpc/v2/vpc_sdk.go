@@ -394,6 +394,14 @@ type EnableDHCPRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
+// EnableRoutingRequest: enable routing request.
+type EnableRoutingRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	VpcID string `json:"-"`
+}
+
 // GetPrivateNetworkRequest: get private network request.
 type GetPrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1111,6 +1119,42 @@ func (s *API) EnableDHCP(req *EnableDHCPRequest, opts ...scw.RequestOption) (*Pr
 	}
 
 	var resp PrivateNetwork
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableRouting: Enable routing on an existing VPC. Note that you will not be able to deactivate it afterwards.
+func (s *API) EnableRouting(req *EnableRoutingRequest, opts ...scw.RequestOption) (*VPC, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpcs/" + fmt.Sprint(req.VpcID) + "/enable-routing",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPC
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
