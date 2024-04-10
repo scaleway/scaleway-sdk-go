@@ -801,6 +801,42 @@ type ProtectSecretRequest struct {
 	SecretID string `json:"-"`
 }
 
+// SecretTypeBasicCredentials: secret type basic credentials.
+type SecretTypeBasicCredentials struct {
+	// Username: the username or identifier associated with the credentials.
+	Username string `json:"username"`
+
+	// Password: the password associated with the credentials.
+	Password string `json:"password"`
+}
+
+// SecretTypeDatabaseCredentials: secret type database credentials.
+type SecretTypeDatabaseCredentials struct {
+	// Engine: supported database engines are: 'postgres', 'mysql', 'other'.
+	Engine string `json:"engine"`
+
+	// Username: the username used to authenticate to the database server.
+	Username string `json:"username"`
+
+	// Password: the password used to authenticate to the database server.
+	Password string `json:"password"`
+
+	// Host: the hostname or resolvable DNS name of the database server.
+	Host string `json:"host"`
+
+	// Dbname: the name of the database to connect to.
+	Dbname string `json:"dbname"`
+
+	// Port: the port must be an integer ranging from 0 to 65535.
+	Port string `json:"port"`
+}
+
+// SecretTypeSSHKey: secret type ssh key.
+type SecretTypeSSHKey struct {
+	// SSHPrivateKey: the private SSH key.
+	SSHPrivateKey string `json:"ssh_private_key"`
+}
+
 // UnprotectSecretRequest: unprotect secret request.
 type UnprotectSecretRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
