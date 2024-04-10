@@ -887,6 +887,15 @@ type Quotum struct {
 	// Unlimited: defines whether or not the quota is unlimited.
 	// Precisely one of Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
+
+	// PrettyName: a human-readable name for the quota.
+	PrettyName string `json:"pretty_name"`
+
+	// Unit: the unit in which the quota is expressed.
+	Unit string `json:"unit"`
+
+	// Description: details about the quota.
+	Description string `json:"description"`
 }
 
 // Rule: rule.
