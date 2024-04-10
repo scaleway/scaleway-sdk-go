@@ -503,6 +503,9 @@ type Hosting struct {
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
+	// OneTimePassword: one-time-password used for the first login or reset password, empty after first use.
+	OneTimePassword string `json:"one_time_password"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
