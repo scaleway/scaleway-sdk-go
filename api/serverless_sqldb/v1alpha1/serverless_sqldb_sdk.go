@@ -109,14 +109,14 @@ func (enum *DatabaseStatus) UnmarshalJSON(data []byte) error {
 type ListDatabaseBackupsRequestOrderBy string
 
 const (
-	ListDatabaseBackupsRequestOrderByCreatedAtAsc  = ListDatabaseBackupsRequestOrderBy("created_at_asc")
 	ListDatabaseBackupsRequestOrderByCreatedAtDesc = ListDatabaseBackupsRequestOrderBy("created_at_desc")
+	ListDatabaseBackupsRequestOrderByCreatedAtAsc  = ListDatabaseBackupsRequestOrderBy("created_at_asc")
 )
 
 func (enum ListDatabaseBackupsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return "created_at_desc"
 	}
 	return string(enum)
 }
@@ -326,7 +326,7 @@ type ListDatabaseBackupsRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	// OrderBy: sorting criteria. One of `created_at_asc`, `created_at_desc`.
-	// Default value: created_at_asc
+	// Default value: created_at_desc
 	OrderBy ListDatabaseBackupsRequestOrderBy `json:"-"`
 }
 
@@ -701,7 +701,7 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// ListDatabaseBackups: List all Serverless SQL Database backups for a given Scaleway Project or Database. By default, the backups returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field.
+// ListDatabaseBackups: List all Serverless SQL Database backups for a given Scaleway Project or Database. By default, the backups returned in the list are ordered by creation date in descending order, though this can be modified via the order_by field.
 func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.RequestOption) (*ListDatabaseBackupsResponse, error) {
 	var err error
 
