@@ -307,6 +307,8 @@ type ListJobDefinitionsRequest struct {
 	OrderBy ListJobDefinitionsRequestOrderBy `json:"-"`
 
 	ProjectID *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListJobDefinitionsResponse: list job definitions response.
@@ -350,6 +352,8 @@ type ListJobRunsRequest struct {
 	JobDefinitionID *string `json:"-"`
 
 	ProjectID *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
 }
 
 // ListJobRunsResponse: list job runs response.
@@ -554,6 +558,7 @@ func (s *API) ListJobDefinitions(req *ListJobDefinitionsRequest, opts ...scw.Req
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -762,6 +767,7 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "job_definition_id", req.JobDefinitionID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
