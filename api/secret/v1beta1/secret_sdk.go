@@ -414,6 +414,27 @@ type Secret struct {
 	Region scw.Region `json:"region"`
 }
 
+// AccessSecretVersionByPathRequest: access secret version by path request.
+type AccessSecretVersionByPathRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - an integer (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+
+	// SecretPath: secret's path.
+	SecretPath string `json:"-"`
+
+	// SecretName: secret's name.
+	SecretName string `json:"-"`
+
+	// ProjectID: ID of the Project to target.
+	ProjectID string `json:"-"`
+}
+
 // AccessSecretVersionRequest: access secret version request.
 type AccessSecretVersionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -459,6 +480,15 @@ type AddSecretOwnerRequest struct {
 	// Product: see `Product` enum for description of values.
 	// Default value: unknown_product
 	Product Product `json:"product"`
+}
+
+// BasicCredentials: basic credentials.
+type BasicCredentials struct {
+	// Username: the username or identifier associated with the credentials.
+	Username string `json:"username"`
+
+	// Password: the password associated with the credentials.
+	Password string `json:"password"`
 }
 
 // BrowseSecretsRequest: browse secrets request.
@@ -564,6 +594,27 @@ type CreateSecretVersionRequest struct {
 
 	// DataCrc32: if specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
 	DataCrc32 *uint32 `json:"data_crc32,omitempty"`
+}
+
+// DatabaseCredentials: database credentials.
+type DatabaseCredentials struct {
+	// Engine: supported database engines are: 'postgres', 'mysql', 'other'.
+	Engine string `json:"engine"`
+
+	// Username: the username used to authenticate to the database server.
+	Username string `json:"username"`
+
+	// Password: the password used to authenticate to the database server.
+	Password string `json:"password"`
+
+	// Host: the hostname or resolvable DNS name of the database server.
+	Host string `json:"host"`
+
+	// Dbname: the name of the database to connect to.
+	Dbname string `json:"dbname"`
+
+	// Port: the port must be an integer ranging from 0 to 65535.
+	Port string `json:"port"`
 }
 
 // DeleteSecretRequest: delete secret request.
@@ -799,6 +850,12 @@ type ProtectSecretRequest struct {
 
 	// SecretID: ID of the secret to enable secret protection for.
 	SecretID string `json:"-"`
+}
+
+// SSHKey: ssh key.
+type SSHKey struct {
+	// SSHPrivateKey: the private SSH key.
+	SSHPrivateKey string `json:"ssh_private_key"`
 }
 
 // UnprotectSecretRequest: unprotect secret request.
@@ -1405,6 +1462,48 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
+	}
+
+	var resp AccessSecretVersionResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AccessSecretVersionByPath: Access sensitive data in a secret's version specified by the `region`, `secret_name`, `secret_path` and `revision` parameters.
+func (s *API) AccessSecretVersionByPath(req *AccessSecretVersionByPathRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "secret_path", req.SecretPath)
+	parameter.AddToQuery(query, "secret_name", req.SecretName)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Revision) == "" {
+		return nil, errors.New("field Revision cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-path/versions/" + fmt.Sprint(req.Revision) + "/access",
+		Query:  query,
 	}
 
 	var resp AccessSecretVersionResponse
