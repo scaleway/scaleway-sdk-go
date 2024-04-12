@@ -482,6 +482,15 @@ type AddSecretOwnerRequest struct {
 	Product Product `json:"product"`
 }
 
+// BasicCredentials: basic credentials.
+type BasicCredentials struct {
+	// Username: the username or identifier associated with the credentials.
+	Username string `json:"username"`
+
+	// Password: the password associated with the credentials.
+	Password string `json:"password"`
+}
+
 // BrowseSecretsRequest: browse secrets request.
 type BrowseSecretsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -585,6 +594,27 @@ type CreateSecretVersionRequest struct {
 
 	// DataCrc32: if specified, Secret Manager will verify the integrity of the data received against the given CRC32 checksum. An error is returned if the CRC32 does not match. If, however, the CRC32 matches, it will be stored and returned along with the SecretVersion on future access requests.
 	DataCrc32 *uint32 `json:"data_crc32,omitempty"`
+}
+
+// DatabaseCredentials: database credentials.
+type DatabaseCredentials struct {
+	// Engine: supported database engines are: 'postgres', 'mysql', 'other'.
+	Engine string `json:"engine"`
+
+	// Username: the username used to authenticate to the database server.
+	Username string `json:"username"`
+
+	// Password: the password used to authenticate to the database server.
+	Password string `json:"password"`
+
+	// Host: the hostname or resolvable DNS name of the database server.
+	Host string `json:"host"`
+
+	// Dbname: the name of the database to connect to.
+	Dbname string `json:"dbname"`
+
+	// Port: the port must be an integer ranging from 0 to 65535.
+	Port string `json:"port"`
 }
 
 // DeleteSecretRequest: delete secret request.
@@ -820,6 +850,12 @@ type ProtectSecretRequest struct {
 
 	// SecretID: ID of the secret to enable secret protection for.
 	SecretID string `json:"-"`
+}
+
+// SSHKey: ssh key.
+type SSHKey struct {
+	// SSHPrivateKey: the private SSH key.
+	SSHPrivateKey string `json:"ssh_private_key"`
 }
 
 // UnprotectSecretRequest: unprotect secret request.
