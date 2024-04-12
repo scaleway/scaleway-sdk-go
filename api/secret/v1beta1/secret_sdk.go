@@ -414,6 +414,27 @@ type Secret struct {
 	Region scw.Region `json:"region"`
 }
 
+// AccessSecretVersionByPathRequest: access secret version by path request.
+type AccessSecretVersionByPathRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1. Value can be either:
+	// - an integer (the revision number)
+	// - "latest" (the latest revision)
+	// - "latest_enabled" (the latest enabled revision).
+	Revision string `json:"-"`
+
+	// SecretPath: secret's path.
+	SecretPath string `json:"-"`
+
+	// SecretName: secret's name.
+	SecretName string `json:"-"`
+
+	// ProjectID: ID of the Project to target.
+	ProjectID string `json:"-"`
+}
+
 // AccessSecretVersionRequest: access secret version request.
 type AccessSecretVersionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1405,6 +1426,48 @@ func (s *API) AccessSecretVersion(req *AccessSecretVersionRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/access",
+	}
+
+	var resp AccessSecretVersionResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AccessSecretVersionByPath: Access sensitive data in a secret's version specified by the `region`, `secret_name`, `secret_path` and `revision` parameters.
+func (s *API) AccessSecretVersionByPath(req *AccessSecretVersionByPathRequest, opts ...scw.RequestOption) (*AccessSecretVersionResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "secret_path", req.SecretPath)
+	parameter.AddToQuery(query, "secret_name", req.SecretName)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Revision) == "" {
+		return nil, errors.New("field Revision cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets-by-path/versions/" + fmt.Sprint(req.Revision) + "/access",
+		Query:  query,
 	}
 
 	var resp AccessSecretVersionResponse
