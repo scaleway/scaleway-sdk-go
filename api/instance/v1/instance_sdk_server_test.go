@@ -25,7 +25,7 @@ func TestServerUpdate(t *testing.T) {
 		dynamicIPRequired = scw.BoolPtr(true)
 		commercialType    = "START1-S"
 		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
-		enableIPv6        = true
+		enableIPv6        = scw.BoolPtr(true)
 		bootType          = BootTypeLocal
 		tags              = []string{"foo", "bar"}
 		project           = "14d2f7ae-9775-414c-9bed-6810e060d500"
