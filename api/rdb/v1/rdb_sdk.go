@@ -166,6 +166,36 @@ func (enum *DatabaseBackupStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type EndpointPrivateNetworkDetailsProvisioningMode string
+
+const (
+	EndpointPrivateNetworkDetailsProvisioningModeStatic = EndpointPrivateNetworkDetailsProvisioningMode("static")
+	EndpointPrivateNetworkDetailsProvisioningModeIpam   = EndpointPrivateNetworkDetailsProvisioningMode("ipam")
+)
+
+func (enum EndpointPrivateNetworkDetailsProvisioningMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "static"
+	}
+	return string(enum)
+}
+
+func (enum EndpointPrivateNetworkDetailsProvisioningMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *EndpointPrivateNetworkDetailsProvisioningMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = EndpointPrivateNetworkDetailsProvisioningMode(EndpointPrivateNetworkDetailsProvisioningMode(tmp).String())
+	return nil
+}
+
 type EngineSettingPropertyType string
 
 const (
@@ -783,6 +813,10 @@ type EndpointPrivateNetworkDetails struct {
 
 	// Zone: private network zone.
 	Zone scw.Zone `json:"zone"`
+
+	// ProvisioningMode: how endpoint ips are provisioned.
+	// Default value: static
+	ProvisioningMode EndpointPrivateNetworkDetailsProvisioningMode `json:"provisioning_mode"`
 }
 
 // EndpointSpecPrivateNetworkIpamConfig: endpoint spec private network ipam config.
