@@ -987,6 +987,9 @@ type Cluster struct {
 
 	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
+
+	// Deprecated: RoutedIPEnabled: defines whether routed IPs are enabled for nodes of this cluster.
+	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 }
 
 // Node: node.
