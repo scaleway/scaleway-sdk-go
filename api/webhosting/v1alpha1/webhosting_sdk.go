@@ -568,6 +568,15 @@ type CreateHostingRequest struct {
 	DomainConfiguration *CreateHostingRequestDomainConfiguration `json:"domain_configuration,omitempty"`
 }
 
+// CreateSessionRequest: create session request.
+type CreateSessionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID.
+	HostingID string `json:"-"`
+}
+
 // DNSRecords: dns records.
 type DNSRecords struct {
 	// Records: list of DNS records.
@@ -745,6 +754,12 @@ type RestoreHostingRequest struct {
 
 	// HostingID: hosting ID.
 	HostingID string `json:"-"`
+}
+
+// Session: session.
+type Session struct {
+	// URL: logged user's session URL.
+	URL string `json:"url"`
 }
 
 // UpdateHostingRequest: update hosting request.
@@ -1096,6 +1111,42 @@ func (s *API) ListControlPanels(req *ListControlPanelsRequest, opts ...scw.Reque
 	}
 
 	var resp ListControlPanelsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateSession: Create a user session.
+func (s *API) CreateSession(req *CreateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/sessions",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Session
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
