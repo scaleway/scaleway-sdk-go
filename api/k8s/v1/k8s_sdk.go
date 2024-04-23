@@ -1625,6 +1625,14 @@ type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
+// MigrateClusterToRoutedIPsRequest: migrate cluster to routed i ps request.
+type MigrateClusterToRoutedIPsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	ClusterID string `json:"-"`
+}
+
 // MigrateToPrivateNetworkClusterRequest: migrate to private network cluster request.
 type MigrateToPrivateNetworkClusterRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2203,6 +2211,42 @@ func (s *API) MigrateToPrivateNetworkCluster(req *MigrateToPrivateNetworkCluster
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-to-private-network",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Cluster
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// MigrateClusterToRoutedIPs: Migrate the nodes of an existing cluster to Routed IPs and enable Routed IPs for all future nodes.
+func (s *API) MigrateClusterToRoutedIPs(req *MigrateClusterToRoutedIPsRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-to-routed-ips",
 	}
 
 	err = scwReq.SetBody(req)
