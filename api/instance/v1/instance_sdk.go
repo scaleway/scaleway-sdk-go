@@ -1822,15 +1822,15 @@ type ApplyBlockMigrationRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// VolumeID: the volume to migrate, along with potentially other resources, according to the migration plan generated with a call to PlanBlockMigration.
+	// VolumeID: the volume to migrate, along with potentially other resources, according to the migration plan generated with a call to the "Plan a migration" endpoint.
 	// Precisely one of VolumeID, SnapshotID must be set.
 	VolumeID *string `json:"volume_id,omitempty"`
 
-	// SnapshotID: the snapshot to migrate, along with potentially other resources, according to the migration plan generated with a call to PlanBlockMigration.
+	// SnapshotID: the snapshot to migrate, along with potentially other resources, according to the migration plan generated with a call to the "Plan a migration" endpoint.
 	// Precisely one of VolumeID, SnapshotID must be set.
 	SnapshotID *string `json:"snapshot_id,omitempty"`
 
-	// ValidationKey: a value to be retrieved from a call to PlanBlockMigration, to confirm that the volume and/or snapshots specified in said plan should be migrated.
+	// ValidationKey: a value to be retrieved from a call to the "Plan a migration" endpoint, to confirm that the volume and/or snapshots specified in said plan should be migrated.
 	ValidationKey string `json:"validation_key,omitempty"`
 }
 
@@ -3225,7 +3225,7 @@ type MigrationPlan struct {
 	// Snapshots: a list of snapshots which will be migrated to SBS together and with the volume, if present.
 	Snapshots []*Snapshot `json:"snapshots"`
 
-	// ValidationKey: a value to be passed to ApplyBlockMigrationRequest, to confirm that the execution of the plan is being requested.
+	// ValidationKey: a value to be passed to the call to the "Apply a migration plan" endpoint, to confirm that the execution of the plan is being requested.
 	ValidationKey string `json:"validation_key"`
 }
 
@@ -6440,7 +6440,7 @@ func (s *API) GetDashboard(req *GetDashboardRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// PlanBlockMigration: Given a volume or snapshot, returns the migration plan for a call to the RPC ApplyBlockMigration. This plan will include zero or one volume, and zero or more snapshots, which will need to be migrated together. This RPC does not perform the actual migration itself, ApplyBlockMigration must be used. The validation_key value returned by this call must be provided to the ApplyBlockMigration call to confirm that all resources listed in the plan should be migrated.
+// PlanBlockMigration: Given a volume or snapshot, returns the migration plan for a call to the "Apply a migration plan" endpoint. This plan will include zero or one volume, and zero or more snapshots, which will need to be migrated together. This endpoint does not perform the actual migration itself, the "Apply a migration plan" endpoint must be used. The validation_key value returned by this endpoint must be provided to the call to the "Apply a migration plan" endpoint to confirm that all resources listed in the plan should be migrated.
 func (s *API) PlanBlockMigration(req *PlanBlockMigrationRequest, opts ...scw.RequestOption) (*MigrationPlan, error) {
 	var err error
 
@@ -6472,7 +6472,7 @@ func (s *API) PlanBlockMigration(req *PlanBlockMigrationRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// ApplyBlockMigration: To be used, this RPC must be preceded by a call to PlanBlockMigration. To migrate all resources mentioned in the MigrationPlan, the validation_key returned in the MigrationPlan must be provided.
+// ApplyBlockMigration: To be used, the call to this endpoint must be preceded by a call to the "Plan a migration" endpoint. To migrate all resources mentioned in the migration plan, the validation_key returned in the plan must be provided.
 func (s *API) ApplyBlockMigration(req *ApplyBlockMigrationRequest, opts ...scw.RequestOption) error {
 	var err error
 
