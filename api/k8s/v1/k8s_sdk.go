@@ -1362,26 +1362,26 @@ type ListClusterAvailableTypesResponse struct {
 	ClusterTypes []*ClusterType `json:"cluster_types"`
 
 	// TotalCount: total number of types.
-	TotalCount uint32 `json:"total_count"`
+	TotalCount uint64 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListClusterAvailableTypesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListClusterAvailableTypesResponse) UnsafeGetTotalCount() uint64 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterAvailableTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListClusterAvailableTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListClusterAvailableTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.ClusterTypes = append(r.ClusterTypes, results.ClusterTypes...)
-	r.TotalCount += uint32(len(results.ClusterTypes))
-	return uint32(len(results.ClusterTypes)), nil
+	r.TotalCount += uint64(len(results.ClusterTypes))
+	return uint64(len(results.ClusterTypes)), nil
 }
 
 // ListClusterAvailableVersionsRequest: list cluster available versions request.
@@ -1414,7 +1414,7 @@ type ListClusterTypesRequest struct {
 // ListClusterTypesResponse: list cluster types response.
 type ListClusterTypesResponse struct {
 	// TotalCount: total number of cluster-types.
-	TotalCount uint32 `json:"total_count"`
+	TotalCount uint64 `json:"total_count"`
 
 	// ClusterTypes: paginated returned cluster-types.
 	ClusterTypes []*ClusterType `json:"cluster_types"`
@@ -1422,21 +1422,21 @@ type ListClusterTypesResponse struct {
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListClusterTypesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListClusterTypesResponse) UnsafeGetTotalCount() uint64 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListClusterTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListClusterTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.ClusterTypes = append(r.ClusterTypes, results.ClusterTypes...)
-	r.TotalCount += uint32(len(results.ClusterTypes))
-	return uint32(len(results.ClusterTypes)), nil
+	r.TotalCount += uint64(len(results.ClusterTypes))
+	return uint64(len(results.ClusterTypes)), nil
 }
 
 // ListClustersRequest: list clusters request.
@@ -1477,7 +1477,7 @@ type ListClustersRequest struct {
 // ListClustersResponse: list clusters response.
 type ListClustersResponse struct {
 	// TotalCount: total number of clusters.
-	TotalCount uint32 `json:"total_count"`
+	TotalCount uint64 `json:"total_count"`
 
 	// Clusters: paginated returned clusters.
 	Clusters []*Cluster `json:"clusters"`
@@ -1485,21 +1485,21 @@ type ListClustersResponse struct {
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListClustersResponse) UnsafeGetTotalCount() uint64 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListClustersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Clusters = append(r.Clusters, results.Clusters...)
-	r.TotalCount += uint32(len(results.Clusters))
-	return uint32(len(results.Clusters)), nil
+	r.TotalCount += uint64(len(results.Clusters))
+	return uint64(len(results.Clusters)), nil
 }
 
 // ListNodesRequest: list nodes request.
@@ -1534,7 +1534,7 @@ type ListNodesRequest struct {
 // ListNodesResponse: list nodes response.
 type ListNodesResponse struct {
 	// TotalCount: total number of nodes.
-	TotalCount uint32 `json:"total_count"`
+	TotalCount uint64 `json:"total_count"`
 
 	// Nodes: paginated returned nodes.
 	Nodes []*Node `json:"nodes"`
@@ -1542,21 +1542,21 @@ type ListNodesResponse struct {
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListNodesResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListNodesResponse) UnsafeGetTotalCount() uint64 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListNodesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Nodes = append(r.Nodes, results.Nodes...)
-	r.TotalCount += uint32(len(results.Nodes))
-	return uint32(len(results.Nodes)), nil
+	r.TotalCount += uint64(len(results.Nodes))
+	return uint64(len(results.Nodes)), nil
 }
 
 // ListPoolsRequest: list pools request.
@@ -1588,7 +1588,7 @@ type ListPoolsRequest struct {
 // ListPoolsResponse: list pools response.
 type ListPoolsResponse struct {
 	// TotalCount: total number of pools that exists for the cluster.
-	TotalCount uint32 `json:"total_count"`
+	TotalCount uint64 `json:"total_count"`
 
 	// Pools: paginated returned pools.
 	Pools []*Pool `json:"pools"`
@@ -1596,21 +1596,21 @@ type ListPoolsResponse struct {
 
 // UnsafeGetTotalCount should not be used
 // Internal usage only
-func (r *ListPoolsResponse) UnsafeGetTotalCount() uint32 {
+func (r *ListPoolsResponse) UnsafeGetTotalCount() uint64 {
 	return r.TotalCount
 }
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListPoolsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
 
 	r.Pools = append(r.Pools, results.Pools...)
-	r.TotalCount += uint32(len(results.Pools))
-	return uint32(len(results.Pools)), nil
+	r.TotalCount += uint64(len(results.Pools))
+	return uint64(len(results.Pools)), nil
 }
 
 // ListVersionsRequest: list versions request.
