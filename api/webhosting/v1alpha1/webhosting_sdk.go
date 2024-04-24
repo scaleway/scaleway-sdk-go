@@ -747,6 +747,21 @@ type ListOffersResponse struct {
 	Offers []*Offer `json:"offers"`
 }
 
+// ResetHostingPasswordRequest: reset hosting password request.
+type ResetHostingPasswordRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting.
+	HostingID string `json:"-"`
+}
+
+// ResetHostingPasswordResponse: reset hosting password response.
+type ResetHostingPasswordResponse struct {
+	// Password: new password.
+	Password string `json:"password"`
+}
+
 // RestoreHostingRequest: restore hosting request.
 type RestoreHostingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1082,7 +1097,7 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// ListControlPanels: List the control panels type: cpanel or plesk.
+// ListControlPanels: "List the control panels type: cpanel or plesk.".
 func (s *API) ListControlPanels(req *ListControlPanelsRequest, opts ...scw.RequestOption) (*ListControlPanelsResponse, error) {
 	var err error
 
@@ -1147,6 +1162,42 @@ func (s *API) CreateSession(req *CreateSessionRequest, opts ...scw.RequestOption
 	}
 
 	var resp Session
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ResetHostingPassword:
+func (s *API) ResetHostingPassword(req *ResetHostingPasswordRequest, opts ...scw.RequestOption) (*ResetHostingPasswordResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/reset-password",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ResetHostingPasswordResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
