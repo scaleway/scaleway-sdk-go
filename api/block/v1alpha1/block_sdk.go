@@ -332,7 +332,7 @@ type Reference struct {
 	// Default value: unknown_type
 	Type ReferenceType `json:"type"`
 
-	// Status: status of reference (attaching, attached, detaching).
+	// Status: status of the reference. Statuses include `attaching`, `attached`, and `detaching`.
 	// Default value: unknown_status
 	Status ReferenceStatus `json:"status"`
 }
