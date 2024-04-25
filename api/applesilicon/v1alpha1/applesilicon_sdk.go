@@ -139,6 +139,36 @@ func (enum *ServerTypeStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// OS: os.
+type OS struct {
+	// ID: unique ID of the OS.
+	ID string `json:"id"`
+
+	// Name: oS name.
+	Name string `json:"name"`
+
+	// Label: oS name as it should be displayed.
+	Label string `json:"label"`
+
+	// ImageURL: URL of the image.
+	ImageURL string `json:"image_url"`
+
+	// Family: the OS family to which this OS belongs, eg. 13 or 14.
+	Family string `json:"family"`
+
+	// IsBeta: describes if the OS is in beta.
+	IsBeta bool `json:"is_beta"`
+
+	// Version: the OS version number, eg. Sonoma has version number 14.3.
+	Version string `json:"version"`
+
+	// XcodeVersion: the current xcode version for this OS.
+	XcodeVersion string `json:"xcode_version"`
+
+	// CompatibleServerTypes: list of compatible server types.
+	CompatibleServerTypes []string `json:"compatible_server_types"`
+}
+
 // ServerTypeCPU: server type cpu.
 type ServerTypeCPU struct {
 	Name string `json:"name"`
@@ -158,24 +188,6 @@ type ServerTypeMemory struct {
 	Capacity scw.Size `json:"capacity"`
 
 	Type string `json:"type"`
-}
-
-// OS: os.
-type OS struct {
-	// ID: unique ID of the OS.
-	ID string `json:"id"`
-
-	// Name: oS name.
-	Name string `json:"name"`
-
-	// Label: oS name as it should be displayed.
-	Label string `json:"label"`
-
-	// ImageURL: URL of the image.
-	ImageURL string `json:"image_url"`
-
-	// CompatibleServerTypes: list of compatible server types.
-	CompatibleServerTypes []string `json:"compatible_server_types"`
 }
 
 // ServerType: server type.
@@ -198,6 +210,9 @@ type ServerType struct {
 
 	// MinimumLeaseDuration: minimum duration of the lease in seconds (example. 3.4s).
 	MinimumLeaseDuration *scw.Duration `json:"minimum_lease_duration"`
+
+	// DefaultOs: the default OS for this server type.
+	DefaultOs *OS `json:"default_os"`
 }
 
 // Server: server.
@@ -222,6 +237,9 @@ type Server struct {
 
 	// VncURL: URL of the VNC.
 	VncURL string `json:"vnc_url"`
+
+	// Os: initially installed OS, this does not necessarily reflect the current OS version.
+	Os *OS `json:"os"`
 
 	// Status: current status of the server.
 	// Default value: unknown_status
@@ -253,6 +271,9 @@ type CreateServerRequest struct {
 
 	// Type: create a server of the given type.
 	Type string `json:"type"`
+
+	// OsID: create a server & install the given os_id, when no os_id provided the default OS for this server type is chosen. Requesting a non-default OS will induce an extended delivery time.
+	OsID *string `json:"os_id,omitempty"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -415,6 +436,9 @@ type ReinstallServerRequest struct {
 
 	// ServerID: UUID of the server you want to reinstall.
 	ServerID string `json:"-"`
+
+	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
+	OsID *string `json:"os_id,omitempty"`
 }
 
 // UpdateServerRequest: update server request.
