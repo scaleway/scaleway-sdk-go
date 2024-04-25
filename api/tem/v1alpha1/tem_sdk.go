@@ -710,15 +710,19 @@ type ListDomainsRequest struct {
 	// Page: requested page number. Value must be greater or equal to 1.
 	Page *int32 `json:"-"`
 
-	// PageSize: page size.
+	// PageSize: requested page size. Value must be between 1 and 1000.
 	PageSize *uint32 `json:"-"`
 
+	// ProjectID: (Optional) ID of the Project in which to list the domains.
 	ProjectID *string `json:"-"`
 
+	// Status: (Optional) List domains under specific statuses.
 	Status []DomainStatus `json:"-"`
 
+	// OrganizationID: (Optional) ID of the Organization in which to list the domains.
 	OrganizationID *string `json:"-"`
 
+	// Name: (Optional) Names of the domains to list.
 	Name *string `json:"-"`
 }
 
