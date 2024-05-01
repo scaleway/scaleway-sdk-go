@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"test volume","organization":"951df375-e094-4d26-97c1-ba548eeb9c42","volume_type":"l_ssd","size":20000000000}'
@@ -42,7 +42,7 @@ interactions:
       - 6fb1b944-1ad1-417e-8568-ad7dbeb80dde
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"some new volume name"}'
     form: {}
@@ -82,7 +82,7 @@ interactions:
       - aa94c984-91fe-4d9e-a504-725b6c87ede0
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -114,4 +114,4 @@ interactions:
       - f031e794-2e6c-4ac9-ade2-01e3d13c3a36
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

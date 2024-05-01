@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"instance_utils_test","project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","from_empty":{"size":20000000000},"tags":null}'
@@ -38,7 +38,7 @@ interactions:
       - 455985ca-4384-4a35-9048-14df169d143b
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"instance_utils_test2","project_id":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","from_empty":{"size":20000000000},"tags":null}'
     form: {}
@@ -76,7 +76,7 @@ interactions:
       - b0869f2d-59e1-418c-b64c-219179f74b0b
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"instance_utils_test","commercial_type":"PRO2-XXS","image":"81b9475d-e1b5-43c2-ac48-4c1a3b640686","volumes":{"0":{"id":"916cf57b-cc1b-4acc-b860-a19c3b06647e","volume_type":"sbs_volume"}},"project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -136,7 +136,7 @@ interactions:
       - 25faf7e1-9e1f-48f1-8d2b-0007e0cc5c92
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -169,7 +169,7 @@ interactions:
       - 4026fb3d-3e0a-4970-bd7a-31241ed88a91
     status: 404 Not Found
     code: 404
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -207,7 +207,7 @@ interactions:
       - e4954a0a-0518-4e44-a415-427f51819ba3
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -263,7 +263,7 @@ interactions:
       - 9a0e6ddd-4dfc-4854-9bbb-adee1e5dde0a
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{}}'
     form: {}
@@ -320,7 +320,7 @@ interactions:
       - 41c46561-a9f5-476a-aa5e-e2db7b7da0fd
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -353,7 +353,7 @@ interactions:
       - 7cd65619-632c-43c6-aa2e-6bf8b7181199
     status: 404 Not Found
     code: 404
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -391,7 +391,7 @@ interactions:
       - 0205f242-c9e2-4c35-9c2b-647868781d60
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -446,7 +446,7 @@ interactions:
       - 43ae674b-2213-450f-a05f-4164021a45b9
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{"0":{"id":"916cf57b-cc1b-4acc-b860-a19c3b06647e","volume_type":"sbs_volume"}}}'
     form: {}
@@ -503,7 +503,7 @@ interactions:
       - b217b9d0-1c6a-4ae7-84db-a18dae993f93
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -536,7 +536,7 @@ interactions:
       - 3b7011d2-f1ed-45f3-a11b-72ea685fc883
     status: 404 Not Found
     code: 404
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -572,7 +572,7 @@ interactions:
       - f67de56f-166b-490a-a65c-094b0410cb3b
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -627,7 +627,7 @@ interactions:
       - 037b5c2f-86fe-4c9d-bfcb-db4620468d90
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{"0":{"id":"916cf57b-cc1b-4acc-b860-a19c3b06647e","volume_type":"sbs_volume"},"1":{"id":"40263419-3952-463c-a87c-48f210b5d227","volume_type":"sbs_volume"}}}'
     form: {}
@@ -685,7 +685,7 @@ interactions:
       - 8986a20c-a6e2-4b60-ba24-95ca29709da9
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -713,7 +713,7 @@ interactions:
       - 5271125a-68dd-4465-ad88-efd0163d73aa
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -749,7 +749,7 @@ interactions:
       - b8dfacb2-08a3-4c26-a69c-114d8b8f6383
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -779,7 +779,7 @@ interactions:
       - 1303607c-fb64-48f2-aae3-791567dce562
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -815,7 +815,7 @@ interactions:
       - d2bebc64-ef63-4e90-a5d2-a0d633042250
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -845,4 +845,4 @@ interactions:
       - 16f002c9-e5ec-473d-aa6a-e9cff8dec4a3
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

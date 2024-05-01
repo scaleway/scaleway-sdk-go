@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"instance_sdk_server_test","dynamic_ip_required":true,"commercial_type":"START1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","enable_ipv6":true,"boot_type":"local","project":"14d2f7ae-9775-414c-9bed-6810e060d500","tags":["foo","bar"]}'
@@ -73,7 +73,7 @@ interactions:
       - ec8ac5f5-cbda-4d28-92b7-76365f6dcc97
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"instance_sdk_server_test","image":"f974feac-abae-4365-b988-8ec7d1cec10d","organization":"14d2f7ae-9775-414c-9bed-6810e060d500"}'
     form: {}
@@ -145,7 +145,7 @@ interactions:
       - f12de65b-8e0e-402d-bdfe-8c76b7837d8d
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -177,7 +177,7 @@ interactions:
       - f0a5c1f4-25a5-4273-8df5-2bf73062bea1
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"some_new_name_for_server","tags":[]}'
     form: {}
@@ -247,7 +247,7 @@ interactions:
       - 10bdaf49-c624-42a6-8523-2fa6ecdf9409
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{}}'
     form: {}
@@ -311,7 +311,7 @@ interactions:
       - b5c48b57-5bd7-419a-ace2-a5f4348a6691
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -343,7 +343,7 @@ interactions:
       - 45a4d549-f633-4d1c-a08c-d7a0039fdfe5
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -375,4 +375,4 @@ interactions:
       - caf7c95e-21e8-4e6e-8679-e632096c6cac
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

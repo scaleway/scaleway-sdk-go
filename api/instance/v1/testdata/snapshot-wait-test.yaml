@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: ""
@@ -46,7 +46,7 @@ interactions:
       - 88cd350e-a7e0-4807-bd2c-3dca140616b4
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"srv-nice-raman","commercial_type":"DEV1-M","image":"1bed752e-f775-4ec2-b179-40af20ec1eec","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -111,7 +111,7 @@ interactions:
       - 00ca7da1-c7cf-43a8-89d8-caca38d32da7
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"backup","volume_id":"c3eb85b8-794e-4777-8081-9c1fb57f67d8","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -154,7 +154,7 @@ interactions:
       - 970e2175-4751-4b38-839c-a0824fe1b72d
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -192,7 +192,7 @@ interactions:
       - 03d3c2ff-70c8-4c03-9820-ebd1a1120662
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -230,7 +230,7 @@ interactions:
       - 3a2bdca8-17c9-4ffa-a2ed-cf2303923ca1
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -258,7 +258,7 @@ interactions:
       - b4bf8c87-a520-4a17-aaf1-e87ebe1fa912
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -286,4 +286,4 @@ interactions:
       - a3158142-67f4-4d83-addb-428fe340b513
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

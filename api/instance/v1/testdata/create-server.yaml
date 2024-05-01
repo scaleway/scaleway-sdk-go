@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: ""
@@ -46,7 +46,7 @@ interactions:
       - 175c82ab-efe5-4bc2-9ee0-f7c27ad4dbff
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"srv-optimistic-mirzakhani","commercial_type":"GP1-XS","image":"1bed752e-f775-4ec2-b179-40af20ec1eec","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -111,7 +111,7 @@ interactions:
       - d7e71ed3-9be6-4ee6-9e19-5e9ee1d850bb
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -139,4 +139,4 @@ interactions:
       - e73e8a6b-4c6f-4c25-becd-fe029e2a3001
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

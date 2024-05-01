@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"srv-hardcore-raman","commercial_type":"DEV1-S","image":"f974feac-abae-4365-b988-8ec7d1cec10d","organization":"14d2f7ae-9775-414c-9bed-6810e060d500"}'
@@ -66,7 +66,7 @@ interactions:
       - DENY
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -98,7 +98,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: way
     form: {}
@@ -130,7 +130,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: niel
     form: {}
@@ -162,7 +162,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: tac
     form: {}
@@ -194,7 +194,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: "on"
     form: {}
@@ -226,7 +226,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: world
     form: {}
@@ -258,7 +258,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -290,7 +290,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -322,7 +322,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -354,7 +354,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -386,7 +386,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -418,7 +418,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -450,7 +450,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -482,7 +482,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -512,7 +512,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -542,7 +542,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -572,7 +572,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -602,7 +602,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -632,7 +632,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: wozniak
     form: {}
@@ -664,7 +664,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: "off"
     form: {}
@@ -696,7 +696,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: niel
     form: {}
@@ -728,7 +728,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: way
     form: {}
@@ -760,7 +760,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -792,7 +792,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -824,7 +824,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -856,7 +856,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -888,7 +888,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -920,7 +920,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -952,7 +952,7 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -982,7 +982,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -1012,7 +1012,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -1042,7 +1042,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -1072,7 +1072,7 @@ interactions:
       - DENY
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -1104,4 +1104,4 @@ interactions:
       - DENY
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms

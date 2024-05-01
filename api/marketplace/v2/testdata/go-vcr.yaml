@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: ""
@@ -45,7 +45,7 @@ interactions:
       - c2b145ac-de80-4e34-a74c-3282af6d4ac3
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -90,7 +90,7 @@ interactions:
       - ab9603eb-e0f3-44ee-be8a-c1ce93b16b5c
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -122,4 +122,4 @@ interactions:
       - 9929f165-243c-42f2-b5b8-c9b08497d6c9
     status: 404 Not Found
     code: 404
-    duration: ""
+    duration: 0.1ms

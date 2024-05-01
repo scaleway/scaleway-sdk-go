@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"name","description":"description","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","stateful":true,"inbound_default_policy":"accept","outbound_default_policy":"drop"}'
@@ -42,7 +42,7 @@ interactions:
       - e40b56b4-b73e-4d46-8db7-deaed04cba16
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"new_name","description":"new_description","inbound_default_policy":"drop","tags":["foo","bar"],"project_default":false,"outbound_default_policy":"accept","stateful":false}'
     form: {}
@@ -82,7 +82,7 @@ interactions:
       - 65cf0b31-1f47-4ddc-9957-923b45a809ec
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -110,4 +110,4 @@ interactions:
       - 7812b2f7-bb6c-4bf2-b489-2ed2868fc981
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

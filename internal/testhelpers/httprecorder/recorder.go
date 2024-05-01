@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dnaeon/go-vcr/cassette"
-	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gopkg.in/dnaeon/go-vcr.v3/cassette"
+	"gopkg.in/dnaeon/go-vcr.v3/recorder"
 )
 
 // IsUpdatingCassette returns true if we are updating cassettes.
@@ -32,9 +32,9 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 
 	var activeProfile *scw.Profile
 
-	recorderMode := recorder.ModeReplaying
+	recorderMode := recorder.ModeReplayOnly
 	if UpdateCassette {
-		recorderMode = recorder.ModeRecording
+		recorderMode = recorder.ModeRecordOnly
 		config, err := scw.LoadConfig()
 		if err != nil {
 			return nil, nil, err
@@ -46,7 +46,10 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	}
 
 	// Setup recorder and scw client
-	r, err := recorder.NewAsMode(fmt.Sprintf("testdata/%s", cassetteName), recorderMode, nil)
+	r, err := recorder.NewWithOptions(&recorder.Options{
+		CassetteName: fmt.Sprintf("testdata/%s", cassetteName),
+		Mode:         recorderMode,
+	})
 	if err != nil {
 		return nil, nil, err
 	}

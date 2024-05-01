@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"volume_name","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","volume_type":"b_ssd","size":1000000000}'
@@ -40,7 +40,7 @@ interactions:
       - c118842c-92e2-4d20-b986-d22fcffb403b
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"name","volume_id":"6c73aee5-1c22-4207-a6f8-3fdc16c88183","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -82,7 +82,7 @@ interactions:
       - 9c8a8504-af61-45a7-a4d3-f24bfbddc1ca
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"new_name","tags":["foo","bar"]}'
     form: {}
@@ -122,7 +122,7 @@ interactions:
       - fcd34fb2-ab59-4b04-b35b-fc190a58878c
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -160,7 +160,7 @@ interactions:
       - cd1194dc-b398-43f4-987e-fd9918ad61a7
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -198,7 +198,7 @@ interactions:
       - 33f3bd9e-43cc-4236-813c-7ca7a228bb81
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -226,4 +226,4 @@ interactions:
       - 5ade24b0-f382-4dcb-82c5-09ef41540b22
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
