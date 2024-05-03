@@ -209,7 +209,7 @@ type BookIPRequest struct {
 	// IsIPv6: request an IPv6 instead of an IPv4.
 	IsIPv6 bool `json:"is_ipv6"`
 
-	// Address: note that only the Private Network source allows you to pick a specific IP. If the requested IP is already booked, then the call will fail.
+	// Address: the requested address should not include the subnet mask (/suffix). Note that only the Private Network source allows you to pick a specific IP. If the requested IP is already booked, then the call will fail.
 	Address *net.IP `json:"address,omitempty"`
 
 	// Tags: tags for the IP.
