@@ -1565,7 +1565,7 @@ type UpgradeGatewayRequest struct {
 	GatewayID string `json:"-"`
 }
 
-// Public Gateways API.
+// This API allows you to manage your Public Gateways.
 type API struct {
 	client *scw.Client
 }

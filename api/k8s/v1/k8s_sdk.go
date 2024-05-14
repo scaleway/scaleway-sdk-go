@@ -1780,7 +1780,7 @@ type UpgradePoolRequest struct {
 	Version string `json:"version"`
 }
 
-// Kubernetes API.
+// This API allows you to manage Kubernetes Kapsule and Kosmos clusters.
 type API struct {
 	client *scw.Client
 }

@@ -1605,7 +1605,7 @@ type UpdateTriggerRequest struct {
 	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
 
-// Serverless Containers API.
+// This API allows you to manage your Serverless Containers.
 type API struct {
 	client *scw.Client
 }

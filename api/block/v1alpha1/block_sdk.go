@@ -775,7 +775,7 @@ type UpdateVolumeRequest struct {
 	PerfIops *uint32 `json:"perf_iops,omitempty"`
 }
 
-// This API allows you to use and manage your Block Storage volumes.
+// This API allows you to manage your Block Storage volumes.
 type API struct {
 	client *scw.Client
 }

@@ -772,6 +772,7 @@ type UpdateEndpointRequest struct {
 	DisableAuth *bool `json:"disable_auth,omitempty"`
 }
 
+// This API allows you to manage your LLM Inference services.
 type API struct {
 	client *scw.Client
 }

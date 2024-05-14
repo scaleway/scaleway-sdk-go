@@ -484,7 +484,7 @@ type UpdateFlexibleIPRequest struct {
 	Reverse *string `json:"reverse,omitempty"`
 }
 
-// Elastic Metal - Flexible IP API.
+// This API allows you to manage your Elastic Metal servers' flexible public IP addresses.
 type API struct {
 	client *scw.Client
 }

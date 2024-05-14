@@ -327,7 +327,7 @@ type UpdateIPRequest struct {
 	Reverses []*Reverse `json:"reverses"`
 }
 
-// This API allows you to manage IP addresses with Scaleway's IP Address Management tool.
+// This API allows you to manage your Scaleway IP addresses with our IP Address Management tool.
 type API struct {
 	client *scw.Client
 }

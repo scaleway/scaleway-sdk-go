@@ -2311,6 +2311,7 @@ type UpgradeInstanceRequest struct {
 	MajorUpgradeWorkflow *UpgradeInstanceRequestMajorUpgradeWorkflow `json:"major_upgrade_workflow,omitempty"`
 }
 
+// This API allows you to manage your Document Databases.
 type API struct {
 	client *scw.Client
 }

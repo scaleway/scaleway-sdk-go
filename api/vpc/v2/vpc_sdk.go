@@ -673,7 +673,7 @@ type UpdateVPCRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
-// VPC API.
+// This API allows you to manage your Virtual Private Clouds (VPCs) and Private Networks.
 type API struct {
 	client *scw.Client
 }
