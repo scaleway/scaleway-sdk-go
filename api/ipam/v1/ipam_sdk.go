@@ -244,12 +244,19 @@ type ListIPsRequest struct {
 	ProjectID *string `json:"-"`
 
 	// Zonal: zone to filter for. Only IPs that are zonal, and in this zone, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID must be set.
 	Zonal *string `json:"zonal,omitempty"`
 
 	// PrivateNetworkID: only IPs that are private, and in this Private Network, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID must be set.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// SubnetID: only IPs inside this exact subnet will be returned.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID must be set.
+	SubnetID *string `json:"subnet_id,omitempty"`
+
+	// VpcID: only IPs owned by resources in this VPC will be returned.
+	VpcID *string `json:"-"`
 
 	// Attached: defines whether to filter only for IPs which are attached to a resource.
 	Attached *bool `json:"-"`
@@ -327,7 +334,7 @@ type UpdateIPRequest struct {
 	Reverses []*Reverse `json:"reverses"`
 }
 
-// This API allows you to manage IP addresses with Scaleway's IP Address Management tool.
+// This API allows you to manage your Scaleway IP addresses with our IP Address Management tool.
 type API struct {
 	client *scw.Client
 }
@@ -499,6 +506,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "attached", req.Attached)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
@@ -509,6 +517,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "resource_name", req.ResourceName)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
