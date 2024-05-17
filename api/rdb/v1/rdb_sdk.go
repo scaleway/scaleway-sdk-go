@@ -971,6 +971,11 @@ type BackupSchedule struct {
 	NextRunAt *time.Time `json:"next_run_at"`
 }
 
+// EncryptionAtRest: encryption at rest.
+type EncryptionAtRest struct {
+	Enabled bool `json:"enabled"`
+}
+
 // InstanceSetting: instance setting.
 type InstanceSetting struct {
 	Name string `json:"name"`
@@ -1318,6 +1323,9 @@ type Instance struct {
 
 	// Maintenances: list of Database Instance maintenance events.
 	Maintenances []*Maintenance `json:"maintenances"`
+
+	// Encryption: encryption at rest settings for your Database Instance.
+	Encryption *EncryptionAtRest `json:"encryption"`
 }
 
 // NodeType: node type.
@@ -1610,6 +1618,9 @@ type CreateInstanceRequest struct {
 
 	// BackupSameRegion: defines whether to or not to store logical backups in the same region as the Database Instance.
 	BackupSameRegion bool `json:"backup_same_region"`
+
+	// Encryption: encryption at rest settings for your Database Instance.
+	Encryption *EncryptionAtRest `json:"encryption,omitempty"`
 }
 
 // CreateReadReplicaEndpointRequest: create read replica endpoint request.

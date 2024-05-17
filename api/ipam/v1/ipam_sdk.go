@@ -319,6 +319,14 @@ type ReleaseIPRequest struct {
 	IPID string `json:"-"`
 }
 
+// ReleaseIPSetRequest: release ip set request.
+type ReleaseIPSetRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	IPIDs []string `json:"ip_ids"`
+}
+
 // UpdateIPRequest: update ip request.
 type UpdateIPRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -406,6 +414,36 @@ func (s *API) ReleaseIP(req *ReleaseIPRequest, opts ...scw.RequestOption) error 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/ipam/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ReleaseIPSet:
+func (s *API) ReleaseIPSet(req *ReleaseIPSetRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/ipam/v1/regions/" + fmt.Sprint(req.Region) + "/ip-sets/release",
 	}
 
 	err = scwReq.SetBody(req)
