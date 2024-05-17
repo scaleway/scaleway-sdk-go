@@ -868,7 +868,7 @@ type SqsInfo struct {
 	SqsEndpointURL string `json:"sqs_endpoint_url"`
 }
 
-// This API allows you to manage Scaleway Messaging and Queueing NATS accounts.
+// This API allows you to manage Scaleway Messaging and Queuing NATS accounts.
 type NatsAPI struct {
 	client *scw.Client
 }
@@ -1194,7 +1194,7 @@ func (s *NatsAPI) ListNatsCredentials(req *NatsAPIListNatsCredentialsRequest, op
 	return &resp, nil
 }
 
-// This API allows you to manage Scaleway Messaging and Queueing SNS brokers.
+// This API allows you to manage your Scaleway Messaging and Queuing SNS brokers.
 type SnsAPI struct {
 	client *scw.Client
 }
@@ -1495,7 +1495,7 @@ func (s *SnsAPI) ListSnsCredentials(req *SnsAPIListSnsCredentialsRequest, opts .
 	return &resp, nil
 }
 
-// This API allows you to manage Scaleway Messaging and Queueing SQS brokers.
+// This API allows you to manage your Scaleway Messaging and Queuing SQS brokers.
 type SqsAPI struct {
 	client *scw.Client
 }

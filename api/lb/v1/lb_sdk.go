@@ -6295,7 +6295,7 @@ func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest
 	return nil
 }
 
-// This API allows you to manage your load balancer service.
+// This API allows you to manage your Load Balancers.
 type API struct {
 	client *scw.Client
 }

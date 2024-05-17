@@ -1578,7 +1578,7 @@ type UpdateRouteRequest struct {
 	RestConfig *UpdateRouteRequestRestConfig `json:"rest_config,omitempty"`
 }
 
-// This API allows you to manage IoT hubs and devices.
+// This API allows you to manage your IoT hubs and devices.
 type API struct {
 	client *scw.Client
 }

@@ -182,7 +182,7 @@ type ProjectAPIUpdateProjectRequest struct {
 	Description *string `json:"description,omitempty"`
 }
 
-// This API allows you to manage projects.
+// This API allows you to manage your Scaleway Projects.
 type ProjectAPI struct {
 	client *scw.Client
 }

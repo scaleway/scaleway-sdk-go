@@ -1615,7 +1615,7 @@ type UpdateSettingRequest struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
-// This API allows to manage your Elastic Metal server.
+// This API allows you to manage your Elastic Metal servers.
 type API struct {
 	client *scw.Client
 }

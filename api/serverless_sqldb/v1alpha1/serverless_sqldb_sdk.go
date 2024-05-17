@@ -438,7 +438,7 @@ type UpdateDatabaseRequest struct {
 	CPUMax *uint32 `json:"cpu_max,omitempty"`
 }
 
-// This API allows you to manage your Serverless SQL DB databases.
+// This API allows you to manage your Serverless SQL Databases.
 type API struct {
 	client *scw.Client
 }

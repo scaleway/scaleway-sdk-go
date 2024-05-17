@@ -452,7 +452,7 @@ type UpdateJobDefinitionRequest struct {
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
-// Serverless Jobs API.
+// This API allows you to manage your Serverless Jobs.
 type API struct {
 	client *scw.Client
 }

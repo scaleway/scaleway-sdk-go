@@ -3907,7 +3907,7 @@ type setSnapshotResponse struct {
 	Snapshot *Snapshot `json:"snapshot"`
 }
 
-// Instance API.
+// This API allows you to manage your Instances.
 type API struct {
 	client *scw.Client
 }

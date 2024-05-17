@@ -1737,6 +1737,7 @@ type UploadURL struct {
 	Headers map[string]*[]string `json:"headers"`
 }
 
+// This API allows you to manage your Serverless Functions.
 type API struct {
 	client *scw.Client
 }

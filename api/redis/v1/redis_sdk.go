@@ -936,6 +936,7 @@ type UpdateEndpointRequest struct {
 	PublicNetwork *EndpointSpecPublicNetworkSpec `json:"public_network,omitempty"`
 }
 
+// This API allows you to manage your Managed Databases for Redis™.
 type API struct {
 	client *scw.Client
 }

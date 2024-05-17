@@ -861,6 +861,7 @@ type Statistics struct {
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
+// This API allows you to manage your Transactional Email services.
 type API struct {
 	client *scw.Client
 }
