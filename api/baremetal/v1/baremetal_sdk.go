@@ -767,6 +767,9 @@ type Offer struct {
 	// Bandwidth: public bandwidth available (in bits/s) with the offer.
 	Bandwidth uint64 `json:"bandwidth"`
 
+	// MaxBandwidth: maximum public bandwidth available (in bits/s) depending on available options.
+	MaxBandwidth uint64 `json:"max_bandwidth"`
+
 	// CommercialRange: commercial range of the offer.
 	CommercialRange string `json:"commercial_range"`
 
