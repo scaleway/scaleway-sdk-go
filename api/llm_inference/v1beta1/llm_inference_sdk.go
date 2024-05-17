@@ -254,7 +254,7 @@ type EndpointSpec struct {
 	// Precisely one of Public, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetwork `json:"private_network,omitempty"`
 
-	// DisableAuth: by default, LLM deployments are protected by IAM authentication.
+	// DisableAuth: by default, deployments are protected by IAM authentication.
 	// When setting this field to true, the authentication will be disabled.
 	DisableAuth bool `json:"disable_auth"`
 }
@@ -767,12 +767,12 @@ type UpdateEndpointRequest struct {
 	// EndpointID: ID of the endpoint to update.
 	EndpointID string `json:"-"`
 
-	// DisableAuth: by default, LLM deployments are protected by IAM authentication.
+	// DisableAuth: by default, deployments are protected by IAM authentication.
 	// When setting this field to true, the authentication will be disabled.
 	DisableAuth *bool `json:"disable_auth,omitempty"`
 }
 
-// This API allows you to manage your LLM Inference services.
+// This API allows you to manage your Inference services.
 type API struct {
 	client *scw.Client
 }
@@ -1239,7 +1239,7 @@ func (s *API) DeleteDeploymentACLRule(req *DeleteDeploymentACLRuleRequest, opts 
 	return nil
 }
 
-// ListModels: List all available LLM models.
+// ListModels: List all available models.
 func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*ListModelsResponse, error) {
 	var err error
 
