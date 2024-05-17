@@ -799,7 +799,7 @@ func (r *ListTaxesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Taxes)), nil
 }
 
-// This API allows you to query your consumption.
+// This API allows you to manage and query your Scaleway billing and consumption.
 type API struct {
 	client *scw.Client
 }

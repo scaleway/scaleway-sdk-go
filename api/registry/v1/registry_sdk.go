@@ -641,7 +641,7 @@ type UpdateNamespaceRequest struct {
 	IsPublic *bool `json:"is_public,omitempty"`
 }
 
-// Container Registry API.
+// This API allows you to manage your Container Registry resources.
 type API struct {
 	client *scw.Client
 }
