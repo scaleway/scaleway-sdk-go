@@ -801,7 +801,7 @@ type UpdateHostingRequest struct {
 	Protected *bool `json:"protected,omitempty"`
 }
 
-// Web Hosting API.
+// This API allows you to manage your Web Hosting services.
 type API struct {
 	client *scw.Client
 }

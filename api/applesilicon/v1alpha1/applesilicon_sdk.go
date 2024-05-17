@@ -453,6 +453,7 @@ type UpdateServerRequest struct {
 	Name *string `json:"name,omitempty"`
 }
 
+// This API allows you to manage your Apple silicon machines.
 type API struct {
 	client *scw.Client
 }

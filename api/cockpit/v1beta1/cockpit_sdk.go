@@ -931,7 +931,7 @@ type TriggerTestAlertRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
-// The Cockpit API allows you to activate your Cockpit to store metrics and logs. It also provides you with a dedicated Grafana for dashboarding to visualize your metrics and logs.
+// This API allows you to manage your Scaleway Cockpit, for storing and visualizing metrics and logs.
 type API struct {
 	client *scw.Client
 }
