@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: ""
@@ -46,7 +46,7 @@ interactions:
       - 9a391945-b520-470d-86a6-2abc3096bc18
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"name":"srv-amazing-heisenberg","commercial_type":"DEV1-M","image":"1bed752e-f775-4ec2-b179-40af20ec1eec","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
     form: {}
@@ -111,7 +111,7 @@ interactions:
       - f257b6b0-3715-47d5-8fcf-961e66d2a625
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"action":"backup","name":"backup"}'
     form: {}
@@ -150,7 +150,7 @@ interactions:
       - 41ff6946-bc96-422d-9818-e1dbcd9ec284
     status: 202 Accepted
     code: 202
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -194,7 +194,7 @@ interactions:
       - 858dc697-d059-4da6-bbb2-d3b7a7af32d0
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -238,7 +238,7 @@ interactions:
       - 6ee51ed8-7b1c-4791-bd8b-db9339e794b0
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -266,7 +266,7 @@ interactions:
       - 65f9b840-dd11-4004-b898-8256c2e87c90
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -294,7 +294,7 @@ interactions:
       - 29df40f9-2378-439e-a80a-a858b5925901
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -322,7 +322,7 @@ interactions:
       - 0eb71a3a-8e8c-425e-a6f7-cf581917b24c
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -350,4 +350,4 @@ interactions:
       - 73183606-37ea-4356-b9a3-7a87c831a544
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: '{"name":"instance_utils_test","commercial_type":"PRO2-XXS","image":"81b9475d-e1b5-43c2-ac48-4c1a3b640686","project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"}'
@@ -65,7 +65,7 @@ interactions:
       - 9f05fb6a-ad06-4f27-9ea4-07860cd3a735
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"project":"ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b","type":"unknown_iptype"}'
     form: {}
@@ -104,7 +104,7 @@ interactions:
       - 9263a54a-4df9-4c8d-ba7f-6e6676662636
     status: 201 Created
     code: 201
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"type":"unknown_iptype","server":"d98c50d4-04b9-405d-be55-40dc42c5b344"}'
     form: {}
@@ -142,7 +142,7 @@ interactions:
       - 5adf5fd2-64f8-4a03-a978-2085819552ed
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"type":"unknown_iptype","server":null}'
     form: {}
@@ -179,7 +179,7 @@ interactions:
       - abd05986-39e4-470f-a2fe-c810a8dd60e5
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -207,7 +207,7 @@ interactions:
       - c18db02f-632e-46a1-a21c-4967e8a108da
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -245,7 +245,7 @@ interactions:
       - 487e6ad2-2b73-4498-83fb-1425e9eccf15
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -306,7 +306,7 @@ interactions:
       - 45254b89-4baf-42d4-ae6d-fd195b7dda23
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{}}'
     form: {}
@@ -363,7 +363,7 @@ interactions:
       - d3ac5d9c-81af-4e4f-a8dd-957b411d134c
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -400,7 +400,7 @@ interactions:
       - e12c4f7d-3176-4bdc-8c69-24e0054d1315
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -455,7 +455,7 @@ interactions:
       - 23420bb5-e634-4f49-9318-7643e0f5cd21
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: '{"volumes":{"0":{"id":"6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2","name":"6ced1bf4-b4f1-4e86-bd2d-0374a9626fc2"}}}'
     form: {}
@@ -518,7 +518,7 @@ interactions:
       - 1bdd821b-b03f-4a71-8d1a-cb203d27ca32
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -546,7 +546,7 @@ interactions:
       - a6634954-7a64-4b28-9786-7f7ca3da6b1a
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -574,4 +574,4 @@ interactions:
       - 41993e5b-f681-4b71-9838-b81f3ffd7d12
     status: 204 No Content
     code: 204
-    duration: ""
+    duration: 0.1ms

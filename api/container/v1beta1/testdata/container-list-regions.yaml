@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 interactions:
 - request:
     body: ""
@@ -32,7 +32,7 @@ interactions:
       - 64534ead-60ca-4176-a37c-89f2781ec10e
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -68,7 +68,7 @@ interactions:
       - ef764335-0239-4aa5-92ca-a91a9a22db3a
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
 - request:
     body: ""
     form: {}
@@ -100,4 +100,4 @@ interactions:
       - 33115f4e-1a87-41cb-8ba4-0ec491271287
     status: 200 OK
     code: 200
-    duration: ""
+    duration: 0.1ms
