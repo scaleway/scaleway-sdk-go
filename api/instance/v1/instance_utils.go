@@ -183,7 +183,7 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 	volume, err := s.getUnknownVolume(&getUnknownVolumeRequest{
 		Zone:     req.Zone,
 		VolumeID: req.VolumeID,
-	})
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func (s *API) DetachVolume(req *DetachVolumeRequest, opts ...scw.RequestOption) 
 		Zone:     req.Zone,
 		ServerID: *volume.ServerID,
 		VolumeID: volume.ID,
-	})
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}
