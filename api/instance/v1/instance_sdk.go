@@ -2122,6 +2122,9 @@ type CreateServerRequest struct {
 
 	// PlacementGroup: placement group ID if Instance must be part of a placement group.
 	PlacementGroup *string `json:"placement_group,omitempty"`
+
+	// AdminPasswordEncryptionSSHKeyID: UUID of the SSH RSA key that will be used to encrypt the initial admin password for OS requiring it. Mandatory for Windows OS.
+	AdminPasswordEncryptionSSHKeyID *string `json:"admin_password_encryption_ssh_key_id,omitempty"`
 }
 
 // CreateServerResponse: create server response.
@@ -2208,6 +2211,15 @@ type CreateVolumeRequest struct {
 // CreateVolumeResponse: create volume response.
 type CreateVolumeResponse struct {
 	Volume *Volume `json:"volume"`
+}
+
+// DeleteEncryptedRdpPasswordRequest: delete encrypted rdp password request.
+type DeleteEncryptedRdpPasswordRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: UUID of the Instance.
+	ServerID string `json:"-"`
 }
 
 // DeleteIPRequest: delete ip request.
@@ -2367,6 +2379,27 @@ type GetDashboardRequest struct {
 // GetDashboardResponse: get dashboard response.
 type GetDashboardResponse struct {
 	Dashboard *Dashboard `json:"dashboard"`
+}
+
+// GetEncryptedRdpPasswordRequest: get encrypted rdp password request.
+type GetEncryptedRdpPasswordRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: UUID of the Instance.
+	ServerID string `json:"-"`
+}
+
+// GetEncryptedRdpPasswordResponse: get encrypted rdp password response.
+type GetEncryptedRdpPasswordResponse struct {
+	// Value: the encrypted RDP password.
+	Value *string `json:"value"`
+
+	// AdminPasswordEncryptionSSHKeyDescription: the description of the SSH key used for ciphering.
+	AdminPasswordEncryptionSSHKeyDescription *string `json:"admin_password_encryption_ssh_key_description"`
+
+	// AdminPasswordEncryptionSSHKeyID: the UUID of the SSH key used for ciphering.
+	AdminPasswordEncryptionSSHKeyID *string `json:"admin_password_encryption_ssh_key_id"`
 }
 
 // GetIPRequest: get ip request.
@@ -6493,6 +6526,66 @@ func (s *API) ApplyBlockMigration(req *ApplyBlockMigrationRequest, opts ...scw.R
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetEncryptedRdpPassword: Get the initial administrator password for Windows RDP. This password is encrypted using the SSH RSA key specified at the time of Instance creation.
+func (s *API) GetEncryptedRdpPassword(req *GetEncryptedRdpPasswordRequest, opts ...scw.RequestOption) (*GetEncryptedRdpPasswordResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/encrypted_rdp_password",
+	}
+
+	var resp GetEncryptedRdpPasswordResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteEncryptedRdpPassword: Delete the initial administrator password for Windows RDP.
+func (s *API) DeleteEncryptedRdpPassword(req *DeleteEncryptedRdpPasswordRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/encrypted_rdp_password",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
