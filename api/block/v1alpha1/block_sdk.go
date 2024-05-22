@@ -289,6 +289,8 @@ const (
 	// The volume is undergoing snapshotting operation (transient).
 	VolumeStatusSnapshotting = VolumeStatus("snapshotting")
 	VolumeStatusLocked       = VolumeStatus("locked")
+	// The volume is being updated (transient).
+	VolumeStatusUpdating = VolumeStatus("updating")
 )
 
 func (enum VolumeStatus) String() string {
