@@ -105,6 +105,36 @@ func (enum *ListRoutesWithNexthopRequestOrderBy) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
+type ListSubnetsRequestOrderBy string
+
+const (
+	ListSubnetsRequestOrderByCreatedAtAsc  = ListSubnetsRequestOrderBy("created_at_asc")
+	ListSubnetsRequestOrderByCreatedAtDesc = ListSubnetsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListSubnetsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListSubnetsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSubnetsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSubnetsRequestOrderBy(ListSubnetsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListVPCsRequestOrderBy string
 
 const (
@@ -509,6 +539,53 @@ func (r *ListRoutesWithNexthopResponse) UnsafeAppend(res interface{}) (uint64, e
 	r.Routes = append(r.Routes, results.Routes...)
 	r.TotalCount += uint64(len(results.Routes))
 	return uint64(len(results.Routes)), nil
+}
+
+// ListSubnetsRequest: list subnets request.
+type ListSubnetsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListSubnetsRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	SubnetIDs []string `json:"-"`
+
+	VpcID *string `json:"-"`
+}
+
+// ListSubnetsResponse: list subnets response.
+type ListSubnetsResponse struct {
+	Subnets []*Subnet `json:"subnets"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSubnetsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSubnetsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+	results, ok := res.(*ListSubnetsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Subnets = append(r.Subnets, results.Subnets...)
+	r.TotalCount += uint32(len(results.Subnets))
+	return uint32(len(results.Subnets)), nil
 }
 
 // ListVPCsRequest: list vp cs request.
@@ -1155,6 +1232,48 @@ func (s *API) EnableRouting(req *EnableRoutingRequest, opts ...scw.RequestOption
 	}
 
 	var resp VPC
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListSubnets:
+func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*ListSubnetsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "subnet_ids", req.SubnetIDs)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/subnets",
+		Query:  query,
+	}
+
+	var resp ListSubnetsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
