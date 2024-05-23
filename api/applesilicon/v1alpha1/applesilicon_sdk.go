@@ -174,6 +174,8 @@ type ServerTypeCPU struct {
 	Name string `json:"name"`
 
 	CoreCount uint32 `json:"core_count"`
+
+	Frequency uint64 `json:"frequency"`
 }
 
 // ServerTypeDisk: server type disk.
@@ -183,11 +185,21 @@ type ServerTypeDisk struct {
 	Type string `json:"type"`
 }
 
+// ServerTypeGPU: server type gpu.
+type ServerTypeGPU struct {
+	Count uint64 `json:"count"`
+}
+
 // ServerTypeMemory: server type memory.
 type ServerTypeMemory struct {
 	Capacity scw.Size `json:"capacity"`
 
 	Type string `json:"type"`
+}
+
+// ServerTypeNetwork: server type network.
+type ServerTypeNetwork struct {
+	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
 // ServerType: server type.
@@ -210,6 +222,12 @@ type ServerType struct {
 
 	// MinimumLeaseDuration: minimum duration of the lease in seconds (example. 3.4s).
 	MinimumLeaseDuration *scw.Duration `json:"minimum_lease_duration"`
+
+	// Gpu: gPU description.
+	Gpu *ServerTypeGPU `json:"gpu"`
+
+	// Network: network description.
+	Network *ServerTypeNetwork `json:"network"`
 
 	// DefaultOs: the default OS for this server type.
 	DefaultOs *OS `json:"default_os"`
