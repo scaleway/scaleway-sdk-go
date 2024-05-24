@@ -212,6 +212,15 @@ type Subnet struct {
 
 	// Subnet: subnet CIDR.
 	Subnet scw.IPNet `json:"subnet"`
+
+	// ProjectID: scaleway Project the subnet belongs to.
+	ProjectID string `json:"project_id"`
+
+	// PrivateNetworkID: private Network the subnet belongs to.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// VpcID: vPC the subnet belongs to.
+	VpcID string `json:"vpc_id"`
 }
 
 // PrivateNetwork: private network.
@@ -546,19 +555,26 @@ type ListSubnetsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of the returned subnets.
+	// Default value: created_at_asc
 	OrderBy ListSubnetsRequestOrderBy `json:"-"`
 
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
+	// PageSize: maximum number of Private Networks to return per page.
 	PageSize *uint32 `json:"-"`
 
+	// OrganizationID: organization ID to filter for. Only subnets belonging to this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: project ID to filter for. Only subnets belonging to this Project will be returned.
 	ProjectID *string `json:"-"`
 
+	// SubnetIDs: subnet IDs to filter for. Only subnets matching the specified IDs will be returned.
 	SubnetIDs []string `json:"-"`
 
+	// VpcID: vPC ID to filter for. Only subnets belonging to this VPC will be returned.
 	VpcID *string `json:"-"`
 }
 
@@ -1240,7 +1256,7 @@ func (s *API) EnableRouting(req *EnableRoutingRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListSubnets:
+// ListSubnets: List any Private Network's subnets. See ListPrivateNetworks to list a specific Private Network's subnets.
 func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*ListSubnetsResponse, error) {
 	var err error
 
