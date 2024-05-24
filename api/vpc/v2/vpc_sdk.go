@@ -212,6 +212,15 @@ type Subnet struct {
 
 	// Subnet: subnet CIDR.
 	Subnet scw.IPNet `json:"subnet"`
+
+	// ProjectID: scaleway Project the subnet belongs to.
+	ProjectID string `json:"project_id"`
+
+	// PrivateNetworkID: private Network the subnet belongs to.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// VpcID: vPC the subnet belongs to.
+	VpcID string `json:"vpc_id"`
 }
 
 // PrivateNetwork: private network.
