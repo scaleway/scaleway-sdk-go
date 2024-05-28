@@ -1633,18 +1633,6 @@ type MigrateClusterToRoutedIPsRequest struct {
 	ClusterID string `json:"-"`
 }
 
-// MigrateToPrivateNetworkClusterRequest: migrate to private network cluster request.
-type MigrateToPrivateNetworkClusterRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ClusterID: ID of the cluster to migrate.
-	ClusterID string `json:"-"`
-
-	// PrivateNetworkID: ID of the Private Network to link to the cluster.
-	PrivateNetworkID string `json:"private_network_id"`
-}
-
 // RebootNodeRequest: reboot node request.
 type RebootNodeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2189,42 +2177,6 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 		return err
 	}
 	return nil
-}
-
-// MigrateToPrivateNetworkCluster: Migrate a cluster that was created before the release of Private Network clusters to a new one with a Private Network.
-func (s *API) MigrateToPrivateNetworkCluster(req *MigrateToPrivateNetworkClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ClusterID) == "" {
-		return nil, errors.New("field ClusterID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-to-private-network",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cluster
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // MigrateClusterToRoutedIPs: Migrate the nodes of an existing cluster to Routed IPs and enable Routed IPs for all future nodes.
