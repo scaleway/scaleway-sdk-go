@@ -1190,6 +1190,9 @@ type ListOffersRequest struct {
 	// SubscriptionPeriod: subscription period type to filter offers by.
 	// Default value: unknown_subscription_period
 	SubscriptionPeriod OfferSubscriptionPeriod `json:"-"`
+
+	// Name: offer name to filter offers by.
+	Name *string `json:"-"`
 }
 
 // ListOffersResponse: list offers response.
@@ -2266,6 +2269,7 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "subscription_period", req.SubscriptionPeriod)
+	parameter.AddToQuery(query, "name", req.Name)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
