@@ -59,6 +59,18 @@ func (enum DeploymentStatus) String() string {
 	return string(enum)
 }
 
+func (enum DeploymentStatus) Values() []DeploymentStatus {
+	return []DeploymentStatus{
+		"unknown_status",
+		"creating",
+		"deploying",
+		"ready",
+		"error",
+		"deleting",
+		"locked",
+	}
+}
+
 func (enum DeploymentStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -89,6 +101,15 @@ func (enum ListDeploymentsRequestOrderBy) String() string {
 		return "created_at_desc"
 	}
 	return string(enum)
+}
+
+func (enum ListDeploymentsRequestOrderBy) Values() []ListDeploymentsRequestOrderBy {
+	return []ListDeploymentsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListDeploymentsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -123,6 +144,15 @@ func (enum ListModelsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListModelsRequestOrderBy) Values() []ListModelsRequestOrderBy {
+	return []ListModelsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListModelsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -153,6 +183,15 @@ func (enum NodeTypeStock) String() string {
 		return "unknown_stock"
 	}
 	return string(enum)
+}
+
+func (enum NodeTypeStock) Values() []NodeTypeStock {
+	return []NodeTypeStock{
+		"unknown_stock",
+		"low_stock",
+		"out_of_stock",
+		"available",
+	}
 }
 
 func (enum NodeTypeStock) MarshalJSON() ([]byte, error) {

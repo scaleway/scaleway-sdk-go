@@ -59,6 +59,18 @@ func (enum FlexibleIPStatus) String() string {
 	return string(enum)
 }
 
+func (enum FlexibleIPStatus) Values() []FlexibleIPStatus {
+	return []FlexibleIPStatus{
+		"unknown",
+		"ready",
+		"updating",
+		"attached",
+		"error",
+		"detaching",
+		"locked",
+	}
+}
+
 func (enum FlexibleIPStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -87,6 +99,13 @@ func (enum ListFlexibleIPsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListFlexibleIPsRequestOrderBy) Values() []ListFlexibleIPsRequestOrderBy {
+	return []ListFlexibleIPsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListFlexibleIPsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -123,6 +142,17 @@ func (enum MACAddressStatus) String() string {
 	return string(enum)
 }
 
+func (enum MACAddressStatus) Values() []MACAddressStatus {
+	return []MACAddressStatus{
+		"unknown",
+		"ready",
+		"updating",
+		"used",
+		"error",
+		"deleting",
+	}
+}
+
 func (enum MACAddressStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -153,6 +183,15 @@ func (enum MACAddressType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum MACAddressType) Values() []MACAddressType {
+	return []MACAddressType{
+		"unknown_type",
+		"vmware",
+		"xen",
+		"kvm",
+	}
 }
 
 func (enum MACAddressType) MarshalJSON() ([]byte, error) {

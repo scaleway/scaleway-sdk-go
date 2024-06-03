@@ -56,6 +56,15 @@ func (enum ListPrivateNetworksRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPrivateNetworksRequestOrderBy) Values() []ListPrivateNetworksRequestOrderBy {
+	return []ListPrivateNetworksRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListPrivateNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -90,6 +99,17 @@ func (enum ListRoutesWithNexthopRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRoutesWithNexthopRequestOrderBy) Values() []ListRoutesWithNexthopRequestOrderBy {
+	return []ListRoutesWithNexthopRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"destination_asc",
+		"destination_desc",
+		"prefix_len_asc",
+		"prefix_len_desc",
+	}
+}
+
 func (enum ListRoutesWithNexthopRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -118,6 +138,13 @@ func (enum ListSubnetsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListSubnetsRequestOrderBy) Values() []ListSubnetsRequestOrderBy {
+	return []ListSubnetsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListSubnetsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -152,6 +179,15 @@ func (enum ListVPCsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListVPCsRequestOrderBy) Values() []ListVPCsRequestOrderBy {
+	return []ListVPCsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListVPCsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -182,6 +218,15 @@ func (enum RouteWithNexthopResourceType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum RouteWithNexthopResourceType) Values() []RouteWithNexthopResourceType {
+	return []RouteWithNexthopResourceType{
+		"unknown_type",
+		"vpc_gateway_network",
+		"instance_private_nic",
+		"baremetal_private_nic",
+	}
 }
 
 func (enum RouteWithNexthopResourceType) MarshalJSON() ([]byte, error) {

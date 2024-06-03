@@ -54,6 +54,13 @@ func (enum AutoscalerEstimator) String() string {
 	return string(enum)
 }
 
+func (enum AutoscalerEstimator) Values() []AutoscalerEstimator {
+	return []AutoscalerEstimator{
+		"unknown_estimator",
+		"binpacking",
+	}
+}
+
 func (enum AutoscalerEstimator) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -87,6 +94,17 @@ func (enum AutoscalerExpander) String() string {
 		return "unknown_expander"
 	}
 	return string(enum)
+}
+
+func (enum AutoscalerExpander) Values() []AutoscalerExpander {
+	return []AutoscalerExpander{
+		"unknown_expander",
+		"random",
+		"most_pods",
+		"least_waste",
+		"priority",
+		"price",
+	}
 }
 
 func (enum AutoscalerExpander) MarshalJSON() ([]byte, error) {
@@ -126,6 +144,18 @@ func (enum CNI) String() string {
 		return "unknown_cni"
 	}
 	return string(enum)
+}
+
+func (enum CNI) Values() []CNI {
+	return []CNI{
+		"unknown_cni",
+		"cilium",
+		"calico",
+		"weave",
+		"flannel",
+		"kilo",
+		"none",
+	}
 }
 
 func (enum CNI) MarshalJSON() ([]byte, error) {
@@ -170,6 +200,19 @@ func (enum ClusterStatus) String() string {
 	return string(enum)
 }
 
+func (enum ClusterStatus) Values() []ClusterStatus {
+	return []ClusterStatus{
+		"unknown",
+		"creating",
+		"ready",
+		"deleting",
+		"deleted",
+		"updating",
+		"locked",
+		"pool_required",
+	}
+}
+
 func (enum ClusterStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -204,6 +247,14 @@ func (enum ClusterTypeAvailability) String() string {
 	return string(enum)
 }
 
+func (enum ClusterTypeAvailability) Values() []ClusterTypeAvailability {
+	return []ClusterTypeAvailability{
+		"available",
+		"scarce",
+		"shortage",
+	}
+}
+
 func (enum ClusterTypeAvailability) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -235,6 +286,14 @@ func (enum ClusterTypeResiliency) String() string {
 		return "unknown_resiliency"
 	}
 	return string(enum)
+}
+
+func (enum ClusterTypeResiliency) Values() []ClusterTypeResiliency {
+	return []ClusterTypeResiliency{
+		"unknown_resiliency",
+		"standard",
+		"high_availability",
+	}
 }
 
 func (enum ClusterTypeResiliency) MarshalJSON() ([]byte, error) {
@@ -275,6 +334,21 @@ func (enum ListClustersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListClustersRequestOrderBy) Values() []ListClustersRequestOrderBy {
+	return []ListClustersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"version_asc",
+		"version_desc",
+	}
+}
+
 func (enum ListClustersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -303,6 +377,13 @@ func (enum ListNodesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListNodesRequestOrderBy) Values() []ListNodesRequestOrderBy {
+	return []ListNodesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListNodesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -343,6 +424,21 @@ func (enum ListPoolsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPoolsRequestOrderBy) Values() []ListPoolsRequestOrderBy {
+	return []ListPoolsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"version_asc",
+		"version_desc",
+	}
+}
+
 func (enum ListPoolsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -377,6 +473,19 @@ func (enum MaintenanceWindowDayOfTheWeek) String() string {
 		return "any"
 	}
 	return string(enum)
+}
+
+func (enum MaintenanceWindowDayOfTheWeek) Values() []MaintenanceWindowDayOfTheWeek {
+	return []MaintenanceWindowDayOfTheWeek{
+		"any",
+		"monday",
+		"tuesday",
+		"wednesday",
+		"thursday",
+		"friday",
+		"saturday",
+		"sunday",
+	}
 }
 
 func (enum MaintenanceWindowDayOfTheWeek) MarshalJSON() ([]byte, error) {
@@ -425,6 +534,23 @@ func (enum NodeStatus) String() string {
 	return string(enum)
 }
 
+func (enum NodeStatus) Values() []NodeStatus {
+	return []NodeStatus{
+		"unknown",
+		"creating",
+		"not_ready",
+		"ready",
+		"deleting",
+		"deleted",
+		"locked",
+		"rebooting",
+		"creation_error",
+		"upgrading",
+		"starting",
+		"registering",
+	}
+}
+
 func (enum NodeStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -466,6 +592,19 @@ func (enum PoolStatus) String() string {
 	return string(enum)
 }
 
+func (enum PoolStatus) Values() []PoolStatus {
+	return []PoolStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"deleted",
+		"scaling",
+		"warning",
+		"locked",
+		"upgrading",
+	}
+}
+
 func (enum PoolStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -499,6 +638,14 @@ func (enum PoolVolumeType) String() string {
 	return string(enum)
 }
 
+func (enum PoolVolumeType) Values() []PoolVolumeType {
+	return []PoolVolumeType{
+		"default_volume_type",
+		"l_ssd",
+		"b_ssd",
+	}
+}
+
 func (enum PoolVolumeType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -530,6 +677,15 @@ func (enum Runtime) String() string {
 		return "unknown_runtime"
 	}
 	return string(enum)
+}
+
+func (enum Runtime) Values() []Runtime {
+	return []Runtime{
+		"unknown_runtime",
+		"docker",
+		"containerd",
+		"crio",
+	}
 }
 
 func (enum Runtime) MarshalJSON() ([]byte, error) {

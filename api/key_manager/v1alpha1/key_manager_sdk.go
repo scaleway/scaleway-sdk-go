@@ -55,6 +55,13 @@ func (enum DataKeyAlgorithmSymmetricEncryption) String() string {
 	return string(enum)
 }
 
+func (enum DataKeyAlgorithmSymmetricEncryption) Values() []DataKeyAlgorithmSymmetricEncryption {
+	return []DataKeyAlgorithmSymmetricEncryption{
+		"unknown_symmetric_encryption",
+		"aes_256_gcm",
+	}
+}
+
 func (enum DataKeyAlgorithmSymmetricEncryption) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -84,6 +91,13 @@ func (enum KeyAlgorithmSymmetricEncryption) String() string {
 		return "unknown_symmetric_encryption"
 	}
 	return string(enum)
+}
+
+func (enum KeyAlgorithmSymmetricEncryption) Values() []KeyAlgorithmSymmetricEncryption {
+	return []KeyAlgorithmSymmetricEncryption{
+		"unknown_symmetric_encryption",
+		"aes_256_gcm",
+	}
 }
 
 func (enum KeyAlgorithmSymmetricEncryption) MarshalJSON() ([]byte, error) {
@@ -121,6 +135,15 @@ func (enum KeyState) String() string {
 	return string(enum)
 }
 
+func (enum KeyState) Values() []KeyState {
+	return []KeyState{
+		"unknown_state",
+		"enabled",
+		"disabled",
+		"pending_key_material",
+	}
+}
+
 func (enum KeyState) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -153,6 +176,17 @@ func (enum ListKeysRequestOrderBy) String() string {
 		return "name_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListKeysRequestOrderBy) Values() []ListKeysRequestOrderBy {
+	return []ListKeysRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+	}
 }
 
 func (enum ListKeysRequestOrderBy) MarshalJSON() ([]byte, error) {
