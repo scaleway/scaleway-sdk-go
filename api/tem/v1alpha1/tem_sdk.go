@@ -1113,6 +1113,9 @@ type ListWebhooksRequest struct {
 
 	// OrganizationID: (Optional) ID of the Organization for which to list the Webhooks.
 	OrganizationID *string `json:"-"`
+
+	// DomainID: (Optional) ID of the Domain for which to list the Webhooks.
+	DomainID *string `json:"-"`
 }
 
 // ListWebhooksResponse: list webhooks response.
@@ -1627,6 +1630,7 @@ func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain_id", req.DomainID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
