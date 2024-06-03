@@ -70,6 +70,20 @@ func (enum EyeColors) String() string {
 	return string(enum)
 }
 
+func (enum EyeColors) Values() []EyeColors {
+	return []EyeColors{
+		"unknown",
+		"amber",
+		"blue",
+		"brown",
+		"gray",
+		"green",
+		"hazel",
+		"red",
+		"violet",
+	}
+}
+
 func (enum EyeColors) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -102,6 +116,14 @@ func (enum HumanStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum HumanStatus) Values() []HumanStatus {
+	return []HumanStatus{
+		"unknown",
+		"stopped",
+		"running",
+	}
 }
 
 func (enum HumanStatus) MarshalJSON() ([]byte, error) {
@@ -142,6 +164,17 @@ func (enum ListHumansRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListHumansRequestOrderBy) Values() []ListHumansRequestOrderBy {
+	return []ListHumansRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"height_asc",
+		"height_desc",
+	}
 }
 
 func (enum ListHumansRequestOrderBy) MarshalJSON() ([]byte, error) {

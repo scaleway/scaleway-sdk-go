@@ -58,6 +58,17 @@ func (enum BrowseSecretsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum BrowseSecretsRequestOrderBy) Values() []BrowseSecretsRequestOrderBy {
+	return []BrowseSecretsRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+	}
+}
+
 func (enum BrowseSecretsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -89,6 +100,14 @@ func (enum EphemeralPolicyAction) String() string {
 		return "unknown_action"
 	}
 	return string(enum)
+}
+
+func (enum EphemeralPolicyAction) Values() []EphemeralPolicyAction {
+	return []EphemeralPolicyAction{
+		"unknown_action",
+		"delete",
+		"disable",
+	}
 }
 
 func (enum EphemeralPolicyAction) MarshalJSON() ([]byte, error) {
@@ -125,6 +144,17 @@ func (enum ListSecretsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListSecretsRequestOrderBy) Values() []ListSecretsRequestOrderBy {
+	return []ListSecretsRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+	}
+}
+
 func (enum ListSecretsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -153,6 +183,13 @@ func (enum Product) String() string {
 		return "unknown_product"
 	}
 	return string(enum)
+}
+
+func (enum Product) Values() []Product {
+	return []Product{
+		"unknown_product",
+		"edge_services",
+	}
 }
 
 func (enum Product) MarshalJSON() ([]byte, error) {
@@ -184,6 +221,14 @@ func (enum SecretStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum SecretStatus) Values() []SecretStatus {
+	return []SecretStatus{
+		"unknown_status",
+		"ready",
+		"locked",
+	}
 }
 
 func (enum SecretStatus) MarshalJSON() ([]byte, error) {
@@ -227,6 +272,18 @@ func (enum SecretType) String() string {
 	return string(enum)
 }
 
+func (enum SecretType) Values() []SecretType {
+	return []SecretType{
+		"unknown_type",
+		"opaque",
+		"certificate",
+		"key_value",
+		"basic_credentials",
+		"database_credentials",
+		"ssh_key",
+	}
+}
+
 func (enum SecretType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -257,6 +314,15 @@ func (enum SecretVersionStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum SecretVersionStatus) Values() []SecretVersionStatus {
+	return []SecretVersionStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+		"deleted",
+	}
 }
 
 func (enum SecretVersionStatus) MarshalJSON() ([]byte, error) {

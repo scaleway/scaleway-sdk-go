@@ -55,6 +55,14 @@ func (enum DHCPEntryType) String() string {
 	return string(enum)
 }
 
+func (enum DHCPEntryType) Values() []DHCPEntryType {
+	return []DHCPEntryType{
+		"unknown",
+		"reservation",
+		"lease",
+	}
+}
+
 func (enum DHCPEntryType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -88,6 +96,18 @@ func (enum GatewayNetworkStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum GatewayNetworkStatus) Values() []GatewayNetworkStatus {
+	return []GatewayNetworkStatus{
+		"unknown",
+		"created",
+		"attaching",
+		"configuring",
+		"ready",
+		"detaching",
+		"deleted",
+	}
 }
 
 func (enum GatewayNetworkStatus) MarshalJSON() ([]byte, error) {
@@ -128,6 +148,21 @@ func (enum GatewayStatus) String() string {
 	return string(enum)
 }
 
+func (enum GatewayStatus) Values() []GatewayStatus {
+	return []GatewayStatus{
+		"unknown",
+		"stopped",
+		"allocating",
+		"configuring",
+		"running",
+		"stopping",
+		"failed",
+		"deleting",
+		"deleted",
+		"locked",
+	}
+}
+
 func (enum GatewayStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -162,6 +197,17 @@ func (enum ListDHCPEntriesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDHCPEntriesRequestOrderBy) Values() []ListDHCPEntriesRequestOrderBy {
+	return []ListDHCPEntriesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"ip_address_asc",
+		"ip_address_desc",
+		"hostname_asc",
+		"hostname_desc",
+	}
+}
+
 func (enum ListDHCPEntriesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -194,6 +240,15 @@ func (enum ListDHCPsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDHCPsRequestOrderBy) Values() []ListDHCPsRequestOrderBy {
+	return []ListDHCPsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"subnet_asc",
+		"subnet_desc",
+	}
+}
+
 func (enum ListDHCPsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -224,6 +279,15 @@ func (enum ListGatewayNetworksRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListGatewayNetworksRequestOrderBy) Values() []ListGatewayNetworksRequestOrderBy {
+	return []ListGatewayNetworksRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"status_asc",
+		"status_desc",
+	}
 }
 
 func (enum ListGatewayNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -262,6 +326,19 @@ func (enum ListGatewaysRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListGatewaysRequestOrderBy) Values() []ListGatewaysRequestOrderBy {
+	return []ListGatewaysRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+		"status_asc",
+		"status_desc",
+	}
+}
+
 func (enum ListGatewaysRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -296,6 +373,17 @@ func (enum ListIPsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListIPsRequestOrderBy) Values() []ListIPsRequestOrderBy {
+	return []ListIPsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"ip_asc",
+		"ip_desc",
+		"reverse_asc",
+		"reverse_desc",
+	}
+}
+
 func (enum ListIPsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -328,6 +416,15 @@ func (enum ListPATRulesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPATRulesRequestOrderBy) Values() []ListPATRulesRequestOrderBy {
+	return []ListPATRulesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"public_port_asc",
+		"public_port_desc",
+	}
+}
+
 func (enum ListPATRulesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -358,6 +455,15 @@ func (enum PATRuleProtocol) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum PATRuleProtocol) Values() []PATRuleProtocol {
+	return []PATRuleProtocol{
+		"unknown",
+		"both",
+		"tcp",
+		"udp",
+	}
 }
 
 func (enum PATRuleProtocol) MarshalJSON() ([]byte, error) {

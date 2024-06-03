@@ -60,6 +60,19 @@ func (enum JobRunState) String() string {
 	return string(enum)
 }
 
+func (enum JobRunState) Values() []JobRunState {
+	return []JobRunState{
+		"unknown_state",
+		"queued",
+		"scheduled",
+		"running",
+		"succeeded",
+		"failed",
+		"canceled",
+		"internal_error",
+	}
+}
+
 func (enum JobRunState) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -90,6 +103,13 @@ func (enum ListJobDefinitionsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListJobDefinitionsRequestOrderBy) Values() []ListJobDefinitionsRequestOrderBy {
+	return []ListJobDefinitionsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListJobDefinitionsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -118,6 +138,13 @@ func (enum ListJobRunsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListJobRunsRequestOrderBy) Values() []ListJobRunsRequestOrderBy {
+	return []ListJobRunsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListJobRunsRequestOrderBy) MarshalJSON() ([]byte, error) {

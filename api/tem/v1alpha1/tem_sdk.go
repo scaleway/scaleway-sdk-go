@@ -60,6 +60,15 @@ func (enum DomainLastStatusRecordStatus) String() string {
 	return string(enum)
 }
 
+func (enum DomainLastStatusRecordStatus) Values() []DomainLastStatusRecordStatus {
+	return []DomainLastStatusRecordStatus{
+		"unknown_record_status",
+		"valid",
+		"invalid",
+		"not_found",
+	}
+}
+
 func (enum DomainLastStatusRecordStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -96,6 +105,16 @@ func (enum DomainReputationStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum DomainReputationStatus) Values() []DomainReputationStatus {
+	return []DomainReputationStatus{
+		"unknown_status",
+		"excellent",
+		"good",
+		"average",
+		"bad",
+	}
 }
 
 func (enum DomainReputationStatus) MarshalJSON() ([]byte, error) {
@@ -138,6 +157,18 @@ func (enum DomainStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum DomainStatus) Values() []DomainStatus {
+	return []DomainStatus{
+		"unknown",
+		"checked",
+		"unchecked",
+		"invalid",
+		"locked",
+		"revoked",
+		"pending",
+	}
 }
 
 func (enum DomainStatus) MarshalJSON() ([]byte, error) {
@@ -184,6 +215,19 @@ func (enum EmailFlag) String() string {
 	return string(enum)
 }
 
+func (enum EmailFlag) Values() []EmailFlag {
+	return []EmailFlag{
+		"unknown_flag",
+		"soft_bounce",
+		"hard_bounce",
+		"spam",
+		"mailbox_full",
+		"mailbox_not_found",
+		"greylisted",
+		"send_before_expiration",
+	}
+}
+
 func (enum EmailFlag) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -218,6 +262,15 @@ func (enum EmailRcptType) String() string {
 		return "unknown_rcpt_type"
 	}
 	return string(enum)
+}
+
+func (enum EmailRcptType) Values() []EmailRcptType {
+	return []EmailRcptType{
+		"unknown_rcpt_type",
+		"to",
+		"cc",
+		"bcc",
+	}
 }
 
 func (enum EmailRcptType) MarshalJSON() ([]byte, error) {
@@ -258,6 +311,17 @@ func (enum EmailStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum EmailStatus) Values() []EmailStatus {
+	return []EmailStatus{
+		"unknown",
+		"new",
+		"sending",
+		"sent",
+		"failed",
+		"canceled",
+	}
 }
 
 func (enum EmailStatus) MarshalJSON() ([]byte, error) {
@@ -312,6 +376,23 @@ func (enum ListEmailsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListEmailsRequestOrderBy) Values() []ListEmailsRequestOrderBy {
+	return []ListEmailsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+		"status_desc",
+		"status_asc",
+		"mail_from_desc",
+		"mail_from_asc",
+		"mail_rcpt_desc",
+		"mail_rcpt_asc",
+		"subject_desc",
+		"subject_asc",
+	}
+}
+
 func (enum ListEmailsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -342,6 +423,13 @@ func (enum ListWebhookEventsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListWebhookEventsRequestOrderBy) Values() []ListWebhookEventsRequestOrderBy {
+	return []ListWebhookEventsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
 func (enum ListWebhookEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -370,6 +458,13 @@ func (enum ListWebhooksRequestOrderBy) String() string {
 		return "created_at_desc"
 	}
 	return string(enum)
+}
+
+func (enum ListWebhooksRequestOrderBy) Values() []ListWebhooksRequestOrderBy {
+	return []ListWebhooksRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
 }
 
 func (enum ListWebhooksRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -408,6 +503,16 @@ func (enum WebhookEventStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum WebhookEventStatus) Values() []WebhookEventStatus {
+	return []WebhookEventStatus{
+		"unknown_status",
+		"waiting",
+		"sending",
+		"sent",
+		"error",
+	}
 }
 
 func (enum WebhookEventStatus) MarshalJSON() ([]byte, error) {
@@ -450,6 +555,18 @@ func (enum WebhookEventType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum WebhookEventType) Values() []WebhookEventType {
+	return []WebhookEventType{
+		"unknown_type",
+		"email_queued",
+		"email_dropped",
+		"email_deferred",
+		"email_delivered",
+		"email_spam",
+		"email_mailbox_not_found",
+	}
 }
 
 func (enum WebhookEventType) MarshalJSON() ([]byte, error) {

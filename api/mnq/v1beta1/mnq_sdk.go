@@ -64,6 +64,17 @@ func (enum ListNatsAccountsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListNatsAccountsRequestOrderBy) Values() []ListNatsAccountsRequestOrderBy {
+	return []ListNatsAccountsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListNatsAccountsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -102,6 +113,17 @@ func (enum ListNatsCredentialsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListNatsCredentialsRequestOrderBy) Values() []ListNatsCredentialsRequestOrderBy {
+	return []ListNatsCredentialsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListNatsCredentialsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -144,6 +166,17 @@ func (enum ListSnsCredentialsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListSnsCredentialsRequestOrderBy) Values() []ListSnsCredentialsRequestOrderBy {
+	return []ListSnsCredentialsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListSnsCredentialsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -184,6 +217,17 @@ func (enum ListSqsCredentialsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListSqsCredentialsRequestOrderBy) Values() []ListSqsCredentialsRequestOrderBy {
+	return []ListSqsCredentialsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListSqsCredentialsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -218,6 +262,14 @@ func (enum SnsInfoStatus) String() string {
 	return string(enum)
 }
 
+func (enum SnsInfoStatus) Values() []SnsInfoStatus {
+	return []SnsInfoStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+	}
+}
+
 func (enum SnsInfoStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -250,6 +302,14 @@ func (enum SqsInfoStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum SqsInfoStatus) Values() []SqsInfoStatus {
+	return []SqsInfoStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+	}
 }
 
 func (enum SqsInfoStatus) MarshalJSON() ([]byte, error) {

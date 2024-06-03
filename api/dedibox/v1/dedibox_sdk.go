@@ -56,6 +56,15 @@ func (enum AttachFailoverIPToMacAddressRequestMacType) String() string {
 	return string(enum)
 }
 
+func (enum AttachFailoverIPToMacAddressRequestMacType) Values() []AttachFailoverIPToMacAddressRequestMacType {
+	return []AttachFailoverIPToMacAddressRequestMacType{
+		"mac_type_unknown",
+		"vmware",
+		"kvm",
+		"xen",
+	}
+}
+
 func (enum AttachFailoverIPToMacAddressRequestMacType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -86,6 +95,15 @@ func (enum BMCAccessStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum BMCAccessStatus) Values() []BMCAccessStatus {
+	return []BMCAccessStatus{
+		"unknown",
+		"creating",
+		"created",
+		"deleting",
+	}
 }
 
 func (enum BMCAccessStatus) MarshalJSON() ([]byte, error) {
@@ -120,6 +138,15 @@ func (enum BackupStatus) String() string {
 	return string(enum)
 }
 
+func (enum BackupStatus) Values() []BackupStatus {
+	return []BackupStatus{
+		"unknown_backup_status",
+		"uninitialized",
+		"inactive",
+		"ready",
+	}
+}
+
 func (enum BackupStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -149,6 +176,14 @@ func (enum FailoverBlockVersion) String() string {
 		return "unknown_version"
 	}
 	return string(enum)
+}
+
+func (enum FailoverBlockVersion) Values() []FailoverBlockVersion {
+	return []FailoverBlockVersion{
+		"unknown_version",
+		"ipv4",
+		"ipv6",
+	}
 }
 
 func (enum FailoverBlockVersion) MarshalJSON() ([]byte, error) {
@@ -183,6 +218,15 @@ func (enum FailoverIPInterfaceType) String() string {
 	return string(enum)
 }
 
+func (enum FailoverIPInterfaceType) Values() []FailoverIPInterfaceType {
+	return []FailoverIPInterfaceType{
+		"unknown",
+		"normal",
+		"ipmi",
+		"virtual",
+	}
+}
+
 func (enum FailoverIPInterfaceType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -213,6 +257,15 @@ func (enum FailoverIPStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum FailoverIPStatus) Values() []FailoverIPStatus {
+	return []FailoverIPStatus{
+		"unknown_status",
+		"ready",
+		"busy",
+		"locked",
+	}
 }
 
 func (enum FailoverIPStatus) MarshalJSON() ([]byte, error) {
@@ -246,6 +299,14 @@ func (enum FailoverIPVersion) String() string {
 	return string(enum)
 }
 
+func (enum FailoverIPVersion) Values() []FailoverIPVersion {
+	return []FailoverIPVersion{
+		"unknown_version",
+		"ipv4",
+		"ipv6",
+	}
+}
+
 func (enum FailoverIPVersion) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -275,6 +336,14 @@ func (enum GetRpnStatusResponseStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum GetRpnStatusResponseStatus) Values() []GetRpnStatusResponseStatus {
+	return []GetRpnStatusResponseStatus{
+		"unknown_status",
+		"busy",
+		"operational",
+	}
 }
 
 func (enum GetRpnStatusResponseStatus) MarshalJSON() ([]byte, error) {
@@ -314,6 +383,20 @@ func (enum IPSemantic) String() string {
 	return string(enum)
 }
 
+func (enum IPSemantic) Values() []IPSemantic {
+	return []IPSemantic{
+		"unknown",
+		"proxad",
+		"ext",
+		"public",
+		"private",
+		"ipmi",
+		"adm",
+		"redirect",
+		"migration",
+	}
+}
+
 func (enum IPSemantic) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -346,6 +429,15 @@ func (enum IPStatus) String() string {
 	return string(enum)
 }
 
+func (enum IPStatus) Values() []IPStatus {
+	return []IPStatus{
+		"unknown_status",
+		"ready",
+		"busy",
+		"locked",
+	}
+}
+
 func (enum IPStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -374,6 +466,13 @@ func (enum IPVersion) String() string {
 		return "ipv4"
 	}
 	return string(enum)
+}
+
+func (enum IPVersion) Values() []IPVersion {
+	return []IPVersion{
+		"ipv4",
+		"ipv6",
+	}
 }
 
 func (enum IPVersion) MarshalJSON() ([]byte, error) {
@@ -405,6 +504,14 @@ func (enum IPv6BlockDelegationStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum IPv6BlockDelegationStatus) Values() []IPv6BlockDelegationStatus {
+	return []IPv6BlockDelegationStatus{
+		"unknown_status",
+		"updating",
+		"done",
+	}
 }
 
 func (enum IPv6BlockDelegationStatus) MarshalJSON() ([]byte, error) {
@@ -441,6 +548,17 @@ func (enum InvoicePaymentMethod) String() string {
 	return string(enum)
 }
 
+func (enum InvoicePaymentMethod) Values() []InvoicePaymentMethod {
+	return []InvoicePaymentMethod{
+		"unknown_payment_method",
+		"credit_card",
+		"amex",
+		"paypal",
+		"transfer",
+		"direct_debit",
+	}
+}
+
 func (enum InvoicePaymentMethod) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -473,6 +591,15 @@ func (enum InvoiceStatus) String() string {
 	return string(enum)
 }
 
+func (enum InvoiceStatus) Values() []InvoiceStatus {
+	return []InvoiceStatus{
+		"unknown_invoice_status",
+		"unpaid",
+		"paid",
+		"errored",
+	}
+}
+
 func (enum InvoiceStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -501,6 +628,13 @@ func (enum ListFailoverIPsRequestOrderBy) String() string {
 		return "ip_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListFailoverIPsRequestOrderBy) Values() []ListFailoverIPsRequestOrderBy {
+	return []ListFailoverIPsRequestOrderBy{
+		"ip_asc",
+		"ip_desc",
+	}
 }
 
 func (enum ListFailoverIPsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -533,6 +667,13 @@ func (enum ListInvoicesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListInvoicesRequestOrderBy) Values() []ListInvoicesRequestOrderBy {
+	return []ListInvoicesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListInvoicesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -563,6 +704,15 @@ func (enum ListOSRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListOSRequestOrderBy) Values() []ListOSRequestOrderBy {
+	return []ListOSRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"released_at_asc",
+		"released_at_desc",
+	}
 }
 
 func (enum ListOSRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -599,6 +749,17 @@ func (enum ListOffersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListOffersRequestOrderBy) Values() []ListOffersRequestOrderBy {
+	return []ListOffersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+		"price_asc",
+		"price_desc",
+	}
+}
+
 func (enum ListOffersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -627,6 +788,13 @@ func (enum ListRefundsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRefundsRequestOrderBy) Values() []ListRefundsRequestOrderBy {
+	return []ListRefundsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRefundsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -659,6 +827,13 @@ func (enum ListRpnCapableSanServersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnCapableSanServersRequestOrderBy) Values() []ListRpnCapableSanServersRequestOrderBy {
+	return []ListRpnCapableSanServersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnCapableSanServersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -687,6 +862,13 @@ func (enum ListRpnCapableServersRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRpnCapableServersRequestOrderBy) Values() []ListRpnCapableServersRequestOrderBy {
+	return []ListRpnCapableServersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRpnCapableServersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -719,6 +901,13 @@ func (enum ListRpnGroupMembersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnGroupMembersRequestOrderBy) Values() []ListRpnGroupMembersRequestOrderBy {
+	return []ListRpnGroupMembersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnGroupMembersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -747,6 +936,13 @@ func (enum ListRpnGroupsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRpnGroupsRequestOrderBy) Values() []ListRpnGroupsRequestOrderBy {
+	return []ListRpnGroupsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRpnGroupsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -779,6 +975,13 @@ func (enum ListRpnInvitesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnInvitesRequestOrderBy) Values() []ListRpnInvitesRequestOrderBy {
+	return []ListRpnInvitesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnInvitesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -807,6 +1010,13 @@ func (enum ListRpnSansRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRpnSansRequestOrderBy) Values() []ListRpnSansRequestOrderBy {
+	return []ListRpnSansRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRpnSansRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -839,6 +1049,13 @@ func (enum ListRpnServerCapabilitiesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnServerCapabilitiesRequestOrderBy) Values() []ListRpnServerCapabilitiesRequestOrderBy {
+	return []ListRpnServerCapabilitiesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnServerCapabilitiesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -867,6 +1084,13 @@ func (enum ListRpnV2CapableResourcesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRpnV2CapableResourcesRequestOrderBy) Values() []ListRpnV2CapableResourcesRequestOrderBy {
+	return []ListRpnV2CapableResourcesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRpnV2CapableResourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -899,6 +1123,13 @@ func (enum ListRpnV2GroupLogsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnV2GroupLogsRequestOrderBy) Values() []ListRpnV2GroupLogsRequestOrderBy {
+	return []ListRpnV2GroupLogsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnV2GroupLogsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -929,6 +1160,13 @@ func (enum ListRpnV2GroupsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnV2GroupsRequestOrderBy) Values() []ListRpnV2GroupsRequestOrderBy {
+	return []ListRpnV2GroupsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRpnV2GroupsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -957,6 +1195,13 @@ func (enum ListRpnV2MembersRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListRpnV2MembersRequestOrderBy) Values() []ListRpnV2MembersRequestOrderBy {
+	return []ListRpnV2MembersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListRpnV2MembersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -990,6 +1235,14 @@ func (enum ListRpnV2MembersRequestType) String() string {
 	return string(enum)
 }
 
+func (enum ListRpnV2MembersRequestType) Values() []ListRpnV2MembersRequestType {
+	return []ListRpnV2MembersRequestType{
+		"unknown_type",
+		"rpnv1_group",
+		"server",
+	}
+}
+
 func (enum ListRpnV2MembersRequestType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1018,6 +1271,13 @@ func (enum ListServerDisksRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListServerDisksRequestOrderBy) Values() []ListServerDisksRequestOrderBy {
+	return []ListServerDisksRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListServerDisksRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -1050,6 +1310,13 @@ func (enum ListServerEventsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListServerEventsRequestOrderBy) Values() []ListServerEventsRequestOrderBy {
+	return []ListServerEventsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListServerEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1080,6 +1347,13 @@ func (enum ListServersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListServersRequestOrderBy) Values() []ListServersRequestOrderBy {
+	return []ListServersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListServersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1108,6 +1382,13 @@ func (enum ListServicesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListServicesRequestOrderBy) Values() []ListServicesRequestOrderBy {
+	return []ListServicesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListServicesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -1148,6 +1429,21 @@ func (enum LogAction) String() string {
 	return string(enum)
 }
 
+func (enum LogAction) Values() []LogAction {
+	return []LogAction{
+		"unknown_log_action",
+		"group_created",
+		"group_deleted",
+		"members_added",
+		"members_deleted",
+		"description_updated",
+		"rpnv1_members_added",
+		"rpnv1_members_deleted",
+		"vlan_updated",
+		"vlan_updated_on_all_servers",
+	}
+}
+
 func (enum LogAction) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1180,6 +1476,15 @@ func (enum LogStatus) String() string {
 	return string(enum)
 }
 
+func (enum LogStatus) Values() []LogStatus {
+	return []LogStatus{
+		"unknown_log_status",
+		"success",
+		"in_progress",
+		"error",
+	}
+}
+
 func (enum LogStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1209,6 +1514,14 @@ func (enum MemoryType) String() string {
 		return "ddr2"
 	}
 	return string(enum)
+}
+
+func (enum MemoryType) Values() []MemoryType {
+	return []MemoryType{
+		"ddr2",
+		"ddr3",
+		"ddr4",
+	}
 }
 
 func (enum MemoryType) MarshalJSON() ([]byte, error) {
@@ -1243,6 +1556,15 @@ func (enum NetworkInterfaceInterfaceType) String() string {
 	return string(enum)
 }
 
+func (enum NetworkInterfaceInterfaceType) Values() []NetworkInterfaceInterfaceType {
+	return []NetworkInterfaceInterfaceType{
+		"unknown",
+		"normal",
+		"ipmi",
+		"virtual",
+	}
+}
+
 func (enum NetworkInterfaceInterfaceType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1274,6 +1596,16 @@ func (enum OSArch) String() string {
 		return "unknown_arch"
 	}
 	return string(enum)
+}
+
+func (enum OSArch) Values() []OSArch {
+	return []OSArch{
+		"unknown_arch",
+		"amd64",
+		"x86",
+		"arm",
+		"arm64",
+	}
 }
 
 func (enum OSArch) MarshalJSON() ([]byte, error) {
@@ -1311,6 +1643,18 @@ func (enum OSType) String() string {
 	return string(enum)
 }
 
+func (enum OSType) Values() []OSType {
+	return []OSType{
+		"unknown_type",
+		"server",
+		"virtu",
+		"panel",
+		"desktop",
+		"custom",
+		"rescue",
+	}
+}
+
 func (enum OSType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1340,6 +1684,14 @@ func (enum OfferAntiDosInfoType) String() string {
 		return "minimal"
 	}
 	return string(enum)
+}
+
+func (enum OfferAntiDosInfoType) Values() []OfferAntiDosInfoType {
+	return []OfferAntiDosInfoType{
+		"minimal",
+		"preventive",
+		"curative",
+	}
 }
 
 func (enum OfferAntiDosInfoType) MarshalJSON() ([]byte, error) {
@@ -1378,6 +1730,19 @@ func (enum OfferCatalog) String() string {
 	return string(enum)
 }
 
+func (enum OfferCatalog) Values() []OfferCatalog {
+	return []OfferCatalog{
+		"all",
+		"default",
+		"beta",
+		"reseller",
+		"premium",
+		"volume",
+		"admin",
+		"inactive",
+	}
+}
+
 func (enum OfferCatalog) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1406,6 +1771,13 @@ func (enum OfferPaymentFrequency) String() string {
 		return "monthly"
 	}
 	return string(enum)
+}
+
+func (enum OfferPaymentFrequency) Values() []OfferPaymentFrequency {
+	return []OfferPaymentFrequency{
+		"monthly",
+		"oneshot",
+	}
 }
 
 func (enum OfferPaymentFrequency) MarshalJSON() ([]byte, error) {
@@ -1438,6 +1810,13 @@ func (enum OfferSANInfoType) String() string {
 	return string(enum)
 }
 
+func (enum OfferSANInfoType) Values() []OfferSANInfoType {
+	return []OfferSANInfoType{
+		"hdd",
+		"ssd",
+	}
+}
+
 func (enum OfferSANInfoType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1467,6 +1846,14 @@ func (enum OfferServerInfoStock) String() string {
 		return "empty"
 	}
 	return string(enum)
+}
+
+func (enum OfferServerInfoStock) Values() []OfferServerInfoStock {
+	return []OfferServerInfoStock{
+		"empty",
+		"low",
+		"available",
+	}
 }
 
 func (enum OfferServerInfoStock) MarshalJSON() ([]byte, error) {
@@ -1507,6 +1894,21 @@ func (enum PartitionFileSystem) String() string {
 	return string(enum)
 }
 
+func (enum PartitionFileSystem) Values() []PartitionFileSystem {
+	return []PartitionFileSystem{
+		"unknown",
+		"efi",
+		"swap",
+		"ext4",
+		"ext3",
+		"ext2",
+		"xfs",
+		"ntfs",
+		"fat32",
+		"ufs",
+	}
+}
+
 func (enum PartitionFileSystem) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1536,6 +1938,14 @@ func (enum PartitionType) String() string {
 		return "primary"
 	}
 	return string(enum)
+}
+
+func (enum PartitionType) Values() []PartitionType {
+	return []PartitionType{
+		"primary",
+		"extended",
+		"logical",
+	}
 }
 
 func (enum PartitionType) MarshalJSON() ([]byte, error) {
@@ -1572,6 +1982,17 @@ func (enum RaidArrayRaidLevel) String() string {
 	return string(enum)
 }
 
+func (enum RaidArrayRaidLevel) Values() []RaidArrayRaidLevel {
+	return []RaidArrayRaidLevel{
+		"no_raid",
+		"raid0",
+		"raid1",
+		"raid5",
+		"raid6",
+		"raid10",
+	}
+}
+
 func (enum RaidArrayRaidLevel) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1603,6 +2024,16 @@ func (enum RefundMethod) String() string {
 		return "unknown_refund_method"
 	}
 	return string(enum)
+}
+
+func (enum RefundMethod) Values() []RefundMethod {
+	return []RefundMethod{
+		"unknown_refund_method",
+		"credit_card",
+		"amex",
+		"paypal",
+		"transfer",
+	}
 }
 
 func (enum RefundMethod) MarshalJSON() ([]byte, error) {
@@ -1637,6 +2068,15 @@ func (enum RefundStatus) String() string {
 	return string(enum)
 }
 
+func (enum RefundStatus) Values() []RefundStatus {
+	return []RefundStatus{
+		"unknown_refund_status",
+		"unpaid",
+		"paid",
+		"errored",
+	}
+}
+
 func (enum RefundStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1665,6 +2105,13 @@ func (enum RescueProtocol) String() string {
 		return "vnc"
 	}
 	return string(enum)
+}
+
+func (enum RescueProtocol) Values() []RescueProtocol {
+	return []RescueProtocol{
+		"vnc",
+		"ssh",
+	}
 }
 
 func (enum RescueProtocol) MarshalJSON() ([]byte, error) {
@@ -1701,6 +2148,17 @@ func (enum RpnGroupMemberStatus) String() string {
 	return string(enum)
 }
 
+func (enum RpnGroupMemberStatus) Values() []RpnGroupMemberStatus {
+	return []RpnGroupMemberStatus{
+		"unknown_rpn_member_status",
+		"pending_invitation",
+		"active",
+		"creating",
+		"deleting",
+		"deleted",
+	}
+}
+
 func (enum RpnGroupMemberStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1732,6 +2190,14 @@ func (enum RpnGroupType) String() string {
 	return string(enum)
 }
 
+func (enum RpnGroupType) Values() []RpnGroupType {
+	return []RpnGroupType{
+		"unknown",
+		"local",
+		"shared",
+	}
+}
+
 func (enum RpnGroupType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1761,6 +2227,14 @@ func (enum RpnSanIPType) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum RpnSanIPType) Values() []RpnSanIPType {
+	return []RpnSanIPType{
+		"unknown",
+		"server_ip",
+		"rpnv2_subnet",
+	}
 }
 
 func (enum RpnSanIPType) MarshalJSON() ([]byte, error) {
@@ -1796,6 +2270,16 @@ func (enum RpnSanStatus) String() string {
 	return string(enum)
 }
 
+func (enum RpnSanStatus) Values() []RpnSanStatus {
+	return []RpnSanStatus{
+		"unknown_status",
+		"creating",
+		"active",
+		"deleting",
+		"maintenance",
+	}
+}
+
 func (enum RpnSanStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1829,6 +2313,16 @@ func (enum RpnV2GroupStatus) String() string {
 	return string(enum)
 }
 
+func (enum RpnV2GroupStatus) Values() []RpnV2GroupStatus {
+	return []RpnV2GroupStatus{
+		"unknown_group_status",
+		"creating",
+		"active",
+		"updating",
+		"deleting",
+	}
+}
+
 func (enum RpnV2GroupStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1858,6 +2352,14 @@ func (enum RpnV2GroupType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum RpnV2GroupType) Values() []RpnV2GroupType {
+	return []RpnV2GroupType{
+		"unknown_type",
+		"standard",
+		"qinq",
+	}
 }
 
 func (enum RpnV2GroupType) MarshalJSON() ([]byte, error) {
@@ -1893,6 +2395,16 @@ func (enum RpnV2MemberStatus) String() string {
 	return string(enum)
 }
 
+func (enum RpnV2MemberStatus) Values() []RpnV2MemberStatus {
+	return []RpnV2MemberStatus{
+		"unknown_member_status",
+		"creating",
+		"active",
+		"updating",
+		"deleting",
+	}
+}
+
 func (enum RpnV2MemberStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -1925,6 +2437,17 @@ func (enum ServerDiskType) String() string {
 		return "sata"
 	}
 	return string(enum)
+}
+
+func (enum ServerDiskType) Values() []ServerDiskType {
+	return []ServerDiskType{
+		"sata",
+		"ssd",
+		"sas",
+		"sshd",
+		"usb",
+		"nvme",
+	}
 }
 
 func (enum ServerDiskType) MarshalJSON() ([]byte, error) {
@@ -1965,6 +2488,21 @@ func (enum ServerInstallStatus) String() string {
 	return string(enum)
 }
 
+func (enum ServerInstallStatus) Values() []ServerInstallStatus {
+	return []ServerInstallStatus{
+		"unknown",
+		"booting",
+		"setting_up_raid",
+		"partitioning",
+		"formatting",
+		"installing",
+		"configuring",
+		"configuring_bootloader",
+		"rebooting",
+		"installed",
+	}
+}
+
 func (enum ServerInstallStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -2002,6 +2540,20 @@ func (enum ServerStatus) String() string {
 	return string(enum)
 }
 
+func (enum ServerStatus) Values() []ServerStatus {
+	return []ServerStatus{
+		"unknown",
+		"delivering",
+		"installing",
+		"ready",
+		"stopped",
+		"error",
+		"locked",
+		"rescue",
+		"busy",
+	}
+}
+
 func (enum ServerStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -2031,6 +2583,14 @@ func (enum ServiceLevelLevel) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum ServiceLevelLevel) Values() []ServiceLevelLevel {
+	return []ServiceLevelLevel{
+		"unknown",
+		"basic",
+		"business",
+	}
 }
 
 func (enum ServiceLevelLevel) MarshalJSON() ([]byte, error) {
@@ -2067,6 +2627,17 @@ func (enum ServiceProvisioningStatus) String() string {
 	return string(enum)
 }
 
+func (enum ServiceProvisioningStatus) Values() []ServiceProvisioningStatus {
+	return []ServiceProvisioningStatus{
+		"unknown",
+		"delivering",
+		"ready",
+		"error",
+		"expiring",
+		"expired",
+	}
+}
+
 func (enum ServiceProvisioningStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -2096,6 +2667,14 @@ func (enum ServiceType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum ServiceType) Values() []ServiceType {
+	return []ServiceType{
+		"unknown_type",
+		"service",
+		"order",
+	}
 }
 
 func (enum ServiceType) MarshalJSON() ([]byte, error) {

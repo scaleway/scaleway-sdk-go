@@ -54,6 +54,13 @@ func (enum ListNamesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListNamesRequestOrderBy) Values() []ListNamesRequestOrderBy {
+	return []ListNamesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListNamesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -84,6 +91,13 @@ func (enum ListPinsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPinsRequestOrderBy) Values() []ListPinsRequestOrderBy {
+	return []ListPinsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListPinsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -112,6 +126,13 @@ func (enum ListVolumesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListVolumesRequestOrderBy) Values() []ListVolumesRequestOrderBy {
+	return []ListVolumesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListVolumesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -145,6 +166,16 @@ func (enum NameStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum NameStatus) Values() []NameStatus {
+	return []NameStatus{
+		"unknown_status",
+		"queued",
+		"publishing",
+		"failed",
+		"published",
+	}
 }
 
 func (enum NameStatus) MarshalJSON() ([]byte, error) {
@@ -196,6 +227,32 @@ func (enum PinDetails) String() string {
 	return string(enum)
 }
 
+func (enum PinDetails) Values() []PinDetails {
+	return []PinDetails{
+		"unknown_details",
+		"pinning_looking_for_provider",
+		"pinning_in_progress",
+		"pinning_blocks_fetched",
+		"pinning_fetching_url_data",
+		"pinned_ok",
+		"unpinned_ok",
+		"unpinning_in_progress",
+		"failed_contains_banned_cid",
+		"failed_pinning",
+		"failed_pinning_no_provider",
+		"failed_pinning_bad_cid_format",
+		"failed_pinning_timeout",
+		"failed_pinning_too_big_content",
+		"failed_pinning_unreachable_url",
+		"failed_pinning_bad_url_format",
+		"failed_pinning_no_url_content_length",
+		"failed_pinning_bad_url_status_code",
+		"failed_unpinning",
+		"checking_coherence",
+		"rescheduled",
+	}
+}
+
 func (enum PinDetails) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -227,6 +284,16 @@ func (enum PinStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum PinStatus) Values() []PinStatus {
+	return []PinStatus{
+		"unknown_status",
+		"queued",
+		"pinning",
+		"failed",
+		"pinned",
+	}
 }
 
 func (enum PinStatus) MarshalJSON() ([]byte, error) {

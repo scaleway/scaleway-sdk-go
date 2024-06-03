@@ -55,6 +55,14 @@ func (enum DeviceMessageFiltersRulePolicy) String() string {
 	return string(enum)
 }
 
+func (enum DeviceMessageFiltersRulePolicy) Values() []DeviceMessageFiltersRulePolicy {
+	return []DeviceMessageFiltersRulePolicy{
+		"unknown",
+		"accept",
+		"reject",
+	}
+}
+
 func (enum DeviceMessageFiltersRulePolicy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -85,6 +93,15 @@ func (enum DeviceStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum DeviceStatus) Values() []DeviceStatus {
+	return []DeviceStatus{
+		"unknown",
+		"error",
+		"enabled",
+		"disabled",
+	}
 }
 
 func (enum DeviceStatus) MarshalJSON() ([]byte, error) {
@@ -119,6 +136,15 @@ func (enum HubProductPlan) String() string {
 	return string(enum)
 }
 
+func (enum HubProductPlan) Values() []HubProductPlan {
+	return []HubProductPlan{
+		"plan_unknown",
+		"plan_shared",
+		"plan_dedicated",
+		"plan_ha",
+	}
+}
+
 func (enum HubProductPlan) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -151,6 +177,17 @@ func (enum HubStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum HubStatus) Values() []HubStatus {
+	return []HubStatus{
+		"unknown",
+		"error",
+		"enabling",
+		"ready",
+		"disabling",
+		"disabled",
+	}
 }
 
 func (enum HubStatus) MarshalJSON() ([]byte, error) {
@@ -193,6 +230,23 @@ func (enum ListDevicesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDevicesRequestOrderBy) Values() []ListDevicesRequestOrderBy {
+	return []ListDevicesRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"hub_id_asc",
+		"hub_id_desc",
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"allow_insecure_asc",
+		"allow_insecure_desc",
+	}
+}
+
 func (enum ListDevicesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -231,6 +285,21 @@ func (enum ListHubsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListHubsRequestOrderBy) Values() []ListHubsRequestOrderBy {
+	return []ListHubsRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"product_plan_asc",
+		"product_plan_desc",
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+	}
+}
+
 func (enum ListHubsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -263,6 +332,17 @@ func (enum ListNetworksRequestOrderBy) String() string {
 		return "name_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListNetworksRequestOrderBy) Values() []ListNetworksRequestOrderBy {
+	return []ListNetworksRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -301,6 +381,19 @@ func (enum ListRoutesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListRoutesRequestOrderBy) Values() []ListRoutesRequestOrderBy {
+	return []ListRoutesRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"hub_id_asc",
+		"hub_id_desc",
+		"type_asc",
+		"type_desc",
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListRoutesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -332,6 +425,14 @@ func (enum NetworkNetworkType) String() string {
 	return string(enum)
 }
 
+func (enum NetworkNetworkType) Values() []NetworkNetworkType {
+	return []NetworkNetworkType{
+		"unknown",
+		"sigfox",
+		"rest",
+	}
+}
+
 func (enum NetworkNetworkType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -361,6 +462,14 @@ func (enum RouteDatabaseConfigEngine) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum RouteDatabaseConfigEngine) Values() []RouteDatabaseConfigEngine {
+	return []RouteDatabaseConfigEngine{
+		"unknown",
+		"postgresql",
+		"mysql",
+	}
 }
 
 func (enum RouteDatabaseConfigEngine) MarshalJSON() ([]byte, error) {
@@ -397,6 +506,17 @@ func (enum RouteRestConfigHTTPVerb) String() string {
 	return string(enum)
 }
 
+func (enum RouteRestConfigHTTPVerb) Values() []RouteRestConfigHTTPVerb {
+	return []RouteRestConfigHTTPVerb{
+		"unknown",
+		"get",
+		"post",
+		"put",
+		"patch",
+		"delete",
+	}
+}
+
 func (enum RouteRestConfigHTTPVerb) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -429,6 +549,15 @@ func (enum RouteRouteType) String() string {
 	return string(enum)
 }
 
+func (enum RouteRouteType) Values() []RouteRouteType {
+	return []RouteRouteType{
+		"unknown",
+		"s3",
+		"database",
+		"rest",
+	}
+}
+
 func (enum RouteRouteType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -458,6 +587,14 @@ func (enum RouteS3ConfigS3Strategy) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum RouteS3ConfigS3Strategy) Values() []RouteS3ConfigS3Strategy {
+	return []RouteS3ConfigS3Strategy{
+		"unknown",
+		"per_topic",
+		"per_message",
+	}
 }
 
 func (enum RouteS3ConfigS3Strategy) MarshalJSON() ([]byte, error) {

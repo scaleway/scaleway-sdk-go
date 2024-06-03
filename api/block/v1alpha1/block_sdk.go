@@ -60,6 +60,15 @@ func (enum ListSnapshotsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListSnapshotsRequestOrderBy) Values() []ListSnapshotsRequestOrderBy {
+	return []ListSnapshotsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListSnapshotsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -94,6 +103,15 @@ func (enum ListVolumesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListVolumesRequestOrderBy) Values() []ListVolumesRequestOrderBy {
+	return []ListVolumesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListVolumesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -138,6 +156,18 @@ func (enum ReferenceStatus) String() string {
 	return string(enum)
 }
 
+func (enum ReferenceStatus) Values() []ReferenceStatus {
+	return []ReferenceStatus{
+		"unknown_status",
+		"attaching",
+		"attached",
+		"detaching",
+		"detached",
+		"creating",
+		"error",
+	}
+}
+
 func (enum ReferenceStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -172,6 +202,15 @@ func (enum ReferenceType) String() string {
 		return "unknown_type"
 	}
 	return string(enum)
+}
+
+func (enum ReferenceType) Values() []ReferenceType {
+	return []ReferenceType{
+		"unknown_type",
+		"link",
+		"exclusive",
+		"read_only",
+	}
 }
 
 func (enum ReferenceType) MarshalJSON() ([]byte, error) {
@@ -218,6 +257,20 @@ func (enum SnapshotStatus) String() string {
 	return string(enum)
 }
 
+func (enum SnapshotStatus) Values() []SnapshotStatus {
+	return []SnapshotStatus{
+		"unknown_status",
+		"creating",
+		"available",
+		"error",
+		"deleting",
+		"deleted",
+		"in_use",
+		"locked",
+		"exporting",
+	}
+}
+
 func (enum SnapshotStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -252,6 +305,15 @@ func (enum StorageClass) String() string {
 		return "unknown_storage_class"
 	}
 	return string(enum)
+}
+
+func (enum StorageClass) Values() []StorageClass {
+	return []StorageClass{
+		"unknown_storage_class",
+		"unspecified",
+		"bssd",
+		"sbs",
+	}
 }
 
 func (enum StorageClass) MarshalJSON() ([]byte, error) {
@@ -300,6 +362,22 @@ func (enum VolumeStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum VolumeStatus) Values() []VolumeStatus {
+	return []VolumeStatus{
+		"unknown_status",
+		"creating",
+		"available",
+		"in_use",
+		"deleting",
+		"deleted",
+		"resizing",
+		"error",
+		"snapshotting",
+		"locked",
+		"updating",
+	}
 }
 
 func (enum VolumeStatus) MarshalJSON() ([]byte, error) {

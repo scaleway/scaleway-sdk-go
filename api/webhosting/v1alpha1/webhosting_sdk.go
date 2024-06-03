@@ -56,6 +56,14 @@ func (enum DNSRecordStatus) String() string {
 	return string(enum)
 }
 
+func (enum DNSRecordStatus) Values() []DNSRecordStatus {
+	return []DNSRecordStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
 func (enum DNSRecordStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -91,6 +99,18 @@ func (enum DNSRecordType) String() string {
 	return string(enum)
 }
 
+func (enum DNSRecordType) Values() []DNSRecordType {
+	return []DNSRecordType{
+		"unknown_type",
+		"a",
+		"cname",
+		"mx",
+		"txt",
+		"ns",
+		"aaaa",
+	}
+}
+
 func (enum DNSRecordType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -122,6 +142,14 @@ func (enum DNSRecordsStatus) String() string {
 	return string(enum)
 }
 
+func (enum DNSRecordsStatus) Values() []DNSRecordsStatus {
+	return []DNSRecordsStatus{
+		"unknown",
+		"valid",
+		"invalid",
+	}
+}
+
 func (enum DNSRecordsStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -151,6 +179,14 @@ func (enum HostingDNSStatus) String() string {
 		return "unknown_dns_status"
 	}
 	return string(enum)
+}
+
+func (enum HostingDNSStatus) Values() []HostingDNSStatus {
+	return []HostingDNSStatus{
+		"unknown_dns_status",
+		"valid",
+		"invalid",
+	}
 }
 
 func (enum HostingDNSStatus) MarshalJSON() ([]byte, error) {
@@ -188,6 +224,18 @@ func (enum HostingStatus) String() string {
 	return string(enum)
 }
 
+func (enum HostingStatus) Values() []HostingStatus {
+	return []HostingStatus{
+		"unknown_status",
+		"delivering",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"migrating",
+	}
+}
+
 func (enum HostingStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -218,6 +266,13 @@ func (enum ListHostingsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListHostingsRequestOrderBy) Values() []ListHostingsRequestOrderBy {
+	return []ListHostingsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListHostingsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -245,6 +300,12 @@ func (enum ListOffersRequestOrderBy) String() string {
 		return "price_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListOffersRequestOrderBy) Values() []ListOffersRequestOrderBy {
+	return []ListOffersRequestOrderBy{
+		"price_asc",
+	}
 }
 
 func (enum ListOffersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -278,6 +339,14 @@ func (enum NameserverStatus) String() string {
 	return string(enum)
 }
 
+func (enum NameserverStatus) Values() []NameserverStatus {
+	return []NameserverStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
 func (enum NameserverStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -308,6 +377,15 @@ func (enum OfferQuotaWarning) String() string {
 		return "unknown_quota_warning"
 	}
 	return string(enum)
+}
+
+func (enum OfferQuotaWarning) Values() []OfferQuotaWarning {
+	return []OfferQuotaWarning{
+		"unknown_quota_warning",
+		"email_count_exceeded",
+		"database_count_exceeded",
+		"disk_usage_exceeded",
+	}
 }
 
 func (enum OfferQuotaWarning) MarshalJSON() ([]byte, error) {

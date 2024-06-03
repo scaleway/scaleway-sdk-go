@@ -56,6 +56,15 @@ func (enum DatabaseBackupStatus) String() string {
 	return string(enum)
 }
 
+func (enum DatabaseBackupStatus) Values() []DatabaseBackupStatus {
+	return []DatabaseBackupStatus{
+		"unknown_status",
+		"error",
+		"ready",
+		"locked",
+	}
+}
+
 func (enum DatabaseBackupStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -91,6 +100,18 @@ func (enum DatabaseStatus) String() string {
 	return string(enum)
 }
 
+func (enum DatabaseStatus) Values() []DatabaseStatus {
+	return []DatabaseStatus{
+		"unknown_status",
+		"error",
+		"creating",
+		"ready",
+		"deleting",
+		"restoring",
+		"locked",
+	}
+}
+
 func (enum DatabaseStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -119,6 +140,13 @@ func (enum ListDatabaseBackupsRequestOrderBy) String() string {
 		return "created_at_desc"
 	}
 	return string(enum)
+}
+
+func (enum ListDatabaseBackupsRequestOrderBy) Values() []ListDatabaseBackupsRequestOrderBy {
+	return []ListDatabaseBackupsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
 }
 
 func (enum ListDatabaseBackupsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -151,6 +179,15 @@ func (enum ListDatabasesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListDatabasesRequestOrderBy) Values() []ListDatabasesRequestOrderBy {
+	return []ListDatabasesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListDatabasesRequestOrderBy) MarshalJSON() ([]byte, error) {
