@@ -337,6 +337,9 @@ type Deployment struct {
 	// ModelName: the inference model used for the deployment.
 	ModelName string `json:"model_name"`
 
+	// ModelID: ID of the model used for the deployment.
+	ModelID string `json:"model_id"`
+
 	// CreatedAt: creation date of the deployment.
 	CreatedAt *time.Time `json:"created_at"`
 
