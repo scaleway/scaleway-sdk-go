@@ -2741,7 +2741,7 @@ type OfferStorageInfo struct {
 // IP: ip.
 type IP struct {
 	// IPID: ID of the IP.
-	IPID string `json:"ip_id"`
+	IPID uint64 `json:"ip_id"`
 
 	// Address: address of the IP.
 	Address net.IP `json:"address"`
