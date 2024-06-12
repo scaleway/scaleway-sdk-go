@@ -249,6 +249,13 @@ type JobRun struct {
 	Region scw.Region `json:"region"`
 }
 
+// Resource: resource.
+type Resource struct {
+	CPULimit uint32 `json:"cpu_limit"`
+
+	MemoryLimit uint32 `json:"memory_limit"`
+}
+
 // UpdateJobDefinitionRequestCronScheduleConfig: update job definition request cron schedule config.
 type UpdateJobDefinitionRequestCronScheduleConfig struct {
 	Schedule *string `json:"schedule"`
@@ -407,6 +414,17 @@ func (r *ListJobRunsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.JobRuns = append(r.JobRuns, results.JobRuns...)
 	r.TotalCount += uint64(len(results.JobRuns))
 	return uint64(len(results.JobRuns)), nil
+}
+
+// ListJobsResourcesRequest: list jobs resources request.
+type ListJobsResourcesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+}
+
+// ListJobsResourcesResponse: list jobs resources response.
+type ListJobsResourcesResponse struct {
+	Resources []*Resource `json:"resources"`
 }
 
 // StartJobDefinitionRequest: start job definition request.
@@ -807,6 +825,33 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp ListJobRunsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListJobsResources: List jobs resources for the console.
+func (s *API) ListJobsResources(req *ListJobsResourcesRequest, opts ...scw.RequestOption) (*ListJobsResourcesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/jobs-resources",
+	}
+
+	var resp ListJobsResourcesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
