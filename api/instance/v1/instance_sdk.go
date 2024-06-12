@@ -2233,8 +2233,11 @@ type CreatePrivateNICRequest struct {
 	// Tags: private NIC tags.
 	Tags []string `json:"tags,omitempty"`
 
-	// IPIDs: ip_ids defined from IPAM.
-	IPIDs []string `json:"ip_ids,omitempty"`
+	// Deprecated: IPIDs: ip_ids defined from IPAM.
+	IPIDs *[]string `json:"ip_ids,omitempty"`
+
+	// IpamIPIDs: UUID of IPAM ips, to be attached to the instance in the requested private network.
+	IpamIPIDs []string `json:"ipam_ip_ids,omitempty"`
 }
 
 // CreatePrivateNICResponse: create private nic response.
