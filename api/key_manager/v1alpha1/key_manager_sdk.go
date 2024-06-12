@@ -215,7 +215,8 @@ type KeyRotationPolicy struct {
 
 // KeyUsage: key usage.
 type KeyUsage struct {
-	// SymmetricEncryption: default value: unknown_symmetric_encryption
+	// SymmetricEncryption: algorithms used to encrypt and decrypt arbitrary payloads.
+	// Default value: unknown_symmetric_encryption
 	// Precisely one of SymmetricEncryption must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
 }
@@ -404,7 +405,7 @@ type GenerateDataKeyRequest struct {
 	// KeyID: ID of the key.
 	KeyID string `json:"-"`
 
-	// Algorithm: symmetric encryption algorithm of the data encryption key.
+	// Algorithm: encryption algorithm of the data encryption key.
 	// Default value: unknown_symmetric_encryption
 	Algorithm DataKeyAlgorithmSymmetricEncryption `json:"algorithm"`
 
