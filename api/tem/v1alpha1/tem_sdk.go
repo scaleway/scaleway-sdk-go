@@ -829,6 +829,9 @@ type WebhookEvent struct {
 	// ProjectID: ID of the Webhook Event Project.
 	ProjectID string `json:"project_id"`
 
+	// DomainID: ID of the webhook event domain.
+	DomainID string `json:"domain_id"`
+
 	// Type: type of the Webhook Event.
 	// Default value: unknown_type
 	Type WebhookEventType `json:"type"`
@@ -1180,6 +1183,24 @@ type ListWebhookEventsRequest struct {
 
 	// PageSize: requested page size. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
+
+	// EmailID: ID of the email linked to the events.
+	EmailID *string `json:"-"`
+
+	// EventTypes: list of event types linked to the events.
+	EventTypes []WebhookEventType `json:"-"`
+
+	// Statuses: list of event statuses.
+	Statuses []WebhookEventStatus `json:"-"`
+
+	// ProjectID: ID of the webhook Project.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: ID of the webhook Organization.
+	OrganizationID *string `json:"-"`
+
+	// DomainID: ID of the domain to watch for triggering events.
+	DomainID *string `json:"-"`
 }
 
 // ListWebhookEventsResponse: list webhook events response.
@@ -1851,6 +1872,12 @@ func (s *API) ListWebhookEvents(req *ListWebhookEventsRequest, opts ...scw.Reque
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "email_id", req.EmailID)
+	parameter.AddToQuery(query, "event_types", req.EventTypes)
+	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain_id", req.DomainID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
