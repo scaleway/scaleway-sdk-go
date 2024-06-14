@@ -2138,7 +2138,7 @@ type CreateLBRequest struct {
 	// Deprecated: IPID: ID of an existing flexible IP address to attach to the Load Balancer.
 	IPID *string `json:"ip_id,omitempty"`
 
-	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
+	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to the Load Balancer. Default value is `true` (assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
 
 	// AssignFlexibleIPv6: defines whether to automatically assign a flexible public IPv6 to the Load Balancer. Default value is `false` (do not assign).
@@ -3664,7 +3664,7 @@ type ZonedAPICreateLBRequest struct {
 	// Deprecated: IPID: ID of an existing flexible IP address to attach to the Load Balancer.
 	IPID *string `json:"ip_id,omitempty"`
 
-	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to lb. Default value is `false` (do not assign).
+	// AssignFlexibleIP: defines whether to automatically assign a flexible public IP to the Load Balancer. Default value is `true` (assign).
 	AssignFlexibleIP *bool `json:"assign_flexible_ip,omitempty"`
 
 	// AssignFlexibleIPv6: defines whether to automatically assign a flexible public IPv6 to the Load Balancer. Default value is `false` (do not assign).
