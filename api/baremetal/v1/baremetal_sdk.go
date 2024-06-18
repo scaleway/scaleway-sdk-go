@@ -2668,7 +2668,7 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	return &resp, nil
 }
 
-// Elastic Metal Private Network API.
+// Elastic Metal - Private Network API.
 type PrivateNetworkAPI struct {
 	client *scw.Client
 }
