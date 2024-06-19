@@ -829,3 +829,14 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestDecimal(t *testing.T) {
+	d := Decimal("1.22")
+	testhelpers.Equals(t, "1.22", d.String())
+
+	dPtr := new(Decimal)
+	testhelpers.Equals(t, "", dPtr.String())
+
+	*dPtr = "1.22"
+	testhelpers.Equals(t, "1.22", dPtr.String())
+}
