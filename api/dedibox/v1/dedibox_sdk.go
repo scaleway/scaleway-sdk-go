@@ -3585,7 +3585,7 @@ type ServerEvent struct {
 	// EventID: ID of the event.
 	EventID uint64 `json:"event_id"`
 
-	// Description: descriptiion of the event.
+	// Description: description of the event.
 	Description string `json:"description"`
 
 	// Date: date of the event.
