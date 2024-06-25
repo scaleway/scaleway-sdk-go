@@ -302,6 +302,46 @@ func (enum *FunctionRuntime) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type FunctionSandbox string
+
+const (
+	// Unknown sandbox.
+	FunctionSandboxUnknownSandbox = FunctionSandbox("unknown_sandbox")
+	FunctionSandboxV1             = FunctionSandbox("v1")
+	FunctionSandboxV2             = FunctionSandbox("v2")
+)
+
+func (enum FunctionSandbox) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sandbox"
+	}
+	return string(enum)
+}
+
+func (enum FunctionSandbox) Values() []FunctionSandbox {
+	return []FunctionSandbox{
+		"unknown_sandbox",
+		"v1",
+		"v2",
+	}
+}
+
+func (enum FunctionSandbox) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *FunctionSandbox) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = FunctionSandbox(FunctionSandbox(tmp).String())
+	return nil
+}
+
 type FunctionStatus string
 
 const (
@@ -1052,6 +1092,10 @@ type Function struct {
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 
 	RuntimeMessage string `json:"runtime_message"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // Namespace: namespace.
@@ -1246,6 +1290,10 @@ type CreateFunctionRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption FunctionHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // CreateNamespaceRequest: create namespace request.
@@ -1883,6 +1931,10 @@ type UpdateFunctionRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption FunctionHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // UpdateNamespaceRequest: update namespace request.
