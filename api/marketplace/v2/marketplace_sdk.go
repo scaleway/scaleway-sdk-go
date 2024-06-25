@@ -87,6 +87,8 @@ func (enum *ListImagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListLocalImagesRequestOrderBy string
 
 const (
+	ListLocalImagesRequestOrderByTypeAsc       = ListLocalImagesRequestOrderBy("type_asc")
+	ListLocalImagesRequestOrderByTypeDesc      = ListLocalImagesRequestOrderBy("type_desc")
 	ListLocalImagesRequestOrderByCreatedAtAsc  = ListLocalImagesRequestOrderBy("created_at_asc")
 	ListLocalImagesRequestOrderByCreatedAtDesc = ListLocalImagesRequestOrderBy("created_at_desc")
 )
@@ -94,13 +96,15 @@ const (
 func (enum ListLocalImagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return "type_asc"
 	}
 	return string(enum)
 }
 
 func (enum ListLocalImagesRequestOrderBy) Values() []ListLocalImagesRequestOrderBy {
 	return []ListLocalImagesRequestOrderBy{
+		"type_asc",
+		"type_desc",
 		"created_at_asc",
 		"created_at_desc",
 	}
@@ -393,7 +397,7 @@ type ListLocalImagesRequest struct {
 
 	Page *int32 `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: default value: type_asc
 	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
 
 	// Precisely one of ImageID, VersionID, ImageLabel must be set.
