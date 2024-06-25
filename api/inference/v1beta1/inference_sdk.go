@@ -858,7 +858,7 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments",
 		Query:  query,
 	}
 
@@ -890,7 +890,7 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
 	}
 
 	var resp Deployment
@@ -917,7 +917,7 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	}
 
 	if req.Name == "" {
-		req.Name = namegenerator.GetRandomName("llm")
+		req.Name = namegenerator.GetRandomName("inference")
 	}
 
 	if fmt.Sprint(req.Region) == "" {
@@ -926,7 +926,7 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments",
 	}
 
 	err = scwReq.SetBody(req)
@@ -962,7 +962,7 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -998,7 +998,7 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "",
 	}
 
 	var resp Deployment
@@ -1030,7 +1030,7 @@ func (s *API) GetDeploymentCertificate(req *GetDeploymentCertificateRequest, opt
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificate",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificate",
 	}
 
 	var resp scw.File
@@ -1057,7 +1057,7 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1093,7 +1093,7 @@ func (s *API) UpdateEndpoint(req *UpdateEndpointRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1129,7 +1129,7 @@ func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1167,7 +1167,7 @@ func (s *API) ListDeploymentACLRules(req *ListDeploymentACLRulesRequest, opts ..
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
 		Query:  query,
 	}
 
@@ -1199,7 +1199,7 @@ func (s *API) AddDeploymentACLRules(req *AddDeploymentACLRulesRequest, opts ...s
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1235,7 +1235,7 @@ func (s *API) SetDeploymentACLRules(req *SetDeploymentACLRulesRequest, opts ...s
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PUT",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/acls",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1271,7 +1271,7 @@ func (s *API) DeleteDeploymentACLRule(req *DeleteDeploymentACLRuleRequest, opts 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1309,7 +1309,7 @@ func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*Li
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models",
 		Query:  query,
 	}
 
@@ -1341,7 +1341,7 @@ func (s *API) GetModel(req *GetModelRequest, opts ...scw.RequestOption) (*Model,
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models/" + fmt.Sprint(req.ModelID) + "",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models/" + fmt.Sprint(req.ModelID) + "",
 	}
 
 	var resp Model
@@ -1372,7 +1372,7 @@ func (s *API) GetModelEula(req *GetModelEulaRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models/" + fmt.Sprint(req.ModelID) + "/eula",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/models/" + fmt.Sprint(req.ModelID) + "/eula",
 	}
 
 	var resp Eula
@@ -1409,7 +1409,7 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/llm-inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/node-types",
+		Path:   "/inference/v1beta1/regions/" + fmt.Sprint(req.Region) + "/node-types",
 		Query:  query,
 	}
 
