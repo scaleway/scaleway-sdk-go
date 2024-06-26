@@ -922,7 +922,7 @@ type CreateEmailRequest struct {
 	Region scw.Region `json:"-"`
 
 	// From: sender information. Must be from a checked domain declared in the Project.
-	From *CreateEmailRequestAddress `json:"from,omitempty"`
+	From *CreateEmailRequestAddress `json:"from"`
 
 	// To: an array of the primary recipient's information.
 	To []*CreateEmailRequestAddress `json:"to"`

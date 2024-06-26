@@ -156,6 +156,46 @@ func (enum *ContainerProtocol) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ContainerSandbox string
+
+const (
+	// Unknown sandbox.
+	ContainerSandboxUnknownSandbox = ContainerSandbox("unknown_sandbox")
+	ContainerSandboxV1             = ContainerSandbox("v1")
+	ContainerSandboxV2             = ContainerSandbox("v2")
+)
+
+func (enum ContainerSandbox) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sandbox"
+	}
+	return string(enum)
+}
+
+func (enum ContainerSandbox) Values() []ContainerSandbox {
+	return []ContainerSandbox{
+		"unknown_sandbox",
+		"v1",
+		"v2",
+	}
+}
+
+func (enum ContainerSandbox) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContainerSandbox) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContainerSandbox(ContainerSandbox(tmp).String())
+	return nil
+}
+
 type ContainerStatus string
 
 const (
@@ -884,6 +924,10 @@ type Container struct {
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
 
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
+
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
 }
@@ -1104,6 +1148,10 @@ type CreateContainerRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1696,6 +1744,10 @@ type UpdateContainerRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
 }
 
 // UpdateCronRequest: update cron request.

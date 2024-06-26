@@ -1234,9 +1234,9 @@ type Bootscript struct {
 	// Title: bootscript title.
 	Title string `json:"title"`
 
-	// Arch: bootscript architecture.
+	// Architecture: bootscript architecture.
 	// Default value: unknown_arch
-	Arch Arch `json:"arch"`
+	Architecture Arch `json:"architecture"`
 
 	// Zone: zone in which the bootscript is located.
 	Zone scw.Zone `json:"zone"`
