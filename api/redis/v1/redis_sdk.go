@@ -56,6 +56,15 @@ func (enum AvailableClusterSettingPropertyType) String() string {
 	return string(enum)
 }
 
+func (enum AvailableClusterSettingPropertyType) Values() []AvailableClusterSettingPropertyType {
+	return []AvailableClusterSettingPropertyType{
+		"UNKNOWN",
+		"BOOLEAN",
+		"INT",
+		"STRING",
+	}
+}
+
 func (enum AvailableClusterSettingPropertyType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -94,6 +103,21 @@ func (enum ClusterStatus) String() string {
 	return string(enum)
 }
 
+func (enum ClusterStatus) Values() []ClusterStatus {
+	return []ClusterStatus{
+		"unknown",
+		"ready",
+		"provisioning",
+		"configuring",
+		"deleting",
+		"error",
+		"autohealing",
+		"locked",
+		"suspended",
+		"initializing",
+	}
+}
+
 func (enum ClusterStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -124,6 +148,15 @@ func (enum ListClustersRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListClustersRequestOrderBy) Values() []ListClustersRequestOrderBy {
+	return []ListClustersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListClustersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -158,6 +191,15 @@ func (enum NodeTypeStock) String() string {
 	return string(enum)
 }
 
+func (enum NodeTypeStock) Values() []NodeTypeStock {
+	return []NodeTypeStock{
+		"unknown",
+		"low_stock",
+		"out_of_stock",
+		"available",
+	}
+}
+
 func (enum NodeTypeStock) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -186,6 +228,13 @@ func (enum PrivateNetworkProvisioningMode) String() string {
 		return "static"
 	}
 	return string(enum)
+}
+
+func (enum PrivateNetworkProvisioningMode) Values() []PrivateNetworkProvisioningMode {
+	return []PrivateNetworkProvisioningMode{
+		"static",
+		"ipam",
+	}
 }
 
 func (enum PrivateNetworkProvisioningMode) MarshalJSON() ([]byte, error) {

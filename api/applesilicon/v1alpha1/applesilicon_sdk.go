@@ -54,6 +54,13 @@ func (enum ListServersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListServersRequestOrderBy) Values() []ListServersRequestOrderBy {
+	return []ListServersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
 func (enum ListServersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -92,6 +99,21 @@ func (enum ServerStatus) String() string {
 	return string(enum)
 }
 
+func (enum ServerStatus) Values() []ServerStatus {
+	return []ServerStatus{
+		"unknown_status",
+		"starting",
+		"ready",
+		"error",
+		"rebooting",
+		"updating",
+		"locking",
+		"locked",
+		"unlocking",
+		"reinstalling",
+	}
+}
+
 func (enum ServerStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -122,6 +144,15 @@ func (enum ServerTypeStock) String() string {
 		return "unknown_stock"
 	}
 	return string(enum)
+}
+
+func (enum ServerTypeStock) Values() []ServerTypeStock {
+	return []ServerTypeStock{
+		"unknown_stock",
+		"no_stock",
+		"low_stock",
+		"high_stock",
+	}
 }
 
 func (enum ServerTypeStock) MarshalJSON() ([]byte, error) {

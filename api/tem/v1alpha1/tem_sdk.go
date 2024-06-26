@@ -60,6 +60,15 @@ func (enum DomainLastStatusRecordStatus) String() string {
 	return string(enum)
 }
 
+func (enum DomainLastStatusRecordStatus) Values() []DomainLastStatusRecordStatus {
+	return []DomainLastStatusRecordStatus{
+		"unknown_record_status",
+		"valid",
+		"invalid",
+		"not_found",
+	}
+}
+
 func (enum DomainLastStatusRecordStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -96,6 +105,16 @@ func (enum DomainReputationStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum DomainReputationStatus) Values() []DomainReputationStatus {
+	return []DomainReputationStatus{
+		"unknown_status",
+		"excellent",
+		"good",
+		"average",
+		"bad",
+	}
 }
 
 func (enum DomainReputationStatus) MarshalJSON() ([]byte, error) {
@@ -138,6 +157,18 @@ func (enum DomainStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum DomainStatus) Values() []DomainStatus {
+	return []DomainStatus{
+		"unknown",
+		"checked",
+		"unchecked",
+		"invalid",
+		"locked",
+		"revoked",
+		"pending",
+	}
 }
 
 func (enum DomainStatus) MarshalJSON() ([]byte, error) {
@@ -184,6 +215,19 @@ func (enum EmailFlag) String() string {
 	return string(enum)
 }
 
+func (enum EmailFlag) Values() []EmailFlag {
+	return []EmailFlag{
+		"unknown_flag",
+		"soft_bounce",
+		"hard_bounce",
+		"spam",
+		"mailbox_full",
+		"mailbox_not_found",
+		"greylisted",
+		"send_before_expiration",
+	}
+}
+
 func (enum EmailFlag) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -218,6 +262,15 @@ func (enum EmailRcptType) String() string {
 		return "unknown_rcpt_type"
 	}
 	return string(enum)
+}
+
+func (enum EmailRcptType) Values() []EmailRcptType {
+	return []EmailRcptType{
+		"unknown_rcpt_type",
+		"to",
+		"cc",
+		"bcc",
+	}
 }
 
 func (enum EmailRcptType) MarshalJSON() ([]byte, error) {
@@ -258,6 +311,17 @@ func (enum EmailStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum EmailStatus) Values() []EmailStatus {
+	return []EmailStatus{
+		"unknown",
+		"new",
+		"sending",
+		"sent",
+		"failed",
+		"canceled",
+	}
 }
 
 func (enum EmailStatus) MarshalJSON() ([]byte, error) {
@@ -312,6 +376,23 @@ func (enum ListEmailsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListEmailsRequestOrderBy) Values() []ListEmailsRequestOrderBy {
+	return []ListEmailsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+		"status_desc",
+		"status_asc",
+		"mail_from_desc",
+		"mail_from_asc",
+		"mail_rcpt_desc",
+		"mail_rcpt_asc",
+		"subject_desc",
+		"subject_asc",
+	}
+}
+
 func (enum ListEmailsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -324,6 +405,182 @@ func (enum *ListEmailsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListEmailsRequestOrderBy(ListEmailsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListWebhookEventsRequestOrderBy string
+
+const (
+	ListWebhookEventsRequestOrderByCreatedAtDesc = ListWebhookEventsRequestOrderBy("created_at_desc")
+	ListWebhookEventsRequestOrderByCreatedAtAsc  = ListWebhookEventsRequestOrderBy("created_at_asc")
+)
+
+func (enum ListWebhookEventsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListWebhookEventsRequestOrderBy) Values() []ListWebhookEventsRequestOrderBy {
+	return []ListWebhookEventsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListWebhookEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListWebhookEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListWebhookEventsRequestOrderBy(ListWebhookEventsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListWebhooksRequestOrderBy string
+
+const (
+	ListWebhooksRequestOrderByCreatedAtDesc = ListWebhooksRequestOrderBy("created_at_desc")
+	ListWebhooksRequestOrderByCreatedAtAsc  = ListWebhooksRequestOrderBy("created_at_asc")
+)
+
+func (enum ListWebhooksRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListWebhooksRequestOrderBy) Values() []ListWebhooksRequestOrderBy {
+	return []ListWebhooksRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListWebhooksRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListWebhooksRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListWebhooksRequestOrderBy(ListWebhooksRequestOrderBy(tmp).String())
+	return nil
+}
+
+type WebhookEventStatus string
+
+const (
+	// If unspecified, the status of the Webhook Event is unknown by default.
+	WebhookEventStatusUnknownStatus = WebhookEventStatus("unknown_status")
+	// The Webhook Event has been created and is waiting to be sent.
+	WebhookEventStatusWaiting = WebhookEventStatus("waiting")
+	// The Webhook Event is in sending process.
+	WebhookEventStatusSending = WebhookEventStatus("sending")
+	// The Webhook Event is sent.
+	WebhookEventStatusSent = WebhookEventStatus("sent")
+	// The Webhook Event cannot be sent after multiple retries.
+	WebhookEventStatusError = WebhookEventStatus("error")
+)
+
+func (enum WebhookEventStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum WebhookEventStatus) Values() []WebhookEventStatus {
+	return []WebhookEventStatus{
+		"unknown_status",
+		"waiting",
+		"sending",
+		"sent",
+		"error",
+	}
+}
+
+func (enum WebhookEventStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *WebhookEventStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = WebhookEventStatus(WebhookEventStatus(tmp).String())
+	return nil
+}
+
+type WebhookEventType string
+
+const (
+	// If unspecified, the type of the Webhook Event is unknown by default.
+	WebhookEventTypeUnknownType = WebhookEventType("unknown_type")
+	// The email resource is received and prepared to be sent.
+	WebhookEventTypeEmailQueued = WebhookEventType("email_queued")
+	// The email resource is sent but we received a hard-bounce from the recipient server.
+	WebhookEventTypeEmailDropped = WebhookEventType("email_dropped")
+	// The email is sent but we received a soft-bounce from the recipient server. The Email will be retried.
+	WebhookEventTypeEmailDeferred = WebhookEventType("email_deferred")
+	// The email resource as been successfully sent.
+	WebhookEventTypeEmailDelivered = WebhookEventType("email_delivered")
+	// The email resource has been detected from Scaleway or the recipient server as a spam.
+	WebhookEventTypeEmailSpam = WebhookEventType("email_spam")
+	// The email resource hard-bounced with a mailbox not found an error.
+	WebhookEventTypeEmailMailboxNotFound = WebhookEventType("email_mailbox_not_found")
+)
+
+func (enum WebhookEventType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum WebhookEventType) Values() []WebhookEventType {
+	return []WebhookEventType{
+		"unknown_type",
+		"email_queued",
+		"email_dropped",
+		"email_deferred",
+		"email_delivered",
+		"email_spam",
+		"email_mailbox_not_found",
+	}
+}
+
+func (enum WebhookEventType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *WebhookEventType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = WebhookEventType(WebhookEventType(tmp).String())
 	return nil
 }
 
@@ -558,6 +815,74 @@ type Domain struct {
 	Region scw.Region `json:"region"`
 }
 
+// WebhookEvent: webhook event.
+type WebhookEvent struct {
+	// ID: ID of the Webhook Event.
+	ID string `json:"id"`
+
+	// WebhookID: ID of the Webhook that triggers the Event.
+	WebhookID string `json:"webhook_id"`
+
+	// OrganizationID: ID of the Webhook Event Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: ID of the Webhook Event Project.
+	ProjectID string `json:"project_id"`
+
+	// DomainID: ID of the webhook event domain.
+	DomainID string `json:"domain_id"`
+
+	// Type: type of the Webhook Event.
+	// Default value: unknown_type
+	Type WebhookEventType `json:"type"`
+
+	// Status: status of the Webhook Event.
+	// Default value: unknown_status
+	Status WebhookEventStatus `json:"status"`
+
+	// Data: data sent to the Webhook destination.
+	Data string `json:"data"`
+
+	// CreatedAt: date and time of the Webhook Event creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time of last Webhook Event updates.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// EmailID: optional Email ID if the event is triggered by an Email resource.
+	EmailID *string `json:"email_id"`
+}
+
+// Webhook: webhook.
+type Webhook struct {
+	// ID: ID of the Webhook.
+	ID string `json:"id"`
+
+	// DomainID: ID of the Domain to watch for triggering events.
+	DomainID string `json:"domain_id"`
+
+	// OrganizationID: ID of the Webhook Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: ID of the Webhook Project.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the Webhook.
+	Name string `json:"name"`
+
+	// EventTypes: list of event types that will trigger a Webhook Event.
+	EventTypes []WebhookEventType `json:"event_types"`
+
+	// SnsArn: scaleway SNS ARN topic to push the events to.
+	SnsArn string `json:"sns_arn"`
+
+	// CreatedAt: date and time of the Webhook creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time of last Webhook updates.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // CancelEmailRequest: cancel email request.
 type CancelEmailRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -597,7 +922,7 @@ type CreateEmailRequest struct {
 	Region scw.Region `json:"-"`
 
 	// From: sender information. Must be from a checked domain declared in the Project.
-	From *CreateEmailRequestAddress `json:"from,omitempty"`
+	From *CreateEmailRequestAddress `json:"from"`
 
 	// To: an array of the primary recipient's information.
 	To []*CreateEmailRequestAddress `json:"to"`
@@ -634,6 +959,15 @@ type CreateEmailRequest struct {
 type CreateEmailResponse struct {
 	// Emails: single page of emails matching the requested criteria.
 	Emails []*Email `json:"emails"`
+}
+
+// DeleteWebhookRequest: delete webhook request.
+type DeleteWebhookRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// WebhookID: ID of the Webhook to delete.
+	WebhookID string `json:"-"`
 }
 
 // DomainLastStatus: domain last status.
@@ -731,6 +1065,7 @@ type ListDomainsResponse struct {
 	// TotalCount: number of domains that match the request (without pagination).
 	TotalCount uint32 `json:"total_count"`
 
+	// Domains: single page of domains matching the requested criteria.
 	Domains []*Domain `json:"domains"`
 }
 
@@ -831,6 +1166,124 @@ func (r *ListEmailsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Emails)), nil
 }
 
+// ListWebhookEventsRequest: list webhook events request.
+type ListWebhookEventsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// WebhookID: ID of the Webhook linked to the events.
+	WebhookID string `json:"-"`
+
+	// OrderBy: (Optional) List Webhook events corresponding to specific criteria.
+	// Default value: created_at_desc
+	OrderBy ListWebhookEventsRequestOrderBy `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// EmailID: ID of the email linked to the events.
+	EmailID *string `json:"-"`
+
+	// EventTypes: list of event types linked to the events.
+	EventTypes []WebhookEventType `json:"-"`
+
+	// Statuses: list of event statuses.
+	Statuses []WebhookEventStatus `json:"-"`
+
+	// ProjectID: ID of the webhook Project.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: ID of the webhook Organization.
+	OrganizationID *string `json:"-"`
+
+	// DomainID: ID of the domain to watch for triggering events.
+	DomainID *string `json:"-"`
+}
+
+// ListWebhookEventsResponse: list webhook events response.
+type ListWebhookEventsResponse struct {
+	// TotalCount: number of Webhook events matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// WebhookEvents: single page of Webhook events matching the requested criteria.
+	WebhookEvents []*WebhookEvent `json:"webhook_events"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListWebhookEventsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListWebhookEventsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListWebhookEventsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.WebhookEvents = append(r.WebhookEvents, results.WebhookEvents...)
+	r.TotalCount += uint64(len(results.WebhookEvents))
+	return uint64(len(results.WebhookEvents)), nil
+}
+
+// ListWebhooksRequest: list webhooks request.
+type ListWebhooksRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: (Optional) List Webhooks corresponding to specific criteria.
+	// Default value: created_at_desc
+	OrderBy ListWebhooksRequestOrderBy `json:"-"`
+
+	// Page: (Optional) Requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: (Optional) Requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: (Optional) ID of the Project for which to list the Webhooks.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: (Optional) ID of the Organization for which to list the Webhooks.
+	OrganizationID *string `json:"-"`
+
+	// DomainID: (Optional) ID of the Domain for which to list the Webhooks.
+	DomainID *string `json:"-"`
+}
+
+// ListWebhooksResponse: list webhooks response.
+type ListWebhooksResponse struct {
+	// TotalCount: number of Webhooks matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// Webhooks: single page of Webhooks matching the requested criteria.
+	Webhooks []*Webhook `json:"webhooks"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListWebhooksResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListWebhooksResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListWebhooksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Webhooks = append(r.Webhooks, results.Webhooks...)
+	r.TotalCount += uint64(len(results.Webhooks))
+	return uint64(len(results.Webhooks)), nil
+}
+
 // RevokeDomainRequest: revoke domain request.
 type RevokeDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -859,6 +1312,24 @@ type Statistics struct {
 
 	// CanceledCount: number of emails in the final `canceled` state. This means emails that have been canceled upon request.
 	CanceledCount uint32 `json:"canceled_count"`
+}
+
+// UpdateWebhookRequest: update webhook request.
+type UpdateWebhookRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// WebhookID: ID of the Webhook to update.
+	WebhookID string `json:"-"`
+
+	// Name: name of the Webhook to update.
+	Name *string `json:"name,omitempty"`
+
+	// EventTypes: list of event types to update.
+	EventTypes []WebhookEventType `json:"event_types"`
+
+	// SnsArn: scaleway SNS ARN topic to update.
+	SnsArn *string `json:"sns_arn,omitempty"`
 }
 
 // This API allows you to manage your Transactional Email services.
@@ -1269,6 +1740,160 @@ func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.R
 	}
 
 	var resp DomainLastStatus
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListWebhooks:
+func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) (*ListWebhooksResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain_id", req.DomainID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks",
+		Query:  query,
+	}
+
+	var resp ListWebhooksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateWebhook:
+func (s *API) UpdateWebhook(req *UpdateWebhookRequest, opts ...scw.RequestOption) (*Webhook, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.WebhookID) == "" {
+		return nil, errors.New("field WebhookID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks/" + fmt.Sprint(req.WebhookID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Webhook
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteWebhook:
+func (s *API) DeleteWebhook(req *DeleteWebhookRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.WebhookID) == "" {
+		return errors.New("field WebhookID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks/" + fmt.Sprint(req.WebhookID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListWebhookEvents:
+func (s *API) ListWebhookEvents(req *ListWebhookEventsRequest, opts ...scw.RequestOption) (*ListWebhookEventsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "email_id", req.EmailID)
+	parameter.AddToQuery(query, "event_types", req.EventTypes)
+	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain_id", req.DomainID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.WebhookID) == "" {
+		return nil, errors.New("field WebhookID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks/" + fmt.Sprint(req.WebhookID) + "/events",
+		Query:  query,
+	}
+
+	var resp ListWebhookEventsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

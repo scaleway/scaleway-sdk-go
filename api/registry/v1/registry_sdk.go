@@ -57,6 +57,16 @@ func (enum ImageStatus) String() string {
 	return string(enum)
 }
 
+func (enum ImageStatus) Values() []ImageStatus {
+	return []ImageStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+	}
+}
+
 func (enum ImageStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -89,6 +99,15 @@ func (enum ImageVisibility) String() string {
 	return string(enum)
 }
 
+func (enum ImageVisibility) Values() []ImageVisibility {
+	return []ImageVisibility{
+		"visibility_unknown",
+		"inherit",
+		"public",
+		"private",
+	}
+}
+
 func (enum ImageVisibility) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -119,6 +138,15 @@ func (enum ListImagesRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListImagesRequestOrderBy) Values() []ListImagesRequestOrderBy {
+	return []ListImagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListImagesRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -155,6 +183,17 @@ func (enum ListNamespacesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListNamespacesRequestOrderBy) Values() []ListNamespacesRequestOrderBy {
+	return []ListNamespacesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"description_asc",
+		"description_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListNamespacesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -185,6 +224,15 @@ func (enum ListTagsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTagsRequestOrderBy) Values() []ListTagsRequestOrderBy {
+	return []ListTagsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListTagsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -220,6 +268,16 @@ func (enum NamespaceStatus) String() string {
 	return string(enum)
 }
 
+func (enum NamespaceStatus) Values() []NamespaceStatus {
+	return []NamespaceStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+	}
+}
+
 func (enum NamespaceStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -251,6 +309,16 @@ func (enum TagStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum TagStatus) Values() []TagStatus {
+	return []TagStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+	}
 }
 
 func (enum TagStatus) MarshalJSON() ([]byte, error) {

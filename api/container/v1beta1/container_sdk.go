@@ -55,6 +55,14 @@ func (enum ContainerHTTPOption) String() string {
 	return string(enum)
 }
 
+func (enum ContainerHTTPOption) Values() []ContainerHTTPOption {
+	return []ContainerHTTPOption{
+		"unknown_http_option",
+		"enabled",
+		"redirected",
+	}
+}
+
 func (enum ContainerHTTPOption) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -84,6 +92,14 @@ func (enum ContainerPrivacy) String() string {
 		return "unknown_privacy"
 	}
 	return string(enum)
+}
+
+func (enum ContainerPrivacy) Values() []ContainerPrivacy {
+	return []ContainerPrivacy{
+		"unknown_privacy",
+		"public",
+		"private",
+	}
 }
 
 func (enum ContainerPrivacy) MarshalJSON() ([]byte, error) {
@@ -117,6 +133,14 @@ func (enum ContainerProtocol) String() string {
 	return string(enum)
 }
 
+func (enum ContainerProtocol) Values() []ContainerProtocol {
+	return []ContainerProtocol{
+		"unknown_protocol",
+		"http1",
+		"h2c",
+	}
+}
+
 func (enum ContainerProtocol) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -129,6 +153,46 @@ func (enum *ContainerProtocol) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ContainerProtocol(ContainerProtocol(tmp).String())
+	return nil
+}
+
+type ContainerSandbox string
+
+const (
+	// Unknown sandbox.
+	ContainerSandboxUnknownSandbox = ContainerSandbox("unknown_sandbox")
+	ContainerSandboxV1             = ContainerSandbox("v1")
+	ContainerSandboxV2             = ContainerSandbox("v2")
+)
+
+func (enum ContainerSandbox) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sandbox"
+	}
+	return string(enum)
+}
+
+func (enum ContainerSandbox) Values() []ContainerSandbox {
+	return []ContainerSandbox{
+		"unknown_sandbox",
+		"v1",
+		"v2",
+	}
+}
+
+func (enum ContainerSandbox) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContainerSandbox) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContainerSandbox(ContainerSandbox(tmp).String())
 	return nil
 }
 
@@ -151,6 +215,19 @@ func (enum ContainerStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum ContainerStatus) Values() []ContainerStatus {
+	return []ContainerStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+		"created",
+	}
 }
 
 func (enum ContainerStatus) MarshalJSON() ([]byte, error) {
@@ -188,6 +265,18 @@ func (enum CronStatus) String() string {
 	return string(enum)
 }
 
+func (enum CronStatus) Values() []CronStatus {
+	return []CronStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum CronStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -222,6 +311,17 @@ func (enum DomainStatus) String() string {
 	return string(enum)
 }
 
+func (enum DomainStatus) Values() []DomainStatus {
+	return []DomainStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum DomainStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -254,6 +354,15 @@ func (enum ListContainersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListContainersRequestOrderBy) Values() []ListContainersRequestOrderBy {
+	return []ListContainersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListContainersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -282,6 +391,13 @@ func (enum ListCronsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListCronsRequestOrderBy) Values() []ListCronsRequestOrderBy {
+	return []ListCronsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListCronsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -316,6 +432,15 @@ func (enum ListDomainsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDomainsRequestOrderBy) Values() []ListDomainsRequestOrderBy {
+	return []ListDomainsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"hostname_asc",
+		"hostname_desc",
+	}
+}
+
 func (enum ListDomainsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -348,6 +473,15 @@ func (enum ListNamespacesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListNamespacesRequestOrderBy) Values() []ListNamespacesRequestOrderBy {
+	return []ListNamespacesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListNamespacesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -376,6 +510,13 @@ func (enum ListTokensRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTokensRequestOrderBy) Values() []ListTokensRequestOrderBy {
+	return []ListTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -408,6 +549,13 @@ func (enum ListTriggersRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTriggersRequestOrderBy) Values() []ListTriggersRequestOrderBy {
+	return []ListTriggersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListTriggersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -445,6 +593,18 @@ func (enum NamespaceStatus) String() string {
 	return string(enum)
 }
 
+func (enum NamespaceStatus) Values() []NamespaceStatus {
+	return []NamespaceStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum NamespaceStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -476,6 +636,16 @@ func (enum TokenStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum TokenStatus) Values() []TokenStatus {
+	return []TokenStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+	}
 }
 
 func (enum TokenStatus) MarshalJSON() ([]byte, error) {
@@ -512,6 +682,16 @@ func (enum TriggerInputType) String() string {
 		return "unknown_input_type"
 	}
 	return string(enum)
+}
+
+func (enum TriggerInputType) Values() []TriggerInputType {
+	return []TriggerInputType{
+		"unknown_input_type",
+		"sqs",
+		"scw_sqs",
+		"nats",
+		"scw_nats",
+	}
 }
 
 func (enum TriggerInputType) MarshalJSON() ([]byte, error) {
@@ -552,6 +732,17 @@ func (enum TriggerStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum TriggerStatus) Values() []TriggerStatus {
+	return []TriggerStatus{
+		"unknown_status",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+		"pending",
+	}
 }
 
 func (enum TriggerStatus) MarshalJSON() ([]byte, error) {
@@ -732,6 +923,10 @@ type Container struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
 
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
@@ -953,6 +1148,10 @@ type CreateContainerRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1545,6 +1744,10 @@ type UpdateContainerRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption ContainerHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the container.
+	// Default value: unknown_sandbox
+	Sandbox ContainerSandbox `json:"sandbox"`
 }
 
 // UpdateCronRequest: update cron request.

@@ -56,6 +56,15 @@ func (enum ListPrivateNetworksRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPrivateNetworksRequestOrderBy) Values() []ListPrivateNetworksRequestOrderBy {
+	return []ListPrivateNetworksRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListPrivateNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }

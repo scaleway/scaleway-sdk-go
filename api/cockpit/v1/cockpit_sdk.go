@@ -58,6 +58,14 @@ func (enum DataSourceOrigin) String() string {
 	return string(enum)
 }
 
+func (enum DataSourceOrigin) Values() []DataSourceOrigin {
+	return []DataSourceOrigin{
+		"unknown_origin",
+		"scaleway",
+		"external",
+	}
+}
+
 func (enum DataSourceOrigin) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -94,6 +102,15 @@ func (enum DataSourceType) String() string {
 	return string(enum)
 }
 
+func (enum DataSourceType) Values() []DataSourceType {
+	return []DataSourceType{
+		"unknown_type",
+		"metrics",
+		"logs",
+		"traces",
+	}
+}
+
 func (enum DataSourceType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -126,6 +143,14 @@ func (enum GrafanaUserRole) String() string {
 		return "unknown_role"
 	}
 	return string(enum)
+}
+
+func (enum GrafanaUserRole) Values() []GrafanaUserRole {
+	return []GrafanaUserRole{
+		"unknown_role",
+		"editor",
+		"viewer",
+	}
 }
 
 func (enum GrafanaUserRole) MarshalJSON() ([]byte, error) {
@@ -162,6 +187,17 @@ func (enum ListDataSourcesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDataSourcesRequestOrderBy) Values() []ListDataSourcesRequestOrderBy {
+	return []ListDataSourcesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+	}
+}
+
 func (enum ListDataSourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -192,6 +228,13 @@ func (enum ListGrafanaUsersRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListGrafanaUsersRequestOrderBy) Values() []ListGrafanaUsersRequestOrderBy {
+	return []ListGrafanaUsersRequestOrderBy{
+		"login_asc",
+		"login_desc",
+	}
+}
+
 func (enum ListGrafanaUsersRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -204,6 +247,51 @@ func (enum *ListGrafanaUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListGrafanaUsersRequestOrderBy(ListGrafanaUsersRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListManagedAlertsRequestOrderBy string
+
+const (
+	ListManagedAlertsRequestOrderByCreatedAtAsc  = ListManagedAlertsRequestOrderBy("created_at_asc")
+	ListManagedAlertsRequestOrderByCreatedAtDesc = ListManagedAlertsRequestOrderBy("created_at_desc")
+	ListManagedAlertsRequestOrderByNameAsc       = ListManagedAlertsRequestOrderBy("name_asc")
+	ListManagedAlertsRequestOrderByNameDesc      = ListManagedAlertsRequestOrderBy("name_desc")
+	ListManagedAlertsRequestOrderByTypeAsc       = ListManagedAlertsRequestOrderBy("type_asc")
+	ListManagedAlertsRequestOrderByTypeDesc      = ListManagedAlertsRequestOrderBy("type_desc")
+)
+
+func (enum ListManagedAlertsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListManagedAlertsRequestOrderBy) Values() []ListManagedAlertsRequestOrderBy {
+	return []ListManagedAlertsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+	}
+}
+
+func (enum ListManagedAlertsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListManagedAlertsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListManagedAlertsRequestOrderBy(ListManagedAlertsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -220,6 +308,13 @@ func (enum ListPlansRequestOrderBy) String() string {
 		return "name_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListPlansRequestOrderBy) Values() []ListPlansRequestOrderBy {
+	return []ListPlansRequestOrderBy{
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListPlansRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -254,6 +349,15 @@ func (enum ListTokensRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListTokensRequestOrderBy) Values() []ListTokensRequestOrderBy {
+	return []ListTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -284,6 +388,15 @@ func (enum PlanName) String() string {
 		return "unknown_name"
 	}
 	return string(enum)
+}
+
+func (enum PlanName) Values() []PlanName {
+	return []PlanName{
+		"unknown_name",
+		"free",
+		"premium",
+		"custom",
+	}
 }
 
 func (enum PlanName) MarshalJSON() ([]byte, error) {
@@ -334,6 +447,21 @@ func (enum TokenScope) String() string {
 	return string(enum)
 }
 
+func (enum TokenScope) Values() []TokenScope {
+	return []TokenScope{
+		"unknown_scope",
+		"read_only_metrics",
+		"write_only_metrics",
+		"full_access_metrics_rules",
+		"read_only_logs",
+		"write_only_logs",
+		"full_access_logs_rules",
+		"full_access_alert_manager",
+		"read_only_traces",
+		"write_only_traces",
+	}
+}
+
 func (enum TokenScope) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -363,6 +491,14 @@ func (enum UsageUnit) String() string {
 		return "unknown_unit"
 	}
 	return string(enum)
+}
+
+func (enum UsageUnit) Values() []UsageUnit {
+	return []UsageUnit{
+		"unknown_unit",
+		"bytes",
+		"samples",
+	}
 }
 
 func (enum UsageUnit) MarshalJSON() ([]byte, error) {
@@ -462,6 +598,19 @@ type GrafanaUser struct {
 
 	// Password: grafana user's password.
 	Password *string `json:"password"`
+}
+
+// Alert: alert.
+type Alert struct {
+	ProductFamily string `json:"product_family"`
+
+	Product string `json:"product"`
+
+	Name string `json:"name"`
+
+	Rule string `json:"rule"`
+
+	Description string `json:"description"`
 }
 
 // Plan: Type of pricing plan.
@@ -799,6 +948,34 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error)
 	return uint64(len(results.GrafanaUsers)), nil
 }
 
+// ListManagedAlertsResponse: Response returned when listing data sources.
+type ListManagedAlertsResponse struct {
+	// TotalCount: total count of data sources matching the request.
+	TotalCount uint64 `json:"total_count"`
+
+	// Alerts: alerts matching the request within the pagination.
+	Alerts []*Alert `json:"alerts"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListManagedAlertsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListManagedAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListManagedAlertsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Alerts = append(r.Alerts, results.Alerts...)
+	r.TotalCount += uint64(len(results.Alerts))
+	return uint64(len(results.Alerts)), nil
+}
+
 // ListPlansResponse: Output returned when listing pricing plans.
 type ListPlansResponse struct {
 	// TotalCount: total count of available pricing plans.
@@ -1042,6 +1219,25 @@ type RegionalAPIListDataSourcesRequest struct {
 
 	// Types: types to filter for, only data sources with matching types will be returned.
 	Types []DataSourceType `json:"-"`
+}
+
+// RegionalAPIListManagedAlertsRequest: Enable the sending of managed alerts.
+type RegionalAPIListManagedAlertsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of data sources to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for data sources in the response.
+	// Default value: created_at_asc
+	OrderBy ListManagedAlertsRequestOrderBy `json:"-"`
+
+	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
+	ProjectID string `json:"-"`
 }
 
 // RegionalAPIListTokensRequest: List tokens.
@@ -2001,6 +2197,50 @@ func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointReque
 		return err
 	}
 	return nil
+}
+
+// ListManagedAlerts: List all managed alerts for the specified Project.
+func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest, opts ...scw.RequestOption) (*ListManagedAlertsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/managed-alerts",
+		Query:  query,
+	}
+
+	var resp ListManagedAlertsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // EnableManagedAlerts: Enable the sending of managed alerts for the specified Project. Managed alerts are predefined alerts that apply to Scaleway recources integrated with Cockpit by default.

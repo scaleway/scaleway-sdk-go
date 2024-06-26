@@ -60,6 +60,15 @@ func (enum DiscountDiscountMode) String() string {
 	return string(enum)
 }
 
+func (enum DiscountDiscountMode) Values() []DiscountDiscountMode {
+	return []DiscountDiscountMode{
+		"unknown_discount_mode",
+		"discount_mode_rate",
+		"discount_mode_value",
+		"discount_mode_splittable",
+	}
+}
+
 func (enum DiscountDiscountMode) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -102,6 +111,18 @@ func (enum DiscountFilterType) String() string {
 	return string(enum)
 }
 
+func (enum DiscountFilterType) Values() []DiscountFilterType {
+	return []DiscountFilterType{
+		"unknown_type",
+		"product_category",
+		"product",
+		"product_offer",
+		"product_reference",
+		"region",
+		"zone",
+	}
+}
+
 func (enum DiscountFilterType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -129,6 +150,12 @@ func (enum DownloadInvoiceRequestFileType) String() string {
 		return "pdf"
 	}
 	return string(enum)
+}
+
+func (enum DownloadInvoiceRequestFileType) Values() []DownloadInvoiceRequestFileType {
+	return []DownloadInvoiceRequestFileType{
+		"pdf",
+	}
 }
 
 func (enum DownloadInvoiceRequestFileType) MarshalJSON() ([]byte, error) {
@@ -162,6 +189,14 @@ func (enum InvoiceType) String() string {
 	return string(enum)
 }
 
+func (enum InvoiceType) Values() []InvoiceType {
+	return []InvoiceType{
+		"unknown_type",
+		"periodic",
+		"purchase",
+	}
+}
+
 func (enum InvoiceType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -192,6 +227,13 @@ func (enum ListDiscountsRequestOrderBy) String() string {
 		return "creation_date_desc"
 	}
 	return string(enum)
+}
+
+func (enum ListDiscountsRequestOrderBy) Values() []ListDiscountsRequestOrderBy {
+	return []ListDiscountsRequestOrderBy{
+		"creation_date_desc",
+		"creation_date_asc",
+	}
 }
 
 func (enum ListDiscountsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -234,6 +276,25 @@ func (enum ListInvoicesRequestOrderBy) String() string {
 		return "invoice_number_desc"
 	}
 	return string(enum)
+}
+
+func (enum ListInvoicesRequestOrderBy) Values() []ListInvoicesRequestOrderBy {
+	return []ListInvoicesRequestOrderBy{
+		"invoice_number_desc",
+		"invoice_number_asc",
+		"start_date_desc",
+		"start_date_asc",
+		"issued_date_desc",
+		"issued_date_asc",
+		"due_date_desc",
+		"due_date_asc",
+		"total_untaxed_desc",
+		"total_untaxed_asc",
+		"total_taxed_desc",
+		"total_taxed_asc",
+		"invoice_type_desc",
+		"invoice_type_asc",
+	}
 }
 
 func (enum ListInvoicesRequestOrderBy) MarshalJSON() ([]byte, error) {

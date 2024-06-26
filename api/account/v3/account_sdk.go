@@ -60,6 +60,15 @@ func (enum ListProjectsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListProjectsRequestOrderBy) Values() []ListProjectsRequestOrderBy {
+	return []ListProjectsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListProjectsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }

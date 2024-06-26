@@ -59,6 +59,18 @@ func (enum CronStatus) String() string {
 	return string(enum)
 }
 
+func (enum CronStatus) Values() []CronStatus {
+	return []CronStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum CronStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -93,6 +105,17 @@ func (enum DomainStatus) String() string {
 	return string(enum)
 }
 
+func (enum DomainStatus) Values() []DomainStatus {
+	return []DomainStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum DomainStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -124,6 +147,14 @@ func (enum FunctionHTTPOption) String() string {
 	return string(enum)
 }
 
+func (enum FunctionHTTPOption) Values() []FunctionHTTPOption {
+	return []FunctionHTTPOption{
+		"unknown_http_option",
+		"enabled",
+		"redirected",
+	}
+}
+
 func (enum FunctionHTTPOption) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -153,6 +184,14 @@ func (enum FunctionPrivacy) String() string {
 		return "unknown_privacy"
 	}
 	return string(enum)
+}
+
+func (enum FunctionPrivacy) Values() []FunctionPrivacy {
+	return []FunctionPrivacy{
+		"unknown_privacy",
+		"public",
+		"private",
+	}
 }
 
 func (enum FunctionPrivacy) MarshalJSON() ([]byte, error) {
@@ -198,6 +237,11 @@ const (
 	FunctionRuntimeGo120          = FunctionRuntime("go120")
 	FunctionRuntimeNode20         = FunctionRuntime("node20")
 	FunctionRuntimeGo121          = FunctionRuntime("go121")
+	FunctionRuntimeNode22         = FunctionRuntime("node22")
+	FunctionRuntimePython312      = FunctionRuntime("python312")
+	FunctionRuntimePhp83          = FunctionRuntime("php83")
+	FunctionRuntimeGo122          = FunctionRuntime("go122")
+	FunctionRuntimeRust179        = FunctionRuntime("rust179")
 )
 
 func (enum FunctionRuntime) String() string {
@@ -206,6 +250,41 @@ func (enum FunctionRuntime) String() string {
 		return "unknown_runtime"
 	}
 	return string(enum)
+}
+
+func (enum FunctionRuntime) Values() []FunctionRuntime {
+	return []FunctionRuntime{
+		"unknown_runtime",
+		"golang",
+		"python",
+		"python3",
+		"node8",
+		"node10",
+		"node14",
+		"node16",
+		"node17",
+		"python37",
+		"python38",
+		"python39",
+		"python310",
+		"go113",
+		"go117",
+		"go118",
+		"node18",
+		"rust165",
+		"go119",
+		"python311",
+		"php82",
+		"node19",
+		"go120",
+		"node20",
+		"go121",
+		"node22",
+		"python312",
+		"php83",
+		"go122",
+		"rust179",
+	}
 }
 
 func (enum FunctionRuntime) MarshalJSON() ([]byte, error) {
@@ -220,6 +299,46 @@ func (enum *FunctionRuntime) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = FunctionRuntime(FunctionRuntime(tmp).String())
+	return nil
+}
+
+type FunctionSandbox string
+
+const (
+	// Unknown sandbox.
+	FunctionSandboxUnknownSandbox = FunctionSandbox("unknown_sandbox")
+	FunctionSandboxV1             = FunctionSandbox("v1")
+	FunctionSandboxV2             = FunctionSandbox("v2")
+)
+
+func (enum FunctionSandbox) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sandbox"
+	}
+	return string(enum)
+}
+
+func (enum FunctionSandbox) Values() []FunctionSandbox {
+	return []FunctionSandbox{
+		"unknown_sandbox",
+		"v1",
+		"v2",
+	}
+}
+
+func (enum FunctionSandbox) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *FunctionSandbox) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = FunctionSandbox(FunctionSandbox(tmp).String())
 	return nil
 }
 
@@ -242,6 +361,19 @@ func (enum FunctionStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum FunctionStatus) Values() []FunctionStatus {
+	return []FunctionStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+		"created",
+	}
 }
 
 func (enum FunctionStatus) MarshalJSON() ([]byte, error) {
@@ -272,6 +404,13 @@ func (enum ListCronsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListCronsRequestOrderBy) Values() []ListCronsRequestOrderBy {
+	return []ListCronsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListCronsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -306,6 +445,15 @@ func (enum ListDomainsRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDomainsRequestOrderBy) Values() []ListDomainsRequestOrderBy {
+	return []ListDomainsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"hostname_asc",
+		"hostname_desc",
+	}
+}
+
 func (enum ListDomainsRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -336,6 +484,15 @@ func (enum ListFunctionsRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListFunctionsRequestOrderBy) Values() []ListFunctionsRequestOrderBy {
+	return []ListFunctionsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListFunctionsRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -370,6 +527,15 @@ func (enum ListNamespacesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListNamespacesRequestOrderBy) Values() []ListNamespacesRequestOrderBy {
+	return []ListNamespacesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListNamespacesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -398,6 +564,13 @@ func (enum ListTokensRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTokensRequestOrderBy) Values() []ListTokensRequestOrderBy {
+	return []ListTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -430,6 +603,13 @@ func (enum ListTriggersRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTriggersRequestOrderBy) Values() []ListTriggersRequestOrderBy {
+	return []ListTriggersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
 }
 
 func (enum ListTriggersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -467,6 +647,18 @@ func (enum NamespaceStatus) String() string {
 	return string(enum)
 }
 
+func (enum NamespaceStatus) Values() []NamespaceStatus {
+	return []NamespaceStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"locked",
+		"creating",
+		"pending",
+	}
+}
+
 func (enum NamespaceStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -501,6 +693,17 @@ func (enum RuntimeStatus) String() string {
 	return string(enum)
 }
 
+func (enum RuntimeStatus) Values() []RuntimeStatus {
+	return []RuntimeStatus{
+		"unknown_status",
+		"beta",
+		"available",
+		"deprecated",
+		"end_of_support",
+		"end_of_life",
+	}
+}
+
 func (enum RuntimeStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -532,6 +735,16 @@ func (enum TokenStatus) String() string {
 		return "unknown"
 	}
 	return string(enum)
+}
+
+func (enum TokenStatus) Values() []TokenStatus {
+	return []TokenStatus{
+		"unknown",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+	}
 }
 
 func (enum TokenStatus) MarshalJSON() ([]byte, error) {
@@ -568,6 +781,16 @@ func (enum TriggerInputType) String() string {
 		return "unknown_input_type"
 	}
 	return string(enum)
+}
+
+func (enum TriggerInputType) Values() []TriggerInputType {
+	return []TriggerInputType{
+		"unknown_input_type",
+		"sqs",
+		"scw_sqs",
+		"nats",
+		"scw_nats",
+	}
 }
 
 func (enum TriggerInputType) MarshalJSON() ([]byte, error) {
@@ -608,6 +831,17 @@ func (enum TriggerStatus) String() string {
 		return "unknown_status"
 	}
 	return string(enum)
+}
+
+func (enum TriggerStatus) Values() []TriggerStatus {
+	return []TriggerStatus{
+		"unknown_status",
+		"ready",
+		"deleting",
+		"error",
+		"creating",
+		"pending",
+	}
 }
 
 func (enum TriggerStatus) MarshalJSON() ([]byte, error) {
@@ -858,6 +1092,10 @@ type Function struct {
 	HTTPOption FunctionHTTPOption `json:"http_option"`
 
 	RuntimeMessage string `json:"runtime_message"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // Namespace: namespace.
@@ -1052,6 +1290,10 @@ type CreateFunctionRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption FunctionHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // CreateNamespaceRequest: create namespace request.
@@ -1689,6 +1931,10 @@ type UpdateFunctionRequest struct {
 	//  - enabled: Serve both HTTP and HTTPS traffic.
 	// Default value: unknown_http_option
 	HTTPOption FunctionHTTPOption `json:"http_option"`
+
+	// Sandbox: execution environment of the function.
+	// Default value: unknown_sandbox
+	Sandbox FunctionSandbox `json:"sandbox"`
 }
 
 // UpdateNamespaceRequest: update namespace request.

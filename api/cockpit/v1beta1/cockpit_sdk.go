@@ -58,6 +58,17 @@ func (enum CockpitStatus) String() string {
 	return string(enum)
 }
 
+func (enum CockpitStatus) Values() []CockpitStatus {
+	return []CockpitStatus{
+		"unknown_status",
+		"creating",
+		"ready",
+		"deleting",
+		"updating",
+		"error",
+	}
+}
+
 func (enum CockpitStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -91,6 +102,16 @@ func (enum DatasourceType) String() string {
 	return string(enum)
 }
 
+func (enum DatasourceType) Values() []DatasourceType {
+	return []DatasourceType{
+		"unknown_datasource_type",
+		"metrics",
+		"logs",
+		"traces",
+		"alerts",
+	}
+}
+
 func (enum DatasourceType) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -120,6 +141,14 @@ func (enum GrafanaUserRole) String() string {
 		return "unknown_role"
 	}
 	return string(enum)
+}
+
+func (enum GrafanaUserRole) Values() []GrafanaUserRole {
+	return []GrafanaUserRole{
+		"unknown_role",
+		"editor",
+		"viewer",
+	}
 }
 
 func (enum GrafanaUserRole) MarshalJSON() ([]byte, error) {
@@ -154,6 +183,15 @@ func (enum ListDatasourcesRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListDatasourcesRequestOrderBy) Values() []ListDatasourcesRequestOrderBy {
+	return []ListDatasourcesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListDatasourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -182,6 +220,13 @@ func (enum ListGrafanaUsersRequestOrderBy) String() string {
 		return "login_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListGrafanaUsersRequestOrderBy) Values() []ListGrafanaUsersRequestOrderBy {
+	return []ListGrafanaUsersRequestOrderBy{
+		"login_asc",
+		"login_desc",
+	}
 }
 
 func (enum ListGrafanaUsersRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -214,6 +259,13 @@ func (enum ListPlansRequestOrderBy) String() string {
 	return string(enum)
 }
 
+func (enum ListPlansRequestOrderBy) Values() []ListPlansRequestOrderBy {
+	return []ListPlansRequestOrderBy{
+		"name_asc",
+		"name_desc",
+	}
+}
+
 func (enum ListPlansRequestOrderBy) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
@@ -244,6 +296,15 @@ func (enum ListTokensRequestOrderBy) String() string {
 		return "created_at_asc"
 	}
 	return string(enum)
+}
+
+func (enum ListTokensRequestOrderBy) Values() []ListTokensRequestOrderBy {
+	return []ListTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
 }
 
 func (enum ListTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
@@ -279,6 +340,15 @@ func (enum PlanName) String() string {
 		return "unknown_name"
 	}
 	return string(enum)
+}
+
+func (enum PlanName) Values() []PlanName {
+	return []PlanName{
+		"unknown_name",
+		"free",
+		"premium",
+		"custom",
+	}
 }
 
 func (enum PlanName) MarshalJSON() ([]byte, error) {
