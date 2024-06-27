@@ -1,0 +1,37 @@
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+* @remyleone
+
+/api/account/ @tbellavia
+/api/applesilicon/ @Laure-di
+/api/baremetal/ @Laure-di
+/api/billing/ @tbellavia
+/api/block/ @Codelax
+/api/cockpit/ @jremy42
+/api/container/ @Codelax
+/api/dedibox/ @Laure-di
+/api/documentdb/ @jremy42
+/api/domain/ @jremy42
+/api/edge_services @yfodil
+/api/flexibleip/ @yfodil
+/api/function/ @Codelax
+/api/iam/ @tbellavia
+/api/inference/ @Laure-di
+/api/instance/ @Codelax
+/api/iot/ @jremy42
+/api/ipam/ @yfodil
+/api/jobs/ @Codelax
+/api/k8s/ @Codelax
+/api/key_manager/ @tbellavia
+/api/lb/ @yfodil
+/api/marketplace/ @Codelax
+/api/mnq/ @jremy42
+/api/rdb/ @jremy42
+/api/redis/ @jremy42
+/api/registry/ @Codelax
+/api/secret/ @tbellavia
+/api/serverless_sqldb/ @jremy42
+/api/tem/ @jremy42
+/api/vpc/ @yfodil
+/api/vpcgw/ @yfodil
+/api/webhosting/ @jremy42
