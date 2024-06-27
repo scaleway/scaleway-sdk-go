@@ -11,7 +11,8 @@
 /api/container/ @Codelax
 /api/dedibox/ @Laure-di
 /api/documentdb/ @jremy42
-/api/domain/ @jremy42 
+/api/domain/ @jremy42
+/api/edge_services @yfodil
 /api/flexibleip/ @yfodil
 /api/function/ @Codelax
 /api/iam/ @tbellavia
