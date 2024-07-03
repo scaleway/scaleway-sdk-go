@@ -307,8 +307,10 @@ type FunctionSandbox string
 const (
 	// Unknown sandbox.
 	FunctionSandboxUnknownSandbox = FunctionSandbox("unknown_sandbox")
-	FunctionSandboxV1             = FunctionSandbox("v1")
-	FunctionSandboxV2             = FunctionSandbox("v2")
+	// Legacy sandboxing with slower cold starts. Fully supports the Linux system call interface.
+	FunctionSandboxV1 = FunctionSandbox("v1")
+	// Recommended sandboxing with faster cold starts.
+	FunctionSandboxV2 = FunctionSandbox("v2")
 )
 
 func (enum FunctionSandbox) String() string {
