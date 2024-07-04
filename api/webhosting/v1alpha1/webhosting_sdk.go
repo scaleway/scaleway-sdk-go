@@ -509,6 +509,9 @@ type ControlPanel struct {
 
 	// LogoURL: URL of this control panel's logo.
 	LogoURL string `json:"logo_url"`
+
+	// AvailableLanguages: list of available languages for the control panel.
+	AvailableLanguages []std.LanguageCode `json:"available_languages"`
 }
 
 // Hosting: hosting.
