@@ -1271,6 +1271,18 @@ type RegionalAPITriggerTestAlertRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// RegionalAPIUpdateDataSourceRequest: Update a data source name.
+type RegionalAPIUpdateDataSourceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DataSourceID: ID of the data source to update.
+	DataSourceID string `json:"-"`
+
+	// Name: updated name of the data source.
+	Name *string `json:"name,omitempty"`
+}
+
 // UsageOverview: usage overview.
 type UsageOverview struct {
 	ScalewayMetricsUsage *Usage `json:"scaleway_metrics_usage"`
@@ -1782,6 +1794,42 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	}
 
 	var resp ListDataSourcesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateDataSource: Update a given data source name, specified by the data source ID.
+func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DataSourceID) == "" {
+		return nil, errors.New("field DataSourceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/data-sources/" + fmt.Sprint(req.DataSourceID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DataSource
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
