@@ -161,8 +161,10 @@ type ContainerSandbox string
 const (
 	// Unknown sandbox.
 	ContainerSandboxUnknownSandbox = ContainerSandbox("unknown_sandbox")
-	ContainerSandboxV1             = ContainerSandbox("v1")
-	ContainerSandboxV2             = ContainerSandbox("v2")
+	// Legacy sandboxing with slower cold starts. Fully supports the Linux system call interface.
+	ContainerSandboxV1 = ContainerSandbox("v1")
+	// Recommended sandboxing with faster cold starts.
+	ContainerSandboxV2 = ContainerSandbox("v2")
 )
 
 func (enum ContainerSandbox) String() string {
