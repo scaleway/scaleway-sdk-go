@@ -387,26 +387,33 @@ func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // ListLocalImagesRequest: list local images request.
 type ListLocalImagesRequest struct {
+	// PageSize: a positive integer lower or equal to 100 to select the number of items to display.
+	PageSize *uint32 `json:"-"`
+
+	// Page: a positive integer to choose the page to display.
+	Page *int32 `json:"-"`
+
+	// OrderBy: ordering to use.
+	// Default value: type_asc
+	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
+
+	// Zone: filter local images available on this Availability Zone.
+	Zone *scw.Zone `json:"-"`
+
+	// ImageID: filter by image id.
 	// Precisely one of ImageID, VersionID, ImageLabel must be set.
 	ImageID *string `json:"image_id,omitempty"`
 
+	// VersionID: filter by version id.
 	// Precisely one of ImageID, VersionID, ImageLabel must be set.
 	VersionID *string `json:"version_id,omitempty"`
 
-	PageSize *uint32 `json:"-"`
-
-	Page *int32 `json:"-"`
-
-	// OrderBy: default value: type_asc
-	OrderBy ListLocalImagesRequestOrderBy `json:"-"`
-
+	// ImageLabel: filter by image label.
 	// Precisely one of ImageID, VersionID, ImageLabel must be set.
 	ImageLabel *string `json:"image_label,omitempty"`
 
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone *scw.Zone `json:"-"`
-
-	// Type: default value: unknown_type
+	// Type: filter by type.
+	// Default value: unknown_type
 	Type LocalImageType `json:"-"`
 }
 
