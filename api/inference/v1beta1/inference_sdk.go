@@ -130,22 +130,24 @@ func (enum *ListDeploymentsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListModelsRequestOrderBy string
 
 const (
-	ListModelsRequestOrderByCreatedAtAsc  = ListModelsRequestOrderBy("created_at_asc")
-	ListModelsRequestOrderByCreatedAtDesc = ListModelsRequestOrderBy("created_at_desc")
-	ListModelsRequestOrderByNameAsc       = ListModelsRequestOrderBy("name_asc")
-	ListModelsRequestOrderByNameDesc      = ListModelsRequestOrderBy("name_desc")
+	ListModelsRequestOrderByDisplayRankAsc = ListModelsRequestOrderBy("display_rank_asc")
+	ListModelsRequestOrderByCreatedAtAsc   = ListModelsRequestOrderBy("created_at_asc")
+	ListModelsRequestOrderByCreatedAtDesc  = ListModelsRequestOrderBy("created_at_desc")
+	ListModelsRequestOrderByNameAsc        = ListModelsRequestOrderBy("name_asc")
+	ListModelsRequestOrderByNameDesc       = ListModelsRequestOrderBy("name_desc")
 )
 
 func (enum ListModelsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return "display_rank_asc"
 	}
 	return string(enum)
 }
 
 func (enum ListModelsRequestOrderBy) Values() []ListModelsRequestOrderBy {
 	return []ListModelsRequestOrderBy{
+		"display_rank_asc",
 		"created_at_asc",
 		"created_at_desc",
 		"name_asc",
@@ -672,7 +674,7 @@ type ListModelsRequest struct {
 	Region scw.Region `json:"-"`
 
 	// OrderBy: order in which to return results.
-	// Default value: created_at_asc
+	// Default value: display_rank_asc
 	OrderBy ListModelsRequestOrderBy `json:"-"`
 
 	// Page: page number to return.
