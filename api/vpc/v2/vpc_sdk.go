@@ -306,23 +306,34 @@ type PrivateNetwork struct {
 
 // Route: route.
 type Route struct {
+	// ID: route ID.
 	ID string `json:"id"`
 
-	CreatedAt *time.Time `json:"created_at"`
-
-	VpcID string `json:"vpc_id"`
-
-	Destination scw.IPNet `json:"destination"`
-
-	NexthopResourceID *string `json:"nexthop_resource_id"`
-
-	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id"`
-
-	Tags []string `json:"tags"`
-
+	// Description: route description.
 	Description string `json:"description"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Tags: tags of the Route.
+	Tags []string `json:"tags"`
+
+	// VpcID: vPC the Route belongs to.
+	VpcID string `json:"vpc_id"`
+
+	// Destination: destination of the Route.
+	Destination scw.IPNet `json:"destination"`
+
+	// NexthopResourceID: ID of the nexthop resource.
+	NexthopResourceID *string `json:"nexthop_resource_id"`
+
+	// NexthopPrivateNetworkID: ID of the nexthop private network.
+	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id"`
+
+	// CreatedAt: date the Route was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the Route was last modified.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the Route.
 	Region scw.Region `json:"region"`
 }
 
@@ -416,6 +427,30 @@ type CreatePrivateNetworkRequest struct {
 	VpcID *string `json:"vpc_id,omitempty"`
 }
 
+// CreateRouteRequest: create route request.
+type CreateRouteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Description: route description.
+	Description string `json:"description"`
+
+	// Tags: tags of the Route.
+	Tags []string `json:"tags"`
+
+	// VpcID: vPC the Route belongs to.
+	VpcID string `json:"vpc_id"`
+
+	// Destination: destination of the Route.
+	Destination scw.IPNet `json:"destination"`
+
+	// NexthopResourceID: ID of the nexthop resource.
+	NexthopResourceID *string `json:"nexthop_resource_id,omitempty"`
+
+	// NexthopPrivateNetworkID: ID of the nexthop private network.
+	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+}
+
 // CreateVPCRequest: create vpc request.
 type CreateVPCRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -441,6 +476,15 @@ type DeletePrivateNetworkRequest struct {
 
 	// PrivateNetworkID: private Network ID.
 	PrivateNetworkID string `json:"-"`
+}
+
+// DeleteRouteRequest: delete route request.
+type DeleteRouteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// RouteID: route ID.
+	RouteID string `json:"-"`
 }
 
 // DeleteSubnetsRequest: delete subnets request.
@@ -493,6 +537,15 @@ type GetPrivateNetworkRequest struct {
 
 	// PrivateNetworkID: private Network ID.
 	PrivateNetworkID string `json:"-"`
+}
+
+// GetRouteRequest: get route request.
+type GetRouteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// RouteID: route ID.
+	RouteID string `json:"-"`
 }
 
 // GetVPCRequest: get vpc request.
@@ -794,6 +847,30 @@ type UpdatePrivateNetworkRequest struct {
 
 	// Tags: tags for the Private Network.
 	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateRouteRequest: update route request.
+type UpdateRouteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// RouteID: route ID.
+	RouteID string `json:"-"`
+
+	// Description: route description.
+	Description *string `json:"description,omitempty"`
+
+	// Tags: tags of the Route.
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Destination: destination of the Route.
+	Destination *scw.IPNet `json:"destination,omitempty"`
+
+	// NexthopResourceID: ID of the nexthop resource.
+	NexthopResourceID *string `json:"nexthop_resource_id,omitempty"`
+
+	// NexthopPrivateNetworkID: ID of the nexthop private network.
+	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
 }
 
 // UpdateVPCRequest: update vpc request.
@@ -1449,6 +1526,134 @@ func (s *API) DeleteSubnets(req *DeleteSubnetsRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// CreateRoute: Create a new custom Route.
+func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/routes",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetRoute: Retrieve details of an existing Route, specified by its Route ID.
+func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return nil, errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateRoute: Update parameters of the specified Route.
+func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*Route, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return nil, errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Route
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteRoute: Delete a Route specified by its Route ID.
+func (s *API) DeleteRoute(req *DeleteRouteRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RouteID) == "" {
+		return errors.New("field RouteID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/routes/" + fmt.Sprint(req.RouteID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type RoutesWithNexthopAPI struct {
