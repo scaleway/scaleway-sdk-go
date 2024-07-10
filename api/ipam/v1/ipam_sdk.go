@@ -313,6 +313,9 @@ type ListIPsRequest struct {
 
 	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
 	ResourceName *string `json:"-"`
+
+	// ResourceTypes: resource types to filter for. Only IPs attached to these types of resources will be returned.
+	ResourceTypes []ResourceType `json:"-"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -584,6 +587,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "resource_name", req.ResourceName)
+	parameter.AddToQuery(query, "resource_types", req.ResourceTypes)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
