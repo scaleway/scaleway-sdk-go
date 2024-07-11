@@ -298,6 +298,7 @@ type CreateJobDefinitionRequest struct {
 	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
 
+	// CronSchedule: configure a cron for the job.
 	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
