@@ -368,6 +368,9 @@ type BrowseSecretsResponseItemSecretDetails struct {
 	Protected bool `json:"protected"`
 
 	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy"`
+
+	// Type: default value: unknown_type
+	Type SecretType `json:"type"`
 }
 
 // EphemeralProperties: ephemeral properties.
@@ -577,6 +580,10 @@ type BrowseSecretsRequest struct {
 
 	// Tags: filter secrets by tags.
 	Tags []string `json:"-"`
+
+	// Type: filter by secret type (optional).
+	// Default value: unknown_type
+	Type SecretType `json:"-"`
 }
 
 // BrowseSecretsResponse: browse secrets response.
@@ -1233,6 +1240,7 @@ func (s *API) BrowseSecrets(req *BrowseSecretsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
