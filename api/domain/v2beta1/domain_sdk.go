@@ -4486,7 +4486,7 @@ func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeReque
 	return &resp, nil
 }
 
-// EnableDomainDNSSEC: If your domain has the default Scaleway NS and uses another registrar, you have to update the DS record manually.
+// EnableDomainDNSSEC: If your domain uses another registrar and has the default Scaleway NS, you have to **update the DS record at your registrar**.
 func (s *RegistrarAPI) EnableDomainDNSSEC(req *RegistrarAPIEnableDomainDNSSECRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
