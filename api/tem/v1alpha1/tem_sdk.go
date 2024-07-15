@@ -485,15 +485,15 @@ func (enum *ListWebhooksRequestOrderBy) UnmarshalJSON(data []byte) error {
 type WebhookEventStatus string
 
 const (
-	// If unspecified, the status of the Webhook Event is unknown by default.
+	// If unspecified, the status of the Webhook event is unknown by default.
 	WebhookEventStatusUnknownStatus = WebhookEventStatus("unknown_status")
-	// The Webhook Event has been created and is waiting to be sent.
+	// The Webhook event was created and is waiting to be sent.
 	WebhookEventStatusWaiting = WebhookEventStatus("waiting")
-	// The Webhook Event is in sending process.
+	// The Webhook event is being sent.
 	WebhookEventStatusSending = WebhookEventStatus("sending")
-	// The Webhook Event is sent.
+	// The Webhook event was sent.
 	WebhookEventStatusSent = WebhookEventStatus("sent")
-	// The Webhook Event cannot be sent after multiple retries.
+	// The Webhook event cannot be sent after multiple retries.
 	WebhookEventStatusError = WebhookEventStatus("error")
 )
 
@@ -535,17 +535,17 @@ type WebhookEventType string
 const (
 	// If unspecified, the type of the Webhook Event is unknown by default.
 	WebhookEventTypeUnknownType = WebhookEventType("unknown_type")
-	// The email resource is received and prepared to be sent.
+	// The email was received and is in preparation to be sent to the recipient servers.
 	WebhookEventTypeEmailQueued = WebhookEventType("email_queued")
-	// The email resource is sent but we received a hard-bounce from the recipient server.
+	// The email was sent but hard-bounced by the recipient server.
 	WebhookEventTypeEmailDropped = WebhookEventType("email_dropped")
-	// The email is sent but we received a soft-bounce from the recipient server. The Email will be retried.
+	// The email was sent but soft-bounced by the recipient server. In this case, the sending of the email will be automatically retried.
 	WebhookEventTypeEmailDeferred = WebhookEventType("email_deferred")
-	// The email resource as been successfully sent.
+	// The email was successfully sent.
 	WebhookEventTypeEmailDelivered = WebhookEventType("email_delivered")
-	// The email resource has been detected from Scaleway or the recipient server as a spam.
+	// The email resource was identified as spam by Scaleway or by the recipient server.
 	WebhookEventTypeEmailSpam = WebhookEventType("email_spam")
-	// The email resource hard-bounced with a mailbox not found an error.
+	// The email hard-bounced with a "mailbox not found" error.
 	WebhookEventTypeEmailMailboxNotFound = WebhookEventType("email_mailbox_not_found")
 )
 
