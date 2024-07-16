@@ -1146,6 +1146,9 @@ type ListBackendStagesRequest struct {
 
 	// BucketRegion: bucket region to filter for, only backend stages with buckets in this region will be returned.
 	BucketRegion *string `json:"-"`
+
+	// LBID: load Balancer ID to filter for, only backend stages with this Load Balancer will be returned.
+	LBID *string `json:"-"`
 }
 
 // ListBackendStagesResponse: list backend stages response.
@@ -1293,6 +1296,9 @@ type ListPipelinesRequest struct {
 
 	// ProjectID: project ID to filter for, only pipelines from this Project will be returned.
 	ProjectID *string `json:"-"`
+
+	// HasBackendStageLB: filter on backend stage, only pipelines with a Load Balancer origin will be returned.
+	HasBackendStageLB *bool `json:"-"`
 }
 
 // ListPipelinesResponse: list pipelines response.
@@ -1537,6 +1543,7 @@ func (s *API) ListPipelines(req *ListPipelinesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "has_backend_stage_lb", req.HasBackendStageLB)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -2054,6 +2061,7 @@ func (s *API) ListBackendStages(req *ListBackendStagesRequest, opts ...scw.Reque
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "bucket_name", req.BucketName)
 	parameter.AddToQuery(query, "bucket_region", req.BucketRegion)
+	parameter.AddToQuery(query, "lb_id", req.LBID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
