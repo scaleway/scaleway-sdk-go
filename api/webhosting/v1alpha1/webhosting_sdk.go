@@ -618,6 +618,24 @@ type Offer struct {
 	ControlPanelName string `json:"control_panel_name"`
 }
 
+// CheckUserOwnsDomainRequest: check user owns domain request.
+type CheckUserOwnsDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain for which ownership is to be verified.
+	Domain string `json:"-"`
+
+	// ProjectID: ID of the project currently in use.
+	ProjectID string `json:"project_id"`
+}
+
+// CheckUserOwnsDomainResponse: check user owns domain response.
+type CheckUserOwnsDomainResponse struct {
+	// OwnsDomain: indicates whether the specified project owns the domain.
+	OwnsDomain bool `json:"owns_domain"`
+}
+
 // CreateHostingRequest: create hosting request.
 type CreateHostingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1135,6 +1153,47 @@ func (s *API) GetDomainDNSRecords(req *GetDomainDNSRecordsRequest, opts ...scw.R
 	}
 
 	var resp DNSRecords
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CheckUserOwnsDomain: "Check whether you own this domain or not.".
+func (s *API) CheckUserOwnsDomain(req *CheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckUserOwnsDomainResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
