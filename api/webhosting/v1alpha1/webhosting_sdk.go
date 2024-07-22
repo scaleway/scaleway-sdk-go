@@ -1175,9 +1175,6 @@ func (s *API) CheckUserOwnsDomain(req *CheckUserOwnsDomainRequest, opts ...scw.R
 		req.ProjectID = defaultProjectID
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -1189,7 +1186,11 @@ func (s *API) CheckUserOwnsDomain(req *CheckUserOwnsDomainRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp CheckUserOwnsDomainResponse
