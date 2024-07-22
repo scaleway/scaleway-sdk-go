@@ -487,14 +487,12 @@ type WebhookEventStatus string
 const (
 	// If unspecified, the status of the Webhook event is unknown by default.
 	WebhookEventStatusUnknownStatus = WebhookEventStatus("unknown_status")
-	// The Webhook event was created and is waiting to be sent.
-	WebhookEventStatusWaiting = WebhookEventStatus("waiting")
 	// The Webhook event is being sent.
 	WebhookEventStatusSending = WebhookEventStatus("sending")
 	// The Webhook event was sent.
 	WebhookEventStatusSent = WebhookEventStatus("sent")
 	// The Webhook event cannot be sent after multiple retries.
-	WebhookEventStatusError = WebhookEventStatus("error")
+	WebhookEventStatusFailed = WebhookEventStatus("failed")
 )
 
 func (enum WebhookEventStatus) String() string {
@@ -508,10 +506,9 @@ func (enum WebhookEventStatus) String() string {
 func (enum WebhookEventStatus) Values() []WebhookEventStatus {
 	return []WebhookEventStatus{
 		"unknown_status",
-		"waiting",
 		"sending",
 		"sent",
-		"error",
+		"failed",
 	}
 }
 
