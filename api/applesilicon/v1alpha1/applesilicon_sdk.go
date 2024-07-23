@@ -284,8 +284,14 @@ type Server struct {
 	// IP: iPv4 address of the server.
 	IP net.IP `json:"ip"`
 
-	// VncURL: URL of the VNC.
+	// VncURL: vnc:// URL to access Apple Remote Desktop.
 	VncURL string `json:"vnc_url"`
+
+	// SSHUsername: SSH Username for remote shell.
+	SSHUsername string `json:"ssh_username"`
+
+	// SudoPassword: admin password required to execute commands.
+	SudoPassword string `json:"sudo_password"`
 
 	// Os: initially installed OS, this does not necessarily reflect the current OS version.
 	Os *OS `json:"os"`
