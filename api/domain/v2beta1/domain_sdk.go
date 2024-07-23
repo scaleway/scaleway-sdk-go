@@ -1186,6 +1186,10 @@ const (
 	RecordTypeNAPTR = RecordType("NAPTR")
 	// A DNAME record provides redirection from one part of the DNS name tree to another part of the DNS name tree. DNAME and CNAME records both cause a lookup to (potentially) return data corresponding to a different domain name from the queried domain name. Example: 'yourcompany.com'.
 	RecordTypeDNAME = RecordType("DNAME")
+	// A SVCB (Service Binding) record provides information about a service endpoint associated with a domain name.
+	RecordTypeSVCB = RecordType("SVCB")
+	// An HTTPS record is a special type of SVCB record for HTTPS service endpoints.
+	RecordTypeHTTPS = RecordType("HTTPS")
 )
 
 func (enum RecordType) String() string {
@@ -1218,6 +1222,8 @@ func (enum RecordType) Values() []RecordType {
 		"DS",
 		"NAPTR",
 		"DNAME",
+		"SVCB",
+		"HTTPS",
 	}
 }
 
