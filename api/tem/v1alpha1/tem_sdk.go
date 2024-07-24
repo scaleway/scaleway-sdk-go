@@ -958,6 +958,27 @@ type CreateEmailResponse struct {
 	Emails []*Email `json:"emails"`
 }
 
+// CreateWebhookRequest: create webhook request.
+type CreateWebhookRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: ID of the Domain to watch for triggering events.
+	DomainID string `json:"domain_id"`
+
+	// ProjectID: ID of the project to which the Webhook belongs.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the Webhook.
+	Name string `json:"name"`
+
+	// EventTypes: list of event types that will trigger an event.
+	EventTypes []WebhookEventType `json:"event_types"`
+
+	// SnsArn: scaleway SNS ARN topic to push the events to.
+	SnsArn string `json:"sns_arn"`
+}
+
 // DeleteWebhookRequest: delete webhook request.
 type DeleteWebhookRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1031,6 +1052,15 @@ type GetStatisticsRequest struct {
 
 	// MailFrom: (Optional) Number of emails sent with this sender's email address.
 	MailFrom *string `json:"-"`
+}
+
+// GetWebhookRequest: get webhook request.
+type GetWebhookRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// WebhookID: ID of the Webhook to check.
+	WebhookID string `json:"-"`
 }
 
 // ListDomainsRequest: list domains request.
@@ -1745,6 +1775,43 @@ func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.R
 	return &resp, nil
 }
 
+// CreateWebhook: Create a new Webhook triggered by a list of event types and pushed to a Scaleway SNS ARN.
+func (s *API) CreateWebhook(req *CreateWebhookRequest, opts ...scw.RequestOption) (*Webhook, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Webhook
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListWebhooks:
 func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) (*ListWebhooksResponse, error) {
 	var err error
@@ -1778,6 +1845,37 @@ func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp ListWebhooksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetWebhook: Get information about a Webhook.
+func (s *API) GetWebhook(req *GetWebhookRequest, opts ...scw.RequestOption) (*Webhook, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.WebhookID) == "" {
+		return nil, errors.New("field WebhookID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/webhooks/" + fmt.Sprint(req.WebhookID) + "",
+	}
+
+	var resp Webhook
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
