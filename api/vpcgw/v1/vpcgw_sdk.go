@@ -1669,6 +1669,9 @@ type UpgradeGatewayRequest struct {
 
 	// GatewayID: ID of the gateway to upgrade.
 	GatewayID string `json:"-"`
+
+	// Type: gateway type (commercial offer).
+	Type *string `json:"type,omitempty"`
 }
 
 // This API allows you to manage your Public Gateways.
@@ -1872,7 +1875,7 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// UpgradeGateway: Upgrade a given Public Gateway to the newest software version. This applies the latest bugfixes and features to your Public Gateway, but its service will be interrupted during the update.
+// UpgradeGateway: Upgrade a given Public Gateway to the newest software version or to a different commercial offer type. This applies the latest bugfixes and features to your Public Gateway. Note that gateway service will be interrupted during the update.
 func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
