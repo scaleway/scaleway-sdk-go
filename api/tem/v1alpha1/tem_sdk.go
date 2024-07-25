@@ -1812,7 +1812,7 @@ func (s *API) CreateWebhook(req *CreateWebhookRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListWebhooks:
+// ListWebhooks: Retrieve Webhooks in a specific Project or in a specific Organization using the `region` parameter.
 func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) (*ListWebhooksResponse, error) {
 	var err error
 
@@ -1853,7 +1853,7 @@ func (s *API) ListWebhooks(req *ListWebhooksRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetWebhook: Get information about a Webhook.
+// GetWebhook: Retrieve information about a specific Webhook using the `webhook_id` and `region` parameters.
 func (s *API) GetWebhook(req *GetWebhookRequest, opts ...scw.RequestOption) (*Webhook, error) {
 	var err error
 
@@ -1884,7 +1884,7 @@ func (s *API) GetWebhook(req *GetWebhookRequest, opts ...scw.RequestOption) (*We
 	return &resp, nil
 }
 
-// UpdateWebhook:
+// UpdateWebhook: Update a Webhook events type, SNS ARN or name.
 func (s *API) UpdateWebhook(req *UpdateWebhookRequest, opts ...scw.RequestOption) (*Webhook, error) {
 	var err error
 
@@ -1920,7 +1920,7 @@ func (s *API) UpdateWebhook(req *UpdateWebhookRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteWebhook:
+// DeleteWebhook: You must specify the Webhook you want to delete by the `region` and `webhook_id`. Deleting a Webhook is permanent and cannot be undone.
 func (s *API) DeleteWebhook(req *DeleteWebhookRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1949,7 +1949,7 @@ func (s *API) DeleteWebhook(req *DeleteWebhookRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// ListWebhookEvents:
+// ListWebhookEvents: Retrieve the list of Webhook events triggered from a specific Webhook or for a specific Project or Organization. You must specify the `region`.
 func (s *API) ListWebhookEvents(req *ListWebhookEventsRequest, opts ...scw.RequestOption) (*ListWebhookEventsResponse, error) {
 	var err error
 
