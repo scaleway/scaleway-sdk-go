@@ -43,7 +43,7 @@ type DataKeyAlgorithmSymmetricEncryption string
 
 const (
 	DataKeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption = DataKeyAlgorithmSymmetricEncryption("unknown_symmetric_encryption")
-	// AES-GCM (256-bits) is the only key algorithm currently supported by Key Manager.
+	// AES-GCM (256-bits) is the only data key algorithm currently supported by Key Manager.
 	DataKeyAlgorithmSymmetricEncryptionAes256Gcm = DataKeyAlgorithmSymmetricEncryption("aes_256_gcm")
 )
 
@@ -123,7 +123,7 @@ const (
 	KeyStateEnabled = KeyState("enabled")
 	// The key cannot be used for cryptographic operations.
 	KeyStateDisabled = KeyState("disabled")
-	// Key material must be imported before you can use it for cryptographic operations.
+	// Key material must be imported before the key can be used for cryptographic operations.
 	KeyStatePendingKeyMaterial = KeyState("pending_key_material")
 )
 
@@ -215,7 +215,7 @@ type KeyRotationPolicy struct {
 
 // KeyUsage: key usage.
 type KeyUsage struct {
-	// SymmetricEncryption: algorithms used to encrypt and decrypt arbitrary payloads.
+	// SymmetricEncryption: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
 	// Default value: unknown_symmetric_encryption
 	// Precisely one of SymmetricEncryption must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
@@ -235,10 +235,7 @@ type Key struct {
 	// Usage: keys with a usage set to `symmetric_encryption` are used to encrypt and decrypt data. The only key algorithm currently supported by Key Manager is AES-256-GCM.
 	Usage *KeyUsage `json:"usage"`
 
-	// State: current state of the key. Values include:
-	// * `unknown_state`: key is in an unknown state.
-	// * `enabled`: key can be used for cryptographic operations.
-	// * `disabled`: key cannot be used for cryptographic operations.
+	// State: see the `Key.State` enum for a description of values.
 	// Default value: unknown_state
 	State KeyState `json:"state"`
 
@@ -405,7 +402,7 @@ type GenerateDataKeyRequest struct {
 	// KeyID: ID of the key.
 	KeyID string `json:"-"`
 
-	// Algorithm: encryption algorithm of the data encryption key.
+	// Algorithm: see the `DataKey.Algorithm.SymmetricEncryption` enum for a description of values.
 	// Default value: unknown_symmetric_encryption
 	Algorithm DataKeyAlgorithmSymmetricEncryption `json:"algorithm"`
 
