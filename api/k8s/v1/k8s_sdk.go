@@ -1191,6 +1191,15 @@ type Node struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// NodeMetadataCoreV1Taint: node metadata core v1 taint.
+type NodeMetadataCoreV1Taint struct {
+	Key string `json:"key"`
+
+	Value string `json:"value"`
+
+	Effect string `json:"effect"`
+}
+
 // UpdateClusterRequestAutoUpgrade: update cluster request auto upgrade.
 type UpdateClusterRequestAutoUpgrade struct {
 	// Enable: defines whether auto upgrade is enabled for the cluster.
@@ -1264,6 +1273,15 @@ type UpdatePoolRequestUpgradePolicy struct {
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
 	MaxSurge *uint32 `json:"max_surge"`
+}
+
+// AuthExternalNodeRequest: auth external node request.
+type AuthExternalNodeRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: pool the node will be attached to.
+	PoolID string `json:"-"`
 }
 
 // CreateClusterRequest: create cluster request.
@@ -1455,6 +1473,13 @@ type ExternalNode struct {
 	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
 }
 
+// ExternalNodeAuth: external node auth.
+type ExternalNodeAuth struct {
+	NodeToken string `json:"node_token"`
+
+	APIURL string `json:"api_url"`
+}
+
 // GetClusterKubeConfigRequest: get cluster kube config request.
 type GetClusterKubeConfigRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1474,6 +1499,12 @@ type GetClusterRequest struct {
 
 	// ClusterID: ID of the requested cluster.
 	ClusterID string `json:"-"`
+}
+
+// GetNodeMetadataRequest: get node metadata request.
+type GetNodeMetadataRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
 }
 
 // GetNodeRequest: get node request.
@@ -1787,6 +1818,37 @@ type MigrateClusterToRoutedIPsRequest struct {
 	Region scw.Region `json:"-"`
 
 	ClusterID string `json:"-"`
+}
+
+// NodeMetadata: node metadata.
+type NodeMetadata struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	ClusterURL string `json:"cluster_url"`
+
+	ClusterCa string `json:"cluster_ca"`
+
+	CredentialProviderConfig string `json:"credential_provider_config"`
+
+	PoolVersion string `json:"pool_version"`
+
+	KubeletConfig string `json:"kubelet_config"`
+
+	NodeLabels map[string]string `json:"node_labels"`
+
+	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
+
+	PrivateNetworkMode string `json:"private_network_mode"`
+
+	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
+
+	FullIsolation bool `json:"full_isolation"`
+
+	HasGpu bool `json:"has_gpu"`
+
+	ExternalIP string `json:"external_ip"`
 }
 
 // RebootNodeRequest: reboot node request.
@@ -2586,6 +2648,69 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	}
 
 	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetNodeMetadata: Rerieve metadata to instantiate a Kapsule/Kosmos node. This method is not intended to be called by end users but rather programmatically by the node-installer.
+func (s *API) GetNodeMetadata(req *GetNodeMetadataRequest, opts ...scw.RequestOption) (*NodeMetadata, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/nodes/metadata",
+	}
+
+	var resp NodeMetadata
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AuthExternalNode: Creates a newer Kosmos node and returns its token. This method is not intended to be called by end users but rather programmatically by the node-installer.
+func (s *API) AuthExternalNode(req *AuthExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNodeAuth, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/external-nodes/auth",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ExternalNodeAuth
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
