@@ -930,6 +930,9 @@ type Container struct {
 	// Default value: unknown_sandbox
 	Sandbox ContainerSandbox `json:"sandbox"`
 
+	// LocalStorageLimit: local storage limit of the container (in MB).
+	LocalStorageLimit uint32 `json:"local_storage_limit"`
+
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
 }
@@ -1154,6 +1157,9 @@ type CreateContainerRequest struct {
 	// Sandbox: execution environment of the container.
 	// Default value: unknown_sandbox
 	Sandbox ContainerSandbox `json:"sandbox"`
+
+	// LocalStorageLimit: local storage limit of the container (in MB).
+	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1750,6 +1756,9 @@ type UpdateContainerRequest struct {
 	// Sandbox: execution environment of the container.
 	// Default value: unknown_sandbox
 	Sandbox ContainerSandbox `json:"sandbox"`
+
+	// LocalStorageLimit: local storage limit of the container (in MB).
+	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
