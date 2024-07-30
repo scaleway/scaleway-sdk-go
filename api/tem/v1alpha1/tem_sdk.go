@@ -808,6 +808,9 @@ type Domain struct {
 	// Records: list of records to configure to validate a domain.
 	Records *DomainRecords `json:"records"`
 
+	// Autoconfig: status of auto-configuration for the domain's DNS zone.
+	Autoconfig bool `json:"autoconfig"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
@@ -911,6 +914,9 @@ type CreateDomainRequest struct {
 
 	// AcceptTos: accept Scaleway's Terms of Service.
 	AcceptTos bool `json:"accept_tos"`
+
+	// Autoconfig: activate auto-configuration of the domain's DNS zone.
+	Autoconfig bool `json:"autoconfig"`
 }
 
 // CreateEmailRequest: create email request.
