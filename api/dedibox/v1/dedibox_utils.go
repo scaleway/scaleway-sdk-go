@@ -36,6 +36,7 @@ func (s *API) WaitForService(req *WaitForServiceRequest, opts ...scw.RequestOpti
 	service, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			service, err := s.GetService(&GetServiceRequest{
+				Zone:      req.Zone,
 				ServiceID: req.ServiceID,
 			}, opts...)
 			if err != nil {
@@ -80,6 +81,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	server, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			server, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
 				ServerID: req.ServerID,
 			}, opts...)
 			if err != nil {
