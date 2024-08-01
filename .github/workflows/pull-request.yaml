@@ -12,14 +12,15 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
+    # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
     - name: Run unit tests
       run: go test -v ./...
 
@@ -31,14 +32,15 @@ jobs:
         arch: [386, amd64, arm, arm64]
     runs-on: ${{ matrix.platform }}
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
+    # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
     - name: Test to build binary
       run: GOARCH=${{ matrix.arch }} go build ./...
 
@@ -49,13 +51,14 @@ jobs:
         platform: [windows-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
+    # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
     - name: Test to build binary
       run: go build ./...
