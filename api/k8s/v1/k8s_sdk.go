@@ -1039,6 +1039,9 @@ type ClusterType struct {
 
 	// AuditLogsSupported: true if the offer allows activation of the audit log functionality. Please note that audit logs are sent to Cockpit.
 	AuditLogsSupported bool `json:"audit_logs_supported"`
+
+	// MaxEtcdSize: maximum amount of data that can be stored in etcd for the offer.
+	MaxEtcdSize scw.Size `json:"max_etcd_size"`
 }
 
 // Version: version.
