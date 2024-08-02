@@ -306,8 +306,11 @@ type Server struct {
 	// UpdatedAt: date on which the server was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// DeletableAt: date on which the server was last deleted.
+	// DeletableAt: date from which the server can be deleted.
 	DeletableAt *time.Time `json:"deletable_at"`
+
+	// DeletionScheduled: set to true to mark the server for automatic deletion depending on `deletable_at` date. Set to false to cancel an existing deletion schedule. Leave unset otherwise.
+	DeletionScheduled bool `json:"deletion_scheduled"`
 
 	// Zone: zone of the server.
 	Zone scw.Zone `json:"zone"`
@@ -506,6 +509,9 @@ type UpdateServerRequest struct {
 
 	// Name: updated name for your server.
 	Name *string `json:"name,omitempty"`
+
+	// ScheduleDeletion: specify whether the server should be flagged for automatic deletion.
+	ScheduleDeletion *bool `json:"schedule_deletion,omitempty"`
 }
 
 // This API allows you to manage your Apple silicon machines.
