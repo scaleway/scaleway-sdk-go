@@ -13,7 +13,7 @@ const (
 )
 
 type WaitForDeploymentRequest struct {
-	DeploymentId  string
+	DeploymentID  string
 	Region        scw.Region
 	Status        DeploymentStatus
 	Timeout       *time.Duration
@@ -40,7 +40,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 		Get: func() (interface{}, bool, error) {
 			deployment, err := s.GetDeployment(&GetDeploymentRequest{
 				Region:       req.Region,
-				DeploymentID: req.DeploymentId,
+				DeploymentID: req.DeploymentID,
 			}, opts...)
 			if err != nil {
 				return nil, false, err
