@@ -9,6 +9,9 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Labeler
+        uses: actions/labeler@v5
         with:
           sync-labels: true
