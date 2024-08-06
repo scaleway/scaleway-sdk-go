@@ -419,6 +419,15 @@ type HostingOption struct {
 	Name string `json:"name"`
 }
 
+// EmailAddress: email address.
+type EmailAddress struct {
+	// Domain: domain part of the mailbox address.
+	Domain string `json:"domain"`
+
+	// Login: username part address of the mailbox address.
+	Login string `json:"login"`
+}
+
 // OfferProduct: offer product.
 type OfferProduct struct {
 	// Name: product name.
@@ -591,6 +600,15 @@ type Hosting struct {
 	Region scw.Region `json:"region"`
 }
 
+// Mailbox: mailbox.
+type Mailbox struct {
+	// MailboxID: the ID of the mailbox.
+	MailboxID uint32 `json:"mailbox_id"`
+
+	// Email: the email address of the mailbox.
+	Email *EmailAddress `json:"email"`
+}
+
 // Offer: offer.
 type Offer struct {
 	// ID: offer ID.
@@ -634,6 +652,78 @@ type CheckUserOwnsDomainRequest struct {
 type CheckUserOwnsDomainResponse struct {
 	// OwnsDomain: indicates whether the specified project owns the domain.
 	OwnsDomain bool `json:"owns_domain"`
+}
+
+// ClassicMailAPICreateMailboxRequest: classic mail api create mailbox request.
+type ClassicMailAPICreateMailboxRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OnlineID: the Online hosting ID.
+	OnlineID uint32 `json:"-"`
+
+	// Email: the email address of the mailbox.
+	Email *EmailAddress `json:"email,omitempty"`
+
+	// Password: password for the new mailbox.
+	Password string `json:"password"`
+}
+
+// ClassicMailAPIDeleteMailboxRequest: classic mail api delete mailbox request.
+type ClassicMailAPIDeleteMailboxRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OnlineID: the Online hosting ID.
+	OnlineID uint32 `json:"-"`
+
+	// MailboxID: the ID of the mailbox to delete.
+	MailboxID uint32 `json:"-"`
+}
+
+// ClassicMailAPIGetMailboxRequest: classic mail api get mailbox request.
+type ClassicMailAPIGetMailboxRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OnlineID: the Online hosting ID.
+	OnlineID uint32 `json:"-"`
+
+	// MailboxID: the ID of the mailbox to get.
+	MailboxID uint32 `json:"-"`
+}
+
+// ClassicMailAPIListMailboxesRequest: classic mail api list mailboxes request.
+type ClassicMailAPIListMailboxesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OnlineID: the Online hosting ID.
+	OnlineID uint32 `json:"-"`
+
+	// Page: page number (must be a positive integer).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of mailboxes to return (must be a positive integer lower or equal to 100).
+	PageSize *uint32 `json:"-"`
+
+	// Domain: domain to filter the mailboxes.
+	Domain *string `json:"-"`
+}
+
+// ClassicMailAPIUpdateMailboxRequest: classic mail api update mailbox request.
+type ClassicMailAPIUpdateMailboxRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OnlineID: the Online hosting ID.
+	OnlineID uint32 `json:"-"`
+
+	// MailboxID: the ID of the mailbox to update.
+	MailboxID uint32 `json:"-"`
+
+	// Password: new password for the mailbox.
+	Password *string `json:"password,omitempty"`
 }
 
 // CreateHostingRequest: create hosting request.
@@ -816,6 +906,34 @@ func (r *ListHostingsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Hostings = append(r.Hostings, results.Hostings...)
 	r.TotalCount += uint32(len(results.Hostings))
 	return uint32(len(results.Hostings)), nil
+}
+
+// ListMailboxesResponse: list mailboxes response.
+type ListMailboxesResponse struct {
+	// TotalCount: total number of mailboxes.
+	TotalCount uint64 `json:"total_count"`
+
+	// Mailboxes: list of mailboxes.
+	Mailboxes []*Mailbox `json:"mailboxes"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListMailboxesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListMailboxesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListMailboxesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Mailboxes = append(r.Mailboxes, results.Mailboxes...)
+	r.TotalCount += uint64(len(results.Mailboxes))
+	return uint64(len(results.Mailboxes)), nil
 }
 
 // ListOffersRequest: list offers request.
@@ -1338,6 +1456,209 @@ func (s *API) ResetHostingPassword(req *ResetHostingPasswordRequest, opts ...scw
 	}
 
 	var resp ResetHostingPasswordResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// This API allows you to manage your mailboxes for your Web Hosting services.
+type ClassicMailAPI struct {
+	client *scw.Client
+}
+
+// NewClassicMailAPI returns a ClassicMailAPI object from a Scaleway client.
+func NewClassicMailAPI(client *scw.Client) *ClassicMailAPI {
+	return &ClassicMailAPI{
+		client: client,
+	}
+}
+func (s *ClassicMailAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// CreateMailbox: Create a new mailbox within your hosting plan.
+func (s *ClassicMailAPI) CreateMailbox(req *ClassicMailAPICreateMailboxRequest, opts ...scw.RequestOption) (*Mailbox, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OnlineID) == "" {
+		return nil, errors.New("field OnlineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/classic-hostings/" + fmt.Sprint(req.OnlineID) + "/mailboxes",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Mailbox
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetMailbox: Get a mailbox by id within your hosting plan.
+func (s *ClassicMailAPI) GetMailbox(req *ClassicMailAPIGetMailboxRequest, opts ...scw.RequestOption) (*Mailbox, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OnlineID) == "" {
+		return nil, errors.New("field OnlineID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.MailboxID) == "" {
+		return nil, errors.New("field MailboxID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/classic-hostings/" + fmt.Sprint(req.OnlineID) + "/mailboxes/" + fmt.Sprint(req.MailboxID) + "",
+	}
+
+	var resp Mailbox
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListMailboxes: List all mailboxes within your hosting plan.
+func (s *ClassicMailAPI) ListMailboxes(req *ClassicMailAPIListMailboxesRequest, opts ...scw.RequestOption) (*ListMailboxesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "domain", req.Domain)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OnlineID) == "" {
+		return nil, errors.New("field OnlineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/classic-hostings/" + fmt.Sprint(req.OnlineID) + "/mailboxes",
+		Query:  query,
+	}
+
+	var resp ListMailboxesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteMailbox:
+func (s *ClassicMailAPI) DeleteMailbox(req *ClassicMailAPIDeleteMailboxRequest, opts ...scw.RequestOption) (*Mailbox, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OnlineID) == "" {
+		return nil, errors.New("field OnlineID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.MailboxID) == "" {
+		return nil, errors.New("field MailboxID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/classic-hostings/" + fmt.Sprint(req.OnlineID) + "/mailboxes/" + fmt.Sprint(req.MailboxID) + "",
+	}
+
+	var resp Mailbox
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateMailbox: Update the mailbox within your hosting plan.
+func (s *ClassicMailAPI) UpdateMailbox(req *ClassicMailAPIUpdateMailboxRequest, opts ...scw.RequestOption) (*Mailbox, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OnlineID) == "" {
+		return nil, errors.New("field OnlineID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.MailboxID) == "" {
+		return nil, errors.New("field MailboxID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/classic-hostings/" + fmt.Sprint(req.OnlineID) + "/mailboxes/" + fmt.Sprint(req.MailboxID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Mailbox
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
