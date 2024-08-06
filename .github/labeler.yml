@@ -1,0 +1,119 @@
+account:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/account/**
+
+apple-silicon:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/applesilicon/**
+
+baremetal:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/baremetal/**
+
+billing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/billing/**
+
+container:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/container/**
+
+dedibox:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/dedibox/**
+
+domain:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/domain/**
+
+flexible-ip:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/flexibleip/**
+
+function:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/function/**
+
+iam:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/iam/**
+
+instance:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/instance/**
+
+iot:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/iot/**
+
+k8s:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/k8s/**
+
+load-balancer:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/lb/**
+
+mnq:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/mnq/**
+
+rdb:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/rdb/**
+
+redis:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/redis/**
+
+registry:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/registry/**
+
+sdb:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/sdb/**
+
+secret:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/secret/**
+
+tem:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/tem/**
+
+vpc:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/vpc/**
+
+vpcgw:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/vpcgw/**
+
+webhosting:
+  - changed-files:
+      - any-glob-to-any-file:
+          - api/webhosting/**
