@@ -479,6 +479,9 @@ type Secret struct {
 	// EphemeralPolicy: (Optional.) Policy that defines whether/when a secret's versions expire. By default, the policy is applied to all the secret's versions.
 	EphemeralPolicy *EphemeralPolicy `json:"ephemeral_policy"`
 
+	// UsedBy: list of Scaleway resources that can access and manage the secret.
+	UsedBy []Product `json:"used_by"`
+
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
