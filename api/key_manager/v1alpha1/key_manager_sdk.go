@@ -115,6 +115,47 @@ func (enum *KeyAlgorithmSymmetricEncryption) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type KeyOrigin string
+
+const (
+	KeyOriginUnknownOrigin = KeyOrigin("unknown_origin")
+	// Scaleway Key Manager generates the key material upon key creation.
+	KeyOriginScalewayKms = KeyOrigin("scaleway_kms")
+	// Scaleway Key Manager creates a key with key material coming from an external source.
+	KeyOriginExternal = KeyOrigin("external")
+)
+
+func (enum KeyOrigin) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_origin"
+	}
+	return string(enum)
+}
+
+func (enum KeyOrigin) Values() []KeyOrigin {
+	return []KeyOrigin{
+		"unknown_origin",
+		"scaleway_kms",
+		"external",
+	}
+}
+
+func (enum KeyOrigin) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyOrigin) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyOrigin(KeyOrigin(tmp).String())
+	return nil
+}
+
 type KeyState string
 
 const (
@@ -266,6 +307,10 @@ type Key struct {
 	// RotationPolicy: key rotation policy.
 	RotationPolicy *KeyRotationPolicy `json:"rotation_policy"`
 
+	// Origin: refer to the `Key.Origin` enum for a description of values.
+	// Default value: unknown_origin
+	Origin KeyOrigin `json:"origin"`
+
 	// Region: region of the key.
 	Region scw.Region `json:"region"`
 }
@@ -295,6 +340,10 @@ type CreateKeyRequest struct {
 
 	// Unprotected: default value is `false`.
 	Unprotected bool `json:"unprotected"`
+
+	// Origin: refer to the `Key.Origin` enum for a description of values.
+	// Default value: unknown_origin
+	Origin KeyOrigin `json:"origin"`
 }
 
 // DataKey: data key.
@@ -341,6 +390,15 @@ type DecryptResponse struct {
 
 	// Ciphertext: if the data was already encrypted with the latest key rotation, no output will be returned in the response object.
 	Ciphertext *[]byte `json:"ciphertext"`
+}
+
+// DeleteKeyMaterialRequest: delete key material request.
+type DeleteKeyMaterialRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key of which to delete the key material.
+	KeyID string `json:"-"`
 }
 
 // DeleteKeyRequest: delete key request.
@@ -418,6 +476,21 @@ type GetKeyRequest struct {
 
 	// KeyID: ID of the key to target.
 	KeyID string `json:"-"`
+}
+
+// ImportKeyMaterialRequest: import key material request.
+type ImportKeyMaterialRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: the key's origin must be 'external'.
+	KeyID string `json:"-"`
+
+	// KeyMaterial: the key material The key material is a random sequence of bytes used to derive a cryptographic key.
+	KeyMaterial []byte `json:"key_material"`
+
+	// Salt: a salt can be used to improve the quality of randomness when the key material is generated from a low entropy source.
+	Salt *[]byte `json:"salt,omitempty"`
 }
 
 // ListKeysRequest: list keys request.
@@ -999,4 +1072,74 @@ func (s *API) Decrypt(req *DecryptRequest, opts ...scw.RequestOption) (*DecryptR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ImportKeyMaterial: Import key material to use to derive a new cryptographic key. The key's origin must be `external`.
+func (s *API) ImportKeyMaterial(req *ImportKeyMaterialRequest, opts ...scw.RequestOption) (*Key, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/import-key-material",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Key
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteKeyMaterial: Delete previously imported key material. This renders the associated cryptographic key unusable for any operation. The key's origin must be `external`.
+func (s *API) DeleteKeyMaterial(req *DeleteKeyMaterialRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/delete-key-material",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
