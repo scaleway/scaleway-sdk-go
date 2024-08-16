@@ -66,16 +66,16 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// insecure mode
 	if s.insecure {
-		logger.Debugf("client: using insecure mode")
+		logger.Debugf("client: using insecure mode\n")
 		setInsecureMode(s.httpClient)
 	}
 
 	if logger.ShouldLog(logger.LogLevelDebug) {
-		logger.Debugf("client: using request logger")
+		logger.Debugf("client: using request logger\n")
 		setRequestLogging(s.httpClient)
 	}
 
-	logger.Debugf("client: using sdk version " + version)
+	logger.Debugf("client: using sdk version " + version + "\n")
 
 	return &Client{
 		auth:                  s.token,
@@ -199,7 +199,7 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
 	if sdkErr != nil {
 		return sdkErr
 	}
-	logger.Debugf("creating %s request on %s", req.Method, url.String())
+	logger.Debugf("creating %s request on %s\n", req.Method, url.String())
 
 	// build request
 	httpRequest, err := http.NewRequest(req.Method, url.String(), req.Body)

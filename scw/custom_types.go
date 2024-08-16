@@ -137,7 +137,7 @@ func (m Money) String() string {
 
 	currencySign, currencySignFound := currencySignsByCodes[m.CurrencyCode]
 	if !currencySignFound {
-		logger.Debugf("%s currency code is not supported", m.CurrencyCode)
+		logger.Debugf("%s currency code is not supported\n", m.CurrencyCode)
 		currencySign = m.CurrencyCode
 	}
 

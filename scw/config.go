@@ -255,10 +255,10 @@ func (c *Config) GetProfile(profileName string) (*Profile, error) {
 func (c *Config) GetActiveProfile() (*Profile, error) {
 	switch {
 	case os.Getenv(ScwActiveProfileEnv) != "":
-		logger.Debugf("using active profile from env: %s=%s", ScwActiveProfileEnv, os.Getenv(ScwActiveProfileEnv))
+		logger.Debugf("using active profile from env: %s=%s\n", ScwActiveProfileEnv, os.Getenv(ScwActiveProfileEnv))
 		return c.GetProfile(os.Getenv(ScwActiveProfileEnv))
 	case c.ActiveProfile != nil:
-		logger.Debugf("using active profile from config: active_profile=%s", ScwActiveProfileEnv, *c.ActiveProfile)
+		logger.Debugf("using active profile from config: active_profile=%s\n", *c.ActiveProfile)
 		return c.GetProfile(*c.ActiveProfile)
 	default:
 		return &c.Profile, nil
