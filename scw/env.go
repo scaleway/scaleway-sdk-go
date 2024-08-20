@@ -115,15 +115,15 @@ func LoadEnvProfile() *Profile {
 func getEnv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
 	value, exist := os.LookupEnv(upToDateKey)
 	if exist {
-		logger.Debugf("reading value from %s", upToDateKey)
+		logger.Debugf("reading value from %s\n", upToDateKey)
 		return value, upToDateKey, true
 	}
 
 	for _, key := range deprecatedKeys {
 		value, exist := os.LookupEnv(key)
 		if exist {
-			logger.Debugf("reading value from %s", key)
-			logger.Warningf("%s is deprecated, please use %s instead", key, upToDateKey)
+			logger.Debugf("reading value from %s\n", key)
+			logger.Warningf("%s is deprecated, please use %s instead\n", key, upToDateKey)
 			return value, key, true
 		}
 	}
