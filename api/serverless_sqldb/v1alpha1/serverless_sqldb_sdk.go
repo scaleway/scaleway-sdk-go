@@ -229,8 +229,11 @@ type DatabaseBackup struct {
 	// ExpiresAt: expiration date.
 	ExpiresAt *time.Time `json:"expires_at"`
 
-	// Size: size of the database backup.
+	// Size: size (in bytes) of the database backup file.
 	Size *scw.Size `json:"size"`
+
+	// DbSize: size (in bytes) of the database when backup has been done.
+	DbSize *scw.Size `json:"db_size"`
 
 	// DownloadURL: download URL of the exported database backup.
 	DownloadURL *string `json:"download_url"`
