@@ -7,7 +7,7 @@ import (
 )
 
 // TODO: versioning process
-const version = "v1.0.0-beta.7+dev"
+const defaultVersion = "v1.0.0-beta.7+dev"
 const path = "github.com/scaleway/scaleway-sdk-go"
 
 var cachedVersion = (*string)(nil)
@@ -31,7 +31,7 @@ func getVersion() string {
 		return *cachedVersion
 	}
 
-	return version
+	return defaultVersion
 }
 
 var userAgent = fmt.Sprintf("scaleway-sdk-go/%s (%s; %s; %s)", getVersion(), runtime.Version(), runtime.GOOS, runtime.GOARCH)
