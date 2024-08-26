@@ -1347,6 +1347,18 @@ type Statistics struct {
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
+// UpdateDomainRequest: update domain request.
+type UpdateDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: ID of the domain to update.
+	DomainID string `json:"-"`
+
+	// Autoconfig: (Optional) If set to true, activate auto-configuration of the domain's DNS zone.
+	Autoconfig *bool `json:"autoconfig,omitempty"`
+}
+
 // UpdateWebhookRequest: update webhook request.
 type UpdateWebhookRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1773,6 +1785,42 @@ func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.R
 	}
 
 	var resp DomainLastStatus
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateDomain: Update a domain auto-configuration.
+func (s *API) UpdateDomain(req *UpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainID) == "" {
+		return nil, errors.New("field DomainID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
