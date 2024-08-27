@@ -1,7 +1,7 @@
 package k8s
 
 import (
-	"io/ioutil"
+	"io"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -101,7 +101,7 @@ func (s *API) GetClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 		return nil, errors.Wrap(err, "error getting cluster kubeconfig")
 	}
 
-	kubeconfigContent, err := ioutil.ReadAll(kubeconfigFile.Content)
+	kubeconfigContent, err := io.ReadAll(kubeconfigFile.Content)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading kubeconfig content")
 	}

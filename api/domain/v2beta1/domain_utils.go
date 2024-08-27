@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
@@ -66,7 +65,7 @@ func (s *API) WaitForDNSZone(
 			}
 
 			if len(DNSZones.DNSZones) == 0 {
-				return nil, true, fmt.Errorf(ErrCodeNoSuchDNSZone)
+				return nil, true, errors.New(ErrCodeNoSuchDNSZone)
 			}
 
 			Dns := DNSZones.DNSZones[0]
@@ -120,7 +119,7 @@ func (s *API) WaitForDNSRecordExist(
 			}
 
 			if DNSRecords.TotalCount == 0 {
-				return nil, false, fmt.Errorf(ErrCodeNoSuchDNSRecord)
+				return nil, false, errors.New(ErrCodeNoSuchDNSRecord)
 			}
 
 			record := DNSRecords.Records[0]

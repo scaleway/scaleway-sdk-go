@@ -1,6 +1,11 @@
 package strcase
 
-import "strings"
+import (
+	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+)
 
 var customBashNames = map[string]string{
 	"aclid":  "acl-id",
@@ -15,9 +20,11 @@ func ToBashArg(s string) string {
 	if customBashName, exists := customBashNames[strings.ToLower(s)]; exists {
 		return customBashName
 	}
+
+	caser := cases.Title(language.English)
 	for _, initialism := range customInitialisms {
 		// catch this kind of pattern: ExampleIDs ==> ExampleIds ==> example-ids
-		s = strings.ReplaceAll(s, initialism[0], strings.Title(strings.ToLower(initialism[0])))
+		s = strings.ReplaceAll(s, initialism[0], caser.String(strings.ToLower(initialism[0])))
 	}
 	return toKebab(s)
 }
