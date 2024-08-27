@@ -24,6 +24,7 @@ linters:
     - gofumpt # Gofumpt checks whether code was gofumpt-ed. [fast: true, auto-fix: true]
     - goimports # In addition to fixing imports, goimports also formats your code in the same style as gofmt. [fast: true, auto-fix: true]
     - mirror # reports wrong mirror patterns of bytes/strings usage [fast: false, auto-fix: false]
+    - unused #(megacheck): Checks Go code for unused constants, variables, functions and types [fast: false, auto-fix: false]
     - whitespace # Tool for detection of leading and trailing whitespace [fast: true, auto-fix: true]
 
 issues:

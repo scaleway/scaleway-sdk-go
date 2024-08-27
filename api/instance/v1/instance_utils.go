@@ -103,28 +103,6 @@ type AttachVolumeResponse struct {
 	Server *Server `json:"-"`
 }
 
-// volumesToVolumeTemplates converts a map of *Volume to a map of *VolumeTemplate
-// so it can be used in a UpdateServer request
-func volumesToVolumeTemplates(volumes map[string]*VolumeServer) map[string]*VolumeServerTemplate {
-	volumeTemplates := map[string]*VolumeServerTemplate{}
-	for key, volume := range volumes {
-		volumeTemplate := &VolumeServerTemplate{
-			ID: &volume.ID,
-		}
-
-		if volume.Name != "" {
-			volumeTemplate.Name = &volume.Name
-		}
-
-		if volume.VolumeType == VolumeServerVolumeTypeSbsVolume {
-			volumeTemplate.VolumeType = VolumeVolumeTypeSbsVolume
-		}
-
-		volumeTemplates[key] = volumeTemplate
-	}
-	return volumeTemplates
-}
-
 // AttachVolume attaches a volume to a server
 //
 // Note: Implementation is thread-safe.
