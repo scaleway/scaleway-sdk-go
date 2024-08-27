@@ -419,7 +419,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
 			setEnv(t, test.env, test.files, dir)
-			test.expectedError = strings.Replace(test.expectedError, "{HOME}", dir, -1)
+			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
@@ -525,7 +525,7 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	os.Clearenv()
 	for key, value := range env {
-		value = strings.Replace(value, "{HOME}", homeDir, -1)
+		value = strings.ReplaceAll(value, "{HOME}", homeDir)
 		testhelpers.AssertNoError(t, os.Setenv(key, value))
 	}
 

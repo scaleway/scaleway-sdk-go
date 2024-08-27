@@ -189,7 +189,7 @@ func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.Request
 		PoolStatusWarning: {},
 	}
 
-	optsWithAllPages := append(opts, scw.WithAllPages())
+	optsWithAllPages := append(opts, scw.WithAllPages()) //nolint:gocritic
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
