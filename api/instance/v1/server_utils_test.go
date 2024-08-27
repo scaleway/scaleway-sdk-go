@@ -3,7 +3,6 @@ package instance
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -69,7 +68,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 	})
 	testhelpers.AssertNoError(t, err)
 
-	resUserData, err := ioutil.ReadAll(data)
+	resUserData, err := io.ReadAll(data)
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, contentStr, string(resUserData))
 }
@@ -137,7 +136,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 			currentReader, exists := allData.UserData[expectedKey]
 			testhelpers.Assert(t, exists, "%s key not found in result", expectedKey)
 
-			currentValue, err := ioutil.ReadAll(currentReader)
+			currentValue, err := io.ReadAll(currentReader)
 			testhelpers.AssertNoError(t, err)
 
 			testhelpers.Equals(t, expectedValue, string(currentValue))

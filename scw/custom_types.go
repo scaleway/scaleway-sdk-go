@@ -112,7 +112,7 @@ type Money struct {
 // - (value = 1.123456789, precision = 9) => Money{Units = 1, Nanos = 123456789}
 func NewMoneyFromFloat(value float64, currencyCode string, precision int) *Money {
 	if precision > 9 {
-		panic(fmt.Errorf("max precision is 9"))
+		panic(errors.New("max precision is 9"))
 	}
 
 	strValue := strconv.FormatFloat(value, 'f', precision, 64)
@@ -206,7 +206,7 @@ func (tsp *TimeSeriesPoint) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(point) != 2 {
-		return fmt.Errorf("invalid point array")
+		return errors.New("invalid point array")
 	}
 
 	strTimestamp, isStrTimestamp := point[0].(string)

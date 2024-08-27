@@ -2,7 +2,7 @@ package scw
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"net"
 	"strings"
@@ -269,7 +269,7 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 		{
 			name: "with timestamp error",
 			json: `{"name":"cpu_usage","points":[["2019/08/08T15-00-00Z",0.2]]}`,
-			err:  fmt.Errorf("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
+			err:  errors.New("2019/08/08T15-00-00Z timestamp is not in RFC 3339 format"),
 		},
 	}
 
@@ -824,7 +824,7 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
-				testhelpers.Equals(t, c.want, string(got))
+				testhelpers.Equals(t, c.want, got)
 			}
 		})
 	}

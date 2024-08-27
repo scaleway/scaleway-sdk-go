@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -245,7 +244,7 @@ func TestSaveConfig(t *testing.T) {
 			for fileName := range test.expectedFiles {
 				expectedContent, err := test.config.HumanConfig()
 				testhelpers.AssertNoError(t, err)
-				content, err := ioutil.ReadFile(filepath.Join(dir, fileName))
+				content, err := os.ReadFile(filepath.Join(dir, fileName))
 				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, expectedContent, string(content))
 			}
@@ -509,7 +508,7 @@ func TestMergeProfiles(t *testing.T) {
 }
 
 func initEnv(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "home")
+	dir, err := os.MkdirTemp("", "home")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -532,7 +531,7 @@ func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
 		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
-		testhelpers.AssertNoError(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
 	}
 }
 

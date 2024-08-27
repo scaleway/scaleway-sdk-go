@@ -3,7 +3,7 @@ package instance
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"net"
 	"net/http"
@@ -226,7 +226,7 @@ func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return make([]byte, 0), errors.Wrap(err, "error reading userdata body")
 		}

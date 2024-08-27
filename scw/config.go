@@ -3,7 +3,6 @@ package scw
 import (
 	"bytes"
 	goerrors "errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -217,7 +216,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 		return nil, err
 	}
 
-	file, err := ioutil.ReadFile(path)
+	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot read config file")
 	}
@@ -304,7 +303,7 @@ func (c *Config) SaveTo(path string) error {
 	}
 
 	// STEP 3: write new config file
-	err = ioutil.WriteFile(path, []byte(file), defaultConfigPermission)
+	err = os.WriteFile(path, []byte(file), defaultConfigPermission)
 	if err != nil {
 		return err
 	}

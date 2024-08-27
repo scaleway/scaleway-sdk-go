@@ -357,7 +357,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 func (c *Client) doListLocalities(req *ScalewayRequest, res interface{}, localities []string) (err error) {
 	path := req.Path
 	if !strings.Contains(path, "%locality%") {
-		return fmt.Errorf("request is not a valid locality request")
+		return errors.New("request is not a valid locality request")
 	}
 	// Requests are parallelized
 	responseMutex := sync.Mutex{}
@@ -418,7 +418,7 @@ func (c *Client) doListZones(req *ScalewayRequest, res interface{}, zones []Zone
 			}
 		}
 		if !strings.Contains(req.Path, "%locality%") {
-			return fmt.Errorf("request is not a valid zoned request")
+			return errors.New("request is not a valid zoned request")
 		}
 		localities := make([]string, 0, len(zones))
 		for _, zone := range zones {
@@ -449,7 +449,7 @@ func (c *Client) doListRegions(req *ScalewayRequest, res interface{}, regions []
 			}
 		}
 		if !strings.Contains(req.Path, "%locality%") {
-			return fmt.Errorf("request is not a valid zoned request")
+			return errors.New("request is not a valid zoned request")
 		}
 		localities := make([]string, 0, len(regions))
 		for _, region := range regions {

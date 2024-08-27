@@ -72,6 +72,6 @@ func (s *API) WaitForPossibleDeletion(req *WaitForServerRequest, opts ...scw.Req
 		return nil, errors.Wrap(err, "waiting for server failed")
 	}
 	timeToDelete := *server.DeletableAt
-	time.Sleep(timeToDelete.Sub(time.Now()))
+	time.Sleep(time.Until(timeToDelete))
 	return server, nil
 }

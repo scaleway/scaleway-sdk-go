@@ -196,21 +196,21 @@ func (s *API) GetServerUserData(req *GetServerUserDataRequest, opts ...scw.Reque
 		req.Zone = defaultZone
 	}
 
-	if fmt.Sprint(req.Zone) == "" {
+	if req.Zone == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ServerID) == "" {
+	if req.ServerID == "" {
 		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.Key) == "" {
+	if req.Key == "" {
 		return nil, errors.New("field Key cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "GET",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/user_data/" + fmt.Sprint(req.Key),
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + req.ServerID + "/user_data/" + req.Key,
 		Headers: http.Header{},
 	}
 
@@ -245,15 +245,15 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 		req.Zone = defaultZone
 	}
 
-	if fmt.Sprint(req.Zone) == "" {
+	if req.Zone == "" {
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ServerID) == "" {
+	if req.ServerID == "" {
 		return errors.New("field ServerID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.Key) == "" {
+	if req.Key == "" {
 		return errors.New("field Key cannot be empty in request")
 	}
 
@@ -263,7 +263,7 @@ func (s *API) SetServerUserData(req *SetServerUserDataRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method:  "PATCH",
-		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/user_data/" + fmt.Sprint(req.Key),
+		Path:    "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + req.ServerID + "/user_data/" + req.Key,
 		Headers: http.Header{},
 	}
 
@@ -304,7 +304,7 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ServerID) == "" {
+	if req.ServerID == "" {
 		return nil, errors.New("field ServerID cannot be empty in request")
 	}
 
@@ -357,11 +357,11 @@ func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw
 		req.Zone = defaultZone
 	}
 
-	if fmt.Sprint(req.Zone) == "" {
+	if req.Zone == "" {
 		return errors.New("field Zone cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ServerID) == "" {
+	if req.ServerID == "" {
 		return errors.New("field ServerID cannot be empty in request")
 	}
 
