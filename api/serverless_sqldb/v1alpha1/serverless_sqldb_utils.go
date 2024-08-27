@@ -104,7 +104,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for backup backup failed")
+		return nil, errors.Wrap(err, "waiting for database backup failed")
 	}
 	return backup.(*DatabaseBackup), nil
 }
