@@ -294,7 +294,7 @@ type InvalidRequestError struct {
 // ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
 func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
 	// If error has no fields, it is not an InvalidArgumentsError.
-	if e.Fields == nil || len(e.Fields) == 0 {
+	if len(e.Fields) == 0 {
 		return nil
 	}
 
