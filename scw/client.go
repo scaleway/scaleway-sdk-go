@@ -352,7 +352,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 	return errors.New("%T does not support pagination", res)
 }
 
-// doListLocalities collects all localities using mutliple list requests and aggregate all results on a lister response
+// doListLocalities collects all localities using multiple list requests and aggregate all results on a lister response
 // results is sorted by locality
 func (c *Client) doListLocalities(req *ScalewayRequest, res interface{}, localities []string) (err error) {
 	path := req.Path
