@@ -18,18 +18,17 @@ func ToSnake(s string) string {
 			}
 		}
 
-		if i > 0 && n[len(n)-1] != '_' && nextCaseIsChanged {
-			// add underscore if next letter case type is changed
+		switch {
+		case i > 0 && n[len(n)-1] != '_' && nextCaseIsChanged:
 			if isUpperLetter(v) {
 				n += "_" + string(v)
 			} else if isLowerLetter(v) {
 				n += string(v) + "_"
 			}
-		} else if v == ' ' || v == '-' {
-			// replace spaces and dashes with underscores
+		case v == ' ' || v == '-':
 			n += "_"
-		} else {
-			n = n + string(v)
+		default:
+			n += string(v)
 		}
 	}
 	n = strings.ToLower(n)
