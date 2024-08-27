@@ -853,7 +853,7 @@ var (
 // formatted as "scw-adjective-surname". For example 'scw-focused-turing'.
 func GetRandomName(prefixes ...string) string {
 begin:
-	parts := append(prefixes, left[r.Intn(len(left))], right[r.Intn(len(right))])
+	parts := append(prefixes, left[r.Intn(len(left))], right[r.Intn(len(right))]) //nolint:gocritic
 	name := strings.Join(parts, "-")
 	if strings.Contains(name, "boring-wozniak") /* Steve Wozniak is not boring */ {
 		goto begin

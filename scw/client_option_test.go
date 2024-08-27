@@ -233,7 +233,7 @@ func TestCombinedClientOptions(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
 			setEnv(t, test.env, test.files, dir)
-			test.expectedError = strings.Replace(test.expectedError, "{HOME}", dir, -1)
+			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)

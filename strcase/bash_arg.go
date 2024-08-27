@@ -17,7 +17,7 @@ func ToBashArg(s string) string {
 	}
 	for _, initialism := range customInitialisms {
 		// catch this kind of pattern: ExampleIDs ==> ExampleIds ==> example-ids
-		s = strings.Replace(s, initialism[0], strings.Title(strings.ToLower(initialism[0])), -1)
+		s = strings.ReplaceAll(s, initialism[0], strings.Title(strings.ToLower(initialism[0])))
 	}
 	return toKebab(s)
 }
@@ -41,18 +41,17 @@ func toDelimited(s string, del uint8) string {
 			}
 		}
 
-		if i > 0 && n[len(n)-1] != del && nextCaseIsChanged {
-			// add delimiter if next letter case type is changed
+		switch {
+		case i > 0 && n[len(n)-1] != del && nextCaseIsChanged:
 			if isUpperLetter(v) {
 				n += string(del) + string(v)
 			} else if isLowerLetter(v) {
 				n += string(v) + string(del)
 			}
-		} else if v == ' ' || v == '-' || v == '_' {
-			// replace spaces and dashes with delimiter
+		case v == ' ' || v == '-' || v == '_':
 			n += string(del)
-		} else {
-			n = n + string(v)
+		default:
+			n += string(v)
 		}
 	}
 	n = strings.ToLower(n)

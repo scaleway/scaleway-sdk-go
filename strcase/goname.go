@@ -17,8 +17,8 @@ func ToPrivateGoName(s string) string {
 
 // toGoName returns a different name if it should be different.
 func toGoName(name string) (should string) {
-	name = strings.Replace(name, " ", "_", -1)
-	name = strings.Replace(name, "-", "_", -1)
+	name = strings.ReplaceAll(name, " ", "_")
+	name = strings.ReplaceAll(name, "-", "_")
 
 	// Fast path for simple cases: "_" and all lowercase.
 	if name == "_" {
@@ -41,25 +41,21 @@ func toGoName(name string) (should string) {
 	w, i := 0, 0 // index of start of word, scan
 	for i+1 <= len(runes) {
 		eow := false // whether we hit the end of a word
-		if i+1 == len(runes) {
+		switch {
+		case i+1 == len(runes):
 			eow = true
-		} else if runes[i+1] == '_' {
-			// underscore; shift the remainder forward over any run of underscores
+		case runes[i+1] == '_':
 			eow = true
 			n := 1
 			for i+n+1 < len(runes) && runes[i+n+1] == '_' {
 				n++
 			}
-
-			// Leave at most one underscore if the underscore is between two digits
 			if i+n+1 < len(runes) && unicode.IsDigit(runes[i]) && unicode.IsDigit(runes[i+n+1]) {
 				n--
 			}
-
 			copy(runes[i+1:], runes[i+n+1:])
 			runes = runes[:len(runes)-n]
-		} else if unicode.IsLower(runes[i]) && !unicode.IsLower(runes[i+1]) {
-			// lower->non-lower
+		case unicode.IsLower(runes[i]) && !unicode.IsLower(runes[i+1]):
 			eow = true
 		}
 		i++
