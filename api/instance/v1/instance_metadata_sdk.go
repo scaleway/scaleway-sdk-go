@@ -298,7 +298,7 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest("DELETE", meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBuffer([]byte("")))
+		request, err := http.NewRequest("DELETE", meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
