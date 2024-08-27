@@ -340,6 +340,7 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 
 	run := func(c *testCase) func(t *testing.T) {
 		return func(t *testing.T) {
+			t.Helper()
 			f := File{}
 			err := json.Unmarshal([]byte(c.json), &f)
 			testhelpers.AssertNoError(t, err)

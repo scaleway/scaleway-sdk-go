@@ -36,6 +36,7 @@ func TestNonStandardError(t *testing.T) {
 
 	run := func(c *testCase) func(t *testing.T) {
 		return func(t *testing.T) {
+			t.Helper()
 			res := &http.Response{
 				Status:     c.resStatus,
 				StatusCode: c.resStatusCode,

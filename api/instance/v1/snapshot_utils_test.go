@@ -33,6 +33,7 @@ func TestWaitForSnapshot(t *testing.T) {
 // createSnapshot is a helper that create an snapshot.
 // It returns the newly created snapshot and a cleanup function
 func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snapshot, func()) {
+	t.Helper()
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
 		Image:          "ubuntu_focal",
