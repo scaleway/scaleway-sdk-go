@@ -38,7 +38,7 @@ func (meta *MetadataAPI) getMetadataUrl() string {
 	for _, url := range []string{metadataAPIv4, metadataAPIv6} {
 		http.DefaultClient.Timeout = 3 * time.Second
 		resp, err := http.Get(url)
-		if err == nil && resp.StatusCode == 200 {
+		if err == nil && resp.StatusCode == http.StatusOK {
 			meta.MetadataURL = &url
 			return url
 		}
@@ -259,7 +259,7 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest("PATCH", meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBuffer(value))
+		request, err := http.NewRequest(http.MethodPatch, meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBuffer(value))
 		if err != nil {
 			return errors.Wrap(err, "error creating patch userdata request")
 		}
@@ -298,7 +298,7 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest("DELETE", meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBufferString(""))
+		request, err := http.NewRequest(http.MethodDelete, meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
