@@ -80,8 +80,3 @@ func GetScwConfigDir() (string, error) {
 	}
 	return filepath.Join(homeDir, ".config", "scw"), nil
 }
-
-func fileExist(name string) bool {
-	_, err := os.Stat(name)
-	return err == nil
-}
