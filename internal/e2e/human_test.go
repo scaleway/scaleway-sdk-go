@@ -8,9 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-var (
-	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-)
+var defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 
 func newE2EClient(withAuthInClient bool) (*test.API, string, string, error) {
 	client, err := scw.NewClient(

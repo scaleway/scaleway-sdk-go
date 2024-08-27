@@ -7,8 +7,10 @@ import (
 )
 
 // TODO: versioning process
-const defaultVersion = "v1.0.0-beta.7+dev"
-const path = "github.com/scaleway/scaleway-sdk-go"
+const (
+	defaultVersion = "v1.0.0-beta.7+dev"
+	path           = "github.com/scaleway/scaleway-sdk-go"
+)
 
 var cachedVersion = (*string)(nil)
 

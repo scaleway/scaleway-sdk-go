@@ -8,28 +8,16 @@ linters:
 
   # Run golangci-lint linters to see
   enable:
-    - deadcode
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - structcheck
-    - typecheck
-    - unused
-    - varcheck
-    - goconst
-    - goimports
-    - golint
-    - misspell
-    - stylecheck
-    - unconvert
-    - unparam
-    - whitespace
-    - gosec
-    # - wsl Could be interesting but need a lot of changes
+    - gci # Gci controls golang package import order and makes it always deterministic. [fast: true, auto-fix: false]
+    - gofmt # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification [fast: true, auto-fix: true]
+    - gofumpt # Gofumpt checks whether code was gofumpt-ed. [fast: true, auto-fix: true]
+    - goimports # In addition to fixing imports, goimports also formats your code in the same style as gofmt. [fast: true, auto-fix: true]
+    - whitespace # Tool for detection of leading and trailing whitespace [fast: true, auto-fix: true]
 
 issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
   exclude-rules:
     - path: _test\.go
       linters:

@@ -9,16 +9,15 @@ import (
 	"strings"
 	"text/template"
 
-	"gopkg.in/yaml.v2"
-
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/logger"
+	"gopkg.in/yaml.v2"
 )
 
 const (
 	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
-	defaultConfigPermission = 0600
+	defaultConfigPermission = 0o600
 
 	// Reserved name for the default profile.
 	DefaultProfileName = "default"
@@ -299,7 +298,7 @@ func (c *Config) SaveTo(path string) error {
 	}
 
 	// STEP 2: create config path dir in cases it didn't exist before
-	err = os.MkdirAll(filepath.Dir(path), 0700)
+	err = os.MkdirAll(filepath.Dir(path), 0o700)
 	if err != nil {
 		return err
 	}

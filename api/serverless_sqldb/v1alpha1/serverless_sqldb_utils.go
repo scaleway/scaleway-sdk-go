@@ -45,7 +45,6 @@ func (s *API) WaitForDatabase(req *WaitForDatabaseRequest, opts ...scw.RequestOp
 				DatabaseID: req.DatabaseID,
 				Region:     req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -94,7 +93,6 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 				BackupID: req.BackupID,
 				Region:   req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

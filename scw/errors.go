@@ -59,6 +59,7 @@ func (e *ResponseError) UnmarshalJSON(b []byte) error {
 
 // IsScwSdkError implement SdkError interface
 func (e *ResponseError) IsScwSdkError() {}
+
 func (e *ResponseError) Error() string {
 	s := fmt.Sprintf("scaleway-sdk-go: http error %s", e.Status)
 
@@ -76,6 +77,7 @@ func (e *ResponseError) Error() string {
 
 	return s
 }
+
 func (e *ResponseError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -214,6 +216,7 @@ type InvalidArgumentsError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *InvalidArgumentsError) IsScwSdkError() {}
+
 func (e *InvalidArgumentsError) Error() string {
 	invalidArgs := make([]string, len(e.Details))
 	for i, d := range e.Details {
@@ -235,6 +238,7 @@ func (e *InvalidArgumentsError) Error() string {
 
 	return "scaleway-sdk-go: invalid argument(s): " + strings.Join(invalidArgs, "; ")
 }
+
 func (e *InvalidArgumentsError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -344,6 +348,7 @@ type QuotasExceededError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *QuotasExceededError) IsScwSdkError() {}
+
 func (e *QuotasExceededError) Error() string {
 	invalidArgs := make([]string, len(e.Details))
 	for i, d := range e.Details {
@@ -352,6 +357,7 @@ func (e *QuotasExceededError) Error() string {
 
 	return "scaleway-sdk-go: quota exceeded(s): " + strings.Join(invalidArgs, "; ")
 }
+
 func (e *QuotasExceededError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -367,6 +373,7 @@ type PermissionsDeniedError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *PermissionsDeniedError) IsScwSdkError() {}
+
 func (e *PermissionsDeniedError) Error() string {
 	invalidArgs := make([]string, len(e.Details))
 	for i, d := range e.Details {
@@ -375,6 +382,7 @@ func (e *PermissionsDeniedError) Error() string {
 
 	return "scaleway-sdk-go: insufficient permissions: " + strings.Join(invalidArgs, "; ")
 }
+
 func (e *PermissionsDeniedError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -389,9 +397,11 @@ type TransientStateError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *TransientStateError) IsScwSdkError() {}
+
 func (e *TransientStateError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is in a transient state: %s", e.Resource, e.ResourceID, e.CurrentState)
 }
+
 func (e *TransientStateError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -405,9 +415,11 @@ type ResourceNotFoundError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *ResourceNotFoundError) IsScwSdkError() {}
+
 func (e *ResourceNotFoundError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is not found", e.Resource, e.ResourceID)
 }
+
 func (e *ResourceNotFoundError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -421,9 +433,11 @@ type ResourceLockedError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *ResourceLockedError) IsScwSdkError() {}
+
 func (e *ResourceLockedError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is locked", e.Resource, e.ResourceID)
 }
+
 func (e *ResourceLockedError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -436,9 +450,11 @@ type OutOfStockError struct {
 
 // IsScwSdkError implements the SdkError interface
 func (e *OutOfStockError) IsScwSdkError() {}
+
 func (e *OutOfStockError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: resource %s is out of stock", e.Resource)
 }
+
 func (e *OutOfStockError) GetRawBody() json.RawMessage {
 	return e.RawBody
 }
@@ -454,6 +470,7 @@ func NewInvalidClientOptionError(format string, a ...interface{}) *InvalidClient
 
 // IsScwSdkError implements the SdkError interface
 func (e InvalidClientOptionError) IsScwSdkError() {}
+
 func (e InvalidClientOptionError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
 }
@@ -469,6 +486,7 @@ func configFileNotFound(path string) *ConfigFileNotFoundError {
 
 // ConfigFileNotFoundError implements the SdkError interface
 func (e ConfigFileNotFoundError) IsScwSdkError() {}
+
 func (e ConfigFileNotFoundError) Error() string {
 	return fmt.Sprintf("scaleway-sdk-go: cannot read config file %s: no such file or directory", e.path)
 }

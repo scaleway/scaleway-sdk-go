@@ -200,11 +200,11 @@ func TestTimeSeries_MarshallJSON(t *testing.T) {
 				Name: "cpu_usage",
 				Points: []*TimeSeriesPoint{
 					{
-						Timestamp: time.Date(2019, time.August, 8, 15, 00, 00, 0, time.UTC),
+						Timestamp: time.Date(2019, time.August, 8, 15, 0, 0, 0, time.UTC),
 						Value:     0.2,
 					},
 					{
-						Timestamp: time.Date(2019, time.August, 8, 15, 01, 00, 0, time.UTC),
+						Timestamp: time.Date(2019, time.August, 8, 15, 1, 0, 0, time.UTC),
 						Value:     10.6,
 					},
 				},
@@ -253,11 +253,11 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 				Name: "cpu_usage",
 				Points: []*TimeSeriesPoint{
 					{
-						Timestamp: time.Date(2019, time.August, 8, 15, 00, 00, 0, time.UTC),
+						Timestamp: time.Date(2019, time.August, 8, 15, 0o0, 0o0, 0, time.UTC),
 						Value:     0.2,
 					},
 					{
-						Timestamp: time.Date(2019, time.August, 8, 15, 01, 00, 0, time.UTC),
+						Timestamp: time.Date(2019, time.August, 8, 15, 0o1, 0o0, 0, time.UTC),
 						Value:     10.6,
 					},
 				},

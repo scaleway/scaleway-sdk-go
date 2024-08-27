@@ -34,7 +34,6 @@ func (s *API) WaitForDNSZone(
 	req *WaitForDNSZoneRequest,
 	opts ...scw.RequestOption,
 ) (*DNSZone, error) {
-
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -62,7 +61,6 @@ func (s *API) WaitForDNSZone(
 
 			// listing dns zones and take the first one
 			DNSZones, err := s.ListDNSZones(listReq, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -80,7 +78,6 @@ func (s *API) WaitForDNSZone(
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
-
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for DNS failed")
 	}
@@ -118,7 +115,6 @@ func (s *API) WaitForDNSRecordExist(
 				Type:    req.RecordType,
 				DNSZone: req.DNSZone,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -134,7 +130,6 @@ func (s *API) WaitForDNSRecordExist(
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
-
 	if err != nil {
 		return nil, errors.Wrap(err, "check for DNS Record exist failed")
 	}

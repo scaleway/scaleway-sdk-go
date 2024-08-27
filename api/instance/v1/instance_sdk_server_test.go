@@ -153,9 +153,7 @@ func TestCreateServerWithIncorrectBody(t *testing.T) {
 
 	instanceAPI := NewAPI(client)
 
-	var (
-		zone = scw.ZoneFrPar1
-	)
+	zone := scw.ZoneFrPar1
 
 	// Create server
 	_, err = instanceAPI.CreateServer(&CreateServerRequest{

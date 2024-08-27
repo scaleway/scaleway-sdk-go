@@ -448,7 +448,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 }
 
 func TestConfigString(t *testing.T) {
-	var c = &Config{
+	c := &Config{
 		Profile: Profile{
 			AccessKey:     s(v2ValidAccessKey),
 			SecretKey:     s(v2ValidSecretKey),
@@ -531,7 +531,7 @@ func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
-		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0700))
+		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
 		testhelpers.AssertNoError(t, ioutil.WriteFile(targetPath, []byte(content), defaultConfigPermission))
 	}
 }
@@ -662,7 +662,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 		config: &Config{
 			Profile: Profile{
 				AccessKey: s(v2ValidAccessKey),
-			}},
+			},
+		},
 		result: `# Scaleway configuration file
 # https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
