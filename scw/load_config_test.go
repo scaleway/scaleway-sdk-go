@@ -1,7 +1,6 @@
 package scw
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -149,7 +148,7 @@ func TestLoad(t *testing.T) {
 			// test expected files
 			for path, expectedContent := range test.expectedFiles {
 				targetPath := filepath.Join(dir, path)
-				content, err := ioutil.ReadFile(targetPath)
+				content, err := os.ReadFile(targetPath)
 				testhelpers.AssertNoError(t, err)
 				testhelpers.Equals(t, expectedContent, string(content))
 				testhelpers.AssertNoError(t, os.RemoveAll(targetPath)) // delete at the end

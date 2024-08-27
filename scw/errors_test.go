@@ -3,7 +3,7 @@ package scw
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -39,7 +39,7 @@ func TestNonStandardError(t *testing.T) {
 			res := &http.Response{
 				Status:     c.resStatus,
 				StatusCode: c.resStatusCode,
-				Body:       ioutil.NopCloser(strings.NewReader(c.resBody)),
+				Body:       io.NopCloser(strings.NewReader(c.resBody)),
 				Header: http.Header{
 					"Content-Type": []string{c.contentType},
 				},
@@ -196,7 +196,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 		Header: map[string][]string{
 			"Content-Type": {"application/json"},
 		},
-		Body: ioutil.NopCloser(bytes.NewReader(bodyBytes)),
+		Body: io.NopCloser(bytes.NewReader(bodyBytes)),
 	}
 
 	// Test hasResponseError()

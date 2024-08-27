@@ -3,7 +3,6 @@ package logger
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -79,10 +78,10 @@ func isEnabled(envKey string) bool {
 // newLogger creates a logger to be used as default logger.
 // All logs are written to w.
 func newLogger(w io.Writer, level LogLevel) *loggerT {
-	errorW := ioutil.Discard
-	warningW := ioutil.Discard
-	infoW := ioutil.Discard
-	debugW := ioutil.Discard
+	errorW := io.Discard
+	warningW := io.Discard
+	infoW := io.Discard
+	debugW := io.Discard
 	if isEnabled(DebugEnv) {
 		level = LogLevelDebug
 	}

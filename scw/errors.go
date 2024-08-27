@@ -3,7 +3,7 @@ package scw
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"sort"
 	"strings"
@@ -97,7 +97,7 @@ func hasResponseError(res *http.Response) error {
 		return newErr
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return errors.Wrap(err, "cannot read error response body")
 	}
