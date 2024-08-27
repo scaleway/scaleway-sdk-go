@@ -824,7 +824,7 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
-				testhelpers.Equals(t, c.want, string(got))
+				testhelpers.Equals(t, c.want, got)
 			}
 		})
 	}
