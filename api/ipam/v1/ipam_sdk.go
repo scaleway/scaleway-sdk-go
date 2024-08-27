@@ -88,6 +88,7 @@ type ResourceType string
 
 const (
 	ResourceTypeUnknownType         = ResourceType("unknown_type")
+	ResourceTypeCustom              = ResourceType("custom")
 	ResourceTypeInstanceServer      = ResourceType("instance_server")
 	ResourceTypeInstanceIP          = ResourceType("instance_ip")
 	ResourceTypeInstancePrivateNic  = ResourceType("instance_private_nic")
@@ -115,6 +116,7 @@ func (enum ResourceType) String() string {
 func (enum ResourceType) Values() []ResourceType {
 	return []ResourceType{
 		"unknown_type",
+		"custom",
 		"instance_server",
 		"instance_ip",
 		"instance_private_nic",
@@ -187,6 +189,15 @@ type Source struct {
 	SubnetID *string `json:"subnet_id,omitempty"`
 }
 
+// CustomResource: custom resource.
+type CustomResource struct {
+	// MacAddress: mAC address of the custom resource.
+	MacAddress string `json:"mac_address"`
+
+	// Name: when the resource is in a Private Network, a DNS record is available to resolve the resource name.
+	Name *string `json:"name"`
+}
+
 // IP: ip.
 type IP struct {
 	// ID: IP ID.
@@ -226,6 +237,18 @@ type IP struct {
 	Zone *scw.Zone `json:"zone"`
 }
 
+// AttachIPRequest: attach ip request.
+type AttachIPRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// IPID: IP ID.
+	IPID string `json:"-"`
+
+	// Resource: custom resource to be attached to the IP.
+	Resource *CustomResource `json:"resource"`
+}
+
 // BookIPRequest: book ip request.
 type BookIPRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -245,6 +268,18 @@ type BookIPRequest struct {
 
 	// Tags: tags for the IP.
 	Tags []string `json:"tags"`
+
+	// Resource: custom resource to attach to the IP being booked. An example of a custom resource is a virtual machine hosted on an Elastic Metal server, or an additional user network interface on an Instance. Do not use this for attaching IP addresses to standard Scaleway resources, as it will fail - instead, see the relevant product API for an equivalent method.
+	Resource *CustomResource `json:"resource,omitempty"`
+}
+
+// DetachIPRequest: detach ip request.
+type DetachIPRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// IPID: IP ID.
+	IPID string `json:"-"`
 }
 
 // GetIPRequest: get ip request.
@@ -342,6 +377,18 @@ func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.IPs = append(r.IPs, results.IPs...)
 	r.TotalCount += uint64(len(results.IPs))
 	return uint64(len(results.IPs)), nil
+}
+
+// MoveIPRequest: move ip request.
+type MoveIPRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// IPID: IP ID.
+	IPID string `json:"-"`
+
+	// Resource: custom resource to be attached to the IP.
+	Resource *CustomResource `json:"resource,omitempty"`
 }
 
 // ReleaseIPRequest: release ip request.
@@ -603,6 +650,114 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	}
 
 	var resp ListIPsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AttachIP: Attach an existing IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server, or an additional user network interface on an Instance. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
+func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/ipam/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "/attach",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IP
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DetachIP: Detach a private IP from a custom resource. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/ipam/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "/detach",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IP
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// MoveIP: Move an existing private IP from one custom resource (e.g. a virtual machine hosted on an Elastic Metal server) to another custom resource. This will detach it from the first resource, and attach it to the second. Do not use this method for moving IP addresses between standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/ipam/v1/regions/" + fmt.Sprint(req.Region) + "/ips/" + fmt.Sprint(req.IPID) + "/move",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IP
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
