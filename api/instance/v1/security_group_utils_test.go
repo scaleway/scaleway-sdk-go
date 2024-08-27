@@ -69,6 +69,7 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	bootstrap := func(t *testing.T) (*SecurityGroup, *SecurityGroupRule, func()) {
+		t.Helper()
 		createSecurityGroupResponse, err := instanceAPI.CreateSecurityGroup(&CreateSecurityGroupRequest{
 			Name:                  "name",
 			Description:           "description",

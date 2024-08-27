@@ -65,6 +65,7 @@ func TestEnableDebugMode(t *testing.T) {
 }
 
 func testThings(t *testing.T, expectedEvents []string, actualOutput string) {
+	t.Helper()
 	lines := strings.Split(actualOutput, "\n")
 	for i, line := range lines[:len(lines)-1] { // last line is always empty
 		tmp := strings.Split(line, " ")

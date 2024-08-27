@@ -33,6 +33,7 @@ func TestWaitForImage(t *testing.T) {
 // createImage cis a helper that create an image.
 // It return the newly created image and a cleanup function
 func createImage(t *testing.T, instanceAPI *API, imageName string) (*Image, func()) {
+	t.Helper()
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
 		Image:          "ubuntu_focal",

@@ -508,6 +508,7 @@ func TestMergeProfiles(t *testing.T) {
 }
 
 func initEnv(t *testing.T) string {
+	t.Helper()
 	dir, err := os.MkdirTemp("", "home")
 	if err != nil {
 		t.Fatal(err)
@@ -516,12 +517,14 @@ func initEnv(t *testing.T) string {
 }
 
 func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
+	t.Helper()
 	for path := range files {
 		testhelpers.AssertNoError(t, os.RemoveAll(filepath.Join(homeDir, path)))
 	}
 }
 
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
+	t.Helper()
 	os.Clearenv()
 	for key, value := range env {
 		value = strings.ReplaceAll(value, "{HOME}", homeDir)
@@ -537,6 +540,7 @@ func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 
 // function taken from https://golang.org/src/os/env_test.go
 func resetEnv(t *testing.T, origEnv []string, homeDir string) {
+	t.Helper()
 	testhelpers.AssertNoError(t, os.RemoveAll(homeDir))
 	for _, pair := range origEnv {
 		// Environment variables on Windows can begin with =
@@ -572,6 +576,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 
 	run := func(c *testCase) func(t *testing.T) {
 		return func(t *testing.T) {
+			t.Helper()
 			config, err := c.config.HumanConfig()
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.result, config)
