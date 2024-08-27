@@ -61,7 +61,7 @@ func (e *ResponseError) UnmarshalJSON(b []byte) error {
 func (e *ResponseError) IsScwSdkError() {}
 
 func (e *ResponseError) Error() string {
-	s := fmt.Sprintf("scaleway-sdk-go: http error %s", e.Status)
+	s := "scaleway-sdk-go: http error " + e.Status
 
 	if e.Resource != "" {
 		s = fmt.Sprintf("%s: resource %s", s, e.Resource)
@@ -472,7 +472,7 @@ func NewInvalidClientOptionError(format string, a ...interface{}) *InvalidClient
 func (e InvalidClientOptionError) IsScwSdkError() {}
 
 func (e InvalidClientOptionError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: %s", e.errorType)
+	return "scaleway-sdk-go: " + e.errorType
 }
 
 // ConfigFileNotFound indicates that the config file could not be found
@@ -537,7 +537,7 @@ func (r DeniedAuthenticationError) Error() string {
 	case "expired":
 		reason = method + " is expired"
 	}
-	return fmt.Sprintf("scaleway-sdk-go: denied authentication: %s", reason)
+	return "scaleway-sdk-go: denied authentication: " + reason
 }
 
 func (r DeniedAuthenticationError) IsScwSdkError() {}
@@ -564,7 +564,7 @@ func (r PreconditionFailedError) Error() string {
 		msg += ", " + r.HelpMessage
 	}
 
-	return fmt.Sprintf("scaleway-sdk-go: precondition failed: %s", msg)
+	return "scaleway-sdk-go: precondition failed: " + msg
 }
 
 func (r PreconditionFailedError) IsScwSdkError() {}

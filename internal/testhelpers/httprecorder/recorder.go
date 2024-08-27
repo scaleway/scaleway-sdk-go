@@ -46,7 +46,7 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	}
 
 	// Setup recorder and scw client
-	r, err := recorder.NewAsMode(fmt.Sprintf("testdata/%s", cassetteName), recorderMode, nil)
+	r, err := recorder.NewAsMode("testdata/"+cassetteName, recorderMode, nil)
 	if err != nil {
 		return nil, nil, err
 	}
