@@ -45,7 +45,6 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 				InstanceID: req.InstanceID,
 				Region:     req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -92,7 +91,6 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 				DatabaseBackupID: req.DatabaseBackupID,
 				Region:           req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -139,7 +137,6 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.Req
 				Region:        req.Region,
 				InstanceLogID: req.InstanceLogID,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -187,7 +184,6 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 				ReadReplicaID: req.ReadReplicaID,
 				Region:        req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

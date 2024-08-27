@@ -7,14 +7,11 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/async"
-
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-var (
-	resourceLock sync.Map
-)
+var resourceLock sync.Map
 
 // lockResource locks a resource from a specific resourceID
 func lockResource(resourceID string) *sync.Mutex {
@@ -315,7 +312,6 @@ func (s *API) WaitForPrivateNIC(req *WaitForPrivateNICRequest, opts ...scw.Reque
 				Zone:         req.Zone,
 				PrivateNicID: req.PrivateNicID,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

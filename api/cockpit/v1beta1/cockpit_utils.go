@@ -54,7 +54,6 @@ func (s *API) WaitForCockpit(
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
-
 	if err != nil {
 		return nil, errors.Wrap(err, "waiting for Cockpit failed")
 	}

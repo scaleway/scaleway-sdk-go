@@ -13,12 +13,12 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
 )
 
-var (
-	metadataRetryBindPort = 200
-)
+var metadataRetryBindPort = 200
 
-const metadataAPIv4 = "http://169.254.42.42"
-const metadataAPIv6 = "http://[fd00:42::42]"
+const (
+	metadataAPIv4 = "http://169.254.42.42"
+	metadataAPIv6 = "http://[fd00:42::42]"
+)
 
 // MetadataAPI metadata API
 type MetadataAPI struct {
@@ -82,7 +82,7 @@ type Metadata struct {
 	Organization   string `json:"organization,omitempty"`
 	Project        string `json:"project,omitempty"`
 	CommercialType string `json:"commercial_type,omitempty"`
-	//PublicIP IPv4 only
+	// PublicIP IPv4 only
 	PublicIP struct {
 		ID               string `json:"id"`
 		Address          string `json:"address"`

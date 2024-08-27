@@ -71,7 +71,6 @@ func TestNewClientMultipleClients(t *testing.T) {
 		testhelpers.Assert(t, isLogger, "transport should be a request logger")
 		_, isLogger = transport.rt.(*requestLoggerTransport)
 		testhelpers.Assert(t, !isLogger, "nested transport should not be a request logger")
-
 	})
 }
 

@@ -17,10 +17,8 @@ const (
 	defaultConfigFileName = "config.yaml"
 )
 
-var (
-	// ErrNoHomeDir errors when no user directory is found
-	ErrNoHomeDir = errors.New("user home directory not found")
-)
+// ErrNoHomeDir errors when no user directory is found
+var ErrNoHomeDir = errors.New("user home directory not found")
 
 // GetCacheDirectory returns the default cache directory.
 // Cache directory is based on the following priority order:

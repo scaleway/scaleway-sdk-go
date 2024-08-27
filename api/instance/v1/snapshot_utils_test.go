@@ -75,9 +75,7 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 
 	instanceAPI := NewAPI(client)
 
-	var (
-		volumeSize = 1 * scw.GB
-	)
+	volumeSize := 1 * scw.GB
 
 	createVolume, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
 		Name:       "volume_name",

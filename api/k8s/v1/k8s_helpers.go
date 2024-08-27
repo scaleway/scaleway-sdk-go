@@ -95,7 +95,6 @@ func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*
 				PoolID: req.PoolID,
 				Region: req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -143,7 +142,6 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 				NodeID: req.NodeID,
 				Region: req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

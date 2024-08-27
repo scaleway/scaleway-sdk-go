@@ -79,7 +79,6 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}
@@ -168,7 +167,6 @@ func (s *API) GetServerType(req *GetServerTypeRequest) (*ServerType, error) {
 	res, err := s.ListServersTypes(&ListServersTypesRequest{
 		Zone: req.Zone,
 	}, scw.WithAllPages())
-
 	if err != nil {
 		return nil, err
 	}

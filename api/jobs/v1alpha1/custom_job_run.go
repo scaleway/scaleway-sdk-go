@@ -44,7 +44,6 @@ func (s *API) WaitForJobRun(req *WaitForJobRunRequest, opts ...scw.RequestOption
 				JobRunID: req.JobRunID,
 				Region:   req.Region,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

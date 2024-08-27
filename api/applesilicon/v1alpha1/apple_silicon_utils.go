@@ -44,7 +44,6 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
 			}, opts...)
-
 			if err != nil {
 				return nil, false, err
 			}

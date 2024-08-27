@@ -189,7 +189,6 @@ func (c *Client) Do(req *ScalewayRequest, res interface{}, opts ...RequestOption
 
 // do performs a single HTTP request based on the ScalewayRequest object.
 func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
-
 	if req == nil {
 		return errors.New("request must be non-nil")
 	}

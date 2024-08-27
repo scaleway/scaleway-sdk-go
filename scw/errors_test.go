@@ -194,7 +194,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 		Status:     errorStatus,
 		StatusCode: errorStatusCode,
 		Header: map[string][]string{
-			"Content-Type": []string{"application/json"},
+			"Content-Type": {"application/json"},
 		},
 		Body: ioutil.NopCloser(bytes.NewReader(bodyBytes)),
 	}
