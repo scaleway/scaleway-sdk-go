@@ -251,7 +251,7 @@ type UnknownResource struct {
 }
 
 // ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
-func (e *UnknownResource) ToResourceNotFoundError() SdkError {
+func (e *UnknownResource) ToResourceNotFoundError() *ResourceNotFoundError {
 	resourceNotFound := &ResourceNotFoundError{
 		RawBody: e.RawBody,
 	}
@@ -292,7 +292,7 @@ type InvalidRequestError struct {
 }
 
 // ToSdkError returns a standard error InvalidArgumentsError or nil Fields is nil.
-func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
+func (e *InvalidRequestError) ToInvalidArgumentsError() *InvalidArgumentsError {
 	// If error has no fields, it is not an InvalidArgumentsError.
 	if len(e.Fields) == 0 {
 		return nil
@@ -318,7 +318,7 @@ func (e *InvalidRequestError) ToInvalidArgumentsError() SdkError {
 	return invalidArguments
 }
 
-func (e *InvalidRequestError) ToQuotasExceededError() SdkError {
+func (e *InvalidRequestError) ToQuotasExceededError() *QuotasExceededError {
 	if !strings.Contains(strings.ToLower(e.Message), "quota exceeded for this resource") {
 		return nil
 	}
