@@ -1,7 +1,9 @@
-package strcase
+package strcase_test
 
 import (
 	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/strcase"
 )
 
 func TestAllStrCases(t *testing.T) {
@@ -52,15 +54,15 @@ func TestAllStrCases(t *testing.T) {
 		{"dhcp-id", "DHCPID", "dhcpID", "dhcp-id"},
 	}
 	for _, test := range tests {
-		got := ToPublicGoName(test.name)
+		got := strcase.ToPublicGoName(test.name)
 		if got != test.publicGoName {
 			t.Errorf("ToPublicGoName(%q) == %q, want %q", test.name, got, test.publicGoName)
 		}
-		got = ToPrivateGoName(test.name)
+		got = strcase.ToPrivateGoName(test.name)
 		if got != test.privateGoName {
 			t.Errorf("ToPrivateGoName(%q) == %q, want %q", test.name, got, test.privateGoName)
 		}
-		got = ToBashArg(test.name)
+		got = strcase.ToBashArg(test.name)
 		if got != test.bashArgName {
 			t.Errorf("ToBashArg(%q) == %q, want %q", test.name, got, test.bashArgName)
 		}

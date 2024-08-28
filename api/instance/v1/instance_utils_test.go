@@ -1,9 +1,10 @@
-package instance
+package instance_test
 
 import (
 	"testing"
 
 	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -16,7 +17,7 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	var (
 		serverID string
@@ -28,7 +29,7 @@ func TestInstanceHelpers(t *testing.T) {
 	)
 
 	t.Run("create server", func(t *testing.T) {
-		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
+		createServerResponse, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 			Zone:           zone,
 			Name:           "instance_utils_test",
 			Project:        &project,
@@ -44,7 +45,7 @@ func TestInstanceHelpers(t *testing.T) {
 
 	t.Run("test ip related functions", func(t *testing.T) {
 		// Create IP
-		createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
+		createIPResponse, err := instanceAPI.CreateIP(&instance.CreateIPRequest{
 			Zone:    zone,
 			Project: &project,
 		})
@@ -52,7 +53,7 @@ func TestInstanceHelpers(t *testing.T) {
 		ipID = createIPResponse.IP.ID
 
 		// Attach IP
-		ipAttachResponse, err := instanceAPI.AttachIP(&AttachIPRequest{
+		ipAttachResponse, err := instanceAPI.AttachIP(&instance.AttachIPRequest{
 			IP:       ipID,
 			Zone:     zone,
 			ServerID: serverID,
@@ -62,7 +63,7 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.Equals(t, serverID, ipAttachResponse.IP.Server.ID)
 
 		// Detach IP
-		ipDetachResponse, err := instanceAPI.DetachIP(&DetachIPRequest{
+		ipDetachResponse, err := instanceAPI.DetachIP(&instance.DetachIPRequest{
 			IP:   ipID,
 			Zone: zone,
 		})
@@ -71,7 +72,7 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.Assert(t, nil == ipDetachResponse.IP.Server, "Server object should be nil for detached IP.")
 
 		// Delete IP
-		err = instanceAPI.DeleteIP(&DeleteIPRequest{
+		err = instanceAPI.DeleteIP(&instance.DeleteIPRequest{
 			Zone: zone,
 			IP:   ipID,
 		})
@@ -79,7 +80,7 @@ func TestInstanceHelpers(t *testing.T) {
 	})
 
 	t.Run("Test attach and detach volume", func(t *testing.T) {
-		detachVolumeResponse, err := instanceAPI.DetachVolume(&DetachVolumeRequest{
+		detachVolumeResponse, err := instanceAPI.DetachVolume(&instance.DetachVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
@@ -89,7 +90,7 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.Assert(t, detachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
 		testhelpers.Assert(t, len(detachVolumeResponse.Server.Volumes) == 0, "Server should have zero volumes after detaching")
 
-		attachVolumeResponse, err := instanceAPI.AttachVolume(&AttachVolumeRequest{
+		attachVolumeResponse, err := instanceAPI.AttachVolume(&instance.AttachVolumeRequest{
 			Zone:     zone,
 			ServerID: serverID,
 			VolumeID: volumeID,
@@ -104,14 +105,14 @@ func TestInstanceHelpers(t *testing.T) {
 
 	t.Run("teardown: delete server and volume", func(t *testing.T) {
 		// Delete Server
-		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		err = instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 			Zone:     zone,
 			ServerID: serverID,
 		})
 		testhelpers.AssertNoError(t, err)
 
 		// Delete Volume
-		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
+		err = instanceAPI.DeleteVolume(&instance.DeleteVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
@@ -126,7 +127,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 	blockAPI := block.NewAPI(client)
 
 	var (
@@ -165,16 +166,16 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 
 		volumeID2 = createVolumeResponse.ID
 
-		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
+		createServerResponse, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 			Zone:           zone,
 			Name:           "instance_utils_test",
 			Project:        &project,
 			Image:          image,
 			CommercialType: "PRO2-XXS",
-			Volumes: map[string]*VolumeServerTemplate{
+			Volumes: map[string]*instance.VolumeServerTemplate{
 				"0": {
 					ID:         &volumeID,
-					VolumeType: VolumeVolumeTypeSbsVolume,
+					VolumeType: instance.VolumeVolumeTypeSbsVolume,
 				},
 			},
 		})
@@ -183,7 +184,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 	})
 
 	t.Run("Test attach and detach volume", func(t *testing.T) {
-		detachVolumeResponse, err := instanceAPI.DetachVolume(&DetachVolumeRequest{
+		detachVolumeResponse, err := instanceAPI.DetachVolume(&instance.DetachVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
@@ -193,7 +194,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.Assert(t, detachVolumeResponse.Server.Volumes != nil, "Should have volumes in response")
 		testhelpers.Assert(t, len(detachVolumeResponse.Server.Volumes) == 0, "Server should have zero volumes after detaching")
 
-		attachVolumeResponse, err := instanceAPI.AttachVolume(&AttachVolumeRequest{
+		attachVolumeResponse, err := instanceAPI.AttachVolume(&instance.AttachVolumeRequest{
 			Zone:     zone,
 			ServerID: serverID,
 			VolumeID: volumeID,
@@ -205,7 +206,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.Assert(t, len(attachVolumeResponse.Server.Volumes) == 1, "Server should have one volumes after attaching")
 		testhelpers.Equals(t, volumeID, attachVolumeResponse.Server.Volumes["0"].ID)
 
-		attachVolumeResponse, err = instanceAPI.AttachVolume(&AttachVolumeRequest{
+		attachVolumeResponse, err = instanceAPI.AttachVolume(&instance.AttachVolumeRequest{
 			Zone:     zone,
 			ServerID: serverID,
 			VolumeID: volumeID2,
@@ -220,7 +221,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 
 	t.Run("teardown: delete server and volume", func(t *testing.T) {
 		// Delete Server
-		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		err = instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 			Zone:     zone,
 			ServerID: serverID,
 		})

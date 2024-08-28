@@ -1,10 +1,11 @@
-package scw
+package scw_test
 
 import (
 	"testing"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 var (
@@ -19,14 +20,14 @@ var (
 	testFloat64  float64       = 47
 	testDuration time.Duration = 48
 	testTime                   = time.Date(2009, 11, 10, 23, 0, 0, 0, time.UTC)
-	testSize                   = 3 * GB
+	testSize                   = 3 * scw.GB
 )
 
 func TestStringPtr(t *testing.T) {
-	pointer := StringPtr(testString)
+	pointer := scw.StringPtr(testString)
 	slice := []string{testString}
-	sliceOfPointers := StringSlicePtr(slice)
-	pointerToSlice := StringsPtr(slice)
+	sliceOfPointers := scw.StringSlicePtr(slice)
+	pointerToSlice := scw.StringsPtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -43,9 +44,9 @@ func TestStringPtr(t *testing.T) {
 }
 
 func TestBytesPtr(t *testing.T) {
-	pointer := BytesPtr(testBytes)
+	pointer := scw.BytesPtr(testBytes)
 	slice := [][]byte{testBytes}
-	sliceOfPointers := BytesSlicePtr(slice)
+	sliceOfPointers := scw.BytesSlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -58,9 +59,9 @@ func TestBytesPtr(t *testing.T) {
 }
 
 func TestBoolPtr(t *testing.T) {
-	pointer := BoolPtr(testBool)
+	pointer := scw.BoolPtr(testBool)
 	slice := []bool{testBool}
-	sliceOfPointers := BoolSlicePtr(slice)
+	sliceOfPointers := scw.BoolSlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -73,9 +74,9 @@ func TestBoolPtr(t *testing.T) {
 }
 
 func TestInt32Ptr(t *testing.T) {
-	pointer := Int32Ptr(testInt32)
+	pointer := scw.Int32Ptr(testInt32)
 	slice := []int32{testInt32}
-	sliceOfPointers := Int32SlicePtr(slice)
+	sliceOfPointers := scw.Int32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -88,9 +89,9 @@ func TestInt32Ptr(t *testing.T) {
 }
 
 func TestInt64Ptr(t *testing.T) {
-	pointer := Int64Ptr(testInt64)
+	pointer := scw.Int64Ptr(testInt64)
 	slice := []int64{testInt64}
-	sliceOfPointers := Int64SlicePtr(slice)
+	sliceOfPointers := scw.Int64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -103,9 +104,9 @@ func TestInt64Ptr(t *testing.T) {
 }
 
 func TestUint32Ptr(t *testing.T) {
-	pointer := Uint32Ptr(testUInt32)
+	pointer := scw.Uint32Ptr(testUInt32)
 	slice := []uint32{testUInt32}
-	sliceOfPointers := Uint32SlicePtr(slice)
+	sliceOfPointers := scw.Uint32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -118,9 +119,9 @@ func TestUint32Ptr(t *testing.T) {
 }
 
 func TestUint64Ptr(t *testing.T) {
-	pointer := Uint64Ptr(testUInt64)
+	pointer := scw.Uint64Ptr(testUInt64)
 	slice := []uint64{testUInt64}
-	sliceOfPointers := Uint64SlicePtr(slice)
+	sliceOfPointers := scw.Uint64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -133,9 +134,9 @@ func TestUint64Ptr(t *testing.T) {
 }
 
 func TestFloat32Ptr(t *testing.T) {
-	pointer := Float32Ptr(testFloat32)
+	pointer := scw.Float32Ptr(testFloat32)
 	slice := []float32{testFloat32}
-	sliceOfPointers := Float32SlicePtr(slice)
+	sliceOfPointers := scw.Float32SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -148,9 +149,9 @@ func TestFloat32Ptr(t *testing.T) {
 }
 
 func TestFloat64Ptr(t *testing.T) {
-	pointer := Float64Ptr(testFloat64)
+	pointer := scw.Float64Ptr(testFloat64)
 	slice := []float64{testFloat64}
-	sliceOfPointers := Float64SlicePtr(slice)
+	sliceOfPointers := scw.Float64SlicePtr(slice)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -163,7 +164,7 @@ func TestFloat64Ptr(t *testing.T) {
 }
 
 func TestDurationPtr(t *testing.T) {
-	pointer := TimeDurationPtr(testDuration)
+	pointer := scw.TimeDurationPtr(testDuration)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -171,7 +172,7 @@ func TestDurationPtr(t *testing.T) {
 }
 
 func TestTimePtr(t *testing.T) {
-	pointer := TimePtr(testTime)
+	pointer := scw.TimePtr(testTime)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")
@@ -179,7 +180,7 @@ func TestTimePtr(t *testing.T) {
 }
 
 func TestSizePtr(t *testing.T) {
-	pointer := SizePtr(testSize)
+	pointer := scw.SizePtr(testSize)
 
 	// value to pointer value
 	testhelpers.Assert(t, pointer != nil, "Pointer should have value")

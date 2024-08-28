@@ -1,10 +1,11 @@
-package async
+package async_test
 
 import (
 	"errors"
 	"testing"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -40,13 +41,13 @@ func TestWaitSync(t *testing.T) {
 	t.Parallel()
 	testsCases := []struct {
 		name     string
-		config   *WaitSyncConfig
+		config   *async.WaitSyncConfig
 		expValue interface{}
 		expErr   error
 	}{
 		{
 			name: "With default timeout and interval",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get: getMock(2, 0),
 			},
 			expValue: &value{
@@ -56,7 +57,7 @@ func TestWaitSync(t *testing.T) {
 		},
 		{
 			name: "With useless timeout",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get:     getMock(2, time.Second),
 				Timeout: 4 * time.Second,
 			},
@@ -67,7 +68,7 @@ func TestWaitSync(t *testing.T) {
 		},
 		{
 			name: "Should timeout",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get:     getMock(2, 2*time.Second),
 				Timeout: time.Second,
 			},
@@ -76,9 +77,9 @@ func TestWaitSync(t *testing.T) {
 		},
 		{
 			name: "With interval",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get:              getMock(2, 0),
-				IntervalStrategy: LinearIntervalStrategy(2 * time.Second),
+				IntervalStrategy: async.LinearIntervalStrategy(2 * time.Second),
 			},
 			expValue: &value{
 				doneIterations: 2,
@@ -87,9 +88,9 @@ func TestWaitSync(t *testing.T) {
 		},
 		{
 			name: "With fibonacci interval",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get:              getMock(5, 0),
-				IntervalStrategy: FibonacciIntervalStrategy(time.Second, 1),
+				IntervalStrategy: async.FibonacciIntervalStrategy(time.Second, 1),
 			},
 			expValue: &value{
 				doneIterations: 5,
@@ -98,10 +99,10 @@ func TestWaitSync(t *testing.T) {
 		},
 		{
 			name: "Should timeout with interval",
-			config: &WaitSyncConfig{
+			config: &async.WaitSyncConfig{
 				Get:              getMock(2, time.Second),
 				Timeout:          2 * time.Second,
-				IntervalStrategy: LinearIntervalStrategy(2 * time.Second),
+				IntervalStrategy: async.LinearIntervalStrategy(2 * time.Second),
 			},
 			expValue: nil,
 			expErr:   errors.New("timeout after 2s"),
@@ -112,7 +113,7 @@ func TestWaitSync(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			t.Parallel()
 
-			terminalValue, err := WaitSync(c.config)
+			terminalValue, err := async.WaitSync(c.config)
 
 			testhelpers.Equals(t, c.expErr, err)
 

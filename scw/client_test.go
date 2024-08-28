@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/logger"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 const (
@@ -19,15 +20,15 @@ const (
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	testDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	testDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6e"
-	testDefaultRegion         = RegionFrPar
-	testDefaultZone           = ZoneFrPar1
+	testDefaultRegion         = scw.RegionFrPar
+	testDefaultZone           = scw.ZoneFrPar1
 	testDefaultPageSize       = uint32(5)
 	testInsecure              = true
 )
 
 func TestNewClientWithNoAuth(t *testing.T) {
 	t.Run("Basic", func(t *testing.T) {
-		client, err := NewClient()
+		client, err := scw.NewClient()
 		testhelpers.AssertNoError(t, err)
 
 		secretKey, exist := client.GetSecretKey()
@@ -39,8 +40,8 @@ func TestNewClientWithNoAuth(t *testing.T) {
 		testhelpers.Assert(t, !exist, "accessKey must not exist")
 	})
 	t.Run("Only access key", func(t *testing.T) {
-		client, err := NewClient(WithProfile(&Profile{
-			AccessKey: StringPtr(testAccessKey),
+		client, err := scw.NewClient(scw.WithProfile(&scw.Profile{
+			AccessKey: scw.StringPtr(testAccessKey),
 		}))
 		testhelpers.AssertNoError(t, err)
 
@@ -58,13 +59,13 @@ func TestNewClientMultipleClients(t *testing.T) {
 	t.Run("Basic", func(t *testing.T) {
 		logger.EnableDebugMode()
 		httpClient := &http.Client{}
-		_, err := NewClient(WithHTTPClient(httpClient))
+		_, err := scw.NewClient(scw.WithHTTPClient(httpClient))
 		testhelpers.AssertNoError(t, err)
 
 		_, isLogger := httpClient.Transport.(*requestLoggerTransport)
 		testhelpers.Assert(t, isLogger, "transport should be a request logger")
 
-		_, err = NewClient(WithHTTPClient(httpClient))
+		_, err = scw.NewClient(scw.WithHTTPClient(httpClient))
 		testhelpers.AssertNoError(t, err)
 
 		transport, isLogger := httpClient.Transport.(*requestLoggerTransport)
@@ -75,11 +76,11 @@ func TestNewClientMultipleClients(t *testing.T) {
 }
 
 func TestNewClientWithDefaults(t *testing.T) {
-	options := []ClientOption{
-		WithInsecure(),
+	options := []scw.ClientOption{
+		scw.WithInsecure(),
 	}
 
-	client, err := NewClient(options...)
+	client, err := scw.NewClient(options...)
 	testhelpers.AssertNoError(t, err)
 
 	testhelpers.Equals(t, defaultAPIURL, client.apiURL)
@@ -90,18 +91,18 @@ func TestNewClientWithOptions(t *testing.T) {
 	t.Run("Basic", func(t *testing.T) {
 		someHTTPClient := &http.Client{}
 
-		options := []ClientOption{
-			WithAPIURL(testAPIURL),
-			WithAuth(testAccessKey, testSecretKey),
-			WithHTTPClient(someHTTPClient),
-			WithDefaultOrganizationID(testDefaultOrganizationID),
-			WithDefaultProjectID(testDefaultProjectID),
-			WithDefaultRegion(testDefaultRegion),
-			WithDefaultZone(testDefaultZone),
-			WithDefaultPageSize(testDefaultPageSize),
+		options := []scw.ClientOption{
+			scw.WithAPIURL(testAPIURL),
+			scw.WithAuth(testAccessKey, testSecretKey),
+			scw.WithHTTPClient(someHTTPClient),
+			scw.WithDefaultOrganizationID(testDefaultOrganizationID),
+			scw.WithDefaultProjectID(testDefaultProjectID),
+			scw.WithDefaultRegion(testDefaultRegion),
+			scw.WithDefaultZone(testDefaultZone),
+			scw.WithDefaultPageSize(testDefaultPageSize),
 		}
 
-		client, err := NewClient(options...)
+		client, err := scw.NewClient(options...)
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
@@ -139,7 +140,7 @@ func TestNewClientWithOptions(t *testing.T) {
 	})
 
 	t.Run("With custom profile", func(t *testing.T) {
-		profile := &Profile{
+		profile := &scw.Profile{
 			s(testAccessKey),
 			s(testSecretKey),
 			s(testAPIURL),
@@ -151,7 +152,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			b(true),
 		}
 
-		client, err := NewClient(WithProfile(profile))
+		client, err := scw.NewClient(scw.WithProfile(profile))
 		testhelpers.AssertNoError(t, err)
 
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)

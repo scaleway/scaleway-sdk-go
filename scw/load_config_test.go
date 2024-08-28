@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"os"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // TestLoad tests all valid configuration files:
@@ -18,7 +19,7 @@ func TestLoad(t *testing.T) {
 		name          string
 		env           map[string]string
 		files         map[string]string
-		expected      *Config
+		expected      *scw.Config
 		expectedError string
 		expectedFiles map[string]string
 	}{
@@ -26,17 +27,17 @@ func TestLoad(t *testing.T) {
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid1/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
 			},
-			expected: &Config{},
+			expected: &scw.Config{},
 		},
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid3/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/valid3/test.conf",
 			},
 			files: map[string]string{
 				"valid3/test.conf": v2SimpleValidConfigFile,
@@ -59,8 +60,8 @@ func TestLoad(t *testing.T) {
 		{
 			name: "XDG config with valid V2",
 			env: map[string]string{
-				"HOME":          "{HOME}",
-				xdgConfigDirEnv: "{HOME}/plop",
+				"HOME":              "{HOME}",
+				scw.XdgConfigDirEnv: "{HOME}/plop",
 			},
 			files: map[string]string{
 				"plop/scw/config.yaml": v2SimpleValidConfigFile,
@@ -72,14 +73,14 @@ func TestLoad(t *testing.T) {
 		{
 			name: "Err: custom-path config does not exist",
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/fake/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
 			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/fake/test.conf: no such file or directory",
 		},
 		{
 			name: "Err: custom-path config with invalid V2",
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/invalid1/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/invalid1/test.conf",
 			},
 			files: map[string]string{
 				"invalid1/test.conf": v2SimpleInvalidConfigFile,
@@ -124,7 +125,7 @@ func TestLoad(t *testing.T) {
 			defer cleanEnv(t, test.files, dir)
 
 			// load config
-			config, err := LoadConfig()
+			config, err := scw.LoadConfig()
 
 			// test expected outputs
 			if test.expectedError != "" {

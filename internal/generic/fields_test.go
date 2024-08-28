@@ -1,6 +1,10 @@
-package generic
+package generic_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/internal/generic"
+)
 
 func TestHasField(t *testing.T) {
 	tests := []struct {
@@ -52,7 +56,7 @@ func TestHasField(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := HasField(tt.i, tt.fieldName); got != tt.want {
+			if got := generic.HasField(tt.i, tt.fieldName); got != tt.want {
 				t.Errorf("HasField() = %v, want %v", got, tt.want)
 			}
 		})

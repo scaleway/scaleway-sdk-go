@@ -1,8 +1,9 @@
-package instance
+package instance_test
 
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -15,21 +16,21 @@ func TestUpdateVolume(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	var (
 		zone          = scw.ZoneFrPar1
 		project       = "951df375-e094-4d26-97c1-ba548eeb9c42"
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
-		volumeType    = VolumeVolumeTypeLSSD
+		volumeType    = instance.VolumeVolumeTypeLSSD
 		newVolumeName = "some new volume name"
 
 		volumeID string
 	)
 
 	// Create volume
-	createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
+	createVolumeResponse, err := instanceAPI.CreateVolume(&instance.CreateVolumeRequest{
 		Zone:       zone,
 		Name:       volumeName,
 		Project:    &project,
@@ -42,7 +43,7 @@ func TestUpdateVolume(t *testing.T) {
 	volumeID = createVolumeResponse.Volume.ID
 
 	// Update volume and test whether successfully updated
-	updateVolumeResponse, err := instanceAPI.UpdateVolume(&UpdateVolumeRequest{
+	updateVolumeResponse, err := instanceAPI.UpdateVolume(&instance.UpdateVolumeRequest{
 		Zone:     zone,
 		Name:     &newVolumeName,
 		VolumeID: volumeID,
@@ -54,7 +55,7 @@ func TestUpdateVolume(t *testing.T) {
 	testhelpers.Equals(t, volumeSize, updateVolumeResponse.Volume.Size) // check that server is not changed
 
 	// Delete Volume
-	err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
+	err = instanceAPI.DeleteVolume(&instance.DeleteVolumeRequest{
 		Zone:     zone,
 		VolumeID: volumeID,
 	})
