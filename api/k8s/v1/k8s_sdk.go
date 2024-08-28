@@ -1823,6 +1823,7 @@ type MigrateClusterToRoutedIPsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ClusterID: cluster ID for which the routed ip will be enabled for the nodes.
 	ClusterID string `json:"-"`
 }
 
