@@ -49,6 +49,7 @@ func (meta *MetadataAPI) getMetadataURL() string {
 			meta.MetadataURL = &url
 			return url
 		}
+		defer resp.Body.Close()
 	}
 	return metadataAPIv4
 }
@@ -289,11 +290,12 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 			return errors.Wrap(err, "error creating patch userdata request")
 		}
 		request.Header.Set("Content-Type", "text/plain")
-		_, err = userdataClient.Do(request)
+		resp, err := userdataClient.Do(request)
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
 		}
+		defer resp.Body.Close()
 
 		return nil
 	}
@@ -328,11 +330,12 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
-		_, err = userdataClient.Do(request)
+		resp, err := userdataClient.Do(request)
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
 		}
+		defer resp.Body.Close()
 
 		return nil
 	}
