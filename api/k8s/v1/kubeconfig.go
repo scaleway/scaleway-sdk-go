@@ -96,7 +96,7 @@ func (s *API) GetClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 	kubeconfigFile, err := s.getClusterKubeConfig(&GetClusterKubeConfigRequest{
 		Region:    req.Region,
 		ClusterID: req.ClusterID,
-	})
+	}, opts...)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting cluster kubeconfig")
 	}

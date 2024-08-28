@@ -50,7 +50,7 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*Attach
 		Zone:   req.Zone,
 		IP:     req.IP,
 		Server: &NullableStringValue{Value: req.ServerID},
-	})
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*Detach
 		Zone:   req.Zone,
 		IP:     req.IP,
 		Server: &NullableStringValue{Null: true},
-	})
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}

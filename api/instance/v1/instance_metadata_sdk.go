@@ -30,7 +30,7 @@ func NewMetadataAPI() *MetadataAPI {
 	return &MetadataAPI{}
 }
 
-func (meta *MetadataAPI) getMetadataUrl() string {
+func (meta *MetadataAPI) getMetadataURL() string {
 	if meta.MetadataURL != nil {
 		return *meta.MetadataURL
 	}
@@ -48,7 +48,7 @@ func (meta *MetadataAPI) getMetadataUrl() string {
 
 // GetMetadata returns the metadata available from the server
 func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
-	resp, err := http.Get(meta.getMetadataUrl() + "/conf?format=json")
+	resp, err := http.Get(meta.getMetadataURL() + "/conf?format=json")
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting metadataURL")
 	}
@@ -178,7 +178,7 @@ func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
 			},
 		}
 
-		resp, err := userdataClient.Get(meta.getMetadataUrl() + "/user_data?format=json")
+		resp, err := userdataClient.Get(meta.getMetadataURL() + "/user_data?format=json")
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
@@ -219,7 +219,7 @@ func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 			},
 		}
 
-		resp, err := userdataClient.Get(meta.getMetadataUrl() + "/user_data/" + key)
+		resp, err := userdataClient.Get(meta.getMetadataURL() + "/user_data/" + key)
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
@@ -259,7 +259,7 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest(http.MethodPatch, meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBuffer(value))
+		request, err := http.NewRequest(http.MethodPatch, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBuffer(value))
 		if err != nil {
 			return errors.Wrap(err, "error creating patch userdata request")
 		}
@@ -298,7 +298,7 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest(http.MethodDelete, meta.getMetadataUrl()+"/user_data/"+key, bytes.NewBufferString(""))
+		request, err := http.NewRequest(http.MethodDelete, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
