@@ -2,6 +2,7 @@ package instance
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"math/rand"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/errors"
+	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 var metadataRetryBindPort = 200
@@ -35,9 +37,14 @@ func (meta *MetadataAPI) getMetadataURL() string {
 		return *meta.MetadataURL
 	}
 
+	ctx := context.Background()
 	for _, url := range []string{metadataAPIv4, metadataAPIv6} {
 		http.DefaultClient.Timeout = 3 * time.Second
-		resp, err := http.Get(url)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, bytes.NewBufferString(""))
+		if err != nil {
+			logger.Warningf("Failed to create metadata URL %s: %v", url, err)
+		}
+		resp, err := http.DefaultClient.Do(req)
 		if err == nil && resp.StatusCode == http.StatusOK {
 			meta.MetadataURL = &url
 			return url
@@ -49,7 +56,13 @@ func (meta *MetadataAPI) getMetadataURL() string {
 
 // GetMetadata returns the metadata available from the server
 func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
-	resp, err := http.Get(meta.getMetadataURL() + "/conf?format=json")
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURL()+"/conf?format=json", bytes.NewBufferString(""))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting metadataURL")
 	}
@@ -162,6 +175,7 @@ type Metadata struct {
 // ListUserData returns the metadata available from the server
 func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
 	retries := 0
+	ctx := context.Background()
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
 		localTCPAddr, err := net.ResolveTCPAddr("tcp", ":"+strconv.Itoa(port))
@@ -179,7 +193,11 @@ func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
 			},
 		}
 
-		resp, err := userdataClient.Get(meta.getMetadataURL() + "/user_data?format=json")
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURL()+"/user_data?format=json", bytes.NewBufferString(""))
+		if err != nil {
+			return nil, err
+		}
+		resp, err := userdataClient.Do(req)
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
@@ -202,6 +220,7 @@ func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 		return make([]byte, 0), errors.New("key must not be empty in GetUserData")
 	}
 
+	ctx := context.Background()
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
@@ -220,7 +239,12 @@ func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 			},
 		}
 
-		resp, err := userdataClient.Get(meta.getMetadataURL() + "/user_data/" + key)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBufferString(""))
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err := userdataClient.Do(req)
 		if err != nil {
 			retries++ // retry with a different source port
 			continue
@@ -243,6 +267,7 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 		return errors.New("key must not be empty in SetUserData")
 	}
 
+	ctx := context.Background()
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
@@ -260,7 +285,7 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest(http.MethodPatch, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBuffer(value))
+		request, err := http.NewRequestWithContext(ctx, http.MethodPatch, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBuffer(value))
 		if err != nil {
 			return errors.Wrap(err, "error creating patch userdata request")
 		}
@@ -283,6 +308,7 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 		return errors.New("key must not be empty in DeleteUserData")
 	}
 
+	ctx := context.Background()
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
@@ -300,7 +326,7 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 				}).DialContext,
 			},
 		}
-		request, err := http.NewRequest(http.MethodDelete, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBufferString(""))
+		request, err := http.NewRequestWithContext(ctx, http.MethodDelete, meta.getMetadataURL()+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
