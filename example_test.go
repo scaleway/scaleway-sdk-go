@@ -2,6 +2,7 @@ package scalewaysdkgo
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
@@ -16,6 +17,7 @@ func Example_apiClient() {
 	)
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create SDK objects for specific Scaleway Products
@@ -31,12 +33,14 @@ func Example_apiClientWithConfig() {
 	config, err := scw.LoadConfig()
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Use active profile
 	profile, err := config.GetActiveProfile()
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create a Scaleway client
@@ -46,6 +50,7 @@ func Example_apiClientWithConfig() {
 	)
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create SDK objects for specific Scaleway Products
@@ -63,6 +68,7 @@ func Example_listServers() {
 	)
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create SDK objects for Scaleway Instance product
@@ -74,6 +80,7 @@ func Example_listServers() {
 	})
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Do something with the response...
@@ -87,6 +94,7 @@ func Example_listServersWithZones() {
 	)
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create SDK objects for Scaleway Instance product
@@ -98,6 +106,7 @@ func Example_listServersWithZones() {
 		scw.WithZones(scw.ZoneFrPar1, scw.ZoneNlAms1, scw.ZonePlWaw1))
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Do something with the response...
@@ -188,6 +197,7 @@ func Example_createLoadBalancer() {
 	)
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Create SDK objects for Scaleway LoadConfig Balancer product
@@ -200,6 +210,7 @@ func Example_createLoadBalancer() {
 	})
 	if err != nil {
 		// handle error
+		log.Fatal(err)
 	}
 
 	// Do something with the newly created LB...

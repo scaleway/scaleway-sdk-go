@@ -48,7 +48,7 @@ func (s *API) WaitForDNSZone(
 		DNSZoneStatusError:  {},
 	}
 
-	dns, err := async.WaitSync(&async.WaitSyncConfig{
+	dnsZone, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
 			listReq := &ListDNSZonesRequest{
 				DNSZones: req.DNSZones,
@@ -58,7 +58,7 @@ func (s *API) WaitForDNSZone(
 				listReq.DNSZone = &req.DNSZone
 			}
 
-			// listing dns zones and take the first one
+			// listing dnsZone zones and take the first one
 			DNSZones, err := s.ListDNSZones(listReq, opts...)
 			if err != nil {
 				return nil, false, err
@@ -68,11 +68,11 @@ func (s *API) WaitForDNSZone(
 				return nil, true, errors.New(ErrCodeNoSuchDNSZone)
 			}
 
-			Dns := DNSZones.DNSZones[0]
+			zone := DNSZones.DNSZones[0]
 
-			_, isTerminal := terminalStatus[Dns.Status]
+			_, isTerminal := terminalStatus[zone.Status]
 
-			return Dns, isTerminal, nil
+			return zone, isTerminal, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
@@ -81,7 +81,7 @@ func (s *API) WaitForDNSZone(
 		return nil, errors.Wrap(err, "waiting for DNS failed")
 	}
 
-	return dns.(*DNSZone), nil
+	return dnsZone.(*DNSZone), nil
 }
 
 // WaitForDNSRecordExistRequest is used by WaitForDNSRecordExist method.

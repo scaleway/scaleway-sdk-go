@@ -18,8 +18,8 @@ var (
 	testFloat32  float32       = 46
 	testFloat64  float64       = 47
 	testDuration time.Duration = 48
-	testTime     time.Time     = time.Date(2009, 11, 10, 23, 0, 0, 0, time.UTC)
-	testSize     Size          = 3 * GB
+	testTime                   = time.Date(2009, 11, 10, 23, 0, 0, 0, time.UTC)
+	testSize                   = 3 * GB
 )
 
 func TestStringPtr(t *testing.T) {

@@ -37,6 +37,7 @@ func getMock(iterations int, sleepTime time.Duration) func() (interface{}, bool,
 }
 
 func TestWaitSync(t *testing.T) {
+	t.Parallel()
 	testsCases := []struct {
 		name     string
 		config   *WaitSyncConfig

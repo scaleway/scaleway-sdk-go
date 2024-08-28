@@ -312,7 +312,7 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 	allUserDataRes, err := s.ListServerUserData(&ListServerUserDataRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
-	})
+	}, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +327,7 @@ func (s *API) GetAllServerUserData(req *GetAllServerUserDataRequest, opts ...scw
 			Zone:     req.Zone,
 			ServerID: req.ServerID,
 			Key:      key,
-		})
+		}, opts...)
 		if err != nil {
 			return nil, err
 		}
@@ -369,7 +369,7 @@ func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw
 	allUserDataRes, err := s.ListServerUserData(&ListServerUserDataRequest{
 		Zone:     req.Zone,
 		ServerID: req.ServerID,
-	})
+	}, opts...)
 	if err != nil {
 		return err
 	}
@@ -384,7 +384,7 @@ func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw
 			Zone:     req.Zone,
 			ServerID: req.ServerID,
 			Key:      key,
-		})
+		}, opts...)
 		if err != nil {
 			return err
 		}
@@ -397,7 +397,7 @@ func (s *API) SetAllServerUserData(req *SetAllServerUserDataRequest, opts ...scw
 			ServerID: req.ServerID,
 			Key:      key,
 			Content:  value,
-		})
+		}, opts...)
 		if err != nil {
 			return err
 		}
