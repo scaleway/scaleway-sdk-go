@@ -1510,20 +1510,6 @@ type GetTriggerRequest struct {
 	TriggerID string `json:"-"`
 }
 
-// IssueJWTRequest: issue jwt request.
-type IssueJWTRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// Precisely one of FunctionID, NamespaceID must be set.
-	FunctionID *string `json:"function_id,omitempty"`
-
-	// Precisely one of FunctionID, NamespaceID must be set.
-	NamespaceID *string `json:"namespace_id,omitempty"`
-
-	ExpiresAt *time.Time `json:"-"`
-}
-
 // ListCronsRequest: list crons request.
 type ListCronsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2779,39 +2765,6 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Domain
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// Deprecated: IssueJWT: Deprecated in favor of CreateToken.
-func (s *API) IssueJWT(req *IssueJWTRequest, opts ...scw.RequestOption) (*Token, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "expires_at", req.ExpiresAt)
-	parameter.AddToQuery(query, "function_id", req.FunctionID)
-	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/functions/v1beta1/regions/" + fmt.Sprint(req.Region) + "/issue-jwt",
-		Query:  query,
-	}
-
-	var resp Token
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
