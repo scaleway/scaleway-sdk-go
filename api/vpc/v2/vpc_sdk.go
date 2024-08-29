@@ -527,6 +527,7 @@ type EnableRoutingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// VpcID: vPC ID.
 	VpcID string `json:"-"`
 }
 
