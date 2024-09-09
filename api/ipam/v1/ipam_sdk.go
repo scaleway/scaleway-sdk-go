@@ -269,7 +269,7 @@ type BookIPRequest struct {
 	// Tags: tags for the IP.
 	Tags []string `json:"tags"`
 
-	// Resource: custom resource to attach to the IP being booked. An example of a custom resource is a virtual machine hosted on an Elastic Metal server, or an additional user network interface on an Instance. Do not use this for attaching IP addresses to standard Scaleway resources, as it will fail - instead, see the relevant product API for an equivalent method.
+	// Resource: custom resource to attach to the IP being booked. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this for attaching IP addresses to standard Scaleway resources, as it will fail - instead, see the relevant product API for an equivalent method.
 	Resource *CustomResource `json:"resource,omitempty"`
 }
 
@@ -280,6 +280,9 @@ type DetachIPRequest struct {
 
 	// IPID: IP ID.
 	IPID string `json:"-"`
+
+	// Resource: custom resource currently attached to the IP.
+	Resource *CustomResource `json:"resource"`
 }
 
 // GetIPRequest: get ip request.
@@ -387,8 +390,11 @@ type MoveIPRequest struct {
 	// IPID: IP ID.
 	IPID string `json:"-"`
 
-	// Resource: custom resource to be attached to the IP.
-	Resource *CustomResource `json:"resource,omitempty"`
+	// FromResource: custom resource currently attached to the IP.
+	FromResource *CustomResource `json:"from_resource"`
+
+	// ToResource: custom resource to be attached to the IP.
+	ToResource *CustomResource `json:"to_resource,omitempty"`
 }
 
 // ReleaseIPRequest: release ip request.
@@ -658,7 +664,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	return &resp, nil
 }
 
-// AttachIP: Attach an existing IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server, or an additional user network interface on an Instance. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
+// AttachIP: Attach an existing IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
