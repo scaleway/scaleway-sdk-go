@@ -92,6 +92,8 @@ const (
 	DataSourceTypeLogs = DataSourceType("logs")
 	// Traces data source type, used to store and query traces using Grafana Tempo.
 	DataSourceTypeTraces = DataSourceType("traces")
+	// Alerts data source type, used as an endpoint for firing alerts using the Grafana Mimir alert manager.
+	DataSourceTypeAlerts = DataSourceType("alerts")
 )
 
 func (enum DataSourceType) String() string {
@@ -108,6 +110,7 @@ func (enum DataSourceType) Values() []DataSourceType {
 		"metrics",
 		"logs",
 		"traces",
+		"alerts",
 	}
 }
 
