@@ -752,7 +752,8 @@ const (
 	// Guest.
 	UserTypeGuest = UserType("guest")
 	// Owner.
-	UserTypeOwner = UserType("owner")
+	UserTypeOwner  = UserType("owner")
+	UserTypeMember = UserType("member")
 )
 
 func (enum UserType) String() string {
@@ -768,6 +769,7 @@ func (enum UserType) Values() []UserType {
 		"unknown_type",
 		"guest",
 		"owner",
+		"member",
 	}
 }
 
@@ -801,6 +803,21 @@ type RuleSpecs struct {
 	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
+}
+
+// CreateUserRequestMember: create user request member.
+type CreateUserRequestMember struct {
+	// Email: email of the user to create.
+	Email string `json:"email"`
+
+	// SendPasswordEmail: whether or not to send an email containing the member's password.
+	SendPasswordEmail bool `json:"send_password_email"`
+
+	// Username: the member's username.
+	Username string `json:"username"`
+
+	// Password: the member's password.
+	Password string `json:"password"`
 }
 
 // JWT: jwt.
@@ -1120,6 +1137,9 @@ type User struct {
 	// Email: email of user.
 	Email string `json:"email"`
 
+	// Username: user identifier unique to the Organization.
+	Username string `json:"username"`
+
 	// CreatedAt: date user was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -1298,10 +1318,15 @@ type CreateUserRequest struct {
 	OrganizationID string `json:"organization_id"`
 
 	// Email: email of the user.
-	Email string `json:"email"`
+	// Precisely one of Email, Member must be set.
+	Email *string `json:"email,omitempty"`
 
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
+
+	// Member: a new IAM Member to create.
+	// Precisely one of Email, Member must be set.
+	Member *CreateUserRequestMember `json:"member,omitempty"`
 }
 
 // DeleteAPIKeyRequest: delete api key request.
