@@ -212,13 +212,13 @@ type IP struct {
 	// IsIPv6: defines whether the IP is an IPv6 (false = IPv4).
 	IsIPv6 bool `json:"is_ipv6"`
 
-	// CreatedAt: date the IP was booked.
+	// CreatedAt: date the IP was reserved.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// UpdatedAt: date the IP was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Source: source pool where the IP was booked in.
+	// Source: source pool where the IP was reserved in.
 	Source *Source `json:"source"`
 
 	// Resource: resource which the IP is attached to.
@@ -257,19 +257,19 @@ type BookIPRequest struct {
 	// ProjectID: when creating an IP in a Private Network, the Project must match the Private Network's Project.
 	ProjectID string `json:"project_id"`
 
-	// Source: source in which to book the IP. Not all sources are available for booking.
+	// Source: source in which to reserve the IP. Not all sources are available for reservation.
 	Source *Source `json:"source"`
 
 	// IsIPv6: request an IPv6 instead of an IPv4.
 	IsIPv6 bool `json:"is_ipv6"`
 
-	// Address: the requested address should not include the subnet mask (/suffix). Note that only the Private Network source allows you to pick a specific IP. If the requested IP is already booked, then the call will fail.
+	// Address: the requested address should not include the subnet mask (/suffix). Note that only the Private Network source allows you to pick a specific IP. If the requested IP is already reserved, then the call will fail.
 	Address *net.IP `json:"address,omitempty"`
 
 	// Tags: tags for the IP.
 	Tags []string `json:"tags"`
 
-	// Resource: custom resource to attach to the IP being booked. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this for attaching IP addresses to standard Scaleway resources, as it will fail - instead, see the relevant product API for an equivalent method.
+	// Resource: custom resource to attach to the IP being reserved. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this for attaching IP addresses to standard Scaleway resources, as it will fail - instead, see the relevant product API for an equivalent method.
 	Resource *CustomResource `json:"resource,omitempty"`
 }
 
@@ -444,7 +444,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// BookIP: Book a new IP from the specified source. Currently IPs can only be booked from a Private Network.
+// BookIP: Reserve a new IP from the specified source. Currently IPs can only be reserved from a Private Network.
 func (s *API) BookIP(req *BookIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -664,7 +664,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	return &resp, nil
 }
 
-// AttachIP: Attach an existing IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
+// AttachIP: Attach an existing reserved IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -700,7 +700,7 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, er
 	return &resp, nil
 }
 
-// DetachIP: Detach a private IP from a custom resource. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+// DetachIP: Detach a private IP from a custom resource. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for detaching IP addresses from standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
 func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -736,7 +736,7 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, er
 	return &resp, nil
 }
 
-// MoveIP: Move an existing private IP from one custom resource (e.g. a virtual machine hosted on an Elastic Metal server) to another custom resource. This will detach it from the first resource, and attach it to the second. Do not use this method for moving IP addresses between standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
+// MoveIP: Move an existing reserved private IP from one custom resource (e.g. a virtual machine hosted on an Elastic Metal server) to another custom resource. This will detach it from the first resource, and attach it to the second. Do not use this method for moving IP addresses between standard Scaleway resources (e.g. Instances, Load Balancers) as it will fail - see the relevant product API for an equivalent method.
 func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
