@@ -8,16 +8,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/scaleway/scaleway-sdk-go/errors"
-	"github.com/scaleway/scaleway-sdk-go/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -1652,6 +1652,7 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 		client: client,
 	}
 }
+
 func (s *RegionalAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

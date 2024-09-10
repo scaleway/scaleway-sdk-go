@@ -8,16 +8,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/scaleway/scaleway-sdk-go/errors"
-	"github.com/scaleway/scaleway-sdk-go/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -1765,6 +1765,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2}
 }
@@ -2679,6 +2680,7 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 		client: client,
 	}
 }
+
 func (s *PrivateNetworkAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar2}
 }

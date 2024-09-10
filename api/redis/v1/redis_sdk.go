@@ -8,16 +8,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/scaleway/scaleway-sdk-go/errors"
-	"github.com/scaleway/scaleway-sdk-go/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -253,8 +253,7 @@ func (enum *PrivateNetworkProvisioningMode) UnmarshalJSON(data []byte) error {
 }
 
 // EndpointSpecPrivateNetworkSpecIpamConfig: endpoint spec private network spec ipam config.
-type EndpointSpecPrivateNetworkSpecIpamConfig struct {
-}
+type EndpointSpecPrivateNetworkSpecIpamConfig struct{}
 
 // PrivateNetwork: private network.
 type PrivateNetwork struct {
@@ -273,8 +272,7 @@ type PrivateNetwork struct {
 }
 
 // PublicNetwork: public network.
-type PublicNetwork struct {
-}
+type PublicNetwork struct{}
 
 // EndpointSpecPrivateNetworkSpec: endpoint spec private network spec.
 type EndpointSpecPrivateNetworkSpec struct {
@@ -289,8 +287,7 @@ type EndpointSpecPrivateNetworkSpec struct {
 }
 
 // EndpointSpecPublicNetworkSpec: endpoint spec public network spec.
-type EndpointSpecPublicNetworkSpec struct {
-}
+type EndpointSpecPublicNetworkSpec struct{}
 
 // AvailableClusterSetting: available cluster setting.
 type AvailableClusterSetting struct {
@@ -996,6 +993,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw1, scw.ZonePlWaw2}
 }
