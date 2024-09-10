@@ -1595,8 +1595,8 @@ type Server struct {
 	// DynamicIPRequired: true if a dynamic IPv4 is required.
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 
-	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode.
-	RoutedIPEnabled bool `json:"routed_ip_enabled"`
+	// Deprecated: RoutedIPEnabled: true to configure the instance so it uses the routed IP mode. Use of `routed_ip_enabled` as `False` is deprecated.
+	RoutedIPEnabled *bool `json:"routed_ip_enabled"`
 
 	// Deprecated: EnableIPv6: true if IPv6 is enabled (deprecated and always `False` when `routed_ip_enabled` is `True`).
 	EnableIPv6 *bool `json:"enable_ipv6"`
@@ -2136,7 +2136,7 @@ type CreateIPRequest struct {
 	// Server: UUID of the Instance you want to attach the IP to.
 	Server *string `json:"server,omitempty"`
 
-	// Type: IP type to reserve (either 'nat', 'routed_ipv4' or 'routed_ipv6').
+	// Type: IP type to reserve (either 'routed_ipv4' or 'routed_ipv6', use of 'nat' is deprecated).
 	// Default value: unknown_iptype
 	Type IPType `json:"type,omitempty"`
 }
@@ -2344,7 +2344,7 @@ type CreateServerRequest struct {
 	// DynamicIPRequired: define if a dynamic IPv4 is required for the Instance.
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
-	// RoutedIPEnabled: if true, configure the Instance so it uses the new routed IP mode.
+	// Deprecated: RoutedIPEnabled: if true, configure the Instance so it uses the new routed IP mode.
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 
 	// CommercialType: define the Instance commercial type (i.e. GP1-S).
@@ -2902,7 +2902,7 @@ type ListIPsRequest struct {
 	// Page: a positive integer to choose the page to return.
 	Page *int32 `json:"-"`
 
-	// Type: filter on the IP Mobility IP type (whose value should be either 'nat', 'routed_ipv4' or 'routed_ipv6').
+	// Type: filter on the IP Mobility IP type (whose value should be either 'routed_ipv4', 'routed_ipv6' or 'nat').
 	Type *string `json:"-"`
 }
 
@@ -3862,7 +3862,7 @@ type UpdateServerRequest struct {
 
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
-	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
+	// Deprecated: RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 
 	// PublicIPs: a list of reserved IP IDs to attach to the Instance.
@@ -4071,7 +4071,7 @@ type setServerRequest struct {
 	// DynamicIPRequired: true if a dynamic IPv4 is required.
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 
-	// RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
+	// Deprecated: RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 
 	// Deprecated: EnableIPv6: true if IPv6 is enabled (deprecated and always `False` when `routed_ip_enabled` is `True`).
