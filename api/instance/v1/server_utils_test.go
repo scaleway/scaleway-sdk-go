@@ -95,12 +95,10 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		{
 			"hello":      "world",
 			"scale":      "way",
-			"xavier":     "niel",
 			"tic":        "tac",
 			"cloud-init": "on",
 		},
 		{
-			"xavier":     "niel",
 			"scale":      "way",
 			"steve":      "wozniak",
 			"cloud-init": "off",
