@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -993,8 +993,7 @@ type SelectPlanRequest struct {
 }
 
 // SelectPlanResponse: Response returned when selecting a pricing plan.
-type SelectPlanResponse struct {
-}
+type SelectPlanResponse struct{}
 
 // TriggerTestAlertRequest: trigger test alert request.
 type TriggerTestAlertRequest struct {

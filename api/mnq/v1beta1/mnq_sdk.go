@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -939,6 +939,7 @@ func NewNatsAPI(client *scw.Client) *NatsAPI {
 		client: client,
 	}
 }
+
 func (s *NatsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
@@ -1265,6 +1266,7 @@ func NewSnsAPI(client *scw.Client) *SnsAPI {
 		client: client,
 	}
 }
+
 func (s *SnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
@@ -1566,6 +1568,7 @@ func NewSqsAPI(client *scw.Client) *SqsAPI {
 		client: client,
 	}
 }
+
 func (s *SqsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
