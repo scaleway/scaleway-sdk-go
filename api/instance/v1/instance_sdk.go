@@ -2005,6 +2005,9 @@ type ServerType struct {
 
 	// ScratchStorageMaxSize: maximum available scratch storage.
 	ScratchStorageMaxSize *scw.Size `json:"scratch_storage_max_size"`
+
+	// BlockBandwidth: the maximum bandwidth allocated to block storage access (in bytes per second).
+	BlockBandwidth *uint64 `json:"block_bandwidth"`
 }
 
 // VolumeType: volume type.
@@ -4194,7 +4197,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

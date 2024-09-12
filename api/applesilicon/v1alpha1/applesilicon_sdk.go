@@ -525,7 +525,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar3}
 }

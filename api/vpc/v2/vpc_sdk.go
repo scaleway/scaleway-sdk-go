@@ -333,6 +333,9 @@ type Route struct {
 	// UpdatedAt: date the Route was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// IsReadOnly: defines whether the route can be modified or deleted by the user.
+	IsReadOnly bool `json:"is_read_only"`
+
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`
 }
@@ -900,7 +903,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

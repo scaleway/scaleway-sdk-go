@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 )
 
 // always import dependencies
@@ -1701,7 +1701,8 @@ type RecordChangeAdd struct {
 }
 
 // RecordChangeClear: record change clear.
-type RecordChangeClear struct{}
+type RecordChangeClear struct {
+}
 
 // RecordChangeDelete: record change delete.
 type RecordChangeDelete struct {
@@ -2145,7 +2146,8 @@ type ClearDNSZoneRecordsRequest struct {
 }
 
 // ClearDNSZoneRecordsResponse: clear dns zone records response.
-type ClearDNSZoneRecordsResponse struct{}
+type ClearDNSZoneRecordsResponse struct {
+}
 
 // CloneDNSZoneRequest: clone dns zone request.
 type CloneDNSZoneRequest struct {
@@ -2191,7 +2193,8 @@ type DeleteDNSZoneRequest struct {
 }
 
 // DeleteDNSZoneResponse: delete dns zone response.
-type DeleteDNSZoneResponse struct{}
+type DeleteDNSZoneResponse struct {
+}
 
 // DeleteDNSZoneTsigKeyRequest: delete dns zone tsig key request.
 type DeleteDNSZoneTsigKeyRequest struct {
@@ -2199,7 +2202,8 @@ type DeleteDNSZoneTsigKeyRequest struct {
 }
 
 // DeleteExternalDomainResponse: delete external domain response.
-type DeleteExternalDomainResponse struct{}
+type DeleteExternalDomainResponse struct {
+}
 
 // DeleteSSLCertificateRequest: delete ssl certificate request.
 type DeleteSSLCertificateRequest struct {
@@ -2207,7 +2211,8 @@ type DeleteSSLCertificateRequest struct {
 }
 
 // DeleteSSLCertificateResponse: delete ssl certificate response.
-type DeleteSSLCertificateResponse struct{}
+type DeleteSSLCertificateResponse struct {
+}
 
 // Domain: domain.
 type Domain struct {
@@ -3183,7 +3188,8 @@ type RestoreDNSZoneVersionRequest struct {
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response.
-type RestoreDNSZoneVersionResponse struct{}
+type RestoreDNSZoneVersionResponse struct {
+}
 
 // SearchAvailableDomainsResponse: search available domains response.
 type SearchAvailableDomainsResponse struct {
