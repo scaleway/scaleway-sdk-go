@@ -650,6 +650,28 @@ func (enum *SettingType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// CertificationOption: certification option.
+type CertificationOption struct {
+}
+
+// LicenseOption: license option.
+type LicenseOption struct {
+	OsID string `json:"os_id"`
+}
+
+// PrivateNetworkOption: private network option.
+type PrivateNetworkOption struct {
+}
+
+// PublicBandwidthOption: public bandwidth option.
+type PublicBandwidthOption struct {
+	BandwidthInBps uint64 `json:"bandwidth_in_bps"`
+}
+
+// RemoteAccessOption: remote access option.
+type RemoteAccessOption struct {
+}
+
 // OSOSField: osos field.
 type OSOSField struct {
 	Editable bool `json:"editable"`
@@ -723,8 +745,28 @@ type OfferOptionOffer struct {
 	// Manageable: boolean to know if option could be managed.
 	Manageable bool `json:"manageable"`
 
-	// OsID: ID of the OS linked to the option.
-	OsID *string `json:"os_id"`
+	// Deprecated: OsID: deprecated, use LicenseOptionVars.os_id instead.
+	OsID *string `json:"os_id,omitempty"`
+
+	// License: license option, contains the ID of the OS linked to the option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	License *LicenseOption `json:"license,omitempty"`
+
+	// PublicBandwidth: public_bandwidth option, contains the bandwidth_in_bps.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
+
+	// PrivateNetwork: private_network option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
+
+	// RemoteAccess: remote_access option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	RemoteAccess *RemoteAccessOption `json:"remote_access,omitempty"`
+
+	// Certification: certification option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	Certification *CertificationOption `json:"certification,omitempty"`
 }
 
 // PersistentMemory: persistent memory.
@@ -811,6 +853,26 @@ type ServerOption struct {
 
 	// ExpiresAt: auto expiration date for compatible options.
 	ExpiresAt *time.Time `json:"expires_at"`
+
+	// License: license option, contains the ID of the OS linked to the option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	License *LicenseOption `json:"license,omitempty"`
+
+	// PublicBandwidth: public_bandwidth option, contains the bandwidth_in_bps.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
+
+	// PrivateNetwork: private_network option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
+
+	// RemoteAccess: remote_access option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	RemoteAccess *RemoteAccessOption `json:"remote_access,omitempty"`
+
+	// Certification: certification option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	Certification *CertificationOption `json:"certification,omitempty"`
 }
 
 // ServerRescueServer: server rescue server.
@@ -972,6 +1034,26 @@ type Option struct {
 
 	// Manageable: defines whether the option is manageable (could be added or removed).
 	Manageable bool `json:"manageable"`
+
+	// License: license option, contains the ID of the OS linked to the option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	License *LicenseOption `json:"license,omitempty"`
+
+	// PublicBandwidth: public_bandwidth option, contains the bandwidth_in_bps.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
+
+	// PrivateNetwork: private_network option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
+
+	// RemoteAccess: remote_access option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	RemoteAccess *RemoteAccessOption `json:"remote_access,omitempty"`
+
+	// Certification: certification option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	Certification *CertificationOption `json:"certification,omitempty"`
 }
 
 // ServerEvent: server event.
