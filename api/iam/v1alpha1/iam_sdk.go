@@ -1174,6 +1174,9 @@ type User struct {
 
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
+
+	// Locked: defines whether the user is locked.
+	Locked bool `json:"locked"`
 }
 
 // AddGroupMemberRequest: add group member request.
