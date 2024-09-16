@@ -149,6 +149,8 @@ const (
 	DomainStatusRevoked = DomainStatus("revoked")
 	// The domain is pending, waiting to be checked.
 	DomainStatusPending = DomainStatus("pending")
+	// The domain is in process of auto-configuration of the domain's DNS zone.
+	DomainStatusAutoconfiguring = DomainStatus("autoconfiguring")
 )
 
 func (enum DomainStatus) String() string {
@@ -168,6 +170,7 @@ func (enum DomainStatus) Values() []DomainStatus {
 		"locked",
 		"revoked",
 		"pending",
+		"autoconfiguring",
 	}
 }
 
@@ -1388,7 +1391,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }
