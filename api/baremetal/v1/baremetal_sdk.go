@@ -883,6 +883,9 @@ type OS struct {
 
 	// Allowed: defines if a specific Organization is allowed to install this OS type.
 	Allowed bool `json:"allowed"`
+
+	// CustomPartitioningSupported: defines if custom partitioning is supported by this OS.
+	CustomPartitioningSupported bool `json:"custom_partitioning_supported"`
 }
 
 // Offer: offer.
@@ -1765,7 +1768,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2}
 }
@@ -2680,7 +2682,6 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 		client: client,
 	}
 }
-
 func (s *PrivateNetworkAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar2}
 }
