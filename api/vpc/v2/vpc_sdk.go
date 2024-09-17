@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -332,6 +332,9 @@ type Route struct {
 
 	// UpdatedAt: date the Route was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// IsReadOnly: defines whether the route can be modified or deleted by the user.
+	IsReadOnly bool `json:"is_read_only"`
 
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`

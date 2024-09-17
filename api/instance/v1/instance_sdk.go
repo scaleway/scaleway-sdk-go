@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -2005,6 +2005,9 @@ type ServerType struct {
 
 	// ScratchStorageMaxSize: maximum available scratch storage.
 	ScratchStorageMaxSize *scw.Size `json:"scratch_storage_max_size"`
+
+	// BlockBandwidth: the maximum bandwidth allocated to block storage access (in bytes per second).
+	BlockBandwidth *uint64 `json:"block_bandwidth"`
 }
 
 // VolumeType: volume type.

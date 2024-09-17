@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scaleway/scaleway-sdk-go/internal/errors"
-	"github.com/scaleway/scaleway-sdk-go/internal/marshaler"
-	"github.com/scaleway/scaleway-sdk-go/internal/parameter"
+	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
+	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -149,6 +149,8 @@ const (
 	DomainStatusRevoked = DomainStatus("revoked")
 	// The domain is pending, waiting to be checked.
 	DomainStatusPending = DomainStatus("pending")
+	// The domain is in process of auto-configuration of the domain's DNS zone.
+	DomainStatusAutoconfiguring = DomainStatus("autoconfiguring")
 )
 
 func (enum DomainStatus) String() string {
@@ -168,6 +170,7 @@ func (enum DomainStatus) Values() []DomainStatus {
 		"locked",
 		"revoked",
 		"pending",
+		"autoconfiguring",
 	}
 }
 
