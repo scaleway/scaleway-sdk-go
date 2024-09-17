@@ -1041,6 +1041,9 @@ type HostingAPICreateHostingRequest struct {
 
 	// DomainConfiguration: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements.
 	DomainConfiguration *CreateHostingRequestDomainConfiguration `json:"domain_configuration,omitempty"`
+
+	// SkipWelcomeEmail: indicates whether to skip a welcome email to the contact email containing hosting info.
+	SkipWelcomeEmail *bool `json:"skip_welcome_email,omitempty"`
 }
 
 // HostingAPICreateSessionRequest: hosting api create session request.
