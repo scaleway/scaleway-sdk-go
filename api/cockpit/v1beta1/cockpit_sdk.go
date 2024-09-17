@@ -993,7 +993,8 @@ type SelectPlanRequest struct {
 }
 
 // SelectPlanResponse: Response returned when selecting a pricing plan.
-type SelectPlanResponse struct{}
+type SelectPlanResponse struct {
+}
 
 // TriggerTestAlertRequest: trigger test alert request.
 type TriggerTestAlertRequest struct {

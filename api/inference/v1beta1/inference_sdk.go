@@ -218,7 +218,8 @@ type EndpointPrivateNetworkDetails struct {
 }
 
 // EndpointPublicAccessDetails: endpoint public access details.
-type EndpointPublicAccessDetails struct{}
+type EndpointPublicAccessDetails struct {
+}
 
 // EndpointSpecPrivateNetwork: endpoint spec private network.
 type EndpointSpecPrivateNetwork struct {
@@ -227,7 +228,8 @@ type EndpointSpecPrivateNetwork struct {
 }
 
 // EndpointSpecPublic: endpoint spec public.
-type EndpointSpecPublic struct{}
+type EndpointSpecPublic struct {
+}
 
 // Endpoint: endpoint.
 type Endpoint struct {
@@ -825,7 +827,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }
