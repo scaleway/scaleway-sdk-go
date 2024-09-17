@@ -354,7 +354,8 @@ type EphemeralPolicy struct {
 }
 
 // BrowseSecretsResponseItemFolderDetails: browse secrets response item folder details.
-type BrowseSecretsResponseItemFolderDetails struct{}
+type BrowseSecretsResponseItemFolderDetails struct {
+}
 
 // BrowseSecretsResponseItemSecretDetails: browse secrets response item secret details.
 type BrowseSecretsResponseItemSecretDetails struct {
@@ -1039,7 +1040,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

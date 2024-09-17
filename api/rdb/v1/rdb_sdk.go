@@ -1023,10 +1023,12 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 }
 
 // EndpointDirectAccessDetails: endpoint direct access details.
-type EndpointDirectAccessDetails struct{}
+type EndpointDirectAccessDetails struct {
+}
 
 // EndpointLoadBalancerDetails: endpoint load balancer details.
-type EndpointLoadBalancerDetails struct{}
+type EndpointLoadBalancerDetails struct {
+}
 
 // EndpointPrivateNetworkDetails: endpoint private network details.
 type EndpointPrivateNetworkDetails struct {
@@ -1045,10 +1047,12 @@ type EndpointPrivateNetworkDetails struct {
 }
 
 // EndpointSpecPrivateNetworkIpamConfig: endpoint spec private network ipam config.
-type EndpointSpecPrivateNetworkIpamConfig struct{}
+type EndpointSpecPrivateNetworkIpamConfig struct {
+}
 
 // ReadReplicaEndpointSpecPrivateNetworkIpamConfig: read replica endpoint spec private network ipam config.
-type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct{}
+type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct {
+}
 
 // EngineSetting: engine setting.
 type EngineSetting struct {
@@ -1120,7 +1124,8 @@ type Endpoint struct {
 }
 
 // EndpointSpecLoadBalancer: endpoint spec load balancer.
-type EndpointSpecLoadBalancer struct{}
+type EndpointSpecLoadBalancer struct {
+}
 
 // EndpointSpecPrivateNetwork: endpoint spec private network.
 type EndpointSpecPrivateNetwork struct {
@@ -1137,7 +1142,8 @@ type EndpointSpecPrivateNetwork struct {
 }
 
 // ReadReplicaEndpointSpecDirectAccess: read replica endpoint spec direct access.
-type ReadReplicaEndpointSpecDirectAccess struct{}
+type ReadReplicaEndpointSpecDirectAccess struct {
+}
 
 // ReadReplicaEndpointSpecPrivateNetwork: read replica endpoint spec private network.
 type ReadReplicaEndpointSpecPrivateNetwork struct {
@@ -2857,7 +2863,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

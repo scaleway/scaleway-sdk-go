@@ -784,7 +784,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -1202,7 +1201,6 @@ func NewIpnsAPI(client *scw.Client) *IpnsAPI {
 		client: client,
 	}
 }
-
 func (s *IpnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
