@@ -485,6 +485,51 @@ func (enum *ListWebhooksRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ProjectSettingsPeriodicReportFrequency string
+
+const (
+	// If unspecified, the frequency is unknown by default.
+	ProjectSettingsPeriodicReportFrequencyUnknownFrequency = ProjectSettingsPeriodicReportFrequency("unknown_frequency")
+	// The periodic report is sent once a month.
+	ProjectSettingsPeriodicReportFrequencyMonthly = ProjectSettingsPeriodicReportFrequency("monthly")
+	// The periodic report is sent once a week.
+	ProjectSettingsPeriodicReportFrequencyWeekly = ProjectSettingsPeriodicReportFrequency("weekly")
+	// The periodic report is sent once a day.
+	ProjectSettingsPeriodicReportFrequencyDaily = ProjectSettingsPeriodicReportFrequency("daily")
+)
+
+func (enum ProjectSettingsPeriodicReportFrequency) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_frequency"
+	}
+	return string(enum)
+}
+
+func (enum ProjectSettingsPeriodicReportFrequency) Values() []ProjectSettingsPeriodicReportFrequency {
+	return []ProjectSettingsPeriodicReportFrequency{
+		"unknown_frequency",
+		"monthly",
+		"weekly",
+		"daily",
+	}
+}
+
+func (enum ProjectSettingsPeriodicReportFrequency) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ProjectSettingsPeriodicReportFrequency) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ProjectSettingsPeriodicReportFrequency(ProjectSettingsPeriodicReportFrequency(tmp).String())
+	return nil
+}
+
 type WebhookEventStatus string
 
 const (
@@ -886,6 +931,38 @@ type Webhook struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// ProjectSettingsPeriodicReport: project settings periodic report.
+type ProjectSettingsPeriodicReport struct {
+	// Enabled: enable or disable periodic report notifications.
+	Enabled bool `json:"enabled"`
+
+	// Frequency: at which frequency you receive periodic report notifications.
+	// Default value: unknown_frequency
+	Frequency ProjectSettingsPeriodicReportFrequency `json:"frequency"`
+
+	// SendingHour: at which hour you receive periodic report notifications.
+	SendingHour uint32 `json:"sending_hour"`
+
+	// SendingDay: on which day you receive periodic report notifications (1-7 weekly, 1-28 monthly).
+	SendingDay uint32 `json:"sending_day"`
+}
+
+// UpdateProjectSettingsRequestUpdatePeriodicReport: update project settings request update periodic report.
+type UpdateProjectSettingsRequestUpdatePeriodicReport struct {
+	// Enabled: (Optional) Enable or disable periodic report notifications.
+	Enabled *bool `json:"enabled"`
+
+	// Frequency: (Optional) At which frequency you receive periodic report notifications.
+	// Default value: unknown_frequency
+	Frequency *ProjectSettingsPeriodicReportFrequency `json:"frequency"`
+
+	// SendingHour: (Optional) At which hour you receive periodic report notifications.
+	SendingHour *uint32 `json:"sending_hour"`
+
+	// SendingDay: (Optional) On which day you receive periodic report notifications (1-7 weekly, 1-28 monthly).
+	SendingDay *uint32 `json:"sending_day"`
+}
+
 // CancelEmailRequest: cancel email request.
 type CancelEmailRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1040,6 +1117,15 @@ type GetEmailRequest struct {
 
 	// EmailID: ID of the email to retrieve.
 	EmailID string `json:"-"`
+}
+
+// GetProjectSettingsRequest: get project settings request.
+type GetProjectSettingsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the project.
+	ProjectID string `json:"-"`
 }
 
 // GetStatisticsRequest: get statistics request.
@@ -1320,6 +1406,12 @@ func (r *ListWebhooksResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Webhooks)), nil
 }
 
+// ProjectSettings: project settings.
+type ProjectSettings struct {
+	// PeriodicReport: information about your periodic report.
+	PeriodicReport *ProjectSettingsPeriodicReport `json:"periodic_report"`
+}
+
 // RevokeDomainRequest: revoke domain request.
 type RevokeDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1360,6 +1452,18 @@ type UpdateDomainRequest struct {
 
 	// Autoconfig: (Optional) If set to true, activate auto-configuration of the domain's DNS zone.
 	Autoconfig *bool `json:"autoconfig,omitempty"`
+}
+
+// UpdateProjectSettingsRequest: update project settings request.
+type UpdateProjectSettingsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the project.
+	ProjectID string `json:"-"`
+
+	// PeriodicReport: periodic report update details - all fields are optional.
+	PeriodicReport *UpdateProjectSettingsRequestUpdatePeriodicReport `json:"periodic_report,omitempty"`
 }
 
 // UpdateWebhookRequest: update webhook request.
@@ -2046,6 +2150,83 @@ func (s *API) ListWebhookEvents(req *ListWebhookEventsRequest, opts ...scw.Reque
 	}
 
 	var resp ListWebhookEventsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetProjectSettings: Retrieve the project settings including periodic reports.
+func (s *API) GetProjectSettings(req *GetProjectSettingsRequest, opts ...scw.RequestOption) (*ProjectSettings, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/project/" + fmt.Sprint(req.ProjectID) + "/settings",
+	}
+
+	var resp ProjectSettings
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateProjectSettings: Update the project settings including periodic reports.
+func (s *API) UpdateProjectSettings(req *UpdateProjectSettingsRequest, opts ...scw.RequestOption) (*ProjectSettings, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/project/" + fmt.Sprint(req.ProjectID) + "/settings",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ProjectSettings
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
