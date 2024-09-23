@@ -347,6 +347,241 @@ func (enum *OfferSubscriptionPeriod) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SchemaFilesystemFormat string
+
+const (
+	SchemaFilesystemFormatUnknownFormat = SchemaFilesystemFormat("unknown_format")
+	SchemaFilesystemFormatFat32         = SchemaFilesystemFormat("fat32")
+	SchemaFilesystemFormatExt4          = SchemaFilesystemFormat("ext4")
+	SchemaFilesystemFormatSwap          = SchemaFilesystemFormat("swap")
+	SchemaFilesystemFormatZfs           = SchemaFilesystemFormat("zfs")
+)
+
+func (enum SchemaFilesystemFormat) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_format"
+	}
+	return string(enum)
+}
+
+func (enum SchemaFilesystemFormat) Values() []SchemaFilesystemFormat {
+	return []SchemaFilesystemFormat{
+		"unknown_format",
+		"fat32",
+		"ext4",
+		"swap",
+		"zfs",
+	}
+}
+
+func (enum SchemaFilesystemFormat) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SchemaFilesystemFormat) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SchemaFilesystemFormat(SchemaFilesystemFormat(tmp).String())
+	return nil
+}
+
+type SchemaLogicalVolumeType string
+
+const (
+	SchemaLogicalVolumeTypeUnknownRaidType = SchemaLogicalVolumeType("unknown_raid_type")
+	SchemaLogicalVolumeTypeStriped         = SchemaLogicalVolumeType("striped")
+	SchemaLogicalVolumeTypeMirror          = SchemaLogicalVolumeType("mirror")
+	SchemaLogicalVolumeTypeRaid0           = SchemaLogicalVolumeType("raid0")
+	SchemaLogicalVolumeTypeRaid1           = SchemaLogicalVolumeType("raid1")
+	SchemaLogicalVolumeTypeRaid5           = SchemaLogicalVolumeType("raid5")
+	SchemaLogicalVolumeTypeRaid6           = SchemaLogicalVolumeType("raid6")
+	SchemaLogicalVolumeTypeRaid10          = SchemaLogicalVolumeType("raid10")
+)
+
+func (enum SchemaLogicalVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_raid_type"
+	}
+	return string(enum)
+}
+
+func (enum SchemaLogicalVolumeType) Values() []SchemaLogicalVolumeType {
+	return []SchemaLogicalVolumeType{
+		"unknown_raid_type",
+		"striped",
+		"mirror",
+		"raid0",
+		"raid1",
+		"raid5",
+		"raid6",
+		"raid10",
+	}
+}
+
+func (enum SchemaLogicalVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SchemaLogicalVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SchemaLogicalVolumeType(SchemaLogicalVolumeType(tmp).String())
+	return nil
+}
+
+type SchemaPartitionLabel string
+
+const (
+	SchemaPartitionLabelUnknownPartitionLabel = SchemaPartitionLabel("unknown_partition_label")
+	SchemaPartitionLabelUefi                  = SchemaPartitionLabel("uefi")
+	SchemaPartitionLabelLegacy                = SchemaPartitionLabel("legacy")
+	SchemaPartitionLabelRoot                  = SchemaPartitionLabel("root")
+	SchemaPartitionLabelBoot                  = SchemaPartitionLabel("boot")
+	SchemaPartitionLabelSwap                  = SchemaPartitionLabel("swap")
+	SchemaPartitionLabelData                  = SchemaPartitionLabel("data")
+	SchemaPartitionLabelHome                  = SchemaPartitionLabel("home")
+	SchemaPartitionLabelRaid                  = SchemaPartitionLabel("raid")
+	SchemaPartitionLabelLvm                   = SchemaPartitionLabel("lvm")
+	SchemaPartitionLabelZfs                   = SchemaPartitionLabel("zfs")
+)
+
+func (enum SchemaPartitionLabel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_partition_label"
+	}
+	return string(enum)
+}
+
+func (enum SchemaPartitionLabel) Values() []SchemaPartitionLabel {
+	return []SchemaPartitionLabel{
+		"unknown_partition_label",
+		"uefi",
+		"legacy",
+		"root",
+		"boot",
+		"swap",
+		"data",
+		"home",
+		"raid",
+		"lvm",
+		"zfs",
+	}
+}
+
+func (enum SchemaPartitionLabel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SchemaPartitionLabel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SchemaPartitionLabel(SchemaPartitionLabel(tmp).String())
+	return nil
+}
+
+type SchemaPoolType string
+
+const (
+	SchemaPoolTypeUnknownType = SchemaPoolType("unknown_type")
+	SchemaPoolTypeNoRaid      = SchemaPoolType("no_raid")
+	SchemaPoolTypeMirror      = SchemaPoolType("mirror")
+	SchemaPoolTypeRaidz1      = SchemaPoolType("raidz1")
+	SchemaPoolTypeRaidz2      = SchemaPoolType("raidz2")
+)
+
+func (enum SchemaPoolType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum SchemaPoolType) Values() []SchemaPoolType {
+	return []SchemaPoolType{
+		"unknown_type",
+		"no_raid",
+		"mirror",
+		"raidz1",
+		"raidz2",
+	}
+}
+
+func (enum SchemaPoolType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SchemaPoolType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SchemaPoolType(SchemaPoolType(tmp).String())
+	return nil
+}
+
+type SchemaRAIDLevel string
+
+const (
+	SchemaRAIDLevelUnknownRaidLevel = SchemaRAIDLevel("unknown_raid_level")
+	SchemaRAIDLevelRaidLevel0       = SchemaRAIDLevel("raid_level_0")
+	SchemaRAIDLevelRaidLevel1       = SchemaRAIDLevel("raid_level_1")
+	SchemaRAIDLevelRaidLevel5       = SchemaRAIDLevel("raid_level_5")
+	SchemaRAIDLevelRaidLevel6       = SchemaRAIDLevel("raid_level_6")
+	SchemaRAIDLevelRaidLevel10      = SchemaRAIDLevel("raid_level_10")
+)
+
+func (enum SchemaRAIDLevel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_raid_level"
+	}
+	return string(enum)
+}
+
+func (enum SchemaRAIDLevel) Values() []SchemaRAIDLevel {
+	return []SchemaRAIDLevel{
+		"unknown_raid_level",
+		"raid_level_0",
+		"raid_level_1",
+		"raid_level_5",
+		"raid_level_6",
+		"raid_level_10",
+	}
+}
+
+func (enum SchemaRAIDLevel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SchemaRAIDLevel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SchemaRAIDLevel(SchemaRAIDLevel(tmp).String())
+	return nil
+}
+
 type ServerBootType string
 
 const (
@@ -650,6 +885,90 @@ func (enum *SettingType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// SchemaLogicalVolume: schema logical volume.
+type SchemaLogicalVolume struct {
+	Name string `json:"name"`
+
+	// Type: default value: unknown_raid_type
+	Type SchemaLogicalVolumeType `json:"type"`
+
+	Size scw.Size `json:"size"`
+
+	StripedNumber int32 `json:"striped_number"`
+
+	MirrorNumber int32 `json:"mirror_number"`
+}
+
+// SchemaPartition: schema partition.
+type SchemaPartition struct {
+	// Label: default value: unknown_partition_label
+	Label SchemaPartitionLabel `json:"label"`
+
+	Number uint32 `json:"number"`
+
+	Size scw.Size `json:"size"`
+}
+
+// SchemaVolumeGroup: schema volume group.
+type SchemaVolumeGroup struct {
+	VolumeGroupName string `json:"volume_group_name"`
+
+	PhysicalVolumes []string `json:"physical_volumes"`
+
+	LogicalVolumes []*SchemaLogicalVolume `json:"logical_volumes"`
+}
+
+// SchemaPool: schema pool.
+type SchemaPool struct {
+	Name string `json:"name"`
+
+	// Type: default value: unknown_type
+	Type SchemaPoolType `json:"type"`
+
+	Devices []string `json:"devices"`
+
+	Options []string `json:"options"`
+
+	FilesystemOptions []string `json:"filesystem_options"`
+}
+
+// SchemaDisk: schema disk.
+type SchemaDisk struct {
+	Device string `json:"device"`
+
+	Partitions []*SchemaPartition `json:"partitions"`
+}
+
+// SchemaFilesystem: schema filesystem.
+type SchemaFilesystem struct {
+	Device string `json:"device"`
+
+	// Format: default value: unknown_format
+	Format SchemaFilesystemFormat `json:"format"`
+
+	Mountpoint string `json:"mountpoint"`
+}
+
+// SchemaLVM: schema lvm.
+type SchemaLVM struct {
+	VolumeGroups []*SchemaVolumeGroup `json:"volume_groups"`
+}
+
+// SchemaRAID: schema raid.
+type SchemaRAID struct {
+	Name string `json:"name"`
+
+	// Level: default value: unknown_raid_level
+	Level SchemaRAIDLevel `json:"level"`
+
+	Devices []string `json:"devices"`
+}
+
+// SchemaZFS: schema zfs.
+type SchemaZFS struct {
+	Pools []*SchemaPool `json:"pools"`
+}
+
 // CertificationOption: certification option.
 type CertificationOption struct {
 }
@@ -670,6 +989,19 @@ type PublicBandwidthOption struct {
 
 // RemoteAccessOption: remote access option.
 type RemoteAccessOption struct {
+}
+
+// Schema: schema.
+type Schema struct {
+	Disks []*SchemaDisk `json:"disks"`
+
+	Raids []*SchemaRAID `json:"raids"`
+
+	Filesystems []*SchemaFilesystem `json:"filesystems"`
+
+	Lvm *SchemaLVM `json:"lvm"`
+
+	Zfs *SchemaZFS `json:"zfs"`
 }
 
 // OSOSField: osos field.
@@ -1270,6 +1602,18 @@ type GetBMCAccessRequest struct {
 	ServerID string `json:"-"`
 }
 
+// GetDefaultPartitioningSchemaRequest: get default partitioning schema request.
+type GetDefaultPartitioningSchemaRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// OfferID: ID of the offer.
+	OfferID string `json:"-"`
+
+	// OsID: ID of the OS.
+	OsID string `json:"-"`
+}
+
 // GetOSRequest: get os request.
 type GetOSRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1839,6 +2183,21 @@ type UpdateSettingRequest struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
+// ValidatePartitioningSchemaRequest: validate partitioning schema request.
+type ValidatePartitioningSchemaRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PartitioningSchema: partitioning schema.
+	PartitioningSchema *Schema `json:"partitioning_schema,omitempty"`
+
+	// OfferID: offer ID of the server.
+	OfferID string `json:"offer_id"`
+
+	// OsID: oS ID.
+	OsID string `json:"os_id"`
+}
+
 // This API allows you to manage your Elastic Metal servers.
 type API struct {
 	client *scw.Client
@@ -2253,6 +2612,68 @@ func (s *API) ListServerEvents(req *ListServerEventsRequest, opts ...scw.Request
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// GetDefaultPartitioningSchema: Get the default partitioning schema for the given offer ID and OS ID.
+func (s *API) GetDefaultPartitioningSchema(req *GetDefaultPartitioningSchemaRequest, opts ...scw.RequestOption) (*Schema, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "offer_id", req.OfferID)
+	parameter.AddToQuery(query, "os_id", req.OsID)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/partitioning-schemas/default",
+		Query:  query,
+	}
+
+	var resp Schema
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ValidatePartitioningSchema: Validate the incoming partitioning schema from a user before installing the server. Return default ErrorCode if invalid.
+func (s *API) ValidatePartitioningSchema(req *ValidatePartitioningSchemaRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/partitioning-schemas/validate",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // StartBMCAccess: Start BMC (Baseboard Management Controller) access associated with the ID.
