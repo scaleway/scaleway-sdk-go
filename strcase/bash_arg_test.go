@@ -1,7 +1,9 @@
-package strcase
+package strcase_test
 
 import (
 	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/strcase"
 )
 
 func TestToKebabCase(t *testing.T) {
@@ -29,7 +31,7 @@ func TestToKebabCase(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.in, func(t *testing.T) {
-			got := toKebab(c.in)
+			got := strcase.ToKebab(c.in)
 			if got != c.want {
 				t.Errorf("toKebab(%q) == %q, want %q", c.in, got, c.want)
 			}
