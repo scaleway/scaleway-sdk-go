@@ -612,6 +612,47 @@ func (enum *PipelineStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PlanName string
+
+const (
+	PlanNameUnknownName  = PlanName("unknown_name")
+	PlanNameStarter      = PlanName("starter")
+	PlanNameProfessional = PlanName("professional")
+	PlanNameAdvanced     = PlanName("advanced")
+)
+
+func (enum PlanName) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_name"
+	}
+	return string(enum)
+}
+
+func (enum PlanName) Values() []PlanName {
+	return []PlanName{
+		"unknown_name",
+		"starter",
+		"professional",
+		"advanced",
+	}
+}
+
+func (enum PlanName) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PlanName) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PlanName(PlanName(tmp).String())
+	return nil
+}
+
 type PurgeRequestStatus string
 
 const (
@@ -846,6 +887,16 @@ type Pipeline struct {
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
 }
 
+// PlanDetails: plan details.
+type PlanDetails struct {
+	// PlanName: default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
+
+	PackageGb uint64 `json:"package_gb"`
+
+	PipelineLimit uint32 `json:"pipeline_limit"`
+}
+
 // PurgeRequest: purge request.
 type PurgeRequest struct {
 	// ID: ID of the purge request.
@@ -1069,6 +1120,11 @@ type DeleteCacheStageRequest struct {
 	CacheStageID string `json:"-"`
 }
 
+// DeleteCurrentPlanRequest: delete current plan request.
+type DeleteCurrentPlanRequest struct {
+	ProjectID string `json:"-"`
+}
+
 // DeleteDNSStageRequest: delete dns stage request.
 type DeleteDNSStageRequest struct {
 	// DNSStageID: ID of the DNS stage to delete.
@@ -1097,6 +1153,11 @@ type GetBackendStageRequest struct {
 type GetCacheStageRequest struct {
 	// CacheStageID: ID of the requested cache stage.
 	CacheStageID string `json:"-"`
+}
+
+// GetCurrentPlanRequest: get current plan request.
+type GetCurrentPlanRequest struct {
+	ProjectID string `json:"-"`
 }
 
 // GetDNSStageRequest: get dns stage request.
@@ -1329,6 +1390,32 @@ func (r *ListPipelinesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Pipelines)), nil
 }
 
+// ListPlansResponse: list plans response.
+type ListPlansResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	Plans []*PlanDetails `json:"plans"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPlansResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Plans = append(r.Plans, results.Plans...)
+	r.TotalCount += uint64(len(results.Plans))
+	return uint64(len(results.Plans)), nil
+}
+
 // ListPurgeRequestsRequest: list purge requests request.
 type ListPurgeRequestsRequest struct {
 	// OrderBy: sort order of purge requests in the response.
@@ -1430,6 +1517,20 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Stages = append(r.Stages, results.Stages...)
 	r.TotalCount += uint64(len(results.Stages))
 	return uint64(len(results.Stages)), nil
+}
+
+// Plan: plan.
+type Plan struct {
+	// PlanName: default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
+}
+
+// SelectPlanRequest: select plan request.
+type SelectPlanRequest struct {
+	ProjectID string `json:"project_id"`
+
+	// PlanName: default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
 }
 
 // UpdateBackendStageRequest: update backend stage request.
@@ -2329,4 +2430,102 @@ func (s *API) CheckLBOrigin(req *CheckLBOriginRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ListPlans:
+func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/plans",
+	}
+
+	var resp ListPlansResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SelectPlan:
+func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/edge-services/v1alpha1/current-plan",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Plan
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetCurrentPlan:
+func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/current-plan",
+		Query:  query,
+	}
+
+	var resp Plan
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteCurrentPlan:
+func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1alpha1/current-plan",
+		Query:  query,
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
