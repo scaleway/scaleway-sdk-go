@@ -326,6 +326,9 @@ type DiscountFilter struct {
 
 	// Value: value of filter, it can be a product/range/region/zone value.
 	Value string `json:"value"`
+
+	// Exclude: boolean to describe if filter is an excluding filter.
+	Exclude bool `json:"exclude"`
 }
 
 // GetConsumptionResponseConsumption: get consumption response consumption.
