@@ -760,13 +760,6 @@ type TLSSecret struct {
 	Region scw.Region `json:"region"`
 }
 
-// CheckPEMChainRequestSecretChain: check pem chain request secret chain.
-type CheckPEMChainRequestSecretChain struct {
-	SecretID string `json:"secret_id"`
-
-	SecretRegion string `json:"secret_region"`
-}
-
 // BackendStage: backend stage.
 type BackendStage struct {
 	// ID: ID of the backend stage.
@@ -887,6 +880,48 @@ type Pipeline struct {
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
 }
 
+// TLSStage: tls stage.
+type TLSStage struct {
+	// ID: ID of the TLS stage.
+	ID string `json:"id"`
+
+	// Secrets: secret (from Scaleway Secret Manager) containing your custom certificate.
+	Secrets []*TLSSecret `json:"secrets"`
+
+	// ManagedCertificate: true when Scaleway generates and manages a Let's Encrypt certificate for the TLS stage/custom endpoint.
+	ManagedCertificate bool `json:"managed_certificate"`
+
+	// PipelineID: pipeline ID the TLS stage belongs to.
+	PipelineID *string `json:"pipeline_id"`
+
+	// ProjectID: project ID of the TLS stage.
+	ProjectID string `json:"project_id"`
+
+	// CertificateExpiresAt: expiration date of the certificate.
+	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
+
+	// CreatedAt: date the TLS stage was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the TLS stage was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// CacheStageID: cache stage ID the TLS stage is linked to.
+	// Precisely one of CacheStageID, BackendStageID must be set.
+	CacheStageID *string `json:"cache_stage_id,omitempty"`
+
+	// BackendStageID: backend stage ID the TLS stage is linked to.
+	// Precisely one of CacheStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+}
+
+// CheckPEMChainRequestSecretChain: check pem chain request secret chain.
+type CheckPEMChainRequestSecretChain struct {
+	SecretID string `json:"secret_id"`
+
+	SecretRegion string `json:"secret_region"`
+}
+
 // PlanDetails: plan details.
 type PlanDetails struct {
 	// PlanName: default value: unknown_name
@@ -922,41 +957,6 @@ type PurgeRequest struct {
 
 	// UpdatedAt: date the purge request was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-}
-
-// TLSStage: tls stage.
-type TLSStage struct {
-	// ID: ID of the TLS stage.
-	ID string `json:"id"`
-
-	// Secrets: secret (from Scaleway Secret Manager) containing your custom certificate.
-	Secrets []*TLSSecret `json:"secrets"`
-
-	// ManagedCertificate: true when Scaleway generates and manages a Let's Encrypt certificate for the TLS stage/custom endpoint.
-	ManagedCertificate bool `json:"managed_certificate"`
-
-	// PipelineID: pipeline ID the TLS stage belongs to.
-	PipelineID *string `json:"pipeline_id"`
-
-	// ProjectID: project ID of the TLS stage.
-	ProjectID string `json:"project_id"`
-
-	// CertificateExpiresAt: expiration date of the certificate.
-	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
-
-	// CreatedAt: date the TLS stage was created.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date the TLS stage was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// CacheStageID: cache stage ID the TLS stage is linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
-	CacheStageID *string `json:"cache_stage_id,omitempty"`
-
-	// BackendStageID: backend stage ID the TLS stage is linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
-	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // TLSSecretsConfig: tls secrets config.
