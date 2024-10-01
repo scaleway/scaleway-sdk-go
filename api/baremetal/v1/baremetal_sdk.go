@@ -355,6 +355,7 @@ const (
 	SchemaFilesystemFormatExt4          = SchemaFilesystemFormat("ext4")
 	SchemaFilesystemFormatSwap          = SchemaFilesystemFormat("swap")
 	SchemaFilesystemFormatZfs           = SchemaFilesystemFormat("zfs")
+	SchemaFilesystemFormatXfs           = SchemaFilesystemFormat("xfs")
 )
 
 func (enum SchemaFilesystemFormat) String() string {
@@ -372,6 +373,7 @@ func (enum SchemaFilesystemFormat) Values() []SchemaFilesystemFormat {
 		"ext4",
 		"swap",
 		"zfs",
+		"xfs",
 	}
 }
 
@@ -390,55 +392,6 @@ func (enum *SchemaFilesystemFormat) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type SchemaLogicalVolumeType string
-
-const (
-	SchemaLogicalVolumeTypeUnknownRaidType = SchemaLogicalVolumeType("unknown_raid_type")
-	SchemaLogicalVolumeTypeStriped         = SchemaLogicalVolumeType("striped")
-	SchemaLogicalVolumeTypeMirror          = SchemaLogicalVolumeType("mirror")
-	SchemaLogicalVolumeTypeRaid0           = SchemaLogicalVolumeType("raid0")
-	SchemaLogicalVolumeTypeRaid1           = SchemaLogicalVolumeType("raid1")
-	SchemaLogicalVolumeTypeRaid5           = SchemaLogicalVolumeType("raid5")
-	SchemaLogicalVolumeTypeRaid6           = SchemaLogicalVolumeType("raid6")
-	SchemaLogicalVolumeTypeRaid10          = SchemaLogicalVolumeType("raid10")
-)
-
-func (enum SchemaLogicalVolumeType) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_raid_type"
-	}
-	return string(enum)
-}
-
-func (enum SchemaLogicalVolumeType) Values() []SchemaLogicalVolumeType {
-	return []SchemaLogicalVolumeType{
-		"unknown_raid_type",
-		"striped",
-		"mirror",
-		"raid0",
-		"raid1",
-		"raid5",
-		"raid6",
-		"raid10",
-	}
-}
-
-func (enum SchemaLogicalVolumeType) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *SchemaLogicalVolumeType) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = SchemaLogicalVolumeType(SchemaLogicalVolumeType(tmp).String())
-	return nil
-}
-
 type SchemaPartitionLabel string
 
 const (
@@ -451,7 +404,6 @@ const (
 	SchemaPartitionLabelData                  = SchemaPartitionLabel("data")
 	SchemaPartitionLabelHome                  = SchemaPartitionLabel("home")
 	SchemaPartitionLabelRaid                  = SchemaPartitionLabel("raid")
-	SchemaPartitionLabelLvm                   = SchemaPartitionLabel("lvm")
 	SchemaPartitionLabelZfs                   = SchemaPartitionLabel("zfs")
 )
 
@@ -474,7 +426,6 @@ func (enum SchemaPartitionLabel) Values() []SchemaPartitionLabel {
 		"data",
 		"home",
 		"raid",
-		"lvm",
 		"zfs",
 	}
 }
@@ -885,20 +836,6 @@ func (enum *SettingType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// SchemaLogicalVolume: schema logical volume.
-type SchemaLogicalVolume struct {
-	Name string `json:"name"`
-
-	// Type: default value: unknown_raid_type
-	Type SchemaLogicalVolumeType `json:"type"`
-
-	Size scw.Size `json:"size"`
-
-	StripedNumber int32 `json:"striped_number"`
-
-	MirrorNumber int32 `json:"mirror_number"`
-}
-
 // SchemaPartition: schema partition.
 type SchemaPartition struct {
 	// Label: default value: unknown_partition_label
@@ -907,15 +844,6 @@ type SchemaPartition struct {
 	Number uint32 `json:"number"`
 
 	Size scw.Size `json:"size"`
-}
-
-// SchemaVolumeGroup: schema volume group.
-type SchemaVolumeGroup struct {
-	VolumeGroupName string `json:"volume_group_name"`
-
-	PhysicalVolumes []string `json:"physical_volumes"`
-
-	LogicalVolumes []*SchemaLogicalVolume `json:"logical_volumes"`
 }
 
 // SchemaPool: schema pool.
@@ -947,11 +875,6 @@ type SchemaFilesystem struct {
 	Format SchemaFilesystemFormat `json:"format"`
 
 	Mountpoint string `json:"mountpoint"`
-}
-
-// SchemaLVM: schema lvm.
-type SchemaLVM struct {
-	VolumeGroups []*SchemaVolumeGroup `json:"volume_groups"`
 }
 
 // SchemaRAID: schema raid.
@@ -998,8 +921,6 @@ type Schema struct {
 	Raids []*SchemaRAID `json:"raids"`
 
 	Filesystems []*SchemaFilesystem `json:"filesystems"`
-
-	Lvm *SchemaLVM `json:"lvm"`
 
 	Zfs *SchemaZFS `json:"zfs"`
 }
