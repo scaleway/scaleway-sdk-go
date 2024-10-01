@@ -2487,13 +2487,13 @@ func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOpti
 		req.ProjectID = defaultProjectID
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/current-plan",
-		Query:  query,
+		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
 	}
 
 	var resp Plan
@@ -2514,13 +2514,13 @@ func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.Reque
 		req.ProjectID = defaultProjectID
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	if fmt.Sprint(req.ProjectID) == "" {
+		return errors.New("field ProjectID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/current-plan",
-		Query:  query,
+		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
