@@ -4576,12 +4576,11 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 // * `stop_in_place`: Stop the Instance, but keep the slot on the hypervisor.
 // * `reboot`: Stop the instance and restart it.
 // * `backup`:  Create an image with all the volumes of an Instance.
-// * `terminate`: Delete the Instance along with all attached volumes.
+// * `terminate`: Delete the Instance along with its attached volumes, except for SBS volumes.
 // * `enable_routed_ip`: Migrate the Instance to the new network stack.
 //
-// Keep in mind that terminating an Instance will result in the deletion of all attached volumes, including local and block storage.
-// If you want to preserve your local volumes, you should use the `archive` action instead of `terminate`. Similarly, if you want to keep your block storage volumes, you must first detach them before issuing the `terminate` command.
-// For more information, read the [Volumes](#path-volumes-list-volumes) documentation.
+// Keep in mind that `terminate` an Instance will result in the deletion of `l_ssd`, `b_ssd` and `scratch` volumes types, `sbs_volume` volumes type will only be detached.
+// If you want to preserve your volumes, you should detach them before the Instance deletion or `terminate` action.
 func (s *API) ServerAction(req *ServerActionRequest, opts ...scw.RequestOption) (*ServerActionResponse, error) {
 	var err error
 
