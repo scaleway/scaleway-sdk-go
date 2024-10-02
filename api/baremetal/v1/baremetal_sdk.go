@@ -355,6 +355,7 @@ const (
 	SchemaFilesystemFormatExt4          = SchemaFilesystemFormat("ext4")
 	SchemaFilesystemFormatSwap          = SchemaFilesystemFormat("swap")
 	SchemaFilesystemFormatZfs           = SchemaFilesystemFormat("zfs")
+	SchemaFilesystemFormatXfs           = SchemaFilesystemFormat("xfs")
 )
 
 func (enum SchemaFilesystemFormat) String() string {
@@ -372,6 +373,7 @@ func (enum SchemaFilesystemFormat) Values() []SchemaFilesystemFormat {
 		"ext4",
 		"swap",
 		"zfs",
+		"xfs",
 	}
 }
 
