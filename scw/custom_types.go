@@ -460,3 +460,24 @@ var _ fmt.Stringer = (*Decimal)(nil)
 func (d Decimal) String() string {
 	return string(d)
 }
+
+func (d Decimal) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"value": d.String(),
+	})
+}
+
+func (d *Decimal) UnmarshalJSON(b []byte) error {
+	m := struct {
+		Value string `json:"value"`
+	}{}
+
+	err := json.Unmarshal(b, &m)
+	if err != nil {
+		return err
+	}
+
+	*d = Decimal(m.Value)
+
+	return nil
+}
