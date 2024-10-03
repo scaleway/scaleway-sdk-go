@@ -1087,6 +1087,9 @@ type ServerInstall struct {
 
 	// ServiceURL: address of the installed service.
 	ServiceURL string `json:"service_url"`
+
+	// PartitioningSchema: partitioning schema.
+	PartitioningSchema *Schema `json:"partitioning_schema"`
 }
 
 // ServerOption: server option.
@@ -1159,6 +1162,9 @@ type CreateServerRequestInstall struct {
 
 	// ServicePassword: password used for the service to install.
 	ServicePassword *string `json:"service_password"`
+
+	// PartitioningSchema: partitioning schema.
+	PartitioningSchema *Schema `json:"partitioning_schema"`
 }
 
 // OS: os.
@@ -1614,6 +1620,9 @@ type InstallServerRequest struct {
 
 	// ServicePassword: password used for the service to install.
 	ServicePassword *string `json:"service_password,omitempty"`
+
+	// PartitioningSchema: partitioning schema.
+	PartitioningSchema *Schema `json:"partitioning_schema,omitempty"`
 }
 
 // ListOSRequest: list os request.
