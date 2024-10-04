@@ -39,6 +39,48 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type DomainLastStatusAutoconfigStateReason string
+
+const (
+	// If not specified, the auto-configuration state is unknown by default.
+	DomainLastStatusAutoconfigStateReasonUnknownReason = DomainLastStatusAutoconfigStateReason("unknown_reason")
+	// The token doesn't have the necessary permissions to manage the domain's DNS records.
+	DomainLastStatusAutoconfigStateReasonPermissionDenied = DomainLastStatusAutoconfigStateReason("permission_denied")
+	// The domain does not exist or isn't manageable by the token.
+	DomainLastStatusAutoconfigStateReasonDomainNotFound = DomainLastStatusAutoconfigStateReason("domain_not_found")
+)
+
+func (enum DomainLastStatusAutoconfigStateReason) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_reason"
+	}
+	return string(enum)
+}
+
+func (enum DomainLastStatusAutoconfigStateReason) Values() []DomainLastStatusAutoconfigStateReason {
+	return []DomainLastStatusAutoconfigStateReason{
+		"unknown_reason",
+		"permission_denied",
+		"domain_not_found",
+	}
+}
+
+func (enum DomainLastStatusAutoconfigStateReason) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainLastStatusAutoconfigStateReason) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainLastStatusAutoconfigStateReason(DomainLastStatusAutoconfigStateReason(tmp).String())
+	return nil
+}
+
 type DomainLastStatusRecordStatus string
 
 const (
@@ -769,6 +811,19 @@ type Email struct {
 	Flags []EmailFlag `json:"flags"`
 }
 
+// DomainLastStatusAutoconfigState: domain last status autoconfig state.
+type DomainLastStatusAutoconfigState struct {
+	// Enabled: enable or disable the auto-configuration of domain DNS records.
+	Enabled bool `json:"enabled"`
+
+	// Autoconfigurable: whether the domain can be auto-configured or not.
+	Autoconfigurable bool `json:"autoconfigurable"`
+
+	// Reason: the reason that the domain cannot be auto-configurable.
+	// Default value: unknown_reason
+	Reason *DomainLastStatusAutoconfigStateReason `json:"reason"`
+}
+
 // DomainLastStatusDkimRecord: domain last status dkim record.
 type DomainLastStatusDkimRecord struct {
 	// Status: status of the DKIM record's configuration.
@@ -952,11 +1007,11 @@ type UpdateProjectSettingsRequestUpdatePeriodicReport struct {
 	// Enabled: (Optional) Enable or disable periodic report notifications.
 	Enabled *bool `json:"enabled"`
 
-	// Frequency: (Optional) At which frequency you receive periodic report notifications.
+	// Frequency: (Optional) Frequency at which you receive periodic report notifications.
 	// Default value: unknown_frequency
 	Frequency *ProjectSettingsPeriodicReportFrequency `json:"frequency"`
 
-	// SendingHour: (Optional) At which hour you receive periodic report notifications.
+	// SendingHour: (Optional) Hour at which you receive periodic report notifications.
 	SendingHour *uint32 `json:"sending_hour"`
 
 	// SendingDay: (Optional) On which day you receive periodic report notifications (1-7 weekly, 1-28 monthly).
@@ -1090,6 +1145,9 @@ type DomainLastStatus struct {
 
 	// DmarcRecord: the DMARC record verification data.
 	DmarcRecord *DomainLastStatusDmarcRecord `json:"dmarc_record"`
+
+	// AutoconfigState: the verification state of domain auto-configuration.
+	AutoconfigState *DomainLastStatusAutoconfigState `json:"autoconfig_state"`
 }
 
 // GetDomainLastStatusRequest: get domain last status request.
