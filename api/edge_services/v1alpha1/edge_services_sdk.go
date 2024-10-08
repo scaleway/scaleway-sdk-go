@@ -924,11 +924,14 @@ type CheckPEMChainRequestSecretChain struct {
 
 // PlanDetails: plan details.
 type PlanDetails struct {
-	// PlanName: default value: unknown_name
+	// PlanName: subscription plan name.
+	// Default value: unknown_name
 	PlanName PlanName `json:"plan_name"`
 
+	// PackageGb: amount of egress data from cache included in subscription plan.
 	PackageGb uint64 `json:"package_gb"`
 
+	// PipelineLimit: number of pipeline included in subscription plan.
 	PipelineLimit uint32 `json:"pipeline_limit"`
 }
 
@@ -1147,6 +1150,38 @@ type DeleteTLSStageRequest struct {
 type GetBackendStageRequest struct {
 	// BackendStageID: ID of the requested backend stage.
 	BackendStageID string `json:"-"`
+}
+
+// GetBillingRequest: get billing request.
+type GetBillingRequest struct {
+	ProjectID string `json:"-"`
+}
+
+// GetBillingResponse: get billing response.
+type GetBillingResponse struct {
+	// CurrentPlan: information on the current edge-service subscription plan.
+	CurrentPlan *PlanDetails `json:"current_plan"`
+
+	// PlanCost: price of the current subscription plan.
+	PlanCost *scw.Money `json:"plan_cost"`
+
+	// PipelineNumber: total number of pipeline currently configured.
+	PipelineNumber uint32 `json:"pipeline_number"`
+
+	// ExtraPipelinesCost: cost to date of the pipelines not included in the plans.
+	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
+
+	// CurrentPlanCacheUsage: total amount of data egressed from cache in current subscription plan.
+	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
+
+	// ExtraCacheUsage: total amount of data egressed from cache not included in the plans.
+	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
+
+	// ExtraCacheCost: cost to date of the data egressed from cache not included in the plans.
+	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
+
+	// TotalCost: total cost to date of edge-service product for the month including current plan, previous plans, extra pipelines and extra egress cache data.
+	TotalCost *scw.Money `json:"total_cost"`
 }
 
 // GetCacheStageRequest: get cache stage request.
@@ -2528,4 +2563,31 @@ func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.Reque
 		return err
 	}
 	return nil
+}
+
+// GetBilling: Gives information on current edge-services subscription plan and used resources with associated price.
+func (s *API) GetBilling(req *GetBillingRequest, opts ...scw.RequestOption) (*GetBillingResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/billing/" + fmt.Sprint(req.ProjectID) + "",
+	}
+
+	var resp GetBillingResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
