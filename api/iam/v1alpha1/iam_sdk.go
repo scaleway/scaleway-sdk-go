@@ -881,6 +881,9 @@ type APIKey struct {
 	// Editable: defines whether or not the API key is editable.
 	Editable bool `json:"editable"`
 
+	// Managed: defines whether or not the API key is managed.
+	Managed bool `json:"managed"`
+
 	// CreationIP: IP address of the device that created the API key.
 	CreationIP string `json:"creation_ip"`
 }
@@ -907,6 +910,12 @@ type Application struct {
 
 	// Editable: defines whether or not the application is editable.
 	Editable bool `json:"editable"`
+
+	// Deletable: defines whether or not the application is deletable.
+	Deletable bool `json:"deletable"`
+
+	// Managed: defines whether or not the application is managed.
+	Managed bool `json:"managed"`
 
 	// NbAPIKeys: number of API keys attributed to the application.
 	NbAPIKeys uint32 `json:"nb_api_keys"`
@@ -943,6 +952,15 @@ type Group struct {
 
 	// Tags: tags associated to the group.
 	Tags []string `json:"tags"`
+
+	// Editable: defines whether or not the group is editable.
+	Editable bool `json:"editable"`
+
+	// Deletable: defines whether or not the group is deletable.
+	Deletable bool `json:"deletable"`
+
+	// Managed: defines whether or not the group is managed.
+	Managed bool `json:"managed"`
 }
 
 // Log: log.
@@ -1018,6 +1036,12 @@ type Policy struct {
 
 	// Editable: defines whether or not a policy is editable.
 	Editable bool `json:"editable"`
+
+	// Deletable: defines whether or not a policy is deletable.
+	Deletable bool `json:"deletable"`
+
+	// Managed: defines whether or not a policy is managed.
+	Managed bool `json:"managed"`
 
 	// NbRules: number of rules of the policy.
 	NbRules uint32 `json:"nb_rules"`
