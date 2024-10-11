@@ -881,6 +881,9 @@ type APIKey struct {
 	// Editable: defines whether or not the API key is editable.
 	Editable bool `json:"editable"`
 
+	// Deletable: defines whether or not the API key is deletable.
+	Deletable bool `json:"deletable"`
+
 	// Managed: defines whether or not the API key is managed.
 	Managed bool `json:"managed"`
 
