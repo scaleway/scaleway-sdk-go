@@ -283,6 +283,47 @@ func (enum *ListPipelinesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListPipelinesWithStagesRequestOrderBy string
+
+const (
+	ListPipelinesWithStagesRequestOrderByCreatedAtAsc  = ListPipelinesWithStagesRequestOrderBy("created_at_asc")
+	ListPipelinesWithStagesRequestOrderByCreatedAtDesc = ListPipelinesWithStagesRequestOrderBy("created_at_desc")
+	ListPipelinesWithStagesRequestOrderByNameAsc       = ListPipelinesWithStagesRequestOrderBy("name_asc")
+	ListPipelinesWithStagesRequestOrderByNameDesc      = ListPipelinesWithStagesRequestOrderBy("name_desc")
+)
+
+func (enum ListPipelinesWithStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) Values() []ListPipelinesWithStagesRequestOrderBy {
+	return []ListPipelinesWithStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPipelinesWithStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPipelinesWithStagesRequestOrderBy(ListPipelinesWithStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPurgeRequestsRequestOrderBy string
 
 const (
@@ -931,8 +972,21 @@ type PlanDetails struct {
 	// PackageGb: amount of egress data from cache included in subscription plan.
 	PackageGb uint64 `json:"package_gb"`
 
-	// PipelineLimit: number of pipeline included in subscription plan.
+	// PipelineLimit: number of pipelines included in subscription plan.
 	PipelineLimit uint32 `json:"pipeline_limit"`
+}
+
+// PipelineStages: pipeline stages.
+type PipelineStages struct {
+	Pipeline *Pipeline `json:"pipeline"`
+
+	DNSStages []*DNSStage `json:"dns_stages"`
+
+	TLSStages []*TLSStage `json:"tls_stages"`
+
+	CacheStages []*CacheStage `json:"cache_stages"`
+
+	BackendStages []*BackendStage `json:"backend_stages"`
 }
 
 // PurgeRequest: purge request.
@@ -1159,28 +1213,28 @@ type GetBillingRequest struct {
 
 // GetBillingResponse: get billing response.
 type GetBillingResponse struct {
-	// CurrentPlan: information on the current edge-service subscription plan.
+	// CurrentPlan: information on the currently-selected, active Edge Services subscription plan.
 	CurrentPlan *PlanDetails `json:"current_plan"`
 
 	// PlanCost: price of the current subscription plan.
 	PlanCost *scw.Money `json:"plan_cost"`
 
-	// PipelineNumber: total number of pipeline currently configured.
+	// PipelineNumber: total number of pipelines currently configured.
 	PipelineNumber uint32 `json:"pipeline_number"`
 
-	// ExtraPipelinesCost: cost to date of the pipelines not included in the plans.
+	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plan.
 	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
 
-	// CurrentPlanCacheUsage: total amount of data egressed from cache in current subscription plan.
+	// CurrentPlanCacheUsage: total amount of data egressed from the cache (this month), included in the active subscription plan.
 	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
 
-	// ExtraCacheUsage: total amount of data egressed from cache not included in the plans.
+	// ExtraCacheUsage: total amount of data egressed from cache (this month), not included in the active subscription plan.
 	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
 
-	// ExtraCacheCost: cost to date of the data egressed from cache not included in the plans.
+	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the active subscription plan.
 	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
 
-	// TotalCost: total cost to date of edge-service product for the month including current plan, previous plans, extra pipelines and extra egress cache data.
+	// TotalCost: total cost to date (this month) of all Edge Services resources including active subscription plan, previously active plans, extra pipelines and extra egress cache data.
 	TotalCost *scw.Money `json:"total_cost"`
 }
 
@@ -1416,6 +1470,48 @@ func (r *ListPipelinesResponse) UnsafeGetTotalCount() uint64 {
 // Internal usage only
 func (r *ListPipelinesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListPipelinesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pipelines = append(r.Pipelines, results.Pipelines...)
+	r.TotalCount += uint64(len(results.Pipelines))
+	return uint64(len(results.Pipelines)), nil
+}
+
+// ListPipelinesWithStagesRequest: list pipelines with stages request.
+type ListPipelinesWithStagesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy ListPipelinesWithStagesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Name *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+}
+
+// ListPipelinesWithStagesResponse: list pipelines with stages response.
+type ListPipelinesWithStagesResponse struct {
+	Pipelines []*PipelineStages `json:"pipelines"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPipelinesWithStagesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
 	}
@@ -1738,6 +1834,38 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Pipeline
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPipelinesWithStages:
+func (s *API) ListPipelinesWithStages(req *ListPipelinesWithStagesRequest, opts ...scw.RequestOption) (*ListPipelinesWithStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/pipelines-stages",
+		Query:  query,
+	}
+
+	var resp ListPipelinesWithStagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2565,7 +2693,7 @@ func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.Reque
 	return nil
 }
 
-// GetBilling: Gives information on current edge-services subscription plan and used resources with associated price.
+// GetBilling: Gives information on the currently selected Edge Services subscription plan, resource usage and associated billing information for this calendar month (including whether consumption falls within or exceeds the currently selected subscription plan.).
 func (s *API) GetBilling(req *GetBillingRequest, opts ...scw.RequestOption) (*GetBillingResponse, error) {
 	var err error
 
