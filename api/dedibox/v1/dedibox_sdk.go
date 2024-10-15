@@ -1506,6 +1506,7 @@ const (
 	MemoryTypeDdr2 = MemoryType("ddr2")
 	MemoryTypeDdr3 = MemoryType("ddr3")
 	MemoryTypeDdr4 = MemoryType("ddr4")
+	MemoryTypeDdr5 = MemoryType("ddr5")
 )
 
 func (enum MemoryType) String() string {
@@ -1521,6 +1522,7 @@ func (enum MemoryType) Values() []MemoryType {
 		"ddr2",
 		"ddr3",
 		"ddr4",
+		"ddr5",
 	}
 }
 
