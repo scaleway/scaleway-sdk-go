@@ -1204,41 +1204,30 @@ type ServerSummary struct {
 
 // Bootscript: bootscript.
 type Bootscript struct {
-	// Bootcmdargs: bootscript arguments.
-	Bootcmdargs string `json:"bootcmdargs"`
-
-	// Default: display if the bootscript is the default bootscript (if no other boot option is configured).
-	Default bool `json:"default"`
-
-	// Dtb: provide information regarding a Device Tree Binary (DTB) for use with C1 servers.
-	Dtb string `json:"dtb"`
-
-	// ID: bootscript ID.
-	ID string `json:"id"`
-
-	// Initrd: initrd (initial ramdisk) configuration.
-	Initrd string `json:"initrd"`
-
-	// Kernel: instance kernel version.
-	Kernel string `json:"kernel"`
-
-	// Organization: bootscript Organization ID.
-	Organization string `json:"organization"`
-
-	// Project: bootscript Project ID.
-	Project string `json:"project"`
-
-	// Public: provide information if the bootscript is public.
-	Public bool `json:"public"`
-
-	// Title: bootscript title.
-	Title string `json:"title"`
-
-	// Architecture: bootscript architecture.
-	// Default value: unknown_arch
+	// Architecture: default value: unknown_arch
 	Architecture Arch `json:"architecture"`
 
-	// Zone: zone in which the bootscript is located.
+	Bootcmdargs string `json:"bootcmdargs"`
+
+	Default bool `json:"default"`
+
+	Dtb string `json:"dtb"`
+
+	ID string `json:"id"`
+
+	Initrd string `json:"initrd"`
+
+	Kernel string `json:"kernel"`
+
+	Organization string `json:"organization"`
+
+	Public bool `json:"public"`
+
+	Title string `json:"title"`
+
+	Project string `json:"project"`
+
+	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -1634,9 +1623,6 @@ type Server struct {
 
 	// Deprecated: IPv6: instance IPv6 address (deprecated when `routed_ip_enabled` is `True`).
 	IPv6 *ServerIPv6 `json:"ipv6"`
-
-	// Deprecated: Bootscript: instance bootscript.
-	Bootscript *Bootscript `json:"bootscript"`
 
 	// BootType: instance boot type.
 	// Default value: local
@@ -2164,9 +2150,6 @@ type CreateImageRequest struct {
 	// Default value: unknown_arch
 	Arch Arch `json:"arch,omitempty"`
 
-	// Deprecated: DefaultBootscript: default bootscript of the image.
-	DefaultBootscript *string `json:"default_bootscript,omitempty"`
-
 	// ExtraVolumes: additional volumes of the image.
 	ExtraVolumes map[string]*VolumeTemplate `json:"extra_volumes,omitempty"`
 
@@ -2371,9 +2354,6 @@ type CreateServerRequest struct {
 	// BootType: boot type to use.
 	// Default value: local
 	BootType *BootType `json:"boot_type,omitempty"`
-
-	// Deprecated: Bootscript: bootscript ID to use when `boot_type` is set to `bootscript`.
-	Bootscript *string `json:"bootscript,omitempty"`
 
 	// Deprecated: Organization: instance Organization ID.
 	// Precisely one of Project, Organization must be set.
@@ -2613,19 +2593,6 @@ type ExportSnapshotResponse struct {
 	Task *Task `json:"task"`
 }
 
-// GetBootscriptRequest: get bootscript request.
-type GetBootscriptRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-
-	BootscriptID string `json:"-"`
-}
-
-// GetBootscriptResponse: get bootscript response.
-type GetBootscriptResponse struct {
-	Bootscript *Bootscript `json:"bootscript"`
-}
-
 // GetDashboardRequest: get dashboard request.
 type GetDashboardRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2828,52 +2795,6 @@ type GetVolumeRequest struct {
 // GetVolumeResponse: get volume response.
 type GetVolumeResponse struct {
 	Volume *Volume `json:"volume"`
-}
-
-// ListBootscriptsRequest: list bootscripts request.
-type ListBootscriptsRequest struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-
-	Arch *string `json:"-"`
-
-	Title *string `json:"-"`
-
-	Default *bool `json:"-"`
-
-	Public *bool `json:"-"`
-
-	PerPage *uint32 `json:"-"`
-
-	Page *int32 `json:"-"`
-}
-
-// ListBootscriptsResponse: list bootscripts response.
-type ListBootscriptsResponse struct {
-	// TotalCount: total number of bootscripts.
-	TotalCount uint32 `json:"total_count"`
-
-	// Bootscripts: list of bootscripts.
-	Bootscripts []*Bootscript `json:"bootscripts"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListBootscriptsResponse) UnsafeGetTotalCount() uint32 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListBootscriptsResponse) UnsafeAppend(res interface{}) (uint32, error) {
-	results, ok := res.(*ListBootscriptsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Bootscripts = append(r.Bootscripts, results.Bootscripts...)
-	r.TotalCount += uint32(len(results.Bootscripts))
-	return uint32(len(results.Bootscripts)), nil
 }
 
 // ListDefaultSecurityGroupRulesRequest: list default security group rules request.
@@ -3860,9 +3781,6 @@ type UpdateServerRequest struct {
 
 	Volumes *map[string]*VolumeServerTemplate `json:"volumes,omitempty"`
 
-	// Deprecated
-	Bootscript *string `json:"bootscript,omitempty"`
-
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
 	// Deprecated: RoutedIPEnabled: true to configure the instance so it uses the new routed IP mode (once this is set to True you cannot set it back to False).
@@ -4110,9 +4028,6 @@ type setServerRequest struct {
 
 	// Deprecated: IPv6: instance IPv6 address (deprecated when `routed_ip_enabled` is `True`).
 	IPv6 *ServerIPv6 `json:"ipv6,omitempty"`
-
-	// Deprecated: Bootscript: instance bootscript.
-	Bootscript *Bootscript `json:"bootscript,omitempty"`
 
 	// BootType: instance boot type.
 	// Default value: local
@@ -6617,73 +6532,6 @@ func (s *API) DeletePrivateNIC(req *DeletePrivateNICRequest, opts ...scw.Request
 		return err
 	}
 	return nil
-}
-
-// Deprecated: ListBootscripts: List bootscripts.
-func (s *API) ListBootscripts(req *ListBootscriptsRequest, opts ...scw.RequestOption) (*ListBootscriptsResponse, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "arch", req.Arch)
-	parameter.AddToQuery(query, "title", req.Title)
-	parameter.AddToQuery(query, "default", req.Default)
-	parameter.AddToQuery(query, "public", req.Public)
-	parameter.AddToQuery(query, "per_page", req.PerPage)
-	parameter.AddToQuery(query, "page", req.Page)
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/bootscripts",
-		Query:  query,
-	}
-
-	var resp ListBootscriptsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// Deprecated: GetBootscript: Get details of a bootscript with the specified ID.
-func (s *API) GetBootscript(req *GetBootscriptRequest, opts ...scw.RequestOption) (*GetBootscriptResponse, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.BootscriptID) == "" {
-		return nil, errors.New("field BootscriptID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/bootscripts/" + fmt.Sprint(req.BootscriptID) + "",
-	}
-
-	var resp GetBootscriptResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // GetDashboard:

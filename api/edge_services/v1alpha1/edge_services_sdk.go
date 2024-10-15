@@ -931,7 +931,7 @@ type PlanDetails struct {
 	// PackageGb: amount of egress data from cache included in subscription plan.
 	PackageGb uint64 `json:"package_gb"`
 
-	// PipelineLimit: number of pipeline included in subscription plan.
+	// PipelineLimit: number of pipelines included in subscription plan.
 	PipelineLimit uint32 `json:"pipeline_limit"`
 }
 
@@ -1159,28 +1159,28 @@ type GetBillingRequest struct {
 
 // GetBillingResponse: get billing response.
 type GetBillingResponse struct {
-	// CurrentPlan: information on the current edge-service subscription plan.
+	// CurrentPlan: information on the currently-selected, active Edge Services subscription plan.
 	CurrentPlan *PlanDetails `json:"current_plan"`
 
 	// PlanCost: price of the current subscription plan.
 	PlanCost *scw.Money `json:"plan_cost"`
 
-	// PipelineNumber: total number of pipeline currently configured.
+	// PipelineNumber: total number of pipelines currently configured.
 	PipelineNumber uint32 `json:"pipeline_number"`
 
-	// ExtraPipelinesCost: cost to date of the pipelines not included in the plans.
+	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plan.
 	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
 
-	// CurrentPlanCacheUsage: total amount of data egressed from cache in current subscription plan.
+	// CurrentPlanCacheUsage: total amount of data egressed from the cache (this month), included in the active subscription plan.
 	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
 
-	// ExtraCacheUsage: total amount of data egressed from cache not included in the plans.
+	// ExtraCacheUsage: total amount of data egressed from cache (this month), not included in the active subscription plan.
 	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
 
-	// ExtraCacheCost: cost to date of the data egressed from cache not included in the plans.
+	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the active subscription plan.
 	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
 
-	// TotalCost: total cost to date of edge-service product for the month including current plan, previous plans, extra pipelines and extra egress cache data.
+	// TotalCost: total cost to date (this month) of all Edge Services resources including active subscription plan, previously active plans, extra pipelines and extra egress cache data.
 	TotalCost *scw.Money `json:"total_cost"`
 }
 
@@ -2565,7 +2565,7 @@ func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.Reque
 	return nil
 }
 
-// GetBilling: Gives information on current edge-services subscription plan and used resources with associated price.
+// GetBilling: Gives information on the currently selected Edge Services subscription plan, resource usage and associated billing information for this calendar month (including whether consumption falls within or exceeds the currently selected subscription plan.).
 func (s *API) GetBilling(req *GetBillingRequest, opts ...scw.RequestOption) (*GetBillingResponse, error) {
 	var err error
 
