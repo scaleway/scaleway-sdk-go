@@ -283,6 +283,47 @@ func (enum *ListPipelinesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListPipelinesWithStagesRequestOrderBy string
+
+const (
+	ListPipelinesWithStagesRequestOrderByCreatedAtAsc  = ListPipelinesWithStagesRequestOrderBy("created_at_asc")
+	ListPipelinesWithStagesRequestOrderByCreatedAtDesc = ListPipelinesWithStagesRequestOrderBy("created_at_desc")
+	ListPipelinesWithStagesRequestOrderByNameAsc       = ListPipelinesWithStagesRequestOrderBy("name_asc")
+	ListPipelinesWithStagesRequestOrderByNameDesc      = ListPipelinesWithStagesRequestOrderBy("name_desc")
+)
+
+func (enum ListPipelinesWithStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) Values() []ListPipelinesWithStagesRequestOrderBy {
+	return []ListPipelinesWithStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPipelinesWithStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPipelinesWithStagesRequestOrderBy(ListPipelinesWithStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPurgeRequestsRequestOrderBy string
 
 const (
@@ -935,6 +976,19 @@ type PlanDetails struct {
 	PipelineLimit uint32 `json:"pipeline_limit"`
 }
 
+// PipelineStages: pipeline stages.
+type PipelineStages struct {
+	Pipeline *Pipeline `json:"pipeline"`
+
+	DNSStages []*DNSStage `json:"dns_stages"`
+
+	TLSStages []*TLSStage `json:"tls_stages"`
+
+	CacheStages []*CacheStage `json:"cache_stages"`
+
+	BackendStages []*BackendStage `json:"backend_stages"`
+}
+
 // PurgeRequest: purge request.
 type PurgeRequest struct {
 	// ID: ID of the purge request.
@@ -1425,6 +1479,48 @@ func (r *ListPipelinesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Pipelines)), nil
 }
 
+// ListPipelinesWithStagesRequest: list pipelines with stages request.
+type ListPipelinesWithStagesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy ListPipelinesWithStagesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Name *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+}
+
+// ListPipelinesWithStagesResponse: list pipelines with stages response.
+type ListPipelinesWithStagesResponse struct {
+	Pipelines []*PipelineStages `json:"pipelines"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPipelinesWithStagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pipelines = append(r.Pipelines, results.Pipelines...)
+	r.TotalCount += uint64(len(results.Pipelines))
+	return uint64(len(results.Pipelines)), nil
+}
+
 // ListPlansResponse: list plans response.
 type ListPlansResponse struct {
 	TotalCount uint64 `json:"total_count"`
@@ -1738,6 +1834,38 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Pipeline
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPipelinesWithStages:
+func (s *API) ListPipelinesWithStages(req *ListPipelinesWithStagesRequest, opts ...scw.RequestOption) (*ListPipelinesWithStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/pipelines-stages",
+		Query:  query,
+	}
+
+	var resp ListPipelinesWithStagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
