@@ -189,12 +189,6 @@ func (r *ListServersResponse) UnsafeSetTotalCount(totalCount int) {
 
 // UnsafeSetTotalCount should not be used
 // Internal usage only
-func (r *ListBootscriptsResponse) UnsafeSetTotalCount(totalCount int) {
-	r.TotalCount = uint32(totalCount)
-}
-
-// UnsafeSetTotalCount should not be used
-// Internal usage only
 func (r *ListIPsResponse) UnsafeSetTotalCount(totalCount int) {
 	r.TotalCount = uint32(totalCount)
 }
