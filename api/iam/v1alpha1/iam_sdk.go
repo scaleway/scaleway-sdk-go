@@ -788,6 +788,33 @@ func (enum *UserType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// JWT: jwt.
+type JWT struct {
+	// Jti: jWT ID.
+	Jti string `json:"jti"`
+
+	// IssuerID: ID of the user who issued the JWT.
+	IssuerID string `json:"issuer_id"`
+
+	// AudienceID: ID of the user targeted by the JWT.
+	AudienceID string `json:"audience_id"`
+
+	// CreatedAt: creation date of the JWT.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the JWT.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ExpiresAt: expiration date of the JWT.
+	ExpiresAt *time.Time `json:"expires_at"`
+
+	// IP: IP address used during the creation of the JWT.
+	IP net.IP `json:"ip"`
+
+	// UserAgent: user-agent used during the creation of the JWT.
+	UserAgent string `json:"user_agent"`
+}
+
 // RuleSpecs: rule specs.
 type RuleSpecs struct {
 	// PermissionSetNames: names of permission sets bound to the rule.
@@ -818,33 +845,6 @@ type CreateUserRequestMember struct {
 
 	// Password: the member's password.
 	Password string `json:"password"`
-}
-
-// JWT: jwt.
-type JWT struct {
-	// Jti: jWT ID.
-	Jti string `json:"jti"`
-
-	// IssuerID: ID of the user who issued the JWT.
-	IssuerID string `json:"issuer_id"`
-
-	// AudienceID: ID of the user targeted by the JWT.
-	AudienceID string `json:"audience_id"`
-
-	// CreatedAt: creation date of the JWT.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: last update date of the JWT.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// ExpiresAt: expiration date of the JWT.
-	ExpiresAt *time.Time `json:"expires_at"`
-
-	// IP: IP address used during the creation of the JWT.
-	IP net.IP `json:"ip"`
-
-	// UserAgent: user-agent used during the creation of the JWT.
-	UserAgent string `json:"user_agent"`
 }
 
 // APIKey: api key.
