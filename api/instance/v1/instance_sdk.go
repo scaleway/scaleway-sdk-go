@@ -2337,7 +2337,7 @@ type CreateServerRequest struct {
 	CommercialType string `json:"commercial_type,omitempty"`
 
 	// Image: instance image ID or label.
-	Image string `json:"image,omitempty"`
+	Image *string `json:"image,omitempty"`
 
 	// Volumes: volumes attached to the server.
 	Volumes map[string]*VolumeServerTemplate `json:"volumes,omitempty"`

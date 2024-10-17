@@ -36,7 +36,7 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 	t.Helper()
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
-		Image:          "ubuntu_focal",
+		Image:          scw.StringPtr("ubuntu_focal"),
 	})
 	testhelpers.AssertNoError(t, err)
 
