@@ -3455,6 +3455,10 @@ type ServerActionRequest struct {
 	// Volumes: for each volume UUID, the snapshot parameters of the volume.
 	// This field should only be specified when performing a backup action.
 	Volumes map[string]*ServerActionRequestVolumeBackupTemplate `json:"volumes,omitempty"`
+
+	// DisableIPv6: disable IPv6 on the Instance while performing migration to routed IPs.
+	// This field should only be specified when performing a enable_routed_ip action.
+	DisableIPv6 *bool `json:"disable_ipv6,omitempty"`
 }
 
 // ServerActionResponse: server action response.
