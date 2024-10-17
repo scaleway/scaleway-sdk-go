@@ -6,6 +6,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestWaitForImage(t *testing.T) {
@@ -36,7 +37,7 @@ func createImage(t *testing.T, instanceAPI *API, imageName string) (*Image, func
 	t.Helper()
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
 		CommercialType: "DEV1-M",
-		Image:          "ubuntu_focal",
+		Image:          scw.StringPtr("ubuntu_focal"),
 	})
 	testhelpers.AssertNoError(t, err)
 

@@ -24,7 +24,7 @@ func TestServerUpdate(t *testing.T) {
 		name              = "instance_sdk_server_test"
 		dynamicIPRequired = scw.BoolPtr(true)
 		commercialType    = "START1-S"
-		image             = "f974feac-abae-4365-b988-8ec7d1cec10d"
+		image             = scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d")
 		enableIPv6        = scw.BoolPtr(true)
 		bootType          = BootTypeLocal
 		tags              = []string{"foo", "bar"}
@@ -56,7 +56,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Equals(t, name, createServerResponse.Server.Name)
 		testhelpers.Equals(t, project, createServerResponse.Server.Project)
 		testhelpers.Equals(t, project, createServerResponse.Server.Organization)
-		testhelpers.Equals(t, image, createServerResponse.Server.Image.ID)
+		testhelpers.Equals(t, *image, createServerResponse.Server.Image.ID)
 		testhelpers.Equals(t, enableIPv6, createServerResponse.Server.EnableIPv6)
 		testhelpers.Equals(t, bootType, createServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, createServerResponse.Server.CommercialType)
@@ -104,7 +104,7 @@ func TestServerUpdate(t *testing.T) {
 		// Initial values that are not altered in the above request should remaining the same
 		testhelpers.Equals(t, project, updateServerResponse.Server.Project)
 		testhelpers.Equals(t, project, updateServerResponse.Server.Organization)
-		testhelpers.Equals(t, image, updateServerResponse.Server.Image.ID)
+		testhelpers.Equals(t, *image, updateServerResponse.Server.Image.ID)
 		testhelpers.Equals(t, enableIPv6, updateServerResponse.Server.EnableIPv6)
 		testhelpers.Equals(t, bootType, updateServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, updateServerResponse.Server.CommercialType)
