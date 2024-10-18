@@ -365,10 +365,11 @@ func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
 type OfferQuotaWarning string
 
 const (
-	OfferQuotaWarningUnknownQuotaWarning   = OfferQuotaWarning("unknown_quota_warning")
-	OfferQuotaWarningEmailCountExceeded    = OfferQuotaWarning("email_count_exceeded")
-	OfferQuotaWarningDatabaseCountExceeded = OfferQuotaWarning("database_count_exceeded")
-	OfferQuotaWarningDiskUsageExceeded     = OfferQuotaWarning("disk_usage_exceeded")
+	OfferQuotaWarningUnknownQuotaWarning      = OfferQuotaWarning("unknown_quota_warning")
+	OfferQuotaWarningEmailCountExceeded       = OfferQuotaWarning("email_count_exceeded")
+	OfferQuotaWarningDatabaseCountExceeded    = OfferQuotaWarning("database_count_exceeded")
+	OfferQuotaWarningDiskUsageExceeded        = OfferQuotaWarning("disk_usage_exceeded")
+	OfferQuotaWarningAddonDomainCountExceeded = OfferQuotaWarning("addon_domain_count_exceeded")
 )
 
 func (enum OfferQuotaWarning) String() string {
@@ -385,6 +386,7 @@ func (enum OfferQuotaWarning) Values() []OfferQuotaWarning {
 		"email_count_exceeded",
 		"database_count_exceeded",
 		"disk_usage_exceeded",
+		"addon_domain_count_exceeded",
 	}
 }
 
