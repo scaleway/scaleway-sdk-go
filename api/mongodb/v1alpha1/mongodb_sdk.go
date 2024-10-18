@@ -754,6 +754,15 @@ type GetInstanceRequest struct {
 	InstanceID string `json:"-"`
 }
 
+// GetSnapshotRequest: get snapshot request.
+type GetSnapshotRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SnapshotID: UUID of the snapshot.
+	SnapshotID string `json:"-"`
+}
+
 // ListInstancesRequest: list instances request.
 type ListInstancesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1430,6 +1439,37 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetSnapshot: Retrieve information about a given snapshot of a Database Instance. You must specify, in the endpoint, the `snapshot_id` parameter of the snapshot you want to retrieve.
+func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
 	}
 
 	var resp Snapshot
