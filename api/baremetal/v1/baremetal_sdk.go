@@ -903,6 +903,7 @@ type LicenseOption struct {
 
 // PrivateNetworkOption: private network option.
 type PrivateNetworkOption struct {
+	BandwidthInBps uint64 `json:"bandwidth_in_bps"`
 }
 
 // PublicBandwidthOption: public bandwidth option.
@@ -1009,7 +1010,7 @@ type OfferOptionOffer struct {
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
 
-	// PrivateNetwork: private_network option.
+	// PrivateNetwork: private_network option, contains the bandwidth_in_bps.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
 
@@ -1118,7 +1119,7 @@ type ServerOption struct {
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
 
-	// PrivateNetwork: private_network option.
+	// PrivateNetwork: private_network option, contains the bandwidth_in_bps.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
 
@@ -1302,7 +1303,7 @@ type Option struct {
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
 
-	// PrivateNetwork: private_network option.
+	// PrivateNetwork: private_network option, contains the bandwidth_in_bps.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
 
