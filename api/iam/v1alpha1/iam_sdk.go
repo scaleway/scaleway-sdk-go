@@ -2191,6 +2191,15 @@ type UpdateSSHKeyRequest struct {
 	Disabled *bool `json:"disabled,omitempty"`
 }
 
+// UpdateUserPasswordRequest: update user password request.
+type UpdateUserPasswordRequest struct {
+	UserID string `json:"-"`
+
+	Password string `json:"password"`
+
+	SendEmail bool `json:"send_email"`
+}
+
 // UpdateUserRequest: update user request.
 type UpdateUserRequest struct {
 	// UserID: ID of the user to update.
@@ -2460,6 +2469,33 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/iam/v1alpha1/users",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateUserPassword:
+func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/update-password",
 	}
 
 	err = scwReq.SetBody(req)
