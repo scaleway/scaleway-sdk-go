@@ -71,7 +71,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	return instance.(*Instance), nil
 }
 
-// WaitForSnapshot waits for the snapshot to reach a "terminal state" before returning.// WaitForSnapshot waits for the snapshot to reach a "terminal state" before returning.
+// WaitForSnapshot waits for the snapshot to reach a "terminal state" before returning.
 func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	timeout := defaultInstanceTimeout
 	if req.Timeout != nil {
