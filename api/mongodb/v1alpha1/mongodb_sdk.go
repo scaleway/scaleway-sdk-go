@@ -1257,6 +1257,10 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 		req.ProjectID = defaultProjectID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("mgdb")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
