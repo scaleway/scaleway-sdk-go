@@ -762,6 +762,12 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ContainerScalingOption: container scaling option.
+type ContainerScalingOption struct {
+	// Precisely one of ConcurrentRequestsThreshold must be set.
+	ConcurrentRequestsThreshold *uint32 `json:"concurrent_requests_threshold,omitempty"`
+}
+
 // SecretHashedValue: secret hashed value.
 type SecretHashedValue struct {
 	Key string `json:"key"`
@@ -932,6 +938,10 @@ type Container struct {
 
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit uint32 `json:"local_storage_limit"`
+
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option"`
 
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
@@ -1135,7 +1145,7 @@ type CreateContainerRequest struct {
 	// RegistryImage: name of the registry image (e.g. "rg.fr-par.scw.cloud/something/image:tag").
 	RegistryImage *string `json:"registry_image,omitempty"`
 
-	// MaxConcurrency: number of maximum concurrent executions of the container.
+	// Deprecated: MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency *uint32 `json:"max_concurrency,omitempty"`
 
 	// Protocol: protocol the container uses.
@@ -1160,6 +1170,10 @@ type CreateContainerRequest struct {
 
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
+
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1723,7 +1737,7 @@ type UpdateContainerRequest struct {
 	// RegistryImage: name of the registry image (e.g. "rg.fr-par.scw.cloud/something/image:tag").
 	RegistryImage *string `json:"registry_image,omitempty"`
 
-	// MaxConcurrency: number of maximum concurrent executions of the container.
+	// Deprecated: MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency *uint32 `json:"max_concurrency,omitempty"`
 
 	// Protocol: default value: unknown_protocol
@@ -1745,6 +1759,10 @@ type UpdateContainerRequest struct {
 
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
+
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
