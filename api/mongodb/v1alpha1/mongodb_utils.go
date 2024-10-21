@@ -90,22 +90,16 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 
 	snapshot, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
-			opts = append(opts, scw.WithAllPages())
-			listSnapshotResponse, err := s.ListSnapshots(&ListSnapshotsRequest{
+			getSnapshotResponse, err := s.GetSnapshot(&GetSnapshotRequest{
 				Region:     req.Region,
-				InstanceID: &req.InstanceID,
+				SnapshotID: req.SnapshotID,
 			}, opts...)
 			if err != nil {
 				return nil, false, err
 			}
 
-			for _, snapshot := range listSnapshotResponse.Snapshots {
-				if snapshot.ID == req.SnapshotID {
-					_, isTerminal := terminalStatus[snapshot.Status]
-					return snapshot, isTerminal, nil
-				}
-			}
-			return nil, false, nil
+			_, isTerminal := terminalStatus[getSnapshotResponse.Status]
+			return getSnapshotResponse, isTerminal, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
