@@ -404,6 +404,17 @@ type GetJobRunRequest struct {
 	JobRunID string `json:"-"`
 }
 
+// GetJobsLimitsRequest: get jobs limits request.
+type GetJobsLimitsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+}
+
+// JobsLimits: jobs limits.
+type JobsLimits struct {
+	SecretsPerJobDefinition uint32 `json:"secrets_per_job_definition"`
+}
+
 // ListJobDefinitionSecretsRequest: list job definition secrets request.
 type ListJobDefinitionSecretsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1155,6 +1166,33 @@ func (s *API) ListJobsResources(req *ListJobsResourcesRequest, opts ...scw.Reque
 	}
 
 	var resp ListJobsResourcesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetJobsLimits: Get jobs limits for the console.
+func (s *API) GetJobsLimits(req *GetJobsLimitsRequest, opts ...scw.RequestOption) (*JobsLimits, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/jobs-limits",
+	}
+
+	var resp JobsLimits
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
