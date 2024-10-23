@@ -1,4 +1,4 @@
-package instance
+package instance_test
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
@@ -19,9 +20,9 @@ func TestAPI_GetServerType(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
-	serverType, err := instanceAPI.GetServerType(&GetServerTypeRequest{
+	serverType, err := instanceAPI.GetServerType(&instance.GetServerTypeRequest{
 		Zone: scw.ZoneFrPar1,
 		Name: "GP1-XS",
 	})
@@ -38,12 +39,12 @@ func TestAPI_ServerUserData(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	key := "hello"
 	contentStr := "world"
 
-	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
+	serverRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
@@ -53,7 +54,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 
 	content := strings.NewReader(contentStr)
-	err = instanceAPI.SetServerUserData(&SetServerUserDataRequest{
+	err = instanceAPI.SetServerUserData(&instance.SetServerUserDataRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: serverRes.Server.ID,
 		Key:      key,
@@ -61,7 +62,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 	})
 	testhelpers.AssertNoError(t, err)
 
-	data, err := instanceAPI.GetServerUserData(&GetServerUserDataRequest{
+	data, err := instanceAPI.GetServerUserData(&instance.GetServerUserDataRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: serverRes.Server.ID,
 		Key:      key,
@@ -80,9 +81,9 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
-	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
+	serverRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
@@ -114,7 +115,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		}
 
 		// set all user data
-		err := instanceAPI.SetAllServerUserData(&SetAllServerUserDataRequest{
+		err := instanceAPI.SetAllServerUserData(&instance.SetAllServerUserDataRequest{
 			Zone:     scw.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
 			UserData: userData,
@@ -122,7 +123,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		// get all user data
-		allData, err := instanceAPI.GetAllServerUserData(&GetAllServerUserDataRequest{
+		allData, err := instanceAPI.GetAllServerUserData(&instance.GetAllServerUserDataRequest{
 			Zone:     scw.ZoneFrPar1,
 			ServerID: serverRes.Server.ID,
 		})
@@ -149,9 +150,9 @@ func TestAPI_CreateServer(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
-	res, err := instanceAPI.CreateServer(&CreateServerRequest{
+	res, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "GP1-XS",
 		Image:          scw.StringPtr("ubuntu_focal"),
@@ -160,7 +161,7 @@ func TestAPI_CreateServer(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
 	testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", res.Server.Image.ID)
-	err = instanceAPI.DeleteServer(&DeleteServerRequest{
+	err = instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,
 	})
