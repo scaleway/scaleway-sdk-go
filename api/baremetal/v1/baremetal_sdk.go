@@ -962,6 +962,15 @@ type Disk struct {
 	Type string `json:"type"`
 }
 
+// GPU: gpu.
+type GPU struct {
+	// Name: name of the GPU.
+	Name string `json:"name"`
+
+	// Vram: capacity of the vram in bytes.
+	Vram uint32 `json:"vram"`
+}
+
 // Memory: memory.
 type Memory struct {
 	// Capacity: capacity of the memory in bytes.
@@ -1282,6 +1291,9 @@ type Offer struct {
 
 	// Tags: array of tags attached to the offer.
 	Tags []string `json:"tags"`
+
+	// Gpus: gPU specifications of the offer.
+	Gpus []*GPU `json:"gpus"`
 }
 
 // Option: option.
