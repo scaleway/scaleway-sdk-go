@@ -910,6 +910,9 @@ type Pipeline struct {
 	// ProjectID: project ID of the pipeline.
 	ProjectID string `json:"project_id"`
 
+	// OrganizationID: organization ID of the pipeline.
+	OrganizationID string `json:"organization_id"`
+
 	// CreatedAt: date the pipeline was created.
 	CreatedAt *time.Time `json:"created_at"`
 
