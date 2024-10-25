@@ -968,7 +968,7 @@ type GPU struct {
 	Name string `json:"name"`
 
 	// Vram: capacity of the vram in bytes.
-	Vram uint32 `json:"vram"`
+	Vram uint64 `json:"vram"`
 }
 
 // Memory: memory.
