@@ -387,7 +387,7 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 
 // EndpointPrivateNetworkDetails: Private Network details.
 type EndpointPrivateNetworkDetails struct {
-	// PrivateNetworkID: UUID of the private network.
+	// PrivateNetworkID: UUID of the Private Network.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
@@ -397,7 +397,7 @@ type EndpointPublicDetails struct {
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
 type EndpointSpecPrivateNetworkDetails struct {
-	// PrivateNetworkID: UUID of the private network.
+	// PrivateNetworkID: UUID of the Private Network.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
@@ -453,13 +453,13 @@ type NodeTypeVolumeType struct {
 	// Default value: unknown_type
 	Type VolumeType `json:"type"`
 
-	// Description: the description of the Volume.
+	// Description: the description of the volume.
 	Description string `json:"description"`
 
-	// MinSize: mimimum size required for the Volume.
+	// MinSize: mimimum size required for the volume.
 	MinSize scw.Size `json:"min_size"`
 
-	// MaxSize: maximum size required for the Volume.
+	// MaxSize: maximum size required for the volume.
 	MaxSize scw.Size `json:"max_size"`
 
 	// ChunkSize: minimum increment level for a Block Storage volume size.
@@ -543,7 +543,7 @@ type Instance struct {
 	// Default value: unknown_status
 	Status InstanceStatus `json:"status"`
 
-	// Version: mongoDB™ engine version of the Database Instance.
+	// Version: mongoDB® engine version of the Database Instance.
 	Version string `json:"version"`
 
 	// Tags: list of tags applied to the Database Instance.
@@ -573,10 +573,10 @@ type Instance struct {
 
 // NodeType: node type.
 type NodeType struct {
-	// Name: node Type name identifier.
+	// Name: node type name identifier.
 	Name string `json:"name"`
 
-	// StockStatus: current stock status for the Node Type.
+	// StockStatus: current stock status for the node type.
 	// Default value: unknown_stock
 	StockStatus NodeTypeStock `json:"stock_status"`
 
@@ -589,16 +589,16 @@ type NodeType struct {
 	// Memory: quantity of RAM.
 	Memory scw.Size `json:"memory"`
 
-	// AvailableVolumeTypes: available storage options for the Node Type.
+	// AvailableVolumeTypes: available storage options for the node type.
 	AvailableVolumeTypes []*NodeTypeVolumeType `json:"available_volume_types"`
 
-	// Disabled: the Node Type is currently disabled.
+	// Disabled: the node type is currently disabled.
 	Disabled bool `json:"disabled"`
 
-	// Beta: the Node Type is currently in beta.
+	// Beta: the node type is currently in beta.
 	Beta bool `json:"beta"`
 
-	// InstanceRange: instance range associated with the NodeType offer.
+	// InstanceRange: instance range associated with the node type offer.
 	InstanceRange string `json:"instance_range"`
 }
 
@@ -635,10 +635,10 @@ type Snapshot struct {
 	// NodeType: source node type.
 	NodeType string `json:"node_type"`
 
-	// VolumeType: type of volume where data is stored sbs_5k or sbs_15k.
+	// VolumeType: type of volume where data is stored - sbs_5k or sbs_15k.
 	VolumeType *SnapshotVolumeType `json:"volume_type"`
 
-	// Region: region of this snapshot.
+	// Region: region of the snapshot.
 	Region scw.Region `json:"region"`
 }
 
@@ -650,7 +650,7 @@ type User struct {
 
 // Version: version.
 type Version struct {
-	// Version: mongoDB™ engine version.
+	// Version: mongoDB® engine version.
 	Version string `json:"version"`
 
 	// EndOfLifeAt: date of End of Life.
@@ -678,7 +678,7 @@ type CreateInstanceRequest struct {
 	// Name: name of the Database Instance.
 	Name string `json:"name"`
 
-	// Version: version of the MongoDB™ engine.
+	// Version: version of the MongoDB® engine.
 	Version string `json:"version"`
 
 	// Tags: tags to apply to the Database Instance.
@@ -778,10 +778,10 @@ type ListInstancesRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListInstancesRequestOrderBy `json:"-"`
 
-	// OrganizationID: organization ID the Database Instance belongs to.
+	// OrganizationID: organization ID of the Database Instance.
 	OrganizationID *string `json:"-"`
 
-	// ProjectID: project ID to list the Database Instance of.
+	// ProjectID: project ID.
 	ProjectID *string `json:"-"`
 
 	Page *int32 `json:"-"`
@@ -794,7 +794,7 @@ type ListInstancesResponse struct {
 	// Instances: list of all Database Instances available in an Organization or Project.
 	Instances []*Instance `json:"instances"`
 
-	// TotalCount: total count of Database Instances available in a Organization or Project.
+	// TotalCount: total count of Database Instances available in an Organization or Project.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -866,7 +866,7 @@ type ListSnapshotsRequest struct {
 	// InstanceID: instance ID the snapshots belongs to.
 	InstanceID *string `json:"-"`
 
-	// Name: lists Database snapshots that match a name pattern.
+	// Name: lists database snapshots that match a name pattern.
 	Name *string `json:"-"`
 
 	// OrderBy: criteria to use when ordering snapshot listings.
@@ -886,10 +886,10 @@ type ListSnapshotsRequest struct {
 
 // ListSnapshotsResponse: list snapshots response.
 type ListSnapshotsResponse struct {
-	// Snapshots: list of all Database Snapshots available in an Organization or Project.
+	// Snapshots: list of all database snapshots available in an Organization or Project.
 	Snapshots []*Snapshot `json:"snapshots"`
 
-	// TotalCount: total count of Database Snapshots available in a Organization or Project.
+	// TotalCount: total count of database snapshots available in a Organization or Project.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -974,10 +974,10 @@ type ListVersionsRequest struct {
 
 // ListVersionsResponse: list versions response.
 type ListVersionsResponse struct {
-	// Versions: available MongoDB™ engine version.
+	// Versions: available MongoDB® engine version.
 	Versions []*Version `json:"versions"`
 
-	// TotalCount: total count of MongoDB™ engine version available.
+	// TotalCount: total count of MongoDB® engine version available.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -1074,12 +1074,12 @@ type UpgradeInstanceRequest struct {
 	// InstanceID: UUID of the Database Instance you want to upgrade.
 	InstanceID string `json:"-"`
 
-	// VolumeSize: increase your block storage volume size.
+	// VolumeSize: increase your Block Storage volume size.
 	// Precisely one of VolumeSize must be set.
 	VolumeSize *scw.Size `json:"volume_size,omitempty"`
 }
 
-// This API allows you to manage your Managed Databases for MongoDB.
+// This API allows you to manage your Managed Databases for MongoDB®.
 type API struct {
 	client *scw.Client
 }
@@ -1132,7 +1132,7 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListVersions: List available MongoDB™ versions.
+// ListVersions: List available MongoDB® versions.
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
@@ -1170,7 +1170,7 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// ListInstances: List all MongoDB™ Database Instances in the specified region, for a given Scaleway Project. By default, the MongoDB™ Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags` and `name`. For the `name` parameter, the value you include will be checked against the whole name string to see if it includes the string you put in the parameter.
+// ListInstances: List all MongoDB® Database Instances in the specified region. By default, the MongoDB® Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags` and `name`. For the `name` parameter, the value you include will be checked against the whole name string to see if it includes the string you put in the parameter.
 func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption) (*ListInstancesResponse, error) {
 	var err error
 
@@ -1212,7 +1212,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetInstance: Retrieve information about a given MongoDB™ Database Instance, specified by the `region` and `instance_id` parameters. Its full details, including name, status, IP address and port, are returned in the response object.
+// GetInstance: Retrieve information about a given MongoDB® Database Instance, specified by the `region` and `instance_id` parameters. Its full details, including name, status, IP address and port, are returned in the response object.
 func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1243,7 +1243,7 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateInstance: Create a new MongoDB™ Database Instance.
+// CreateInstance: Create a new MongoDB® Database Instance.
 func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1284,7 +1284,7 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// UpdateInstance: Update the parameters of a MongoDB™ Database Instance.
+// UpdateInstance: Update the parameters of a MongoDB® Database Instance.
 func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1320,7 +1320,7 @@ func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteInstance: Delete a given MongoDB™ Database Instance, specified by the `region` and `instance_id` parameters. Deleting a MongoDB™ Database Instance is permanent, and cannot be undone. Note that upon deletion all your data will be lost.
+// DeleteInstance: Delete a given MongoDB® Database Instance, specified by the `region` and `instance_id` parameters. Deleting a MongoDB® Database Instance is permanent, and cannot be undone. Note that upon deletion all your data will be lost.
 func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
 	var err error
 
@@ -1599,7 +1599,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint,  the `snapshot_id` parameter of the snapshot you want to delete.
+// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint, the `snapshot_id` parameter of the snapshot you want to delete.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
