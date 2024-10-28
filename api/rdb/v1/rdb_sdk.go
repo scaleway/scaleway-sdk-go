@@ -2827,29 +2827,33 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// NodeType: node type of the Database Instance you want to upgrade to.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	NodeType *string `json:"node_type,omitempty"`
 
 	// EnableHa: defines whether or not high availability should be enabled on the Database Instance.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 
 	// VolumeSize: increase your block storage volume size.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
 
 	// VolumeType: change your Database Instance storage type.
 	// Default value: lssd
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	VolumeType *VolumeType `json:"volume_type,omitempty"`
 
 	// UpgradableVersionID: this will create a new Database Instance with same specifications as the current one and perform a Database Engine upgrade.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	UpgradableVersionID *string `json:"upgradable_version_id,omitempty"`
 
 	// MajorUpgradeWorkflow: upgrade your database engine to a new major version including instance endpoints.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow must be set.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	MajorUpgradeWorkflow *UpgradeInstanceRequestMajorUpgradeWorkflow `json:"major_upgrade_workflow,omitempty"`
+
+	// EnableEncryption: defines whether or not encryption should be enabled on the Database Instance.
+	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	EnableEncryption *bool `json:"enable_encryption,omitempty"`
 }
 
 // This API allows you to manage your Managed Databases for PostgreSQL and MySQL.
