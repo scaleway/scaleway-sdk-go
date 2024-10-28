@@ -943,6 +943,15 @@ type Container struct {
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option"`
 
+	// CreatedAt: creation date of the container.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the container.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ReadyAt: last date when the container was successfully deployed and set to ready.
+	ReadyAt *time.Time `json:"ready_at"`
+
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
 }
