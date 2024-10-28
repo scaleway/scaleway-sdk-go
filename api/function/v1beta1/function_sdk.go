@@ -1138,6 +1138,9 @@ type Namespace struct {
 
 	// Region: region in which the namespace is located.
 	Region scw.Region `json:"region"`
+
+	// Tags: [ALPHA] List of tags applied to the Serverless Function Namespace.
+	Tags []string `json:"tags"`
 }
 
 // Token: token.
@@ -1316,6 +1319,9 @@ type CreateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	Tags []string `json:"tags"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1941,6 +1947,9 @@ type UpdateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateTriggerRequest: update trigger request.
