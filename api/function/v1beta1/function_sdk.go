@@ -1098,6 +1098,15 @@ type Function struct {
 	// Sandbox: execution environment of the function.
 	// Default value: unknown_sandbox
 	Sandbox FunctionSandbox `json:"sandbox"`
+
+	// CreatedAt: creation date of the function.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the function.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ReadyAt: last date when the function was successfully deployed and set to ready.
+	ReadyAt *time.Time `json:"ready_at"`
 }
 
 // Namespace: namespace.
