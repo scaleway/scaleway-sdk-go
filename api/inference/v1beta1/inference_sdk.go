@@ -372,7 +372,7 @@ type Model struct {
 	// Description: purpose of the model.
 	Description string `json:"description"`
 
-	// HasEula: defines whether the model has an end user licence agreement.
+	// HasEula: defines whether the model has an end user license agreement.
 	HasEula bool `json:"has_eula"`
 
 	// CreatedAt: creation date of the model.
@@ -384,7 +384,7 @@ type Model struct {
 	// Region: region of the model.
 	Region scw.Region `json:"region"`
 
-	// S3Model: s3 URL pointing to the model source weight.
+	// S3Model: object Storage URL pointing to the model source weight.
 	// Precisely one of S3Model must be set.
 	S3Model *ModelS3Model `json:"s3_model,omitempty"`
 
@@ -531,7 +531,7 @@ type DeleteEndpointRequest struct {
 
 // Eula: eula.
 type Eula struct {
-	// Content: content of the end user licence agreement.
+	// Content: content of the end user license agreement.
 	Content string `json:"content"`
 }
 
