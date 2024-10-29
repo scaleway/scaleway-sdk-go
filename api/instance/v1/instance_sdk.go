@@ -2581,10 +2581,10 @@ type ExportSnapshotRequest struct {
 	// SnapshotID: snapshot ID.
 	SnapshotID string `json:"-"`
 
-	// Bucket: s3 bucket name.
+	// Bucket: object Storage bucket name.
 	Bucket string `json:"bucket,omitempty"`
 
-	// Key: s3 object key.
+	// Key: object key.
 	Key string `json:"key,omitempty"`
 }
 
@@ -5122,7 +5122,7 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-// ExportSnapshot: Export a snapshot to a specified S3 bucket in the same region.
+// ExportSnapshot: Export a snapshot to a specified Object Storage bucket in the same region.
 func (s *API) ExportSnapshot(req *ExportSnapshotRequest, opts ...scw.RequestOption) (*ExportSnapshotResponse, error) {
 	var err error
 
