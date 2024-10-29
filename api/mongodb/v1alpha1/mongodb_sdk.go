@@ -718,6 +718,21 @@ type CreateSnapshotRequest struct {
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }
 
+// CreateUserRequest: create user request.
+type CreateUserRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance the user belongs to.
+	InstanceID string `json:"-"`
+
+	// Name: name of the database user.
+	Name string `json:"-"`
+
+	// Password: password of the database user.
+	Password *string `json:"password,omitempty"`
+}
+
 // DeleteInstanceRequest: delete instance request.
 type DeleteInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1665,6 +1680,46 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	}
 
 	var resp ListUsersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateUser: Create an user on a Database Instance. You must define the `name`, `password` of the user and `instance_id` parameters in the request.
+func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Name) == "" {
+		return nil, errors.New("field Name cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/users/" + fmt.Sprint(req.Name) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
