@@ -293,6 +293,9 @@ type Server struct {
 	// SudoPassword: admin password required to execute commands.
 	SudoPassword string `json:"sudo_password"`
 
+	// VncPort: vNC port to use for remote desktop connection.
+	VncPort uint32 `json:"vnc_port"`
+
 	// Os: initially installed OS, this does not necessarily reflect the current OS version.
 	Os *OS `json:"os"`
 
