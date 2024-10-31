@@ -727,7 +727,7 @@ type CreateUserRequest struct {
 	InstanceID string `json:"-"`
 
 	// Name: name of the database user.
-	Name string `json:"-"`
+	Name string `json:"name"`
 
 	// Password: password of the database user.
 	Password string `json:"password"`
@@ -1705,13 +1705,9 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 		return nil, errors.New("field InstanceID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.Name) == "" {
-		return nil, errors.New("field Name cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/users/" + fmt.Sprint(req.Name) + "",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/users",
 	}
 
 	err = scwReq.SetBody(req)
