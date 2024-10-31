@@ -872,6 +872,37 @@ type Pool struct {
 	Region scw.Region `json:"region"`
 }
 
+// ACLRuleRequest: acl rule request.
+type ACLRuleRequest struct {
+	// IP: IP subnet to allow.
+	// Precisely one of IP, ScalewayRanges must be set.
+	IP *scw.IPNet `json:"ip,omitempty"`
+
+	// ScalewayRanges: only one rule with this field set to true can be added.
+	// Precisely one of IP, ScalewayRanges must be set.
+	ScalewayRanges *bool `json:"scaleway_ranges,omitempty"`
+
+	// Description: description of the ACL.
+	Description string `json:"description"`
+}
+
+// ACLRule: acl rule.
+type ACLRule struct {
+	// ID: ID of the ACL rule.
+	ID string `json:"id"`
+
+	// IP: IP subnet to allow.
+	// Precisely one of IP, ScalewayRanges must be set.
+	IP *scw.IPNet `json:"ip,omitempty"`
+
+	// ScalewayRanges: only one rule with this field set to true can be added.
+	// Precisely one of IP, ScalewayRanges must be set.
+	ScalewayRanges *bool `json:"scaleway_ranges,omitempty"`
+
+	// Description: description of the ACL.
+	Description string `json:"description"`
+}
+
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
 type CreateClusterRequestAutoUpgrade struct {
 	// Enable: defines whether auto upgrade is enabled for the cluster.
@@ -1284,6 +1315,24 @@ type UpdatePoolRequestUpgradePolicy struct {
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
+// AddClusterACLRulesRequest: add cluster acl rules request.
+type AddClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be added.
+	ClusterID string `json:"-"`
+
+	// ACLs: aCLs to add.
+	ACLs []*ACLRuleRequest `json:"acls"`
+}
+
+// AddClusterACLRulesResponse: add cluster acl rules response.
+type AddClusterACLRulesResponse struct {
+	// Rules: aCLs that were added.
+	Rules []*ACLRule `json:"rules"`
+}
+
 // AuthExternalNodeRequest: auth external node request.
 type AuthExternalNodeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1417,6 +1466,15 @@ type CreatePoolRequest struct {
 	PublicIPDisabled bool `json:"public_ip_disabled"`
 }
 
+// DeleteACLRuleRequest: delete acl rule request.
+type DeleteACLRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ACLID: ID of the ACL rule to delete.
+	ACLID string `json:"-"`
+}
+
 // DeleteClusterRequest: delete cluster request.
 type DeleteClusterRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1541,6 +1599,49 @@ type GetVersionRequest struct {
 
 	// VersionName: requested version name.
 	VersionName string `json:"-"`
+}
+
+// ListClusterACLRulesRequest: list cluster acl rules request.
+type ListClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be listed.
+	ClusterID string `json:"-"`
+
+	// Page: page number for the returned ACLs.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of ACLs per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListClusterACLRulesResponse: list cluster acl rules response.
+type ListClusterACLRulesResponse struct {
+	// TotalCount: total number of ACLs that exist for the cluster.
+	TotalCount uint64 `json:"total_count"`
+
+	// Rules: paginated returned ACLs.
+	Rules []*ACLRule `json:"rules"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListClusterACLRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListClusterACLRulesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListClusterACLRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Rules = append(r.Rules, results.Rules...)
+	r.TotalCount += uint64(len(results.Rules))
+	return uint64(len(results.Rules)), nil
 }
 
 // ListClusterAvailableTypesRequest: list cluster available types request.
@@ -1886,6 +1987,24 @@ type ResetClusterAdminTokenRequest struct {
 
 	// ClusterID: cluster ID on which the admin token will be renewed.
 	ClusterID string `json:"-"`
+}
+
+// SetClusterACLRulesRequest: set cluster acl rules request.
+type SetClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be set.
+	ClusterID string `json:"-"`
+
+	// ACLs: aCLs to set.
+	ACLs []*ACLRuleRequest `json:"acls"`
+}
+
+// SetClusterACLRulesResponse: set cluster acl rules response.
+type SetClusterACLRulesResponse struct {
+	// Rules: aCLs that were set.
+	Rules []*ACLRule `json:"rules"`
 }
 
 // SetClusterTypeRequest: set cluster type request.
@@ -2441,6 +2560,148 @@ func (s *API) MigrateClusterToSBSCSI(req *MigrateClusterToSBSCSIRequest, opts ..
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ListClusterACLRules: List ACLs for a specific cluster.
+func (s *API) ListClusterACLRules(req *ListClusterACLRulesRequest, opts ...scw.RequestOption) (*ListClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+		Query:  query,
+	}
+
+	var resp ListClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddClusterACLRules: Add new ACL rules for a specific cluster.
+func (s *API) AddClusterACLRules(req *AddClusterACLRulesRequest, opts ...scw.RequestOption) (*AddClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetClusterACLRules: Set new ACL rules for a specific cluster.
+func (s *API) SetClusterACLRules(req *SetClusterACLRulesRequest, opts ...scw.RequestOption) (*SetClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteACLRule: Delete an existing ACL.
+func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return errors.New("field ACLID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ListPools: List all the existing pools for a specific Kubernetes cluster.
