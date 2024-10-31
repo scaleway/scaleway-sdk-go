@@ -762,10 +762,41 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ContainerHealthCheckSpecHTTPProbe: container health check spec http probe.
+type ContainerHealthCheckSpecHTTPProbe struct {
+	// Path: path to use for the HTTP health check.
+	Path string `json:"path"`
+}
+
+// ContainerHealthCheckSpecTCPProbe: container health check spec tcp probe.
+type ContainerHealthCheckSpecTCPProbe struct {
+}
+
+// ContainerHealthCheckSpec: container health check spec.
+type ContainerHealthCheckSpec struct {
+	// HTTP: HTTP health check configuration.
+	// Precisely one of HTTP, TCP must be set.
+	HTTP *ContainerHealthCheckSpecHTTPProbe `json:"http,omitempty"`
+
+	// TCP: TCP health check configuration.
+	// Precisely one of HTTP, TCP must be set.
+	TCP *ContainerHealthCheckSpecTCPProbe `json:"tcp,omitempty"`
+
+	// FailureThreshold: during a deployment, if a newly created container fails to pass the health check, the deployment is aborted.
+	// As a result, lowering this value can help to reduce the time it takes to detect a failed deployment.
+	FailureThreshold uint32 `json:"failure_threshold"`
+
+	// Interval: period between health checks.
+	Interval *scw.Duration `json:"interval"`
+}
+
 // ContainerScalingOption: container scaling option.
 type ContainerScalingOption struct {
-	// Precisely one of ConcurrentRequestsThreshold must be set.
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold must be set.
 	ConcurrentRequestsThreshold *uint32 `json:"concurrent_requests_threshold,omitempty"`
+
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold must be set.
+	CPUUsageThreshold *uint32 `json:"cpu_usage_threshold,omitempty"`
 }
 
 // SecretHashedValue: secret hashed value.
@@ -941,7 +972,11 @@ type Container struct {
 
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check"`
 
 	// CreatedAt: creation date of the container.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1185,7 +1220,11 @@ type CreateContainerRequest struct {
 
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1777,7 +1816,11 @@ type UpdateContainerRequest struct {
 
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
