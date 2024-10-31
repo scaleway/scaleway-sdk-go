@@ -2203,10 +2203,13 @@ type UpdateSSHKeyRequest struct {
 
 // UpdateUserPasswordRequest: update user password request.
 type UpdateUserPasswordRequest struct {
+	// UserID: ID of the user to update.
 	UserID string `json:"-"`
 
+	// Password: the new password.
 	Password string `json:"password"`
 
+	// SendEmail: whether or not to send an email alerting the user their password has changed.
 	SendEmail bool `json:"send_email"`
 }
 
@@ -2495,7 +2498,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserPassword:
+// UpdateUserPassword: Update an user's password.
 func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
