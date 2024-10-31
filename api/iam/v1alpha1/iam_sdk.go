@@ -2069,6 +2069,11 @@ func (r *ListUsersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Users)), nil
 }
 
+// LockUserRequest: lock user request.
+type LockUserRequest struct {
+	UserID string `json:"-"`
+}
+
 // RemoveGroupMemberRequest: remove group member request.
 type RemoveGroupMemberRequest struct {
 	// GroupID: ID of the group.
@@ -2105,6 +2110,11 @@ type SetRulesRequest struct {
 type SetRulesResponse struct {
 	// Rules: rules of the policy.
 	Rules []*Rule `json:"rules"`
+}
+
+// UnlockUserRequest: unlock user request.
+type UnlockUserRequest struct {
+	UserID string `json:"-"`
 }
 
 // UpdateAPIKeyRequest: update api key request.
@@ -2496,6 +2506,60 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/update-password",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// LockUser: Lock a user. Note that a locked user cannot log in or use API keys until the locked status is removed.
+func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/lock",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnlockUser: Unlock a user.
+func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/unlock",
 	}
 
 	err = scwReq.SetBody(req)
