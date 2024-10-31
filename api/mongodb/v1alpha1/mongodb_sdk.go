@@ -730,7 +730,7 @@ type CreateUserRequest struct {
 	Name string `json:"-"`
 
 	// Password: password of the database user.
-	Password *string `json:"password,omitempty"`
+	Password string `json:"password"`
 }
 
 // DeleteInstanceRequest: delete instance request.
