@@ -92,8 +92,6 @@ const (
 	DataSourceTypeLogs = DataSourceType("logs")
 	// Traces data source type, used to store and query traces using Grafana Tempo.
 	DataSourceTypeTraces = DataSourceType("traces")
-	// Alerts data source type, used as an endpoint for firing alerts using the Grafana Mimir alert manager.
-	DataSourceTypeAlerts = DataSourceType("alerts")
 )
 
 func (enum DataSourceType) String() string {
@@ -110,7 +108,6 @@ func (enum DataSourceType) Values() []DataSourceType {
 		"metrics",
 		"logs",
 		"traces",
-		"alerts",
 	}
 }
 
@@ -524,6 +521,15 @@ type ContactPointEmail struct {
 	To string `json:"to"`
 }
 
+// GetConfigResponseRetention: get config response retention.
+type GetConfigResponseRetention struct {
+	MinDays uint32 `json:"min_days"`
+
+	MaxDays uint32 `json:"max_days"`
+
+	DefaultDays uint32 `json:"default_days"`
+}
+
 // ContactPoint: Contact point.
 type ContactPoint struct {
 	// Email: email address to send alerts to.
@@ -564,6 +570,9 @@ type DataSource struct {
 
 	// SynchronizedWithGrafana: indicates whether the data source is synchronized with Grafana.
 	SynchronizedWithGrafana bool `json:"synchronized_with_grafana"`
+
+	// RetentionDays: bETA - Duration for which the data will be retained in the data source.
+	RetentionDays uint32 `json:"retention_days"`
 
 	// Region: region of the data source.
 	Region scw.Region `json:"region"`
@@ -714,6 +723,18 @@ type AlertManager struct {
 
 	// Region: regions where the Alert manager is enabled.
 	Region scw.Region `json:"region"`
+}
+
+// GetConfigResponse: Cockpit configuration.
+type GetConfigResponse struct {
+	// MetricsRetention: metrics retention configuration.
+	MetricsRetention *GetConfigResponseRetention `json:"metrics_retention"`
+
+	// LogsRetention: logs retention configuration.
+	LogsRetention *GetConfigResponseRetention `json:"logs_retention"`
+
+	// TracesRetention: traces retention configuration.
+	TracesRetention *GetConfigResponseRetention `json:"traces_retention"`
 }
 
 // GlobalAPICreateGrafanaUserRequest: Create a Grafana user.
@@ -1062,6 +1083,9 @@ type RegionalAPICreateDataSourceRequest struct {
 	// Type: data source type.
 	// Default value: unknown_type
 	Type DataSourceType `json:"type"`
+
+	// RetentionDays: default values are 30 days for metrics, 7 days for logs and traces.
+	RetentionDays *uint32 `json:"retention_days,omitempty"`
 }
 
 // RegionalAPICreateTokenRequest: Create a token.
@@ -1153,6 +1177,12 @@ type RegionalAPIGetAlertManagerRequest struct {
 
 	// ProjectID: project ID of the requested Alert manager.
 	ProjectID string `json:"project_id"`
+}
+
+// RegionalAPIGetConfigRequest: Get Cockpit configuration.
+type RegionalAPIGetConfigRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
 }
 
 // RegionalAPIGetDataSourceRequest: Retrieve a data source.
@@ -1284,6 +1314,9 @@ type RegionalAPIUpdateDataSourceRequest struct {
 
 	// Name: updated name of the data source.
 	Name *string `json:"name,omitempty"`
+
+	// RetentionDays: bETA - Duration for which the data will be retained in the data source.
+	RetentionDays *uint32 `json:"retention_days,omitempty"`
 }
 
 // UsageOverview: usage overview.
@@ -1557,7 +1590,8 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 	return &resp, nil
 }
 
-// ListPlans: Retrieve a list of available pricing plan types.
+// Deprecated: ListPlans: Retrieve a list of available pricing plan types.
+// Deprecated, retention is now managed at the data source level.
 func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1586,7 +1620,8 @@ func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.Reques
 	return &resp, nil
 }
 
-// SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
+// Deprecated: SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
+// Deprecated, retention is now managed at the data source level.
 func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1614,7 +1649,8 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
+// Deprecated: GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
+// Deprecated, retention is now managed at the data source level.
 func (s *GlobalAPI) GetCurrentPlan(req *GlobalAPIGetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1654,6 +1690,33 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 }
 func (s *RegionalAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// GetConfig: Get the Cockpit configuration.
+func (s *RegionalAPI) GetConfig(req *RegionalAPIGetConfigRequest, opts ...scw.RequestOption) (*GetConfigResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/config",
+	}
+
+	var resp GetConfigResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // CreateDataSource: You must specify the data source type upon creation. Available data source types include:
