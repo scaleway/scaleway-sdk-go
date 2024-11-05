@@ -203,15 +203,20 @@ type CreateJobDefinitionSecretsRequestSecretConfig struct {
 
 // Secret: secret.
 type Secret struct {
+	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"secret_id"`
 
+	// SecretManagerID: UUID of the secret in Secret Manager.
 	SecretManagerID string `json:"secret_manager_id"`
 
+	// SecretManagerVersion: version of the secret in Secret Manager.
 	SecretManagerVersion string `json:"secret_manager_version"`
 
+	// File: file secret mounted inside the job.
 	// Precisely one of File, EnvVar must be set.
 	File *SecretFile `json:"file,omitempty"`
 
+	// EnvVar: environment variable used to expose the secret.
 	// Precisely one of File, EnvVar must be set.
 	EnvVar *SecretEnvVar `json:"env_var,omitempty"`
 }
@@ -345,15 +350,16 @@ type CreateJobDefinitionSecretsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// JobDefinitionID: UUID of the job definition to get.
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"-"`
 
-	// Secrets: secrets to inject into the job.
+	// Secrets: list of secrets to inject into the job.
 	Secrets []*CreateJobDefinitionSecretsRequestSecretConfig `json:"secrets"`
 }
 
 // CreateJobDefinitionSecretsResponse: create job definition secrets response.
 type CreateJobDefinitionSecretsResponse struct {
+	// Secrets: list of secrets created.
 	Secrets []*Secret `json:"secrets"`
 }
 
@@ -371,8 +377,10 @@ type DeleteJobDefinitionSecretRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"-"`
 
+	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"-"`
 }
 
@@ -390,8 +398,10 @@ type GetJobDefinitionSecretRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"-"`
 
+	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"-"`
 }
 
@@ -420,13 +430,16 @@ type ListJobDefinitionSecretsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"-"`
 }
 
 // ListJobDefinitionSecretsResponse: list job definition secrets response.
 type ListJobDefinitionSecretsResponse struct {
+	// Secrets: list of secret references within a job definition.
 	Secrets []*Secret `json:"secrets"`
 
+	// TotalCount: total count of secret references within a job definition.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -623,15 +636,20 @@ type UpdateJobDefinitionSecretRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"-"`
 
+	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"-"`
 
+	// SecretManagerVersion: version of the secret in Secret Manager.
 	SecretManagerVersion *string `json:"secret_manager_version,omitempty"`
 
+	// Path: path of the secret to mount inside the job (either `path` or `env_var_name` must be set).
 	// Precisely one of Path, EnvVarName must be set.
 	Path *string `json:"path,omitempty"`
 
+	// EnvVarName: environment variable name used to expose the secret inside the job (either `path` or `env_var_name` must be set).
 	// Precisely one of Path, EnvVarName must be set.
 	EnvVarName *string `json:"env_var_name,omitempty"`
 }
@@ -864,7 +882,7 @@ func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// CreateJobDefinitionSecrets:
+// CreateJobDefinitionSecrets: Create a secret reference within a job definition.
 func (s *API) CreateJobDefinitionSecrets(req *CreateJobDefinitionSecretsRequest, opts ...scw.RequestOption) (*CreateJobDefinitionSecretsResponse, error) {
 	var err error
 
@@ -900,7 +918,7 @@ func (s *API) CreateJobDefinitionSecrets(req *CreateJobDefinitionSecretsRequest,
 	return &resp, nil
 }
 
-// GetJobDefinitionSecret:
+// GetJobDefinitionSecret: Get a secret references within a job definition.
 func (s *API) GetJobDefinitionSecret(req *GetJobDefinitionSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -935,7 +953,7 @@ func (s *API) GetJobDefinitionSecret(req *GetJobDefinitionSecretRequest, opts ..
 	return &resp, nil
 }
 
-// ListJobDefinitionSecrets:
+// ListJobDefinitionSecrets: List secrets references within a job definition.
 func (s *API) ListJobDefinitionSecrets(req *ListJobDefinitionSecretsRequest, opts ...scw.RequestOption) (*ListJobDefinitionSecretsResponse, error) {
 	var err error
 
@@ -966,7 +984,7 @@ func (s *API) ListJobDefinitionSecrets(req *ListJobDefinitionSecretsRequest, opt
 	return &resp, nil
 }
 
-// UpdateJobDefinitionSecret:
+// UpdateJobDefinitionSecret: Update a secret reference within a job definition.
 func (s *API) UpdateJobDefinitionSecret(req *UpdateJobDefinitionSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
 	var err error
 
@@ -1006,7 +1024,7 @@ func (s *API) UpdateJobDefinitionSecret(req *UpdateJobDefinitionSecretRequest, o
 	return &resp, nil
 }
 
-// DeleteJobDefinitionSecret:
+// DeleteJobDefinitionSecret: Delete a secret reference within a job definition.
 func (s *API) DeleteJobDefinitionSecret(req *DeleteJobDefinitionSecretRequest, opts ...scw.RequestOption) error {
 	var err error
 
