@@ -792,11 +792,14 @@ type ContainerHealthCheckSpec struct {
 
 // ContainerScalingOption: container scaling option.
 type ContainerScalingOption struct {
-	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold must be set.
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
 	ConcurrentRequestsThreshold *uint32 `json:"concurrent_requests_threshold,omitempty"`
 
-	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold must be set.
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
 	CPUUsageThreshold *uint32 `json:"cpu_usage_threshold,omitempty"`
+
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
+	MemoryUsageThreshold *uint32 `json:"memory_usage_threshold,omitempty"`
 }
 
 // SecretHashedValue: secret hashed value.
@@ -973,6 +976,7 @@ type Container struct {
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
 	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option"`
 
 	// HealthCheck: health check configuration of the container.
@@ -1221,6 +1225,7 @@ type CreateContainerRequest struct {
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
 	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 
 	// HealthCheck: health check configuration of the container.
@@ -1817,6 +1822,7 @@ type UpdateContainerRequest struct {
 	// ScalingOption: possible values:
 	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
 	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 
 	// HealthCheck: health check configuration of the container.
