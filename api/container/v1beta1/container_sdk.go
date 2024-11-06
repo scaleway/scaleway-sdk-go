@@ -1080,6 +1080,12 @@ type Namespace struct {
 
 	// Tags: [ALPHA] List of tags applied to the Serverless Container Namespace.
 	Tags []string `json:"tags"`
+
+	// CreatedAt: creation date of the namespace.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the namespace.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Token: token.
