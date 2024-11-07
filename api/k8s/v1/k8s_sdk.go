@@ -627,7 +627,9 @@ const (
 	// Local Block Storage: your system is stored locally on your node hypervisor. Lower latency, no persistence across node replacements.
 	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
 	// Remote Block Storage: your system is stored on a centralized and resilient cluster. Higher latency, persistence across node replacements.
-	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+	PoolVolumeTypeBSSD   = PoolVolumeType("b_ssd")
+	PoolVolumeTypeSbs5k  = PoolVolumeType("sbs_5k")
+	PoolVolumeTypeSbs15k = PoolVolumeType("sbs_15k")
 )
 
 func (enum PoolVolumeType) String() string {
@@ -643,6 +645,8 @@ func (enum PoolVolumeType) Values() []PoolVolumeType {
 		"default_volume_type",
 		"l_ssd",
 		"b_ssd",
+		"sbs_5k",
+		"sbs_15k",
 	}
 }
 
@@ -2942,7 +2946,7 @@ func (s *API) GetNodeMetadata(req *GetNodeMetadataRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/nodes/metadata",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/node-metadata",
 	}
 
 	var resp NodeMetadata
