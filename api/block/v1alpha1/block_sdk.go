@@ -828,6 +828,9 @@ type ListVolumesRequest struct {
 
 	// ProductResourceID: filter by a product resource ID linked to this volume (such as an Instance ID).
 	ProductResourceID *string `json:"-"`
+
+	// Tags: filter by tags. Only volumes with one or more matching tags will be returned.
+	Tags []string `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -969,6 +972,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "product_resource_id", req.ProductResourceID)
+	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
