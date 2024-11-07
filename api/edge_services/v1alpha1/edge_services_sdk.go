@@ -1228,10 +1228,10 @@ type GetBillingResponse struct {
 	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plan.
 	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
 
-	// CurrentPlanCacheUsage: total amount of data egressed from the cache (this month), included in the active subscription plan.
+	// CurrentPlanCacheUsage: total amount of data egressed from the cache in gigabytes from the beginning of the month, included in the active subscription plan.
 	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
 
-	// ExtraCacheUsage: total amount of data egressed from cache (this month), not included in the active subscription plan.
+	// ExtraCacheUsage: total amount of extra data egressed from cache in gigabytes from the beginning of the month, not included in the active subscription plan.
 	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
 
 	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the active subscription plan.
