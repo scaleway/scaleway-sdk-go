@@ -103,6 +103,7 @@ const (
 	ResourceTypeBaremetalServer     = ResourceType("baremetal_server")
 	ResourceTypeBaremetalPrivateNic = ResourceType("baremetal_private_nic")
 	ResourceTypeLlmDeployment       = ResourceType("llm_deployment")
+	ResourceTypeMgdbInstance        = ResourceType("mgdb_instance")
 )
 
 func (enum ResourceType) String() string {
@@ -131,6 +132,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"baremetal_server",
 		"baremetal_private_nic",
 		"llm_deployment",
+		"mgdb_instance",
 	}
 }
 
@@ -440,7 +442,6 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
-
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
