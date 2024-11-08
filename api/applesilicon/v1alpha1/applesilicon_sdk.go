@@ -39,6 +39,84 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type ConnectivityDiagnosticActionType string
+
+const (
+	ConnectivityDiagnosticActionTypeRebootServer    = ConnectivityDiagnosticActionType("reboot_server")
+	ConnectivityDiagnosticActionTypeReinstallServer = ConnectivityDiagnosticActionType("reinstall_server")
+)
+
+func (enum ConnectivityDiagnosticActionType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "reboot_server"
+	}
+	return string(enum)
+}
+
+func (enum ConnectivityDiagnosticActionType) Values() []ConnectivityDiagnosticActionType {
+	return []ConnectivityDiagnosticActionType{
+		"reboot_server",
+		"reinstall_server",
+	}
+}
+
+func (enum ConnectivityDiagnosticActionType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ConnectivityDiagnosticActionType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ConnectivityDiagnosticActionType(ConnectivityDiagnosticActionType(tmp).String())
+	return nil
+}
+
+type ConnectivityDiagnosticDiagnosticStatus string
+
+const (
+	ConnectivityDiagnosticDiagnosticStatusUnknownStatus = ConnectivityDiagnosticDiagnosticStatus("unknown_status")
+	ConnectivityDiagnosticDiagnosticStatusProcessing    = ConnectivityDiagnosticDiagnosticStatus("processing")
+	ConnectivityDiagnosticDiagnosticStatusError         = ConnectivityDiagnosticDiagnosticStatus("error")
+	ConnectivityDiagnosticDiagnosticStatusCompleted     = ConnectivityDiagnosticDiagnosticStatus("completed")
+)
+
+func (enum ConnectivityDiagnosticDiagnosticStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum ConnectivityDiagnosticDiagnosticStatus) Values() []ConnectivityDiagnosticDiagnosticStatus {
+	return []ConnectivityDiagnosticDiagnosticStatus{
+		"unknown_status",
+		"processing",
+		"error",
+		"completed",
+	}
+}
+
+func (enum ConnectivityDiagnosticDiagnosticStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ConnectivityDiagnosticDiagnosticStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ConnectivityDiagnosticDiagnosticStatus(ConnectivityDiagnosticDiagnosticStatus(tmp).String())
+	return nil
+}
+
 type ListServersRequestOrderBy string
 
 const (
@@ -233,6 +311,21 @@ type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
+// ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
+type ConnectivityDiagnosticServerHealth struct {
+	LastCheckinDate *time.Time `json:"last_checkin_date"`
+
+	IsServerAlive bool `json:"is_server_alive"`
+
+	IsAgentAlive bool `json:"is_agent_alive"`
+
+	IsMdmAlive bool `json:"is_mdm_alive"`
+
+	IsSSHPortUp bool `json:"is_ssh_port_up"`
+
+	IsVncPortUp bool `json:"is_vnc_port_up"`
+}
+
 // ServerType: server type.
 type ServerType struct {
 	// CPU: CPU description.
@@ -322,6 +415,22 @@ type Server struct {
 	Delivered bool `json:"delivered"`
 }
 
+// ConnectivityDiagnostic: connectivity diagnostic.
+type ConnectivityDiagnostic struct {
+	ID string `json:"id"`
+
+	// Status: default value: unknown_status
+	Status ConnectivityDiagnosticDiagnosticStatus `json:"status"`
+
+	IsHealthy bool `json:"is_healthy"`
+
+	HealthDetails *ConnectivityDiagnosticServerHealth `json:"health_details"`
+
+	SupportedActions []ConnectivityDiagnosticActionType `json:"supported_actions"`
+
+	ErrorMessage string `json:"error_message"`
+}
+
 // CreateServerRequest: create server request.
 type CreateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -347,6 +456,14 @@ type DeleteServerRequest struct {
 
 	// ServerID: UUID of the server you want to delete.
 	ServerID string `json:"-"`
+}
+
+// GetConnectivityDiagnosticRequest: get connectivity diagnostic request.
+type GetConnectivityDiagnosticRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	DiagnosticID string `json:"-"`
 }
 
 // GetOSRequest: get os request.
@@ -503,6 +620,19 @@ type ReinstallServerRequest struct {
 
 	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
 	OsID *string `json:"os_id,omitempty"`
+}
+
+// StartConnectivityDiagnosticRequest: start connectivity diagnostic request.
+type StartConnectivityDiagnosticRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"server_id"`
+}
+
+// StartConnectivityDiagnosticResponse: start connectivity diagnostic response.
+type StartConnectivityDiagnosticResponse struct {
+	DiagnosticID string `json:"diagnostic_id"`
 }
 
 // UpdateServerRequest: update server request.
@@ -904,6 +1034,69 @@ func (s *API) ReinstallServer(req *ReinstallServerRequest, opts ...scw.RequestOp
 	}
 
 	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// StartConnectivityDiagnostic:
+func (s *API) StartConnectivityDiagnostic(req *StartConnectivityDiagnosticRequest, opts ...scw.RequestOption) (*StartConnectivityDiagnosticResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/connectivity-diagnostics",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp StartConnectivityDiagnosticResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetConnectivityDiagnostic:
+func (s *API) GetConnectivityDiagnostic(req *GetConnectivityDiagnosticRequest, opts ...scw.RequestOption) (*ConnectivityDiagnostic, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DiagnosticID) == "" {
+		return nil, errors.New("field DiagnosticID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/connectivity-diagnostics/" + fmt.Sprint(req.DiagnosticID) + "",
+	}
+
+	var resp ConnectivityDiagnostic
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
