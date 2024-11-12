@@ -727,14 +727,20 @@ type AlertManager struct {
 
 // GetConfigResponse: Cockpit configuration.
 type GetConfigResponse struct {
-	// MetricsRetention: metrics retention configuration.
-	MetricsRetention *GetConfigResponseRetention `json:"metrics_retention"`
+	// CustomMetricsRetention: custom metrics retention configuration.
+	CustomMetricsRetention *GetConfigResponseRetention `json:"custom_metrics_retention"`
 
-	// LogsRetention: logs retention configuration.
-	LogsRetention *GetConfigResponseRetention `json:"logs_retention"`
+	// CustomLogsRetention: custom logs retention configuration.
+	CustomLogsRetention *GetConfigResponseRetention `json:"custom_logs_retention"`
 
-	// TracesRetention: traces retention configuration.
-	TracesRetention *GetConfigResponseRetention `json:"traces_retention"`
+	// CustomTracesRetention: custom traces retention configuration.
+	CustomTracesRetention *GetConfigResponseRetention `json:"custom_traces_retention"`
+
+	// ProductMetricsRetention: scaleway metrics retention configuration.
+	ProductMetricsRetention *GetConfigResponseRetention `json:"product_metrics_retention"`
+
+	// ProductLogsRetention: scaleway logs retention configuration.
+	ProductLogsRetention *GetConfigResponseRetention `json:"product_logs_retention"`
 }
 
 // GlobalAPICreateGrafanaUserRequest: Create a Grafana user.
