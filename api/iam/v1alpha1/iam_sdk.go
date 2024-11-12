@@ -840,6 +840,9 @@ type CreateUserRequestMember struct {
 	// SendPasswordEmail: whether or not to send an email containing the member's password.
 	SendPasswordEmail bool `json:"send_password_email"`
 
+	// SendWelcomeEmail: whether or not to send a welcome email that includes onboarding information.
+	SendWelcomeEmail bool `json:"send_welcome_email"`
+
 	// Username: the member's username.
 	Username string `json:"username"`
 
