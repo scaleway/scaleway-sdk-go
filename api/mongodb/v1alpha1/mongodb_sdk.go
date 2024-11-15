@@ -733,6 +733,15 @@ type CreateUserRequest struct {
 	Password string `json:"password"`
 }
 
+// DeleteEndpointRequest: delete endpoint request.
+type DeleteEndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// EndpointID: UUID of the Endpoint to delete.
+	EndpointID string `json:"-"`
+}
+
 // DeleteInstanceRequest: delete instance request.
 type DeleteInstanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1762,4 +1771,33 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// DeleteEndpoint: Delete the endpoint of a Database Instance. You must specify the `endpoint_id` parameter of the endpoint you want to delete. Note that you might need to update any environment configurations that point to the deleted endpoint.
+func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.EndpointID) == "" {
+		return errors.New("field EndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/endpoints/" + fmt.Sprint(req.EndpointID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
