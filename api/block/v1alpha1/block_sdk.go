@@ -1008,6 +1008,10 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 		req.ProjectID = defaultProjectID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("vol")
+	}
+
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
@@ -1214,6 +1218,10 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("snp")
 	}
 
 	if fmt.Sprint(req.Zone) == "" {
