@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	std "github.com/scaleway/scaleway-sdk-go/api/std"
 )
 
 // always import dependencies
@@ -1073,6 +1073,15 @@ type HostingAPIGetHostingRequest struct {
 	HostingID string `json:"-"`
 }
 
+// HostingAPIGetResourceSummaryRequest: hosting api get resource summary request.
+type HostingAPIGetResourceSummaryRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID.
+	HostingID string `json:"-"`
+}
+
 // HostingAPIListHostingsRequest: hosting api list hostings request.
 type HostingAPIListHostingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1463,6 +1472,21 @@ type OfferAPIListOffersRequest struct {
 type ResetHostingPasswordResponse struct {
 	// OneTimePassword: new temporary password.
 	OneTimePassword string `json:"one_time_password"`
+}
+
+// ResourceSummary: resource summary.
+type ResourceSummary struct {
+	// DatabasesCount: total number of active databases in the Web Hosting plan.
+	DatabasesCount uint32 `json:"databases_count"`
+
+	// MailAccountsCount: total number of active email accounts in the Web Hosting plan.
+	MailAccountsCount uint32 `json:"mail_accounts_count"`
+
+	// FtpAccountsCount: total number of active FTP accounts in the Web Hosting plan.
+	FtpAccountsCount uint32 `json:"ftp_accounts_count"`
+
+	// WebsitesCount: total number of active domains in the the Web Hosting plan.
+	WebsitesCount uint32 `json:"websites_count"`
 }
 
 // Session: session.
@@ -2286,6 +2310,37 @@ func (s *HostingAPI) ResetHostingPassword(req *HostingAPIResetHostingPasswordReq
 	}
 
 	var resp ResetHostingPasswordResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetResourceSummary: Get the total counts of websites, databases, email accounts, and FTP accounts of a Web Hosting plan.
+func (s *HostingAPI) GetResourceSummary(req *HostingAPIGetResourceSummaryRequest, opts ...scw.RequestOption) (*ResourceSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/resource-summary",
+	}
+
+	var resp ResourceSummary
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
