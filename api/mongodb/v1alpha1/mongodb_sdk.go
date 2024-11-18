@@ -509,6 +509,15 @@ type Setting struct {
 	FloatMax *float32 `json:"float_max"`
 }
 
+// EndpointSpec: endpoint spec.
+type EndpointSpec struct {
+	// Precisely one of Public, PrivateNetwork must be set.
+	Public *EndpointSpecPublicDetails `json:"public,omitempty"`
+
+	// Precisely one of Public, PrivateNetwork must be set.
+	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
+}
+
 // CreateInstanceRequestVolumeDetails: create instance request volume details.
 type CreateInstanceRequestVolumeDetails struct {
 	// VolumeSize: volume size.
@@ -517,15 +526,6 @@ type CreateInstanceRequestVolumeDetails struct {
 	// VolumeType: type of volume where data is stored.
 	// Default value: unknown_type
 	VolumeType VolumeType `json:"volume_type"`
-}
-
-// EndpointSpec: endpoint spec.
-type EndpointSpec struct {
-	// Precisely one of Public, PrivateNetwork must be set.
-	Public *EndpointSpecPublicDetails `json:"public,omitempty"`
-
-	// Precisely one of Public, PrivateNetwork must be set.
-	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
 // Instance: instance.
@@ -665,6 +665,18 @@ type RestoreSnapshotRequestVolumeDetails struct {
 	// VolumeType: type of volume where data is stored.
 	// Default value: unknown_type
 	VolumeType VolumeType `json:"volume_type"`
+}
+
+// CreateEndpointRequest: create endpoint request.
+type CreateEndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance.
+	InstanceID string `json:"instance_id"`
+
+	// Endpoint: endpointSpec used to expose your Database Instance.
+	Endpoint *EndpointSpec `json:"endpoint"`
 }
 
 // CreateInstanceRequest: create instance request.
@@ -1800,4 +1812,36 @@ func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOpti
 		return err
 	}
 	return nil
+}
+
+// CreateEndpoint: Create a new endpoint for a MongoDB® Database Instance. You can add `public_network` or `private_network` specifications to the body of the request.
+func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOption) (*Endpoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/endpoints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
