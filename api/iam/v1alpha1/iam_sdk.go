@@ -2223,6 +2223,9 @@ type UpdateUserRequest struct {
 
 	// Tags: new tags for the user (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Email: new email for the user (only available on Members).
+	Email *string `json:"email,omitempty"`
 }
 
 // This API allows you to manage Identity and Access Management (IAM) across your Scaleway Organizations, Projects and resources.
