@@ -50,9 +50,6 @@ func (e *ResponseError) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-
-	tmp.Message = strings.ToLower(tmp.Message)
-
 	*e = ResponseError(tmp)
 	return nil
 }
