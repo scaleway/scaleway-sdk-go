@@ -13,6 +13,6 @@ import (
 	_ "github.com/scaleway/scaleway-sdk-go/api/rdb/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/registry/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/test/v1"
-	_ "github.com/scaleway/scaleway-sdk-go/api/vpc/v1"
+	_ "github.com/scaleway/scaleway-sdk-go/api/vpc/v2"
 	_ "github.com/scaleway/scaleway-sdk-go/api/vpcgw/v1"
 )
