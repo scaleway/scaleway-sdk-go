@@ -167,6 +167,7 @@ const (
 	ServerStatusLocked        = ServerStatus("locked")
 	ServerStatusUnlocking     = ServerStatus("unlocking")
 	ServerStatusReinstalling  = ServerStatus("reinstalling")
+	ServerStatusBusy          = ServerStatus("busy")
 )
 
 func (enum ServerStatus) String() string {
@@ -189,6 +190,7 @@ func (enum ServerStatus) Values() []ServerStatus {
 		"locked",
 		"unlocking",
 		"reinstalling",
+		"busy",
 	}
 }
 
