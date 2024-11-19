@@ -1921,11 +1921,13 @@ type Dashboard struct {
 
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
 
-	VolumesBSSDCount uint32 `json:"volumes_b_ssd_count"`
+	// Deprecated
+	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
 
 	VolumesLSSDTotalSize scw.Size `json:"volumes_l_ssd_total_size"`
 
-	VolumesBSSDTotalSize scw.Size `json:"volumes_b_ssd_total_size"`
+	// Deprecated
+	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
 
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
