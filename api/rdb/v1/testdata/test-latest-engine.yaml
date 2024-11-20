@@ -1,0 +1,99 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.23.0; darwin; amd64)
+    url: https://api.scaleway.com/rdb/v1/regions/fr-par/database-engines
+    method: GET
+  response:
+    body: '{"message":"authentication is denied","method":"api_key","reason":"invalid_argument","type":"denied_authentication"}'
+    headers:
+      Content-Length:
+      - "116"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 20 Nov 2024 11:07:06 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge03)
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - 3406dc5d-f3c0-458f-b421-635dfb150e3c
+    status: 401 Unauthorized
+    code: 401
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.23.0; darwin; amd64)
+    url: https://api.scaleway.com/rdb/v1/regions/fr-par/database-engines
+    method: GET
+  response:
+    body: '{"message":"authentication is denied","method":"api_key","reason":"invalid_argument","type":"denied_authentication"}'
+    headers:
+      Content-Length:
+      - "116"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 20 Nov 2024 11:07:06 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge03)
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - 873b79fa-6225-4b57-b85f-b16cedfd6c8f
+    status: 401 Unauthorized
+    code: 401
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.23.0; darwin; amd64)
+    url: https://api.scaleway.com/rdb/v1/regions/fr-par/database-engines
+    method: GET
+  response:
+    body: '{"message":"authentication is denied","method":"api_key","reason":"invalid_argument","type":"denied_authentication"}'
+    headers:
+      Content-Length:
+      - "116"
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 20 Nov 2024 11:07:06 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge03)
+      Strict-Transport-Security:
+      - max-age=63072000
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Request-Id:
+      - 8723575e-0397-4e42-ad78-1fb6ec3fd013
+    status: 401 Unauthorized
+    code: 401
+    duration: ""
