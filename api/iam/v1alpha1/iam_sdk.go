@@ -81,6 +81,48 @@ func (enum *BearerType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type GracePeriodType string
+
+const (
+	// Unknown grace period type.
+	GracePeriodTypeUnknownGracePeriodType = GracePeriodType("unknown_grace_period_type")
+	// Password should be updated.
+	GracePeriodTypeUpdatePassword = GracePeriodType("update_password")
+	// MFA should be configured.
+	GracePeriodTypeSetMfa = GracePeriodType("set_mfa")
+)
+
+func (enum GracePeriodType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_grace_period_type"
+	}
+	return string(enum)
+}
+
+func (enum GracePeriodType) Values() []GracePeriodType {
+	return []GracePeriodType{
+		"unknown_grace_period_type",
+		"update_password",
+		"set_mfa",
+	}
+}
+
+func (enum GracePeriodType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *GracePeriodType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = GracePeriodType(GracePeriodType(tmp).String())
+	return nil
+}
+
 type ListAPIKeysRequestOrderBy string
 
 const (
@@ -930,6 +972,19 @@ type Application struct {
 	Tags []string `json:"tags"`
 }
 
+// GracePeriod: grace period.
+type GracePeriod struct {
+	// Type: type of grace period.
+	// Default value: unknown_grace_period_type
+	Type GracePeriodType `json:"type"`
+
+	// CreatedAt: date and time the grace period was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// ExpiresAt: date and time the grace period expires.
+	ExpiresAt *time.Time `json:"expires_at"`
+}
+
 // Group: group.
 type Group struct {
 	// ID: ID of the group.
@@ -1602,6 +1657,18 @@ func (r *ListApplicationsResponse) UnsafeAppend(res interface{}) (uint32, error)
 	return uint32(len(results.Applications)), nil
 }
 
+// ListGracePeriodsRequest: list grace periods request.
+type ListGracePeriodsRequest struct {
+	// UserID: ID of the user to list grace periods for.
+	UserID *string `json:"-"`
+}
+
+// ListGracePeriodsResponse: list grace periods response.
+type ListGracePeriodsResponse struct {
+	// GracePeriods: list of grace periods.
+	GracePeriods []*GracePeriod `json:"grace_periods"`
+}
+
 // ListGroupsRequest: list groups request.
 type ListGroupsRequest struct {
 	// OrderBy: sort order of groups.
@@ -2074,6 +2141,7 @@ func (r *ListUsersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // LockUserRequest: lock user request.
 type LockUserRequest struct {
+	// UserID: ID of the user to lock.
 	UserID string `json:"-"`
 }
 
@@ -2117,6 +2185,7 @@ type SetRulesResponse struct {
 
 // UnlockUserRequest: unlock user request.
 type UnlockUserRequest struct {
+	// UserID: ID of the user to unlock.
 	UserID string `json:"-"`
 }
 
@@ -2577,6 +2646,28 @@ func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*Us
 	}
 
 	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListGracePeriods: List the grace periods of a user.
+func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.RequestOption) (*ListGracePeriodsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "user_id", req.UserID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/grace-periods",
+		Query:  query,
+	}
+
+	var resp ListGracePeriodsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
