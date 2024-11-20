@@ -199,3 +199,20 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 	}
 	return readReplica.(*ReadReplica), nil
 }
+
+func (s *API) FetchLatestEngineVersion(engineName string) (string, error) {
+	engines, err := s.ListDatabaseEngines(&ListDatabaseEnginesRequest{})
+	if err != nil {
+		return "", err
+	}
+	latestEngineVersion := ""
+	for _, engine := range engines.Engines {
+		if engine.Name == engineName {
+			if len(engine.Versions) > 0 {
+				latestEngineVersion = engine.Versions[0].Name
+				break
+			}
+		}
+	}
+	return latestEngineVersion, nil
+}
