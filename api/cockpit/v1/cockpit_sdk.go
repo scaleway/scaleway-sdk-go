@@ -46,8 +46,8 @@ const (
 	DataSourceOriginUnknownOrigin = DataSourceOrigin("unknown_origin")
 	// Data source managed by Scaleway, used to store and query metrics and logs from Scaleway resources.
 	DataSourceOriginScaleway = DataSourceOrigin("scaleway")
-	// Data source created by the user, used to store and query metrics, logs and traces from user's external resources.
-	DataSourceOriginExternal = DataSourceOrigin("external")
+	// Data source created by the user, used to store and query metrics, logs and traces from user's custom resources.
+	DataSourceOriginCustom = DataSourceOrigin("custom")
 )
 
 func (enum DataSourceOrigin) String() string {
@@ -62,7 +62,7 @@ func (enum DataSourceOrigin) Values() []DataSourceOrigin {
 	return []DataSourceOrigin{
 		"unknown_origin",
 		"scaleway",
-		"external",
+		"custom",
 	}
 }
 
@@ -725,6 +725,11 @@ type AlertManager struct {
 	Region scw.Region `json:"region"`
 }
 
+// CockpitMetrics: cockpit metrics.
+type CockpitMetrics struct {
+	Timeseries []*scw.TimeSeries `json:"timeseries"`
+}
+
 // GetConfigResponse: Cockpit configuration.
 type GetConfigResponse struct {
 	// CustomMetricsRetention: custom metrics retention configuration.
@@ -1183,6 +1188,17 @@ type RegionalAPIGetAlertManagerRequest struct {
 
 	// ProjectID: project ID of the requested Alert manager.
 	ProjectID string `json:"project_id"`
+}
+
+// RegionalAPIGetCockpitMetricsRequest: regional api get cockpit metrics request.
+type RegionalAPIGetCockpitMetricsRequest struct {
+	ProjectID string `json:"-"`
+
+	StartDate *time.Time `json:"-"`
+
+	EndDate *time.Time `json:"-"`
+
+	Query string `json:"-"`
 }
 
 // RegionalAPIGetConfigRequest: Get Cockpit configuration.
@@ -2470,4 +2486,34 @@ func (s *RegionalAPI) TriggerTestAlert(req *RegionalAPITriggerTestAlertRequest, 
 		return err
 	}
 	return nil
+}
+
+// GetCockpitMetrics:
+func (s *RegionalAPI) GetCockpitMetrics(req *RegionalAPIGetCockpitMetricsRequest, opts ...scw.RequestOption) (*CockpitMetrics, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "start_date", req.StartDate)
+	parameter.AddToQuery(query, "end_date", req.EndDate)
+	parameter.AddToQuery(query, "query", req.Query)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1beta1/cockpit/metrics",
+		Query:  query,
+	}
+
+	var resp CockpitMetrics
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
