@@ -3,7 +3,7 @@ package scalewaysdkgo
 // This test file makes sure that all the auto-generated code compiles.
 
 import (
-	_ "github.com/scaleway/scaleway-sdk-go/api/account/v2alpha1"
+	_ "github.com/scaleway/scaleway-sdk-go/api/account/v3"
 	_ "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/domain/v2beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/instance/v1"
