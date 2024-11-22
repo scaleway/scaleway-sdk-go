@@ -1964,6 +1964,8 @@ type NodeMetadata struct {
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
+
+	RepoURI string `json:"repo_uri"`
 }
 
 // RebootNodeRequest: reboot node request.
