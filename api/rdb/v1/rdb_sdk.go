@@ -1815,7 +1815,7 @@ type CreateInstanceRequest struct {
 	// UserName: username created when the Database Instance is created.
 	UserName string `json:"user_name"`
 
-	// Password: password of the user.
+	// Password: password of the user. Password must be between 8 and 128 characters, contain at least one digit, one uppercase, one lowercase and one special character.
 	Password string `json:"password"`
 
 	// NodeType: type of node to use for the Database Instance.
@@ -1903,7 +1903,7 @@ type CreateUserRequest struct {
 	// Name: name of the user you want to create.
 	Name string `json:"name"`
 
-	// Password: password of the user you want to create.
+	// Password: password of the user you want to create. Password must be between 8 and 128 characters, contain at least one digit, one uppercase, one lowercase and one special character.
 	Password string `json:"password"`
 
 	// IsAdmin: defines whether the user will have administrative privileges.
@@ -2811,7 +2811,7 @@ type UpdateUserRequest struct {
 	// Name: name of the database user.
 	Name string `json:"-"`
 
-	// Password: password of the database user.
+	// Password: password of the database user. Password must be between 8 and 128 characters, contain at least one digit, one uppercase, one lowercase and one special character.
 	Password *string `json:"password,omitempty"`
 
 	// IsAdmin: defines whether or not this user got administrative privileges.
