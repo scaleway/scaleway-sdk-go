@@ -6,7 +6,6 @@ import (
 	_ "github.com/scaleway/scaleway-sdk-go/api/account/v3"
 	_ "github.com/scaleway/scaleway-sdk-go/api/applesilicon/v1alpha1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/baremetal/v1"
-	_ "github.com/scaleway/scaleway-sdk-go/api/billing/v2alpha1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/billing/v2beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/cockpit/v1"
