@@ -1475,16 +1475,16 @@ type ServerMaintenance struct {
 type VolumeServer struct {
 	ID string `json:"id"`
 
-	Name string `json:"name"`
+	Name *string `json:"name"`
 
 	// Deprecated
 	ExportURI *string `json:"export_uri"`
 
-	Organization string `json:"organization"`
+	Organization *string `json:"organization"`
 
 	Server *ServerSummary `json:"server"`
 
-	Size scw.Size `json:"size"`
+	Size *scw.Size `json:"size"`
 
 	// VolumeType: default value: l_ssd
 	VolumeType VolumeServerVolumeType `json:"volume_type"`
@@ -1494,9 +1494,9 @@ type VolumeServer struct {
 	ModificationDate *time.Time `json:"modification_date"`
 
 	// State: default value: available
-	State VolumeServerState `json:"state"`
+	State *VolumeServerState `json:"state"`
 
-	Project string `json:"project"`
+	Project *string `json:"project"`
 
 	Boot bool `json:"boot"`
 
