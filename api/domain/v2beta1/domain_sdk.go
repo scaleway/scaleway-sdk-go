@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	std "github.com/scaleway/scaleway-sdk-go/api/std"
 )
 
 // always import dependencies
