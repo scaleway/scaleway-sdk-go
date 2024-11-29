@@ -85,6 +85,7 @@ const (
 	ResourceTypeKubeCluster       = ResourceType("kube_cluster")
 	ResourceTypeKubePool          = ResourceType("kube_pool")
 	ResourceTypeKubeNode          = ResourceType("kube_node")
+	ResourceTypeKubeACL           = ResourceType("kube_acl")
 )
 
 func (enum ResourceType) String() string {
@@ -103,6 +104,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"kube_cluster",
 		"kube_pool",
 		"kube_node",
+		"kube_acl",
 	}
 }
 
@@ -119,6 +121,10 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 
 	*enum = ResourceType(ResourceType(tmp).String())
 	return nil
+}
+
+// KubernetesACLInfo: kubernetes acl info.
+type KubernetesACLInfo struct {
 }
 
 // KubernetesClusterInfo: kubernetes cluster info.
@@ -169,20 +175,23 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 }
 
 // Event: event.
