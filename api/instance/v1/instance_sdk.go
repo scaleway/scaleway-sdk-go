@@ -2108,6 +2108,14 @@ type AttachServerVolumeResponse struct {
 	Server *Server `json:"server"`
 }
 
+// CheckBlockMigrationOrganizationQuotasRequest: check block migration organization quotas request.
+type CheckBlockMigrationOrganizationQuotasRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	Organization string `json:"organization,omitempty"`
+}
+
 // CreateIPRequest: create ip request.
 type CreateIPRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -6628,6 +6636,41 @@ func (s *API) ApplyBlockMigration(req *ApplyBlockMigrationRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/block-migration/apply",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CheckBlockMigrationOrganizationQuotas:
+func (s *API) CheckBlockMigrationOrganizationQuotas(req *CheckBlockMigrationOrganizationQuotasRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if req.Organization == "" {
+		defaultOrganization, _ := s.client.GetDefaultOrganizationID()
+		req.Organization = defaultOrganization
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/block-migration/check-organization-quotas",
 	}
 
 	err = scwReq.SetBody(req)
