@@ -196,41 +196,58 @@ type Resource struct {
 
 // Event: event.
 type Event struct {
+	// ID: ID of the event.
 	ID string `json:"id"`
 
+	// RecordedAt: timestamp of the event.
 	RecordedAt *time.Time `json:"recorded_at"`
 
+	// Locality: locality of the resource attached to the event.
 	Locality string `json:"locality"`
 
+	// Principal: user or IAM application at the origin of the event.
 	Principal *EventPrincipal `json:"principal"`
 
+	// OrganizationID: organization ID containing the event.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: (Optional) Project of the resource attached to the event.
 	ProjectID *string `json:"project_id"`
 
+	// SourceIP: IP address at the origin of the event.
 	SourceIP net.IP `json:"source_ip"`
 
+	// UserAgent: user Agent at the origin of the event.
 	UserAgent *string `json:"user_agent"`
 
+	// ProductName: product name of the resource attached to the event.
 	ProductName string `json:"product_name"`
 
+	// ServiceName: API name called to trigger the event.
 	ServiceName string `json:"service_name"`
 
+	// MethodName: API method called to trigger the event.
 	MethodName string `json:"method_name"`
 
+	// Resource: resource attached to the event.
 	Resource *Resource `json:"resource"`
 
+	// RequestID: unique identifier of the request at the origin of the event.
 	RequestID string `json:"request_id"`
 
+	// RequestBody: request at the origin of the event.
 	RequestBody *scw.JSONObject `json:"request_body"`
 
+	// StatusCode: HTTP status code resulting of the API call.
 	StatusCode uint32 `json:"status_code"`
 }
 
 // Product: product.
 type Product struct {
+	// Title: product title.
 	Title string `json:"title"`
 
+	// Name: product name.
 	Name string `json:"name"`
 }
 
@@ -289,8 +306,10 @@ type ListProductsRequest struct {
 
 // ListProductsResponse: list products response.
 type ListProductsResponse struct {
+	// Products: list of all products integrated with Audit Trail.
 	Products []*Product `json:"products"`
 
+	// TotalCount: number of integrated products.
 	TotalCount uint64 `json:"total_count"`
 }
 
