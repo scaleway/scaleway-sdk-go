@@ -636,6 +636,9 @@ type HostingSummary struct {
 	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: date on which the Web Hosting plan was created.
+	CreatedAt *time.Time `json:"created_at"`
+
 	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
