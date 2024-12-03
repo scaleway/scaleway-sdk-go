@@ -339,6 +339,9 @@ type ListIPsRequest struct {
 	// ResourceID: resource ID to filter for. Only IPs attached to this resource will be returned.
 	ResourceID *string `json:"-"`
 
+	// ResourceIDs: resource IDs to filter for. Only IPs attached to at least one of these resources will be returned.
+	ResourceIDs []string `json:"-"`
+
 	// ResourceType: resource type to filter for. Only IPs attached to this type of resource will be returned.
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
@@ -640,6 +643,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "attached", req.Attached)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
+	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
 	parameter.AddToQuery(query, "mac_address", req.MacAddress)
 	parameter.AddToQuery(query, "tags", req.Tags)
