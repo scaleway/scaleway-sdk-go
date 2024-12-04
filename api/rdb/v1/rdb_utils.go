@@ -1,6 +1,7 @@
 package rdb
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -198,4 +199,24 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 		return nil, errors.Wrap(err, "waiting for read replica failed")
 	}
 	return readReplica.(*ReadReplica), nil
+}
+
+func (s *API) FetchLatestEngineVersion(engineName string) (string, error) {
+	engines, err := s.ListDatabaseEngines(&ListDatabaseEnginesRequest{})
+	if err != nil {
+		return "", err
+	}
+	latestEngineVersion := ""
+	for _, engine := range engines.Engines {
+		if engine.Name == engineName {
+			if len(engine.Versions) > 0 {
+				latestEngineVersion = engine.Versions[0].Name
+				break
+			}
+		}
+	}
+	if latestEngineVersion == "" {
+		return "", fmt.Errorf("no versions found for engine: %s", engineName)
+	}
+	return latestEngineVersion, nil
 }
