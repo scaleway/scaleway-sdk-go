@@ -670,6 +670,9 @@ type NatsAPIListNatsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: include only NATS accounts in this Project.
+	ProjectID *string `json:"-"`
+
 	// NatsAccountID: include only credentials for this NATS account.
 	NatsAccountID *string `json:"-"`
 
@@ -1230,6 +1233,7 @@ func (s *NatsAPI) ListNatsCredentials(req *NatsAPIListNatsCredentialsRequest, op
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "nats_account_id", req.NatsAccountID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
