@@ -338,25 +338,25 @@ type File struct {
 
 // SnsPermissions: sns permissions.
 type SnsPermissions struct {
-	// CanPublish: defines whether the credentials bearer can publish messages to the service (publish to SNS topics).
+	// CanPublish: defines whether the credentials bearer can publish messages to the service (publish to Topics and Events topics).
 	CanPublish *bool `json:"can_publish"`
 
 	// CanReceive: defines whether the credentials bearer can receive messages from the service (configure subscriptions).
 	CanReceive *bool `json:"can_receive"`
 
-	// CanManage: defines whether the credentials bearer can manage the associated SNS topics or subscriptions.
+	// CanManage: defines whether the credentials bearer can manage the associated Topics and Events topics or subscriptions.
 	CanManage *bool `json:"can_manage"`
 }
 
 // SqsPermissions: sqs permissions.
 type SqsPermissions struct {
-	// CanPublish: defines whether the credentials bearer can publish messages to the service (send messages to SQS queues).
+	// CanPublish: defines whether the credentials bearer can publish messages to the service (send messages to Queues queues).
 	CanPublish *bool `json:"can_publish"`
 
-	// CanReceive: defines whether the credentials bearer can receive messages from SQS queues.
+	// CanReceive: defines whether the credentials bearer can receive messages from Queues queues.
 	CanReceive *bool `json:"can_receive"`
 
-	// CanManage: defines whether the credentials bearer can manage the associated SQS queues.
+	// CanManage: defines whether the credentials bearer can manage the associated Queues queues.
 	CanManage *bool `json:"can_manage"`
 }
 
@@ -431,7 +431,7 @@ type SnsCredentials struct {
 	// AccessKey: access key ID.
 	AccessKey string `json:"access_key"`
 
-	// SecretKey: secret key ID (Only returned by **Create SNS Credentials** call).
+	// SecretKey: secret key ID (Only returned by **Create Topics and Events Credentials** call).
 	SecretKey string `json:"secret_key"`
 
 	// SecretChecksum: checksum of the Secret key.
@@ -464,7 +464,7 @@ type SqsCredentials struct {
 	// AccessKey: access key ID.
 	AccessKey string `json:"access_key"`
 
-	// SecretKey: secret key ID (Only returned by **Create SQS Credentials** call).
+	// SecretKey: secret key ID (Only returned by **Create Queues Credentials** call).
 	SecretKey string `json:"secret_key"`
 
 	// SecretChecksum: checksum of the Secret key.
@@ -535,7 +535,7 @@ type ListSnsCredentialsResponse struct {
 	// TotalCount: total count of existing credentials (matching any filters specified).
 	TotalCount uint64 `json:"total_count"`
 
-	// SnsCredentials: sNS credentials on this page.
+	// SnsCredentials: topics and Events credentials on this page.
 	SnsCredentials []*SnsCredentials `json:"sns_credentials"`
 }
 
@@ -563,7 +563,7 @@ type ListSqsCredentialsResponse struct {
 	// TotalCount: total count of existing credentials (matching any filters specified).
 	TotalCount uint64 `json:"total_count"`
 
-	// SqsCredentials: sQS credentials on this page.
+	// SqsCredentials: queues credentials on this page.
 	SqsCredentials []*SqsCredentials `json:"sqs_credentials"`
 }
 
@@ -704,7 +704,7 @@ type SnsAPIActivateSnsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project on which to activate the SNS service.
+	// ProjectID: project on which to activate the Topics and Events service.
 	ProjectID string `json:"project_id"`
 }
 
@@ -713,7 +713,7 @@ type SnsAPICreateSnsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project containing the SNS credentials.
+	// ProjectID: project containing the Topics and Events credentials.
 	ProjectID string `json:"project_id"`
 
 	// Name: name of the credentials.
@@ -728,7 +728,7 @@ type SnsAPIDeactivateSnsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project on which to deactivate the SNS service.
+	// ProjectID: project on which to deactivate the Topics and Events service.
 	ProjectID string `json:"project_id"`
 }
 
@@ -746,7 +746,7 @@ type SnsAPIGetSnsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// SnsCredentialsID: ID of the SNS credentials to get.
+	// SnsCredentialsID: ID of the Topics and Events credentials to get.
 	SnsCredentialsID string `json:"-"`
 }
 
@@ -755,7 +755,7 @@ type SnsAPIGetSnsInfoRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project to retrieve SNS info from.
+	// ProjectID: project to retrieve Topics and Events info from.
 	ProjectID string `json:"project_id"`
 }
 
@@ -764,7 +764,7 @@ type SnsAPIListSnsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: include only SNS credentials in this Project.
+	// ProjectID: include only Topics and Events credentials in this Project.
 	ProjectID *string `json:"-"`
 
 	// Page: page number to return.
@@ -783,7 +783,7 @@ type SnsAPIUpdateSnsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// SnsCredentialsID: ID of the SNS credentials to update.
+	// SnsCredentialsID: ID of the Topics and Events credentials to update.
 	SnsCredentialsID string `json:"-"`
 
 	// Name: name of the credentials.
@@ -801,17 +801,17 @@ type SnsInfo struct {
 	// Region: region of the service.
 	Region scw.Region `json:"region"`
 
-	// CreatedAt: sNS creation date.
+	// CreatedAt: topics and Events creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: sNS last modification date.
+	// UpdatedAt: topics and Events last modification date.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Status: sNS activation status.
+	// Status: topics and Events activation status.
 	// Default value: unknown_status
 	Status SnsInfoStatus `json:"status"`
 
-	// SnsEndpointURL: endpoint of the SNS service for this region and project.
+	// SnsEndpointURL: endpoint of the Topics and Events service for this region and project.
 	SnsEndpointURL string `json:"sns_endpoint_url"`
 }
 
@@ -820,7 +820,7 @@ type SqsAPIActivateSqsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project on which to activate the SQS service.
+	// ProjectID: project on which to activate the Queues service.
 	ProjectID string `json:"project_id"`
 }
 
@@ -829,7 +829,7 @@ type SqsAPICreateSqsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project containing the SQS credentials.
+	// ProjectID: project containing the Queues credentials.
 	ProjectID string `json:"project_id"`
 
 	// Name: name of the credentials.
@@ -844,7 +844,7 @@ type SqsAPIDeactivateSqsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project on which to deactivate the SQS service.
+	// ProjectID: project on which to deactivate the Queues service.
 	ProjectID string `json:"project_id"`
 }
 
@@ -862,7 +862,7 @@ type SqsAPIGetSqsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// SqsCredentialsID: ID of the SQS credentials to get.
+	// SqsCredentialsID: ID of the Queues credentials to get.
 	SqsCredentialsID string `json:"-"`
 }
 
@@ -871,7 +871,7 @@ type SqsAPIGetSqsInfoRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: project to retrieve SQS info from.
+	// ProjectID: project to retrieve Queues info from.
 	ProjectID string `json:"project_id"`
 }
 
@@ -880,7 +880,7 @@ type SqsAPIListSqsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: include only SQS credentials in this Project.
+	// ProjectID: include only Queues credentials in this Project.
 	ProjectID *string `json:"-"`
 
 	// Page: page number to return.
@@ -899,7 +899,7 @@ type SqsAPIUpdateSqsCredentialsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// SqsCredentialsID: ID of the SQS credentials to update.
+	// SqsCredentialsID: ID of the Queues credentials to update.
 	SqsCredentialsID string `json:"-"`
 
 	// Name: name of the credentials.
@@ -917,21 +917,21 @@ type SqsInfo struct {
 	// Region: region of the service.
 	Region scw.Region `json:"region"`
 
-	// CreatedAt: sQS creation date.
+	// CreatedAt: queues creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: sQS last modification date.
+	// UpdatedAt: queues last modification date.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Status: sQS activation status.
+	// Status: queues activation status.
 	// Default value: unknown_status
 	Status SqsInfoStatus `json:"status"`
 
-	// SqsEndpointURL: endpoint of the SQS service for this region and project.
+	// SqsEndpointURL: endpoint of the Queues service for this region and project.
 	SqsEndpointURL string `json:"sqs_endpoint_url"`
 }
 
-// This API allows you to manage Scaleway Messaging and Queuing NATS accounts.
+// This API allows you to manage Scaleway NATS accounts.
 type NatsAPI struct {
 	client *scw.Client
 }
@@ -1258,7 +1258,7 @@ func (s *NatsAPI) ListNatsCredentials(req *NatsAPIListNatsCredentialsRequest, op
 	return &resp, nil
 }
 
-// This API allows you to manage your Scaleway Messaging and Queuing SNS brokers.
+// This API allows you to manage your Scaleway Topics and Events.
 type SnsAPI struct {
 	client *scw.Client
 }
@@ -1273,7 +1273,7 @@ func (s *SnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
-// ActivateSns: Activate SNS for the specified Project ID. SNS must be activated before any usage. Activating SNS does not trigger any billing, and you can deactivate at any time.
+// ActivateSns: Activate Topics and Events for the specified Project ID. Topics and Events must be activated before any usage. Activating Topics and Events does not trigger any billing, and you can deactivate at any time.
 func (s *SnsAPI) ActivateSns(req *SnsAPIActivateSnsRequest, opts ...scw.RequestOption) (*SnsInfo, error) {
 	var err error
 
@@ -1310,7 +1310,7 @@ func (s *SnsAPI) ActivateSns(req *SnsAPIActivateSnsRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-// GetSnsInfo: Retrieve the SNS information of the specified Project ID. Informations include the activation status and the SNS API endpoint URL.
+// GetSnsInfo: Retrieve the Topics and Events information of the specified Project ID. Informations include the activation status and the Topics and Events API endpoint URL.
 func (s *SnsAPI) GetSnsInfo(req *SnsAPIGetSnsInfoRequest, opts ...scw.RequestOption) (*SnsInfo, error) {
 	var err error
 
@@ -1346,7 +1346,7 @@ func (s *SnsAPI) GetSnsInfo(req *SnsAPIGetSnsInfoRequest, opts ...scw.RequestOpt
 	return &resp, nil
 }
 
-// DeactivateSns: Deactivate SNS for the specified Project ID.You must delete all topics and credentials before this call or you need to set the force_delete parameter.
+// DeactivateSns: Deactivate Topics and Events for the specified Project ID. You must delete all topics and credentials before this call or you need to set the force_delete parameter.
 func (s *SnsAPI) DeactivateSns(req *SnsAPIDeactivateSnsRequest, opts ...scw.RequestOption) (*SnsInfo, error) {
 	var err error
 
@@ -1383,7 +1383,7 @@ func (s *SnsAPI) DeactivateSns(req *SnsAPIDeactivateSnsRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// CreateSnsCredentials: Create a set of credentials for SNS, specified by a Project ID. Credentials give the bearer access to topics, and the level of permissions can be defined granularly.
+// CreateSnsCredentials: Create a set of credentials for Topics and Events, specified by a Project ID. Credentials give the bearer access to topics, and the level of permissions can be defined granularly.
 func (s *SnsAPI) CreateSnsCredentials(req *SnsAPICreateSnsCredentialsRequest, opts ...scw.RequestOption) (*SnsCredentials, error) {
 	var err error
 
@@ -1424,7 +1424,7 @@ func (s *SnsAPI) CreateSnsCredentials(req *SnsAPICreateSnsCredentialsRequest, op
 	return &resp, nil
 }
 
-// DeleteSnsCredentials: Delete a set of SNS credentials, specified by their credentials ID. Deleting credentials is irreversible and cannot be undone. The credentials can then no longer be used to access SNS.
+// DeleteSnsCredentials: Delete a set of Topics and Events credentials, specified by their credentials ID. Deleting credentials is irreversible and cannot be undone. The credentials can then no longer be used to access Topics and Events.
 func (s *SnsAPI) DeleteSnsCredentials(req *SnsAPIDeleteSnsCredentialsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1453,7 +1453,7 @@ func (s *SnsAPI) DeleteSnsCredentials(req *SnsAPIDeleteSnsCredentialsRequest, op
 	return nil
 }
 
-// UpdateSnsCredentials: Update a set of SNS credentials. You can update the credentials' name, or their permissions.
+// UpdateSnsCredentials: Update a set of Topics and Events credentials. You can update the credentials' name, or their permissions.
 func (s *SnsAPI) UpdateSnsCredentials(req *SnsAPIUpdateSnsCredentialsRequest, opts ...scw.RequestOption) (*SnsCredentials, error) {
 	var err error
 
@@ -1520,7 +1520,7 @@ func (s *SnsAPI) GetSnsCredentials(req *SnsAPIGetSnsCredentialsRequest, opts ...
 	return &resp, nil
 }
 
-// ListSnsCredentials: List existing SNS credentials in the specified region. The response contains only the metadata for the credentials, not the credentials themselves.
+// ListSnsCredentials: List existing Topics and Events credentials in the specified region. The response contains only the metadata for the credentials, not the credentials themselves.
 func (s *SnsAPI) ListSnsCredentials(req *SnsAPIListSnsCredentialsRequest, opts ...scw.RequestOption) (*ListSnsCredentialsResponse, error) {
 	var err error
 
@@ -1559,7 +1559,7 @@ func (s *SnsAPI) ListSnsCredentials(req *SnsAPIListSnsCredentialsRequest, opts .
 	return &resp, nil
 }
 
-// This API allows you to manage your Scaleway Messaging and Queuing SQS brokers.
+// This API allows you to manage your Scaleway Queues.
 type SqsAPI struct {
 	client *scw.Client
 }
@@ -1574,7 +1574,7 @@ func (s *SqsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
 
-// ActivateSqs: Activate SQS for the specified Project ID. SQS must be activated before any usage such as creating credentials and queues. Activating SQS does not trigger any billing, and you can deactivate at any time.
+// ActivateSqs: Activate Queues for the specified Project ID. Queues must be activated before any usage such as creating credentials and queues. Activating Queues does not trigger any billing, and you can deactivate at any time.
 func (s *SqsAPI) ActivateSqs(req *SqsAPIActivateSqsRequest, opts ...scw.RequestOption) (*SqsInfo, error) {
 	var err error
 
@@ -1611,7 +1611,7 @@ func (s *SqsAPI) ActivateSqs(req *SqsAPIActivateSqsRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-// GetSqsInfo: Retrieve the SQS information of the specified Project ID. Informations include the activation status and the SQS API endpoint URL.
+// GetSqsInfo: Retrieve the Queues information of the specified Project ID. Informations include the activation status and the Queues API endpoint URL.
 func (s *SqsAPI) GetSqsInfo(req *SqsAPIGetSqsInfoRequest, opts ...scw.RequestOption) (*SqsInfo, error) {
 	var err error
 
@@ -1647,7 +1647,7 @@ func (s *SqsAPI) GetSqsInfo(req *SqsAPIGetSqsInfoRequest, opts ...scw.RequestOpt
 	return &resp, nil
 }
 
-// DeactivateSqs: Deactivate SQS for the specified Project ID. You must delete all queues and credentials before this call or you need to set the force_delete parameter.
+// DeactivateSqs: Deactivate Queues for the specified Project ID. You must delete all queues and credentials before this call or you need to set the force_delete parameter.
 func (s *SqsAPI) DeactivateSqs(req *SqsAPIDeactivateSqsRequest, opts ...scw.RequestOption) (*SqsInfo, error) {
 	var err error
 
@@ -1684,7 +1684,7 @@ func (s *SqsAPI) DeactivateSqs(req *SqsAPIDeactivateSqsRequest, opts ...scw.Requ
 	return &resp, nil
 }
 
-// CreateSqsCredentials: Create a set of credentials for SQS, specified by a Project ID. Credentials give the bearer access to queues, and the level of permissions can be defined granularly.
+// CreateSqsCredentials: Create a set of credentials for Queues, specified by a Project ID. Credentials give the bearer access to queues, and the level of permissions can be defined granularly.
 func (s *SqsAPI) CreateSqsCredentials(req *SqsAPICreateSqsCredentialsRequest, opts ...scw.RequestOption) (*SqsCredentials, error) {
 	var err error
 
@@ -1725,7 +1725,7 @@ func (s *SqsAPI) CreateSqsCredentials(req *SqsAPICreateSqsCredentialsRequest, op
 	return &resp, nil
 }
 
-// DeleteSqsCredentials: Delete a set of SQS credentials, specified by their credentials ID. Deleting credentials is irreversible and cannot be undone. The credentials can then no longer be used to access SQS.
+// DeleteSqsCredentials: Delete a set of Queues credentials, specified by their credentials ID. Deleting credentials is irreversible and cannot be undone. The credentials can then no longer be used to access Queues.
 func (s *SqsAPI) DeleteSqsCredentials(req *SqsAPIDeleteSqsCredentialsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1754,7 +1754,7 @@ func (s *SqsAPI) DeleteSqsCredentials(req *SqsAPIDeleteSqsCredentialsRequest, op
 	return nil
 }
 
-// UpdateSqsCredentials: Update a set of SQS credentials. You can update the credentials' name, or their permissions.
+// UpdateSqsCredentials: Update a set of Queues credentials. You can update the credentials' name, or their permissions.
 func (s *SqsAPI) UpdateSqsCredentials(req *SqsAPIUpdateSqsCredentialsRequest, opts ...scw.RequestOption) (*SqsCredentials, error) {
 	var err error
 
@@ -1821,7 +1821,7 @@ func (s *SqsAPI) GetSqsCredentials(req *SqsAPIGetSqsCredentialsRequest, opts ...
 	return &resp, nil
 }
 
-// ListSqsCredentials: List existing SQS credentials in the specified region. The response contains only the metadata for the credentials, not the credentials themselves.
+// ListSqsCredentials: List existing Queues credentials in the specified region. The response contains only the metadata for the credentials, not the credentials themselves.
 func (s *SqsAPI) ListSqsCredentials(req *SqsAPIListSqsCredentialsRequest, opts ...scw.RequestOption) (*ListSqsCredentialsResponse, error) {
 	var err error
 
