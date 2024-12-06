@@ -1412,7 +1412,7 @@ type CreateUserRequest struct {
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
 
-	// Member: a new IAM Member to create.
+	// Member: details of IAM member. Private Beta feature.
 	// Precisely one of Email, Member must be set.
 	Member *CreateUserRequestMember `json:"member,omitempty"`
 }
@@ -2293,7 +2293,7 @@ type UpdateUserRequest struct {
 	// Tags: new tags for the user (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
 
-	// Email: new email for the user (only available on Members).
+	// Email: iAM member email.
 	Email *string `json:"email,omitempty"`
 }
 
@@ -2573,7 +2573,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserPassword: Update an user's password.
+// UpdateUserPassword: Update an user's password. Private Beta feature.
 func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2600,7 +2600,7 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// LockUser: Lock a user. Note that a locked user cannot log in or use API keys until the locked status is removed.
+// LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed. Private Beta feature.
 func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2627,7 +2627,7 @@ func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, 
 	return &resp, nil
 }
 
-// UnlockUser: Unlock a user.
+// UnlockUser: Unlock a member. Private Beta feature.
 func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2654,7 +2654,7 @@ func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// ListGracePeriods: List the grace periods of a user.
+// ListGracePeriods: List the grace periods of a member. Private Beta feature.
 func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.RequestOption) (*ListGracePeriodsResponse, error) {
 	var err error
 
@@ -3362,7 +3362,7 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id` which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that he secret key is only showed once. Make sure that you copy and store both keys somewhere safe.
+// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id`, which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that the secret key is only shown once. Make sure that you copy and store both keys somewhere safe.
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
