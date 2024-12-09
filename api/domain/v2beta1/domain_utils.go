@@ -135,3 +135,90 @@ func (s *API) WaitForDNSRecordExist(
 
 	return dns.(*Record), nil
 }
+
+// WaitForOrderDomainRequest is used by WaitForOrderDomain method.
+type WaitForOrderDomainRequest struct {
+	Domain        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForOrderDomain waits until the domain reaches a terminal status.
+func (s *RegistrarAPI) WaitForOrderDomain(
+	req *WaitForOrderDomainRequest,
+	opts ...scw.RequestOption,
+) (*Domain, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	// Terminal statuses indicating success
+	terminalStatuses := map[DomainStatus]struct{}{
+		DomainStatusActive:   {},
+		DomainStatusExpired:  {},
+		DomainStatusExpiring: {},
+		DomainStatusLocked:   {},
+	}
+
+	// Terminal statuses indicating errors
+	errorStatuses := map[DomainStatus]struct{}{
+		DomainStatusCreateError: {},
+		DomainStatusRenewError:  {},
+		DomainStatusXferError:   {},
+	}
+
+	// Transient statuses
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusCreating: {},
+		DomainStatusRenewing: {},
+		DomainStatusXfering:  {},
+		DomainStatusUpdating: {},
+		DomainStatusChecking: {},
+		DomainStatusDeleting: {},
+	}
+
+	var lastStatus DomainStatus
+
+	domain, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			resp, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			lastStatus = resp.Status
+
+			// Terminal success statuses
+			if _, isTerminal := terminalStatuses[resp.Status]; isTerminal {
+				return resp, true, nil
+			}
+
+			// Terminal error statuses
+			if _, isError := errorStatuses[resp.Status]; isError {
+				return nil, true, errors.New("domain entered error status: " + string(resp.Status))
+			}
+
+			// Transient statuses
+			if _, isTransient := transientStatuses[resp.Status]; isTransient {
+				return resp, false, nil
+			}
+
+			// Unexpected status
+			return nil, false, errors.New("unexpected domain status: " + string(resp.Status))
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for domain %s failed, last known status: %s", req.Domain, lastStatus)
+	}
+
+	return domain.(*Domain), nil
+}
