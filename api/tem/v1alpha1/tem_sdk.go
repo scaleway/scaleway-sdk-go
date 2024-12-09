@@ -634,10 +634,6 @@ const (
 	WebhookEventTypeEmailSpam = WebhookEventType("email_spam")
 	// The email hard-bounced with a "mailbox not found" error.
 	WebhookEventTypeEmailMailboxNotFound = WebhookEventType("email_mailbox_not_found")
-	// The email was blocked before it was sent, as the recipient matches a blocklist.
-	WebhookEventTypeEmailBlocklisted = WebhookEventType("email_blocklisted")
-	// A new blocklist is created.
-	WebhookEventTypeBlocklistCreated = WebhookEventType("blocklist_created")
 )
 
 func (enum WebhookEventType) String() string {
@@ -657,8 +653,6 @@ func (enum WebhookEventType) Values() []WebhookEventType {
 		"email_delivered",
 		"email_spam",
 		"email_mailbox_not_found",
-		"email_blocklisted",
-		"blocklist_created",
 	}
 }
 
