@@ -1188,8 +1188,8 @@ type Cluster struct {
 	// Deprecated: SbsCsiEnabled: defines whether the SBS-enabled CSI starting from v0.3 is installed on the cluster.
 	SbsCsiEnabled *bool `json:"sbs_csi_enabled,omitempty"`
 
-	// Deprecated: FullVpcIntegratonEnabled: defines whether VPC is fully integrated on the cluster.
-	FullVpcIntegratonEnabled *bool `json:"full_vpc_integraton_enabled,omitempty"`
+	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
+	ACLAvailable *bool `json:"acl_available,omitempty"`
 }
 
 // Node: node.
