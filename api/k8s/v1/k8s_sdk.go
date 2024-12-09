@@ -1182,9 +1182,6 @@ type Cluster struct {
 	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
-	// Deprecated: RoutedIPEnabled: defines whether routed IPs are enabled for nodes of this cluster.
-	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
-
 	// Deprecated: SbsCsiEnabled: defines whether the SBS-enabled CSI starting from v0.3 is installed on the cluster.
 	SbsCsiEnabled *bool `json:"sbs_csi_enabled,omitempty"`
 
