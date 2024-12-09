@@ -40,6 +40,92 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type DNSRecordStatus string
+
+const (
+	DNSRecordStatusUnknownStatus = DNSRecordStatus("unknown_status")
+	DNSRecordStatusValid         = DNSRecordStatus("valid")
+	DNSRecordStatusInvalid       = DNSRecordStatus("invalid")
+)
+
+func (enum DNSRecordStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum DNSRecordStatus) Values() []DNSRecordStatus {
+	return []DNSRecordStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
+func (enum DNSRecordStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DNSRecordStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DNSRecordStatus(DNSRecordStatus(tmp).String())
+	return nil
+}
+
+type DNSRecordType string
+
+const (
+	DNSRecordTypeUnknownType = DNSRecordType("unknown_type")
+	DNSRecordTypeA           = DNSRecordType("a")
+	DNSRecordTypeCname       = DNSRecordType("cname")
+	DNSRecordTypeMx          = DNSRecordType("mx")
+	DNSRecordTypeTxt         = DNSRecordType("txt")
+	DNSRecordTypeNs          = DNSRecordType("ns")
+	DNSRecordTypeAaaa        = DNSRecordType("aaaa")
+)
+
+func (enum DNSRecordType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum DNSRecordType) Values() []DNSRecordType {
+	return []DNSRecordType{
+		"unknown_type",
+		"a",
+		"cname",
+		"mx",
+		"txt",
+		"ns",
+		"aaaa",
+	}
+}
+
+func (enum DNSRecordType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DNSRecordType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DNSRecordType(DNSRecordType(tmp).String())
+	return nil
+}
+
 type DNSRecordsStatus string
 
 const (
@@ -434,6 +520,45 @@ func (enum *ListWebsitesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type NameserverStatus string
+
+const (
+	NameserverStatusUnknownStatus = NameserverStatus("unknown_status")
+	NameserverStatusValid         = NameserverStatus("valid")
+	NameserverStatusInvalid       = NameserverStatus("invalid")
+)
+
+func (enum NameserverStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum NameserverStatus) Values() []NameserverStatus {
+	return []NameserverStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
+func (enum NameserverStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = NameserverStatus(NameserverStatus(tmp).String())
+	return nil
+}
+
 type OfferOptionName string
 
 const (
@@ -592,6 +717,9 @@ type OfferOption struct {
 	// QuotaWarning: defines a warning if the maximum value for the option has been reached.
 	// Default value: unknown_warning
 	QuotaWarning OfferOptionWarning `json:"quota_warning"`
+
+	// Price: price of the option for 1 value.
+	Price *scw.Money `json:"price"`
 }
 
 // PlatformControlPanel: platform control panel.
@@ -621,6 +749,42 @@ type OfferOptionRequest struct {
 
 	// Quantity: the option requested quantity to set for the Web Hosting plan.
 	Quantity int64 `json:"quantity"`
+}
+
+// DNSRecord: dns record.
+type DNSRecord struct {
+	// Name: record name.
+	Name string `json:"name"`
+
+	// Type: record type.
+	// Default value: unknown_type
+	Type DNSRecordType `json:"type"`
+
+	// TTL: record time-to-live.
+	TTL uint32 `json:"ttl"`
+
+	// Value: record value.
+	Value string `json:"value"`
+
+	// Priority: record priority level.
+	Priority *uint32 `json:"priority"`
+
+	// Status: record status.
+	// Default value: unknown_status
+	Status DNSRecordStatus `json:"status"`
+}
+
+// Nameserver: nameserver.
+type Nameserver struct {
+	// Hostname: hostname of the nameserver.
+	Hostname string `json:"hostname"`
+
+	// Status: status of the nameserver.
+	// Default value: unknown_status
+	Status NameserverStatus `json:"status"`
+
+	// IsDefault: defines whether the nameserver is the default one.
+	IsDefault bool `json:"is_default"`
 }
 
 // HostingUser: hosting user.
@@ -772,6 +936,12 @@ type Website struct {
 	SslStatus bool `json:"ssl_status"`
 }
 
+// CheckUserOwnsDomainResponse: check user owns domain response.
+type CheckUserOwnsDomainResponse struct {
+	// OwnsDomain: indicates whether the specified project owns the domain.
+	OwnsDomain bool `json:"owns_domain"`
+}
+
 // ControlPanelAPIListControlPanelsRequest: control panel api list control panels request.
 type ControlPanelAPIListControlPanelsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -782,6 +952,40 @@ type ControlPanelAPIListControlPanelsRequest struct {
 
 	// PageSize: number of control panels to return (must be a positive integer lower or equal to 100).
 	PageSize *uint32 `json:"-"`
+}
+
+// DNSAPICheckUserOwnsDomainRequest: dnsapi check user owns domain request.
+type DNSAPICheckUserOwnsDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain for which ownership is to be verified.
+	Domain string `json:"-"`
+
+	// ProjectID: ID of the project currently in use.
+	ProjectID string `json:"project_id"`
+}
+
+// DNSAPIGetDomainDNSRecordsRequest: dnsapi get domain dns records request.
+type DNSAPIGetDomainDNSRecordsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain associated with the DNS records.
+	Domain string `json:"-"`
+}
+
+// DNSRecords: dns records.
+type DNSRecords struct {
+	// Records: list of DNS records.
+	Records []*DNSRecord `json:"records"`
+
+	// NameServers: list of nameservers.
+	NameServers []*Nameserver `json:"name_servers"`
+
+	// Status: status of the records.
+	// Default value: unknown_status
+	Status DNSRecordsStatus `json:"status"`
 }
 
 // DatabaseAPIAssignDatabaseUserRequest: database api assign database user request.
@@ -1570,7 +1774,7 @@ func NewControlPanelAPI(client *scw.Client) *ControlPanelAPI {
 	}
 }
 func (s *ControlPanelAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListControlPanels: "List the control panels type: cpanel or plesk.".
@@ -2033,6 +2237,93 @@ func (s *DatabaseAPI) UnassignDatabaseUser(req *DatabaseAPIUnassignDatabaseUserR
 	}
 
 	var resp DatabaseUser
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// This API allows you to manage your Web Hosting services.
+type DnsAPI struct {
+	client *scw.Client
+}
+
+// NewDnsAPI returns a DnsAPI object from a Scaleway client.
+func NewDnsAPI(client *scw.Client) *DnsAPI {
+	return &DnsAPI{
+		client: client,
+	}
+}
+func (s *DnsAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// GetDomainDNSRecords: Get the set of DNS records of a specified domain associated with a Web Hosting plan's domain.
+func (s *DnsAPI) GetDomainDNSRecords(req *DNSAPIGetDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/dns-records",
+	}
+
+	var resp DNSRecords
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CheckUserOwnsDomain: "Check whether you own this domain or not.".
+func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckUserOwnsDomainResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
