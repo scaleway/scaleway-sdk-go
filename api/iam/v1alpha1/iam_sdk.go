@@ -1412,7 +1412,7 @@ type CreateUserRequest struct {
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
 
-	// Member: a new IAM Member to create.
+	// Member: details of IAM member. Private Beta feature.
 	// Precisely one of Email, Member must be set.
 	Member *CreateUserRequestMember `json:"member,omitempty"`
 }
@@ -1498,6 +1498,12 @@ type GetJWTRequest struct {
 type GetLogRequest struct {
 	// LogID: ID of the log.
 	LogID string `json:"-"`
+}
+
+// GetOrganizationSecuritySettingsRequest: get organization security settings request.
+type GetOrganizationSecuritySettingsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
 }
 
 // GetPolicyRequest: get policy request.
@@ -2145,6 +2151,18 @@ type LockUserRequest struct {
 	UserID string `json:"-"`
 }
 
+// OrganizationSecuritySettings: organization security settings.
+type OrganizationSecuritySettings struct {
+	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
+	EnforcePasswordRenewal bool `json:"enforce_password_renewal"`
+
+	// GracePeriodDuration: duration of the grace period to renew password or enable MFA.
+	GracePeriodDuration *scw.Duration `json:"grace_period_duration"`
+
+	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
+	LoginAttemptsBeforeLocked uint32 `json:"login_attempts_before_locked"`
+}
+
 // RemoveGroupMemberRequest: remove group member request.
 type RemoveGroupMemberRequest struct {
 	// GroupID: ID of the group.
@@ -2231,6 +2249,21 @@ type UpdateGroupRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
+// UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
+type UpdateOrganizationSecuritySettingsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
+	EnforcePasswordRenewal *bool `json:"enforce_password_renewal,omitempty"`
+
+	// GracePeriodDuration: duration of the grace period to renew password or enable MFA.
+	GracePeriodDuration *scw.Duration `json:"grace_period_duration,omitempty"`
+
+	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
+	LoginAttemptsBeforeLocked *uint32 `json:"login_attempts_before_locked,omitempty"`
+}
+
 // UpdatePolicyRequest: update policy request.
 type UpdatePolicyRequest struct {
 	// PolicyID: id of policy to update.
@@ -2293,7 +2326,7 @@ type UpdateUserRequest struct {
 	// Tags: new tags for the user (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
 
-	// Email: new email for the user (only available on Members).
+	// Email: iAM member email.
 	Email *string `json:"email,omitempty"`
 }
 
@@ -2573,7 +2606,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserPassword: Update an user's password.
+// UpdateUserPassword: Update an user's password. Private Beta feature.
 func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2600,7 +2633,7 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// LockUser: Lock a user. Note that a locked user cannot log in or use API keys until the locked status is removed.
+// LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed. Private Beta feature.
 func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2627,7 +2660,7 @@ func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, 
 	return &resp, nil
 }
 
-// UnlockUser: Unlock a user.
+// UnlockUser: Unlock a member. Private Beta feature.
 func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2654,7 +2687,7 @@ func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// ListGracePeriods: List the grace periods of a user.
+// ListGracePeriods: List the grace periods of a member. Private Beta feature.
 func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.RequestOption) (*ListGracePeriodsResponse, error) {
 	var err error
 
@@ -3362,7 +3395,7 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id` which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that he secret key is only showed once. Make sure that you copy and store both keys somewhere safe.
+// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id`, which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that the secret key is only shown once. Make sure that you copy and store both keys somewhere safe.
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -3671,6 +3704,65 @@ func (s *API) GetLog(req *GetLogRequest, opts ...scw.RequestOption) (*Log, error
 	}
 
 	var resp Log
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetOrganizationSecuritySettings: Retrieve information about the security settings of an Organization, specified by the `organization_id` parameter.
+func (s *API) GetOrganizationSecuritySettings(req *GetOrganizationSecuritySettingsRequest, opts ...scw.RequestOption) (*OrganizationSecuritySettings, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/security-settings",
+	}
+
+	var resp OrganizationSecuritySettings
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateOrganizationSecuritySettings: Update the security settings of an Organization.
+func (s *API) UpdateOrganizationSecuritySettings(req *UpdateOrganizationSecuritySettingsRequest, opts ...scw.RequestOption) (*OrganizationSecuritySettings, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/security-settings",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp OrganizationSecuritySettings
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
