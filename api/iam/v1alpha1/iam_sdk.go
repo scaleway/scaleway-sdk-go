@@ -565,6 +565,10 @@ const (
 	ListUsersRequestOrderByLastLoginAsc = ListUsersRequestOrderBy("last_login_asc")
 	// Last login descending.
 	ListUsersRequestOrderByLastLoginDesc = ListUsersRequestOrderBy("last_login_desc")
+	// Username ascending.
+	ListUsersRequestOrderByUsernameAsc = ListUsersRequestOrderBy("username_asc")
+	// Username descending.
+	ListUsersRequestOrderByUsernameDesc = ListUsersRequestOrderBy("username_desc")
 )
 
 func (enum ListUsersRequestOrderBy) String() string {
@@ -585,6 +589,8 @@ func (enum ListUsersRequestOrderBy) Values() []ListUsersRequestOrderBy {
 		"email_desc",
 		"last_login_asc",
 		"last_login_desc",
+		"username_asc",
+		"username_desc",
 	}
 }
 
