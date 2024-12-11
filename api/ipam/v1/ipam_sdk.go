@@ -336,6 +336,9 @@ type ListIPsRequest struct {
 	// Attached: defines whether to filter only for IPs which are attached to a resource.
 	Attached *bool `json:"-"`
 
+	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
+	ResourceName *string `json:"-"`
+
 	// ResourceID: resource ID to filter for. Only IPs attached to this resource will be returned.
 	ResourceID *string `json:"-"`
 
@@ -345,6 +348,9 @@ type ListIPsRequest struct {
 	// ResourceType: resource type to filter for. Only IPs attached to this type of resource will be returned.
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
+
+	// ResourceTypes: resource types to filter for. Only IPs attached to these types of resources will be returned.
+	ResourceTypes []ResourceType `json:"-"`
 
 	// MacAddress: mAC address to filter for. Only IPs attached to a resource with this MAC address will be returned.
 	MacAddress *string `json:"-"`
@@ -358,11 +364,8 @@ type ListIPsRequest struct {
 	// IsIPv6: defines whether to filter only for IPv4s or IPv6s.
 	IsIPv6 *bool `json:"-"`
 
-	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
-	ResourceName *string `json:"-"`
-
-	// ResourceTypes: resource types to filter for. Only IPs attached to these types of resources will be returned.
-	ResourceTypes []ResourceType `json:"-"`
+	// IPIDs: IP IDs to filter for. Only IPs with these UUIDs will be returned.
+	IPIDs []string `json:"-"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -642,15 +645,16 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "attached", req.Attached)
+	parameter.AddToQuery(query, "resource_name", req.ResourceName)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
+	parameter.AddToQuery(query, "resource_types", req.ResourceTypes)
 	parameter.AddToQuery(query, "mac_address", req.MacAddress)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
-	parameter.AddToQuery(query, "resource_name", req.ResourceName)
-	parameter.AddToQuery(query, "resource_types", req.ResourceTypes)
+	parameter.AddToQuery(query, "ip_ids", req.IPIDs)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
