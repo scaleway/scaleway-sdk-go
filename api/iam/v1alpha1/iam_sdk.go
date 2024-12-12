@@ -81,6 +81,48 @@ func (enum *BearerType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type GracePeriodType string
+
+const (
+	// Unknown grace period type.
+	GracePeriodTypeUnknownGracePeriodType = GracePeriodType("unknown_grace_period_type")
+	// Password should be updated.
+	GracePeriodTypeUpdatePassword = GracePeriodType("update_password")
+	// MFA should be configured.
+	GracePeriodTypeSetMfa = GracePeriodType("set_mfa")
+)
+
+func (enum GracePeriodType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_grace_period_type"
+	}
+	return string(enum)
+}
+
+func (enum GracePeriodType) Values() []GracePeriodType {
+	return []GracePeriodType{
+		"unknown_grace_period_type",
+		"update_password",
+		"set_mfa",
+	}
+}
+
+func (enum GracePeriodType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *GracePeriodType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = GracePeriodType(GracePeriodType(tmp).String())
+	return nil
+}
+
 type ListAPIKeysRequestOrderBy string
 
 const (
@@ -523,6 +565,10 @@ const (
 	ListUsersRequestOrderByLastLoginAsc = ListUsersRequestOrderBy("last_login_asc")
 	// Last login descending.
 	ListUsersRequestOrderByLastLoginDesc = ListUsersRequestOrderBy("last_login_desc")
+	// Username ascending.
+	ListUsersRequestOrderByUsernameAsc = ListUsersRequestOrderBy("username_asc")
+	// Username descending.
+	ListUsersRequestOrderByUsernameDesc = ListUsersRequestOrderBy("username_desc")
 )
 
 func (enum ListUsersRequestOrderBy) String() string {
@@ -543,6 +589,8 @@ func (enum ListUsersRequestOrderBy) Values() []ListUsersRequestOrderBy {
 		"email_desc",
 		"last_login_asc",
 		"last_login_desc",
+		"username_asc",
+		"username_desc",
 	}
 }
 
@@ -928,6 +976,19 @@ type Application struct {
 
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
+}
+
+// GracePeriod: grace period.
+type GracePeriod struct {
+	// Type: type of grace period.
+	// Default value: unknown_grace_period_type
+	Type GracePeriodType `json:"type"`
+
+	// CreatedAt: date and time the grace period was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// ExpiresAt: date and time the grace period expires.
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // Group: group.
@@ -1357,7 +1418,7 @@ type CreateUserRequest struct {
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
 
-	// Member: a new IAM Member to create.
+	// Member: details of IAM member. Private Beta feature.
 	// Precisely one of Email, Member must be set.
 	Member *CreateUserRequestMember `json:"member,omitempty"`
 }
@@ -1443,6 +1504,12 @@ type GetJWTRequest struct {
 type GetLogRequest struct {
 	// LogID: ID of the log.
 	LogID string `json:"-"`
+}
+
+// GetOrganizationSecuritySettingsRequest: get organization security settings request.
+type GetOrganizationSecuritySettingsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
 }
 
 // GetPolicyRequest: get policy request.
@@ -1600,6 +1667,18 @@ func (r *ListApplicationsResponse) UnsafeAppend(res interface{}) (uint32, error)
 	r.Applications = append(r.Applications, results.Applications...)
 	r.TotalCount += uint32(len(results.Applications))
 	return uint32(len(results.Applications)), nil
+}
+
+// ListGracePeriodsRequest: list grace periods request.
+type ListGracePeriodsRequest struct {
+	// UserID: ID of the user to list grace periods for.
+	UserID *string `json:"-"`
+}
+
+// ListGracePeriodsResponse: list grace periods response.
+type ListGracePeriodsResponse struct {
+	// GracePeriods: list of grace periods.
+	GracePeriods []*GracePeriod `json:"grace_periods"`
 }
 
 // ListGroupsRequest: list groups request.
@@ -2074,7 +2153,20 @@ func (r *ListUsersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 
 // LockUserRequest: lock user request.
 type LockUserRequest struct {
+	// UserID: ID of the user to lock.
 	UserID string `json:"-"`
+}
+
+// OrganizationSecuritySettings: organization security settings.
+type OrganizationSecuritySettings struct {
+	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
+	EnforcePasswordRenewal bool `json:"enforce_password_renewal"`
+
+	// GracePeriodDuration: duration of the grace period to renew password or enable MFA.
+	GracePeriodDuration *scw.Duration `json:"grace_period_duration"`
+
+	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
+	LoginAttemptsBeforeLocked uint32 `json:"login_attempts_before_locked"`
 }
 
 // RemoveGroupMemberRequest: remove group member request.
@@ -2117,6 +2209,7 @@ type SetRulesResponse struct {
 
 // UnlockUserRequest: unlock user request.
 type UnlockUserRequest struct {
+	// UserID: ID of the user to unlock.
 	UserID string `json:"-"`
 }
 
@@ -2160,6 +2253,21 @@ type UpdateGroupRequest struct {
 
 	// Tags: new tags for the group (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
+type UpdateOrganizationSecuritySettingsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
+	EnforcePasswordRenewal *bool `json:"enforce_password_renewal,omitempty"`
+
+	// GracePeriodDuration: duration of the grace period to renew password or enable MFA.
+	GracePeriodDuration *scw.Duration `json:"grace_period_duration,omitempty"`
+
+	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
+	LoginAttemptsBeforeLocked *uint32 `json:"login_attempts_before_locked,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
@@ -2224,7 +2332,7 @@ type UpdateUserRequest struct {
 	// Tags: new tags for the user (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
 
-	// Email: new email for the user (only available on Members).
+	// Email: iAM member email.
 	Email *string `json:"email,omitempty"`
 }
 
@@ -2504,7 +2612,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserPassword: Update an user's password.
+// UpdateUserPassword: Update an user's password. Private Beta feature.
 func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2531,7 +2639,7 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// LockUser: Lock a user. Note that a locked user cannot log in or use API keys until the locked status is removed.
+// LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed. Private Beta feature.
 func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2558,7 +2666,7 @@ func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, 
 	return &resp, nil
 }
 
-// UnlockUser: Unlock a user.
+// UnlockUser: Unlock a member. Private Beta feature.
 func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2577,6 +2685,28 @@ func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*Us
 	}
 
 	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListGracePeriods: List the grace periods of a member. Private Beta feature.
+func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.RequestOption) (*ListGracePeriodsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "user_id", req.UserID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/grace-periods",
+		Query:  query,
+	}
+
+	var resp ListGracePeriodsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3271,7 +3401,7 @@ func (s *API) ListAPIKeys(req *ListAPIKeysRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id` which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that he secret key is only showed once. Make sure that you copy and store both keys somewhere safe.
+// CreateAPIKey: Create an API key. You must specify the `application_id` or the `user_id` and the description. You can also specify the `default_project_id`, which is the Project ID of your preferred Project, to use with Object Storage. The `access_key` and `secret_key` values are returned in the response. Note that the secret key is only shown once. Make sure that you copy and store both keys somewhere safe.
 func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 
@@ -3580,6 +3710,65 @@ func (s *API) GetLog(req *GetLogRequest, opts ...scw.RequestOption) (*Log, error
 	}
 
 	var resp Log
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetOrganizationSecuritySettings: Retrieve information about the security settings of an Organization, specified by the `organization_id` parameter.
+func (s *API) GetOrganizationSecuritySettings(req *GetOrganizationSecuritySettingsRequest, opts ...scw.RequestOption) (*OrganizationSecuritySettings, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/security-settings",
+	}
+
+	var resp OrganizationSecuritySettings
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateOrganizationSecuritySettings: Update the security settings of an Organization.
+func (s *API) UpdateOrganizationSecuritySettings(req *UpdateOrganizationSecuritySettingsRequest, opts ...scw.RequestOption) (*OrganizationSecuritySettings, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/security-settings",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp OrganizationSecuritySettings
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

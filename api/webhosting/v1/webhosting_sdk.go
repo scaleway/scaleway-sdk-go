@@ -40,42 +40,128 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type HostingDNSStatus string
+type DNSRecordStatus string
 
 const (
-	HostingDNSStatusUnknownDNSStatus = HostingDNSStatus("unknown_dns_status")
-	HostingDNSStatusValid            = HostingDNSStatus("valid")
-	HostingDNSStatusInvalid          = HostingDNSStatus("invalid")
+	DNSRecordStatusUnknownStatus = DNSRecordStatus("unknown_status")
+	DNSRecordStatusValid         = DNSRecordStatus("valid")
+	DNSRecordStatusInvalid       = DNSRecordStatus("invalid")
 )
 
-func (enum HostingDNSStatus) String() string {
+func (enum DNSRecordStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_dns_status"
+		return "unknown_status"
 	}
 	return string(enum)
 }
 
-func (enum HostingDNSStatus) Values() []HostingDNSStatus {
-	return []HostingDNSStatus{
-		"unknown_dns_status",
+func (enum DNSRecordStatus) Values() []DNSRecordStatus {
+	return []DNSRecordStatus{
+		"unknown_status",
 		"valid",
 		"invalid",
 	}
 }
 
-func (enum HostingDNSStatus) MarshalJSON() ([]byte, error) {
+func (enum DNSRecordStatus) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *HostingDNSStatus) UnmarshalJSON(data []byte) error {
+func (enum *DNSRecordStatus) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = HostingDNSStatus(HostingDNSStatus(tmp).String())
+	*enum = DNSRecordStatus(DNSRecordStatus(tmp).String())
+	return nil
+}
+
+type DNSRecordType string
+
+const (
+	DNSRecordTypeUnknownType = DNSRecordType("unknown_type")
+	DNSRecordTypeA           = DNSRecordType("a")
+	DNSRecordTypeCname       = DNSRecordType("cname")
+	DNSRecordTypeMx          = DNSRecordType("mx")
+	DNSRecordTypeTxt         = DNSRecordType("txt")
+	DNSRecordTypeNs          = DNSRecordType("ns")
+	DNSRecordTypeAaaa        = DNSRecordType("aaaa")
+)
+
+func (enum DNSRecordType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum DNSRecordType) Values() []DNSRecordType {
+	return []DNSRecordType{
+		"unknown_type",
+		"a",
+		"cname",
+		"mx",
+		"txt",
+		"ns",
+		"aaaa",
+	}
+}
+
+func (enum DNSRecordType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DNSRecordType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DNSRecordType(DNSRecordType(tmp).String())
+	return nil
+}
+
+type DNSRecordsStatus string
+
+const (
+	DNSRecordsStatusUnknownStatus = DNSRecordsStatus("unknown_status")
+	DNSRecordsStatusValid         = DNSRecordsStatus("valid")
+	DNSRecordsStatusInvalid       = DNSRecordsStatus("invalid")
+)
+
+func (enum DNSRecordsStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum DNSRecordsStatus) Values() []DNSRecordsStatus {
+	return []DNSRecordsStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
+func (enum DNSRecordsStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DNSRecordsStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DNSRecordsStatus(DNSRecordsStatus(tmp).String())
 	return nil
 }
 
@@ -434,6 +520,45 @@ func (enum *ListWebsitesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type NameserverStatus string
+
+const (
+	NameserverStatusUnknownStatus = NameserverStatus("unknown_status")
+	NameserverStatusValid         = NameserverStatus("valid")
+	NameserverStatusInvalid       = NameserverStatus("invalid")
+)
+
+func (enum NameserverStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum NameserverStatus) Values() []NameserverStatus {
+	return []NameserverStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+	}
+}
+
+func (enum NameserverStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = NameserverStatus(NameserverStatus(tmp).String())
+	return nil
+}
+
 type OfferOptionName string
 
 const (
@@ -520,6 +645,54 @@ func (enum *OfferOptionWarning) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PlatformPlatformGroup string
+
+const (
+	PlatformPlatformGroupUnknownGroup = PlatformPlatformGroup("unknown_group")
+	PlatformPlatformGroupDefault      = PlatformPlatformGroup("default")
+	PlatformPlatformGroupPremium      = PlatformPlatformGroup("premium")
+)
+
+func (enum PlatformPlatformGroup) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_group"
+	}
+	return string(enum)
+}
+
+func (enum PlatformPlatformGroup) Values() []PlatformPlatformGroup {
+	return []PlatformPlatformGroup{
+		"unknown_group",
+		"default",
+		"premium",
+	}
+}
+
+func (enum PlatformPlatformGroup) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PlatformPlatformGroup) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PlatformPlatformGroup(PlatformPlatformGroup(tmp).String())
+	return nil
+}
+
+// PlatformControlPanelURLs: platform control panel ur ls.
+type PlatformControlPanelURLs struct {
+	// Dashboard: URL to connect to the hosting control panel dashboard.
+	Dashboard string `json:"dashboard"`
+
+	// Webmail: URL to connect to the hosting Webmail interface.
+	Webmail string `json:"webmail"`
+}
+
 // OfferOption: offer option.
 type OfferOption struct {
 	// ID: option ID.
@@ -544,6 +717,18 @@ type OfferOption struct {
 	// QuotaWarning: defines a warning if the maximum value for the option has been reached.
 	// Default value: unknown_warning
 	QuotaWarning OfferOptionWarning `json:"quota_warning"`
+
+	// Price: price of the option for 1 value.
+	Price *scw.Money `json:"price"`
+}
+
+// PlatformControlPanel: platform control panel.
+type PlatformControlPanel struct {
+	// Name: name of the control panel.
+	Name string `json:"name"`
+
+	// URLs: URL to connect to cPanel dashboard and to Webmail interface.
+	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
@@ -566,24 +751,98 @@ type OfferOptionRequest struct {
 	Quantity int64 `json:"quantity"`
 }
 
-// HostingCpanelURLs: hosting cpanel ur ls.
-type HostingCpanelURLs struct {
-	Dashboard string `json:"dashboard"`
+// DNSRecord: dns record.
+type DNSRecord struct {
+	// Name: record name.
+	Name string `json:"name"`
 
-	Webmail string `json:"webmail"`
+	// Type: record type.
+	// Default value: unknown_type
+	Type DNSRecordType `json:"type"`
+
+	// TTL: record time-to-live.
+	TTL uint32 `json:"ttl"`
+
+	// Value: record value.
+	Value string `json:"value"`
+
+	// Priority: record priority level.
+	Priority *uint32 `json:"priority"`
+
+	// Status: record status.
+	// Default value: unknown_status
+	Status DNSRecordStatus `json:"status"`
 }
 
-// HostingOption: hosting option.
-type HostingOption struct {
-	// ID: option ID.
+// Nameserver: nameserver.
+type Nameserver struct {
+	// Hostname: hostname of the nameserver.
+	Hostname string `json:"hostname"`
+
+	// Status: status of the nameserver.
+	// Default value: unknown_status
+	Status NameserverStatus `json:"status"`
+
+	// IsDefault: defines whether the nameserver is the default one.
+	IsDefault bool `json:"is_default"`
+}
+
+// HostingUser: hosting user.
+type HostingUser struct {
+	// Username: main Web Hosting cPanel username.
+	Username string `json:"username"`
+
+	// OneTimePassword: one-time-password used for the first login or reset password, empty after first use.
+	OneTimePassword *string `json:"one_time_password"`
+
+	// ContactEmail: contact email used for the hosting.
+	ContactEmail string `json:"contact_email"`
+}
+
+// Offer: offer.
+type Offer struct {
+	// ID: offer ID.
 	ID string `json:"id"`
 
-	// Name: option name.
-	// Default value: unknown_name
-	Name OfferOptionName `json:"name"`
+	// BillingOperationPath: unique identifier used for billing.
+	BillingOperationPath string `json:"billing_operation_path"`
 
-	// Quantity: option quantity.
-	Quantity int32 `json:"quantity"`
+	// Options: options available for the offer.
+	Options []*OfferOption `json:"options"`
+
+	// Price: price of the offer.
+	Price *scw.Money `json:"price"`
+
+	// Available: if a hosting_id was specified in the call, defines whether the offer is available for a specified hosting plan to migrate (update) to.
+	Available bool `json:"available"`
+
+	// ControlPanelName: name of the control panel.
+	ControlPanelName string `json:"control_panel_name"`
+
+	// EndOfLife: indicates if the offer has reached its end of life.
+	EndOfLife bool `json:"end_of_life"`
+}
+
+// Platform: platform.
+type Platform struct {
+	// Hostname: hostname of the host platform.
+	Hostname string `json:"hostname"`
+
+	// Number: number of the host platform.
+	Number int32 `json:"number"`
+
+	// GroupName: group name of the hosting's host platform.
+	// Default value: unknown_group
+	GroupName PlatformPlatformGroup `json:"group_name"`
+
+	// IPv4: iPv4 address of the hosting's host platform.
+	IPv4 net.IP `json:"ipv4"`
+
+	// IPv6: iPv6 address of the hosting's host platform.
+	IPv6 net.IP `json:"ipv6"`
+
+	// ControlPanel: details of the platform control panel.
+	ControlPanel *PlatformControlPanel `json:"control_panel"`
 }
 
 // ControlPanel: control panel.
@@ -636,6 +895,9 @@ type HostingSummary struct {
 	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: date on which the Web Hosting plan was created.
+	CreatedAt *time.Time `json:"created_at"`
+
 	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
@@ -662,30 +924,6 @@ type MailAccount struct {
 	Username string `json:"username"`
 }
 
-// Offer: offer.
-type Offer struct {
-	// ID: offer ID.
-	ID string `json:"id"`
-
-	// BillingOperationPath: unique identifier used for billing.
-	BillingOperationPath string `json:"billing_operation_path"`
-
-	// Options: options available for the offer.
-	Options []*OfferOption `json:"options"`
-
-	// Price: price of the offer.
-	Price *scw.Money `json:"price"`
-
-	// Available: if a hosting_id was specified in the call, defines whether the offer is available for a specified hosting plan to migrate (update) to.
-	Available bool `json:"available"`
-
-	// ControlPanelName: name of the control panel.
-	ControlPanelName string `json:"control_panel_name"`
-
-	// EndOfLife: indicates if the offer has reached its end of life.
-	EndOfLife bool `json:"end_of_life"`
-}
-
 // Website: website.
 type Website struct {
 	// Domain: the domain of the website.
@@ -698,6 +936,12 @@ type Website struct {
 	SslStatus bool `json:"ssl_status"`
 }
 
+// CheckUserOwnsDomainResponse: check user owns domain response.
+type CheckUserOwnsDomainResponse struct {
+	// OwnsDomain: indicates whether the specified project owns the domain.
+	OwnsDomain bool `json:"owns_domain"`
+}
+
 // ControlPanelAPIListControlPanelsRequest: control panel api list control panels request.
 type ControlPanelAPIListControlPanelsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -708,6 +952,40 @@ type ControlPanelAPIListControlPanelsRequest struct {
 
 	// PageSize: number of control panels to return (must be a positive integer lower or equal to 100).
 	PageSize *uint32 `json:"-"`
+}
+
+// DNSAPICheckUserOwnsDomainRequest: dnsapi check user owns domain request.
+type DNSAPICheckUserOwnsDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain for which ownership is to be verified.
+	Domain string `json:"-"`
+
+	// ProjectID: ID of the project currently in use.
+	ProjectID string `json:"project_id"`
+}
+
+// DNSAPIGetDomainDNSRecordsRequest: dnsapi get domain dns records request.
+type DNSAPIGetDomainDNSRecordsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain associated with the DNS records.
+	Domain string `json:"-"`
+}
+
+// DNSRecords: dns records.
+type DNSRecords struct {
+	// Records: list of DNS records.
+	Records []*DNSRecord `json:"records"`
+
+	// NameServers: list of nameservers.
+	NameServers []*Nameserver `json:"name_servers"`
+
+	// Status: status of the records.
+	// Default value: unknown_status
+	Status DNSRecordsStatus `json:"status"`
 }
 
 // DatabaseAPIAssignDatabaseUserRequest: database api assign database user request.
@@ -953,60 +1231,30 @@ type Hosting struct {
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
-	// PlatformHostname: hostname of the host platform.
-	PlatformHostname string `json:"platform_hostname"`
-
-	// PlatformNumber: number of the host platform.
-	PlatformNumber int32 `json:"platform_number"`
-
-	// OfferID: ID of the active offer for the Web Hosting plan.
-	OfferID string `json:"offer_id"`
-
-	// OfferName: name of the active offer for the Web Hosting plan.
-	OfferName string `json:"offer_name"`
-
 	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
+
+	// Offer: details of the Web Hosting plan offer and options.
+	Offer *Offer `json:"offer"`
+
+	// Platform: details of the hosting platform.
+	Platform *Platform `json:"platform"`
 
 	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
-	// Options: list of the Web Hosting plan options.
-	Options []*HostingOption `json:"options"`
-
 	// DNSStatus: DNS status of the Web Hosting plan.
-	// Default value: unknown_dns_status
-	DNSStatus HostingDNSStatus `json:"dns_status"`
+	// Default value: unknown_status
+	DNSStatus DNSRecordsStatus `json:"dns_status"`
 
-	// CpanelURLs: URL to connect to cPanel dashboard and to Webmail interface.
-	CpanelURLs *HostingCpanelURLs `json:"cpanel_urls"`
-
-	// Username: main Web Hosting cPanel username.
-	Username string `json:"username"`
-
-	// OfferEndOfLife: indicates if the hosting offer has reached its end of life.
-	OfferEndOfLife bool `json:"offer_end_of_life"`
-
-	// ControlPanelName: name of the control panel.
-	ControlPanelName string `json:"control_panel_name"`
-
-	// PlatformGroup: group of the hosting's host server/platform.
-	PlatformGroup string `json:"platform_group"`
-
-	// IPv4: iPv4 address of the hosting's host server.
-	IPv4 string `json:"ipv4"`
-
-	// IPv6: iPv6 address of the hosting's host server.
-	IPv6 string `json:"ipv6"`
+	// IPv4: current IPv4 address of the hosting.
+	IPv4 net.IP `json:"ipv4"`
 
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
-	// OneTimePassword: one-time-password used for the first login or reset password, empty after first use.
-	OneTimePassword string `json:"one_time_password"`
-
-	// ContactEmail: contact email used for the hosting.
-	ContactEmail string `json:"contact_email"`
+	// User: details of the hosting user.
+	User *HostingUser `json:"user"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
@@ -1526,7 +1774,7 @@ func NewControlPanelAPI(client *scw.Client) *ControlPanelAPI {
 	}
 }
 func (s *ControlPanelAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListControlPanels: "List the control panels type: cpanel or plesk.".
@@ -1997,6 +2245,93 @@ func (s *DatabaseAPI) UnassignDatabaseUser(req *DatabaseAPIUnassignDatabaseUserR
 	return &resp, nil
 }
 
+// This API allows you to manage your Web Hosting services.
+type DnsAPI struct {
+	client *scw.Client
+}
+
+// NewDnsAPI returns a DnsAPI object from a Scaleway client.
+func NewDnsAPI(client *scw.Client) *DnsAPI {
+	return &DnsAPI{
+		client: client,
+	}
+}
+func (s *DnsAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// GetDomainDNSRecords: Get the set of DNS records of a specified domain associated with a Web Hosting plan's domain.
+func (s *DnsAPI) GetDomainDNSRecords(req *DNSAPIGetDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/dns-records",
+	}
+
+	var resp DNSRecords
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CheckUserOwnsDomain: "Check whether you own this domain or not.".
+func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckUserOwnsDomainResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // This API allows you to manage your offer for your Web Hosting services.
 type OfferAPI struct {
 	client *scw.Client
@@ -2064,7 +2399,7 @@ func NewHostingAPI(client *scw.Client) *HostingAPI {
 	}
 }
 func (s *HostingAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // CreateHosting: Order a Web Hosting plan, specifying the offer type required via the `offer_id` parameter.

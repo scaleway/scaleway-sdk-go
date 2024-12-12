@@ -1182,14 +1182,11 @@ type Cluster struct {
 	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
-	// Deprecated: RoutedIPEnabled: defines whether routed IPs are enabled for nodes of this cluster.
-	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
-
 	// Deprecated: SbsCsiEnabled: defines whether the SBS-enabled CSI starting from v0.3 is installed on the cluster.
 	SbsCsiEnabled *bool `json:"sbs_csi_enabled,omitempty"`
 
-	// Deprecated: FullVpcIntegratonEnabled: defines whether VPC is fully integrated on the cluster.
-	FullVpcIntegratonEnabled *bool `json:"full_vpc_integraton_enabled,omitempty"`
+	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
+	ACLAvailable *bool `json:"acl_available,omitempty"`
 }
 
 // Node: node.
@@ -1964,6 +1961,8 @@ type NodeMetadata struct {
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
+
+	RepoURI string `json:"repo_uri"`
 }
 
 // RebootNodeRequest: reboot node request.

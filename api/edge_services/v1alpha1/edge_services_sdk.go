@@ -1219,7 +1219,7 @@ type GetBillingResponse struct {
 	// CurrentPlan: information on the currently-selected, active Edge Services subscription plan.
 	CurrentPlan *PlanDetails `json:"current_plan"`
 
-	// PlanCost: price of the current subscription plan.
+	// PlanCost: cost to date (this month) for Edge Service subscription plans. This comprises the pro-rata cost of the current subscription plan, and any previous subscription plans that were active earlier in the month.
 	PlanCost *scw.Money `json:"plan_cost"`
 
 	// PipelineNumber: total number of pipelines currently configured.

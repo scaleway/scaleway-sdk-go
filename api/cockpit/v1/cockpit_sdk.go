@@ -46,8 +46,10 @@ const (
 	DataSourceOriginUnknownOrigin = DataSourceOrigin("unknown_origin")
 	// Data source managed by Scaleway, used to store and query metrics and logs from Scaleway resources.
 	DataSourceOriginScaleway = DataSourceOrigin("scaleway")
-	// Data source created by the user, used to store and query metrics, logs and traces from user's external resources.
+	// Data source created by the user, used to store and query metrics, logs and traces from user's custom resources.
 	DataSourceOriginExternal = DataSourceOrigin("external")
+	// Data source created by the user, used to store and query metrics, logs and traces from user's custom resources.
+	DataSourceOriginCustom = DataSourceOrigin("custom")
 )
 
 func (enum DataSourceOrigin) String() string {
@@ -63,6 +65,7 @@ func (enum DataSourceOrigin) Values() []DataSourceOrigin {
 		"unknown_origin",
 		"scaleway",
 		"external",
+		"custom",
 	}
 }
 

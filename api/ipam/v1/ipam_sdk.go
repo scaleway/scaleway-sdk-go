@@ -87,23 +87,25 @@ func (enum *ListIPsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType         = ResourceType("unknown_type")
-	ResourceTypeCustom              = ResourceType("custom")
-	ResourceTypeInstanceServer      = ResourceType("instance_server")
-	ResourceTypeInstanceIP          = ResourceType("instance_ip")
-	ResourceTypeInstancePrivateNic  = ResourceType("instance_private_nic")
-	ResourceTypeLBServer            = ResourceType("lb_server")
-	ResourceTypeFipIP               = ResourceType("fip_ip")
-	ResourceTypeVpcGateway          = ResourceType("vpc_gateway")
-	ResourceTypeVpcGatewayNetwork   = ResourceType("vpc_gateway_network")
-	ResourceTypeK8sNode             = ResourceType("k8s_node")
-	ResourceTypeK8sCluster          = ResourceType("k8s_cluster")
-	ResourceTypeRdbInstance         = ResourceType("rdb_instance")
-	ResourceTypeRedisCluster        = ResourceType("redis_cluster")
-	ResourceTypeBaremetalServer     = ResourceType("baremetal_server")
-	ResourceTypeBaremetalPrivateNic = ResourceType("baremetal_private_nic")
-	ResourceTypeLlmDeployment       = ResourceType("llm_deployment")
-	ResourceTypeMgdbInstance        = ResourceType("mgdb_instance")
+	ResourceTypeUnknownType            = ResourceType("unknown_type")
+	ResourceTypeCustom                 = ResourceType("custom")
+	ResourceTypeInstanceServer         = ResourceType("instance_server")
+	ResourceTypeInstanceIP             = ResourceType("instance_ip")
+	ResourceTypeInstancePrivateNic     = ResourceType("instance_private_nic")
+	ResourceTypeLBServer               = ResourceType("lb_server")
+	ResourceTypeFipIP                  = ResourceType("fip_ip")
+	ResourceTypeVpcGateway             = ResourceType("vpc_gateway")
+	ResourceTypeVpcGatewayNetwork      = ResourceType("vpc_gateway_network")
+	ResourceTypeK8sNode                = ResourceType("k8s_node")
+	ResourceTypeK8sCluster             = ResourceType("k8s_cluster")
+	ResourceTypeRdbInstance            = ResourceType("rdb_instance")
+	ResourceTypeRedisCluster           = ResourceType("redis_cluster")
+	ResourceTypeBaremetalServer        = ResourceType("baremetal_server")
+	ResourceTypeBaremetalPrivateNic    = ResourceType("baremetal_private_nic")
+	ResourceTypeLlmDeployment          = ResourceType("llm_deployment")
+	ResourceTypeMgdbInstance           = ResourceType("mgdb_instance")
+	ResourceTypeAppleSiliconServer     = ResourceType("apple_silicon_server")
+	ResourceTypeAppleSiliconPrivateNic = ResourceType("apple_silicon_private_nic")
 )
 
 func (enum ResourceType) String() string {
@@ -133,6 +135,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"baremetal_private_nic",
 		"llm_deployment",
 		"mgdb_instance",
+		"apple_silicon_server",
+		"apple_silicon_private_nic",
 	}
 }
 
@@ -332,12 +336,21 @@ type ListIPsRequest struct {
 	// Attached: defines whether to filter only for IPs which are attached to a resource.
 	Attached *bool `json:"-"`
 
+	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
+	ResourceName *string `json:"-"`
+
 	// ResourceID: resource ID to filter for. Only IPs attached to this resource will be returned.
 	ResourceID *string `json:"-"`
+
+	// ResourceIDs: resource IDs to filter for. Only IPs attached to at least one of these resources will be returned.
+	ResourceIDs []string `json:"-"`
 
 	// ResourceType: resource type to filter for. Only IPs attached to this type of resource will be returned.
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
+
+	// ResourceTypes: resource types to filter for. Only IPs attached to these types of resources will be returned.
+	ResourceTypes []ResourceType `json:"-"`
 
 	// MacAddress: mAC address to filter for. Only IPs attached to a resource with this MAC address will be returned.
 	MacAddress *string `json:"-"`
@@ -351,11 +364,8 @@ type ListIPsRequest struct {
 	// IsIPv6: defines whether to filter only for IPv4s or IPv6s.
 	IsIPv6 *bool `json:"-"`
 
-	// ResourceName: attached resource name to filter for, only IPs attached to a resource with this string within their name will be returned.
-	ResourceName *string `json:"-"`
-
-	// ResourceTypes: resource types to filter for. Only IPs attached to these types of resources will be returned.
-	ResourceTypes []ResourceType `json:"-"`
+	// IPIDs: IP IDs to filter for. Only IPs with these UUIDs will be returned.
+	IPIDs []string `json:"-"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -635,14 +645,16 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "attached", req.Attached)
+	parameter.AddToQuery(query, "resource_name", req.ResourceName)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
+	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
+	parameter.AddToQuery(query, "resource_types", req.ResourceTypes)
 	parameter.AddToQuery(query, "mac_address", req.MacAddress)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
-	parameter.AddToQuery(query, "resource_name", req.ResourceName)
-	parameter.AddToQuery(query, "resource_types", req.ResourceTypes)
+	parameter.AddToQuery(query, "ip_ids", req.IPIDs)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
