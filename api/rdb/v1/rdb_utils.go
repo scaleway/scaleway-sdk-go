@@ -201,22 +201,24 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 	return readReplica.(*ReadReplica), nil
 }
 
-func (s *API) FetchLatestEngineVersion(engineName string) (string, error) {
+func (s *API) FetchLatestEngineVersion(engineName string) (*EngineVersion, error) {
 	engines, err := s.ListDatabaseEngines(&ListDatabaseEnginesRequest{})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	latestEngineVersion := ""
+
+	var latestEngineVersion *EngineVersion
 	for _, engine := range engines.Engines {
 		if engine.Name == engineName {
 			if len(engine.Versions) > 0 {
-				latestEngineVersion = engine.Versions[0].Name
+				latestEngineVersion = engine.Versions[0]
 				break
 			}
 		}
 	}
-	if latestEngineVersion == "" {
-		return "", fmt.Errorf("no versions found for engine: %s", engineName)
+
+	if latestEngineVersion == nil {
+		return nil, fmt.Errorf("no versions found for engine: %s", engineName)
 	}
 	return latestEngineVersion, nil
 }
