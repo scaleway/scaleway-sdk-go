@@ -194,6 +194,13 @@ type Resource struct {
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 }
 
+// ProductService: product service.
+type ProductService struct {
+	Name string `json:"name"`
+
+	Methods []string `json:"methods"`
+}
+
 // Event: event.
 type Event struct {
 	// ID: ID of the event.
@@ -249,6 +256,9 @@ type Product struct {
 
 	// Name: product name.
 	Name string `json:"name"`
+
+	// Services: specifies the API versions of the products integrated with Audit Trail. Each version defines the methods logged by Audit Trail.
+	Services []*ProductService `json:"services"`
 }
 
 // ListEventsRequest: list events request.
