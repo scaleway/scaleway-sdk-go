@@ -2336,6 +2336,13 @@ type UpdateUserRequest struct {
 	Email *string `json:"email,omitempty"`
 }
 
+// UpdateUserUsernameRequest: update user username request.
+type UpdateUserUsernameRequest struct {
+	UserID string `json:"-"`
+
+	Username string `json:"username"`
+}
+
 // This API allows you to manage Identity and Access Management (IAM) across your Scaleway Organizations, Projects and resources.
 type API struct {
 	client *scw.Client
@@ -2596,6 +2603,33 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/iam/v1alpha1/users",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateUserUsername:
+func (s *API) UpdateUserUsername(req *UpdateUserUsernameRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/update-username",
 	}
 
 	err = scwReq.SetBody(req)
