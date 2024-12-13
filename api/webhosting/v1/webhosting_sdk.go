@@ -731,6 +731,13 @@ type PlatformControlPanel struct {
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
+// CreateDatabaseRequestUser: create database request user.
+type CreateDatabaseRequestUser struct {
+	Username string `json:"username"`
+
+	Password string `json:"password"`
+}
+
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
 type CreateHostingRequestDomainConfiguration struct {
 	UpdateNameservers bool `json:"update_nameservers"`
@@ -1028,6 +1035,14 @@ type DatabaseAPICreateDatabaseRequest struct {
 
 	// DatabaseName: name of the database to be created.
 	DatabaseName string `json:"database_name"`
+
+	// NewUser: (Optional) Username and password to create a user and link to the database.
+	// Precisely one of NewUser, ExistingUsername must be set.
+	NewUser *CreateDatabaseRequestUser `json:"new_user,omitempty"`
+
+	// ExistingUsername: (Optional) Username to link an existing user to the database.
+	// Precisely one of NewUser, ExistingUsername must be set.
+	ExistingUsername *string `json:"existing_username,omitempty"`
 }
 
 // DatabaseAPICreateDatabaseUserRequest: database api create database user request.
