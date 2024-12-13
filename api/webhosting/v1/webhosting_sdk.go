@@ -731,6 +731,13 @@ type PlatformControlPanel struct {
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
+// CreateDatabaseRequestUser: create database request user.
+type CreateDatabaseRequestUser struct {
+	Username string `json:"username"`
+
+	Password string `json:"password"`
+}
+
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
 type CreateHostingRequestDomainConfiguration struct {
 	UpdateNameservers bool `json:"update_nameservers"`
@@ -911,6 +918,13 @@ type HostingSummary struct {
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
+	// DNSStatus: DNS status of the Web Hosting plan.
+	// Default value: unknown_status
+	DNSStatus DNSRecordsStatus `json:"dns_status"`
+
+	// OfferName: name of the active offer for the Web Hosting plan.
+	OfferName string `json:"offer_name"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -1028,6 +1042,14 @@ type DatabaseAPICreateDatabaseRequest struct {
 
 	// DatabaseName: name of the database to be created.
 	DatabaseName string `json:"database_name"`
+
+	// NewUser: (Optional) Username and password to create a user and link to the database.
+	// Precisely one of NewUser, ExistingUsername must be set.
+	NewUser *CreateDatabaseRequestUser `json:"new_user,omitempty"`
+
+	// ExistingUsername: (Optional) Username to link an existing user to the database.
+	// Precisely one of NewUser, ExistingUsername must be set.
+	ExistingUsername *string `json:"existing_username,omitempty"`
 }
 
 // DatabaseAPICreateDatabaseUserRequest: database api create database user request.
