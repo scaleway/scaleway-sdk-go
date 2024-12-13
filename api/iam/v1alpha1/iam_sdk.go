@@ -2338,8 +2338,10 @@ type UpdateUserRequest struct {
 
 // UpdateUserUsernameRequest: update user username request.
 type UpdateUserUsernameRequest struct {
+	// UserID: ID of the user to update.
 	UserID string `json:"-"`
 
+	// Username: the new username.
 	Username string `json:"username"`
 }
 
@@ -2619,7 +2621,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserUsername:
+// UpdateUserUsername: Update an user's username. Private Beta feature.
 func (s *API) UpdateUserUsername(req *UpdateUserUsernameRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
