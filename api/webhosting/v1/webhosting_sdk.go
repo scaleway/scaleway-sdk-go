@@ -918,6 +918,13 @@ type HostingSummary struct {
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
+	// DNSStatus: DNS status of the Web Hosting plan.
+	// Default value: unknown_status
+	DNSStatus DNSRecordsStatus `json:"dns_status"`
+
+	// OfferName: name of the active offer for the Web Hosting plan.
+	OfferName string `json:"offer_name"`
+
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
 }
