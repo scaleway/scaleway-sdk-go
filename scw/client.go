@@ -230,7 +230,7 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
 		return sdkErr
 	}
 
-	if res != nil {
+	if res != nil && httpResponse.ContentLength > 0 {
 		contentType := httpResponse.Header.Get("Content-Type")
 
 		if strings.HasPrefix(contentType, "application/json") {
