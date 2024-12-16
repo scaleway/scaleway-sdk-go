@@ -240,6 +240,7 @@ type Image struct {
 	ValidUntil *time.Time `json:"valid_until"`
 
 	// Label: typically an identifier for a distribution (ex. "ubuntu_focal").
+	// This label can be used in the image field of the server creation request.
 	Label string `json:"label"`
 }
 
@@ -257,7 +258,7 @@ type LocalImage struct {
 	// Zone: availability Zone where this local image is available.
 	Zone scw.Zone `json:"zone"`
 
-	// Label: image label this image belongs to.
+	// Label: this label can be used in the image field of the server creation request.
 	Label string `json:"label"`
 
 	// Type: type of this local image.
