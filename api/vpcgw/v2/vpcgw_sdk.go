@@ -643,6 +643,9 @@ type DeleteGatewayRequest struct {
 
 	// GatewayID: ID of the gateway to delete.
 	GatewayID string `json:"-"`
+
+	// DeleteIP: defines whether the PGW's IP should be deleted.
+	DeleteIP bool `json:"delete_ip"`
 }
 
 // DeleteIPRequest: delete ip request.
@@ -1247,6 +1250,9 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 		req.Zone = defaultZone
 	}
 
+	query := url.Values{}
+	parameter.AddToQuery(query, "delete_ip", req.DeleteIP)
+
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
 	}
@@ -1258,6 +1264,7 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/vpc-gw/v2/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "",
+		Query:  query,
 	}
 
 	var resp Gateway
