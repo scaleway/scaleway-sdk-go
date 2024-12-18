@@ -758,6 +758,14 @@ type OfferOptionRequest struct {
 	Quantity int64 `json:"quantity"`
 }
 
+// SyncDomainDNSRecordsRequestRecord: sync domain dns records request record.
+type SyncDomainDNSRecordsRequestRecord struct {
+	Name string `json:"name"`
+
+	// Type: default value: unknown_type
+	Type DNSRecordType `json:"type"`
+}
+
 // DNSRecord: dns record.
 type DNSRecord struct {
 	// Name: record name.
@@ -987,6 +995,27 @@ type DNSAPIGetDomainDNSRecordsRequest struct {
 
 	// Domain: domain associated with the DNS records.
 	Domain string `json:"-"`
+}
+
+// DNSAPISyncDomainDNSRecordsRequest: dnsapi sync domain dns records request.
+type DNSAPISyncDomainDNSRecordsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Domain: domain for which the DNS records will be synchronized.
+	Domain string `json:"-"`
+
+	// UpdateWebRecords: whether or not to synchronize the web records.
+	UpdateWebRecords bool `json:"update_web_records"`
+
+	// UpdateMailRecords: whether or not to synchronize the mail records.
+	UpdateMailRecords bool `json:"update_mail_records"`
+
+	// UpdateAllRecords: whether or not to synchronize all types of records. This one has priority.
+	UpdateAllRecords bool `json:"update_all_records"`
+
+	// CustomRecords: custom records to synchronize.
+	CustomRecords []*SyncDomainDNSRecordsRequestRecord `json:"custom_records"`
 }
 
 // DNSRecords: dns records.
@@ -2346,6 +2375,42 @@ func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts
 	}
 
 	var resp CheckUserOwnsDomainResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SyncDomainDNSRecords: "Synchronize your DNS records on the Elements Console and on cPanel.".
+func (s *DnsAPI) SyncDomainDNSRecords(req *DNSAPISyncDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Domain) == "" {
+		return nil, errors.New("field Domain cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/sync-domain-dns-records",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DNSRecords
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
