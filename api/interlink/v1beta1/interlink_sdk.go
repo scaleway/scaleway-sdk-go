@@ -401,6 +401,9 @@ type Pop struct {
 	// LogoURL: image URL of the PoP's logo.
 	LogoURL string `json:"logo_url"`
 
+	// AvailableLinkBandwidthsMbps: available bandwidth in Mbits/s for future hosted_links from available ports in this PoP.
+	AvailableLinkBandwidthsMbps []uint64 `json:"available_link_bandwidths_mbps"`
+
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
 }
