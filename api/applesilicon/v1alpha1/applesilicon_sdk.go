@@ -154,6 +154,47 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ServerPrivateNetworkStatus string
+
+const (
+	ServerPrivateNetworkStatusVpcUnknownStatus = ServerPrivateNetworkStatus("vpc_unknown_status")
+	ServerPrivateNetworkStatusVpcEnabled       = ServerPrivateNetworkStatus("vpc_enabled")
+	ServerPrivateNetworkStatusVpcUpdating      = ServerPrivateNetworkStatus("vpc_updating")
+	ServerPrivateNetworkStatusVpcDisabled      = ServerPrivateNetworkStatus("vpc_disabled")
+)
+
+func (enum ServerPrivateNetworkStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "vpc_unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum ServerPrivateNetworkStatus) Values() []ServerPrivateNetworkStatus {
+	return []ServerPrivateNetworkStatus{
+		"vpc_unknown_status",
+		"vpc_enabled",
+		"vpc_updating",
+		"vpc_disabled",
+	}
+}
+
+func (enum ServerPrivateNetworkStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerPrivateNetworkStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerPrivateNetworkStatus(ServerPrivateNetworkStatus(tmp).String())
+	return nil
+}
+
 type ServerStatus string
 
 const (
@@ -415,6 +456,10 @@ type Server struct {
 
 	// Delivered: set to true once the server has completed its provisioning steps and is ready to use. Some OS configurations might require a reinstallation of the server before delivery depending on the available stock. A reinstallation after the initial delivery will not change this flag and can be tracked using the server status.
 	Delivered bool `json:"delivered"`
+
+	// VpcStatus: activation status of optional Private Network feature support for this server.
+	// Default value: vpc_unknown_status
+	VpcStatus ServerPrivateNetworkStatus `json:"vpc_status"`
 }
 
 // ConnectivityDiagnostic: connectivity diagnostic.
@@ -449,6 +494,9 @@ type CreateServerRequest struct {
 
 	// OsID: create a server & install the given os_id, when no os_id provided the default OS for this server type is chosen. Requesting a non-default OS will induce an extended delivery time.
 	OsID *string `json:"os_id,omitempty"`
+
+	// EnableVpc: activate the Private Network feature for this server. This feature is configured through the Apple Silicon - Private Networks API.
+	EnableVpc bool `json:"enable_vpc"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -650,6 +698,9 @@ type UpdateServerRequest struct {
 
 	// ScheduleDeletion: specify whether the server should be flagged for automatic deletion.
 	ScheduleDeletion *bool `json:"schedule_deletion,omitempty"`
+
+	// EnableVpc: activate or deactivate Private Network support for this server.
+	EnableVpc *bool `json:"enable_vpc,omitempty"`
 }
 
 // This API allows you to manage your Apple silicon machines.
