@@ -1,10 +1,11 @@
-package scw
+package scw_test
 
 import (
 	"os"
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 // TestLoadConfig tests config getters return correct values
@@ -26,14 +27,14 @@ func TestLoadEnvProfile(t *testing.T) {
 		{
 			name: "No config with env variables",
 			env: map[string]string{
-				ScwAccessKeyEnv:             v2ValidAccessKey,
-				ScwSecretKeyEnv:             v2ValidSecretKey,
-				ScwAPIURLEnv:                v2ValidAPIURL,
-				ScwInsecureEnv:              "false",
-				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
-				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
-				ScwDefaultZoneEnv:           v2ValidDefaultZone,
+				scw.ScwAccessKeyEnv:             v2ValidAccessKey,
+				scw.ScwSecretKeyEnv:             v2ValidSecretKey,
+				scw.ScwAPIURLEnv:                v2ValidAPIURL,
+				scw.ScwInsecureEnv:              "false",
+				scw.ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
+				scw.ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
+				scw.ScwDefaultRegionEnv:         v2ValidDefaultRegion,
+				scw.ScwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
@@ -88,7 +89,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			defer cleanEnv(t, nil, dir)
 
 			// load config
-			p := LoadEnvProfile()
+			p := scw.LoadEnvProfile()
 
 			// assert getters
 			testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
