@@ -422,9 +422,6 @@ type SecretVersion struct {
 	// UpdatedAt: last update of the version.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// DeletedAt: date and time of the version's deletion.
-	DeletedAt *time.Time `json:"deleted_at"`
-
 	// Description: description of the version.
 	Description *string `json:"description"`
 
