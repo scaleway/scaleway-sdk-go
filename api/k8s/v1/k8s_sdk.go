@@ -1952,12 +1952,6 @@ type NodeMetadata struct {
 
 	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
 
-	PrivateNetworkMode string `json:"private_network_mode"`
-
-	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
-
-	FullIsolation bool `json:"full_isolation"`
-
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
