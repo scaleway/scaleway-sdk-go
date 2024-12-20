@@ -1543,9 +1543,9 @@ type ExternalNode struct {
 
 // ExternalNodeAuth: external node auth.
 type ExternalNodeAuth struct {
-	NodeToken string `json:"node_token"`
+	NodeSecretKey string `json:"node_secret_key"`
 
-	APIURL string `json:"api_url"`
+	MetadataURL string `json:"metadata_url"`
 }
 
 // GetClusterKubeConfigRequest: get cluster kube config request.
@@ -1951,12 +1951,6 @@ type NodeMetadata struct {
 	NodeLabels map[string]string `json:"node_labels"`
 
 	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
-
-	PrivateNetworkMode string `json:"private_network_mode"`
-
-	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
-
-	FullIsolation bool `json:"full_isolation"`
 
 	HasGpu bool `json:"has_gpu"`
 
