@@ -5,7 +5,6 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/api/k8s/v1"
 	"github.com/scaleway/scaleway-sdk-go/logger"
-
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 

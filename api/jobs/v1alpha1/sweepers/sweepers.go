@@ -3,7 +3,7 @@ package sweepers
 import (
 	"fmt"
 
-	"github.com/scaleway/scaleway-sdk-go/api/jobs/v1alpha1"
+	jobs "github.com/scaleway/scaleway-sdk-go/api/jobs/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )

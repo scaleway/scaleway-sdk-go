@@ -8,7 +8,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func testSweepDomain(scwClient *scw.Client, region scw.Region, skippedDomain string) error {
+func SweepDomain(scwClient *scw.Client, region scw.Region, skippedDomain string) error {
 	temAPI := temSDK.NewAPI(scwClient)
 	logger.Warningf("sweeper: revoking the tem domains in (%s)", region)
 

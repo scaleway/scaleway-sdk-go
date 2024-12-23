@@ -3,10 +3,8 @@ package sweepers
 import (
 	"fmt"
 
-	"github.com/scaleway/scaleway-sdk-go/logger"
-
 	"github.com/scaleway/scaleway-sdk-go/api/ipam/v1"
-
+	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 

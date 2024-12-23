@@ -78,23 +78,6 @@ func SweepGrafanaUser(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepCockpit(scwClient *scw.Client) error {
-	accountAPI := accountSDK.NewProjectAPI(scwClient)
-
-	listProjects, err := accountAPI.ListProjects(&accountSDK.ProjectAPIListProjectsRequest{}, scw.WithAllPages())
-	if err != nil {
-		return fmt.Errorf("failed to list projects: %w", err)
-	}
-
-	for _, project := range listProjects.Projects {
-		if !strings.HasPrefix(project.Name, "tf_tests") {
-			continue
-		}
-	}
-
-	return nil
-}
-
 func SweepSource(scwClient *scw.Client, region scw.Region) error {
 	accountAPI := accountSDK.NewProjectAPI(scwClient)
 	cockpitAPI := cockpit.NewRegionalAPI(scwClient)

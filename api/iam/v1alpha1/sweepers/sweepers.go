@@ -64,7 +64,7 @@ func SweepSSHKey(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepIamPolicy(scwClient *scw.Client) error {
+func SweepPolicy(scwClient *scw.Client) error {
 	api := iam.NewAPI(scwClient)
 
 	orgID, exists := scwClient.GetDefaultOrganizationID()
@@ -93,7 +93,7 @@ func SweepIamPolicy(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepIamGroup(scwClient *scw.Client) error {
+func SweepGroup(scwClient *scw.Client) error {
 	api := iam.NewAPI(scwClient)
 
 	orgID, exists := scwClient.GetDefaultOrganizationID()
@@ -151,7 +151,7 @@ func SweepApplication(scwClient *scw.Client) error {
 	return nil
 }
 
-func testSweepIamAPIKey(scwClient *scw.Client) error {
+func SweepAPIKey(scwClient *scw.Client) error {
 	api := iam.NewAPI(scwClient)
 
 	logger.Debugf("sweeper: destroying the api keys")

@@ -3,7 +3,7 @@ package sweepers
 import (
 	"fmt"
 
-	"github.com/scaleway/scaleway-sdk-go/api/applesilicon/v1alpha1"
+	applesilicon "github.com/scaleway/scaleway-sdk-go/api/applesilicon/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
