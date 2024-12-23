@@ -48,3 +48,13 @@ func SweepCluster(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&k8s.API{}).Regions() {
+		err := SweepCluster(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

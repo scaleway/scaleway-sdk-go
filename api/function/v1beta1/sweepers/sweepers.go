@@ -105,3 +105,26 @@ func SweepCrons(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&functionSDK.API{}).Regions() {
+		err := SweepTriggers(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepNamespaces(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepFunctions(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepCrons(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

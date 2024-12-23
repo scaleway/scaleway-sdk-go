@@ -97,3 +97,26 @@ func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&vpcgwSDK.API{}).Zones() {
+		err := SweepVPCPublicGateway(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepGatewayNetworks(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepVPCPublicGatewayIP(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepVPCPublicGatewayDHCP(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

@@ -30,3 +30,14 @@ func SweepHub(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range scw.AllRegions {
+		err := SweepHub(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

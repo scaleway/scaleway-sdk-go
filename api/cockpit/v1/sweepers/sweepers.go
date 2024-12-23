@@ -113,3 +113,19 @@ func SweepSource(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	if err := SweepToken(scwClient); err != nil {
+		return err
+	}
+	if err := SweepGrafanaUser(scwClient); err != nil {
+		return err
+	}
+	for _, region := range (&cockpit.RegionalAPI{}).Regions() {
+		if err := SweepSource(scwClient, region); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

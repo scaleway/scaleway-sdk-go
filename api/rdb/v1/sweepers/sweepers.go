@@ -30,3 +30,14 @@ func SweepInstance(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&rdb.API{}).Regions() {
+		err := SweepInstance(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

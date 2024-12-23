@@ -29,3 +29,14 @@ func SweepFlexibleIP(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&flexibleip.API{}).Zones() {
+		err := SweepFlexibleIP(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

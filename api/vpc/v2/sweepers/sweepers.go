@@ -8,10 +8,6 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepAllLocalities() error {
-	return nil
-}
-
 func SweepVPC(scwClient *scw.Client, region scw.Region) error {
 	vpcAPI := vpcSDK.NewAPI(scwClient)
 
@@ -85,6 +81,27 @@ func SweepRoute(scwClient *scw.Client, region scw.Region) error {
 			}
 		} else {
 			return fmt.Errorf("route is nil in RouteWithNexthop: %v", routeWithNexthop)
+		}
+	}
+
+	return nil
+}
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&vpcSDK.API{}).Regions() {
+		err := SweepVPC(scwClient, region)
+		if err != nil {
+			return err
+		}
+
+		err = SweepPrivateNetwork(scwClient, region)
+		if err != nil {
+			return err
+		}
+
+		err = SweepRoute(scwClient, region)
+		if err != nil {
+			return err
 		}
 	}
 

@@ -189,3 +189,38 @@ func SweepImages(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&instance.API{}).Zones() {
+		err := SweepVolumes(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepSnapshots(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepServers(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepSecurityGroups(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepPlacementGroup(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepIP(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepImages(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

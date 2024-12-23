@@ -31,3 +31,14 @@ func SweepJobDefinition(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&jobs.API{}).Regions() {
+		err := SweepJobDefinition(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

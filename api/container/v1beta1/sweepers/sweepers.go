@@ -80,3 +80,21 @@ func SweepNamespace(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&container.API{}).Regions() {
+		err := SweepTrigger(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepContainer(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepNamespace(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

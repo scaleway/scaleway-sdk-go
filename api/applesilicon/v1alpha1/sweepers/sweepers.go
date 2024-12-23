@@ -27,3 +27,14 @@ func SweepServer(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&applesilicon.API{}).Zones() {
+		err := SweepServer(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

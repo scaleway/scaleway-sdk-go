@@ -31,3 +31,14 @@ func SweepDeployment(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, locality := range (&inference.API{}).Regions() {
+		err := SweepDeployment(scwClient, locality)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

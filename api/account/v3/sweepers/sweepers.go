@@ -30,3 +30,10 @@ func SweepProjects(scwClient *scw.Client) error {
 	}
 	return nil
 }
+
+func SweepAll(scwClient *scw.Client) error {
+	if err := SweepProjects(scwClient); err != nil {
+		return err
+	}
+	return nil
+}

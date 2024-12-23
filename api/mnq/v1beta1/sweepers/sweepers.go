@@ -139,3 +139,62 @@ func SweepNatsAccount(scwClient *scw.Client, region scw.Region) error {
 
 	return nil
 }
+
+func SweepAllSNS(scwClient *scw.Client) error {
+	for _, region := range (&mnq.SnsAPI{}).Regions() {
+		err := SweepSNSCredentials(scwClient, region)
+		if err != nil {
+			return err
+		}
+
+		err = SweepSNS(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func SweepAllSQS(scwClient *scw.Client) error {
+	for _, region := range (&mnq.SqsAPI{}).Regions() {
+		err := SweepSQSCredentials(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepSQS(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func SweepAllNats(scwClient *scw.Client) error {
+	for _, region := range (&mnq.NatsAPI{}).Regions() {
+		err := SweepNatsAccount(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	err := SweepAllSNS(scwClient)
+	if err != nil {
+		return err
+	}
+
+	err = SweepAllSQS(scwClient)
+	if err != nil {
+		return err
+	}
+
+	err = SweepAllNats(scwClient)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -30,3 +30,14 @@ func SweepCluster(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&redis.API{}).Zones() {
+		err := SweepCluster(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

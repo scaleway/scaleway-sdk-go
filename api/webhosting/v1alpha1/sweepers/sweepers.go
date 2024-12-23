@@ -8,15 +8,15 @@ import (
 )
 
 func SweepWebHosting(scwClient *scw.Client, region scw.Region) error {
-	webhsotingAPI := webhostingSDK.NewAPI(scwClient)
+	webHostingAPI := webhostingSDK.NewAPI(scwClient)
 
-	listHostings, err := webhsotingAPI.ListHostings(&webhostingSDK.ListHostingsRequest{Region: region}, scw.WithAllPages())
+	listHostings, err := webHostingAPI.ListHostings(&webhostingSDK.ListHostingsRequest{Region: region}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing hostings in (%s) in sweeper: %s", region, err)
 	}
 
 	for _, hosting := range listHostings.Hostings {
-		_, err := webhsotingAPI.DeleteHosting(&webhostingSDK.DeleteHostingRequest{
+		_, err := webHostingAPI.DeleteHosting(&webhostingSDK.DeleteHostingRequest{
 			HostingID: hosting.ID,
 			Region:    region,
 		})
@@ -25,5 +25,15 @@ func SweepWebHosting(scwClient *scw.Client, region scw.Region) error {
 		}
 	}
 
+	return nil
+}
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, region := range (&webhostingSDK.API{}).Regions() {
+		err := SweepWebHosting(scwClient, region)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

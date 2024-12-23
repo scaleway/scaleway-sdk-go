@@ -181,3 +181,26 @@ func SweepAPIKey(scwClient *scw.Client) error {
 
 	return nil
 }
+
+func SweepAll(scwClient *scw.Client) error {
+	if err := SweepUser(scwClient); err != nil {
+		return err
+	}
+	if err := SweepSSHKey(scwClient); err != nil {
+		return err
+	}
+	if err := SweepPolicy(scwClient); err != nil {
+		return err
+	}
+	if err := SweepGroup(scwClient); err != nil {
+		return err
+	}
+	if err := SweepApplication(scwClient); err != nil {
+		return err
+	}
+	if err := SweepAPIKey(scwClient); err != nil {
+		return err
+	}
+
+	return nil
+}

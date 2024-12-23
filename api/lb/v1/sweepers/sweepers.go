@@ -63,3 +63,18 @@ func SweepIP(scwClient *scw.Client, zone scw.Zone) error {
 
 	return nil
 }
+
+func SweepAllLocalities(scwClient *scw.Client) error {
+	for _, zone := range (&lb.ZonedAPI{}).Zones() {
+		err := SweepLB(scwClient, zone)
+		if err != nil {
+			return err
+		}
+		err = SweepIP(scwClient, zone)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
