@@ -562,14 +562,16 @@ func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
 type OfferOptionName string
 
 const (
-	OfferOptionNameUnknownName = OfferOptionName("unknown_name")
-	OfferOptionNameDomainCount = OfferOptionName("domain_count")
-	OfferOptionNameEmailCount  = OfferOptionName("email_count")
-	OfferOptionNameStorageGb   = OfferOptionName("storage_gb")
-	OfferOptionNameVcpuCount   = OfferOptionName("vcpu_count")
-	OfferOptionNameRAMGb       = OfferOptionName("ram_gb")
-	OfferOptionNameBackup      = OfferOptionName("backup")
-	OfferOptionNameDedicatedIP = OfferOptionName("dedicated_ip")
+	OfferOptionNameUnknownName    = OfferOptionName("unknown_name")
+	OfferOptionNameDomainCount    = OfferOptionName("domain_count")
+	OfferOptionNameEmailCount     = OfferOptionName("email_count")
+	OfferOptionNameStorageGb      = OfferOptionName("storage_gb")
+	OfferOptionNameVcpuCount      = OfferOptionName("vcpu_count")
+	OfferOptionNameRAMGb          = OfferOptionName("ram_gb")
+	OfferOptionNameBackup         = OfferOptionName("backup")
+	OfferOptionNameDedicatedIP    = OfferOptionName("dedicated_ip")
+	OfferOptionNameEmailStorageGb = OfferOptionName("email_storage_gb")
+	OfferOptionNameDatabaseCount  = OfferOptionName("database_count")
 )
 
 func (enum OfferOptionName) String() string {
@@ -590,6 +592,8 @@ func (enum OfferOptionName) Values() []OfferOptionName {
 		"ram_gb",
 		"backup",
 		"dedicated_ip",
+		"email_storage_gb",
+		"database_count",
 	}
 }
 
@@ -613,6 +617,7 @@ type OfferOptionWarning string
 const (
 	OfferOptionWarningUnknownWarning       = OfferOptionWarning("unknown_warning")
 	OfferOptionWarningQuotaExceededWarning = OfferOptionWarning("quota_exceeded_warning")
+	OfferOptionWarningUsageLowWarning      = OfferOptionWarning("usage_low_warning")
 )
 
 func (enum OfferOptionWarning) String() string {
@@ -627,6 +632,7 @@ func (enum OfferOptionWarning) Values() []OfferOptionWarning {
 	return []OfferOptionWarning{
 		"unknown_warning",
 		"quota_exceeded_warning",
+		"usage_low_warning",
 	}
 }
 
@@ -819,6 +825,9 @@ type Offer struct {
 	// ID: offer ID.
 	ID string `json:"id"`
 
+	// Name: offer name.
+	Name string `json:"name"`
+
 	// BillingOperationPath: unique identifier used for billing.
 	BillingOperationPath string `json:"billing_operation_path"`
 
@@ -836,6 +845,10 @@ type Offer struct {
 
 	// EndOfLife: indicates if the offer has reached its end of life.
 	EndOfLife bool `json:"end_of_life"`
+
+	// QuotaWarning: defines a warning if the maximum value for an option in the offer is exceeded.
+	// Default value: unknown_warning
+	QuotaWarning OfferOptionWarning `json:"quota_warning"`
 }
 
 // Platform: platform.
