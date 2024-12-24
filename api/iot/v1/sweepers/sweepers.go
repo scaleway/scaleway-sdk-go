@@ -32,7 +32,7 @@ func SweepHub(scwClient *scw.Client, region scw.Region) error {
 }
 
 func SweepAllLocalities(scwClient *scw.Client) error {
-	for _, region := range scw.AllRegions {
+	for _, region := range (&iot.API{}).Regions() {
 		err := SweepHub(scwClient, region)
 		if err != nil {
 			return err

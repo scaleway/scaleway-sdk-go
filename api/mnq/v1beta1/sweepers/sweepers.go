@@ -12,10 +12,20 @@ import (
 
 func SweepSQSCredentials(scwClient *scw.Client, region scw.Region) error {
 	mnqAPI := mnq.NewSqsAPI(scwClient)
+	projectID, _ := scwClient.GetDefaultProjectID()
 	logger.Warningf("sweeper: destroying the mnq sqs credentials in (%s)", region)
+	sqsInfo, err := mnqAPI.GetSqsInfo(&mnq.SqsAPIGetSqsInfoRequest{Region: region})
+	if err != nil {
+		return fmt.Errorf("error getting sns info in sweeper: %s", err)
+	}
+	if sqsInfo.Status == mnq.SqsInfoStatusDisabled {
+		logger.Infof("sqs is disabled, skipping")
+		return nil
+	}
 	listSqsCredentials, err := mnqAPI.ListSqsCredentials(
 		&mnq.SqsAPIListSqsCredentialsRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: scw.StringPtr(projectID),
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing sqs credentials in (%s) in sweeper: %s", region, err)
@@ -63,11 +73,20 @@ func SweepSQS(scwClient *scw.Client, region scw.Region) error {
 
 func SweepSNSCredentials(scwClient *scw.Client, region scw.Region) error {
 	mnqAPI := mnq.NewSnsAPI(scwClient)
-
+	projectID, _ := scwClient.GetDefaultProjectID()
 	logger.Warningf("sweeper: destroying the mnq sns credentials in (%s)", region)
+	snsInfo, err := mnqAPI.GetSnsInfo(&mnq.SnsAPIGetSnsInfoRequest{Region: region})
+	if err != nil {
+		return fmt.Errorf("error getting sns info in sweeper: %s", err)
+	}
+	if snsInfo.Status == mnq.SnsInfoStatusDisabled {
+		logger.Infof("sns is disabled, skipping")
+		return nil
+	}
 	listSnsCredentials, err := mnqAPI.ListSnsCredentials(
 		&mnq.SnsAPIListSnsCredentialsRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: scw.StringPtr(projectID),
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing sns credentials in (%s) in sweeper: %s", region, err)
