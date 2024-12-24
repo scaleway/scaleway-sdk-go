@@ -1225,16 +1225,16 @@ type GetBillingResponse struct {
 	// PipelineNumber: total number of pipelines currently configured.
 	PipelineNumber uint32 `json:"pipeline_number"`
 
-	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plan.
+	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plans.
 	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
 
-	// CurrentPlanCacheUsage: total amount of data egressed from the cache in gigabytes from the beginning of the month, included in the active subscription plan.
+	// CurrentPlanCacheUsage: total amount of data egressed from the cache in gigabytes from the beginning of the month, for the active subscription plan.
 	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
 
-	// ExtraCacheUsage: total amount of extra data egressed from cache in gigabytes from the beginning of the month, not included in the active subscription plan.
+	// ExtraCacheUsage: total amount of extra data egressed from cache in gigabytes from the beginning of the month, not included in the subscription plans.
 	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
 
-	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the active subscription plan.
+	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the subscription plans.
 	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
 
 	// TotalCost: total cost to date (this month) of all Edge Services resources including active subscription plan, previously active plans, extra pipelines and extra egress cache data.
