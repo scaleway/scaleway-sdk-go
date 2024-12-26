@@ -369,6 +369,14 @@ type ListNodesRequestOrderBy string
 const (
 	ListNodesRequestOrderByCreatedAtAsc  = ListNodesRequestOrderBy("created_at_asc")
 	ListNodesRequestOrderByCreatedAtDesc = ListNodesRequestOrderBy("created_at_desc")
+	ListNodesRequestOrderByUpdatedAtAsc  = ListNodesRequestOrderBy("updated_at_asc")
+	ListNodesRequestOrderByUpdatedAtDesc = ListNodesRequestOrderBy("updated_at_desc")
+	ListNodesRequestOrderByNameAsc       = ListNodesRequestOrderBy("name_asc")
+	ListNodesRequestOrderByNameDesc      = ListNodesRequestOrderBy("name_desc")
+	ListNodesRequestOrderByStatusAsc     = ListNodesRequestOrderBy("status_asc")
+	ListNodesRequestOrderByStatusDesc    = ListNodesRequestOrderBy("status_desc")
+	ListNodesRequestOrderByVersionAsc    = ListNodesRequestOrderBy("version_asc")
+	ListNodesRequestOrderByVersionDesc   = ListNodesRequestOrderBy("version_desc")
 )
 
 func (enum ListNodesRequestOrderBy) String() string {
@@ -383,6 +391,14 @@ func (enum ListNodesRequestOrderBy) Values() []ListNodesRequestOrderBy {
 	return []ListNodesRequestOrderBy{
 		"created_at_asc",
 		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"version_asc",
+		"version_desc",
 	}
 }
 
@@ -747,7 +763,7 @@ type ClusterAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -840,17 +856,17 @@ type Pool struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize uint32 `json:"max_size"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -862,7 +878,10 @@ type Pool struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -921,7 +940,7 @@ type CreateClusterRequestAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -983,7 +1002,7 @@ type CreateClusterRequestPoolConfig struct {
 	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
 	NodeType string `json:"node_type"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id"`
 
 	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
@@ -998,14 +1017,14 @@ type CreateClusterRequestPoolConfig struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize *uint32 `json:"max_size"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -1017,7 +1036,10 @@ type CreateClusterRequestPoolConfig struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -1158,7 +1180,7 @@ type Cluster struct {
 	// AutoscalerConfig: autoscaler config for the cluster.
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 
-	// AutoUpgrade: auto upgrade configuration of the cluster.
+	// AutoUpgrade: auto upgrade Kubernetes version of the cluster.
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
 
 	// UpgradeAvailable: defines whether a new Kubernetes version is available.
@@ -1255,7 +1277,7 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -1356,7 +1378,7 @@ type CreateClusterRequest struct {
 	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
-	// Type: type of the cluster (possible values are kapsule, multicloud, kapsule-dedicated-8, kapsule-dedicated-16).
+	// Type: type of the cluster. See [list available cluster types](#list-available-cluster-types-for-a-cluster) for a list of valid types.
 	Type string `json:"type"`
 
 	// Name: cluster name.
@@ -1422,7 +1444,7 @@ type CreatePoolRequest struct {
 	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
 	NodeType string `json:"node_type"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
 
 	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
@@ -1437,14 +1459,14 @@ type CreatePoolRequest struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize *uint32 `json:"max_size,omitempty"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -1456,7 +1478,10 @@ type CreatePoolRequest struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -2036,7 +2061,7 @@ type UpdateClusterRequest struct {
 	// AutoscalerConfig: new autoscaler config for the cluster.
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config,omitempty"`
 
-	// AutoUpgrade: new auto upgrade configuration for the cluster. Note that all fields need to be set.
+	// AutoUpgrade: new auto upgrade configuration for the cluster. Note that all fields needs to be set.
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade,omitempty"`
 
 	// FeatureGates: list of feature gates to enable.
@@ -2284,7 +2309,7 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteCluster: Delete a specific Kubernetes cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancer or Block Volume that are associated with the cluster.
+// DeleteCluster: Delete a specific Kubernetes cluster and all its associated pools and nodes, and possibly its associated Load Balancers or Block Volumes.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2355,7 +2380,7 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// SetClusterType: Change the type of a specific Kubernetes cluster. To see the possible values you can enter for the `type` field, [list available cluster types](#path-clusters-list-available-cluster-types-for-a-cluster).
+// SetClusterType: Change the type of a specific Kubernetes cluster. To see the possible values you can enter for the `type` field, [list available cluster types](#list-available-cluster-types-for-a-cluster).
 func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2489,7 +2514,7 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 	return &resp, nil
 }
 
-// ResetClusterAdminToken: Reset the admin token for a specific Kubernetes cluster. This will revoke the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to download kubeconfig again to keep interacting with the cluster.
+// ResetClusterAdminToken: Reset the admin token for a specific Kubernetes cluster. This will revoke the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to download the kubeconfig again to keep interacting with the cluster.
 func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2524,6 +2549,7 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 }
 
 // MigrateClusterToSBSCSI: Enable the latest CSI compatible with Scaleway Block Storage (SBS) and migrate all existing PersistentVolumes/VolumeSnapshotContents to SBS.
+// Make sure to have the necessary Quota before running this command.
 func (s *API) MigrateClusterToSBSCSI(req *MigrateClusterToSBSCSIRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2822,6 +2848,7 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 }
 
 // UpgradePool: Upgrade the Kubernetes version of a specific pool. Note that it only works if the targeted version matches the cluster's version.
+// This will drain and replace the nodes in that pool.
 func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -2857,7 +2884,7 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UpdatePool: Update the attributes of a specific pool, such as its desired size, autoscaling settings, and tags.
+// UpdatePool: Update the attributes of a specific pool, such as its desired size, autoscaling settings, and tags. To upgrade a pool, you will need to use the dedicated endpoint.
 func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -3099,7 +3126,7 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 	return &resp, nil
 }
 
-// Deprecated: ReplaceNode: Replace a specific Node. The node will first be cordoned (scheduling will be disabled on it). The existing pods on the node will then be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3135,7 +3162,7 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// RebootNode: Reboot a specific Node. The node will first be cordoned (scheduling will be disabled on it). The existing pods on the node will then be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// RebootNode: Reboot a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3171,7 +3198,7 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	return &resp, nil
 }
 
-// DeleteNode: Delete a specific Node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// DeleteNode: Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
