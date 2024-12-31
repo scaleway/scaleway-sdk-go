@@ -369,6 +369,14 @@ type ListNodesRequestOrderBy string
 const (
 	ListNodesRequestOrderByCreatedAtAsc  = ListNodesRequestOrderBy("created_at_asc")
 	ListNodesRequestOrderByCreatedAtDesc = ListNodesRequestOrderBy("created_at_desc")
+	ListNodesRequestOrderByUpdatedAtAsc  = ListNodesRequestOrderBy("updated_at_asc")
+	ListNodesRequestOrderByUpdatedAtDesc = ListNodesRequestOrderBy("updated_at_desc")
+	ListNodesRequestOrderByNameAsc       = ListNodesRequestOrderBy("name_asc")
+	ListNodesRequestOrderByNameDesc      = ListNodesRequestOrderBy("name_desc")
+	ListNodesRequestOrderByStatusAsc     = ListNodesRequestOrderBy("status_asc")
+	ListNodesRequestOrderByStatusDesc    = ListNodesRequestOrderBy("status_desc")
+	ListNodesRequestOrderByVersionAsc    = ListNodesRequestOrderBy("version_asc")
+	ListNodesRequestOrderByVersionDesc   = ListNodesRequestOrderBy("version_desc")
 )
 
 func (enum ListNodesRequestOrderBy) String() string {
@@ -383,6 +391,14 @@ func (enum ListNodesRequestOrderBy) Values() []ListNodesRequestOrderBy {
 	return []ListNodesRequestOrderBy{
 		"created_at_asc",
 		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"version_asc",
+		"version_desc",
 	}
 }
 
