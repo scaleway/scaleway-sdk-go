@@ -117,6 +117,47 @@ func (enum *ConnectivityDiagnosticDiagnosticStatus) UnmarshalJSON(data []byte) e
 	return nil
 }
 
+type ListServerPrivateNetworksRequestOrderBy string
+
+const (
+	ListServerPrivateNetworksRequestOrderByCreatedAtAsc  = ListServerPrivateNetworksRequestOrderBy("created_at_asc")
+	ListServerPrivateNetworksRequestOrderByCreatedAtDesc = ListServerPrivateNetworksRequestOrderBy("created_at_desc")
+	ListServerPrivateNetworksRequestOrderByUpdatedAtAsc  = ListServerPrivateNetworksRequestOrderBy("updated_at_asc")
+	ListServerPrivateNetworksRequestOrderByUpdatedAtDesc = ListServerPrivateNetworksRequestOrderBy("updated_at_desc")
+)
+
+func (enum ListServerPrivateNetworksRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListServerPrivateNetworksRequestOrderBy) Values() []ListServerPrivateNetworksRequestOrderBy {
+	return []ListServerPrivateNetworksRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+	}
+}
+
+func (enum ListServerPrivateNetworksRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListServerPrivateNetworksRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListServerPrivateNetworksRequestOrderBy(ListServerPrivateNetworksRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListServersRequestOrderBy string
 
 const (
@@ -151,6 +192,51 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListServersRequestOrderBy(ListServersRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ServerPrivateNetworkServerStatus string
+
+const (
+	ServerPrivateNetworkServerStatusUnknownStatus = ServerPrivateNetworkServerStatus("unknown_status")
+	ServerPrivateNetworkServerStatusAttaching     = ServerPrivateNetworkServerStatus("attaching")
+	ServerPrivateNetworkServerStatusAttached      = ServerPrivateNetworkServerStatus("attached")
+	ServerPrivateNetworkServerStatusError         = ServerPrivateNetworkServerStatus("error")
+	ServerPrivateNetworkServerStatusDetaching     = ServerPrivateNetworkServerStatus("detaching")
+	ServerPrivateNetworkServerStatusLocked        = ServerPrivateNetworkServerStatus("locked")
+)
+
+func (enum ServerPrivateNetworkServerStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum ServerPrivateNetworkServerStatus) Values() []ServerPrivateNetworkServerStatus {
+	return []ServerPrivateNetworkServerStatus{
+		"unknown_status",
+		"attaching",
+		"attached",
+		"error",
+		"detaching",
+		"locked",
+	}
+}
+
+func (enum ServerPrivateNetworkServerStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerPrivateNetworkServerStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerPrivateNetworkServerStatus(ServerPrivateNetworkServerStatus(tmp).String())
 	return nil
 }
 
@@ -367,6 +453,37 @@ type ConnectivityDiagnosticServerHealth struct {
 	IsSSHPortUp bool `json:"is_ssh_port_up"`
 
 	IsVncPortUp bool `json:"is_vnc_port_up"`
+}
+
+// ServerPrivateNetwork: server private network.
+type ServerPrivateNetwork struct {
+	// ID: ID of the Server-to-Private Network mapping.
+	ID string `json:"id"`
+
+	// ProjectID: private Network Project ID.
+	ProjectID string `json:"project_id"`
+
+	// ServerID: apple silicon server ID.
+	ServerID string `json:"server_id"`
+
+	// PrivateNetworkID: private Network ID.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// Vlan: ID of the VLAN associated with the Private Network.
+	Vlan *uint32 `json:"vlan"`
+
+	// Status: configuration status of the Private Network.
+	// Default value: unknown_status
+	Status ServerPrivateNetworkServerStatus `json:"status"`
+
+	// CreatedAt: private Network creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the Private Network was last modified.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// IpamIPIDs: iPAM IP IDs of the server, if it has any.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
 }
 
 // ServerType: server type.
@@ -589,6 +706,32 @@ func (r *ListOSResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Os)), nil
 }
 
+// ListServerPrivateNetworksResponse: list server private networks response.
+type ListServerPrivateNetworksResponse struct {
+	ServerPrivateNetworks []*ServerPrivateNetwork `json:"server_private_networks"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServerPrivateNetworksResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServerPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListServerPrivateNetworksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ServerPrivateNetworks = append(r.ServerPrivateNetworks, results.ServerPrivateNetworks...)
+	r.TotalCount += uint64(len(results.ServerPrivateNetworks))
+	return uint64(len(results.ServerPrivateNetworks)), nil
+}
+
 // ListServerTypesRequest: list server types request.
 type ListServerTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -651,6 +794,86 @@ func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Servers)), nil
 }
 
+// PrivateNetworkAPIAddServerPrivateNetworkRequest: private network api add server private network request.
+type PrivateNetworkAPIAddServerPrivateNetworkRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server.
+	ServerID string `json:"-"`
+
+	// PrivateNetworkID: ID of the Private Network.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// IpamIPIDs: iPAM IDs of IPs to attach to the server.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
+}
+
+// PrivateNetworkAPIDeleteServerPrivateNetworkRequest: private network api delete server private network request.
+type PrivateNetworkAPIDeleteServerPrivateNetworkRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server.
+	ServerID string `json:"-"`
+
+	// PrivateNetworkID: ID of the Private Network.
+	PrivateNetworkID string `json:"-"`
+}
+
+// PrivateNetworkAPIGetServerPrivateNetworkRequest: private network api get server private network request.
+type PrivateNetworkAPIGetServerPrivateNetworkRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PrivateNetworkID string `json:"-"`
+}
+
+// PrivateNetworkAPIListServerPrivateNetworksRequest: private network api list server private networks request.
+type PrivateNetworkAPIListServerPrivateNetworksRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// OrderBy: sort order for the returned Private Networks.
+	// Default value: created_at_asc
+	OrderBy ListServerPrivateNetworksRequestOrderBy `json:"-"`
+
+	// Page: page number for the returned Private Networks.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of Private Networks per page.
+	PageSize *uint32 `json:"-"`
+
+	// ServerID: filter Private Networks by server ID.
+	ServerID *string `json:"-"`
+
+	// PrivateNetworkID: filter Private Networks by Private Network ID.
+	PrivateNetworkID *string `json:"-"`
+
+	// OrganizationID: filter Private Networks by Organization ID.
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: filter Private Networks by Project ID.
+	ProjectID *string `json:"-"`
+
+	// IpamIPIDs: filter Private Networks by IPAM IP IDs.
+	IpamIPIDs []string `json:"-"`
+}
+
+// PrivateNetworkAPISetServerPrivateNetworksRequest: private network api set server private networks request.
+type PrivateNetworkAPISetServerPrivateNetworksRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server.
+	ServerID string `json:"-"`
+
+	// PerPrivateNetworkIpamIPIDs: object where the keys are the IDs of Private Networks and the values are arrays of IPAM IDs representing the IPs to assign to this Apple silicon server on the Private Network. If the array supplied for a Private Network is empty, the next available IP from the Private Network's CIDR block will automatically be used for attachment.
+	PerPrivateNetworkIpamIPIDs map[string]*[]string `json:"per_private_network_ipam_ip_ids"`
+}
+
 // RebootServerRequest: reboot server request.
 type RebootServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -670,6 +893,11 @@ type ReinstallServerRequest struct {
 
 	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
 	OsID *string `json:"os_id,omitempty"`
+}
+
+// SetServerPrivateNetworksResponse: set server private networks response.
+type SetServerPrivateNetworksResponse struct {
+	ServerPrivateNetworks []*ServerPrivateNetwork `json:"server_private_networks"`
 }
 
 // StartConnectivityDiagnosticRequest: start connectivity diagnostic request.
@@ -1156,4 +1384,202 @@ func (s *API) GetConnectivityDiagnostic(req *GetConnectivityDiagnosticRequest, o
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// Apple silicon - Private Networks API.
+type PrivateNetworkAPI struct {
+	client *scw.Client
+}
+
+// NewPrivateNetworkAPI returns a PrivateNetworkAPI object from a Scaleway client.
+func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
+	return &PrivateNetworkAPI{
+		client: client,
+	}
+}
+func (s *PrivateNetworkAPI) Zones() []scw.Zone {
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar3}
+}
+
+// GetServerPrivateNetwork:
+func (s *PrivateNetworkAPI) GetServerPrivateNetwork(req *PrivateNetworkAPIGetServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
+	}
+
+	var resp ServerPrivateNetwork
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddServerPrivateNetwork: Add an Apple silicon server to a Private Network.
+func (s *PrivateNetworkAPI) AddServerPrivateNetwork(req *PrivateNetworkAPIAddServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private-networks",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ServerPrivateNetwork
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetServerPrivateNetworks: Configure multiple Private Networks on an Apple silicon server.
+func (s *PrivateNetworkAPI) SetServerPrivateNetworks(req *PrivateNetworkAPISetServerPrivateNetworksRequest, opts ...scw.RequestOption) (*SetServerPrivateNetworksResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private-networks",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetServerPrivateNetworksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListServerPrivateNetworks: List the Private Networks of an Apple silicon server.
+func (s *PrivateNetworkAPI) ListServerPrivateNetworks(req *PrivateNetworkAPIListServerPrivateNetworksRequest, opts ...scw.RequestOption) (*ListServerPrivateNetworksResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "server_id", req.ServerID)
+	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "ipam_ip_ids", req.IpamIPIDs)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/server-private-networks",
+		Query:  query,
+	}
+
+	var resp ListServerPrivateNetworksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteServerPrivateNetwork: Delete a Private Network.
+func (s *PrivateNetworkAPI) DeleteServerPrivateNetwork(req *PrivateNetworkAPIDeleteServerPrivateNetworkRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return errors.New("field ServerID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
