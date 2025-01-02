@@ -8,7 +8,7 @@ import (
 
 const (
 	// XDG wiki: https://wiki.archlinux.org/index.php/XDG_Base_Directory
-	xdgConfigDirEnv = "XDG_CONFIG_HOME"
+	XdgConfigDirEnv = "XDG_CONFIG_HOME"
 	xdgCacheDirEnv  = "XDG_CACHE_HOME"
 
 	unixHomeDirEnv    = "HOME"
@@ -70,7 +70,7 @@ func getConfigV2FilePath() (string, bool) {
 
 // GetScwConfigDir returns the path to scw config folder
 func GetScwConfigDir() (string, error) {
-	if xdgPath := os.Getenv(xdgConfigDirEnv); xdgPath != "" {
+	if xdgPath := os.Getenv(XdgConfigDirEnv); xdgPath != "" {
 		return filepath.Join(xdgPath, "scw"), nil
 	}
 
