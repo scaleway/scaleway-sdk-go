@@ -572,6 +572,7 @@ const (
 	OfferOptionNameDedicatedIP    = OfferOptionName("dedicated_ip")
 	OfferOptionNameEmailStorageGb = OfferOptionName("email_storage_gb")
 	OfferOptionNameDatabaseCount  = OfferOptionName("database_count")
+	OfferOptionNameSupport        = OfferOptionName("support")
 )
 
 func (enum OfferOptionName) String() string {
@@ -594,6 +595,7 @@ func (enum OfferOptionName) Values() []OfferOptionName {
 		"dedicated_ip",
 		"email_storage_gb",
 		"database_count",
+		"support",
 	}
 }
 
