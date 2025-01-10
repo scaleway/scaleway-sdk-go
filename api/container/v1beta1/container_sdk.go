@@ -2468,7 +2468,7 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-// ListDomains: List all domain name bindings in a specified region.
+// ListDomains: List all custom domains in a specified region.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -2507,7 +2507,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetDomain: Get a domain name binding for the container with the specified ID.
+// GetDomain: Get a custom domain for the container with the specified ID.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2538,7 +2538,7 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
-// CreateDomain: Create a domain name binding for the container with the specified ID.
+// CreateDomain: Create a custom domain for the container with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2570,7 +2570,7 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// DeleteDomain: Delete the domain name binding with the specific ID.
+// DeleteDomain: Delete the custom domain with the specific ID.
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
