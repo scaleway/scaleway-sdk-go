@@ -491,6 +491,9 @@ type Gateway struct {
 	// IsLegacy: defines whether the gateway uses non-IPAM IP configurations.
 	IsLegacy bool `json:"is_legacy"`
 
+	// BastionAllowedIPs: ranges of IP addresses allowed to connect to the gateway's SSH bastion.
+	BastionAllowedIPs []scw.IPNet `json:"bastion_allowed_ips"`
+
 	// Zone: zone of the gateway.
 	Zone scw.Zone `json:"zone"`
 }
@@ -540,6 +543,24 @@ type SetPatRulesRequestRule struct {
 	// Protocol: protocol the rule should apply to.
 	// Default value: unknown_protocol
 	Protocol PatRuleProtocol `json:"protocol"`
+}
+
+// AddBastionAllowedIPsRequest: add bastion allowed i ps request.
+type AddBastionAllowedIPsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// GatewayID: ID of the gateway to add the allowed IP range to.
+	GatewayID string `json:"-"`
+
+	// IPRange: IP range allowed to connect to the SSH bastion.
+	IPRange scw.IPNet `json:"ip_range"`
+}
+
+// AddBastionAllowedIPsResponse: add bastion allowed i ps response.
+type AddBastionAllowedIPsResponse struct {
+	// IPRanges: ranges of IP addresses allowed to connect to the gateway's SSH bastion.
+	IPRanges []scw.IPNet `json:"ip_ranges"`
 }
 
 // CreateGatewayNetworkRequest: create gateway network request.
@@ -625,6 +646,18 @@ type CreatePatRuleRequest struct {
 	// Protocol: protocol the rule should apply to.
 	// Default value: unknown_protocol
 	Protocol PatRuleProtocol `json:"protocol"`
+}
+
+// DeleteBastionAllowedIPsRequest: delete bastion allowed i ps request.
+type DeleteBastionAllowedIPsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// GatewayID: ID of the gateway on which to delete the allowed IP range.
+	GatewayID string `json:"-"`
+
+	// IPRange: IP range to delete from SSH bastion's list of allowed IPs.
+	IPRange scw.IPNet `json:"-"`
 }
 
 // DeleteGatewayNetworkRequest: delete gateway network request.
@@ -958,6 +991,24 @@ type RefreshSSHKeysRequest struct {
 
 	// GatewayID: ID of the gateway to refresh SSH keys on.
 	GatewayID string `json:"-"`
+}
+
+// SetBastionAllowedIPsRequest: set bastion allowed i ps request.
+type SetBastionAllowedIPsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// GatewayID: ID of the gateway on which to set the allowed IP range.
+	GatewayID string `json:"-"`
+
+	// IPRanges: new list of IP ranges (each range in CIDR notation) allowed to connect to the SSH bastion.
+	IPRanges []string `json:"ip_ranges"`
+}
+
+// SetBastionAllowedIPsResponse: set bastion allowed i ps response.
+type SetBastionAllowedIPsResponse struct {
+	// IPRanges: ranges of IP addresses allowed to connect to the gateway's SSH bastion.
+	IPRanges []scw.IPNet `json:"ip_ranges"`
 }
 
 // SetPatRulesRequest: set pat rules request.
@@ -1922,4 +1973,109 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// AddBastionAllowedIPs: Add an IP range (in CIDR notation) to be allowed to connect to the SSH bastion.
+func (s *API) AddBastionAllowedIPs(req *AddBastionAllowedIPsRequest, opts ...scw.RequestOption) (*AddBastionAllowedIPsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return nil, errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc-gw/v2/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/bastion-allowed-ips",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddBastionAllowedIPsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetBastionAllowedIPs: Set a definitive list of IP ranges (in CIDR notation) allowed to connect to the SSH bastion.
+func (s *API) SetBastionAllowedIPs(req *SetBastionAllowedIPsRequest, opts ...scw.RequestOption) (*SetBastionAllowedIPsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return nil, errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/vpc-gw/v2/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/bastion-allowed-ips",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetBastionAllowedIPsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteBastionAllowedIPs: Delete an IP range (defined in CIDR notation) from SSH bastion, so that it is no longer allowed to connect.
+func (s *API) DeleteBastionAllowedIPs(req *DeleteBastionAllowedIPsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return errors.New("field GatewayID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPRange) == "" {
+		return errors.New("field IPRange cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/vpc-gw/v2/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/bastion-allowed-ips/" + fmt.Sprint(req.IPRange) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
