@@ -292,6 +292,8 @@ const (
 	EmailFlagGreylisted = EmailFlag("greylisted")
 	// Refers to an email with a `send-before` tag to indicate the maximum time limit for the email to be sent.
 	EmailFlagSendBeforeExpiration = EmailFlag("send_before_expiration")
+	// Refers to an email blocked by a blocklist.
+	EmailFlagBlocklisted = EmailFlag("blocklisted")
 )
 
 func (enum EmailFlag) String() string {
@@ -312,6 +314,7 @@ func (enum EmailFlag) Values() []EmailFlag {
 		"mailbox_not_found",
 		"greylisted",
 		"send_before_expiration",
+		"blocklisted",
 	}
 }
 
