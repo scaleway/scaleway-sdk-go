@@ -222,3 +222,49 @@ func (s *API) FetchLatestEngineVersion(engineName string) (*EngineVersion, error
 	}
 	return latestEngineVersion, nil
 }
+
+// WaitForSnapshotRequest is used by WaitForSnapshot method.
+type WaitForSnapshotRequest struct {
+	SnapshotID    string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[SnapshotStatus]struct{}{
+		SnapshotStatusReady:  {},
+		SnapshotStatusError:  {},
+		SnapshotStatusLocked: {},
+	}
+
+	snapshot, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetSnapshot(&GetSnapshotRequest{
+				SnapshotID: req.SnapshotID,
+				Region:     req.Region,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.Status]
+
+			return res, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for snapshot failed")
+	}
+	return snapshot.(*Snapshot), nil
+}
