@@ -39,6 +39,48 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type BlocklistType string
+
+const (
+	// If unspecified, the type of blocklist is unknown by default.
+	BlocklistTypeUnknownType = BlocklistType("unknown_type")
+	// The recipient's mailbox is full and cannot receive any new email.
+	BlocklistTypeMailboxFull = BlocklistType("mailbox_full")
+	// The recipient's mailbox does not exist.
+	BlocklistTypeMailboxNotFound = BlocklistType("mailbox_not_found")
+)
+
+func (enum BlocklistType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum BlocklistType) Values() []BlocklistType {
+	return []BlocklistType{
+		"unknown_type",
+		"mailbox_full",
+		"mailbox_not_found",
+	}
+}
+
+func (enum BlocklistType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BlocklistType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BlocklistType(BlocklistType(tmp).String())
+	return nil
+}
+
 type DomainLastStatusAutoconfigStateReason string
 
 const (
@@ -381,6 +423,51 @@ func (enum *EmailStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = EmailStatus(EmailStatus(tmp).String())
+	return nil
+}
+
+type ListBlocklistsRequestOrderBy string
+
+const (
+	// Order by creation date (descending chronological order).
+	ListBlocklistsRequestOrderByCreatedAtDesc = ListBlocklistsRequestOrderBy("created_at_desc")
+	// Order by creation date (ascending chronological order).
+	ListBlocklistsRequestOrderByCreatedAtAsc = ListBlocklistsRequestOrderBy("created_at_asc")
+	// Order by blocklist ends date (descending chronological order).
+	ListBlocklistsRequestOrderByEndsAtDesc = ListBlocklistsRequestOrderBy("ends_at_desc")
+	// Order by blocklist ends date (ascending chronological order).
+	ListBlocklistsRequestOrderByEndsAtAsc = ListBlocklistsRequestOrderBy("ends_at_asc")
+)
+
+func (enum ListBlocklistsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_desc"
+	}
+	return string(enum)
+}
+
+func (enum ListBlocklistsRequestOrderBy) Values() []ListBlocklistsRequestOrderBy {
+	return []ListBlocklistsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"ends_at_desc",
+		"ends_at_asc",
+	}
+}
+
+func (enum ListBlocklistsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListBlocklistsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListBlocklistsRequestOrderBy(ListBlocklistsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -737,6 +824,37 @@ type DomainStatistics struct {
 	CanceledCount uint32 `json:"canceled_count"`
 }
 
+// Blocklist: blocklist.
+type Blocklist struct {
+	// ID: ID of the blocklist.
+	ID string `json:"id"`
+
+	// DomainID: domain ID linked to the blocklist.
+	DomainID string `json:"domain_id"`
+
+	// CreatedAt: date and time of the blocklist creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time of the blocklist's last update.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// EndsAt: date and time when the blocklist ends. Empty if the blocklist has no end.
+	EndsAt *time.Time `json:"ends_at"`
+
+	// Email: email blocked by the blocklist.
+	Email string `json:"email"`
+
+	// Type: type of block for this email.
+	// Default value: unknown_type
+	Type BlocklistType `json:"type"`
+
+	// Reason: reason to block this email.
+	Reason string `json:"reason"`
+
+	// Custom: true if this blocklist was created manually. False for an automatic Transactional Email blocklist.
+	Custom bool `json:"custom"`
+}
+
 // CreateEmailRequestAddress: create email request address.
 type CreateEmailRequestAddress struct {
 	// Email: email address.
@@ -1024,6 +1142,31 @@ type UpdateProjectSettingsRequestUpdatePeriodicReport struct {
 	SendingDay *uint32 `json:"sending_day"`
 }
 
+// BulkCreateBlocklistsRequest: bulk create blocklists request.
+type BulkCreateBlocklistsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainID: domain ID linked to the blocklist.
+	DomainID string `json:"domain_id"`
+
+	// Emails: email blocked by the blocklist.
+	Emails []string `json:"emails"`
+
+	// Type: type of blocklist.
+	// Default value: unknown_type
+	Type BlocklistType `json:"type"`
+
+	// Reason: reason to block the email.
+	Reason *string `json:"reason,omitempty"`
+}
+
+// BulkCreateBlocklistsResponse: bulk create blocklists response.
+type BulkCreateBlocklistsResponse struct {
+	// Blocklists: list of blocklist created.
+	Blocklists []*Blocklist `json:"blocklists"`
+}
+
 // CancelEmailRequest: cancel email request.
 type CancelEmailRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1126,6 +1269,15 @@ type CreateWebhookRequest struct {
 	SnsArn string `json:"sns_arn"`
 }
 
+// DeleteBlocklistRequest: delete blocklist request.
+type DeleteBlocklistRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// BlocklistID: ID of the blocklist to delete.
+	BlocklistID string `json:"-"`
+}
+
 // DeleteWebhookRequest: delete webhook request.
 type DeleteWebhookRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1220,6 +1372,63 @@ type GetWebhookRequest struct {
 
 	// WebhookID: ID of the Webhook to check.
 	WebhookID string `json:"-"`
+}
+
+// ListBlocklistsRequest: list blocklists request.
+type ListBlocklistsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: (Optional) List blocklist corresponding to specific criteria.
+	// Default value: created_at_desc
+	OrderBy ListBlocklistsRequestOrderBy `json:"-"`
+
+	// Page: (Optional) Requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: (Optional) Requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// DomainID: (Optional) Filter by a domain ID.
+	DomainID string `json:"-"`
+
+	// Email: (Optional) Filter by an email address.
+	Email *string `json:"-"`
+
+	// Type: (Optional) Filter by a blocklist type.
+	// Default value: unknown_type
+	Type *BlocklistType `json:"-"`
+
+	// Custom: (Optional) Filter by custom blocklist (true) or automatic Transactional Email blocklist (false).
+	Custom *bool `json:"-"`
+}
+
+// ListBlocklistsResponse: list blocklists response.
+type ListBlocklistsResponse struct {
+	// TotalCount: number of blocklists matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// Blocklists: single page of blocklists matching the requested criteria.
+	Blocklists []*Blocklist `json:"blocklists"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBlocklistsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBlocklistsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListBlocklistsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Blocklists = append(r.Blocklists, results.Blocklists...)
+	r.TotalCount += uint64(len(results.Blocklists))
+	return uint64(len(results.Blocklists)), nil
 }
 
 // ListDomainsRequest: list domains request.
@@ -2297,4 +2506,107 @@ func (s *API) UpdateProjectSettings(req *UpdateProjectSettingsRequest, opts ...s
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ListBlocklists: Retrieve the list of blocklists.
+func (s *API) ListBlocklists(req *ListBlocklistsRequest, opts ...scw.RequestOption) (*ListBlocklistsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "domain_id", req.DomainID)
+	parameter.AddToQuery(query, "email", req.Email)
+	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "custom", req.Custom)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/blocklists",
+		Query:  query,
+	}
+
+	var resp ListBlocklistsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// BulkCreateBlocklists: Create multiple blocklists in a specific Project or Organization using the `region` parameter.
+func (s *API) BulkCreateBlocklists(req *BulkCreateBlocklistsRequest, opts ...scw.RequestOption) (*BulkCreateBlocklistsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/blocklists",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp BulkCreateBlocklistsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteBlocklist: You must specify the blocklist you want to delete by the `region` and `blocklist_id`.
+func (s *API) DeleteBlocklist(req *DeleteBlocklistRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BlocklistID) == "" {
+		return errors.New("field BlocklistID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/blocklists/" + fmt.Sprint(req.BlocklistID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
