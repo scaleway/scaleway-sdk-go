@@ -522,6 +522,9 @@ type ListJobRunsRequest struct {
 	ProjectID *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	// State: default value: unknown_state
+	State JobRunState `json:"-"`
 }
 
 // ListJobRunsResponse: list job runs response.
@@ -1145,6 +1148,7 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "job_definition_id", req.JobDefinitionID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "state", req.State)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
