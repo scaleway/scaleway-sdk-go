@@ -50,9 +50,6 @@ func SweepSSHKey(scwClient *scw.Client) error {
 	}
 
 	for _, sshKey := range listSSHKeys.SSHKeys {
-		if !testhelpers.IsTestResource(sshKey.Name) {
-			continue
-		}
 		err := iamAPI.DeleteSSHKey(&iam.DeleteSSHKeyRequest{
 			SSHKeyID: sshKey.ID,
 		})
