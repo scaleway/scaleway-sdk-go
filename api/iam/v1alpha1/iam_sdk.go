@@ -1406,6 +1406,12 @@ type CreateSSHKeyRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// CreateUserMFAOTPRequest: create user mfaotp request.
+type CreateUserMFAOTPRequest struct {
+	// UserID: user ID of the MFA OTP.
+	UserID string `json:"-"`
+}
+
 // CreateUserRequest: create user request.
 type CreateUserRequest struct {
 	// OrganizationID: ID of the Organization.
@@ -1456,6 +1462,12 @@ type DeletePolicyRequest struct {
 // DeleteSSHKeyRequest: delete ssh key request.
 type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
+}
+
+// DeleteUserMFAOTPRequest: delete user mfaotp request.
+type DeleteUserMFAOTPRequest struct {
+	// UserID: user ID of the MFA OTP.
+	UserID string `json:"-"`
 }
 
 // DeleteUserRequest: delete user request.
@@ -2157,6 +2169,11 @@ type LockUserRequest struct {
 	UserID string `json:"-"`
 }
 
+// MFAOTP: mfaotp.
+type MFAOTP struct {
+	Secret string `json:"secret"`
+}
+
 // OrganizationSecuritySettings: organization security settings.
 type OrganizationSecuritySettings struct {
 	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
@@ -2340,6 +2357,21 @@ type UpdateUserUsernameRequest struct {
 
 	// Username: the new username.
 	Username string `json:"username"`
+}
+
+// ValidateUserMFAOTPRequest: validate user mfaotp request.
+type ValidateUserMFAOTPRequest struct {
+	// UserID: user ID of the MFA OTP.
+	UserID string `json:"-"`
+
+	// OneTimePassword: a password generated using the OTP.
+	OneTimePassword string `json:"one_time_password"`
+}
+
+// ValidateUserMFAOTPResponse: validate user mfaotp response.
+type ValidateUserMFAOTPResponse struct {
+	// RecoveryCodes: list of recovery codes usable for this OTP method.
+	RecoveryCodes []string `json:"recovery_codes"`
 }
 
 // This API allows you to manage Identity and Access Management (IAM) across your Scaleway Organizations, Projects and resources.
@@ -2670,6 +2702,85 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// CreateUserMFAOTP: Create a MFA OTP. Private Beta feature.
+func (s *API) CreateUserMFAOTP(req *CreateUserMFAOTPRequest, opts ...scw.RequestOption) (*MFAOTP, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/mfa-otp",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp MFAOTP
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ValidateUserMFAOTP: Validate a MFA OTP. Private Beta feature.
+func (s *API) ValidateUserMFAOTP(req *ValidateUserMFAOTPRequest, opts ...scw.RequestOption) (*ValidateUserMFAOTPResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/validate-mfa-otp",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ValidateUserMFAOTPResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteUserMFAOTP: Delete a MFA OTP. Private Beta feature.
+func (s *API) DeleteUserMFAOTP(req *DeleteUserMFAOTPRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/mfa-otp",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed. Private Beta feature.
