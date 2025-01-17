@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
@@ -38,6 +39,108 @@ var (
 	_ = parameter.AddToQuery
 	_ = namegenerator.GetRandomName
 )
+
+type ContractType string
+
+const (
+	// Unknown type.
+	ContractTypeUnknownType = ContractType("unknown_type")
+	// A global contract.
+	ContractTypeGlobal = ContractType("global")
+	// Deprecated. A contract specific to the Kubernetes product.
+	ContractTypeK8s = ContractType("k8s")
+	// A contract specific to the Instance product.
+	ContractTypeInstance = ContractType("instance")
+	// A contract specific to Container products.
+	ContractTypeContainer = ContractType("container")
+	// A contract specific to Baremetal products.
+	ContractTypeBaremetal = ContractType("baremetal")
+)
+
+func (enum ContractType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_type"
+	}
+	return string(enum)
+}
+
+func (enum ContractType) Values() []ContractType {
+	return []ContractType{
+		"unknown_type",
+		"global",
+		"k8s",
+		"instance",
+		"container",
+		"baremetal",
+	}
+}
+
+func (enum ContractType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ContractType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ContractType(ContractType(tmp).String())
+	return nil
+}
+
+type ListContractSignaturesRequestOrderBy string
+
+const (
+	// Signing date ascending.
+	ListContractSignaturesRequestOrderBySignedAtAsc = ListContractSignaturesRequestOrderBy("signed_at_asc")
+	// Signing date descending.
+	ListContractSignaturesRequestOrderBySignedAtDesc = ListContractSignaturesRequestOrderBy("signed_at_desc")
+	// Expiration date ascending.
+	ListContractSignaturesRequestOrderByExpiresAtAsc = ListContractSignaturesRequestOrderBy("expires_at_asc")
+	// Expiration date descending.
+	ListContractSignaturesRequestOrderByExpiresAtDesc = ListContractSignaturesRequestOrderBy("expires_at_desc")
+	// Name ascending.
+	ListContractSignaturesRequestOrderByNameAsc = ListContractSignaturesRequestOrderBy("name_asc")
+	// Name descending.
+	ListContractSignaturesRequestOrderByNameDesc = ListContractSignaturesRequestOrderBy("name_desc")
+)
+
+func (enum ListContractSignaturesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "signed_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListContractSignaturesRequestOrderBy) Values() []ListContractSignaturesRequestOrderBy {
+	return []ListContractSignaturesRequestOrderBy{
+		"signed_at_asc",
+		"signed_at_desc",
+		"expires_at_asc",
+		"expires_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListContractSignaturesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListContractSignaturesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListContractSignaturesRequestOrderBy(ListContractSignaturesRequestOrderBy(tmp).String())
+	return nil
+}
 
 type ListProjectsRequestOrderBy string
 
@@ -84,6 +187,49 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Contract: contract.
+type Contract struct {
+	// ID: ID of the contract.
+	ID string `json:"id"`
+
+	// Type: the type of the contract.
+	// Default value: unknown_type
+	Type ContractType `json:"type"`
+
+	// Name: the name of the contract.
+	Name string `json:"name"`
+
+	// Version: the version of the contract.
+	Version uint32 `json:"version"`
+
+	// CreatedAt: the creation date of the contract.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: the last modification date of the contract.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+// ContractSignature: contract signature.
+type ContractSignature struct {
+	// ID: ID of the contract signature.
+	ID string `json:"id"`
+
+	// OrganizationID: the Organization ID which signed the contract.
+	OrganizationID string `json:"organization_id"`
+
+	// CreatedAt: the creation date of the contract signature.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// SignedAt: the signing date of the contract signature.
+	SignedAt *time.Time `json:"signed_at"`
+
+	// ExpiresAt: the expiration date of the contract signature.
+	ExpiresAt *time.Time `json:"expires_at"`
+
+	// Contract: the contract signed.
+	Contract *Contract `json:"contract"`
+}
+
 // Project: project.
 type Project struct {
 	// ID: ID of the Project.
@@ -103,6 +249,104 @@ type Project struct {
 
 	// Description: description of the Project.
 	Description string `json:"description"`
+}
+
+// CheckContractSignatureResponse: check contract signature response.
+type CheckContractSignatureResponse struct {
+	// Created: whether a signature has been requested for this contract.
+	Created bool `json:"created"`
+
+	// Validated: whether the signature for this contract has been validated.
+	Validated bool `json:"validated"`
+}
+
+// ContractAPICheckContractSignatureRequest: contract api check contract signature request.
+type ContractAPICheckContractSignatureRequest struct {
+	// OrganizationID: ID of the Organization to check the contract signature for.
+	OrganizationID string `json:"organization_id"`
+
+	// ContractType: filter on contract type.
+	// Default value: unknown_type
+	ContractType ContractType `json:"contract_type"`
+
+	// ContractName: filter on contract name.
+	ContractName string `json:"contract_name"`
+}
+
+// ContractAPICreateContractSignatureRequest: contract api create contract signature request.
+type ContractAPICreateContractSignatureRequest struct {
+	// ContractType: the type of the contract.
+	// Default value: unknown_type
+	ContractType ContractType `json:"contract_type"`
+
+	// ContractName: the name of the contract.
+	ContractName string `json:"contract_name"`
+
+	// Validated: whether the contract is validated at creation.
+	Validated bool `json:"validated"`
+
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"organization_id"`
+}
+
+// ContractAPIDownloadContractSignatureRequest: contract api download contract signature request.
+type ContractAPIDownloadContractSignatureRequest struct {
+	// ContractSignatureID: the contract signature ID.
+	ContractSignatureID string `json:"-"`
+
+	// Locale: the locale requested for the content of the contract.
+	// Default value: unknown_language_code
+	Locale std.LanguageCode `json:"-"`
+}
+
+// ContractAPIListContractSignaturesRequest: contract api list contract signatures request.
+type ContractAPIListContractSignaturesRequest struct {
+	// Page: the page number for the returned contracts.
+	Page *int32 `json:"-"`
+
+	// PageSize: the maximum number of contracts per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: how the contracts are ordered in the response.
+	// Default value: signed_at_asc
+	OrderBy ListContractSignaturesRequestOrderBy `json:"-"`
+
+	// OrganizationID: filter on Organization ID.
+	OrganizationID string `json:"-"`
+}
+
+// ContractAPIValidateContractSignatureRequest: contract api validate contract signature request.
+type ContractAPIValidateContractSignatureRequest struct {
+	// ContractSignatureID: the contract linked to your Organization you want to sign.
+	ContractSignatureID string `json:"-"`
+}
+
+// ListContractSignaturesResponse: list contract signatures response.
+type ListContractSignaturesResponse struct {
+	// TotalCount: the total number of contract signatures.
+	TotalCount uint64 `json:"total_count"`
+
+	// ContractSignatures: the paginated returned contract signatures.
+	ContractSignatures []*ContractSignature `json:"contract_signatures"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListContractSignaturesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListContractSignaturesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListContractSignaturesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ContractSignatures = append(r.ContractSignatures, results.ContractSignatures...)
+	r.TotalCount += uint64(len(results.ContractSignatures))
+	return uint64(len(results.ContractSignatures)), nil
 }
 
 // ListProjectsResponse: list projects response.
@@ -189,6 +433,162 @@ type ProjectAPIUpdateProjectRequest struct {
 
 	// Description: description of the Project.
 	Description *string `json:"description,omitempty"`
+}
+
+// The Contract API allows you to manage contracts.
+type ContractAPI struct {
+	client *scw.Client
+}
+
+// NewContractAPI returns a ContractAPI object from a Scaleway client.
+func NewContractAPI(client *scw.Client) *ContractAPI {
+	return &ContractAPI{
+		client: client,
+	}
+}
+
+// DownloadContractSignature: Download a contract content.
+func (s *ContractAPI) DownloadContractSignature(req *ContractAPIDownloadContractSignatureRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "locale", req.Locale)
+
+	if fmt.Sprint(req.ContractSignatureID) == "" {
+		return nil, errors.New("field ContractSignatureID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account/v3/contract-signatures/" + fmt.Sprint(req.ContractSignatureID) + "/download",
+		Query:  query,
+	}
+
+	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateContractSignature: Create a signature for your Organization for the latest version of the requested contract.
+func (s *ContractAPI) CreateContractSignature(req *ContractAPICreateContractSignatureRequest, opts ...scw.RequestOption) (*ContractSignature, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/contract-signatures",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ContractSignature
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ValidateContractSignature: Sign a contract for your Organization.
+func (s *ContractAPI) ValidateContractSignature(req *ContractAPIValidateContractSignatureRequest, opts ...scw.RequestOption) (*ContractSignature, error) {
+	var err error
+
+	if fmt.Sprint(req.ContractSignatureID) == "" {
+		return nil, errors.New("field ContractSignatureID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/contract-signatures/" + fmt.Sprint(req.ContractSignatureID) + "/validate",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ContractSignature
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CheckContractSignature: Check if a contract is signed for your Organization.
+func (s *ContractAPI) CheckContractSignature(req *ContractAPICheckContractSignatureRequest, opts ...scw.RequestOption) (*CheckContractSignatureResponse, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/contract-signatures/check",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckContractSignatureResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListContractSignatures: List contract signatures for an Organization.
+func (s *ContractAPI) ListContractSignatures(req *ContractAPIListContractSignaturesRequest, opts ...scw.RequestOption) (*ListContractSignaturesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/account/v3/contract-signatures",
+		Query:  query,
+	}
+
+	var resp ListContractSignaturesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // This API allows you to manage your Scaleway Projects.
