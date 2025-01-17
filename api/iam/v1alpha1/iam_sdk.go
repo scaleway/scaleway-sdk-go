@@ -2319,9 +2319,6 @@ type UpdateUserPasswordRequest struct {
 
 	// Password: the new password.
 	Password string `json:"password"`
-
-	// SendEmail: whether or not to send an email alerting the user their password has changed.
-	SendEmail bool `json:"send_email"`
 }
 
 // UpdateUserRequest: update user request.
