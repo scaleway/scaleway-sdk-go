@@ -795,6 +795,9 @@ type DNSRecord struct {
 	// Status: record status.
 	// Default value: unknown_status
 	Status DNSRecordStatus `json:"status"`
+
+	// RawData: record representation as it appears in the zone file or DNS management system.
+	RawData string `json:"raw_data"`
 }
 
 // Nameserver: nameserver.
