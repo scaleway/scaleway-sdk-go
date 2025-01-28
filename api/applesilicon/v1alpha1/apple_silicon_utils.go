@@ -75,3 +75,47 @@ func (s *API) WaitForPossibleDeletion(req *WaitForServerRequest, opts ...scw.Req
 	time.Sleep(time.Until(timeToDelete))
 	return server, nil
 }
+
+func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerRequest, opts ...scw.RequestOption) (*[]ServerPrivateNetwork, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ServerPrivateNetworkServerStatus]struct{}{
+		ServerPrivateNetworkServerStatusAttached:      {},
+		ServerPrivateNetworkServerStatusError:         {},
+		ServerPrivateNetworkServerStatusUnknownStatus: {},
+		ServerPrivateNetworkServerStatusLocked:        {},
+	}
+
+	serverPrivateNetworks, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.ListServerPrivateNetworks(&PrivateNetworkAPIListServerPrivateNetworksRequest{
+				Zone:     req.Zone,
+				ServerID: &req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+			for _, serverPrivateNetwork := range res.ServerPrivateNetworks {
+				_, isTerminal := terminalStatus[serverPrivateNetwork.Status]
+				if !isTerminal {
+					return res.ServerPrivateNetworks, isTerminal, err
+				}
+			}
+			return res.ServerPrivateNetworks, true, err
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for server private network failed")
+	}
+
+	return serverPrivateNetworks.(*[]ServerPrivateNetwork), nil
+}
