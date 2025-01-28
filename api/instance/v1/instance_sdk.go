@@ -1367,7 +1367,8 @@ type PlacementGroup struct {
 	// Default value: max_availability
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
 
-	// PolicyRespected: returns true if the policy is respected, false otherwise.
+	// PolicyRespected: in the server endpoints the value is always false as it is deprecated.
+	// In the placement group endpoints the value is correct.
 	PolicyRespected bool `json:"policy_respected"`
 
 	// Zone: zone in which the placement group is located.
