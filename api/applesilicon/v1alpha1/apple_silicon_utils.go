@@ -76,7 +76,7 @@ func (s *API) WaitForPossibleDeletion(req *WaitForServerRequest, opts ...scw.Req
 	return server, nil
 }
 
-func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerRequest, opts ...scw.RequestOption) (*[]ServerPrivateNetwork, error) {
+func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerRequest, opts ...scw.RequestOption) ([]*ServerPrivateNetwork, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -117,5 +117,5 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerReque
 		return nil, errors.Wrap(err, "waiting for server private network failed")
 	}
 
-	return serverPrivateNetworks.(*[]ServerPrivateNetwork), nil
+	return serverPrivateNetworks.([]*ServerPrivateNetwork), nil
 }
