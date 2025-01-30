@@ -353,6 +353,9 @@ type Link struct {
 	// PairingKey: used to identify a link from a user or partner's point of view.
 	PairingKey string `json:"pairing_key"`
 
+	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
+	DisapprovedReason *string `json:"disapproved_reason"`
+
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
 }
