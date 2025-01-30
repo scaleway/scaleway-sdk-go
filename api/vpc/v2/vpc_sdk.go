@@ -766,23 +766,6 @@ func (r *ListVPCsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Vpcs)), nil
 }
 
-// MigrateZonalPrivateNetworksRequest: migrate zonal private networks request.
-type MigrateZonalPrivateNetworksRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// OrganizationID: organization ID to target. The specified zoned Private Networks within this Organization will be migrated to regional.
-	// Precisely one of OrganizationID, ProjectID must be set.
-	OrganizationID *string `json:"organization_id,omitempty"`
-
-	// ProjectID: project to target. The specified zoned Private Networks within this Project will be migrated to regional.
-	// Precisely one of OrganizationID, ProjectID must be set.
-	ProjectID *string `json:"project_id,omitempty"`
-
-	// PrivateNetworkIDs: iDs of the Private Networks to migrate.
-	PrivateNetworkIDs []string `json:"private_network_ids"`
-}
-
 // RoutesWithNexthopAPIListRoutesWithNexthopRequest: routes with nexthop api list routes with nexthop request.
 type RoutesWithNexthopAPIListRoutesWithNexthopRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1261,46 +1244,6 @@ func (s *API) DeletePrivateNetwork(req *DeletePrivateNetworkRequest, opts ...scw
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// MigrateZonalPrivateNetworks: Transform multiple existing zoned Private Networks (scoped to a single Availability Zone) into regional Private Networks, scoped to an entire region. You can transform one or many Private Networks (specified by their Private Network IDs) within a single Scaleway Organization or Project, with the same call.
-func (s *API) MigrateZonalPrivateNetworks(req *MigrateZonalPrivateNetworksRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.OrganizationID = &defaultOrganizationID
-	}
-
-	defaultProjectID, exist := s.client.GetDefaultProjectID()
-	if exist && req.OrganizationID == nil && req.ProjectID == nil {
-		req.ProjectID = &defaultProjectID
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/migrate-zonal",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
