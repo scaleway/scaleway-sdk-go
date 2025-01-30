@@ -609,6 +609,45 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type LocalityType string
+
+const (
+	LocalityTypeGlobal = LocalityType("global")
+	LocalityTypeRegion = LocalityType("region")
+	LocalityTypeZone   = LocalityType("zone")
+)
+
+func (enum LocalityType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "global"
+	}
+	return string(enum)
+}
+
+func (enum LocalityType) Values() []LocalityType {
+	return []LocalityType{
+		"global",
+		"region",
+		"zone",
+	}
+}
+
+func (enum LocalityType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LocalityType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LocalityType(LocalityType(tmp).String())
+	return nil
+}
+
 type LogAction string
 
 const (
@@ -834,6 +873,29 @@ func (enum *UserType) UnmarshalJSON(data []byte) error {
 
 	*enum = UserType(UserType(tmp).String())
 	return nil
+}
+
+// QuotumLimit: quotum limit.
+type QuotumLimit struct {
+	// Global: whether or not the limit is applied globally.
+	// Precisely one of Global, Region, Zone must be set.
+	Global *bool `json:"global,omitempty"`
+
+	// Region: the region on which the limit is applied.
+	// Precisely one of Global, Region, Zone must be set.
+	Region *scw.Region `json:"region,omitempty"`
+
+	// Zone: the zone on which the limit is applied.
+	// Precisely one of Global, Region, Zone must be set.
+	Zone *scw.Zone `json:"zone,omitempty"`
+
+	// Limit: maximum locality limit.
+	// Precisely one of Limit, Unlimited must be set.
+	Limit *uint64 `json:"limit,omitempty"`
+
+	// Unlimited: whether or not the quota per locality is unlimited.
+	// Precisely one of Limit, Unlimited must be set.
+	Unlimited *bool `json:"unlimited,omitempty"`
 }
 
 // JWT: jwt.
@@ -1144,11 +1206,11 @@ type Quotum struct {
 	// Name: name of the quota.
 	Name string `json:"name"`
 
-	// Limit: maximum limit of the quota.
+	// Deprecated: Limit: maximum limit of the quota.
 	// Precisely one of Limit, Unlimited must be set.
 	Limit *uint64 `json:"limit,omitempty"`
 
-	// Unlimited: defines whether or not the quota is unlimited.
+	// Deprecated: Unlimited: defines whether or not the quota is unlimited.
 	// Precisely one of Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
 
@@ -1160,6 +1222,13 @@ type Quotum struct {
 
 	// Description: details about the quota.
 	Description string `json:"description"`
+
+	// LocalityType: whether this quotum is applied on at the zone level, region level, or globally.
+	// Default value: global
+	LocalityType LocalityType `json:"locality_type"`
+
+	// Limits: limits per locality.
+	Limits []*QuotumLimit `json:"limits"`
 }
 
 // Rule: rule.
