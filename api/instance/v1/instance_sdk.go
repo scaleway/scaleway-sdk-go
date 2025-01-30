@@ -207,7 +207,6 @@ type IPType string
 
 const (
 	IPTypeUnknownIptype = IPType("unknown_iptype")
-	IPTypeNat           = IPType("nat")
 	IPTypeRoutedIPv4    = IPType("routed_ipv4")
 	IPTypeRoutedIPv6    = IPType("routed_ipv6")
 )
@@ -223,7 +222,6 @@ func (enum IPType) String() string {
 func (enum IPType) Values() []IPType {
 	return []IPType{
 		"unknown_iptype",
-		"nat",
 		"routed_ipv4",
 		"routed_ipv6",
 	}
@@ -2136,7 +2134,7 @@ type CreateIPRequest struct {
 	// Server: UUID of the Instance you want to attach the IP to.
 	Server *string `json:"server,omitempty"`
 
-	// Type: IP type to reserve (either 'routed_ipv4' or 'routed_ipv6', use of 'nat' is deprecated).
+	// Type: IP type to reserve (either 'routed_ipv4' or 'routed_ipv6').
 	// Default value: unknown_iptype
 	Type IPType `json:"type,omitempty"`
 }
@@ -2837,7 +2835,7 @@ type ListIPsRequest struct {
 	// Page: a positive integer to choose the page to return.
 	Page *int32 `json:"-"`
 
-	// Type: filter on the IP Mobility IP type (whose value should be either 'routed_ipv4', 'routed_ipv6' or 'nat').
+	// Type: filter on the IP Mobility IP type (whose value should be either 'routed_ipv4' or 'routed_ipv6').
 	Type *string `json:"-"`
 }
 
@@ -3587,7 +3585,7 @@ type UpdateIPRequest struct {
 	// Reverse: reverse domain name.
 	Reverse *NullableStringValue `json:"reverse,omitempty"`
 
-	// Type: convert a 'nat' IP to a 'routed_ipv4'.
+	// Type: should have no effect.
 	// Default value: unknown_iptype
 	Type IPType `json:"type,omitempty"`
 
