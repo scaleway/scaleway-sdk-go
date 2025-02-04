@@ -151,7 +151,7 @@ func (s *API) WaitForServerVPCOptionTerminalState(req *WaitForServerRequest, opt
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return errors.Wrap(err, "waiting for server failed")
+		return errors.Wrap(err, "waiting for vpc option terminal state failed")
 	}
 	return nil
 }
