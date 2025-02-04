@@ -1258,7 +1258,7 @@ type HealthCheck struct {
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 
-	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
+	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22 or <9.0. For older or newer versions, use a TCP health check.
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 
@@ -1460,7 +1460,7 @@ type Backend struct {
 	// UpdatedAt: date at which the backend was updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
+	// FailoverHost: scaleway Object Storage bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host"`
 
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
@@ -1960,7 +1960,7 @@ type CreateBackendRequest struct {
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
+	// FailoverHost: scaleway Object Storage bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host,omitempty"`
 
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
@@ -3081,7 +3081,7 @@ type UpdateBackendRequest struct {
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
+	// FailoverHost: scaleway Object Storage bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host,omitempty"`
 
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
@@ -3236,7 +3236,7 @@ type UpdateHealthCheckRequest struct {
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 
-	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
+	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22 or <9.0. For older or newer versions, use a TCP health check.
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 
@@ -3489,7 +3489,7 @@ type ZonedAPICreateBackendRequest struct {
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
+	// FailoverHost: scaleway Object Storage bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host,omitempty"`
 
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
@@ -4280,7 +4280,7 @@ type ZonedAPIUpdateBackendRequest struct {
 	// Default value: proxy_protocol_unknown
 	ProxyProtocol ProxyProtocol `json:"proxy_protocol"`
 
-	// FailoverHost: scaleway S3 bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
+	// FailoverHost: scaleway Object Storage bucket website to be served as failover if all backend servers are down, e.g. failover-website.s3-website.fr-par.scw.cloud.
 	FailoverHost *string `json:"failover_host,omitempty"`
 
 	// SslBridging: defines whether to enable SSL bridging between the Load Balancer and backend servers.
@@ -4435,7 +4435,7 @@ type ZonedAPIUpdateHealthCheckRequest struct {
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	TCPConfig *HealthCheckTCPConfig `json:"tcp_config,omitempty"`
 
-	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22, for older versions, use a TCP health check.
+	// MysqlConfig: object to configure a MySQL health check. The check requires MySQL >=3.22 or <9.0. For older or newer versions, use a TCP health check.
 	// Precisely one of TCPConfig, MysqlConfig, PgsqlConfig, LdapConfig, RedisConfig, HTTPConfig, HTTPSConfig must be set.
 	MysqlConfig *HealthCheckMysqlConfig `json:"mysql_config,omitempty"`
 

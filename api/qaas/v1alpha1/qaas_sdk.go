@@ -1274,7 +1274,7 @@ type ListJobsRequest struct {
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// Tags: list jobs with these tags.
-	Tags *[]string `json:"-"`
+	Tags []string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`
@@ -1511,7 +1511,7 @@ type ListSessionsRequest struct {
 	PlatformID *string `json:"-"`
 
 	// Tags: list sessions with these tags.
-	Tags *[]string `json:"-"`
+	Tags []string `json:"-"`
 
 	// Page: page number.
 	Page *int32 `json:"-"`

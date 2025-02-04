@@ -134,7 +134,7 @@ func Example_createServer() {
 	createRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Name:              "my-server-01",
 		CommercialType:    serverType,
-		Image:             image,
+		Image:             scw.StringPtr(image),
 		DynamicIPRequired: scw.BoolPtr(true),
 	})
 	if err != nil {

@@ -162,6 +162,16 @@ func (enum *ListJobRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// SecretEnvVar: secret env var.
+type SecretEnvVar struct {
+	Name string `json:"name"`
+}
+
+// SecretFile: secret file.
+type SecretFile struct {
+	Path string `json:"path"`
+}
+
 // CronSchedule: cron schedule.
 type CronSchedule struct {
 	// Schedule: uNIX cron schedule to run job (e.g., '* * * * *').
@@ -176,6 +186,39 @@ type CreateJobDefinitionRequestCronScheduleConfig struct {
 	Schedule string `json:"schedule"`
 
 	Timezone string `json:"timezone"`
+}
+
+// CreateJobDefinitionSecretsRequestSecretConfig: create job definition secrets request secret config.
+type CreateJobDefinitionSecretsRequestSecretConfig struct {
+	SecretManagerID string `json:"secret_manager_id"`
+
+	SecretManagerVersion string `json:"secret_manager_version"`
+
+	// Precisely one of Path, EnvVarName must be set.
+	Path *string `json:"path,omitempty"`
+
+	// Precisely one of Path, EnvVarName must be set.
+	EnvVarName *string `json:"env_var_name,omitempty"`
+}
+
+// Secret: secret.
+type Secret struct {
+	// SecretID: UUID of the secret reference within the job.
+	SecretID string `json:"secret_id"`
+
+	// SecretManagerID: UUID of the secret in Secret Manager.
+	SecretManagerID string `json:"secret_manager_id"`
+
+	// SecretManagerVersion: version of the secret in Secret Manager.
+	SecretManagerVersion string `json:"secret_manager_version"`
+
+	// File: file secret mounted inside the job.
+	// Precisely one of File, EnvVar must be set.
+	File *SecretFile `json:"file,omitempty"`
+
+	// EnvVar: environment variable used to expose the secret.
+	// Precisely one of File, EnvVar must be set.
+	EnvVar *SecretEnvVar `json:"env_var,omitempty"`
 }
 
 // JobDefinition: job definition.
@@ -302,6 +345,24 @@ type CreateJobDefinitionRequest struct {
 	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 }
 
+// CreateJobDefinitionSecretsRequest: create job definition secrets request.
+type CreateJobDefinitionSecretsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+
+	// Secrets: list of secrets to inject into the job.
+	Secrets []*CreateJobDefinitionSecretsRequestSecretConfig `json:"secrets"`
+}
+
+// CreateJobDefinitionSecretsResponse: create job definition secrets response.
+type CreateJobDefinitionSecretsResponse struct {
+	// Secrets: list of secrets created.
+	Secrets []*Secret `json:"secrets"`
+}
+
 // DeleteJobDefinitionRequest: delete job definition request.
 type DeleteJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -309,6 +370,18 @@ type DeleteJobDefinitionRequest struct {
 
 	// JobDefinitionID: UUID of the job definition to delete.
 	JobDefinitionID string `json:"-"`
+}
+
+// DeleteJobDefinitionSecretRequest: delete job definition secret request.
+type DeleteJobDefinitionSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+
+	// SecretID: UUID of the secret reference within the job.
+	SecretID string `json:"-"`
 }
 
 // GetJobDefinitionRequest: get job definition request.
@@ -320,6 +393,18 @@ type GetJobDefinitionRequest struct {
 	JobDefinitionID string `json:"-"`
 }
 
+// GetJobDefinitionSecretRequest: get job definition secret request.
+type GetJobDefinitionSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+
+	// SecretID: UUID of the secret reference within the job.
+	SecretID string `json:"-"`
+}
+
 // GetJobRunRequest: get job run request.
 type GetJobRunRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -327,6 +412,54 @@ type GetJobRunRequest struct {
 
 	// JobRunID: UUID of the job run to get.
 	JobRunID string `json:"-"`
+}
+
+// GetJobsLimitsRequest: get jobs limits request.
+type GetJobsLimitsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+}
+
+// JobsLimits: jobs limits.
+type JobsLimits struct {
+	SecretsPerJobDefinition uint32 `json:"secrets_per_job_definition"`
+}
+
+// ListJobDefinitionSecretsRequest: list job definition secrets request.
+type ListJobDefinitionSecretsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+}
+
+// ListJobDefinitionSecretsResponse: list job definition secrets response.
+type ListJobDefinitionSecretsResponse struct {
+	// Secrets: list of secret references within a job definition.
+	Secrets []*Secret `json:"secrets"`
+
+	// TotalCount: total count of secret references within a job definition.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListJobDefinitionSecretsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListJobDefinitionSecretsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListJobDefinitionSecretsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Secrets = append(r.Secrets, results.Secrets...)
+	r.TotalCount += uint64(len(results.Secrets))
+	return uint64(len(results.Secrets)), nil
 }
 
 // ListJobDefinitionsRequest: list job definitions request.
@@ -389,6 +522,9 @@ type ListJobRunsRequest struct {
 	ProjectID *string `json:"-"`
 
 	OrganizationID *string `json:"-"`
+
+	// State: default value: unknown_state
+	State JobRunState `json:"-"`
 }
 
 // ListJobRunsResponse: list job runs response.
@@ -496,6 +632,29 @@ type UpdateJobDefinitionRequest struct {
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
 
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
+}
+
+// UpdateJobDefinitionSecretRequest: update job definition secret request.
+type UpdateJobDefinitionSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+
+	// SecretID: UUID of the secret reference within the job.
+	SecretID string `json:"-"`
+
+	// SecretManagerVersion: version of the secret in Secret Manager.
+	SecretManagerVersion *string `json:"secret_manager_version,omitempty"`
+
+	// Path: path of the secret to mount inside the job (either `path` or `env_var_name` must be set).
+	// Precisely one of Path, EnvVarName must be set.
+	Path *string `json:"path,omitempty"`
+
+	// EnvVarName: environment variable name used to expose the secret inside the job (either `path` or `env_var_name` must be set).
+	// Precisely one of Path, EnvVarName must be set.
+	EnvVarName *string `json:"env_var_name,omitempty"`
 }
 
 // This API allows you to manage your Serverless Jobs.
@@ -726,6 +885,181 @@ func (s *API) StartJobDefinition(req *StartJobDefinitionRequest, opts ...scw.Req
 	return &resp, nil
 }
 
+// CreateJobDefinitionSecrets: Create a secret reference within a job definition.
+func (s *API) CreateJobDefinitionSecrets(req *CreateJobDefinitionSecretsRequest, opts ...scw.RequestOption) (*CreateJobDefinitionSecretsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/secrets",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CreateJobDefinitionSecretsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetJobDefinitionSecret: Get a secret references within a job definition.
+func (s *API) GetJobDefinitionSecret(req *GetJobDefinitionSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
+	}
+
+	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListJobDefinitionSecrets: List secrets references within a job definition.
+func (s *API) ListJobDefinitionSecrets(req *ListJobDefinitionSecretsRequest, opts ...scw.RequestOption) (*ListJobDefinitionSecretsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/secrets",
+	}
+
+	var resp ListJobDefinitionSecretsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateJobDefinitionSecret: Update a secret reference within a job definition.
+func (s *API) UpdateJobDefinitionSecret(req *UpdateJobDefinitionSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return nil, errors.New("field JobDefinitionID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Secret
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteJobDefinitionSecret: Delete a secret reference within a job definition.
+func (s *API) DeleteJobDefinitionSecret(req *DeleteJobDefinitionSecretRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.JobDefinitionID) == "" {
+		return errors.New("field JobDefinitionID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/job-definitions/" + fmt.Sprint(req.JobDefinitionID) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetJobRun: Get a job run by its unique identifier.
 func (s *API) GetJobRun(req *GetJobRunRequest, opts ...scw.RequestOption) (*JobRun, error) {
 	var err error
@@ -814,6 +1148,7 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "job_definition_id", req.JobDefinitionID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "state", req.State)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -853,6 +1188,33 @@ func (s *API) ListJobsResources(req *ListJobsResourcesRequest, opts ...scw.Reque
 	}
 
 	var resp ListJobsResourcesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetJobsLimits: Get jobs limits for the console.
+func (s *API) GetJobsLimits(req *GetJobsLimitsRequest, opts ...scw.RequestOption) (*JobsLimits, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/jobs-limits",
+	}
+
+	var resp JobsLimits
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

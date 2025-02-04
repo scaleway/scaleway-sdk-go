@@ -883,16 +883,16 @@ type RouteRestConfig struct {
 
 // RouteS3Config: route s3 config.
 type RouteS3Config struct {
-	// BucketRegion: region of the S3 route's destination bucket (e.g., 'fr-par').
+	// BucketRegion: region of the Amazon S3 route's destination bucket (e.g., 'fr-par').
 	BucketRegion string `json:"bucket_region"`
 
-	// BucketName: destination bucket name of the S3 route.
+	// BucketName: destination bucket name of the Amazon S3 route.
 	BucketName string `json:"bucket_name"`
 
 	// ObjectPrefix: optional string to prefix object names with.
 	ObjectPrefix string `json:"object_prefix"`
 
-	// Strategy: how the S3 route's objects will be created: one per topic or one per message.
+	// Strategy: how the Amazon S3 route's objects will be created: one per topic or one per message.
 	// Default value: unknown
 	Strategy RouteS3ConfigS3Strategy `json:"strategy"`
 }
@@ -1038,7 +1038,7 @@ type CreateRouteRequest struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters.
 	Topic string `json:"topic"`
 
-	// S3Config: if creating S3 Route, S3-specific configuration fields.
+	// S3Config: if creating Amazon S3 Routes, Amazon S3-specific configuration fields.
 	// Precisely one of S3Config, DbConfig, RestConfig must be set.
 	S3Config *CreateRouteRequestS3Config `json:"s3_config,omitempty"`
 
@@ -1570,7 +1570,7 @@ type Route struct {
 	// CreatedAt: date at which the route was created.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// S3Config: when using S3 Route, S3-specific configuration fields.
+	// S3Config: when using Amazon S3 Routes, Amazon S3-specific configuration fields.
 	// Precisely one of S3Config, DbConfig, RestConfig must be set.
 	S3Config *RouteS3Config `json:"s3_config,omitempty"`
 
@@ -1702,7 +1702,7 @@ type UpdateRouteRequest struct {
 	// Topic: topic the route subscribes to. It must be a valid MQTT topic and up to 65535 characters.
 	Topic *string `json:"topic,omitempty"`
 
-	// S3Config: when updating S3 Route, S3-specific configuration fields.
+	// S3Config: when updating Amazon S3 Route, Amazon S3-specific configuration fields.
 	// Precisely one of S3Config, DbConfig, RestConfig must be set.
 	S3Config *UpdateRouteRequestS3Config `json:"s3_config,omitempty"`
 
@@ -2516,8 +2516,8 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 //     <b>You need to manage the database by yourself</b>.
 //   - REST Route.
 //     Create a route that will call a REST API on received subscribed MQTT messages.
-//   - S3 Routes.
-//     Create a route that will put subscribed MQTT messages into an S3 bucket.
+//   - Amazon S3 Routes.
+//     Create a route that will put subscribed MQTT messages into an Object Storage bucket.
 //     You need to create the bucket yourself and grant write access.
 //     Granting can be done with s3cmd (`s3cmd setacl s3://<my-bucket> --acl-grant=write:555c69c3-87d0-4bf8-80f1-99a2f757d031:555c69c3-87d0-4bf8-80f1-99a2f757d031`).
 func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*Route, error) {

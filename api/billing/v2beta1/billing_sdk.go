@@ -360,6 +360,14 @@ const (
 	ListDiscountsRequestOrderByCreationDateDesc = ListDiscountsRequestOrderBy("creation_date_desc")
 	// Order discounts by creation date (ascending chronological order).
 	ListDiscountsRequestOrderByCreationDateAsc = ListDiscountsRequestOrderBy("creation_date_asc")
+	// Order discounts by start date (descending chronological order).
+	ListDiscountsRequestOrderByStartDateDesc = ListDiscountsRequestOrderBy("start_date_desc")
+	// Order discounts by start date (ascending chronological order).
+	ListDiscountsRequestOrderByStartDateAsc = ListDiscountsRequestOrderBy("start_date_asc")
+	// Order discounts by stop date (descending chronological order).
+	ListDiscountsRequestOrderByStopDateDesc = ListDiscountsRequestOrderBy("stop_date_desc")
+	// Order discounts by stop date (ascending chronological order).
+	ListDiscountsRequestOrderByStopDateAsc = ListDiscountsRequestOrderBy("stop_date_asc")
 )
 
 func (enum ListDiscountsRequestOrderBy) String() string {
@@ -374,6 +382,10 @@ func (enum ListDiscountsRequestOrderBy) Values() []ListDiscountsRequestOrderBy {
 	return []ListDiscountsRequestOrderBy{
 		"creation_date_desc",
 		"creation_date_asc",
+		"start_date_desc",
+		"start_date_asc",
+		"stop_date_desc",
+		"stop_date_asc",
 	}
 }
 
@@ -512,6 +524,9 @@ type DiscountFilter struct {
 
 	// Value: value of filter.
 	Value string `json:"value"`
+
+	// Exclude: boolean to describe if filter is an excluding filter.
+	Exclude bool `json:"exclude"`
 }
 
 // ListConsumptionsResponseConsumption: list consumptions response consumption.

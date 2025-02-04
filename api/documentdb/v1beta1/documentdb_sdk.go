@@ -1270,7 +1270,7 @@ type ListInstanceLogsDetailsResponseInstanceLogDetail struct {
 
 // InstanceLog: instance log.
 type InstanceLog struct {
-	// DownloadURL: presigned S3 URL to download your log file.
+	// DownloadURL: presigned Object Storage URL to download your log file.
 	DownloadURL *string `json:"download_url"`
 
 	// ID: UUID of the Database Instance log.

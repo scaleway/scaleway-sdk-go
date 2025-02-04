@@ -149,7 +149,7 @@ func TestNonStandardError(t *testing.T) {
 		expectedError: &ResponseError{
 			Status:     "409 Conflict",
 			StatusCode: http.StatusConflict,
-			Message:    "group is in use. you cannot delete it.",
+			Message:    "Group is in use. You cannot delete it.",
 			Type:       "conflict",
 			RawBody:    []byte(`{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`),
 		},

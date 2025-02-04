@@ -762,6 +762,46 @@ func (enum *TriggerStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ContainerHealthCheckSpecHTTPProbe: container health check spec http probe.
+type ContainerHealthCheckSpecHTTPProbe struct {
+	// Path: path to use for the HTTP health check.
+	Path string `json:"path"`
+}
+
+// ContainerHealthCheckSpecTCPProbe: container health check spec tcp probe.
+type ContainerHealthCheckSpecTCPProbe struct {
+}
+
+// ContainerHealthCheckSpec: container health check spec.
+type ContainerHealthCheckSpec struct {
+	// HTTP: HTTP health check configuration.
+	// Precisely one of HTTP, TCP must be set.
+	HTTP *ContainerHealthCheckSpecHTTPProbe `json:"http,omitempty"`
+
+	// TCP: TCP health check configuration.
+	// Precisely one of HTTP, TCP must be set.
+	TCP *ContainerHealthCheckSpecTCPProbe `json:"tcp,omitempty"`
+
+	// FailureThreshold: during a deployment, if a newly created container fails to pass the health check, the deployment is aborted.
+	// As a result, lowering this value can help to reduce the time it takes to detect a failed deployment.
+	FailureThreshold uint32 `json:"failure_threshold"`
+
+	// Interval: period between health checks.
+	Interval *scw.Duration `json:"interval"`
+}
+
+// ContainerScalingOption: container scaling option.
+type ContainerScalingOption struct {
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
+	ConcurrentRequestsThreshold *uint32 `json:"concurrent_requests_threshold,omitempty"`
+
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
+	CPUUsageThreshold *uint32 `json:"cpu_usage_threshold,omitempty"`
+
+	// Precisely one of ConcurrentRequestsThreshold, CPUUsageThreshold, MemoryUsageThreshold must be set.
+	MemoryUsageThreshold *uint32 `json:"memory_usage_threshold,omitempty"`
+}
+
 // SecretHashedValue: secret hashed value.
 type SecretHashedValue struct {
 	Key string `json:"key"`
@@ -933,6 +973,24 @@ type Container struct {
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit uint32 `json:"local_storage_limit"`
 
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check"`
+
+	// CreatedAt: creation date of the container.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the container.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ReadyAt: last date when the container was successfully deployed and set to ready.
+	ReadyAt *time.Time `json:"ready_at"`
+
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
 }
@@ -1019,6 +1077,15 @@ type Namespace struct {
 
 	// Region: region in which the namespace will be created.
 	Region scw.Region `json:"region"`
+
+	// Tags: [ALPHA] List of tags applied to the Serverless Container Namespace.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation date of the namespace.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the namespace.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Token: token.
@@ -1135,7 +1202,7 @@ type CreateContainerRequest struct {
 	// RegistryImage: name of the registry image (e.g. "rg.fr-par.scw.cloud/something/image:tag").
 	RegistryImage *string `json:"registry_image,omitempty"`
 
-	// MaxConcurrency: number of maximum concurrent executions of the container.
+	// Deprecated: MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency *uint32 `json:"max_concurrency,omitempty"`
 
 	// Protocol: protocol the container uses.
@@ -1160,6 +1227,15 @@ type CreateContainerRequest struct {
 
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
+
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1211,6 +1287,9 @@ type CreateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace to create.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Container Namespace.
+	Tags []string `json:"tags"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1723,7 +1802,7 @@ type UpdateContainerRequest struct {
 	// RegistryImage: name of the registry image (e.g. "rg.fr-par.scw.cloud/something/image:tag").
 	RegistryImage *string `json:"registry_image,omitempty"`
 
-	// MaxConcurrency: number of maximum concurrent executions of the container.
+	// Deprecated: MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency *uint32 `json:"max_concurrency,omitempty"`
 
 	// Protocol: default value: unknown_protocol
@@ -1745,6 +1824,15 @@ type UpdateContainerRequest struct {
 
 	// LocalStorageLimit: local storage limit of the container (in MB).
 	LocalStorageLimit *uint32 `json:"local_storage_limit,omitempty"`
+
+	// ScalingOption: possible values:
+	// - concurrent_requests_threshold: Scale depending on the number of concurrent requests being processed per container instance.
+	// - cpu_usage_threshold: Scale depending on the CPU usage of a container instance.
+	// - memory_usage_threshold: Scale depending on the memory usage of a container instance.
+	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
+
+	// HealthCheck: health check configuration of the container.
+	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
@@ -1784,6 +1872,9 @@ type UpdateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace to update.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Container Namespace.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateTriggerRequest: update trigger request.
@@ -2377,7 +2468,7 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-// ListDomains: List all domain name bindings in a specified region.
+// ListDomains: List all custom domains in a specified region.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -2416,7 +2507,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetDomain: Get a domain name binding for the container with the specified ID.
+// GetDomain: Get a custom domain for the container with the specified ID.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2447,7 +2538,7 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
-// CreateDomain: Create a domain name binding for the container with the specified ID.
+// CreateDomain: Create a custom domain for the container with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2479,7 +2570,7 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// DeleteDomain: Delete the domain name binding with the specific ID.
+// DeleteDomain: Delete the custom domain with the specific ID.
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 

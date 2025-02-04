@@ -1098,6 +1098,15 @@ type Function struct {
 	// Sandbox: execution environment of the function.
 	// Default value: unknown_sandbox
 	Sandbox FunctionSandbox `json:"sandbox"`
+
+	// CreatedAt: creation date of the function.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the function.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// ReadyAt: last date when the function was successfully deployed and set to ready.
+	ReadyAt *time.Time `json:"ready_at"`
 }
 
 // Namespace: namespace.
@@ -1138,6 +1147,15 @@ type Namespace struct {
 
 	// Region: region in which the namespace is located.
 	Region scw.Region `json:"region"`
+
+	// Tags: [ALPHA] List of tags applied to the Serverless Function Namespace.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation date of the namespace.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the namespace.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // Token: token.
@@ -1316,6 +1334,9 @@ type CreateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	Tags []string `json:"tags"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1941,6 +1962,9 @@ type UpdateNamespaceRequest struct {
 
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
+
+	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateTriggerRequest: update trigger request.

@@ -535,7 +535,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
 
 // CreateFlexibleIP: Generate a new flexible IP within a given zone, specifying its configuration including Project ID and description.

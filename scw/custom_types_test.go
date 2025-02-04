@@ -841,3 +841,20 @@ func TestDecimal(t *testing.T) {
 	*dPtr = "1.22"
 	testhelpers.Equals(t, "1.22", dPtr.String())
 }
+
+func TestDecimal_MarshalJSON(t *testing.T) {
+	d := Decimal("1.22")
+	testhelpers.Equals(t, "1.22", d.String())
+
+	value, err := json.Marshal(d)
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "{\"value\":\"1.22\"}", string(value))
+}
+
+func TestDecimal_UnmarshalJSON(t *testing.T) {
+	value := "{\"value\":\"1.22\"}"
+	d := new(Decimal)
+	err := json.Unmarshal([]byte(value), d)
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, "1.22", d.String())
+}

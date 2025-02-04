@@ -24,7 +24,7 @@ func TestInstanceHelpers(t *testing.T) {
 		volumeID string
 		zone     = scw.ZoneFrPar1
 		project  = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
-		image    = "81b9475d-e1b5-43c2-ac48-4c1a3b640686"
+		image    = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
 	)
 
 	t.Run("create server", func(t *testing.T) {
@@ -135,7 +135,7 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		volumeID2 string
 		zone      = scw.ZoneFrPar1
 		project   = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
-		image     = "81b9475d-e1b5-43c2-ac48-4c1a3b640686"
+		image     = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
 	)
 
 	t.Run("create server and volume", func(t *testing.T) {

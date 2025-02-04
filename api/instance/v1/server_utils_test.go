@@ -47,7 +47,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
-		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
+		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
 		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
@@ -86,7 +86,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
-		Image:          "f974feac-abae-4365-b988-8ec7d1cec10d",
+		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
 		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
@@ -154,7 +154,7 @@ func TestAPI_CreateServer(t *testing.T) {
 	res, err := instanceAPI.CreateServer(&CreateServerRequest{
 		Zone:           scw.ZoneFrPar1,
 		CommercialType: "GP1-XS",
-		Image:          "ubuntu_focal",
+		Image:          scw.StringPtr("ubuntu_focal"),
 	})
 
 	testhelpers.AssertNoError(t, err)

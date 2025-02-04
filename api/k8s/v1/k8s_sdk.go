@@ -369,6 +369,14 @@ type ListNodesRequestOrderBy string
 const (
 	ListNodesRequestOrderByCreatedAtAsc  = ListNodesRequestOrderBy("created_at_asc")
 	ListNodesRequestOrderByCreatedAtDesc = ListNodesRequestOrderBy("created_at_desc")
+	ListNodesRequestOrderByUpdatedAtAsc  = ListNodesRequestOrderBy("updated_at_asc")
+	ListNodesRequestOrderByUpdatedAtDesc = ListNodesRequestOrderBy("updated_at_desc")
+	ListNodesRequestOrderByNameAsc       = ListNodesRequestOrderBy("name_asc")
+	ListNodesRequestOrderByNameDesc      = ListNodesRequestOrderBy("name_desc")
+	ListNodesRequestOrderByStatusAsc     = ListNodesRequestOrderBy("status_asc")
+	ListNodesRequestOrderByStatusDesc    = ListNodesRequestOrderBy("status_desc")
+	ListNodesRequestOrderByVersionAsc    = ListNodesRequestOrderBy("version_asc")
+	ListNodesRequestOrderByVersionDesc   = ListNodesRequestOrderBy("version_desc")
 )
 
 func (enum ListNodesRequestOrderBy) String() string {
@@ -383,6 +391,14 @@ func (enum ListNodesRequestOrderBy) Values() []ListNodesRequestOrderBy {
 	return []ListNodesRequestOrderBy{
 		"created_at_asc",
 		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+		"version_asc",
+		"version_desc",
 	}
 }
 
@@ -627,7 +643,9 @@ const (
 	// Local Block Storage: your system is stored locally on your node hypervisor. Lower latency, no persistence across node replacements.
 	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
 	// Remote Block Storage: your system is stored on a centralized and resilient cluster. Higher latency, persistence across node replacements.
-	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+	PoolVolumeTypeBSSD   = PoolVolumeType("b_ssd")
+	PoolVolumeTypeSbs5k  = PoolVolumeType("sbs_5k")
+	PoolVolumeTypeSbs15k = PoolVolumeType("sbs_15k")
 )
 
 func (enum PoolVolumeType) String() string {
@@ -643,6 +661,8 @@ func (enum PoolVolumeType) Values() []PoolVolumeType {
 		"default_volume_type",
 		"l_ssd",
 		"b_ssd",
+		"sbs_5k",
+		"sbs_15k",
 	}
 }
 
@@ -743,7 +763,7 @@ type ClusterAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -836,17 +856,17 @@ type Pool struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize uint32 `json:"max_size"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -858,7 +878,10 @@ type Pool struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -870,6 +893,37 @@ type Pool struct {
 
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
+}
+
+// ACLRuleRequest: acl rule request.
+type ACLRuleRequest struct {
+	// IP: IP subnet to allow.
+	// Precisely one of IP, ScalewayRanges must be set.
+	IP *scw.IPNet `json:"ip,omitempty"`
+
+	// ScalewayRanges: only one rule with this field set to true can be added.
+	// Precisely one of IP, ScalewayRanges must be set.
+	ScalewayRanges *bool `json:"scaleway_ranges,omitempty"`
+
+	// Description: description of the ACL.
+	Description string `json:"description"`
+}
+
+// ACLRule: acl rule.
+type ACLRule struct {
+	// ID: ID of the ACL rule.
+	ID string `json:"id"`
+
+	// IP: IP subnet to allow.
+	// Precisely one of IP, ScalewayRanges must be set.
+	IP *scw.IPNet `json:"ip,omitempty"`
+
+	// ScalewayRanges: only one rule with this field set to true can be added.
+	// Precisely one of IP, ScalewayRanges must be set.
+	ScalewayRanges *bool `json:"scaleway_ranges,omitempty"`
+
+	// Description: description of the ACL.
+	Description string `json:"description"`
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
@@ -886,7 +940,7 @@ type CreateClusterRequestAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -948,7 +1002,7 @@ type CreateClusterRequestPoolConfig struct {
 	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
 	NodeType string `json:"node_type"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id"`
 
 	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
@@ -963,14 +1017,14 @@ type CreateClusterRequestPoolConfig struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize *uint32 `json:"max_size"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -982,7 +1036,10 @@ type CreateClusterRequestPoolConfig struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -1123,7 +1180,7 @@ type Cluster struct {
 	// AutoscalerConfig: autoscaler config for the cluster.
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 
-	// AutoUpgrade: auto upgrade configuration of the cluster.
+	// AutoUpgrade: auto upgrade Kubernetes version of the cluster.
 	AutoUpgrade *ClusterAutoUpgrade `json:"auto_upgrade"`
 
 	// UpgradeAvailable: defines whether a new Kubernetes version is available.
@@ -1147,11 +1204,11 @@ type Cluster struct {
 	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
-	// Deprecated: RoutedIPEnabled: defines whether routed IPs are enabled for nodes of this cluster.
-	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
-
 	// Deprecated: SbsCsiEnabled: defines whether the SBS-enabled CSI starting from v0.3 is installed on the cluster.
 	SbsCsiEnabled *bool `json:"sbs_csi_enabled,omitempty"`
+
+	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
+	ACLAvailable *bool `json:"acl_available,omitempty"`
 }
 
 // Node: node.
@@ -1220,7 +1277,7 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	// ScaleDownDisabled: disable the cluster autoscaler.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
-	// ScaleDownDelayAfterAdd: how long after scale up that scale down evaluation resumes.
+	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
 	ScaleDownDelayAfterAdd *string `json:"scale_down_delay_after_add"`
 
 	// Estimator: type of resource estimator to be used in scale up.
@@ -1281,6 +1338,24 @@ type UpdatePoolRequestUpgradePolicy struct {
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
+// AddClusterACLRulesRequest: add cluster acl rules request.
+type AddClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be added.
+	ClusterID string `json:"-"`
+
+	// ACLs: aCLs to add.
+	ACLs []*ACLRuleRequest `json:"acls"`
+}
+
+// AddClusterACLRulesResponse: add cluster acl rules response.
+type AddClusterACLRulesResponse struct {
+	// Rules: aCLs that were added.
+	Rules []*ACLRule `json:"rules"`
+}
+
 // AuthExternalNodeRequest: auth external node request.
 type AuthExternalNodeRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1303,7 +1378,7 @@ type CreateClusterRequest struct {
 	// Precisely one of ProjectID, OrganizationID must be set.
 	ProjectID *string `json:"project_id,omitempty"`
 
-	// Type: type of the cluster (possible values are kapsule, multicloud, kapsule-dedicated-8, kapsule-dedicated-16).
+	// Type: type of the cluster. See [list available cluster types](#list-available-cluster-types-for-a-cluster) for a list of valid types.
 	Type string `json:"type"`
 
 	// Name: cluster name.
@@ -1369,7 +1444,7 @@ type CreatePoolRequest struct {
 	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
 	NodeType string `json:"node_type"`
 
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created.
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
 
 	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
@@ -1384,14 +1459,14 @@ type CreatePoolRequest struct {
 	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
 	MaxSize *uint32 `json:"max_size,omitempty"`
 
-	// ContainerRuntime: customization of the container runtime is available for each pool. Note that `docker` has been deprecated since version 1.20 and will be removed by version 1.24.
+	// ContainerRuntime: customization of the container runtime is available for each pool.
 	// Default value: unknown_runtime
 	ContainerRuntime Runtime `json:"container_runtime"`
 
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool.
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -1403,7 +1478,10 @@ type CreatePoolRequest struct {
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
-	// RootVolumeType: defines the system volume disk type. Two different types of volume (`volume_type`) are provided: `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. `b_ssd` is a remote block storage which means your system is stored on a centralized and resilient cluster.
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -1412,6 +1490,15 @@ type CreatePoolRequest struct {
 
 	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
 	PublicIPDisabled bool `json:"public_ip_disabled"`
+}
+
+// DeleteACLRuleRequest: delete acl rule request.
+type DeleteACLRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ACLID: ID of the ACL rule to delete.
+	ACLID string `json:"-"`
 }
 
 // DeleteClusterRequest: delete cluster request.
@@ -1481,9 +1568,9 @@ type ExternalNode struct {
 
 // ExternalNodeAuth: external node auth.
 type ExternalNodeAuth struct {
-	NodeToken string `json:"node_token"`
+	NodeSecretKey string `json:"node_secret_key"`
 
-	APIURL string `json:"api_url"`
+	MetadataURL string `json:"metadata_url"`
 }
 
 // GetClusterKubeConfigRequest: get cluster kube config request.
@@ -1538,6 +1625,49 @@ type GetVersionRequest struct {
 
 	// VersionName: requested version name.
 	VersionName string `json:"-"`
+}
+
+// ListClusterACLRulesRequest: list cluster acl rules request.
+type ListClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be listed.
+	ClusterID string `json:"-"`
+
+	// Page: page number for the returned ACLs.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of ACLs per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListClusterACLRulesResponse: list cluster acl rules response.
+type ListClusterACLRulesResponse struct {
+	// TotalCount: total number of ACLs that exist for the cluster.
+	TotalCount uint64 `json:"total_count"`
+
+	// Rules: paginated returned ACLs.
+	Rules []*ACLRule `json:"rules"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListClusterACLRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListClusterACLRulesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListClusterACLRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Rules = append(r.Rules, results.Rules...)
+	r.TotalCount += uint64(len(results.Rules))
+	return uint64(len(results.Rules)), nil
 }
 
 // ListClusterAvailableTypesRequest: list cluster available types request.
@@ -1818,15 +1948,6 @@ type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
-// MigrateClusterToRoutedIPsRequest: migrate cluster to routed i ps request.
-type MigrateClusterToRoutedIPsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ClusterID: cluster ID for which the routed ip will be enabled for the nodes.
-	ClusterID string `json:"-"`
-}
-
 // MigrateClusterToSBSCSIRequest: migrate cluster to sbscsi request.
 type MigrateClusterToSBSCSIRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1856,15 +1977,11 @@ type NodeMetadata struct {
 
 	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
 
-	PrivateNetworkMode string `json:"private_network_mode"`
-
-	KapsuleIfaceMac string `json:"kapsule_iface_mac"`
-
-	FullIsolation bool `json:"full_isolation"`
-
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
+
+	RepoURI string `json:"repo_uri"`
 }
 
 // RebootNodeRequest: reboot node request.
@@ -1892,6 +2009,24 @@ type ResetClusterAdminTokenRequest struct {
 
 	// ClusterID: cluster ID on which the admin token will be renewed.
 	ClusterID string `json:"-"`
+}
+
+// SetClusterACLRulesRequest: set cluster acl rules request.
+type SetClusterACLRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ClusterID: ID of the cluster whose ACLs will be set.
+	ClusterID string `json:"-"`
+
+	// ACLs: aCLs to set.
+	ACLs []*ACLRuleRequest `json:"acls"`
+}
+
+// SetClusterACLRulesResponse: set cluster acl rules response.
+type SetClusterACLRulesResponse struct {
+	// Rules: aCLs that were set.
+	Rules []*ACLRule `json:"rules"`
 }
 
 // SetClusterTypeRequest: set cluster type request.
@@ -1926,7 +2061,7 @@ type UpdateClusterRequest struct {
 	// AutoscalerConfig: new autoscaler config for the cluster.
 	AutoscalerConfig *UpdateClusterRequestAutoscalerConfig `json:"autoscaler_config,omitempty"`
 
-	// AutoUpgrade: new auto upgrade configuration for the cluster. Note that all fields need to be set.
+	// AutoUpgrade: new auto upgrade configuration for the cluster. Note that all fields needs to be set.
 	AutoUpgrade *UpdateClusterRequestAutoUpgrade `json:"auto_upgrade,omitempty"`
 
 	// FeatureGates: list of feature gates to enable.
@@ -2174,7 +2309,7 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteCluster: Delete a specific Kubernetes cluster and all its associated pools and nodes. Note that this method will not delete any Load Balancer or Block Volume that are associated with the cluster.
+// DeleteCluster: Delete a specific Kubernetes cluster and all its associated pools and nodes, and possibly its associated Load Balancers or Block Volumes.
 func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2245,7 +2380,7 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// SetClusterType: Change the type of a specific Kubernetes cluster. To see the possible values you can enter for the `type` field, [list available cluster types](#path-clusters-list-available-cluster-types-for-a-cluster).
+// SetClusterType: Change the type of a specific Kubernetes cluster. To see the possible values you can enter for the `type` field, [list available cluster types](#list-available-cluster-types-for-a-cluster).
 func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2379,7 +2514,7 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 	return &resp, nil
 }
 
-// ResetClusterAdminToken: Reset the admin token for a specific Kubernetes cluster. This will revoke the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to download kubeconfig again to keep interacting with the cluster.
+// ResetClusterAdminToken: Reset the admin token for a specific Kubernetes cluster. This will revoke the old admin token (which will not be usable afterwards) and create a new one. Note that you will need to download the kubeconfig again to keep interacting with the cluster.
 func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2413,43 +2548,8 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 	return nil
 }
 
-// MigrateClusterToRoutedIPs: Migrate the nodes of an existing cluster to Routed IPs and enable Routed IPs for all future nodes.
-func (s *API) MigrateClusterToRoutedIPs(req *MigrateClusterToRoutedIPsRequest, opts ...scw.RequestOption) (*Cluster, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ClusterID) == "" {
-		return nil, errors.New("field ClusterID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-to-routed-ips",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cluster
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // MigrateClusterToSBSCSI: Enable the latest CSI compatible with Scaleway Block Storage (SBS) and migrate all existing PersistentVolumes/VolumeSnapshotContents to SBS.
+// Make sure to have the necessary Quota before running this command.
 func (s *API) MigrateClusterToSBSCSI(req *MigrateClusterToSBSCSIRequest, opts ...scw.RequestOption) (*Cluster, error) {
 	var err error
 
@@ -2483,6 +2583,148 @@ func (s *API) MigrateClusterToSBSCSI(req *MigrateClusterToSBSCSIRequest, opts ..
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ListClusterACLRules: List ACLs for a specific cluster.
+func (s *API) ListClusterACLRules(req *ListClusterACLRulesRequest, opts ...scw.RequestOption) (*ListClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+		Query:  query,
+	}
+
+	var resp ListClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddClusterACLRules: Add new ACL rules for a specific cluster.
+func (s *API) AddClusterACLRules(req *AddClusterACLRulesRequest, opts ...scw.RequestOption) (*AddClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetClusterACLRules: Set new ACL rules for a specific cluster.
+func (s *API) SetClusterACLRules(req *SetClusterACLRulesRequest, opts ...scw.RequestOption) (*SetClusterACLRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ClusterID) == "" {
+		return nil, errors.New("field ClusterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/acls",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetClusterACLRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteACLRule: Delete an existing ACL.
+func (s *API) DeleteACLRule(req *DeleteACLRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ACLID) == "" {
+		return errors.New("field ACLID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/acls/" + fmt.Sprint(req.ACLID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ListPools: List all the existing pools for a specific Kubernetes cluster.
@@ -2606,6 +2848,7 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 }
 
 // UpgradePool: Upgrade the Kubernetes version of a specific pool. Note that it only works if the targeted version matches the cluster's version.
+// This will drain and replace the nodes in that pool.
 func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -2641,7 +2884,7 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UpdatePool: Update the attributes of a specific pool, such as its desired size, autoscaling settings, and tags.
+// UpdatePool: Update the attributes of a specific pool, such as its desired size, autoscaling settings, and tags. To upgrade a pool, you will need to use the dedicated endpoint.
 func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
@@ -2723,7 +2966,7 @@ func (s *API) GetNodeMetadata(req *GetNodeMetadataRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/nodes/metadata",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/node-metadata",
 	}
 
 	var resp NodeMetadata
@@ -2883,7 +3126,7 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 	return &resp, nil
 }
 
-// Deprecated: ReplaceNode: Replace a specific Node. The node will first be cordoned (scheduling will be disabled on it). The existing pods on the node will then be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -2919,7 +3162,7 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// RebootNode: Reboot a specific Node. The node will first be cordoned (scheduling will be disabled on it). The existing pods on the node will then be drained and rescheduled onto another schedulable node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// RebootNode: Reboot a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -2955,7 +3198,7 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	return &resp, nil
 }
 
-// DeleteNode: Delete a specific Node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster), disruption of your applications can be expected.
+// DeleteNode: Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 

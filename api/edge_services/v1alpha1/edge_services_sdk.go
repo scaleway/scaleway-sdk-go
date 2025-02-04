@@ -283,6 +283,47 @@ func (enum *ListPipelinesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListPipelinesWithStagesRequestOrderBy string
+
+const (
+	ListPipelinesWithStagesRequestOrderByCreatedAtAsc  = ListPipelinesWithStagesRequestOrderBy("created_at_asc")
+	ListPipelinesWithStagesRequestOrderByCreatedAtDesc = ListPipelinesWithStagesRequestOrderBy("created_at_desc")
+	ListPipelinesWithStagesRequestOrderByNameAsc       = ListPipelinesWithStagesRequestOrderBy("name_asc")
+	ListPipelinesWithStagesRequestOrderByNameDesc      = ListPipelinesWithStagesRequestOrderBy("name_desc")
+)
+
+func (enum ListPipelinesWithStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) Values() []ListPipelinesWithStagesRequestOrderBy {
+	return []ListPipelinesWithStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListPipelinesWithStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPipelinesWithStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPipelinesWithStagesRequestOrderBy(ListPipelinesWithStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPurgeRequestsRequestOrderBy string
 
 const (
@@ -612,6 +653,47 @@ func (enum *PipelineStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PlanName string
+
+const (
+	PlanNameUnknownName  = PlanName("unknown_name")
+	PlanNameStarter      = PlanName("starter")
+	PlanNameProfessional = PlanName("professional")
+	PlanNameAdvanced     = PlanName("advanced")
+)
+
+func (enum PlanName) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_name"
+	}
+	return string(enum)
+}
+
+func (enum PlanName) Values() []PlanName {
+	return []PlanName{
+		"unknown_name",
+		"starter",
+		"professional",
+		"advanced",
+	}
+}
+
+func (enum PlanName) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PlanName) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PlanName(PlanName(tmp).String())
+	return nil
+}
+
 type PurgeRequestStatus string
 
 const (
@@ -717,13 +799,6 @@ type TLSSecret struct {
 
 	// Region: region of the Secret.
 	Region scw.Region `json:"region"`
-}
-
-// CheckPEMChainRequestSecretChain: check pem chain request secret chain.
-type CheckPEMChainRequestSecretChain struct {
-	SecretID string `json:"secret_id"`
-
-	SecretRegion string `json:"secret_region"`
 }
 
 // BackendStage: backend stage.
@@ -835,6 +910,9 @@ type Pipeline struct {
 	// ProjectID: project ID of the pipeline.
 	ProjectID string `json:"project_id"`
 
+	// OrganizationID: organization ID of the pipeline.
+	OrganizationID string `json:"organization_id"`
+
 	// CreatedAt: date the pipeline was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -844,33 +922,6 @@ type Pipeline struct {
 	// DNSStageID: DNS stage ID the pipeline is attached to.
 	// Precisely one of DNSStageID must be set.
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
-}
-
-// PurgeRequest: purge request.
-type PurgeRequest struct {
-	// ID: ID of the purge request.
-	ID string `json:"id"`
-
-	// PipelineID: pipeline ID the purge request belongs to.
-	PipelineID string `json:"pipeline_id"`
-
-	// Status: status of the purge request.
-	// Default value: unknown_status
-	Status PurgeRequestStatus `json:"status"`
-
-	// Assets: list of asserts to purge.
-	// Precisely one of Assets, All must be set.
-	Assets *[]string `json:"assets,omitempty"`
-
-	// All: defines whether to purge all content.
-	// Precisely one of Assets, All must be set.
-	All *bool `json:"all,omitempty"`
-
-	// CreatedAt: date the purge request was created.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date the purge request was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // TLSStage: tls stage.
@@ -906,6 +957,66 @@ type TLSStage struct {
 	// BackendStageID: backend stage ID the TLS stage is linked to.
 	// Precisely one of CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+}
+
+// CheckPEMChainRequestSecretChain: check pem chain request secret chain.
+type CheckPEMChainRequestSecretChain struct {
+	SecretID string `json:"secret_id"`
+
+	SecretRegion string `json:"secret_region"`
+}
+
+// PlanDetails: plan details.
+type PlanDetails struct {
+	// PlanName: subscription plan name.
+	// Default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
+
+	// PackageGb: amount of egress data from cache included in subscription plan.
+	PackageGb uint64 `json:"package_gb"`
+
+	// PipelineLimit: number of pipelines included in subscription plan.
+	PipelineLimit uint32 `json:"pipeline_limit"`
+}
+
+// PipelineStages: pipeline stages.
+type PipelineStages struct {
+	Pipeline *Pipeline `json:"pipeline"`
+
+	DNSStages []*DNSStage `json:"dns_stages"`
+
+	TLSStages []*TLSStage `json:"tls_stages"`
+
+	CacheStages []*CacheStage `json:"cache_stages"`
+
+	BackendStages []*BackendStage `json:"backend_stages"`
+}
+
+// PurgeRequest: purge request.
+type PurgeRequest struct {
+	// ID: ID of the purge request.
+	ID string `json:"id"`
+
+	// PipelineID: pipeline ID the purge request belongs to.
+	PipelineID string `json:"pipeline_id"`
+
+	// Status: status of the purge request.
+	// Default value: unknown_status
+	Status PurgeRequestStatus `json:"status"`
+
+	// Assets: list of asserts to purge.
+	// Precisely one of Assets, All must be set.
+	Assets *[]string `json:"assets,omitempty"`
+
+	// All: defines whether to purge all content.
+	// Precisely one of Assets, All must be set.
+	All *bool `json:"all,omitempty"`
+
+	// CreatedAt: date the purge request was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the purge request was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // TLSSecretsConfig: tls secrets config.
@@ -1069,6 +1180,11 @@ type DeleteCacheStageRequest struct {
 	CacheStageID string `json:"-"`
 }
 
+// DeleteCurrentPlanRequest: delete current plan request.
+type DeleteCurrentPlanRequest struct {
+	ProjectID string `json:"-"`
+}
+
 // DeleteDNSStageRequest: delete dns stage request.
 type DeleteDNSStageRequest struct {
 	// DNSStageID: ID of the DNS stage to delete.
@@ -1093,10 +1209,47 @@ type GetBackendStageRequest struct {
 	BackendStageID string `json:"-"`
 }
 
+// GetBillingRequest: get billing request.
+type GetBillingRequest struct {
+	ProjectID string `json:"-"`
+}
+
+// GetBillingResponse: get billing response.
+type GetBillingResponse struct {
+	// CurrentPlan: information on the currently-selected, active Edge Services subscription plan.
+	CurrentPlan *PlanDetails `json:"current_plan"`
+
+	// PlanCost: cost to date (this month) for Edge Service subscription plans. This comprises the pro-rata cost of the current subscription plan, and any previous subscription plans that were active earlier in the month.
+	PlanCost *scw.Money `json:"plan_cost"`
+
+	// PipelineNumber: total number of pipelines currently configured.
+	PipelineNumber uint32 `json:"pipeline_number"`
+
+	// ExtraPipelinesCost: cost to date (this month) of pipelines not included in the subscription plans.
+	ExtraPipelinesCost *scw.Money `json:"extra_pipelines_cost"`
+
+	// CurrentPlanCacheUsage: total amount of data egressed from the cache in gigabytes from the beginning of the month, for the active subscription plan.
+	CurrentPlanCacheUsage uint64 `json:"current_plan_cache_usage"`
+
+	// ExtraCacheUsage: total amount of extra data egressed from cache in gigabytes from the beginning of the month, not included in the subscription plans.
+	ExtraCacheUsage uint64 `json:"extra_cache_usage"`
+
+	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the subscription plans.
+	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
+
+	// TotalCost: total cost to date (this month) of all Edge Services resources including active subscription plan, previously active plans, extra pipelines and extra egress cache data.
+	TotalCost *scw.Money `json:"total_cost"`
+}
+
 // GetCacheStageRequest: get cache stage request.
 type GetCacheStageRequest struct {
 	// CacheStageID: ID of the requested cache stage.
 	CacheStageID string `json:"-"`
+}
+
+// GetCurrentPlanRequest: get current plan request.
+type GetCurrentPlanRequest struct {
+	ProjectID string `json:"-"`
 }
 
 // GetDNSStageRequest: get dns stage request.
@@ -1329,6 +1482,74 @@ func (r *ListPipelinesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Pipelines)), nil
 }
 
+// ListPipelinesWithStagesRequest: list pipelines with stages request.
+type ListPipelinesWithStagesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy ListPipelinesWithStagesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	Name *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
+}
+
+// ListPipelinesWithStagesResponse: list pipelines with stages response.
+type ListPipelinesWithStagesResponse struct {
+	Pipelines []*PipelineStages `json:"pipelines"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPipelinesWithStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPipelinesWithStagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pipelines = append(r.Pipelines, results.Pipelines...)
+	r.TotalCount += uint64(len(results.Pipelines))
+	return uint64(len(results.Pipelines)), nil
+}
+
+// ListPlansResponse: list plans response.
+type ListPlansResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	Plans []*PlanDetails `json:"plans"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPlansResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Plans = append(r.Plans, results.Plans...)
+	r.TotalCount += uint64(len(results.Plans))
+	return uint64(len(results.Plans)), nil
+}
+
 // ListPurgeRequestsRequest: list purge requests request.
 type ListPurgeRequestsRequest struct {
 	// OrderBy: sort order of purge requests in the response.
@@ -1430,6 +1651,20 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	r.Stages = append(r.Stages, results.Stages...)
 	r.TotalCount += uint64(len(results.Stages))
 	return uint64(len(results.Stages)), nil
+}
+
+// Plan: plan.
+type Plan struct {
+	// PlanName: default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
+}
+
+// SelectPlanRequest: select plan request.
+type SelectPlanRequest struct {
+	ProjectID string `json:"project_id"`
+
+	// PlanName: default value: unknown_name
+	PlanName PlanName `json:"plan_name"`
 }
 
 // UpdateBackendStageRequest: update backend stage request.
@@ -1602,6 +1837,38 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Pipeline
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPipelinesWithStages:
+func (s *API) ListPipelinesWithStages(req *ListPipelinesWithStagesRequest, opts ...scw.RequestOption) (*ListPipelinesWithStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/pipelines-stages",
+		Query:  query,
+	}
+
+	var resp ListPipelinesWithStagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2323,6 +2590,131 @@ func (s *API) CheckLBOrigin(req *CheckLBOriginRequest, opts ...scw.RequestOption
 	}
 
 	var resp CheckLBOriginResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPlans:
+func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/plans",
+	}
+
+	var resp ListPlansResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SelectPlan:
+func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/edge-services/v1alpha1/current-plan",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Plan
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetCurrentPlan:
+func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
+	}
+
+	var resp Plan
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteCurrentPlan:
+func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetBilling: Gives information on the currently selected Edge Services subscription plan, resource usage and associated billing information for this calendar month (including whether consumption falls within or exceeds the currently selected subscription plan.).
+func (s *API) GetBilling(req *GetBillingRequest, opts ...scw.RequestOption) (*GetBillingResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1alpha1/billing/" + fmt.Sprint(req.ProjectID) + "",
+	}
+
+	var resp GetBillingResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
