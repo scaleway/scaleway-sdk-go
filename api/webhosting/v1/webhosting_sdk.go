@@ -165,6 +165,291 @@ func (enum *DNSRecordsStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DomainAction string
+
+const (
+	// Unknown action.
+	DomainActionUnknownAction = DomainAction("unknown_action")
+	// Action to transfer the domain to Scaleway.
+	DomainActionTransfer = DomainAction("transfer")
+	// Action to manage domain zone at Scaleway.
+	DomainActionManageExternal = DomainAction("manage_external")
+	// Action to renew the domain's registration.
+	DomainActionRenew = DomainAction("renew")
+)
+
+func (enum DomainAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_action"
+	}
+	return string(enum)
+}
+
+func (enum DomainAction) Values() []DomainAction {
+	return []DomainAction{
+		"unknown_action",
+		"transfer",
+		"manage_external",
+		"renew",
+	}
+}
+
+func (enum DomainAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainAction(DomainAction(tmp).String())
+	return nil
+}
+
+type DomainAvailabilityAction string
+
+const (
+	// Unknown action.
+	DomainAvailabilityActionUnknownAction = DomainAvailabilityAction("unknown_action")
+	// Action to register the domain at Scaleway.
+	DomainAvailabilityActionRegister = DomainAvailabilityAction("register")
+	// Action to transfer the domain from another registrar to Scaleway.
+	DomainAvailabilityActionTransfer = DomainAvailabilityAction("transfer")
+	// Action to manage the domain as an external domain at Scaleway.
+	DomainAvailabilityActionManageExternal = DomainAvailabilityAction("manage_external")
+)
+
+func (enum DomainAvailabilityAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_action"
+	}
+	return string(enum)
+}
+
+func (enum DomainAvailabilityAction) Values() []DomainAvailabilityAction {
+	return []DomainAvailabilityAction{
+		"unknown_action",
+		"register",
+		"transfer",
+		"manage_external",
+	}
+}
+
+func (enum DomainAvailabilityAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainAvailabilityAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainAvailabilityAction(DomainAvailabilityAction(tmp).String())
+	return nil
+}
+
+type DomainAvailabilityStatus string
+
+const (
+	// The status of the domain is unknown.
+	DomainAvailabilityStatusUnknownStatus = DomainAvailabilityStatus("unknown_status")
+	// The domain is available for registration.
+	DomainAvailabilityStatusAvailable = DomainAvailabilityStatus("available")
+	// The domain is not available for registration.
+	DomainAvailabilityStatusNotAvailable = DomainAvailabilityStatus("not_available")
+	// The domain is already owned by the user.
+	DomainAvailabilityStatusOwned = DomainAvailabilityStatus("owned")
+	// The domain is being validated.
+	DomainAvailabilityStatusValidating = DomainAvailabilityStatus("validating")
+	// The domain is in an error status, it should be checked in Domain&DNS.
+	DomainAvailabilityStatusError = DomainAvailabilityStatus("error")
+)
+
+func (enum DomainAvailabilityStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum DomainAvailabilityStatus) Values() []DomainAvailabilityStatus {
+	return []DomainAvailabilityStatus{
+		"unknown_status",
+		"available",
+		"not_available",
+		"owned",
+		"validating",
+		"error",
+	}
+}
+
+func (enum DomainAvailabilityStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainAvailabilityStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainAvailabilityStatus(DomainAvailabilityStatus(tmp).String())
+	return nil
+}
+
+type DomainDNSAction string
+
+const (
+	// Unknown DNS action.
+	DomainDNSActionUnknownDNSAction = DomainDNSAction("unknown_dns_action")
+	// Automatically configure all DNS records for the domain.
+	DomainDNSActionAutoConfigAllRecords = DomainDNSAction("auto_config_all_records")
+	// Automatically configure web-related DNS records (e.g., A, CNAME).
+	DomainDNSActionAutoConfigWebRecords = DomainDNSAction("auto_config_web_records")
+	// Automatically configure mail-related DNS records (e.g., MX, SPF, DKIM).
+	DomainDNSActionAutoConfigMailRecords = DomainDNSAction("auto_config_mail_records")
+	// Automatically configure the domain's nameservers to point to Web Hosting Nameservers.
+	DomainDNSActionAutoConfigNameservers = DomainDNSAction("auto_config_nameservers")
+)
+
+func (enum DomainDNSAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_dns_action"
+	}
+	return string(enum)
+}
+
+func (enum DomainDNSAction) Values() []DomainDNSAction {
+	return []DomainDNSAction{
+		"unknown_dns_action",
+		"auto_config_all_records",
+		"auto_config_web_records",
+		"auto_config_mail_records",
+		"auto_config_nameservers",
+	}
+}
+
+func (enum DomainDNSAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainDNSAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainDNSAction(DomainDNSAction(tmp).String())
+	return nil
+}
+
+type DomainStatus string
+
+const (
+	// The status of the domain is unknown.
+	DomainStatusUnknownStatus = DomainStatus("unknown_status")
+	// The domain is valid and operational.
+	DomainStatusValid = DomainStatus("valid")
+	// The domain is invalid, potentially due to incorrect settings or configuration issues.
+	DomainStatusInvalid = DomainStatus("invalid")
+	// The domain is in the process of being validated.
+	DomainStatusValidating = DomainStatus("validating")
+	// The domain is in an error status, it should be checked in Domain&DNS.
+	DomainStatusError = DomainStatus("error")
+)
+
+func (enum DomainStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum DomainStatus) Values() []DomainStatus {
+	return []DomainStatus{
+		"unknown_status",
+		"valid",
+		"invalid",
+		"validating",
+		"error",
+	}
+}
+
+func (enum DomainStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainStatus(DomainStatus(tmp).String())
+	return nil
+}
+
+type DomainZoneOwner string
+
+const (
+	// The zone owner is unknown or not specified.
+	DomainZoneOwnerUnknownZoneOwner = DomainZoneOwner("unknown_zone_owner")
+	// The domain's DNS is managed externally.
+	DomainZoneOwnerExternal = DomainZoneOwner("external")
+	// The domain's DNS is managed by Scaleway.
+	DomainZoneOwnerScaleway = DomainZoneOwner("scaleway")
+	// The domain's DNS is managed by Online.
+	DomainZoneOwnerOnline = DomainZoneOwner("online")
+	// The domain's DNS is managed by the Web Hosting platform.
+	DomainZoneOwnerWebhosting = DomainZoneOwner("webhosting")
+)
+
+func (enum DomainZoneOwner) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_zone_owner"
+	}
+	return string(enum)
+}
+
+func (enum DomainZoneOwner) Values() []DomainZoneOwner {
+	return []DomainZoneOwner{
+		"unknown_zone_owner",
+		"external",
+		"scaleway",
+		"online",
+		"webhosting",
+	}
+}
+
+func (enum DomainZoneOwner) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DomainZoneOwner) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DomainZoneOwner(DomainZoneOwner(tmp).String())
+	return nil
+}
+
 type HostingStatus string
 
 const (
@@ -976,6 +1261,28 @@ type Website struct {
 	SslStatus bool `json:"ssl_status"`
 }
 
+// DomainAvailability: domain availability.
+type DomainAvailability struct {
+	// Name: fully qualified domain name (FQDN).
+	Name string `json:"name"`
+
+	// ZoneName: DNS zone associated with the domain.
+	ZoneName string `json:"zone_name"`
+
+	// Status: availability status of the domain.
+	// Default value: unknown_status
+	Status DomainAvailabilityStatus `json:"status"`
+
+	// AvailableActions: a list of actions that can be performed on the domain.
+	AvailableActions []DomainAvailabilityAction `json:"available_actions"`
+
+	// CanCreateHosting: whether a hosting can be created for this domain.
+	CanCreateHosting bool `json:"can_create_hosting"`
+
+	// Price: price for registering the domain.
+	Price *scw.Money `json:"price"`
+}
+
 // CheckUserOwnsDomainResponse: check user owns domain response.
 type CheckUserOwnsDomainResponse struct {
 	// OwnsDomain: indicates whether the specified project owns the domain.
@@ -1015,6 +1322,30 @@ type DNSAPIGetDomainDNSRecordsRequest struct {
 	Domain string `json:"-"`
 }
 
+// DNSAPIGetDomainRequest: dnsapi get domain request.
+type DNSAPIGetDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainName: domain name to get.
+	DomainName string `json:"-"`
+
+	// ProjectID: ID of the Scaleway Project in which to get the domain to create the Web Hosting plan.
+	ProjectID string `json:"project_id"`
+}
+
+// DNSAPISearchDomainsRequest: dnsapi search domains request.
+type DNSAPISearchDomainsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DomainName: domain name to search.
+	DomainName string `json:"-"`
+
+	// ProjectID: ID of the Scaleway Project in which to search the domain to create the Web Hosting plan.
+	ProjectID string `json:"-"`
+}
+
 // DNSAPISyncDomainDNSRecordsRequest: dnsapi sync domain dns records request.
 type DNSAPISyncDomainDNSRecordsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1031,6 +1362,9 @@ type DNSAPISyncDomainDNSRecordsRequest struct {
 
 	// UpdateAllRecords: whether or not to synchronize all types of records. This one has priority.
 	UpdateAllRecords bool `json:"update_all_records"`
+
+	// UpdateNameservers: whether or not to synchronize domain nameservers.
+	UpdateNameservers bool `json:"update_nameservers"`
 
 	// CustomRecords: custom records to synchronize.
 	CustomRecords []*SyncDomainDNSRecordsRequestRecord `json:"custom_records"`
@@ -1213,6 +1547,26 @@ type DatabaseAPIUnassignDatabaseUserRequest struct {
 
 	// Username: name of the user to unassign.
 	Username string `json:"username"`
+}
+
+// Domain: domain.
+type Domain struct {
+	// Name: name of the domain.
+	Name string `json:"name"`
+
+	// Status: current status of the domain.
+	// Default value: unknown_status
+	Status DomainStatus `json:"status"`
+
+	// Owner: zone owner of the domain.
+	// Default value: unknown_zone_owner
+	Owner DomainZoneOwner `json:"owner"`
+
+	// AvailableActions: a list of actions that can be performed on the domain.
+	AvailableActions []DomainAction `json:"available_actions"`
+
+	// AvailableDNSActions: a list of DNS-related actions that can be auto configured for the domain.
+	AvailableDNSActions []DomainDNSAction `json:"available_dns_actions"`
 }
 
 // FtpAccountAPIChangeFtpAccountPasswordRequest: ftp account api change ftp account password request.
@@ -1806,6 +2160,12 @@ type ResourceSummary struct {
 	WebsitesCount uint32 `json:"websites_count"`
 }
 
+// SearchDomainsResponse: search domains response.
+type SearchDomainsResponse struct {
+	// DomainsAvailable: list of domains availability.
+	DomainsAvailable []*DomainAvailability `json:"domains_available"`
+}
+
 // Session: session.
 type Session struct {
 	// URL: logged user's session URL.
@@ -2360,7 +2720,7 @@ func (s *DnsAPI) GetDomainDNSRecords(req *DNSAPIGetDomainDNSRecordsRequest, opts
 	return &resp, nil
 }
 
-// CheckUserOwnsDomain: "Check whether you own this domain or not.".
+// CheckUserOwnsDomain: Check whether you own this domain or not.
 func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
 	var err error
 
@@ -2401,7 +2761,7 @@ func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts
 	return &resp, nil
 }
 
-// SyncDomainDNSRecords: "Synchronize your DNS records on the Elements Console and on cPanel.".
+// SyncDomainDNSRecords: Synchronize your DNS records on the Elements Console and on cPanel.
 func (s *DnsAPI) SyncDomainDNSRecords(req *DNSAPISyncDomainDNSRecordsRequest, opts ...scw.RequestOption) (*DNSRecords, error) {
 	var err error
 
@@ -2429,6 +2789,83 @@ func (s *DnsAPI) SyncDomainDNSRecords(req *DNSAPISyncDomainDNSRecordsRequest, op
 	}
 
 	var resp DNSRecords
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SearchDomains: Search for available domains based on domain name.
+func (s *DnsAPI) SearchDomains(req *DNSAPISearchDomainsRequest, opts ...scw.RequestOption) (*SearchDomainsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "domain_name", req.DomainName)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/search-domains",
+		Query:  query,
+	}
+
+	var resp SearchDomainsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetDomain: Retrieve detailed information about a specific domain, including its status, DNS configuration, and ownership.
+func (s *DnsAPI) GetDomain(req *DNSAPIGetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainName) == "" {
+		return nil, errors.New("field DomainName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.DomainName) + "",
+		Query:  query,
+	}
+
+	var resp Domain
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
