@@ -1305,7 +1305,7 @@ func (s *API) CheckUserOwnsDomain(req *CheckUserOwnsDomainRequest, opts ...scw.R
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
+		Path:   "/webhosting/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/domains/" + fmt.Sprint(req.Domain) + "/check-ownership",
 	}
 
 	err = scwReq.SetBody(req)
