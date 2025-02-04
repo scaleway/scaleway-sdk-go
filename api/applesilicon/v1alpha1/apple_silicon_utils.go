@@ -60,22 +60,6 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	return server.(*Server), nil
 }
 
-func (s *API) WaitForPossibleDeletion(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
-	server, err := s.WaitForServer(&WaitForServerRequest{
-		ServerID:      req.ServerID,
-		Zone:          req.Zone,
-		Timeout:       scw.TimeDurationPtr(defaultTimeout),
-		RetryInterval: scw.TimeDurationPtr(defaultRetryInterval),
-	}, opts...,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "waiting for server failed")
-	}
-	timeToDelete := *server.DeletableAt
-	time.Sleep(time.Until(timeToDelete))
-	return server, nil
-}
-
 func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerRequest, opts ...scw.RequestOption) ([]*ServerPrivateNetwork, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
