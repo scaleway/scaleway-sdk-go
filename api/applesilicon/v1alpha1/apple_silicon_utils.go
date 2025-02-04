@@ -119,3 +119,39 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerReque
 
 	return serverPrivateNetworks.([]*ServerPrivateNetwork), nil
 }
+
+func (s *API) WaitForServerVPCOptionTerminalState(req *WaitForServerRequest, opts ...scw.RequestOption) error {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ServerPrivateNetworkStatus]struct{}{
+		ServerPrivateNetworkStatusVpcEnabled:  {},
+		ServerPrivateNetworkStatusVpcDisabled: {},
+	}
+	_, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				ServerID: req.ServerID,
+				Zone:     req.Zone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[res.VpcStatus]
+
+			return res, isTerminal, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return errors.Wrap(err, "waiting for server failed")
+	}
+	return nil
+}
