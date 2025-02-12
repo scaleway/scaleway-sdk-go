@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -221,4 +222,128 @@ func (s *RegistrarAPI) WaitForOrderDomain(
 	}
 
 	return domain.(*Domain), nil
+}
+
+// WaitForAutoRenewStatusRequest defines the parameters for waiting on the auto‑renew feature.
+type WaitForAutoRenewStatusRequest struct {
+	Domain        string         // The domain to wait for.
+	Timeout       *time.Duration // Optional timeout.
+	RetryInterval *time.Duration // Optional retry interval.
+}
+
+// WaitForAutoRenewStatus polls the domain until its auto‑renew feature reaches a terminal state
+// (either "enabled" or "disabled"). It uses GetDomain() to fetch the current status.
+func (s *RegistrarAPI) WaitForAutoRenewStatus(req *WaitForAutoRenewStatusRequest, opts ...scw.RequestOption) (*Domain, error) {
+	// Use default timeout and retry interval if not provided.
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	// Terminal statuses for auto_renew: enabled or disabled.
+	terminalStatuses := map[DomainFeatureStatus]struct{}{
+		DomainFeatureStatusEnabled:  {},
+		DomainFeatureStatusDisabled: {},
+	}
+	// Transient statuses for auto_renew: enabling or disabling.
+	transientStatuses := map[DomainFeatureStatus]struct{}{
+		DomainFeatureStatusEnabling:  {},
+		DomainFeatureStatusDisabling: {},
+	}
+
+	var lastStatus DomainFeatureStatus
+
+	domainResult, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			// Retrieve the domain.
+			resp, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			// Check the current auto_renew status.
+			lastStatus = resp.AutoRenewStatus
+			if _, isTerminal := terminalStatuses[resp.AutoRenewStatus]; isTerminal {
+				return resp, true, nil
+			}
+			if _, isTransient := transientStatuses[resp.AutoRenewStatus]; isTransient {
+				return resp, false, nil
+			}
+			return nil, false, errors.New("unexpected auto_renew status: " + string(resp.AutoRenewStatus))
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("waiting for auto_renew to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus))
+	}
+	return domainResult.(*Domain), nil
+}
+
+// WaitForDNSSECStatusRequest defines the parameters for waiting on the DNSSEC feature.
+type WaitForDNSSECStatusRequest struct {
+	Domain        string         // The domain to wait for.
+	Timeout       *time.Duration // Optional timeout.
+	RetryInterval *time.Duration // Optional retry interval.
+}
+
+// WaitForDNSSECStatus polls the domain until its DNSSEC feature reaches a terminal state
+// (either "enabled" or "disabled"). It uses GetDomain() to fetch the current status.
+func (s *RegistrarAPI) WaitForDNSSECStatus(req *WaitForDNSSECStatusRequest, opts ...scw.RequestOption) (*Domain, error) {
+	// Use default timeout and retry interval if not provided.
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	// Terminal statuses for DNSSEC: enabled or disabled.
+	terminalStatuses := map[DomainFeatureStatus]struct{}{
+		DomainFeatureStatusEnabled:  {},
+		DomainFeatureStatusDisabled: {},
+	}
+	// Transient statuses for DNSSEC: enabling or disabling.
+	transientStatuses := map[DomainFeatureStatus]struct{}{
+		DomainFeatureStatusEnabling:  {},
+		DomainFeatureStatusDisabling: {},
+	}
+
+	var lastStatus DomainFeatureStatus
+
+	domainResult, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			// Retrieve the domain.
+			resp, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			// Check the current DNSSEC status.
+			lastStatus = resp.Dnssec.Status
+			if _, isTerminal := terminalStatuses[resp.Dnssec.Status]; isTerminal {
+				return resp, true, nil
+			}
+			if _, isTransient := transientStatuses[resp.Dnssec.Status]; isTransient {
+				return resp, false, nil
+			}
+			return nil, false, errors.New("unexpected dnssec status: " + string(resp.Dnssec.Status))
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("waiting for dnssec to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus))
+	}
+	return domainResult.(*Domain), nil
 }
