@@ -39,6 +39,45 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type CommitmentType string
+
+const (
+	CommitmentTypeDuration24h    = CommitmentType("duration_24h")
+	CommitmentTypeRenewedMonthly = CommitmentType("renewed_monthly")
+	CommitmentTypeNone           = CommitmentType("none")
+)
+
+func (enum CommitmentType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "duration_24h"
+	}
+	return string(enum)
+}
+
+func (enum CommitmentType) Values() []CommitmentType {
+	return []CommitmentType{
+		"duration_24h",
+		"renewed_monthly",
+		"none",
+	}
+}
+
+func (enum CommitmentType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CommitmentType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CommitmentType(CommitmentType(tmp).String())
+	return nil
+}
+
 type ConnectivityDiagnosticActionType string
 
 const (
@@ -440,6 +479,14 @@ type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
+// Commitment: commitment.
+type Commitment struct {
+	// Type: default value: duration_24h
+	Type CommitmentType `json:"type"`
+
+	Cancelled bool `json:"cancelled"`
+}
+
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
 type ConnectivityDiagnosticServerHealth struct {
 	LastCheckinDate *time.Time `json:"last_checkin_date"`
@@ -577,6 +624,15 @@ type Server struct {
 	// VpcStatus: activation status of optional Private Network feature support for this server.
 	// Default value: vpc_unknown_status
 	VpcStatus ServerPrivateNetworkStatus `json:"vpc_status"`
+
+	// Commitment: commitment scheme applied to this server.
+	Commitment *Commitment `json:"commitment"`
+}
+
+// CommitmentTypeValue: commitment type value.
+type CommitmentTypeValue struct {
+	// CommitmentType: default value: duration_24h
+	CommitmentType CommitmentType `json:"commitment_type"`
 }
 
 // ConnectivityDiagnostic: connectivity diagnostic.
@@ -614,6 +670,10 @@ type CreateServerRequest struct {
 
 	// EnableVpc: activate the Private Network feature for this server. This feature is configured through the Apple Silicon - Private Networks API.
 	EnableVpc bool `json:"enable_vpc"`
+
+	// CommitmentType: activate commitment for this server. If not specified, there is a 24h commitment due to Apple licensing. It can be updated with the Update Server request. Available commitment depends on server type.
+	// Default value: duration_24h
+	CommitmentType CommitmentType `json:"commitment_type"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -929,6 +989,9 @@ type UpdateServerRequest struct {
 
 	// EnableVpc: activate or deactivate Private Network support for this server.
 	EnableVpc *bool `json:"enable_vpc,omitempty"`
+
+	// CommitmentType: change commitment. Use 'none' to automatically cancel a renewing commitment.
+	CommitmentType *CommitmentTypeValue `json:"commitment_type,omitempty"`
 }
 
 // This API allows you to manage your Apple silicon machines.
