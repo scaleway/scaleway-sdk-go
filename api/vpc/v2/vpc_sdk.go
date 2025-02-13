@@ -206,10 +206,11 @@ func (enum *ListVPCsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type RouteWithNexthopResourceType string
 
 const (
-	RouteWithNexthopResourceTypeUnknownType         = RouteWithNexthopResourceType("unknown_type")
-	RouteWithNexthopResourceTypeVpcGatewayNetwork   = RouteWithNexthopResourceType("vpc_gateway_network")
-	RouteWithNexthopResourceTypeInstancePrivateNic  = RouteWithNexthopResourceType("instance_private_nic")
-	RouteWithNexthopResourceTypeBaremetalPrivateNic = RouteWithNexthopResourceType("baremetal_private_nic")
+	RouteWithNexthopResourceTypeUnknownType            = RouteWithNexthopResourceType("unknown_type")
+	RouteWithNexthopResourceTypeVpcGatewayNetwork      = RouteWithNexthopResourceType("vpc_gateway_network")
+	RouteWithNexthopResourceTypeInstancePrivateNic     = RouteWithNexthopResourceType("instance_private_nic")
+	RouteWithNexthopResourceTypeBaremetalPrivateNic    = RouteWithNexthopResourceType("baremetal_private_nic")
+	RouteWithNexthopResourceTypeAppleSiliconPrivateNic = RouteWithNexthopResourceType("apple_silicon_private_nic")
 )
 
 func (enum RouteWithNexthopResourceType) String() string {
@@ -226,6 +227,7 @@ func (enum RouteWithNexthopResourceType) Values() []RouteWithNexthopResourceType
 		"vpc_gateway_network",
 		"instance_private_nic",
 		"baremetal_private_nic",
+		"apple_silicon_private_nic",
 	}
 }
 
