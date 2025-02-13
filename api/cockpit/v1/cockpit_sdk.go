@@ -539,8 +539,11 @@ type ContactPoint struct {
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region.
 	Region scw.Region `json:"region"`
+
+	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
+	ReceiveResolvedNotifications bool `json:"receive_resolved_notifications"`
 }
 
 // DataSource: Data source.
@@ -1076,6 +1079,9 @@ type RegionalAPICreateContactPointRequest struct {
 	// Email: email address of the contact point to create.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
+
+	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
+	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
 }
 
 // RegionalAPICreateDataSourceRequest: Create a data source.
@@ -1311,6 +1317,22 @@ type RegionalAPITriggerTestAlertRequest struct {
 
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
+}
+
+// RegionalAPIUpdateContactPointRequest: Update a contact point.
+type RegionalAPIUpdateContactPointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project containing the contact point to update.
+	ProjectID string `json:"project_id"`
+
+	// Email: email address of the contact point to update.
+	// Precisely one of Email must be set.
+	Email *ContactPointEmail `json:"email,omitempty"`
+
+	// ReceiveResolvedNotifications: enable or disable notifications when alert is resolved.
+	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
 }
 
 // RegionalAPIUpdateDataSourceRequest: Update a data source name.
@@ -2279,6 +2301,43 @@ func (s *RegionalAPI) ListContactPoints(req *RegionalAPIListContactPointsRequest
 	}
 
 	var resp ListContactPointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateContactPoint:
+func (s *RegionalAPI) UpdateContactPoint(req *RegionalAPIUpdateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/contact-points",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ContactPoint
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

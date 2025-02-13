@@ -43,7 +43,7 @@ type DataKeyAlgorithmSymmetricEncryption string
 
 const (
 	DataKeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption = DataKeyAlgorithmSymmetricEncryption("unknown_symmetric_encryption")
-	// AES-GCM (256-bits) is the only data key algorithm currently supported by Key Manager.
+	// Key Manager currently only supports the `AES-GCM` (256-bits) data key algorithm.
 	DataKeyAlgorithmSymmetricEncryptionAes256Gcm = DataKeyAlgorithmSymmetricEncryption("aes_256_gcm")
 )
 
@@ -81,7 +81,7 @@ type KeyAlgorithmSymmetricEncryption string
 
 const (
 	KeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption = KeyAlgorithmSymmetricEncryption("unknown_symmetric_encryption")
-	// AES-GCM (256-bits) is the only key algorithm currently supported by Key Manager.
+	// Key Manager currently only supports the `AES-GCM` (256-bits) key algorithm.
 	KeyAlgorithmSymmetricEncryptionAes256Gcm = KeyAlgorithmSymmetricEncryption("aes_256_gcm")
 )
 
@@ -119,9 +119,9 @@ type KeyOrigin string
 
 const (
 	KeyOriginUnknownOrigin = KeyOrigin("unknown_origin")
-	// Scaleway Key Manager generates the key material upon key creation.
+	// Key Manager generates the key material upon key creation.
 	KeyOriginScalewayKms = KeyOrigin("scaleway_kms")
-	// Scaleway Key Manager creates a key with key material coming from an external source.
+	// Key Manager creates a key with key material coming from an external source.
 	KeyOriginExternal = KeyOrigin("external")
 )
 
@@ -247,10 +247,10 @@ func (enum *ListKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // KeyRotationPolicy: key rotation policy.
 type KeyRotationPolicy struct {
-	// RotationPeriod: duration between two key rotations. The minimum duration is 24 hours and the maximum duration is 876000 hours (1 year).
+	// RotationPeriod: time interval between two key rotations. The minimum duration is 24 hours and the maximum duration is 1 year (876000 hours).
 	RotationPeriod *scw.Duration `json:"rotation_period"`
 
-	// NextRotationAt: date at which the key will be rotated next.
+	// NextRotationAt: timestamp indicating the next scheduled rotation.
 	NextRotationAt *time.Time `json:"next_rotation_at"`
 }
 
@@ -273,14 +273,14 @@ type Key struct {
 	// Name: name of the key.
 	Name string `json:"name"`
 
-	// Usage: keys with a usage set to `symmetric_encryption` are used to encrypt and decrypt data. The only key algorithm currently supported by Key Manager is AES-256-GCM.
+	// Usage: keys with a usage set to `symmetric_encryption` can encrypt and decrypt data using the `AES-256-GCM` key algorithm. Key Manager currently only supports `AES-256-GCM`.
 	Usage *KeyUsage `json:"usage"`
 
-	// State: see the `Key.State` enum for a description of values.
+	// State: see the `Key.State` enum for a description of possible values.
 	// Default value: unknown_state
 	State KeyState `json:"state"`
 
-	// RotationCount: the rotation count tracks the amount of times that the key was rotated.
+	// RotationCount: the rotation count tracks the number of times the key has been rotated.
 	RotationCount uint32 `json:"rotation_count"`
 
 	// CreatedAt: key creation date.
@@ -311,7 +311,7 @@ type Key struct {
 	// Default value: unknown_origin
 	Origin KeyOrigin `json:"origin"`
 
-	// Region: region of the key.
+	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
 }
 
@@ -351,7 +351,7 @@ type DataKey struct {
 	// KeyID: ID of the data encryption key.
 	KeyID string `json:"key_id"`
 
-	// Algorithm: symmetric encryption algorithm of the data encryption key.
+	// Algorithm: symmetric encryption algorithm of the data encryption key (`AES-256-GCM`).
 	// Default value: unknown_symmetric_encryption
 	Algorithm DataKeyAlgorithmSymmetricEncryption `json:"algorithm"`
 
@@ -483,13 +483,13 @@ type ImportKeyMaterialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// KeyID: the key's origin must be 'external'.
+	// KeyID: the key's origin must be `external`.
 	KeyID string `json:"-"`
 
 	// KeyMaterial: the key material The key material is a random sequence of bytes used to derive a cryptographic key.
 	KeyMaterial []byte `json:"key_material"`
 
-	// Salt: a salt can be used to improve the quality of randomness when the key material is generated from a low entropy source.
+	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
 	Salt *[]byte `json:"salt,omitempty"`
 }
 
@@ -609,7 +609,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateKey: Create a key in a given region specified by the `region` parameter. Keys only support symmetric encryption. You can use keys to encrypt or decrypt arbitrary payloads, or to generate data encryption keys that can be used without being stored in Key Manager.
+// CreateKey: Create a key in a given region specified by the `region` parameter. Keys only support symmetric encryption. You can use keys to encrypt or decrypt arbitrary payloads, or to generate data encryption keys. **Data encryption keys are not stored in Key Manager**.
 func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -646,7 +646,7 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	return &resp, nil
 }
 
-// GetKey: Retrieve the metadata of a key specified by the `region` and `key_id` parameters.
+// GetKey: Retrieve metadata for a specified key using the `region` and `key_id` parameters.
 func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -677,7 +677,7 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	return &resp, nil
 }
 
-// UpdateKey: Update a key's metadata (name, description and tags), specified by the `key_id` and `region` parameters.
+// UpdateKey: Modify a key's metadata including name, description and tags, specified by the `key_id` and `region` parameters.
 func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -713,7 +713,7 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	return &resp, nil
 }
 
-// DeleteKey: Delete an existing key specified by the `region` and `key_id` parameters. Deleting a key is permanent and cannot be undone. All data encrypted using this key, including data encryption keys, will become unusable.
+// DeleteKey: Permanently delete a key specified by the `region` and `key_id` parameters. This action is irreversible. Any data encrypted with this key, including data encryption keys, will no longer be decipherable.
 func (s *API) DeleteKey(req *DeleteKeyRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -742,7 +742,7 @@ func (s *API) DeleteKey(req *DeleteKeyRequest, opts ...scw.RequestOption) error 
 	return nil
 }
 
-// RotateKey: Generate a new version of an existing key with randomly generated key material. Rotated keys can still be used to decrypt previously encrypted data. The key's new material will be used for subsequent encryption operations and data key generation.
+// RotateKey: Generate a new version of an existing key with new key material. Previous key versions remain usable to decrypt previously encrypted data, but the key's new version will be used for subsequent encryption operations and data key generation.
 func (s *API) RotateKey(req *RotateKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -778,7 +778,7 @@ func (s *API) RotateKey(req *RotateKeyRequest, opts ...scw.RequestOption) (*Key,
 	return &resp, nil
 }
 
-// ProtectKey: Apply key protection to a given key specified by the `key_id` parameter. Applying key protection means that your key can be used and modified, but it cannot be deleted.
+// ProtectKey: Apply protection to a given key specified by the `key_id` parameter. Applying key protection means that your key can be used and modified, but it cannot be deleted.
 func (s *API) ProtectKey(req *ProtectKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -886,7 +886,7 @@ func (s *API) EnableKey(req *EnableKeyRequest, opts ...scw.RequestOption) (*Key,
 	return &resp, nil
 }
 
-// DisableKey: Disable a given key to be used for cryptographic operations. Disabling a key renders it unusable. You must specify the `region` and `key_id` parameters.
+// DisableKey: Disable a given key, preventing it to be used for cryptographic operations. Disabling a key renders it unusable. You must specify the `region` and `key_id` parameters.
 func (s *API) DisableKey(req *DisableKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -922,7 +922,7 @@ func (s *API) DisableKey(req *DisableKeyRequest, opts ...scw.RequestOption) (*Ke
 	return &resp, nil
 }
 
-// ListKeys: Retrieve the list of keys created within all Projects of an Organization or in a given Project. You must specify the `region`, and either the `organization_id` or the `project_id`.
+// ListKeys: Retrieve a list of keys across all Projects in an Organization or within a specific Project. You must specify the `region`, and either the `organization_id` or the `project_id`.
 func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKeysResponse, error) {
 	var err error
 
@@ -964,9 +964,9 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	return &resp, nil
 }
 
-// GenerateDataKey: Generate a new data encryption key to use for cryptographic operations outside of Key Manager. Note that Key Manager does not store your data encryption key. The data encryption key is encrypted and must be decrypted using the key you have created in Key Manager. The data encryption key's plaintext is returned in the response object, for immediate usage.
+// GenerateDataKey: Create a new data encryption key for cryptographic operations outside of Key Manager. The data encryption key is encrypted and must be decrypted using the key you have created in Key Manager.
 //
-// Always store the data encryption key's ciphertext, rather than its plaintext, which must not be stored. To retrieve your key's plaintext, call the Decrypt endpoint with your key's ID and ciphertext.
+// The data encryption key is returned in plaintext and ciphertext but it should only be stored in its encrypted form (ciphertext). Key Manager does not store your data encryption key. To retrieve your key's plaintext, use the `Decrypt` method with your key's ID and ciphertext.
 func (s *API) GenerateDataKey(req *GenerateDataKeyRequest, opts ...scw.RequestOption) (*DataKey, error) {
 	var err error
 
@@ -1002,7 +1002,7 @@ func (s *API) GenerateDataKey(req *GenerateDataKeyRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// Encrypt: Encrypt data using an existing key, specified by the `key_id` parameter. Only keys with a usage set to **symmetric_encryption** are supported by this method. The maximum payload size that can be encrypted is 64KB of plaintext.
+// Encrypt: Encrypt a payload using an existing key, specified by the `key_id` parameter. Only keys with a usage set to `symmetric_encryption` are supported by this method. The maximum payload size that can be encrypted is 64 KB of plaintext.
 func (s *API) Encrypt(req *EncryptRequest, opts ...scw.RequestOption) (*EncryptResponse, error) {
 	var err error
 
@@ -1038,7 +1038,7 @@ func (s *API) Encrypt(req *EncryptRequest, opts ...scw.RequestOption) (*EncryptR
 	return &resp, nil
 }
 
-// Decrypt: Decrypt data using an existing key, specified by the `key_id` parameter. The maximum payload size that can be decrypted is the result of the encryption of 64KB of data (around 131KB).
+// Decrypt: Decrypt an encrypted payload using an existing key, specified by the `key_id` parameter. The maximum payload size that can be decrypted is equivalent to the encrypted output of 64 KB of data (around 131 KB).
 func (s *API) Decrypt(req *DecryptRequest, opts ...scw.RequestOption) (*DecryptResponse, error) {
 	var err error
 
@@ -1074,7 +1074,7 @@ func (s *API) Decrypt(req *DecryptRequest, opts ...scw.RequestOption) (*DecryptR
 	return &resp, nil
 }
 
-// ImportKeyMaterial: Import key material to use to derive a new cryptographic key. The key's origin must be `external`.
+// ImportKeyMaterial: Import externally generated key material into Key Manager to derive a new cryptographic key. The key's origin must be `external`.
 func (s *API) ImportKeyMaterial(req *ImportKeyMaterialRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 

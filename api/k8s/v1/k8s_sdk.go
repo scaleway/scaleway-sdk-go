@@ -1564,6 +1564,8 @@ type ExternalNode struct {
 	NodeLabels map[string]string `json:"node_labels"`
 
 	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
+
+	IamToken string `json:"iam_token"`
 }
 
 // ExternalNodeAuth: external node auth.

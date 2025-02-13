@@ -106,6 +106,8 @@ const (
 	ResourceTypeMgdbInstance           = ResourceType("mgdb_instance")
 	ResourceTypeAppleSiliconServer     = ResourceType("apple_silicon_server")
 	ResourceTypeAppleSiliconPrivateNic = ResourceType("apple_silicon_private_nic")
+	ResourceTypeServerlessContainer    = ResourceType("serverless_container")
+	ResourceTypeServerlessFunction     = ResourceType("serverless_function")
 )
 
 func (enum ResourceType) String() string {
@@ -137,6 +139,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"mgdb_instance",
 		"apple_silicon_server",
 		"apple_silicon_private_nic",
+		"serverless_container",
+		"serverless_function",
 	}
 }
 
