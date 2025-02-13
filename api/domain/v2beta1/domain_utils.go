@@ -158,29 +158,14 @@ func (s *RegistrarAPI) WaitForOrderDomain(
 		retryInterval = *req.RetryInterval
 	}
 
-	// Terminal statuses indicating success
+	// Terminal statuses indicating success or error.
 	terminalStatuses := map[DomainStatus]struct{}{
-		DomainStatusActive:   {},
-		DomainStatusExpired:  {},
-		DomainStatusExpiring: {},
-		DomainStatusLocked:   {},
-	}
-
-	// Terminal statuses indicating errors
-	errorStatuses := map[DomainStatus]struct{}{
+		DomainStatusActive:      {},
+		DomainStatusExpired:     {},
+		DomainStatusLocked:      {},
 		DomainStatusCreateError: {},
 		DomainStatusRenewError:  {},
 		DomainStatusXferError:   {},
-	}
-
-	// Transient statuses
-	transientStatuses := map[DomainStatus]struct{}{
-		DomainStatusCreating: {},
-		DomainStatusRenewing: {},
-		DomainStatusXfering:  {},
-		DomainStatusUpdating: {},
-		DomainStatusChecking: {},
-		DomainStatusDeleting: {},
 	}
 
 	var lastStatus DomainStatus
@@ -196,29 +181,16 @@ func (s *RegistrarAPI) WaitForOrderDomain(
 
 			lastStatus = resp.Status
 
-			// Terminal success statuses
 			if _, isTerminal := terminalStatuses[resp.Status]; isTerminal {
 				return resp, true, nil
 			}
-
-			// Terminal error statuses
-			if _, isError := errorStatuses[resp.Status]; isError {
-				return nil, true, errors.New("domain entered error status: " + string(resp.Status))
-			}
-
-			// Transient statuses
-			if _, isTransient := transientStatuses[resp.Status]; isTransient {
-				return resp, false, nil
-			}
-
-			// Unexpected status
-			return nil, false, errors.New("unexpected domain status: " + string(resp.Status))
+			return resp, false, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "waiting for domain %s failed, last known status: %s", req.Domain, lastStatus)
+		return nil, errors.Wrap(err, fmt.Sprintf("waiting for domain %s failed, last known status: %s", req.Domain, lastStatus))
 	}
 
 	return domain.(*Domain), nil
@@ -249,17 +221,11 @@ func (s *RegistrarAPI) WaitForAutoRenewStatus(req *WaitForAutoRenewStatusRequest
 		DomainFeatureStatusEnabled:  {},
 		DomainFeatureStatusDisabled: {},
 	}
-	// Transient statuses for auto_renew: enabling or disabling.
-	transientStatuses := map[DomainFeatureStatus]struct{}{
-		DomainFeatureStatusEnabling:  {},
-		DomainFeatureStatusDisabling: {},
-	}
 
 	var lastStatus DomainFeatureStatus
 
 	domainResult, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
-			// Retrieve the domain.
 			resp, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
 				Domain: req.Domain,
 			}, opts...)
@@ -267,15 +233,11 @@ func (s *RegistrarAPI) WaitForAutoRenewStatus(req *WaitForAutoRenewStatusRequest
 				return nil, false, err
 			}
 
-			// Check the current auto_renew status.
 			lastStatus = resp.AutoRenewStatus
 			if _, isTerminal := terminalStatuses[resp.AutoRenewStatus]; isTerminal {
 				return resp, true, nil
 			}
-			if _, isTransient := transientStatuses[resp.AutoRenewStatus]; isTransient {
-				return resp, false, nil
-			}
-			return nil, false, errors.New("unexpected auto_renew status: " + string(resp.AutoRenewStatus))
+			return resp, false, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
@@ -311,11 +273,6 @@ func (s *RegistrarAPI) WaitForDNSSECStatus(req *WaitForDNSSECStatusRequest, opts
 		DomainFeatureStatusEnabled:  {},
 		DomainFeatureStatusDisabled: {},
 	}
-	// Transient statuses for DNSSEC: enabling or disabling.
-	transientStatuses := map[DomainFeatureStatus]struct{}{
-		DomainFeatureStatusEnabling:  {},
-		DomainFeatureStatusDisabling: {},
-	}
 
 	var lastStatus DomainFeatureStatus
 
@@ -334,10 +291,7 @@ func (s *RegistrarAPI) WaitForDNSSECStatus(req *WaitForDNSSECStatusRequest, opts
 			if _, isTerminal := terminalStatuses[resp.Dnssec.Status]; isTerminal {
 				return resp, true, nil
 			}
-			if _, isTransient := transientStatuses[resp.Dnssec.Status]; isTransient {
-				return resp, false, nil
-			}
-			return nil, false, errors.New("unexpected dnssec status: " + string(resp.Dnssec.Status))
+			return resp, false, nil
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
