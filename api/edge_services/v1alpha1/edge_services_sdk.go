@@ -977,6 +977,15 @@ type PlanDetails struct {
 
 	// PipelineLimit: number of pipelines included in subscription plan.
 	PipelineLimit uint32 `json:"pipeline_limit"`
+
+	// WafRequests: number of WAF requests included in subscription plan.
+	WafRequests uint64 `json:"waf_requests"`
+}
+
+// PlanUsageDetails: plan usage details.
+type PlanUsageDetails struct {
+	// PlanCost: cost to date (this month) for the corresponding Edge Services subscription plan.
+	PlanCost *scw.Money `json:"plan_cost"`
 }
 
 // PipelineStages: pipeline stages.
@@ -1236,6 +1245,21 @@ type GetBillingResponse struct {
 
 	// ExtraCacheCost: cost to date (this month) of the data egressed from the cache that is not included in the subscription plans.
 	ExtraCacheCost *scw.Money `json:"extra_cache_cost"`
+
+	// CurrentPlanWafUsage: total number of requests processed by the WAF since the beginning of the current month, for the active subscription plan.
+	CurrentPlanWafUsage uint64 `json:"current_plan_waf_usage"`
+
+	// ExtraWafUsage: total number of extra requests processed by the WAF from the beginning of the month, not included in the subscription plans.
+	ExtraWafUsage uint64 `json:"extra_waf_usage"`
+
+	// ExtraWafCost: cost to date (this month) of the extra requests processed by the WAF that were not included in the subscription plans.
+	ExtraWafCost *scw.Money `json:"extra_waf_cost"`
+
+	// WafAddOn: cost of activating WAF add-on (where subscription plan does not include WAF).
+	WafAddOn *scw.Money `json:"waf_add_on"`
+
+	// PlansUsageDetails: detailed costs and usage for all Edge Services subscription plans that were activated during the month.
+	PlansUsageDetails map[string]*PlanUsageDetails `json:"plans_usage_details"`
 
 	// TotalCost: total cost to date (this month) of all Edge Services resources including active subscription plan, previously active plans, extra pipelines and extra egress cache data.
 	TotalCost *scw.Money `json:"total_cost"`
