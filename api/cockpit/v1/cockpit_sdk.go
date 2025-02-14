@@ -39,6 +39,53 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type AnyAlertState string
+
+const (
+	AnyAlertStateUnknownState = AnyAlertState("unknown_state")
+	// The alert is turned off and will never fire.
+	AnyAlertStateDisabled = AnyAlertState("disabled")
+	// The alert is active and may transition to `pending` or `firing` if its conditions are met.
+	AnyAlertStateEnabled = AnyAlertState("enabled")
+	// The alert's conditions are met. They must persist for the configured duration before transitioning to the `firing` state.
+	AnyAlertStatePending = AnyAlertState("pending")
+	// The alert's conditions, including the required duration, have been fully met.
+	AnyAlertStateFiring = AnyAlertState("firing")
+)
+
+func (enum AnyAlertState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_state"
+	}
+	return string(enum)
+}
+
+func (enum AnyAlertState) Values() []AnyAlertState {
+	return []AnyAlertState{
+		"unknown_state",
+		"disabled",
+		"enabled",
+		"pending",
+		"firing",
+	}
+}
+
+func (enum AnyAlertState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AnyAlertState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AnyAlertState(AnyAlertState(tmp).String())
+	return nil
+}
+
 type DataSourceOrigin string
 
 const (
@@ -533,6 +580,25 @@ type GetConfigResponseRetention struct {
 	DefaultDays uint32 `json:"default_days"`
 }
 
+// AnyAlert: any alert.
+type AnyAlert struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	Preconfigured bool `json:"preconfigured"`
+
+	Name string `json:"name"`
+
+	Rule string `json:"rule"`
+
+	Duration string `json:"duration"`
+
+	// State: default value: unknown_state
+	State AnyAlertState `json:"state"`
+
+	Annotations map[string]string `json:"annotations"`
+}
+
 // ContactPoint: Contact point.
 type ContactPoint struct {
 	// Email: email address to send alerts to.
@@ -864,6 +930,34 @@ type GlobalAPISyncGrafanaDataSourcesRequest struct {
 type Grafana struct {
 	// GrafanaURL: URL to access your Cockpit's Grafana.
 	GrafanaURL string `json:"grafana_url"`
+}
+
+// ListAlertsResponse: Retrieve a list of alerts matching the request.
+type ListAlertsResponse struct {
+	// TotalCount: total count of alerts matching the request.
+	TotalCount uint64 `json:"total_count"`
+
+	// Alerts: list of alerts matching the applied filters.
+	Alerts []*AnyAlert `json:"alerts"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAlertsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListAlertsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Alerts = append(r.Alerts, results.Alerts...)
+	r.TotalCount += uint64(len(results.Alerts))
+	return uint64(len(results.Alerts)), nil
 }
 
 // ListContactPointsResponse: Response returned when listing contact points.
@@ -1226,6 +1320,25 @@ type RegionalAPIGetUsageOverviewRequest struct {
 	ProjectID string `json:"-"`
 
 	Interval *scw.Duration `json:"-"`
+}
+
+// RegionalAPIListAlertsRequest: Retrieve a list of alerts.
+type RegionalAPIListAlertsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID to filter for, only alerts from this Project will be returned.
+	ProjectID string `json:"-"`
+
+	// IsEnabled: true returns only enabled alerts. False returns only disabled alerts. If omitted, no alert filtering is applied. Other filters may still apply.
+	IsEnabled *bool `json:"-"`
+
+	// IsPreconfigured: true returns only preconfigured alerts. False returns only custom alerts. If omitted, no filtering is applied on alert types. Other filters may still apply.
+	IsPreconfigured *bool `json:"-"`
+
+	// State: valid values to filter on are `disabled`, `enabled`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
+	// Default value: unknown_state
+	State *AnyAlertState `json:"-"`
 }
 
 // RegionalAPIListContactPointsRequest: List contact points.
@@ -2417,6 +2530,45 @@ func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest
 	}
 
 	var resp ListManagedAlertsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAlerts: List preconfigured and/or custom alerts for the specified Project.
+func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.RequestOption) (*ListAlertsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "is_enabled", req.IsEnabled)
+	parameter.AddToQuery(query, "is_preconfigured", req.IsPreconfigured)
+	parameter.AddToQuery(query, "state", req.State)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alerts",
+		Query:  query,
+	}
+
+	var resp ListAlertsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
