@@ -1625,6 +1625,9 @@ type Frontend struct {
 
 	// EnableHTTP3: defines whether to enable HTTP/3 protocol on the frontend.
 	EnableHTTP3 bool `json:"enable_http3"`
+
+	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
+	ConnectionRateLimit *uint32 `json:"connection_rate_limit"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -2066,6 +2069,9 @@ type CreateFrontendRequest struct {
 
 	// EnableHTTP3: defines whether to enable HTTP/3 protocol on the frontend.
 	EnableHTTP3 bool `json:"enable_http3"`
+
+	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
+	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3179,6 +3185,9 @@ type UpdateFrontendRequest struct {
 
 	// EnableHTTP3: defines whether to enable HTTP/3 protocol on the frontend.
 	EnableHTTP3 bool `json:"enable_http3"`
+
+	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
+	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3595,6 +3604,9 @@ type ZonedAPICreateFrontendRequest struct {
 
 	// EnableHTTP3: defines whether to enable HTTP/3 protocol on the frontend.
 	EnableHTTP3 bool `json:"enable_http3"`
+
+	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
+	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 }
 
 func (m *ZonedAPICreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -4378,6 +4390,9 @@ type ZonedAPIUpdateFrontendRequest struct {
 
 	// EnableHTTP3: defines whether to enable HTTP/3 protocol on the frontend.
 	EnableHTTP3 bool `json:"enable_http3"`
+
+	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
+	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 }
 
 func (m *ZonedAPIUpdateFrontendRequest) UnmarshalJSON(b []byte) error {
