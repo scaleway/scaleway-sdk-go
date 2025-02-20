@@ -1219,9 +1219,9 @@ type HostingSummary struct {
 	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Status: status of the Web Hosting plan.
+	// Deprecated: Status: status of the Web Hosting plan.
 	// Default value: unknown_status
-	Status HostingSummaryStatus `json:"status"`
+	Status *HostingSummaryStatus `json:"status,omitempty"`
 
 	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
@@ -1229,12 +1229,20 @@ type HostingSummary struct {
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
-	// DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_status
-	DNSStatus DNSRecordsStatus `json:"dns_status"`
+	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
+
+	// HostingStatus: status of the Web Hosting plan.
+	// Default value: unknown_status
+	HostingStatus HostingStatus `json:"hosting_status"`
+
+	// DomainStatus: main domain status of the Web Hosting plan.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
@@ -1666,9 +1674,9 @@ type Hosting struct {
 	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
-	// DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_status
-	DNSStatus DNSRecordsStatus `json:"dns_status"`
+	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// IPv4: current IPv4 address of the hosting.
 	IPv4 net.IP `json:"ipv4"`
@@ -1678,6 +1686,10 @@ type Hosting struct {
 
 	// User: details of the hosting user.
 	User *HostingUser `json:"user"`
+
+	// DomainStatus: main domain status of the Web Hosting plan.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
