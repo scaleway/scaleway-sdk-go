@@ -302,10 +302,11 @@ func (enum *SecretType) UnmarshalJSON(data []byte) error {
 type SecretVersionStatus string
 
 const (
-	SecretVersionStatusUnknownStatus = SecretVersionStatus("unknown_status")
-	SecretVersionStatusEnabled       = SecretVersionStatus("enabled")
-	SecretVersionStatusDisabled      = SecretVersionStatus("disabled")
-	SecretVersionStatusDeleted       = SecretVersionStatus("deleted")
+	SecretVersionStatusUnknownStatus        = SecretVersionStatus("unknown_status")
+	SecretVersionStatusEnabled              = SecretVersionStatus("enabled")
+	SecretVersionStatusDisabled             = SecretVersionStatus("disabled")
+	SecretVersionStatusDeleted              = SecretVersionStatus("deleted")
+	SecretVersionStatusScheduledForDeletion = SecretVersionStatus("scheduled_for_deletion")
 )
 
 func (enum SecretVersionStatus) String() string {
@@ -322,6 +323,7 @@ func (enum SecretVersionStatus) Values() []SecretVersionStatus {
 		"enabled",
 		"disabled",
 		"deleted",
+		"scheduled_for_deletion",
 	}
 }
 
@@ -412,6 +414,7 @@ type SecretVersion struct {
 	// Status: * `unknown_status`: the version is in an invalid state.
 	// * `enabled`: the version is accessible.
 	// * `disabled`: the version is not accessible but can be enabled.
+	// * `scheduled_for_deletion`: the version is scheduled for deletion. It will be deleted in 7 days.
 	// * `deleted`: the version is permanently deleted. It is not possible to recover it.
 	// Default value: unknown_status
 	Status SecretVersionStatus `json:"status"`
@@ -433,6 +436,9 @@ type SecretVersion struct {
 
 	// EphemeralProperties: returns the version's expiration date, whether it expires after being accessed once, and the action to perform (disable or delete) once the version expires.
 	EphemeralProperties *EphemeralProperties `json:"ephemeral_properties"`
+
+	// DeletionRequestedAt: returns the time at which deletion was requested.
+	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 }
 
 // Secret: secret.
@@ -484,6 +490,9 @@ type Secret struct {
 
 	// UsedBy: list of Scaleway resources that can access and manage the secret.
 	UsedBy []Product `json:"used_by"`
+
+	// DeletionRequestedAt: returns the time at which deletion was requested.
+	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
@@ -892,6 +901,9 @@ type ListSecretsRequest struct {
 	// Type: filter by secret type (optional).
 	// Default value: unknown_type
 	Type SecretType `json:"-"`
+
+	// ScheduledForDeletion: filter by whether the secret was scheduled for deletion / not scheduled for deletion (optional).
+	ScheduledForDeletion *bool `json:"-"`
 }
 
 // ListSecretsResponse: list secrets response.
@@ -970,6 +982,24 @@ type ProtectSecretRequest struct {
 
 	// SecretID: ID of the secret to enable secret protection for.
 	SecretID string `json:"-"`
+}
+
+// RestoreSecretRequest: restore secret request.
+type RestoreSecretRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	SecretID string `json:"-"`
+}
+
+// RestoreSecretVersionRequest: restore secret version request.
+type RestoreSecretVersionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	SecretID string `json:"-"`
+
+	Revision string `json:"-"`
 }
 
 // SSHKey: ssh key.
@@ -1205,6 +1235,7 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "path", req.Path)
 	parameter.AddToQuery(query, "ephemeral", req.Ephemeral)
 	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "scheduled_for_deletion", req.ScheduledForDeletion)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1794,6 +1825,82 @@ func (s *API) ListSecretTypes(req *ListSecretTypesRequest, opts ...scw.RequestOp
 	}
 
 	var resp ListSecretTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RestoreSecretVersion: Restore a secret's version specified by the `region`, `secret_id` and `revision` parameters.
+func (s *API) RestoreSecretVersion(req *RestoreSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Revision) == "" {
+		return nil, errors.New("field Revision cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/restore",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SecretVersion
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RestoreSecret: Restore a secret and all its versions scheduled for deletion specified by the `region` and `secret_id` parameters.
+func (s *API) RestoreSecret(req *RestoreSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SecretID) == "" {
+		return nil, errors.New("field SecretID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/restore",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Secret
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
