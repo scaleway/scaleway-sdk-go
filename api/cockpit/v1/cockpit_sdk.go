@@ -39,21 +39,19 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type AnyAlertState string
+type AlertState string
 
 const (
-	AnyAlertStateUnknownState = AnyAlertState("unknown_state")
-	// The alert is turned off and will never fire.
-	AnyAlertStateDisabled = AnyAlertState("disabled")
-	// The alert is active and may transition to `pending` or `firing` if its conditions are met.
-	AnyAlertStateEnabled = AnyAlertState("enabled")
+	AlertStateUnknownState = AlertState("unknown_state")
+	// The alert is inactive and may transition to `pending` or `firing` if its conditions are met.
+	AlertStateInactive = AlertState("inactive")
 	// The alert's conditions are met. They must persist for the configured duration before transitioning to the `firing` state.
-	AnyAlertStatePending = AnyAlertState("pending")
+	AlertStatePending = AlertState("pending")
 	// The alert's conditions, including the required duration, have been fully met.
-	AnyAlertStateFiring = AnyAlertState("firing")
+	AlertStateFiring = AlertState("firing")
 )
 
-func (enum AnyAlertState) String() string {
+func (enum AlertState) String() string {
 	if enum == "" {
 		// return default value if empty
 		return "unknown_state"
@@ -61,28 +59,27 @@ func (enum AnyAlertState) String() string {
 	return string(enum)
 }
 
-func (enum AnyAlertState) Values() []AnyAlertState {
-	return []AnyAlertState{
+func (enum AlertState) Values() []AlertState {
+	return []AlertState{
 		"unknown_state",
-		"disabled",
-		"enabled",
+		"inactive",
 		"pending",
 		"firing",
 	}
 }
 
-func (enum AnyAlertState) MarshalJSON() ([]byte, error) {
+func (enum AlertState) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
 }
 
-func (enum *AnyAlertState) UnmarshalJSON(data []byte) error {
+func (enum *AlertState) UnmarshalJSON(data []byte) error {
 	tmp := ""
 
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
 
-	*enum = AnyAlertState(AnyAlertState(tmp).String())
+	*enum = AlertState(AlertState(tmp).String())
 	return nil
 }
 
@@ -297,51 +294,6 @@ func (enum *ListGrafanaUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListGrafanaUsersRequestOrderBy(ListGrafanaUsersRequestOrderBy(tmp).String())
-	return nil
-}
-
-type ListManagedAlertsRequestOrderBy string
-
-const (
-	ListManagedAlertsRequestOrderByCreatedAtAsc  = ListManagedAlertsRequestOrderBy("created_at_asc")
-	ListManagedAlertsRequestOrderByCreatedAtDesc = ListManagedAlertsRequestOrderBy("created_at_desc")
-	ListManagedAlertsRequestOrderByNameAsc       = ListManagedAlertsRequestOrderBy("name_asc")
-	ListManagedAlertsRequestOrderByNameDesc      = ListManagedAlertsRequestOrderBy("name_desc")
-	ListManagedAlertsRequestOrderByTypeAsc       = ListManagedAlertsRequestOrderBy("type_asc")
-	ListManagedAlertsRequestOrderByTypeDesc      = ListManagedAlertsRequestOrderBy("type_desc")
-)
-
-func (enum ListManagedAlertsRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "created_at_asc"
-	}
-	return string(enum)
-}
-
-func (enum ListManagedAlertsRequestOrderBy) Values() []ListManagedAlertsRequestOrderBy {
-	return []ListManagedAlertsRequestOrderBy{
-		"created_at_asc",
-		"created_at_desc",
-		"name_asc",
-		"name_desc",
-		"type_asc",
-		"type_desc",
-	}
-}
-
-func (enum ListManagedAlertsRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListManagedAlertsRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListManagedAlertsRequestOrderBy(ListManagedAlertsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -580,8 +532,8 @@ type GetConfigResponseRetention struct {
 	DefaultDays uint32 `json:"default_days"`
 }
 
-// AnyAlert: any alert.
-type AnyAlert struct {
+// Alert: alert.
+type Alert struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 
@@ -593,8 +545,10 @@ type AnyAlert struct {
 
 	Duration string `json:"duration"`
 
+	Enabled bool `json:"enabled"`
+
 	// State: default value: unknown_state
-	State AnyAlertState `json:"state"`
+	State *AlertState `json:"state"`
 
 	Annotations map[string]string `json:"annotations"`
 }
@@ -682,19 +636,6 @@ type GrafanaUser struct {
 
 	// Password: grafana user's password.
 	Password *string `json:"password"`
-}
-
-// Alert: alert.
-type Alert struct {
-	ProductFamily string `json:"product_family"`
-
-	Product string `json:"product"`
-
-	Name string `json:"name"`
-
-	Rule string `json:"rule"`
-
-	Description string `json:"description"`
 }
 
 // Plan: Type of pricing plan.
@@ -938,7 +879,7 @@ type ListAlertsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 
 	// Alerts: list of alerts matching the applied filters.
-	Alerts []*AnyAlert `json:"alerts"`
+	Alerts []*Alert `json:"alerts"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -1076,34 +1017,6 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error)
 	r.GrafanaUsers = append(r.GrafanaUsers, results.GrafanaUsers...)
 	r.TotalCount += uint64(len(results.GrafanaUsers))
 	return uint64(len(results.GrafanaUsers)), nil
-}
-
-// ListManagedAlertsResponse: Response returned when listing data sources.
-type ListManagedAlertsResponse struct {
-	// TotalCount: total count of data sources matching the request.
-	TotalCount uint64 `json:"total_count"`
-
-	// Alerts: alerts matching the request within the pagination.
-	Alerts []*Alert `json:"alerts"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListManagedAlertsResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListManagedAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListManagedAlertsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Alerts = append(r.Alerts, results.Alerts...)
-	r.TotalCount += uint64(len(results.Alerts))
-	return uint64(len(results.Alerts)), nil
 }
 
 // ListPlansResponse: Output returned when listing pricing plans.
@@ -1338,7 +1251,7 @@ type RegionalAPIListAlertsRequest struct {
 
 	// State: valid values to filter on are `disabled`, `enabled`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
 	// Default value: unknown_state
-	State *AnyAlertState `json:"-"`
+	State *AlertState `json:"-"`
 }
 
 // RegionalAPIListContactPointsRequest: List contact points.
@@ -1380,25 +1293,6 @@ type RegionalAPIListDataSourcesRequest struct {
 
 	// Types: types to filter for, only data sources with matching types will be returned.
 	Types []DataSourceType `json:"-"`
-}
-
-// RegionalAPIListManagedAlertsRequest: Enable the sending of managed alerts.
-type RegionalAPIListManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// Page: page number to return, from the paginated results.
-	Page *int32 `json:"-"`
-
-	// PageSize: number of data sources to return per page.
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: sort order for data sources in the response.
-	// Default value: created_at_asc
-	OrderBy ListManagedAlertsRequestOrderBy `json:"-"`
-
-	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
-	ProjectID string `json:"-"`
 }
 
 // RegionalAPIListTokensRequest: List tokens.
@@ -2492,50 +2386,6 @@ func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointReque
 		return err
 	}
 	return nil
-}
-
-// ListManagedAlerts: List all managed alerts for the specified Project.
-func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest, opts ...scw.RequestOption) (*ListManagedAlertsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/managed-alerts",
-		Query:  query,
-	}
-
-	var resp ListManagedAlertsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // ListAlerts: List preconfigured and/or custom alerts for the specified Project.
