@@ -1389,6 +1389,9 @@ type DNSRecords struct {
 	// Status: status of the records.
 	// Default value: unknown_status
 	Status DNSRecordsStatus `json:"status"`
+
+	// DNSConfig: records dns auto configuration settings.
+	DNSConfig []DomainDNSAction `json:"dns_config"`
 }
 
 // DatabaseAPIAssignDatabaseUserRequest: database api assign database user request.
