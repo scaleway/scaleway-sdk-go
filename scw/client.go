@@ -264,6 +264,10 @@ func (c *Client) do(req *ScalewayRequest, res interface{}) (sdkErr error) {
 	return nil
 }
 
+type listerWithToken interface {
+	UnsafeAppend(interface{}) (*string, error)
+}
+
 type lister interface {
 	UnsafeGetTotalCount() uint64
 	UnsafeAppend(interface{}) (uint64, error)
@@ -301,11 +305,28 @@ func listerAppend(recv interface{}, elems interface{}) (uint64, error) {
 	panic(fmt.Errorf("%T does not support pagination but checks failed, should not happen", recv))
 }
 
+func listerTokenAppend(recv interface{}, elems interface{}) (*string, error) {
+	if l, isLister := recv.(listerWithToken); isLister {
+		return l.UnsafeAppend(elems)
+	}
+
+	panic(fmt.Errorf("%T does not support token pagination but checks failed, should not happen", recv))
+}
+
 func isLister(i interface{}) bool {
 	switch i.(type) {
 	case lister:
 		return true
 	case lister32:
+		return true
+	default:
+		return false
+	}
+}
+
+func isListerWithToken(i interface{}) bool {
+	switch i.(type) {
+	case listerWithToken:
 		return true
 	default:
 		return false
@@ -347,6 +368,31 @@ func (c *Client) doListAll(req *ScalewayRequest, res interface{}) (err error) {
 			}
 		}
 		return nil
+	}
+	if isListerWithToken(res) {
+		var nextPageToken *string
+
+		for {
+			if nextPageToken != nil {
+				req.Query.Set("page_token", *nextPageToken)
+			}
+
+			nextPage := newVariableFromType(res)
+			err := c.do(req, nextPage)
+			if err != nil {
+				return err
+			}
+
+			// append results
+			nextPageToken, err = listerTokenAppend(res, nextPage)
+			if err != nil {
+				return err
+			}
+
+			if nextPageToken == nil {
+				return nil
+			}
+		}
 	}
 
 	return errors.New("%T does not support pagination", res)
