@@ -732,6 +732,9 @@ type ListSnapshotsRequest struct {
 
 	// Name: filter snapshots by their names.
 	Name *string `json:"-"`
+
+	// Tags: filter by tags. Only snapshots with one or more matching tags will be returned.
+	Tags []string `json:"-"`
 }
 
 // ListSnapshotsResponse: list snapshots response.
@@ -1154,6 +1157,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
