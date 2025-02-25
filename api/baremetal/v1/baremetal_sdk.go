@@ -757,6 +757,7 @@ const (
 	ServerStatusOutOfStock = ServerStatus("out_of_stock")
 	ServerStatusOrdered    = ServerStatus("ordered")
 	ServerStatusResetting  = ServerStatus("resetting")
+	ServerStatusMigrating  = ServerStatus("migrating")
 )
 
 func (enum ServerStatus) String() string {
@@ -781,6 +782,7 @@ func (enum ServerStatus) Values() []ServerStatus {
 		"out_of_stock",
 		"ordered",
 		"resetting",
+		"migrating",
 	}
 }
 
@@ -1294,6 +1296,9 @@ type Offer struct {
 
 	// Gpus: gPU specifications of the offer.
 	Gpus []*GPU `json:"gpus"`
+
+	// MonthlyOfferID: exist only for hourly offers, to migrate to the monthly offer.
+	MonthlyOfferID *string `json:"monthly_offer_id"`
 }
 
 // Option: option.
@@ -1954,6 +1959,15 @@ func (r *ListSettingsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.Settings = append(r.Settings, results.Settings...)
 	r.TotalCount += uint32(len(results.Settings))
 	return uint32(len(results.Settings)), nil
+}
+
+// MigrateServerToMonthlyOfferRequest: migrate server to monthly offer request.
+type MigrateServerToMonthlyOfferRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server.
+	ServerID string `json:"-"`
 }
 
 // PrivateNetworkAPIAddServerPrivateNetworkRequest: private network api add server private network request.
@@ -2822,6 +2836,37 @@ func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.Req
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/options/" + fmt.Sprint(req.OptionID) + "",
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// MigrateServerToMonthlyOffer: Migrate server with hourly offer to monthly offer.
+func (s *API) MigrateServerToMonthlyOffer(req *MigrateServerToMonthlyOfferRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/migrate-offer-monthly",
 	}
 
 	var resp Server
