@@ -87,12 +87,12 @@ const (
 	ResourceTypeKubeNode          = ResourceType("kube_node")
 	ResourceTypeKubeACL           = ResourceType("kube_acl")
 	ResourceTypeKeymKey           = ResourceType("keym_key")
-	ResourceTypeIamxUser          = ResourceType("iamx_user")
-	ResourceTypeIamxApplication   = ResourceType("iamx_application")
-	ResourceTypeIamxGroup         = ResourceType("iamx_group")
-	ResourceTypeIamxPolicy        = ResourceType("iamx_policy")
-	ResourceTypeIamxAPIKey        = ResourceType("iamx_api_key")
-	ResourceTypeIamxSSHKey        = ResourceType("iamx_ssh_key")
+	ResourceTypeIamUser           = ResourceType("iam_user")
+	ResourceTypeIamApplication    = ResourceType("iam_application")
+	ResourceTypeIamGroup          = ResourceType("iam_group")
+	ResourceTypeIamPolicy         = ResourceType("iam_policy")
+	ResourceTypeIamAPIKey         = ResourceType("iam_api_key")
+	ResourceTypeIamSSHKey         = ResourceType("iam_ssh_key")
 )
 
 func (enum ResourceType) String() string {
@@ -113,12 +113,12 @@ func (enum ResourceType) Values() []ResourceType {
 		"kube_node",
 		"kube_acl",
 		"keym_key",
-		"iamx_user",
-		"iamx_application",
-		"iamx_group",
-		"iamx_policy",
-		"iamx_api_key",
-		"iamx_ssh_key",
+		"iam_user",
+		"iam_application",
+		"iam_group",
+		"iam_policy",
+		"iam_api_key",
+		"iam_ssh_key",
 	}
 }
 
