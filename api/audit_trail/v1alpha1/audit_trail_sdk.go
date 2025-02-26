@@ -257,8 +257,11 @@ type Event struct {
 	// MethodName: API method called to trigger the event.
 	MethodName string `json:"method_name"`
 
-	// Resource: resource attached to the event.
-	Resource *Resource `json:"resource"`
+	// Deprecated: Resource: resource attached to the event.
+	Resource *Resource `json:"resource,omitempty"`
+
+	// Resources: resources attached to the event.
+	Resources []*Resource `json:"resources"`
 
 	// RequestID: unique identifier of the request at the origin of the event.
 	RequestID string `json:"request_id"`
