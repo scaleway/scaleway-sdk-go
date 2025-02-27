@@ -336,6 +336,9 @@ type ListEventsResponse struct {
 type ListProductsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization containing the Audit Trail events.
+	OrganizationID string `json:"organization_id"`
 }
 
 // ListProductsResponse: list products response.
@@ -441,6 +444,14 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 		req.Region = defaultRegion
 	}
 
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -448,6 +459,7 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/products",
+		Query:  query,
 	}
 
 	var resp ListProductsResponse
