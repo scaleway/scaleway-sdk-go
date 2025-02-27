@@ -317,8 +317,10 @@ const (
 	DomainDNSActionAutoConfigWebRecords = DomainDNSAction("auto_config_web_records")
 	// Automatically configure mail-related DNS records (e.g., MX, SPF, DKIM).
 	DomainDNSActionAutoConfigMailRecords = DomainDNSAction("auto_config_mail_records")
-	// Automatically configure the domain's nameservers to point to Web Hosting Nameservers.
+	// Automatically configure the domain's name servers to point to Web Hosting name servers.
 	DomainDNSActionAutoConfigNameservers = DomainDNSAction("auto_config_nameservers")
+	// No automatic domain configuration. Users must configure their domain for the Web Hosting to work.
+	DomainDNSActionAutoConfigNone = DomainDNSAction("auto_config_none")
 )
 
 func (enum DomainDNSAction) String() string {
@@ -336,6 +338,7 @@ func (enum DomainDNSAction) Values() []DomainDNSAction {
 		"auto_config_web_records",
 		"auto_config_mail_records",
 		"auto_config_nameservers",
+		"auto_config_none",
 	}
 }
 
@@ -494,53 +497,6 @@ func (enum *HostingStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = HostingStatus(HostingStatus(tmp).String())
-	return nil
-}
-
-type HostingSummaryStatus string
-
-const (
-	HostingSummaryStatusUnknownStatus = HostingSummaryStatus("unknown_status")
-	HostingSummaryStatusDelivering    = HostingSummaryStatus("delivering")
-	HostingSummaryStatusReady         = HostingSummaryStatus("ready")
-	HostingSummaryStatusDeleting      = HostingSummaryStatus("deleting")
-	HostingSummaryStatusError         = HostingSummaryStatus("error")
-	HostingSummaryStatusLocked        = HostingSummaryStatus("locked")
-	HostingSummaryStatusMigrating     = HostingSummaryStatus("migrating")
-)
-
-func (enum HostingSummaryStatus) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_status"
-	}
-	return string(enum)
-}
-
-func (enum HostingSummaryStatus) Values() []HostingSummaryStatus {
-	return []HostingSummaryStatus{
-		"unknown_status",
-		"delivering",
-		"ready",
-		"deleting",
-		"error",
-		"locked",
-		"migrating",
-	}
-}
-
-func (enum HostingSummaryStatus) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *HostingSummaryStatus) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = HostingSummaryStatus(HostingSummaryStatus(tmp).String())
 	return nil
 }
 
@@ -1219,9 +1175,9 @@ type HostingSummary struct {
 	// UpdatedAt: date on which the Web Hosting plan was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Deprecated: Status: status of the Web Hosting plan.
+	// Status: status of the Web Hosting plan.
 	// Default value: unknown_status
-	Status *HostingSummaryStatus `json:"status,omitempty"`
+	Status HostingStatus `json:"status"`
 
 	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
@@ -1235,10 +1191,6 @@ type HostingSummary struct {
 
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
-
-	// HostingStatus: status of the Web Hosting plan.
-	// Default value: unknown_status
-	HostingStatus HostingStatus `json:"hosting_status"`
 
 	// DomainStatus: main domain status of the Web Hosting plan.
 	// Default value: unknown_status
