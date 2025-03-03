@@ -1680,7 +1680,7 @@ type RouteMatch struct {
 	// Precisely one of Sni, HostHeader must be set.
 	Sni *string `json:"sni,omitempty"`
 
-	// HostHeader: value to match in the HTTP Host request header from an incoming connection. This field should be set for routes on HTTP Load Balancers.
+	// HostHeader: value to match in the HTTP Host request header from an incoming request. This field should be set for routes on HTTP Load Balancers.
 	// Precisely one of Sni, HostHeader must be set.
 	HostHeader *string `json:"host_header,omitempty"`
 
