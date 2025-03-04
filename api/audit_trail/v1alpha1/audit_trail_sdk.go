@@ -79,20 +79,23 @@ func (enum *ListEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType       = ResourceType("unknown_type")
-	ResourceTypeSecmSecret        = ResourceType("secm_secret")
-	ResourceTypeSecmSecretVersion = ResourceType("secm_secret_version")
-	ResourceTypeKubeCluster       = ResourceType("kube_cluster")
-	ResourceTypeKubePool          = ResourceType("kube_pool")
-	ResourceTypeKubeNode          = ResourceType("kube_node")
-	ResourceTypeKubeACL           = ResourceType("kube_acl")
-	ResourceTypeKeymKey           = ResourceType("keym_key")
-	ResourceTypeIamUser           = ResourceType("iam_user")
-	ResourceTypeIamApplication    = ResourceType("iam_application")
-	ResourceTypeIamGroup          = ResourceType("iam_group")
-	ResourceTypeIamPolicy         = ResourceType("iam_policy")
-	ResourceTypeIamAPIKey         = ResourceType("iam_api_key")
-	ResourceTypeIamSSHKey         = ResourceType("iam_ssh_key")
+	ResourceTypeUnknownType          = ResourceType("unknown_type")
+	ResourceTypeSecmSecret           = ResourceType("secm_secret")
+	ResourceTypeSecmSecretVersion    = ResourceType("secm_secret_version")
+	ResourceTypeKubeCluster          = ResourceType("kube_cluster")
+	ResourceTypeKubePool             = ResourceType("kube_pool")
+	ResourceTypeKubeNode             = ResourceType("kube_node")
+	ResourceTypeKubeACL              = ResourceType("kube_acl")
+	ResourceTypeKeymKey              = ResourceType("keym_key")
+	ResourceTypeIamUser              = ResourceType("iam_user")
+	ResourceTypeIamApplication       = ResourceType("iam_application")
+	ResourceTypeIamGroup             = ResourceType("iam_group")
+	ResourceTypeIamPolicy            = ResourceType("iam_policy")
+	ResourceTypeIamAPIKey            = ResourceType("iam_api_key")
+	ResourceTypeIamSSHKey            = ResourceType("iam_ssh_key")
+	ResourceTypeSecretManagerSecret  = ResourceType("secret_manager_secret")
+	ResourceTypeSecretManagerVersion = ResourceType("secret_manager_version")
+	ResourceTypeKeyManagerKey        = ResourceType("key_manager_key")
 )
 
 func (enum ResourceType) String() string {
@@ -119,6 +122,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_policy",
 		"iam_api_key",
 		"iam_ssh_key",
+		"secret_manager_secret",
+		"secret_manager_version",
+		"key_manager_key",
 	}
 }
 
@@ -193,26 +199,38 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo must be set.
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KeymKeyInfo *KeyManagerKeyInfo `json:"keym_key_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	SecretManagerSecretInfo *SecretManagerSecretInfo `json:"secret_manager_secret_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	SecretManagerVersionInfo *SecretManagerSecretVersionInfo `json:"secret_manager_version_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	KeyManagerKeyInfo *KeyManagerKeyInfo `json:"key_manager_key_info,omitempty"`
 }
 
 // ProductService: product service.
