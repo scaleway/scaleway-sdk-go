@@ -898,6 +898,25 @@ type QuotumLimit struct {
 	Unlimited *bool `json:"unlimited,omitempty"`
 }
 
+// ListUserConnectionsResponseConnectionConnectedOrganization: list user connections response connection connected organization.
+type ListUserConnectionsResponseConnectionConnectedOrganization struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Locked bool `json:"locked"`
+}
+
+// ListUserConnectionsResponseConnectionConnectedUser: list user connections response connection connected user.
+type ListUserConnectionsResponseConnectionConnectedUser struct {
+	ID string `json:"id"`
+
+	Username string `json:"username"`
+
+	// Type: default value: unknown_type
+	Type UserType `json:"type"`
+}
+
 // JWT: jwt.
 type JWT struct {
 	// Jti: jWT ID.
@@ -1287,6 +1306,15 @@ type SSHKey struct {
 
 	// Disabled: SSH key status.
 	Disabled bool `json:"disabled"`
+}
+
+// ListUserConnectionsResponseConnection: list user connections response connection.
+type ListUserConnectionsResponseConnection struct {
+	// Organization: information about the connected organization.
+	Organization *ListUserConnectionsResponseConnectionConnectedOrganization `json:"organization"`
+
+	// User: information about the connected user.
+	User *ListUserConnectionsResponseConnectionConnectedUser `json:"user"`
 }
 
 // User: user.
@@ -2179,6 +2207,18 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.SSHKeys)), nil
 }
 
+// ListUserConnectionsRequest: list user connections request.
+type ListUserConnectionsRequest struct {
+	// UserID: ID of the user to list connections for.
+	UserID string `json:"-"`
+}
+
+// ListUserConnectionsResponse: list user connections response.
+type ListUserConnectionsResponse struct {
+	// Connections: list of connections.
+	Connections []*ListUserConnectionsResponseConnection `json:"connections"`
+}
+
 // ListUsersRequest: list users request.
 type ListUsersRequest struct {
 	// OrderBy: criteria for sorting results.
@@ -2920,6 +2960,28 @@ func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.Request
 	}
 
 	var resp ListGracePeriodsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListUserConnections:
+func (s *API) ListUserConnections(req *ListUserConnectionsRequest, opts ...scw.RequestOption) (*ListUserConnectionsResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/connections",
+	}
+
+	var resp ListUserConnectionsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
