@@ -902,8 +902,8 @@ type ListSecretsRequest struct {
 	// Default value: unknown_type
 	Type SecretType `json:"-"`
 
-	// ScheduledForDeletion: filter by whether the secret was scheduled for deletion / not scheduled for deletion (optional).
-	ScheduledForDeletion *bool `json:"-"`
+	// ScheduledForDeletion: filter by whether the secret was scheduled for deletion / not scheduled for deletion. By default, it will display only not scheduled for deletion secrets.
+	ScheduledForDeletion bool `json:"-"`
 }
 
 // ListSecretsResponse: list secrets response.
