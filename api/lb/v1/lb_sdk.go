@@ -1683,6 +1683,9 @@ type RouteMatch struct {
 	// HostHeader: value to match in the HTTP Host request header from an incoming connection. This field should be set for routes on HTTP Load Balancers.
 	// Precisely one of Sni, HostHeader must be set.
 	HostHeader *string `json:"host_header,omitempty"`
+
+	// MatchSubdomains: if true, all subdomains will match.
+	MatchSubdomains bool `json:"match_subdomains"`
 }
 
 // CreateCertificateRequestCustomCertificate: create certificate request custom certificate.
