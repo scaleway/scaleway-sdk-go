@@ -875,6 +875,25 @@ func (enum *UserType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// GetUserConnectionsResponseConnectionConnectedOrganization: get user connections response connection connected organization.
+type GetUserConnectionsResponseConnectionConnectedOrganization struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Locked bool `json:"locked"`
+}
+
+// GetUserConnectionsResponseConnectionConnectedUser: get user connections response connection connected user.
+type GetUserConnectionsResponseConnectionConnectedUser struct {
+	ID string `json:"id"`
+
+	Username string `json:"username"`
+
+	// Type: default value: unknown_type
+	Type UserType `json:"type"`
+}
+
 // QuotumLimit: quotum limit.
 type QuotumLimit struct {
 	// Global: whether or not the limit is applied globally.
@@ -896,25 +915,6 @@ type QuotumLimit struct {
 	// Unlimited: whether or not the quota per locality is unlimited.
 	// Precisely one of Limit, Unlimited must be set.
 	Unlimited *bool `json:"unlimited,omitempty"`
-}
-
-// ListUserConnectionsResponseConnectionConnectedOrganization: list user connections response connection connected organization.
-type ListUserConnectionsResponseConnectionConnectedOrganization struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	Locked bool `json:"locked"`
-}
-
-// ListUserConnectionsResponseConnectionConnectedUser: list user connections response connection connected user.
-type ListUserConnectionsResponseConnectionConnectedUser struct {
-	ID string `json:"id"`
-
-	Username string `json:"username"`
-
-	// Type: default value: unknown_type
-	Type UserType `json:"type"`
 }
 
 // JWT: jwt.
@@ -977,6 +977,15 @@ type CreateUserRequestMember struct {
 
 	// Password: the member's password.
 	Password string `json:"password"`
+}
+
+// GetUserConnectionsResponseConnection: get user connections response connection.
+type GetUserConnectionsResponseConnection struct {
+	// Organization: information about the connected organization.
+	Organization *GetUserConnectionsResponseConnectionConnectedOrganization `json:"organization"`
+
+	// User: information about the connected user.
+	User *GetUserConnectionsResponseConnectionConnectedUser `json:"user"`
 }
 
 // APIKey: api key.
@@ -1308,15 +1317,6 @@ type SSHKey struct {
 	Disabled bool `json:"disabled"`
 }
 
-// ListUserConnectionsResponseConnection: list user connections response connection.
-type ListUserConnectionsResponseConnection struct {
-	// Organization: information about the connected organization.
-	Organization *ListUserConnectionsResponseConnectionConnectedOrganization `json:"organization"`
-
-	// User: information about the connected user.
-	User *ListUserConnectionsResponseConnectionConnectedUser `json:"user"`
-}
-
 // User: user.
 type User struct {
 	// ID: ID of user.
@@ -1640,6 +1640,18 @@ type GetQuotumRequest struct {
 type GetSSHKeyRequest struct {
 	// SSHKeyID: ID of the SSH key.
 	SSHKeyID string `json:"-"`
+}
+
+// GetUserConnectionsRequest: get user connections request.
+type GetUserConnectionsRequest struct {
+	// UserID: ID of the user to list connections for.
+	UserID string `json:"-"`
+}
+
+// GetUserConnectionsResponse: get user connections response.
+type GetUserConnectionsResponse struct {
+	// Connections: list of connections.
+	Connections []*GetUserConnectionsResponseConnection `json:"connections"`
 }
 
 // GetUserRequest: get user request.
@@ -2205,18 +2217,6 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	r.SSHKeys = append(r.SSHKeys, results.SSHKeys...)
 	r.TotalCount += uint32(len(results.SSHKeys))
 	return uint32(len(results.SSHKeys)), nil
-}
-
-// ListUserConnectionsRequest: list user connections request.
-type ListUserConnectionsRequest struct {
-	// UserID: ID of the user to list connections for.
-	UserID string `json:"-"`
-}
-
-// ListUserConnectionsResponse: list user connections response.
-type ListUserConnectionsResponse struct {
-	// Connections: list of connections.
-	Connections []*ListUserConnectionsResponseConnection `json:"connections"`
 }
 
 // ListUsersRequest: list users request.
@@ -2968,8 +2968,8 @@ func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ListUserConnections:
-func (s *API) ListUserConnections(req *ListUserConnectionsRequest, opts ...scw.RequestOption) (*ListUserConnectionsResponse, error) {
+// GetUserConnections:
+func (s *API) GetUserConnections(req *GetUserConnectionsRequest, opts ...scw.RequestOption) (*GetUserConnectionsResponse, error) {
 	var err error
 
 	if fmt.Sprint(req.UserID) == "" {
@@ -2981,7 +2981,7 @@ func (s *API) ListUserConnections(req *ListUserConnectionsRequest, opts ...scw.R
 		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/connections",
 	}
 
-	var resp ListUserConnectionsResponse
+	var resp GetUserConnectionsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
