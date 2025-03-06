@@ -984,24 +984,6 @@ type ProtectSecretRequest struct {
 	SecretID string `json:"-"`
 }
 
-// RestoreSecretRequest: restore secret request.
-type RestoreSecretRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	SecretID string `json:"-"`
-}
-
-// RestoreSecretVersionRequest: restore secret version request.
-type RestoreSecretVersionRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	SecretID string `json:"-"`
-
-	Revision string `json:"-"`
-}
-
 // SSHKey: ssh key.
 type SSHKey struct {
 	// SSHPrivateKey: the private SSH key.
@@ -1825,82 +1807,6 @@ func (s *API) ListSecretTypes(req *ListSecretTypesRequest, opts ...scw.RequestOp
 	}
 
 	var resp ListSecretTypesResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// RestoreSecretVersion: Restore a secret's version specified by the `region`, `secret_id` and `revision` parameters.
-func (s *API) RestoreSecretVersion(req *RestoreSecretVersionRequest, opts ...scw.RequestOption) (*SecretVersion, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.SecretID) == "" {
-		return nil, errors.New("field SecretID cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.Revision) == "" {
-		return nil, errors.New("field Revision cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/versions/" + fmt.Sprint(req.Revision) + "/restore",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp SecretVersion
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// RestoreSecret: Restore a secret and all its versions scheduled for deletion specified by the `region` and `secret_id` parameters.
-func (s *API) RestoreSecret(req *RestoreSecretRequest, opts ...scw.RequestOption) (*Secret, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.SecretID) == "" {
-		return nil, errors.New("field SecretID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/secret-manager/v1beta1/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "/restore",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Secret
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
