@@ -564,7 +564,7 @@ type Discount struct {
 	// CreationDate: the creation date of the discount.
 	CreationDate *time.Time `json:"creation_date"`
 
-	// OrganizationID: the organization ID of the discount.
+	// OrganizationID: the Organization ID of the discount.
 	OrganizationID string `json:"organization_id"`
 
 	// Description: the description of the discount.
@@ -1124,7 +1124,10 @@ func (s *API) DownloadInvoice(req *DownloadInvoiceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// ListDiscounts: List all discounts for your organization and usable categories, products, offers, references, regions and zones where the discount can be applied.
+// ListDiscounts: List all discounts for your Organization and usable categories, products, offers, references, regions and zones where the discount can be applied. As a reseller:
+// - If you do not specify an `organization_id` you will list the discounts applied to your own Organization and your customers
+// - If you indicate your `organization_id` you will list only the discounts applied to your Organization
+// - If you indicate `the organization_id` of one of your customers, you will list the discounts applied to their Organization.
 func (s *API) ListDiscounts(req *ListDiscountsRequest, opts ...scw.RequestOption) (*ListDiscountsResponse, error) {
 	var err error
 
