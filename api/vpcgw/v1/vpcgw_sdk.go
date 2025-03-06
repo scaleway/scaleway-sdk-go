@@ -1467,6 +1467,7 @@ type MigrateToV2Request struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// GatewayID: ID of the gateway to put into IPAM mode.
 	GatewayID string `json:"-"`
 }
 
@@ -2946,7 +2947,7 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// MigrateToV2:
+// MigrateToV2: Put a Public Gateway in IPAM mode, so that it can be used with the Public Gateways API v2. This call is idempotent.
 func (s *API) MigrateToV2(req *MigrateToV2Request, opts ...scw.RequestOption) error {
 	var err error
 
