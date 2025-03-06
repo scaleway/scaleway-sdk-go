@@ -353,6 +353,7 @@ const (
 	UserRoleRoleRead        = UserRoleRole("read")
 	UserRoleRoleReadWrite   = UserRoleRole("read_write")
 	UserRoleRoleDbAdmin     = UserRoleRole("db_admin")
+	UserRoleRoleSync        = UserRoleRole("sync")
 )
 
 func (enum UserRoleRole) String() string {
@@ -369,6 +370,7 @@ func (enum UserRoleRole) Values() []UserRoleRole {
 		"read",
 		"read_write",
 		"db_admin",
+		"sync",
 	}
 }
 
