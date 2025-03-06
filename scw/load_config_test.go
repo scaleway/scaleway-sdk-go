@@ -111,9 +111,6 @@ func TestLoad(t *testing.T) {
 	// create home dir
 	dir := initEnv(t)
 
-	// delete home dir and reset env variables
-	defer resetEnv(t, os.Environ(), dir)
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)

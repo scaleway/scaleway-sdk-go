@@ -224,9 +224,6 @@ func TestSaveConfig(t *testing.T) {
 	// create home dir
 	dir := initEnv(t)
 
-	// delete home dir and reset env variables
-	defer resetEnv(t, os.Environ(), dir)
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
@@ -411,8 +408,6 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 	// create home dir
 	dir := initEnv(t)
 
-	// delete home dir and reset env variables
-	defer resetEnv(t, os.Environ(), dir)
 	logger.EnableDebugMode()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -509,10 +504,7 @@ func TestMergeProfiles(t *testing.T) {
 
 func initEnv(t *testing.T) string {
 	t.Helper()
-	dir, err := os.MkdirTemp("", "home")
-	if err != nil {
-		t.Fatal(err)
-	}
+	dir := t.TempDir()
 	return dir
 }
 
@@ -528,27 +520,13 @@ func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	os.Clearenv()
 	for key, value := range env {
 		value = strings.ReplaceAll(value, "{HOME}", homeDir)
-		testhelpers.AssertNoError(t, os.Setenv(key, value))
+		t.Setenv(key, value)
 	}
 
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
 		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
 		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
-	}
-}
-
-// function taken from https://golang.org/src/os/env_test.go
-func resetEnv(t *testing.T, origEnv []string, homeDir string) {
-	t.Helper()
-	testhelpers.AssertNoError(t, os.RemoveAll(homeDir))
-	for _, pair := range origEnv {
-		// Environment variables on Windows can begin with =
-		// https://blogs.msdn.com/b/oldnewthing/archive/2010/05/06/10008132.aspx
-		i := strings.Index(pair[1:], "=") + 1
-		if err := os.Setenv(pair[:i], pair[i+1:]); err != nil {
-			t.Errorf("Setenv(%q, %q) failed during reset: %v", pair[:i], pair[i+1:], err)
-		}
 	}
 }
 
