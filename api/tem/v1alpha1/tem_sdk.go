@@ -902,7 +902,7 @@ type Email struct {
 	// MailFrom: email address of the sender.
 	MailFrom string `json:"mail_from"`
 
-	// Deprecated: RcptTo: email address of the recipient.
+	// Deprecated: RcptTo: deprecated. Email address of the recipient.
 	RcptTo *string `json:"rcpt_to,omitempty"`
 
 	// MailRcpt: email address of the recipient.
@@ -1020,7 +1020,7 @@ type Domain struct {
 	// RevokedAt: date and time of the domain's deletion.
 	RevokedAt *time.Time `json:"revoked_at"`
 
-	// Deprecated: LastError: error message returned if the last check failed.
+	// Deprecated: LastError: deprecated. Error message returned if the last check failed.
 	LastError *string `json:"last_error,omitempty"`
 
 	// SpfConfig: snippet of the SPF record to register in the DNS zone.
@@ -1199,8 +1199,8 @@ type CreateDomainRequest struct {
 	// DomainName: fully qualified domain dame.
 	DomainName string `json:"domain_name"`
 
-	// AcceptTos: accept Scaleway's Terms of Service.
-	AcceptTos bool `json:"accept_tos"`
+	// Deprecated: AcceptTos: deprecated. Accept Scaleway's Terms of Service.
+	AcceptTos *bool `json:"accept_tos,omitempty"`
 
 	// Autoconfig: activate auto-configuration of the domain's DNS zone.
 	Autoconfig bool `json:"autoconfig"`
@@ -1513,7 +1513,7 @@ type ListEmailsRequest struct {
 	// MailFrom: (Optional) List emails sent with this sender's email address.
 	MailFrom *string `json:"-"`
 
-	// Deprecated: MailTo: list emails sent to this recipient's email address.
+	// Deprecated: MailTo: deprecated. List emails sent to this recipient's email address.
 	MailTo *string `json:"-"`
 
 	// MailRcpt: (Optional) List emails sent to this recipient's email address.
