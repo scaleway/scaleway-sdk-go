@@ -1995,6 +1995,9 @@ type ServerType struct {
 
 	// BlockBandwidth: the maximum bandwidth allocated to block storage access (in bytes per second).
 	BlockBandwidth *uint64 `json:"block_bandwidth"`
+
+	// EndOfService: true if this Instance type has reached end of service.
+	EndOfService bool `json:"end_of_service"`
 }
 
 // VolumeType: volume type.
@@ -2718,6 +2721,15 @@ type GetSecurityGroupRuleRequest struct {
 // GetSecurityGroupRuleResponse: get security group rule response.
 type GetSecurityGroupRuleResponse struct {
 	Rule *SecurityGroupRule `json:"rule"`
+}
+
+// GetServerCompatibleTypesRequest: get server compatible types request.
+type GetServerCompatibleTypesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: UUID of the Instance you want to get.
+	ServerID string `json:"-"`
 }
 
 // GetServerRequest: get server request.
@@ -3473,6 +3485,12 @@ type ServerActionRequest struct {
 // ServerActionResponse: server action response.
 type ServerActionResponse struct {
 	Task *Task `json:"task"`
+}
+
+// ServerCompatibleTypes: server compatible types.
+type ServerCompatibleTypes struct {
+	// CompatibleTypes: instance compatible types.
+	CompatibleTypes []string `json:"compatible_types"`
 }
 
 // SetImageRequest: set image request.
@@ -4610,6 +4628,42 @@ func (s *API) DeleteServerUserData(req *DeleteServerUserDataRequest, opts ...scw
 		return err
 	}
 	return nil
+}
+
+// GetServerCompatibleTypes: Get compatible commercial types that can be used to update the Instance. The compatibility of an Instance offer is based on:
+// * the CPU architecture
+// * the OS type
+// * the required l_ssd storage size
+// * the required scratch storage size
+// If the specified Instance offer is flagged as end of service, the best compatible offer is the first returned.
+func (s *API) GetServerCompatibleTypes(req *GetServerCompatibleTypesRequest, opts ...scw.RequestOption) (*ServerCompatibleTypes, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/compatible-types",
+	}
+
+	var resp ServerCompatibleTypes
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // AttachServerVolume:

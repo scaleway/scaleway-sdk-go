@@ -39,6 +39,50 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type AlertState string
+
+const (
+	AlertStateUnknownState = AlertState("unknown_state")
+	// The alert is inactive and may transition to `pending` or `firing` if its conditions are met.
+	AlertStateInactive = AlertState("inactive")
+	// The alert's conditions are met. They must persist for the configured duration before transitioning to the `firing` state.
+	AlertStatePending = AlertState("pending")
+	// The alert's conditions, including the required duration, have been fully met.
+	AlertStateFiring = AlertState("firing")
+)
+
+func (enum AlertState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_state"
+	}
+	return string(enum)
+}
+
+func (enum AlertState) Values() []AlertState {
+	return []AlertState{
+		"unknown_state",
+		"inactive",
+		"pending",
+		"firing",
+	}
+}
+
+func (enum AlertState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AlertState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AlertState(AlertState(tmp).String())
+	return nil
+}
+
 type DataSourceOrigin string
 
 const (
@@ -250,51 +294,6 @@ func (enum *ListGrafanaUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListGrafanaUsersRequestOrderBy(ListGrafanaUsersRequestOrderBy(tmp).String())
-	return nil
-}
-
-type ListManagedAlertsRequestOrderBy string
-
-const (
-	ListManagedAlertsRequestOrderByCreatedAtAsc  = ListManagedAlertsRequestOrderBy("created_at_asc")
-	ListManagedAlertsRequestOrderByCreatedAtDesc = ListManagedAlertsRequestOrderBy("created_at_desc")
-	ListManagedAlertsRequestOrderByNameAsc       = ListManagedAlertsRequestOrderBy("name_asc")
-	ListManagedAlertsRequestOrderByNameDesc      = ListManagedAlertsRequestOrderBy("name_desc")
-	ListManagedAlertsRequestOrderByTypeAsc       = ListManagedAlertsRequestOrderBy("type_asc")
-	ListManagedAlertsRequestOrderByTypeDesc      = ListManagedAlertsRequestOrderBy("type_desc")
-)
-
-func (enum ListManagedAlertsRequestOrderBy) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "created_at_asc"
-	}
-	return string(enum)
-}
-
-func (enum ListManagedAlertsRequestOrderBy) Values() []ListManagedAlertsRequestOrderBy {
-	return []ListManagedAlertsRequestOrderBy{
-		"created_at_asc",
-		"created_at_desc",
-		"name_asc",
-		"name_desc",
-		"type_asc",
-		"type_desc",
-	}
-}
-
-func (enum ListManagedAlertsRequestOrderBy) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *ListManagedAlertsRequestOrderBy) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = ListManagedAlertsRequestOrderBy(ListManagedAlertsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -533,14 +532,38 @@ type GetConfigResponseRetention struct {
 	DefaultDays uint32 `json:"default_days"`
 }
 
+// Alert: alert.
+type Alert struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	Preconfigured bool `json:"preconfigured"`
+
+	Name string `json:"name"`
+
+	Rule string `json:"rule"`
+
+	Duration string `json:"duration"`
+
+	Enabled bool `json:"enabled"`
+
+	// State: default value: unknown_state
+	State *AlertState `json:"state"`
+
+	Annotations map[string]string `json:"annotations"`
+}
+
 // ContactPoint: Contact point.
 type ContactPoint struct {
 	// Email: email address to send alerts to.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region.
 	Region scw.Region `json:"region"`
+
+	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
+	ReceiveResolvedNotifications bool `json:"receive_resolved_notifications"`
 }
 
 // DataSource: Data source.
@@ -613,19 +636,6 @@ type GrafanaUser struct {
 
 	// Password: grafana user's password.
 	Password *string `json:"password"`
-}
-
-// Alert: alert.
-type Alert struct {
-	ProductFamily string `json:"product_family"`
-
-	Product string `json:"product"`
-
-	Name string `json:"name"`
-
-	Rule string `json:"rule"`
-
-	Description string `json:"description"`
 }
 
 // Plan: Type of pricing plan.
@@ -863,6 +873,34 @@ type Grafana struct {
 	GrafanaURL string `json:"grafana_url"`
 }
 
+// ListAlertsResponse: Retrieve a list of alerts matching the request.
+type ListAlertsResponse struct {
+	// TotalCount: total count of alerts matching the request.
+	TotalCount uint64 `json:"total_count"`
+
+	// Alerts: list of alerts matching the applied filters.
+	Alerts []*Alert `json:"alerts"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAlertsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListAlertsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Alerts = append(r.Alerts, results.Alerts...)
+	r.TotalCount += uint64(len(results.Alerts))
+	return uint64(len(results.Alerts)), nil
+}
+
 // ListContactPointsResponse: Response returned when listing contact points.
 type ListContactPointsResponse struct {
 	// TotalCount: total count of contact points associated with the default receiver.
@@ -981,34 +1019,6 @@ func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error)
 	return uint64(len(results.GrafanaUsers)), nil
 }
 
-// ListManagedAlertsResponse: Response returned when listing data sources.
-type ListManagedAlertsResponse struct {
-	// TotalCount: total count of data sources matching the request.
-	TotalCount uint64 `json:"total_count"`
-
-	// Alerts: alerts matching the request within the pagination.
-	Alerts []*Alert `json:"alerts"`
-}
-
-// UnsafeGetTotalCount should not be used
-// Internal usage only
-func (r *ListManagedAlertsResponse) UnsafeGetTotalCount() uint64 {
-	return r.TotalCount
-}
-
-// UnsafeAppend should not be used
-// Internal usage only
-func (r *ListManagedAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
-	results, ok := res.(*ListManagedAlertsResponse)
-	if !ok {
-		return 0, errors.New("%T type cannot be appended to type %T", res, r)
-	}
-
-	r.Alerts = append(r.Alerts, results.Alerts...)
-	r.TotalCount += uint64(len(results.Alerts))
-	return uint64(len(results.Alerts)), nil
-}
-
 // ListPlansResponse: Output returned when listing pricing plans.
 type ListPlansResponse struct {
 	// TotalCount: total count of available pricing plans.
@@ -1076,6 +1086,9 @@ type RegionalAPICreateContactPointRequest struct {
 	// Email: email address of the contact point to create.
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
+
+	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
+	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
 }
 
 // RegionalAPICreateDataSourceRequest: Create a data source.
@@ -1222,6 +1235,25 @@ type RegionalAPIGetUsageOverviewRequest struct {
 	Interval *scw.Duration `json:"-"`
 }
 
+// RegionalAPIListAlertsRequest: Retrieve a list of alerts.
+type RegionalAPIListAlertsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID to filter for, only alerts from this Project will be returned.
+	ProjectID string `json:"-"`
+
+	// IsEnabled: true returns only enabled alerts. False returns only disabled alerts. If omitted, no alert filtering is applied. Other filters may still apply.
+	IsEnabled *bool `json:"-"`
+
+	// IsPreconfigured: true returns only preconfigured alerts. False returns only custom alerts. If omitted, no filtering is applied on alert types. Other filters may still apply.
+	IsPreconfigured *bool `json:"-"`
+
+	// State: valid values to filter on are `disabled`, `enabled`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
+	// Default value: unknown_state
+	State *AlertState `json:"-"`
+}
+
 // RegionalAPIListContactPointsRequest: List contact points.
 type RegionalAPIListContactPointsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1263,25 +1295,6 @@ type RegionalAPIListDataSourcesRequest struct {
 	Types []DataSourceType `json:"-"`
 }
 
-// RegionalAPIListManagedAlertsRequest: Enable the sending of managed alerts.
-type RegionalAPIListManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// Page: page number to return, from the paginated results.
-	Page *int32 `json:"-"`
-
-	// PageSize: number of data sources to return per page.
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: sort order for data sources in the response.
-	// Default value: created_at_asc
-	OrderBy ListManagedAlertsRequestOrderBy `json:"-"`
-
-	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
-	ProjectID string `json:"-"`
-}
-
 // RegionalAPIListTokensRequest: List tokens.
 type RegionalAPIListTokensRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1311,6 +1324,22 @@ type RegionalAPITriggerTestAlertRequest struct {
 
 	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
+}
+
+// RegionalAPIUpdateContactPointRequest: Update a contact point.
+type RegionalAPIUpdateContactPointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project containing the contact point to update.
+	ProjectID string `json:"project_id"`
+
+	// Email: email address of the contact point to update.
+	// Precisely one of Email must be set.
+	Email *ContactPointEmail `json:"email,omitempty"`
+
+	// ReceiveResolvedNotifications: enable or disable notifications when alert is resolved.
+	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
 }
 
 // RegionalAPIUpdateDataSourceRequest: Update a data source name.
@@ -2287,6 +2316,43 @@ func (s *RegionalAPI) ListContactPoints(req *RegionalAPIListContactPointsRequest
 	return &resp, nil
 }
 
+// UpdateContactPoint:
+func (s *RegionalAPI) UpdateContactPoint(req *RegionalAPIUpdateContactPointRequest, opts ...scw.RequestOption) (*ContactPoint, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/contact-points",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ContactPoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // DeleteContactPoint: Delete a contact point associated with the default receiver.
 func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -2322,18 +2388,13 @@ func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointReque
 	return nil
 }
 
-// ListManagedAlerts: List all managed alerts for the specified Project.
-func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest, opts ...scw.RequestOption) (*ListManagedAlertsResponse, error) {
+// ListAlerts: List preconfigured and/or custom alerts for the specified Project.
+func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.RequestOption) (*ListAlertsResponse, error) {
 	var err error
 
 	if req.Region == "" {
 		defaultRegion, _ := s.client.GetDefaultRegion()
 		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
 	}
 
 	if req.ProjectID == "" {
@@ -2342,10 +2403,10 @@ func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "is_enabled", req.IsEnabled)
+	parameter.AddToQuery(query, "is_preconfigured", req.IsPreconfigured)
+	parameter.AddToQuery(query, "state", req.State)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2353,11 +2414,11 @@ func (s *RegionalAPI) ListManagedAlerts(req *RegionalAPIListManagedAlertsRequest
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/managed-alerts",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alerts",
 		Query:  query,
 	}
 
-	var resp ListManagedAlertsResponse
+	var resp ListAlertsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

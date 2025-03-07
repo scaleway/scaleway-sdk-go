@@ -1,7 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
-// Package edge_services provides methods and message types of the edge_services v1alpha1 API.
+// Package edge_services provides methods and message types of the edge_services v1beta1 API.
 package edge_services
 
 import (
@@ -42,7 +42,7 @@ var (
 type DNSStageType string
 
 const (
-	// The DNS stage type is unknown by default.
+	// DNS stage type unknown (default).
 	DNSStageTypeUnknownType = DNSStageType("unknown_type")
 	// The DNS stage is configured with the default FQDN.
 	DNSStageTypeAuto = DNSStageType("auto")
@@ -245,10 +245,14 @@ func (enum *ListDNSStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ListPipelinesRequestOrderBy string
 
 const (
-	ListPipelinesRequestOrderByCreatedAtAsc  = ListPipelinesRequestOrderBy("created_at_asc")
+	// Order by creation date (ascending chronological order).
+	ListPipelinesRequestOrderByCreatedAtAsc = ListPipelinesRequestOrderBy("created_at_asc")
+	// Order by creation date (descending chronological order).
 	ListPipelinesRequestOrderByCreatedAtDesc = ListPipelinesRequestOrderBy("created_at_desc")
-	ListPipelinesRequestOrderByNameAsc       = ListPipelinesRequestOrderBy("name_asc")
-	ListPipelinesRequestOrderByNameDesc      = ListPipelinesRequestOrderBy("name_desc")
+	// Order by name (ascending alphabetical order).
+	ListPipelinesRequestOrderByNameAsc = ListPipelinesRequestOrderBy("name_asc")
+	// Order by name (descending alphabetical order).
+	ListPipelinesRequestOrderByNameDesc = ListPipelinesRequestOrderBy("name_desc")
 )
 
 func (enum ListPipelinesRequestOrderBy) String() string {
@@ -363,6 +367,43 @@ func (enum *ListPurgeRequestsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListRouteStagesRequestOrderBy string
+
+const (
+	ListRouteStagesRequestOrderByCreatedAtAsc  = ListRouteStagesRequestOrderBy("created_at_asc")
+	ListRouteStagesRequestOrderByCreatedAtDesc = ListRouteStagesRequestOrderBy("created_at_desc")
+)
+
+func (enum ListRouteStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListRouteStagesRequestOrderBy) Values() []ListRouteStagesRequestOrderBy {
+	return []ListRouteStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListRouteStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListRouteStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListRouteStagesRequestOrderBy(ListRouteStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListTLSStagesRequestOrderBy string
 
 const (
@@ -402,6 +443,43 @@ func (enum *ListTLSStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListWafStagesRequestOrderBy string
+
+const (
+	ListWafStagesRequestOrderByCreatedAtAsc  = ListWafStagesRequestOrderBy("created_at_asc")
+	ListWafStagesRequestOrderByCreatedAtDesc = ListWafStagesRequestOrderBy("created_at_desc")
+)
+
+func (enum ListWafStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListWafStagesRequestOrderBy) Values() []ListWafStagesRequestOrderBy {
+	return []ListWafStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListWafStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListWafStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListWafStagesRequestOrderBy(ListWafStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type PipelineErrorCode string
 
 const (
@@ -432,6 +510,8 @@ const (
 	PipelineErrorCodeTLSRootMissing            = PipelineErrorCode("tls_root_missing")
 	PipelineErrorCodeTLSSanMismatch            = PipelineErrorCode("tls_san_mismatch")
 	PipelineErrorCodeTLSSelfSigned             = PipelineErrorCode("tls_self_signed")
+	PipelineErrorCodePipelineInvalidWorkflow   = PipelineErrorCode("pipeline_invalid_workflow")
+	PipelineErrorCodePipelineMissingHeadStage  = PipelineErrorCode("pipeline_missing_head_stage")
 )
 
 func (enum PipelineErrorCode) String() string {
@@ -471,6 +551,8 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_root_missing",
 		"tls_san_mismatch",
 		"tls_self_signed",
+		"pipeline_invalid_workflow",
+		"pipeline_missing_head_stage",
 	}
 }
 
@@ -613,11 +695,16 @@ func (enum *PipelineErrorType) UnmarshalJSON(data []byte) error {
 type PipelineStatus string
 
 const (
+	// Pipeline status unknown (default).
 	PipelineStatusUnknownStatus = PipelineStatus("unknown_status")
-	PipelineStatusReady         = PipelineStatus("ready")
-	PipelineStatusError         = PipelineStatus("error")
-	PipelineStatusPending       = PipelineStatus("pending")
-	PipelineStatusWarning       = PipelineStatus("warning")
+	// The pipeline has been created and processed.
+	PipelineStatusReady = PipelineStatus("ready")
+	// An error occurred during the pipeline creation.
+	PipelineStatusError = PipelineStatus("error")
+	// The pipeline status is pending.
+	PipelineStatusPending = PipelineStatus("pending")
+	// An event occured and the pipeline may not work.
+	PipelineStatusWarning = PipelineStatus("warning")
 )
 
 func (enum PipelineStatus) String() string {
@@ -697,7 +784,7 @@ func (enum *PlanName) UnmarshalJSON(data []byte) error {
 type PurgeRequestStatus string
 
 const (
-	// The purge request status is unknown by default.
+	// Purge request status unknown (default).
 	PurgeRequestStatusUnknownStatus = PurgeRequestStatus("unknown_status")
 	// The purge request has been processed sucessfully.
 	PurgeRequestStatusDone = PurgeRequestStatus("done")
@@ -739,6 +826,184 @@ func (enum *PurgeRequestStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RuleHTTPMatchMethodFilter string
+
+const (
+	// Method filter unknown (default).
+	RuleHTTPMatchMethodFilterUnknownMethodFilter = RuleHTTPMatchMethodFilter("unknown_method_filter")
+	// GET HTTP method.
+	RuleHTTPMatchMethodFilterGet = RuleHTTPMatchMethodFilter("get")
+	// POST HTTP method.
+	RuleHTTPMatchMethodFilterPost = RuleHTTPMatchMethodFilter("post")
+	// PUT HTTP method.
+	RuleHTTPMatchMethodFilterPut = RuleHTTPMatchMethodFilter("put")
+	// PATCH HTTP method.
+	RuleHTTPMatchMethodFilterPatch = RuleHTTPMatchMethodFilter("patch")
+	// DELETE HTTP method.
+	RuleHTTPMatchMethodFilterDelete = RuleHTTPMatchMethodFilter("delete")
+	// HEAD HTTP method.
+	RuleHTTPMatchMethodFilterHead = RuleHTTPMatchMethodFilter("head")
+	// OPTIONS HTTP method.
+	RuleHTTPMatchMethodFilterOptions = RuleHTTPMatchMethodFilter("options")
+)
+
+func (enum RuleHTTPMatchMethodFilter) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_method_filter"
+	}
+	return string(enum)
+}
+
+func (enum RuleHTTPMatchMethodFilter) Values() []RuleHTTPMatchMethodFilter {
+	return []RuleHTTPMatchMethodFilter{
+		"unknown_method_filter",
+		"get",
+		"post",
+		"put",
+		"patch",
+		"delete",
+		"head",
+		"options",
+	}
+}
+
+func (enum RuleHTTPMatchMethodFilter) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RuleHTTPMatchMethodFilter) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RuleHTTPMatchMethodFilter(RuleHTTPMatchMethodFilter(tmp).String())
+	return nil
+}
+
+type RuleHTTPMatchPathFilterPathFilterType string
+
+const (
+	// Path filter type unknown (default).
+	RuleHTTPMatchPathFilterPathFilterTypeUnknownPathFilter = RuleHTTPMatchPathFilterPathFilterType("unknown_path_filter")
+	// Value of path to filter for is evaluated as regex.
+	RuleHTTPMatchPathFilterPathFilterTypeRegex = RuleHTTPMatchPathFilterPathFilterType("regex")
+)
+
+func (enum RuleHTTPMatchPathFilterPathFilterType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_path_filter"
+	}
+	return string(enum)
+}
+
+func (enum RuleHTTPMatchPathFilterPathFilterType) Values() []RuleHTTPMatchPathFilterPathFilterType {
+	return []RuleHTTPMatchPathFilterPathFilterType{
+		"unknown_path_filter",
+		"regex",
+	}
+}
+
+func (enum RuleHTTPMatchPathFilterPathFilterType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RuleHTTPMatchPathFilterPathFilterType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RuleHTTPMatchPathFilterPathFilterType(RuleHTTPMatchPathFilterPathFilterType(tmp).String())
+	return nil
+}
+
+type SearchBackendStagesRequestOrderBy string
+
+const (
+	SearchBackendStagesRequestOrderByCreatedAtAsc  = SearchBackendStagesRequestOrderBy("created_at_asc")
+	SearchBackendStagesRequestOrderByCreatedAtDesc = SearchBackendStagesRequestOrderBy("created_at_desc")
+)
+
+func (enum SearchBackendStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum SearchBackendStagesRequestOrderBy) Values() []SearchBackendStagesRequestOrderBy {
+	return []SearchBackendStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum SearchBackendStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SearchBackendStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SearchBackendStagesRequestOrderBy(SearchBackendStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
+type WafStageMode string
+
+const (
+	// WAF mode unknown (default).
+	WafStageModeUnknownMode = WafStageMode("unknown_mode")
+	// WAF engine is disabled and does not evaluate requests.
+	WafStageModeDisable = WafStageMode("disable")
+	// WAF engine is enabled and evaluates requests but does not block them. HTTP requests which are identified as malicious, and would have been blocked in `enable` mode are logged in Scaleway Cockpit.
+	WafStageModeLogOnly = WafStageMode("log_only")
+	// WAF engine is enabled and evaluates requests. HTTP requests classed as malicious according to the defined `paranoia_level` are blocked and logged in Scaleway Cockpit.
+	WafStageModeEnable = WafStageMode("enable")
+)
+
+func (enum WafStageMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_mode"
+	}
+	return string(enum)
+}
+
+func (enum WafStageMode) Values() []WafStageMode {
+	return []WafStageMode{
+		"unknown_mode",
+		"disable",
+		"log_only",
+		"enable",
+	}
+}
+
+func (enum WafStageMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *WafStageMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = WafStageMode(WafStageMode(tmp).String())
+	return nil
+}
+
 // ScalewayLB: scaleway lb.
 type ScalewayLB struct {
 	// ID: ID of the Load Balancer.
@@ -755,6 +1020,16 @@ type ScalewayLB struct {
 
 	// DomainName: fully Qualified Domain Name (in the format subdomain.example.com) to use in HTTP requests sent towards your Load Balancer.
 	DomainName *string `json:"domain_name"`
+}
+
+// RuleHTTPMatchPathFilter: rule http match path filter.
+type RuleHTTPMatchPathFilter struct {
+	// PathFilterType: type of filter to match for the HTTP URL path. For now, all path filters must be written in regex and use the `regex` type.
+	// Default value: unknown_path_filter
+	PathFilterType RuleHTTPMatchPathFilterPathFilterType `json:"path_filter_type"`
+
+	// Value: value to be matched for the HTTP URL path.
+	Value string `json:"value"`
 }
 
 // ScalewayLBBackendConfig: scaleway lb backend config.
@@ -801,16 +1076,22 @@ type TLSSecret struct {
 	Region scw.Region `json:"region"`
 }
 
+// RuleHTTPMatch: rule http match.
+type RuleHTTPMatch struct {
+	// MethodFilters: HTTP methods to filter for. A request using any of these methods will be considered to match the rule. Possible values are `get`, `post`, `put`, `patch`, `delete`, `head`, `options`. All methods will match if none is provided.
+	MethodFilters []RuleHTTPMatchMethodFilter `json:"method_filters"`
+
+	// PathFilter: HTTP URL path to filter for. A request whose path matches the given filter will be considered to match the rule. All paths will match if none is provided.
+	PathFilter *RuleHTTPMatchPathFilter `json:"path_filter"`
+}
+
 // BackendStage: backend stage.
 type BackendStage struct {
 	// ID: ID of the backend stage.
 	ID string `json:"id"`
 
 	// PipelineID: pipeline ID the backend stage belongs to.
-	PipelineID *string `json:"pipeline_id"`
-
-	// ProjectID: project ID of the backend stage.
-	ProjectID string `json:"project_id"`
+	PipelineID string `json:"pipeline_id"`
 
 	// CreatedAt: date the backend stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -833,10 +1114,7 @@ type CacheStage struct {
 	ID string `json:"id"`
 
 	// PipelineID: pipeline ID the cache stage belongs to.
-	PipelineID *string `json:"pipeline_id"`
-
-	// ProjectID: project ID of the cache stage.
-	ProjectID string `json:"project_id"`
+	PipelineID string `json:"pipeline_id"`
 
 	// FallbackTTL: time To Live (TTL) in seconds. Defines how long content is cached.
 	FallbackTTL *scw.Duration `json:"fallback_ttl"`
@@ -848,8 +1126,14 @@ type CacheStage struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// BackendStageID: backend stage ID the cache stage is linked to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
 }
 
 // DNSStage: dns stage.
@@ -865,10 +1149,7 @@ type DNSStage struct {
 	Type DNSStageType `json:"type"`
 
 	// PipelineID: pipeline ID the DNS stage belongs to.
-	PipelineID *string `json:"pipeline_id"`
-
-	// ProjectID: project ID of the DNS stage.
-	ProjectID string `json:"project_id"`
+	PipelineID string `json:"pipeline_id"`
 
 	// CreatedAt: date the DNS stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -918,10 +1199,25 @@ type Pipeline struct {
 
 	// UpdatedAt: date the pipeline was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+}
 
-	// DNSStageID: DNS stage ID the pipeline is attached to.
-	// Precisely one of DNSStageID must be set.
-	DNSStageID *string `json:"dns_stage_id,omitempty"`
+// RouteStage: route stage.
+type RouteStage struct {
+	// ID: ID of the route stage.
+	ID string `json:"id"`
+
+	// PipelineID: pipeline ID the route stage belongs to.
+	PipelineID string `json:"pipeline_id"`
+
+	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// CreatedAt: date the route stage was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the route stage was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // TLSStage: tls stage.
@@ -936,10 +1232,7 @@ type TLSStage struct {
 	ManagedCertificate bool `json:"managed_certificate"`
 
 	// PipelineID: pipeline ID the TLS stage belongs to.
-	PipelineID *string `json:"pipeline_id"`
-
-	// ProjectID: project ID of the TLS stage.
-	ProjectID string `json:"project_id"`
+	PipelineID string `json:"pipeline_id"`
 
 	// CertificateExpiresAt: expiration date of the certificate.
 	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
@@ -951,12 +1244,72 @@ type TLSStage struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// CacheStageID: cache stage ID the TLS stage is linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, WafStageID, RouteStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
 
 	// BackendStageID: backend stage ID the TLS stage is linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, WafStageID, RouteStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, WafStageID, RouteStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, WafStageID, RouteStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
+}
+
+// WafStage: waf stage.
+type WafStage struct {
+	// ID: ID of the WAF stage.
+	ID string `json:"id"`
+
+	// PipelineID: pipeline ID the WAF stage belongs to.
+	PipelineID string `json:"pipeline_id"`
+
+	// Mode: mode defining WAF behavior (`disable`/`log_only`/`enable`).
+	// Default value: unknown_mode
+	Mode WafStageMode `json:"mode"`
+
+	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
+	ParanoiaLevel uint32 `json:"paranoia_level"`
+
+	// CreatedAt: date the WAF stage was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the WAF stage was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
+	// Precisely one of BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+}
+
+// SetRouteRulesRequestRouteRule: set route rules request route rule.
+type SetRouteRulesRequestRouteRule struct {
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// Precisely one of RuleHTTPMatch must be set.
+	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
+
+	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
+	// Precisely one of BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+}
+
+// RouteRule: route rule.
+type RouteRule struct {
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// Precisely one of RuleHTTPMatch must be set.
+	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
+
+	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
+	// Precisely one of BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Position: position of the rule which determines the order of processing within the route stage.
+	Position int32 `json:"position"`
+
+	// RouteStageID: route stage ID the route rule belongs to.
+	RouteStageID string `json:"route_stage_id"`
 }
 
 // CheckPEMChainRequestSecretChain: check pem chain request secret chain.
@@ -988,6 +1341,18 @@ type PlanUsageDetails struct {
 	PlanCost *scw.Money `json:"plan_cost"`
 }
 
+// HeadStageResponseHeadStage: head stage response head stage.
+type HeadStageResponseHeadStage struct {
+	// Precisely one of DNSStageID must be set.
+	DNSStageID *string `json:"dns_stage_id,omitempty"`
+}
+
+// ListHeadStagesResponseHeadStage: list head stages response head stage.
+type ListHeadStagesResponseHeadStage struct {
+	// Precisely one of DNSStageID must be set.
+	DNSStageID *string `json:"dns_stage_id,omitempty"`
+}
+
 // PipelineStages: pipeline stages.
 type PipelineStages struct {
 	Pipeline *Pipeline `json:"pipeline"`
@@ -999,6 +1364,10 @@ type PipelineStages struct {
 	CacheStages []*CacheStage `json:"cache_stages"`
 
 	BackendStages []*BackendStage `json:"backend_stages"`
+
+	WafStages []*WafStage `json:"waf_stages"`
+
+	RouteStages []*RouteStage `json:"route_stages"`
 }
 
 // PurgeRequest: purge request.
@@ -1028,10 +1397,50 @@ type PurgeRequest struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// SetHeadStageRequestAddNewHeadStage: set head stage request add new head stage.
+type SetHeadStageRequestAddNewHeadStage struct {
+	NewStageID string `json:"new_stage_id"`
+}
+
+// SetHeadStageRequestRemoveHeadStage: set head stage request remove head stage.
+type SetHeadStageRequestRemoveHeadStage struct {
+	RemoveStageID string `json:"remove_stage_id"`
+}
+
+// SetHeadStageRequestSwapHeadStage: set head stage request swap head stage.
+type SetHeadStageRequestSwapHeadStage struct {
+	NewStageID string `json:"new_stage_id"`
+
+	CurrentStageID string `json:"current_stage_id"`
+}
+
 // TLSSecretsConfig: tls secrets config.
 type TLSSecretsConfig struct {
 	// TLSSecrets: secret information (from Secret Manager).
 	TLSSecrets []*TLSSecret `json:"tls_secrets"`
+}
+
+// AddRouteRulesRequest: add route rules request.
+type AddRouteRulesRequest struct {
+	// RouteStageID: ID of the route stage to update.
+	RouteStageID string `json:"-"`
+
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
+
+	// AfterPosition: add rules after the given position.
+	// Precisely one of AfterPosition, BeforePosition must be set.
+	AfterPosition *uint64 `json:"after_position,omitempty"`
+
+	// BeforePosition: add rules before the given position.
+	// Precisely one of AfterPosition, BeforePosition must be set.
+	BeforePosition *uint64 `json:"before_position,omitempty"`
+}
+
+// AddRouteRulesResponse: add route rules response.
+type AddRouteRulesResponse struct {
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	RouteRules []*RouteRule `json:"route_rules"`
 }
 
 // CheckDomainRequest: check domain request.
@@ -1081,8 +1490,8 @@ type CheckPEMChainResponse struct {
 
 // CreateBackendStageRequest: create backend stage request.
 type CreateBackendStageRequest struct {
-	// ProjectID: project ID in which the backend stage will be created.
-	ProjectID string `json:"project_id"`
+	// PipelineID: pipeline ID the Backend stage belongs to.
+	PipelineID string `json:"-"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB must be set.
@@ -1095,21 +1504,27 @@ type CreateBackendStageRequest struct {
 
 // CreateCacheStageRequest: create cache stage request.
 type CreateCacheStageRequest struct {
-	// ProjectID: project ID in which the cache stage will be created.
-	ProjectID string `json:"project_id"`
+	// PipelineID: pipeline ID the Cache stage belongs to.
+	PipelineID string `json:"-"`
 
 	// FallbackTTL: time To Live (TTL) in seconds. Defines how long content is cached.
 	FallbackTTL *scw.Duration `json:"fallback_ttl,omitempty"`
 
 	// BackendStageID: backend stage ID the cache stage will be linked to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
 }
 
 // CreateDNSStageRequest: create dns stage request.
 type CreateDNSStageRequest struct {
-	// ProjectID: project ID in which the DNS stage will be created.
-	ProjectID string `json:"project_id"`
+	// PipelineID: pipeline ID the DNS stage belongs to.
+	PipelineID string `json:"-"`
 
 	// Fqdns: fully Qualified Domain Name (in the format subdomain.example.com) to attach to the stage.
 	Fqdns *[]string `json:"fqdns,omitempty"`
@@ -1137,10 +1552,6 @@ type CreatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description string `json:"description"`
-
-	// DNSStageID: DNS stage ID the pipeline will be attached to.
-	// Precisely one of DNSStageID must be set.
-	DNSStageID *string `json:"dns_stage_id,omitempty"`
 }
 
 // CreatePurgeRequestRequest: create purge request request.
@@ -1157,10 +1568,20 @@ type CreatePurgeRequestRequest struct {
 	All *bool `json:"all,omitempty"`
 }
 
+// CreateRouteStageRequest: create route stage request.
+type CreateRouteStageRequest struct {
+	// PipelineID: pipeline ID the route stage belongs to.
+	PipelineID string `json:"-"`
+
+	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+}
+
 // CreateTLSStageRequest: create tls stage request.
 type CreateTLSStageRequest struct {
-	// ProjectID: project ID in which the TLS stage will be created.
-	ProjectID string `json:"project_id"`
+	// PipelineID: pipeline ID the TLS stage belongs to.
+	PipelineID string `json:"-"`
 
 	// Secrets: secret (from Scaleway Secret Manager) containing your custom certificate.
 	Secrets []*TLSSecret `json:"secrets"`
@@ -1169,11 +1590,34 @@ type CreateTLSStageRequest struct {
 	ManagedCertificate *bool `json:"managed_certificate,omitempty"`
 
 	// CacheStageID: cache stage ID the TLS stage will be linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
 
 	// BackendStageID: backend stage ID the TLS stage will be linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+}
+
+// CreateWafStageRequest: create waf stage request.
+type CreateWafStageRequest struct {
+	// PipelineID: pipeline ID the WAF stage belongs to.
+	PipelineID string `json:"-"`
+
+	// Mode: mode defining WAF behavior (`disable`/`log_only`/`enable`).
+	// Default value: unknown_mode
+	Mode WafStageMode `json:"mode"`
+
+	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
+	ParanoiaLevel uint32 `json:"paranoia_level"`
+
+	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
+	// Precisely one of BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
@@ -1206,10 +1650,22 @@ type DeletePipelineRequest struct {
 	PipelineID string `json:"-"`
 }
 
+// DeleteRouteStageRequest: delete route stage request.
+type DeleteRouteStageRequest struct {
+	// RouteStageID: ID of the route stage to delete.
+	RouteStageID string `json:"-"`
+}
+
 // DeleteTLSStageRequest: delete tls stage request.
 type DeleteTLSStageRequest struct {
 	// TLSStageID: ID of the TLS stage to delete.
 	TLSStageID string `json:"-"`
+}
+
+// DeleteWafStageRequest: delete waf stage request.
+type DeleteWafStageRequest struct {
+	// WafStageID: ID of the WAF stage to delete.
+	WafStageID string `json:"-"`
 }
 
 // GetBackendStageRequest: get backend stage request.
@@ -1294,14 +1750,35 @@ type GetPurgeRequestRequest struct {
 	PurgeRequestID string `json:"-"`
 }
 
+// GetRouteStageRequest: get route stage request.
+type GetRouteStageRequest struct {
+	// RouteStageID: ID of the requested route stage.
+	RouteStageID string `json:"-"`
+}
+
 // GetTLSStageRequest: get tls stage request.
 type GetTLSStageRequest struct {
 	// TLSStageID: ID of the requested TLS stage.
 	TLSStageID string `json:"-"`
 }
 
+// GetWafStageRequest: get waf stage request.
+type GetWafStageRequest struct {
+	// WafStageID: ID of the requested WAF stage.
+	WafStageID string `json:"-"`
+}
+
+// HeadStageResponse: head stage response.
+type HeadStageResponse struct {
+	// HeadStage: modified or created head stage.
+	HeadStage *HeadStageResponseHeadStage `json:"head_stage"`
+}
+
 // ListBackendStagesRequest: list backend stages request.
 type ListBackendStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only backend stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
 	// OrderBy: sort order of backend stages in the response.
 	// Default value: created_at_asc
 	OrderBy ListBackendStagesRequestOrderBy `json:"-"`
@@ -1312,19 +1789,13 @@ type ListBackendStagesRequest struct {
 	// PageSize: number of backend stages to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// PipelineID: pipeline ID to filter for, only backend stages from this pipeline will be returned.
-	PipelineID *string `json:"-"`
-
-	// ProjectID: project ID to filter for, only backend stages from this Project will be returned.
-	ProjectID *string `json:"-"`
-
-	// BucketName: bucket name to filter for, only backend stages from this Bucket will be returned.
+	// BucketName: bucket name to filter for. Only backend stages from this Bucket will be returned.
 	BucketName *string `json:"-"`
 
-	// BucketRegion: bucket region to filter for, only backend stages with buckets in this region will be returned.
+	// BucketRegion: bucket region to filter for. Only backend stages with buckets in this region will be returned.
 	BucketRegion *string `json:"-"`
 
-	// LBID: load Balancer ID to filter for, only backend stages with this Load Balancer will be returned.
+	// LBID: load Balancer ID to filter for. Only backend stages with this Load Balancer will be returned.
 	LBID *string `json:"-"`
 }
 
@@ -1358,6 +1829,9 @@ func (r *ListBackendStagesResponse) UnsafeAppend(res interface{}) (uint64, error
 
 // ListCacheStagesRequest: list cache stages request.
 type ListCacheStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only cache stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
 	// OrderBy: sort order of cache stages in the response.
 	// Default value: created_at_asc
 	OrderBy ListCacheStagesRequestOrderBy `json:"-"`
@@ -1367,12 +1841,6 @@ type ListCacheStagesRequest struct {
 
 	// PageSize: number of cache stages to return per page.
 	PageSize *uint32 `json:"-"`
-
-	// PipelineID: pipeline ID to filter for, only cache stages from this pipeline will be returned.
-	PipelineID *string `json:"-"`
-
-	// ProjectID: project ID to filter for, only cache stages from this Project will be returned.
-	ProjectID *string `json:"-"`
 }
 
 // ListCacheStagesResponse: list cache stages response.
@@ -1405,6 +1873,9 @@ func (r *ListCacheStagesResponse) UnsafeAppend(res interface{}) (uint64, error) 
 
 // ListDNSStagesRequest: list dns stages request.
 type ListDNSStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only DNS stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
 	// OrderBy: sort order of DNS stages in the response.
 	// Default value: created_at_asc
 	OrderBy ListDNSStagesRequestOrderBy `json:"-"`
@@ -1415,13 +1886,7 @@ type ListDNSStagesRequest struct {
 	// PageSize: number of DNS stages to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// PipelineID: pipeline ID to filter for, only DNS stages from this pipeline will be returned.
-	PipelineID *string `json:"-"`
-
-	// ProjectID: project ID to filter for, only DNS stages from this Project will be returned.
-	ProjectID *string `json:"-"`
-
-	// Fqdn: fully Qualified Domain Name to filter for (in the format subdomain.example.com), only DNS stages with this FQDN will be returned.
+	// Fqdn: fully Qualified Domain Name to filter for (in the format subdomain.example.com). Only DNS stages with this FQDN will be returned.
 	Fqdn *string `json:"-"`
 }
 
@@ -1453,6 +1918,46 @@ func (r *ListDNSStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Stages)), nil
 }
 
+// ListHeadStagesRequest: list head stages request.
+type ListHeadStagesRequest struct {
+	// PipelineID: ID of the pipeline to update.
+	PipelineID string `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of head stages to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListHeadStagesResponse: list head stages response.
+type ListHeadStagesResponse struct {
+	// HeadStages: number of head stages to return per page.
+	HeadStages []*ListHeadStagesResponseHeadStage `json:"head_stages"`
+
+	// TotalCount: count of all head stages matching the requested pipeline_id.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListHeadStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListHeadStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListHeadStagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.HeadStages = append(r.HeadStages, results.HeadStages...)
+	r.TotalCount += uint64(len(results.HeadStages))
+	return uint64(len(results.HeadStages)), nil
+}
+
 // ListPipelinesRequest: list pipelines request.
 type ListPipelinesRequest struct {
 	// OrderBy: sort order of pipelines in the response.
@@ -1465,16 +1970,16 @@ type ListPipelinesRequest struct {
 	// PageSize: number of pipelines to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// Name: pipeline name to filter for, only pipelines with this string within their name will be returned.
+	// Name: pipeline name to filter for. Only pipelines with this string within their name will be returned.
 	Name *string `json:"-"`
 
-	// OrganizationID: organization ID to filter for, only pipelines from this Organization will be returned.
+	// OrganizationID: organization ID to filter for. Only pipelines from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
-	// ProjectID: project ID to filter for, only pipelines from this Project will be returned.
+	// ProjectID: project ID to filter for. Only pipelines from this Project will be returned.
 	ProjectID *string `json:"-"`
 
-	// HasBackendStageLB: filter on backend stage, only pipelines with a Load Balancer origin will be returned.
+	// HasBackendStageLB: filter on backend stage. Only pipelines with a Load Balancer origin will be returned.
 	HasBackendStageLB *bool `json:"-"`
 }
 
@@ -1586,13 +2091,13 @@ type ListPurgeRequestsRequest struct {
 	// PageSize: number of purge requests to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrganizationID: organization ID to filter for, only purge requests from this Project will be returned.
+	// OrganizationID: organization ID to filter for. Only purge requests from this Project will be returned.
 	OrganizationID *string `json:"-"`
 
-	// ProjectID: project ID to filter for, only purge requests from this Project will be returned.
+	// ProjectID: project ID to filter for. Only purge requests from this Project will be returned.
 	ProjectID *string `json:"-"`
 
-	// PipelineID: pipeline ID to filter for, only purge requests from this pipeline will be returned.
+	// PipelineID: pipeline ID to filter for. Only purge requests from this pipeline will be returned.
 	PipelineID *string `json:"-"`
 }
 
@@ -1624,8 +2129,67 @@ func (r *ListPurgeRequestsResponse) UnsafeAppend(res interface{}) (uint64, error
 	return uint64(len(results.PurgeRequests)), nil
 }
 
+// ListRouteRulesRequest: list route rules request.
+type ListRouteRulesRequest struct {
+	// RouteStageID: route stage ID to filter for. Only route rules from this route stage will be returned.
+	RouteStageID string `json:"-"`
+}
+
+// ListRouteRulesResponse: list route rules response.
+type ListRouteRulesResponse struct {
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	RouteRules []*RouteRule `json:"route_rules"`
+}
+
+// ListRouteStagesRequest: list route stages request.
+type ListRouteStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only route stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
+	// OrderBy: sort order of route stages in the response.
+	// Default value: created_at_asc
+	OrderBy ListRouteStagesRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of route stages to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListRouteStagesResponse: list route stages response.
+type ListRouteStagesResponse struct {
+	// Stages: paginated list of summarized route stages.
+	Stages []*RouteStage `json:"stages"`
+
+	// TotalCount: count of all route stages matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRouteStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRouteStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListRouteStagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Stages = append(r.Stages, results.Stages...)
+	r.TotalCount += uint64(len(results.Stages))
+	return uint64(len(results.Stages)), nil
+}
+
 // ListTLSStagesRequest: list tls stages request.
 type ListTLSStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only TLS stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
 	// OrderBy: sort order of TLS stages in the response.
 	// Default value: created_at_asc
 	OrderBy ListTLSStagesRequestOrderBy `json:"-"`
@@ -1636,16 +2200,10 @@ type ListTLSStagesRequest struct {
 	// PageSize: number of TLS stages to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// PipelineID: pipeline ID to filter for, only TLS stages from this pipeline will be returned.
-	PipelineID *string `json:"-"`
-
-	// ProjectID: project ID to filter for, only TLS stages from this Project will be returned.
-	ProjectID *string `json:"-"`
-
-	// SecretID: secret ID to filter for, only TLS stages with this Secret ID will be returned.
+	// SecretID: secret ID to filter for. Only TLS stages with this Secret ID will be returned.
 	SecretID *string `json:"-"`
 
-	// SecretRegion: secret region to filter for, only TLS stages with a Secret in this region will be returned.
+	// SecretRegion: secret region to filter for. Only TLS stages with a Secret in this region will be returned.
 	SecretRegion *string `json:"-"`
 }
 
@@ -1677,10 +2235,72 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Stages)), nil
 }
 
+// ListWafStagesRequest: list waf stages request.
+type ListWafStagesRequest struct {
+	// PipelineID: pipeline ID to filter for. Only WAF stages from this pipeline will be returned.
+	PipelineID string `json:"-"`
+
+	// OrderBy: sort order of WAF stages in the response.
+	// Default value: created_at_asc
+	OrderBy ListWafStagesRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of WAF stages to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListWafStagesResponse: list waf stages response.
+type ListWafStagesResponse struct {
+	// Stages: paginated list of WAF stages.
+	Stages []*WafStage `json:"stages"`
+
+	// TotalCount: count of all WAF stages matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListWafStagesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListWafStagesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListWafStagesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Stages = append(r.Stages, results.Stages...)
+	r.TotalCount += uint64(len(results.Stages))
+	return uint64(len(results.Stages)), nil
+}
+
 // Plan: plan.
 type Plan struct {
 	// PlanName: default value: unknown_name
 	PlanName PlanName `json:"plan_name"`
+}
+
+// SearchBackendStagesRequest: search backend stages request.
+type SearchBackendStagesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy SearchBackendStagesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	ProjectID string `json:"-"`
+
+	BucketName *string `json:"-"`
+
+	BucketRegion *string `json:"-"`
+
+	LBID *string `json:"-"`
 }
 
 // SelectPlanRequest: select plan request.
@@ -1689,6 +2309,39 @@ type SelectPlanRequest struct {
 
 	// PlanName: default value: unknown_name
 	PlanName PlanName `json:"plan_name"`
+}
+
+// SetHeadStageRequest: set head stage request.
+type SetHeadStageRequest struct {
+	// PipelineID: ID of the pipeline to update.
+	PipelineID string `json:"-"`
+
+	// AddNewHeadStage: add a new head stage.
+	// Precisely one of AddNewHeadStage, RemoveHeadStage, SwapHeadStage must be set.
+	AddNewHeadStage *SetHeadStageRequestAddNewHeadStage `json:"add_new_head_stage,omitempty"`
+
+	// RemoveHeadStage: remove a head stage.
+	// Precisely one of AddNewHeadStage, RemoveHeadStage, SwapHeadStage must be set.
+	RemoveHeadStage *SetHeadStageRequestRemoveHeadStage `json:"remove_head_stage,omitempty"`
+
+	// SwapHeadStage: replace a head stage with a new one.
+	// Precisely one of AddNewHeadStage, RemoveHeadStage, SwapHeadStage must be set.
+	SwapHeadStage *SetHeadStageRequestSwapHeadStage `json:"swap_head_stage,omitempty"`
+}
+
+// SetRouteRulesRequest: set route rules request.
+type SetRouteRulesRequest struct {
+	// RouteStageID: ID of the route stage to update.
+	RouteStageID string `json:"-"`
+
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
+}
+
+// SetRouteRulesResponse: set route rules response.
+type SetRouteRulesResponse struct {
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	RouteRules []*RouteRule `json:"route_rules"`
 }
 
 // UpdateBackendStageRequest: update backend stage request.
@@ -1703,6 +2356,9 @@ type UpdateBackendStageRequest struct {
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
+
+	// PipelineID: pipeline ID the Backend stage belongs to.
+	PipelineID string `json:"pipeline_id"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
@@ -1714,8 +2370,14 @@ type UpdateCacheStageRequest struct {
 	FallbackTTL *scw.Duration `json:"fallback_ttl,omitempty"`
 
 	// BackendStageID: backend stage ID the cache stage will be linked to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
 }
 
 // UpdateDNSStageRequest: update dns stage request.
@@ -1749,10 +2411,16 @@ type UpdatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description *string `json:"description,omitempty"`
+}
 
-	// DNSStageID: DNS stage ID the pipeline will be attached to.
-	// Precisely one of DNSStageID must be set.
-	DNSStageID *string `json:"dns_stage_id,omitempty"`
+// UpdateRouteStageRequest: update route stage request.
+type UpdateRouteStageRequest struct {
+	// RouteStageID: ID of the route stage to update.
+	RouteStageID string `json:"-"`
+
+	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // UpdateTLSStageRequest: update tls stage request.
@@ -1767,11 +2435,34 @@ type UpdateTLSStageRequest struct {
 	ManagedCertificate *bool `json:"managed_certificate,omitempty"`
 
 	// CacheStageID: cache stage ID the TLS stage will be linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
 	CacheStageID *string `json:"cache_stage_id,omitempty"`
 
 	// BackendStageID: backend stage ID the TLS stage will be linked to.
-	// Precisely one of CacheStageID, BackendStageID must be set.
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	RouteStageID *string `json:"route_stage_id,omitempty"`
+
+	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
+}
+
+// UpdateWafStageRequest: update waf stage request.
+type UpdateWafStageRequest struct {
+	// WafStageID: ID of the WAF stage to update.
+	WafStageID string `json:"-"`
+
+	// Mode: mode defining WAF behavior (`disable`/`log_only`/`enable`).
+	// Default value: unknown_mode
+	Mode WafStageMode `json:"mode"`
+
+	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
+	ParanoiaLevel *uint32 `json:"paranoia_level,omitempty"`
+
+	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
+	// Precisely one of BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
@@ -1806,7 +2497,7 @@ func (s *API) ListPipelines(req *ListPipelinesRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/pipelines",
+		Path:   "/edge-services/v1beta1/pipelines",
 		Query:  query,
 	}
 
@@ -1830,7 +2521,7 @@ func (s *API) CreatePipeline(req *CreatePipelineRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/pipelines",
+		Path:   "/edge-services/v1beta1/pipelines",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1857,7 +2548,7 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
 	}
 
 	var resp Pipeline
@@ -1888,7 +2579,7 @@ func (s *API) ListPipelinesWithStages(req *ListPipelinesWithStagesRequest, opts 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/pipelines-stages",
+		Path:   "/edge-services/v1beta1/pipelines-stages",
 		Query:  query,
 	}
 
@@ -1911,7 +2602,7 @@ func (s *API) UpdatePipeline(req *UpdatePipelineRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1938,7 +2629,7 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1946,6 +2637,65 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 		return err
 	}
 	return nil
+}
+
+// ListHeadStages:
+func (s *API) ListHeadStages(req *ListHeadStagesRequest, opts ...scw.RequestOption) (*ListHeadStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/head-stages",
+		Query:  query,
+	}
+
+	var resp ListHeadStagesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetHeadStage: You must specify either a `add_new_head_stage` (to add a new head stage), `remove_head_stage` (to remove a head stage) or `swap_head_stage` (to replace a head stage).
+func (s *API) SetHeadStage(req *SetHeadStageRequest, opts ...scw.RequestOption) (*HeadStageResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/set-head-stage",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HeadStageResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListDNSStages: List all DNS stages, for a Scaleway Organization or Scaleway Project. By default, the DNS stages returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
@@ -1961,13 +2711,15 @@ func (s *API) ListDNSStages(req *ListDNSStagesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "pipeline_id", req.PipelineID)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "fqdn", req.Fqdn)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/dns-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/dns-stages",
 		Query:  query,
 	}
 
@@ -1984,14 +2736,13 @@ func (s *API) ListDNSStages(req *ListDNSStagesRequest, opts ...scw.RequestOption
 func (s *API) CreateDNSStage(req *CreateDNSStageRequest, opts ...scw.RequestOption) (*DNSStage, error) {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/dns-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/dns-stages",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2018,7 +2769,7 @@ func (s *API) GetDNSStage(req *GetDNSStageRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
+		Path:   "/edge-services/v1beta1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
 	}
 
 	var resp DNSStage
@@ -2040,7 +2791,7 @@ func (s *API) UpdateDNSStage(req *UpdateDNSStageRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
+		Path:   "/edge-services/v1beta1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2067,7 +2818,7 @@ func (s *API) DeleteDNSStage(req *DeleteDNSStageRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
+		Path:   "/edge-services/v1beta1/dns-stages/" + fmt.Sprint(req.DNSStageID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -2090,14 +2841,16 @@ func (s *API) ListTLSStages(req *ListTLSStagesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "pipeline_id", req.PipelineID)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "secret_id", req.SecretID)
 	parameter.AddToQuery(query, "secret_region", req.SecretRegion)
 
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/tls-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/tls-stages",
 		Query:  query,
 	}
 
@@ -2114,14 +2867,13 @@ func (s *API) ListTLSStages(req *ListTLSStagesRequest, opts ...scw.RequestOption
 func (s *API) CreateTLSStage(req *CreateTLSStageRequest, opts ...scw.RequestOption) (*TLSStage, error) {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/tls-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/tls-stages",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2148,7 +2900,7 @@ func (s *API) GetTLSStage(req *GetTLSStageRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
+		Path:   "/edge-services/v1beta1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
 	}
 
 	var resp TLSStage
@@ -2170,7 +2922,7 @@ func (s *API) UpdateTLSStage(req *UpdateTLSStageRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
+		Path:   "/edge-services/v1beta1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2197,7 +2949,7 @@ func (s *API) DeleteTLSStage(req *DeleteTLSStageRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
+		Path:   "/edge-services/v1beta1/tls-stages/" + fmt.Sprint(req.TLSStageID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -2220,12 +2972,14 @@ func (s *API) ListCacheStages(req *ListCacheStagesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "pipeline_id", req.PipelineID)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/cache-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/cache-stages",
 		Query:  query,
 	}
 
@@ -2242,14 +2996,13 @@ func (s *API) ListCacheStages(req *ListCacheStagesRequest, opts ...scw.RequestOp
 func (s *API) CreateCacheStage(req *CreateCacheStageRequest, opts ...scw.RequestOption) (*CacheStage, error) {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/cache-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/cache-stages",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2276,7 +3029,7 @@ func (s *API) GetCacheStage(req *GetCacheStageRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
+		Path:   "/edge-services/v1beta1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
 	}
 
 	var resp CacheStage
@@ -2298,7 +3051,7 @@ func (s *API) UpdateCacheStage(req *UpdateCacheStageRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
+		Path:   "/edge-services/v1beta1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2325,7 +3078,7 @@ func (s *API) DeleteCacheStage(req *DeleteCacheStageRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
+		Path:   "/edge-services/v1beta1/cache-stages/" + fmt.Sprint(req.CacheStageID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -2348,15 +3101,17 @@ func (s *API) ListBackendStages(req *ListBackendStagesRequest, opts ...scw.Reque
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "pipeline_id", req.PipelineID)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "bucket_name", req.BucketName)
 	parameter.AddToQuery(query, "bucket_region", req.BucketRegion)
 	parameter.AddToQuery(query, "lb_id", req.LBID)
 
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/backend-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/backend-stages",
 		Query:  query,
 	}
 
@@ -2373,14 +3128,13 @@ func (s *API) ListBackendStages(req *ListBackendStagesRequest, opts ...scw.Reque
 func (s *API) CreateBackendStage(req *CreateBackendStageRequest, opts ...scw.RequestOption) (*BackendStage, error) {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/backend-stages",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/backend-stages",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2407,7 +3161,7 @@ func (s *API) GetBackendStage(req *GetBackendStageRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
+		Path:   "/edge-services/v1beta1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
 	}
 
 	var resp BackendStage
@@ -2429,7 +3183,7 @@ func (s *API) UpdateBackendStage(req *UpdateBackendStageRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
+		Path:   "/edge-services/v1beta1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2456,7 +3210,7 @@ func (s *API) DeleteBackendStage(req *DeleteBackendStageRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
+		Path:   "/edge-services/v1beta1/backend-stages/" + fmt.Sprint(req.BackendStageID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -2464,6 +3218,340 @@ func (s *API) DeleteBackendStage(req *DeleteBackendStageRequest, opts ...scw.Req
 		return err
 	}
 	return nil
+}
+
+// ListWafStages: List all WAF stages, for a Scaleway Organization or Scaleway Project. By default, the WAF stages returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
+func (s *API) ListWafStages(req *ListWafStagesRequest, opts ...scw.RequestOption) (*ListWafStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/waf-stages",
+		Query:  query,
+	}
+
+	var resp ListWafStagesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateWafStage: Create a new WAF stage. You must specify the `mode` and `paranoia_level` fields to customize the WAF.
+func (s *API) CreateWafStage(req *CreateWafStageRequest, opts ...scw.RequestOption) (*WafStage, error) {
+	var err error
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/waf-stages",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp WafStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetWafStage: Retrieve information about an existing WAF stage, specified by its `waf_stage_id`. Its full details are returned in the response object.
+func (s *API) GetWafStage(req *GetWafStageRequest, opts ...scw.RequestOption) (*WafStage, error) {
+	var err error
+
+	if fmt.Sprint(req.WafStageID) == "" {
+		return nil, errors.New("field WafStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/waf-stages/" + fmt.Sprint(req.WafStageID) + "",
+	}
+
+	var resp WafStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateWafStage: Update the parameters of an existing WAF stage, specified by its `waf_stage_id`. Both `mode` and `paranoia_level` parameters can be updated.
+func (s *API) UpdateWafStage(req *UpdateWafStageRequest, opts ...scw.RequestOption) (*WafStage, error) {
+	var err error
+
+	if fmt.Sprint(req.WafStageID) == "" {
+		return nil, errors.New("field WafStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/edge-services/v1beta1/waf-stages/" + fmt.Sprint(req.WafStageID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp WafStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteWafStage: Delete an existing WAF stage, specified by its `waf_stage_id`. Deleting a WAF stage is permanent, and cannot be undone.
+func (s *API) DeleteWafStage(req *DeleteWafStageRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.WafStageID) == "" {
+		return errors.New("field WafStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1beta1/waf-stages/" + fmt.Sprint(req.WafStageID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListRouteStages: List all route stages, for a given pipeline. By default, the route stages returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
+func (s *API) ListRouteStages(req *ListRouteStagesRequest, opts ...scw.RequestOption) (*ListRouteStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/route-stages",
+		Query:  query,
+	}
+
+	var resp ListRouteStagesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateRouteStage: Create a new route stage. You must specify the `waf_stage_id` field to customize the route.
+func (s *API) CreateRouteStage(req *CreateRouteStageRequest, opts ...scw.RequestOption) (*RouteStage, error) {
+	var err error
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/route-stages",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RouteStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetRouteStage: Retrieve information about an existing route stage, specified by its `route_stage_id`. The summary of the route stage (without route rules) is returned in the response object.
+func (s *API) GetRouteStage(req *GetRouteStageRequest, opts ...scw.RequestOption) (*RouteStage, error) {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return nil, errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "",
+	}
+
+	var resp RouteStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateRouteStage: Update the parameters of an existing route stage, specified by its `route_stage_id`.
+func (s *API) UpdateRouteStage(req *UpdateRouteStageRequest, opts ...scw.RequestOption) (*RouteStage, error) {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return nil, errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RouteStage
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteRouteStage: Delete an existing route stage, specified by its `route_stage_id`. Deleting a route stage is permanent, and cannot be undone.
+func (s *API) DeleteRouteStage(req *DeleteRouteStageRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListRouteRules: List all route rules of an existing route stage, specified by its `route_stage_id`.
+func (s *API) ListRouteRules(req *ListRouteRulesRequest, opts ...scw.RequestOption) (*ListRouteRulesResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return nil, errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/" + fmt.Sprint(req.RouteStageID) + "/route-rules",
+	}
+
+	var resp ListRouteRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetRouteRules: Set the rules of an existing route stage, specified by its `route_stage_id`.
+func (s *API) SetRouteRules(req *SetRouteRulesRequest, opts ...scw.RequestOption) (*SetRouteRulesResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return nil, errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "/route-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetRouteRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddRouteRules: Add route rules to an existing route stage, specified by its `route_stage_id`.
+func (s *API) AddRouteRules(req *AddRouteRulesRequest, opts ...scw.RequestOption) (*AddRouteRulesResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.RouteStageID) == "" {
+		return nil, errors.New("field RouteStageID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "/route-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddRouteRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // CheckDomain:
@@ -2477,7 +3565,7 @@ func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/check-domain",
+		Path:   "/edge-services/v1beta1/check-domain",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2505,7 +3593,7 @@ func (s *API) CheckPEMChain(req *CheckPEMChainRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/check-pem-chain",
+		Path:   "/edge-services/v1beta1/check-pem-chain",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2514,6 +3602,44 @@ func (s *API) CheckPEMChain(req *CheckPEMChainRequest, opts ...scw.RequestOption
 	}
 
 	var resp CheckPEMChainResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SearchBackendStages:
+func (s *API) SearchBackendStages(req *SearchBackendStagesRequest, opts ...scw.RequestOption) (*ListBackendStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "bucket_name", req.BucketName)
+	parameter.AddToQuery(query, "bucket_region", req.BucketRegion)
+	parameter.AddToQuery(query, "lb_id", req.LBID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/search-backend-stages",
+		Query:  query,
+	}
+
+	var resp ListBackendStagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2541,7 +3667,7 @@ func (s *API) ListPurgeRequests(req *ListPurgeRequestsRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/purge-requests",
+		Path:   "/edge-services/v1beta1/purge-requests",
 		Query:  query,
 	}
 
@@ -2560,7 +3686,7 @@ func (s *API) CreatePurgeRequest(req *CreatePurgeRequestRequest, opts ...scw.Req
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/purge-requests",
+		Path:   "/edge-services/v1beta1/purge-requests",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2587,7 +3713,7 @@ func (s *API) GetPurgeRequest(req *GetPurgeRequestRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/purge-requests/" + fmt.Sprint(req.PurgeRequestID) + "",
+		Path:   "/edge-services/v1beta1/purge-requests/" + fmt.Sprint(req.PurgeRequestID) + "",
 	}
 
 	var resp PurgeRequest
@@ -2605,7 +3731,7 @@ func (s *API) CheckLBOrigin(req *CheckLBOriginRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/edge-services/v1alpha1/check-lb-origin",
+		Path:   "/edge-services/v1beta1/check-lb-origin",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2628,7 +3754,7 @@ func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/plans",
+		Path:   "/edge-services/v1beta1/plans",
 	}
 
 	var resp ListPlansResponse
@@ -2651,7 +3777,7 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Pl
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/edge-services/v1alpha1/current-plan",
+		Path:   "/edge-services/v1beta1/current-plan",
 	}
 
 	err = scwReq.SetBody(req)
@@ -2683,7 +3809,7 @@ func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
+		Path:   "/edge-services/v1beta1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
 	}
 
 	var resp Plan
@@ -2710,7 +3836,7 @@ func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/edge-services/v1alpha1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
+		Path:   "/edge-services/v1beta1/current-plan/" + fmt.Sprint(req.ProjectID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -2735,7 +3861,7 @@ func (s *API) GetBilling(req *GetBillingRequest, opts ...scw.RequestOption) (*Ge
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1alpha1/billing/" + fmt.Sprint(req.ProjectID) + "",
+		Path:   "/edge-services/v1beta1/billing/" + fmt.Sprint(req.ProjectID) + "",
 	}
 
 	var resp GetBillingResponse

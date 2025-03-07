@@ -875,6 +875,25 @@ func (enum *UserType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// GetUserConnectionsResponseConnectionConnectedOrganization: get user connections response connection connected organization.
+type GetUserConnectionsResponseConnectionConnectedOrganization struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	Locked bool `json:"locked"`
+}
+
+// GetUserConnectionsResponseConnectionConnectedUser: get user connections response connection connected user.
+type GetUserConnectionsResponseConnectionConnectedUser struct {
+	ID string `json:"id"`
+
+	Username string `json:"username"`
+
+	// Type: default value: unknown_type
+	Type UserType `json:"type"`
+}
+
 // QuotumLimit: quotum limit.
 type QuotumLimit struct {
 	// Global: whether or not the limit is applied globally.
@@ -958,6 +977,15 @@ type CreateUserRequestMember struct {
 
 	// Password: the member's password.
 	Password string `json:"password"`
+}
+
+// GetUserConnectionsResponseConnection: get user connections response connection.
+type GetUserConnectionsResponseConnection struct {
+	// Organization: information about the connected organization.
+	Organization *GetUserConnectionsResponseConnectionConnectedOrganization `json:"organization"`
+
+	// User: information about the connected user.
+	User *GetUserConnectionsResponseConnectionConnectedUser `json:"user"`
 }
 
 // APIKey: api key.
@@ -1612,6 +1640,18 @@ type GetQuotumRequest struct {
 type GetSSHKeyRequest struct {
 	// SSHKeyID: ID of the SSH key.
 	SSHKeyID string `json:"-"`
+}
+
+// GetUserConnectionsRequest: get user connections request.
+type GetUserConnectionsRequest struct {
+	// UserID: ID of the user to list connections for.
+	UserID string `json:"-"`
+}
+
+// GetUserConnectionsResponse: get user connections response.
+type GetUserConnectionsResponse struct {
+	// Connections: list of connections.
+	Connections []*GetUserConnectionsResponseConnection `json:"connections"`
 }
 
 // GetUserRequest: get user request.
@@ -2920,6 +2960,28 @@ func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.Request
 	}
 
 	var resp ListGracePeriodsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetUserConnections:
+func (s *API) GetUserConnections(req *GetUserConnectionsRequest, opts ...scw.RequestOption) (*GetUserConnectionsResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/connections",
+	}
+
+	var resp GetUserConnectionsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

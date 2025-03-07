@@ -39,5 +39,4 @@ import (
 	_ "github.com/scaleway/scaleway-sdk-go/api/vpc/v2"
 	_ "github.com/scaleway/scaleway-sdk-go/api/vpcgw/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/webhosting/v1"
-	_ "github.com/scaleway/scaleway-sdk-go/api/webhosting/v1alpha1"
 )

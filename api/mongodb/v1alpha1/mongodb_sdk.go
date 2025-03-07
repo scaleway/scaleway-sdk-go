@@ -346,6 +346,49 @@ func (enum *SnapshotStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type UserRoleRole string
+
+const (
+	UserRoleRoleUnknownRole = UserRoleRole("unknown_role")
+	UserRoleRoleRead        = UserRoleRole("read")
+	UserRoleRoleReadWrite   = UserRoleRole("read_write")
+	UserRoleRoleDbAdmin     = UserRoleRole("db_admin")
+	UserRoleRoleSync        = UserRoleRole("sync")
+)
+
+func (enum UserRoleRole) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_role"
+	}
+	return string(enum)
+}
+
+func (enum UserRoleRole) Values() []UserRoleRole {
+	return []UserRoleRole{
+		"unknown_role",
+		"read",
+		"read_write",
+		"db_admin",
+		"sync",
+	}
+}
+
+func (enum UserRoleRole) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *UserRoleRole) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = UserRoleRole(UserRoleRole(tmp).String())
+	return nil
+}
+
 type VolumeType string
 
 const (
@@ -470,6 +513,18 @@ type NodeTypeVolumeType struct {
 type SnapshotVolumeType struct {
 	// Type: default value: unknown_type
 	Type VolumeType `json:"type"`
+}
+
+// UserRole: user role.
+type UserRole struct {
+	// Role: default value: unknown_role
+	Role UserRoleRole `json:"role"`
+
+	// Precisely one of Database, AnyDatabase must be set.
+	Database *string `json:"database,omitempty"`
+
+	// Precisely one of Database, AnyDatabase must be set.
+	AnyDatabase *bool `json:"any_database,omitempty"`
 }
 
 // Setting: setting.
@@ -646,6 +701,9 @@ type Snapshot struct {
 type User struct {
 	// Name: name of the user (Length must be between 1 and 63 characters. First character must be an alphabet character (a-zA-Z). Only a-zA-Z0-9_$- characters are accepted).
 	Name string `json:"name"`
+
+	// Roles: list of roles assigned to the user, along with the corresponding database where each role is granted.
+	Roles []*UserRole `json:"roles"`
 }
 
 // Version: version.
@@ -1067,6 +1125,21 @@ type RestoreSnapshotRequest struct {
 
 	// Volume: instance volume information.
 	Volume *RestoreSnapshotRequestVolumeDetails `json:"volume"`
+}
+
+// SetUserRoleRequest: set user role request.
+type SetUserRoleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance the user belongs to.
+	InstanceID string `json:"-"`
+
+	// UserName: name of the database user.
+	UserName string `json:"user_name"`
+
+	// Roles: list of roles assigned to the user, along with the corresponding database where each role is granted.
+	Roles []*UserRole `json:"roles"`
 }
 
 // UpdateInstanceRequest: update instance request.
@@ -1833,6 +1906,42 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 		return err
 	}
 	return nil
+}
+
+// SetUserRole:
+func (s *API) SetUserRole(req *SetUserRoleRequest, opts ...scw.RequestOption) (*User, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/mongodb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/roles",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // DeleteEndpoint: Delete the endpoint of a Database Instance. You must specify the `endpoint_id` parameter of the endpoint you want to delete. Note that you might need to update any environment configurations that point to the deleted endpoint.

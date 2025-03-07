@@ -21,8 +21,9 @@ type WaitForHostingRequest struct {
 	RetryInterval *time.Duration
 }
 
-// WaitForHosting wait for a hosting to be in a "terminal state" before returning.
-func (s *API) WaitForHosting(req *WaitForHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
+// WaitForHosting waits for a hosting to be in a "terminal" state before returning.
+// Terminal states are defined as: HostingStatusReady, HostingStatusError, HostingStatusUnknownStatus, and HostingStatusLocked.
+func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -41,7 +42,7 @@ func (s *API) WaitForHosting(req *WaitForHostingRequest, opts ...scw.RequestOpti
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (interface{}, bool, error) {
-			hosting, err := s.GetHosting(&GetHostingRequest{
+			hosting, err := s.GetHosting(&HostingAPIGetHostingRequest{
 				HostingID: req.HostingID,
 				Region:    req.Region,
 			}, opts...)

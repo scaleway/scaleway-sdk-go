@@ -79,13 +79,23 @@ func (enum *ListEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType       = ResourceType("unknown_type")
-	ResourceTypeSecmSecret        = ResourceType("secm_secret")
-	ResourceTypeSecmSecretVersion = ResourceType("secm_secret_version")
-	ResourceTypeKubeCluster       = ResourceType("kube_cluster")
-	ResourceTypeKubePool          = ResourceType("kube_pool")
-	ResourceTypeKubeNode          = ResourceType("kube_node")
-	ResourceTypeKubeACL           = ResourceType("kube_acl")
+	ResourceTypeUnknownType          = ResourceType("unknown_type")
+	ResourceTypeSecmSecret           = ResourceType("secm_secret")
+	ResourceTypeSecmSecretVersion    = ResourceType("secm_secret_version")
+	ResourceTypeKubeCluster          = ResourceType("kube_cluster")
+	ResourceTypeKubePool             = ResourceType("kube_pool")
+	ResourceTypeKubeNode             = ResourceType("kube_node")
+	ResourceTypeKubeACL              = ResourceType("kube_acl")
+	ResourceTypeKeymKey              = ResourceType("keym_key")
+	ResourceTypeIamUser              = ResourceType("iam_user")
+	ResourceTypeIamApplication       = ResourceType("iam_application")
+	ResourceTypeIamGroup             = ResourceType("iam_group")
+	ResourceTypeIamPolicy            = ResourceType("iam_policy")
+	ResourceTypeIamAPIKey            = ResourceType("iam_api_key")
+	ResourceTypeIamSSHKey            = ResourceType("iam_ssh_key")
+	ResourceTypeSecretManagerSecret  = ResourceType("secret_manager_secret")
+	ResourceTypeSecretManagerVersion = ResourceType("secret_manager_version")
+	ResourceTypeKeyManagerKey        = ResourceType("key_manager_key")
 )
 
 func (enum ResourceType) String() string {
@@ -105,6 +115,16 @@ func (enum ResourceType) Values() []ResourceType {
 		"kube_pool",
 		"kube_node",
 		"kube_acl",
+		"keym_key",
+		"iam_user",
+		"iam_application",
+		"iam_group",
+		"iam_policy",
+		"iam_api_key",
+		"iam_ssh_key",
+		"secret_manager_secret",
+		"secret_manager_version",
+		"key_manager_key",
 	}
 }
 
@@ -121,6 +141,10 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 
 	*enum = ResourceType(ResourceType(tmp).String())
 	return nil
+}
+
+// KeyManagerKeyInfo: key manager key info.
+type KeyManagerKeyInfo struct {
 }
 
 // KubernetesACLInfo: kubernetes acl info.
@@ -175,23 +199,38 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
+
+	// Deprecated
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	KeymKeyInfo *KeyManagerKeyInfo `json:"keym_key_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	SecretManagerSecretInfo *SecretManagerSecretInfo `json:"secret_manager_secret_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	SecretManagerVersionInfo *SecretManagerSecretVersionInfo `json:"secret_manager_version_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo must be set.
+	KeyManagerKeyInfo *KeyManagerKeyInfo `json:"key_manager_key_info,omitempty"`
 }
 
 // ProductService: product service.
@@ -236,8 +275,11 @@ type Event struct {
 	// MethodName: API method called to trigger the event.
 	MethodName string `json:"method_name"`
 
-	// Resource: resource attached to the event.
-	Resource *Resource `json:"resource"`
+	// Deprecated: Resource: resource attached to the event.
+	Resource *Resource `json:"resource,omitempty"`
+
+	// Resources: resources attached to the event.
+	Resources []*Resource `json:"resources"`
 
 	// RequestID: unique identifier of the request at the origin of the event.
 	RequestID string `json:"request_id"`
@@ -276,7 +318,7 @@ type ListEventsRequest struct {
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
 
-	// MethodName: (Optional) Name of the method or the API call performed.
+	// MethodName: (Optional) Name of the method of the API call performed.
 	MethodName *string `json:"-"`
 
 	// Status: (Optional) HTTP status code of the request. Returns either `200` if the request was successful or `403` if the permission was denied.
@@ -297,6 +339,9 @@ type ListEventsRequest struct {
 
 	// ProductName: (Optional) Name of the Scaleway resource in a hyphenated format.
 	ProductName *string `json:"-"`
+
+	// ServiceName: (Optional) Name of the service of the API call performed.
+	ServiceName *string `json:"-"`
 }
 
 // ListEventsResponse: list events response.
@@ -312,6 +357,9 @@ type ListEventsResponse struct {
 type ListProductsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization containing the Audit Trail events.
+	OrganizationID string `json:"organization_id"`
 }
 
 // ListProductsResponse: list products response.
@@ -388,6 +436,7 @@ func (s *API) ListEvents(req *ListEventsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "page_token", req.PageToken)
 	parameter.AddToQuery(query, "product_name", req.ProductName)
+	parameter.AddToQuery(query, "service_name", req.ServiceName)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -417,6 +466,14 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 		req.Region = defaultRegion
 	}
 
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -424,6 +481,7 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
 		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/products",
+		Query:  query,
 	}
 
 	var resp ListProductsResponse

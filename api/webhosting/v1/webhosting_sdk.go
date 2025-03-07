@@ -317,8 +317,10 @@ const (
 	DomainDNSActionAutoConfigWebRecords = DomainDNSAction("auto_config_web_records")
 	// Automatically configure mail-related DNS records (e.g., MX, SPF, DKIM).
 	DomainDNSActionAutoConfigMailRecords = DomainDNSAction("auto_config_mail_records")
-	// Automatically configure the domain's nameservers to point to Web Hosting Nameservers.
+	// Automatically configure the domain's name servers to point to Web Hosting name servers.
 	DomainDNSActionAutoConfigNameservers = DomainDNSAction("auto_config_nameservers")
+	// No automatic domain configuration. Users must configure their domain for the Web Hosting to work.
+	DomainDNSActionAutoConfigNone = DomainDNSAction("auto_config_none")
 )
 
 func (enum DomainDNSAction) String() string {
@@ -336,6 +338,7 @@ func (enum DomainDNSAction) Values() []DomainDNSAction {
 		"auto_config_web_records",
 		"auto_config_mail_records",
 		"auto_config_nameservers",
+		"auto_config_none",
 	}
 }
 
@@ -494,53 +497,6 @@ func (enum *HostingStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = HostingStatus(HostingStatus(tmp).String())
-	return nil
-}
-
-type HostingSummaryStatus string
-
-const (
-	HostingSummaryStatusUnknownStatus = HostingSummaryStatus("unknown_status")
-	HostingSummaryStatusDelivering    = HostingSummaryStatus("delivering")
-	HostingSummaryStatusReady         = HostingSummaryStatus("ready")
-	HostingSummaryStatusDeleting      = HostingSummaryStatus("deleting")
-	HostingSummaryStatusError         = HostingSummaryStatus("error")
-	HostingSummaryStatusLocked        = HostingSummaryStatus("locked")
-	HostingSummaryStatusMigrating     = HostingSummaryStatus("migrating")
-)
-
-func (enum HostingSummaryStatus) String() string {
-	if enum == "" {
-		// return default value if empty
-		return "unknown_status"
-	}
-	return string(enum)
-}
-
-func (enum HostingSummaryStatus) Values() []HostingSummaryStatus {
-	return []HostingSummaryStatus{
-		"unknown_status",
-		"delivering",
-		"ready",
-		"deleting",
-		"error",
-		"locked",
-		"migrating",
-	}
-}
-
-func (enum HostingSummaryStatus) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *HostingSummaryStatus) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = HostingSummaryStatus(HostingSummaryStatus(tmp).String())
 	return nil
 }
 
@@ -1221,7 +1177,7 @@ type HostingSummary struct {
 
 	// Status: status of the Web Hosting plan.
 	// Default value: unknown_status
-	Status HostingSummaryStatus `json:"status"`
+	Status HostingStatus `json:"status"`
 
 	// Domain: main domain associated with the Web Hosting plan.
 	Domain string `json:"domain"`
@@ -1229,12 +1185,16 @@ type HostingSummary struct {
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
-	// DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_status
-	DNSStatus DNSRecordsStatus `json:"dns_status"`
+	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
+
+	// DomainStatus: main domain status of the Web Hosting plan.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
@@ -1381,6 +1341,9 @@ type DNSRecords struct {
 	// Status: status of the records.
 	// Default value: unknown_status
 	Status DNSRecordsStatus `json:"status"`
+
+	// DNSConfig: records dns auto configuration settings.
+	DNSConfig []DomainDNSAction `json:"dns_config"`
 }
 
 // DatabaseAPIAssignDatabaseUserRequest: database api assign database user request.
@@ -1666,9 +1629,9 @@ type Hosting struct {
 	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
-	// DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_status
-	DNSStatus DNSRecordsStatus `json:"dns_status"`
+	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// IPv4: current IPv4 address of the hosting.
 	IPv4 net.IP `json:"ipv4"`
@@ -1678,6 +1641,10 @@ type Hosting struct {
 
 	// User: details of the hosting user.
 	User *HostingUser `json:"user"`
+
+	// DomainStatus: main domain status of the Web Hosting plan.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`

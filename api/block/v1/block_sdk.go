@@ -1,7 +1,7 @@
 // This file was automatically generated. DO NOT EDIT.
 // If you have any remark or suggestion do not hesitate to open an issue.
 
-// Package block provides methods and message types of the block v1alpha1 API.
+// Package block provides methods and message types of the block v1 API.
 package block
 
 import (
@@ -682,30 +682,6 @@ type ImportSnapshotFromObjectStorageRequest struct {
 	Size *scw.Size `json:"size,omitempty"`
 }
 
-// ImportSnapshotFromS3Request: import snapshot from s3 request.
-type ImportSnapshotFromS3Request struct {
-	// Zone: zone to target. If none is passed will use default zone from the config.
-	Zone scw.Zone `json:"-"`
-
-	// Bucket: scaleway Object Storage bucket where the object is stored.
-	Bucket string `json:"bucket"`
-
-	// Key: the object key inside the given bucket.
-	Key string `json:"key"`
-
-	// Name: name of the snapshot.
-	Name string `json:"name"`
-
-	// ProjectID: UUID of the Project to which the volume and the snapshot belong.
-	ProjectID string `json:"project_id"`
-
-	// Tags: list of tags assigned to the snapshot.
-	Tags []string `json:"tags"`
-
-	// Size: size of the snapshot.
-	Size *scw.Size `json:"size,omitempty"`
-}
-
 // ListSnapshotsRequest: list snapshots request.
 type ListSnapshotsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -940,7 +916,7 @@ func (s *API) ListVolumeTypes(req *ListVolumeTypesRequest, opts ...scw.RequestOp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volume-types",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volume-types",
 		Query:  query,
 	}
 
@@ -983,7 +959,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
 		Query:  query,
 	}
 
@@ -1021,7 +997,7 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1057,7 +1033,7 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	var resp Volume
@@ -1088,7 +1064,7 @@ func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1118,7 +1094,7 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/volumes/" + fmt.Sprint(req.VolumeID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1165,7 +1141,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
 		Query:  query,
 	}
 
@@ -1197,7 +1173,7 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
 	}
 
 	var resp Snapshot
@@ -1234,46 +1210,7 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Snapshot
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// Deprecated: ImportSnapshotFromS3: Import a snapshot from a Scaleway Object Storage bucket
-// The bucket must contain a QCOW2 image.
-// The bucket can be imported into any Availability Zone as long as it is in the same region as the bucket.
-func (s *API) ImportSnapshotFromS3(req *ImportSnapshotFromS3Request, opts ...scw.RequestOption) (*Snapshot, error) {
-	var err error
-
-	if req.Zone == "" {
-		defaultZone, _ := s.client.GetDefaultZone()
-		req.Zone = defaultZone
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.Zone) == "" {
-		return nil, errors.New("field Zone cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/import-from-s3",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1311,7 +1248,7 @@ func (s *API) ImportSnapshotFromObjectStorage(req *ImportSnapshotFromObjectStora
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/import-from-object-storage",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/import-from-object-storage",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1348,7 +1285,7 @@ func (s *API) ExportSnapshotToObjectStorage(req *ExportSnapshotToObjectStorageRe
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "/export-to-object-storage",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "/export-to-object-storage",
 	}
 
 	err = scwReq.SetBody(req)
@@ -1384,7 +1321,7 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -1413,7 +1350,7 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/block/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+		Path:   "/block/v1/zones/" + fmt.Sprint(req.Zone) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
 	}
 
 	err = scwReq.SetBody(req)

@@ -1462,6 +1462,15 @@ func (r *ListPATRulesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.PatRules)), nil
 }
 
+// MigrateToV2Request: migrate to v2 request.
+type MigrateToV2Request struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// GatewayID: ID of the gateway to put into IPAM mode.
+	GatewayID string `json:"-"`
+}
+
 // RefreshSSHKeysRequest: refresh ssh keys request.
 type RefreshSSHKeysRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2936,4 +2945,38 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// MigrateToV2: Put a Public Gateway in IPAM mode, so that it can be used with the Public Gateways API v2. This call is idempotent.
+func (s *API) MigrateToV2(req *MigrateToV2Request, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GatewayID) == "" {
+		return errors.New("field GatewayID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc-gw/v1/zones/" + fmt.Sprint(req.Zone) + "/gateways/" + fmt.Sprint(req.GatewayID) + "/migrate-to-v2",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
