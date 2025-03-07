@@ -3488,7 +3488,7 @@ func (s *API) ListRouteRules(req *ListRouteRulesRequest, opts ...scw.RequestOpti
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/edge-services/v1beta1/" + fmt.Sprint(req.RouteStageID) + "/route-rules",
+		Path:   "/edge-services/v1beta1/route-stages/" + fmt.Sprint(req.RouteStageID) + "/route-rules",
 	}
 
 	var resp ListRouteRulesResponse
