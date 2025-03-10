@@ -1521,6 +1521,18 @@ type ServerTypeCapabilities struct {
 	BootTypes []BootType `json:"boot_types"`
 }
 
+// ServerTypeGPUInfo: server type gpu info.
+type ServerTypeGPUInfo struct {
+	// GpuManufacturer: gPU manufacturer.
+	GpuManufacturer string `json:"gpu_manufacturer"`
+
+	// GpuName: gPU model name.
+	GpuName string `json:"gpu_name"`
+
+	// GpuMemory: RAM of a single GPU, in bytes.
+	GpuMemory scw.Size `json:"gpu_memory"`
+}
+
 // ServerTypeNetwork: server type network.
 type ServerTypeNetwork struct {
 	// Interfaces: list of available network interfaces.
@@ -1976,6 +1988,9 @@ type ServerType struct {
 
 	// RAM: available RAM in bytes.
 	RAM uint64 `json:"ram"`
+
+	// GpuInfo: gPU information.
+	GpuInfo *ServerTypeGPUInfo `json:"gpu_info"`
 
 	// Arch: CPU architecture.
 	// Default value: unknown_arch
