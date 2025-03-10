@@ -93,6 +93,7 @@ const (
 	ResourceTypeIamPolicy            = ResourceType("iam_policy")
 	ResourceTypeIamAPIKey            = ResourceType("iam_api_key")
 	ResourceTypeIamSSHKey            = ResourceType("iam_ssh_key")
+	ResourceTypeIamRule              = ResourceType("iam_rule")
 	ResourceTypeSecretManagerSecret  = ResourceType("secret_manager_secret")
 	ResourceTypeSecretManagerVersion = ResourceType("secret_manager_version")
 	ResourceTypeKeyManagerKey        = ResourceType("key_manager_key")
@@ -122,6 +123,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_policy",
 		"iam_api_key",
 		"iam_ssh_key",
+		"iam_rule",
 		"secret_manager_secret",
 		"secret_manager_version",
 		"key_manager_key",
