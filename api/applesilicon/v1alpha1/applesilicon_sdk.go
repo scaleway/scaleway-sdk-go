@@ -671,7 +671,7 @@ type CreateServerRequest struct {
 	// EnableVpc: activate the Private Network feature for this server. This feature is configured through the Apple Silicon - Private Networks API.
 	EnableVpc bool `json:"enable_vpc"`
 
-	// CommitmentType: activate commitment for this server. If not specified, there is a 24h commitment due to Apple licensing. It can be updated with the Update Server request. Available commitment depends on server type.
+	// CommitmentType: activate commitment for this server. If not specified, there is a 24h commitment due to Apple licensing (commitment_type `duration_24h`). It can be updated with the Update Server request. Available commitment depends on server type.
 	// Default value: duration_24h
 	CommitmentType CommitmentType `json:"commitment_type"`
 }
