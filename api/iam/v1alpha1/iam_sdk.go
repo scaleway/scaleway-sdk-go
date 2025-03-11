@@ -875,8 +875,8 @@ func (enum *UserType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// GetUserConnectionsResponseConnectionConnectedOrganization: get user connections response connection connected organization.
-type GetUserConnectionsResponseConnectionConnectedOrganization struct {
+// ConnectionConnectedOrganization: connection connected organization.
+type ConnectionConnectedOrganization struct {
 	ID string `json:"id"`
 
 	Name string `json:"name"`
@@ -884,8 +884,8 @@ type GetUserConnectionsResponseConnectionConnectedOrganization struct {
 	Locked bool `json:"locked"`
 }
 
-// GetUserConnectionsResponseConnectionConnectedUser: get user connections response connection connected user.
-type GetUserConnectionsResponseConnectionConnectedUser struct {
+// ConnectionConnectedUser: connection connected user.
+type ConnectionConnectedUser struct {
 	ID string `json:"id"`
 
 	Username string `json:"username"`
@@ -979,13 +979,13 @@ type CreateUserRequestMember struct {
 	Password string `json:"password"`
 }
 
-// GetUserConnectionsResponseConnection: get user connections response connection.
-type GetUserConnectionsResponseConnection struct {
+// Connection: connection.
+type Connection struct {
 	// Organization: information about the connected organization.
-	Organization *GetUserConnectionsResponseConnectionConnectedOrganization `json:"organization"`
+	Organization *ConnectionConnectedOrganization `json:"organization"`
 
 	// User: information about the connected user.
-	User *GetUserConnectionsResponseConnectionConnectedUser `json:"user"`
+	User *ConnectionConnectedUser `json:"user"`
 }
 
 // APIKey: api key.
@@ -1651,7 +1651,7 @@ type GetUserConnectionsRequest struct {
 // GetUserConnectionsResponse: get user connections response.
 type GetUserConnectionsResponse struct {
 	// Connections: list of connections.
-	Connections []*GetUserConnectionsResponseConnection `json:"connections"`
+	Connections []*Connection `json:"connections"`
 }
 
 // GetUserRequest: get user request.
