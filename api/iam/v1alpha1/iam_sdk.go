@@ -2243,9 +2243,9 @@ type ListUsersRequest struct {
 	// Tag: filter by tags containing a given string.
 	Tag *string `json:"-"`
 
-	// Status: filter by user status.
-	// Default value: unknown_status
-	Status UserStatus `json:"-"`
+	// Type: filter by user type.
+	// Default value: unknown_type
+	Type UserType `json:"-"`
 }
 
 // ListUsersResponse: list users response.
@@ -2650,7 +2650,7 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "user_ids", req.UserIDs)
 	parameter.AddToQuery(query, "mfa", req.Mfa)
 	parameter.AddToQuery(query, "tag", req.Tag)
-	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "type", req.Type)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
