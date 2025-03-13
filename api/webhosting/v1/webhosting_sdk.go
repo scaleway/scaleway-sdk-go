@@ -987,6 +987,21 @@ type CreateDatabaseRequestUser struct {
 	Password string `json:"password"`
 }
 
+// AutoConfigDomainDNS: auto config domain dns.
+type AutoConfigDomainDNS struct {
+	// Nameservers: whether or not to synchronize domain nameservers.
+	Nameservers bool `json:"nameservers"`
+
+	// WebRecords: whether or not to synchronize web records.
+	WebRecords bool `json:"web_records"`
+
+	// MailRecords: whether or not to synchronize mail records.
+	MailRecords bool `json:"mail_records"`
+
+	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
+	AllRecords bool `json:"all_records"`
+}
+
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
 type CreateHostingRequestDomainConfiguration struct {
 	UpdateNameservers bool `json:"update_nameservers"`
@@ -1314,20 +1329,23 @@ type DNSAPISyncDomainDNSRecordsRequest struct {
 	// Domain: domain for which the DNS records will be synchronized.
 	Domain string `json:"-"`
 
-	// UpdateWebRecords: whether or not to synchronize the web records.
-	UpdateWebRecords bool `json:"update_web_records"`
+	// Deprecated: UpdateWebRecords: whether or not to synchronize the web records (deprecated, use auto_config_domain_dns).
+	UpdateWebRecords *bool `json:"update_web_records,omitempty"`
 
-	// UpdateMailRecords: whether or not to synchronize the mail records.
-	UpdateMailRecords bool `json:"update_mail_records"`
+	// Deprecated: UpdateMailRecords: whether or not to synchronize the mail records (deprecated, use auto_config_domain_dns).
+	UpdateMailRecords *bool `json:"update_mail_records,omitempty"`
 
-	// UpdateAllRecords: whether or not to synchronize all types of records. This one has priority.
-	UpdateAllRecords bool `json:"update_all_records"`
+	// Deprecated: UpdateAllRecords: whether or not to synchronize all types of records. This one has priority (deprecated, use auto_config_domain_dns).
+	UpdateAllRecords *bool `json:"update_all_records,omitempty"`
 
-	// UpdateNameservers: whether or not to synchronize domain nameservers.
-	UpdateNameservers bool `json:"update_nameservers"`
+	// Deprecated: UpdateNameservers: whether or not to synchronize domain nameservers (deprecated, use auto_config_domain_dns).
+	UpdateNameservers *bool `json:"update_nameservers,omitempty"`
 
 	// CustomRecords: custom records to synchronize.
 	CustomRecords []*SyncDomainDNSRecordsRequestRecord `json:"custom_records"`
+
+	// AutoConfigDomainDNS: whether or not to synchronize each types of records.
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
 }
 
 // DNSRecords: dns records.
@@ -1528,8 +1546,11 @@ type Domain struct {
 	// AvailableActions: a list of actions that can be performed on the domain.
 	AvailableActions []DomainAction `json:"available_actions"`
 
-	// AvailableDNSActions: a list of DNS-related actions that can be auto configured for the domain.
-	AvailableDNSActions []DomainDNSAction `json:"available_dns_actions"`
+	// Deprecated: AvailableDNSActions: a list of DNS-related actions that can be auto configured for the domain (deprecated, use auto_config_domain_dns instead).
+	AvailableDNSActions *[]DomainDNSAction `json:"available_dns_actions,omitempty"`
+
+	// AutoConfigDomainDNS: whether or not to synchronize each type of record.
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
 // FtpAccountAPIChangeFtpAccountPasswordRequest: ftp account api change ftp account password request.
@@ -1677,11 +1698,14 @@ type HostingAPICreateHostingRequest struct {
 	// Default value: unknown_language_code
 	Language std.LanguageCode `json:"language"`
 
-	// DomainConfiguration: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements.
+	// Deprecated: DomainConfiguration: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements (deprecated, use auto_config_domain_dns instead).
 	DomainConfiguration *CreateHostingRequestDomainConfiguration `json:"domain_configuration,omitempty"`
 
 	// SkipWelcomeEmail: indicates whether to skip a welcome email to the contact email containing hosting info.
 	SkipWelcomeEmail *bool `json:"skip_welcome_email,omitempty"`
+
+	// AutoConfigDomainDNS: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements (deprecated, use auto_update_* fields instead).
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
 }
 
 // HostingAPICreateSessionRequest: hosting api create session request.
