@@ -187,6 +187,148 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type QualificationArchitectureType string
+
+const (
+	// Unknown architecture type.
+	QualificationArchitectureTypeUnknownArchitectureType = QualificationArchitectureType("unknown_architecture_type")
+	// Object Storage architecture.
+	QualificationArchitectureTypeObjectStorage = QualificationArchitectureType("object_storage")
+	// Web Hosting architecture.
+	QualificationArchitectureTypeWebHosting = QualificationArchitectureType("web_hosting")
+	// Instance architecture.
+	QualificationArchitectureTypeInstance = QualificationArchitectureType("instance")
+	// Elastic Metal architecture.
+	QualificationArchitectureTypeElastic = QualificationArchitectureType("elastic")
+	// Kubernetes architecture.
+	QualificationArchitectureTypeKubernetes = QualificationArchitectureType("kubernetes")
+	// Serverless architecture.
+	QualificationArchitectureTypeServerless = QualificationArchitectureType("serverless")
+	// Dedibox architecture.
+	QualificationArchitectureTypeDedicatedServer = QualificationArchitectureType("dedicated_server")
+	// Other architecture type.
+	QualificationArchitectureTypeOtherArchitectureType = QualificationArchitectureType("other_architecture_type")
+)
+
+func (enum QualificationArchitectureType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_architecture_type"
+	}
+	return string(enum)
+}
+
+func (enum QualificationArchitectureType) Values() []QualificationArchitectureType {
+	return []QualificationArchitectureType{
+		"unknown_architecture_type",
+		"object_storage",
+		"web_hosting",
+		"instance",
+		"elastic",
+		"kubernetes",
+		"serverless",
+		"dedicated_server",
+		"other_architecture_type",
+	}
+}
+
+func (enum QualificationArchitectureType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationArchitectureType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationArchitectureType(QualificationArchitectureType(tmp).String())
+	return nil
+}
+
+type QualificationHostApplicationSubUseCase string
+
+const (
+	QualificationHostApplicationSubUseCaseUnknownSubUseCase = QualificationHostApplicationSubUseCase("unknown_sub_use_case")
+	QualificationHostApplicationSubUseCaseSaasApp           = QualificationHostApplicationSubUseCase("saas_app")
+	QualificationHostApplicationSubUseCaseGovernmentApp     = QualificationHostApplicationSubUseCase("government_app")
+)
+
+func (enum QualificationHostApplicationSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationHostApplicationSubUseCase) Values() []QualificationHostApplicationSubUseCase {
+	return []QualificationHostApplicationSubUseCase{
+		"unknown_sub_use_case",
+		"saas_app",
+		"government_app",
+	}
+}
+
+func (enum QualificationHostApplicationSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationHostApplicationSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationHostApplicationSubUseCase(QualificationHostApplicationSubUseCase(tmp).String())
+	return nil
+}
+
+type QualificationHostWebsiteSubUseCase string
+
+const (
+	QualificationHostWebsiteSubUseCaseUnknownSubUseCase  = QualificationHostWebsiteSubUseCase("unknown_sub_use_case")
+	QualificationHostWebsiteSubUseCaseInformationWebsite = QualificationHostWebsiteSubUseCase("information_website")
+	QualificationHostWebsiteSubUseCaseEcommerceWebsite   = QualificationHostWebsiteSubUseCase("ecommerce_website")
+	QualificationHostWebsiteSubUseCaseHighWebsite        = QualificationHostWebsiteSubUseCase("high_website")
+	QualificationHostWebsiteSubUseCaseOtherSubUseCase    = QualificationHostWebsiteSubUseCase("other_sub_use_case")
+)
+
+func (enum QualificationHostWebsiteSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationHostWebsiteSubUseCase) Values() []QualificationHostWebsiteSubUseCase {
+	return []QualificationHostWebsiteSubUseCase{
+		"unknown_sub_use_case",
+		"information_website",
+		"ecommerce_website",
+		"high_website",
+		"other_sub_use_case",
+	}
+}
+
+func (enum QualificationHostWebsiteSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationHostWebsiteSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationHostWebsiteSubUseCase(QualificationHostWebsiteSubUseCase(tmp).String())
+	return nil
+}
+
 // Contract: contract.
 type Contract struct {
 	// ID: ID of the contract.
@@ -207,6 +349,46 @@ type Contract struct {
 
 	// UpdatedAt: the last modification date of the contract.
 	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+// QualificationAiMachine: qualification ai machine.
+type QualificationAiMachine struct {
+}
+
+// QualificationArchiveData: qualification archive data.
+type QualificationArchiveData struct {
+}
+
+// QualificationContainer: qualification container.
+type QualificationContainer struct {
+}
+
+// QualificationDeploySoftware: qualification deploy software.
+type QualificationDeploySoftware struct {
+}
+
+// QualificationHostApplication: qualification host application.
+type QualificationHostApplication struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationHostApplicationSubUseCase `json:"sub_use_case"`
+}
+
+// QualificationHostWebsite: qualification host website.
+type QualificationHostWebsite struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationHostWebsiteSubUseCase `json:"sub_use_case"`
+}
+
+// QualificationOtherUseCase: qualification other use case.
+type QualificationOtherUseCase struct {
+}
+
+// QualificationSetScalewayEnvironment: qualification set scaleway environment.
+type QualificationSetScalewayEnvironment struct {
+}
+
+// QualificationShareData: qualification share data.
+type QualificationShareData struct {
 }
 
 // ContractSignature: contract signature.
@@ -249,6 +431,40 @@ type Project struct {
 
 	// Description: description of the Project.
 	Description string `json:"description"`
+}
+
+// Qualification: qualification.
+type Qualification struct {
+	// ArchitectureType: architecture type of the qualification.
+	// Default value: unknown_architecture_type
+	ArchitectureType QualificationArchitectureType `json:"architecture_type"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	HostWebsite *QualificationHostWebsite `json:"host_website,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	HostApplication *QualificationHostApplication `json:"host_application,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	DeploySoftware *QualificationDeploySoftware `json:"deploy_software,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	SetScalewayEnvironment *QualificationSetScalewayEnvironment `json:"set_scaleway_environment,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	AiMachine *QualificationAiMachine `json:"ai_machine,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	Container *QualificationContainer `json:"container,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	ArchiveData *QualificationArchiveData `json:"archive_data,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	ShareData *QualificationShareData `json:"share_data,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	OtherUseCase *QualificationOtherUseCase `json:"other_use_case,omitempty"`
 }
 
 // CheckContractSignatureResponse: check contract signature response.
@@ -423,6 +639,15 @@ type ProjectAPIListProjectsRequest struct {
 	ProjectIDs []string `json:"-"`
 }
 
+// ProjectAPISetProjectQualificationRequest: project api set project qualification request.
+type ProjectAPISetProjectQualificationRequest struct {
+	// ProjectID: project ID.
+	ProjectID string `json:"-"`
+
+	// Qualification: use case chosen for the Project.
+	Qualification *Qualification `json:"qualification,omitempty"`
+}
+
 // ProjectAPIUpdateProjectRequest: project api update project request.
 type ProjectAPIUpdateProjectRequest struct {
 	// ProjectID: project ID of the Project.
@@ -433,6 +658,15 @@ type ProjectAPIUpdateProjectRequest struct {
 
 	// Description: description of the Project.
 	Description *string `json:"description,omitempty"`
+}
+
+// ProjectQualification: project qualification.
+type ProjectQualification struct {
+	// ProjectID: project ID.
+	ProjectID string `json:"project_id"`
+
+	// Qualification: qualification of the Project.
+	Qualification *Qualification `json:"qualification"`
 }
 
 // The Contract API allows you to manage contracts.
@@ -748,6 +982,38 @@ func (s *ProjectAPI) UpdateProject(req *ProjectAPIUpdateProjectRequest, opts ...
 	}
 
 	var resp Project
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetProjectQualification: Set the project use case for a new or existing Project, specified by its Project ID. You can customize the use case, sub use case, and architecture type you want to use in the Project.
+func (s *ProjectAPI) SetProjectQualification(req *ProjectAPISetProjectQualificationRequest, opts ...scw.RequestOption) (*ProjectQualification, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/projects/" + fmt.Sprint(req.ProjectID) + "/project-qualification",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ProjectQualification
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
