@@ -617,6 +617,96 @@ func (enum *ListWebhooksRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type OfferName string
+
+const (
+	// If unspecified, the offer name is unknown by default.
+	OfferNameUnknownName = OfferName("unknown_name")
+	// The 'essential' offer.
+	OfferNameEssential = OfferName("essential")
+	// The 'scale' offer.
+	OfferNameScale = OfferName("scale")
+)
+
+func (enum OfferName) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_name"
+	}
+	return string(enum)
+}
+
+func (enum OfferName) Values() []OfferName {
+	return []OfferName{
+		"unknown_name",
+		"essential",
+		"scale",
+	}
+}
+
+func (enum OfferName) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OfferName) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OfferName(OfferName(tmp).String())
+	return nil
+}
+
+type PoolStatus string
+
+const (
+	// If unspecified, the status is unknown by default.
+	PoolStatusUnknownStatus = PoolStatus("unknown_status")
+	// The pool is disabled.
+	PoolStatusDisabled = PoolStatus("disabled")
+	// The pool is being created.
+	PoolStatusCreating = PoolStatus("creating")
+	// The pool is ready to be used.
+	PoolStatusReady = PoolStatus("ready")
+	// The pool has an error status.
+	PoolStatusError = PoolStatus("error")
+)
+
+func (enum PoolStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum PoolStatus) Values() []PoolStatus {
+	return []PoolStatus{
+		"unknown_status",
+		"disabled",
+		"creating",
+		"ready",
+		"error",
+	}
+}
+
+func (enum PoolStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PoolStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PoolStatus(PoolStatus(tmp).String())
+	return nil
+}
+
 type ProjectSettingsPeriodicReportFrequency string
 
 const (
@@ -1045,6 +1135,96 @@ type Domain struct {
 	Region scw.Region `json:"region"`
 }
 
+// OfferSubscription: offer subscription.
+type OfferSubscription struct {
+	// OrganizationID: ID of the offer-subscription Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: ID of the offer-subscription Project.
+	ProjectID string `json:"project_id"`
+
+	// OfferName: name of the offer associated with the Project.
+	// Default value: unknown_name
+	OfferName OfferName `json:"offer_name"`
+
+	// SubscribedAt: date and time of the subscription.
+	SubscribedAt *time.Time `json:"subscribed_at"`
+
+	// CancellationAvailableAt: date and time of the end of the offer-subscription commitment.
+	CancellationAvailableAt *time.Time `json:"cancellation_available_at"`
+
+	// SLA: service Level Agreement percentage of the offer-subscription.
+	SLA float32 `json:"sla"`
+
+	// MaxDomains: max number of domains that can be associated with the offer-subscription for a particular Project.
+	MaxDomains int32 `json:"max_domains"`
+
+	// MaxDedicatedIPs: max number of dedicated IPs that can be associated with the offer-subscription for a particular Project.
+	MaxDedicatedIPs int32 `json:"max_dedicated_ips"`
+
+	// MaxWebhooksPerDomain: max number of webhooks that can be associated with the offer-subscription for a particular Project.
+	MaxWebhooksPerDomain int32 `json:"max_webhooks_per_domain"`
+
+	// MaxCustomBlocklistsPerDomain: max number of custom blocklists that can be associated with the offer-subscription for a particular Project.
+	MaxCustomBlocklistsPerDomain int32 `json:"max_custom_blocklists_per_domain"`
+
+	// IncludedMonthlyEmails: number of emails included in the offer-subscription per month.
+	IncludedMonthlyEmails int32 `json:"included_monthly_emails"`
+}
+
+// Offer: offer.
+type Offer struct {
+	// Name: name of the offer.
+	// Default value: unknown_name
+	Name OfferName `json:"name"`
+
+	// CreatedAt: date and time of the offer creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// CommitmentPeriod: period of commitment.
+	CommitmentPeriod *scw.Duration `json:"commitment_period"`
+
+	// SLA: service Level Agreement percentage of the offer.
+	SLA float32 `json:"sla"`
+
+	// MaxDomains: max number of checked domains that can be associated with the offer.
+	MaxDomains int32 `json:"max_domains"`
+
+	// MaxDedicatedIPs: max number of dedicated IPs that can be associated with the offer.
+	MaxDedicatedIPs int32 `json:"max_dedicated_ips"`
+
+	// IncludedMonthlyEmails: number of emails included in the offer per month.
+	IncludedMonthlyEmails int32 `json:"included_monthly_emails"`
+
+	// MaxWebhooksPerDomain: max number of webhooks that can be associated with the offer.
+	MaxWebhooksPerDomain int32 `json:"max_webhooks_per_domain"`
+
+	// MaxCustomBlocklistsPerDomain: max number of active custom blocklists that can be associated with the offer.
+	MaxCustomBlocklistsPerDomain int32 `json:"max_custom_blocklists_per_domain"`
+}
+
+// Pool: pool.
+type Pool struct {
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+
+	// Status: status of the pool.
+	// Default value: unknown_status
+	Status PoolStatus `json:"status"`
+
+	// Details: details of the pool.
+	Details *string `json:"details"`
+
+	// Zone: zone of the pool.
+	Zone *scw.Zone `json:"zone"`
+
+	// IPs: iPs of the pool.
+	IPs []net.IP `json:"ips"`
+
+	// Reverse: reverse hostname of all IPs of the pool.
+	Reverse *string `json:"reverse"`
+}
+
 // WebhookEvent: webhook event.
 type WebhookEvent struct {
 	// ID: ID of the Webhook Event.
@@ -1338,6 +1518,15 @@ type GetEmailRequest struct {
 	EmailID string `json:"-"`
 }
 
+// GetProjectConsumptionRequest: get project consumption request.
+type GetProjectConsumptionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
+}
+
 // GetProjectSettingsRequest: get project settings request.
 type GetProjectSettingsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1564,6 +1753,120 @@ func (r *ListEmailsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	return uint32(len(results.Emails)), nil
 }
 
+// ListOfferSubscriptionsRequest: list offer subscriptions request.
+type ListOfferSubscriptionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+}
+
+// ListOfferSubscriptionsResponse: list offer subscriptions response.
+type ListOfferSubscriptionsResponse struct {
+	// TotalCount: number of offer-subscriptions matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// OfferSubscriptions: single page of offer-subscriptions matching the requested criteria.
+	OfferSubscriptions []*OfferSubscription `json:"offer_subscriptions"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOfferSubscriptionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOfferSubscriptionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOfferSubscriptionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.OfferSubscriptions = append(r.OfferSubscriptions, results.OfferSubscriptions...)
+	r.TotalCount += uint64(len(results.OfferSubscriptions))
+	return uint64(len(results.OfferSubscriptions)), nil
+}
+
+// ListOffersRequest: list offers request.
+type ListOffersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+}
+
+// ListOffersResponse: list offers response.
+type ListOffersResponse struct {
+	// TotalCount: number of offers matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// Offers: single page of offers matching the requested criteria.
+	Offers []*Offer `json:"offers"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListOffersResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListOffersResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListOffersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Offers = append(r.Offers, results.Offers...)
+	r.TotalCount += uint64(len(results.Offers))
+	return uint64(len(results.Offers)), nil
+}
+
+// ListPoolsRequest: list pools request.
+type ListPoolsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: requested page size. Value must be between 1 and 1000.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"-"`
+}
+
+// ListPoolsResponse: list pools response.
+type ListPoolsResponse struct {
+	// TotalCount: number of pools matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+
+	// Pools: single page of pools matching the requested criteria.
+	Pools []*Pool `json:"pools"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListPoolsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Pools = append(r.Pools, results.Pools...)
+	r.TotalCount += uint64(len(results.Pools))
+	return uint64(len(results.Pools)), nil
+}
+
 // ListWebhookEventsRequest: list webhook events request.
 type ListWebhookEventsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1682,6 +1985,27 @@ func (r *ListWebhooksResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Webhooks)), nil
 }
 
+// ProjectConsumption: project consumption.
+type ProjectConsumption struct {
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
+
+	// DomainsCount: number of domains in the project.
+	DomainsCount int32 `json:"domains_count"`
+
+	// DedicatedIPsCount: number of dedicated IP in the project.
+	DedicatedIPsCount int32 `json:"dedicated_ips_count"`
+
+	// MonthlyEmailsCount: number of emails sent during the current month in the project.
+	MonthlyEmailsCount int32 `json:"monthly_emails_count"`
+
+	// WebhooksCount: number of webhooks in the project.
+	WebhooksCount int32 `json:"webhooks_count"`
+
+	// CustomBlocklistsCount: number of custom blocklists in the project.
+	CustomBlocklistsCount int32 `json:"custom_blocklists_count"`
+}
+
 // ProjectSettings: project settings.
 type ProjectSettings struct {
 	// PeriodicReport: information about your periodic report.
@@ -1728,6 +2052,19 @@ type UpdateDomainRequest struct {
 
 	// Autoconfig: (Optional) If set to true, activate auto-configuration of the domain's DNS zone.
 	Autoconfig *bool `json:"autoconfig,omitempty"`
+}
+
+// UpdateOfferSubscriptionRequest: update offer subscription request.
+type UpdateOfferSubscriptionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the offer-subscription.
+	// Default value: unknown_name
+	Name OfferName `json:"name"`
 }
 
 // UpdateProjectSettingsRequest: update project settings request.
@@ -2612,4 +2949,183 @@ func (s *API) DeleteBlocklist(req *DeleteBlocklistRequest, opts ...scw.RequestOp
 		return err
 	}
 	return nil
+}
+
+// ListOfferSubscriptions: Retrieve information about the offers you are subscribed to using the `project_id` and `region` parameters.
+func (s *API) ListOfferSubscriptions(req *ListOfferSubscriptionsRequest, opts ...scw.RequestOption) (*ListOfferSubscriptionsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/offer-subscriptions",
+		Query:  query,
+	}
+
+	var resp ListOfferSubscriptionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateOfferSubscription: Update a subscribed offer.
+func (s *API) UpdateOfferSubscription(req *UpdateOfferSubscriptionRequest, opts ...scw.RequestOption) (*OfferSubscription, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/offer-subscriptions",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp OfferSubscription
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListOffers: Retrieve the list of the available and free-of-charge offers you can subscribe to.
+func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*ListOffersResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/offers",
+	}
+
+	var resp ListOffersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListPools: Retrieve information about a sending pool, including its creation status and configuration parameters.
+func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*ListPoolsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/pools",
+		Query:  query,
+	}
+
+	var resp ListPoolsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetProjectConsumption: Get project resource consumption.
+func (s *API) GetProjectConsumption(req *GetProjectConsumptionRequest, opts ...scw.RequestOption) (*ProjectConsumption, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/transactional-email/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/project-consumption",
+		Query:  query,
+	}
+
+	var resp ProjectConsumption
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
