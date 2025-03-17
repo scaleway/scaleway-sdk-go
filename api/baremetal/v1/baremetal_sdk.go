@@ -846,6 +846,8 @@ type SchemaPartition struct {
 	Number uint32 `json:"number"`
 
 	Size scw.Size `json:"size"`
+
+	UseAllAvailableSpace bool `json:"use_all_available_space"`
 }
 
 // SchemaPool: schema pool.
