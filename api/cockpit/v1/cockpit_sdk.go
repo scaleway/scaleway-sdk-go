@@ -562,8 +562,8 @@ type ContactPoint struct {
 	// Region: region.
 	Region scw.Region `json:"region"`
 
-	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
-	ReceiveResolvedNotifications bool `json:"receive_resolved_notifications"`
+	// SendResolvedNotifications: send an email notification when an alert is marked as resolved.
+	SendResolvedNotifications bool `json:"send_resolved_notifications"`
 }
 
 // DataSource: Data source.
@@ -1087,8 +1087,8 @@ type RegionalAPICreateContactPointRequest struct {
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 
-	// ReceiveResolvedNotifications: send an email notification when an alert is marked as resolved.
-	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
+	// SendResolvedNotifications: send an email notification when an alert is marked as resolved.
+	SendResolvedNotifications *bool `json:"send_resolved_notifications,omitempty"`
 }
 
 // RegionalAPICreateDataSourceRequest: Create a data source.
@@ -1338,8 +1338,8 @@ type RegionalAPIUpdateContactPointRequest struct {
 	// Precisely one of Email must be set.
 	Email *ContactPointEmail `json:"email,omitempty"`
 
-	// ReceiveResolvedNotifications: enable or disable notifications when alert is resolved.
-	ReceiveResolvedNotifications *bool `json:"receive_resolved_notifications,omitempty"`
+	// SendResolvedNotifications: enable or disable notifications when alert is resolved.
+	SendResolvedNotifications *bool `json:"send_resolved_notifications,omitempty"`
 }
 
 // RegionalAPIUpdateDataSourceRequest: Update a data source name.
