@@ -1113,7 +1113,7 @@ type SubscriberWebhookConfig struct {
 
 // HealthCheckHTTPConfig: health check http config.
 type HealthCheckHTTPConfig struct {
-	// URI: the HTTP URI to use when performing a health check on backend servers.
+	// URI: the HTTP path to use when performing a health check on backend servers.
 	URI string `json:"uri"`
 
 	// Method: the HTTP method used when performing a health check on backend servers.
@@ -1128,7 +1128,7 @@ type HealthCheckHTTPConfig struct {
 
 // HealthCheckHTTPSConfig: health check https config.
 type HealthCheckHTTPSConfig struct {
-	// URI: the HTTP URI to use when performing a health check on backend servers.
+	// URI: the HTTP path to use when performing a health check on backend servers.
 	URI string `json:"uri"`
 
 	// Method: the HTTP method used when performing a health check on backend servers.
