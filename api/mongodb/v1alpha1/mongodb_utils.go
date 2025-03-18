@@ -1,6 +1,9 @@
 package mongodb
 
 import (
+	"context"
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -108,4 +111,24 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 		return nil, errors.Wrap(err, "waiting for snapshot failed")
 	}
 	return snapshot.(*Snapshot), nil
+}
+
+func (s *API) FetchLatestEngineVersion(region scw.Region) (*Version, error) {
+	resp, err := s.ListVersions(&ListVersionsRequest{
+		Region: region,
+	}, scw.WithContext(context.Background()))
+
+	if err != nil {
+		return nil, fmt.Errorf("error fetching MongoDB versions: %w", err)
+	}
+
+	if len(resp.Versions) == 0 {
+		return nil, fmt.Errorf("no MongoDB versions found")
+	}
+
+	sort.Slice(resp.Versions, func(i, j int) bool {
+		return resp.Versions[i].Version > resp.Versions[j].Version
+	})
+
+	return resp.Versions[0], nil
 }
