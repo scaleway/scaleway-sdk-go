@@ -39,6 +39,86 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type ACLRuleProtocol string
+
+const (
+	ACLRuleProtocolANY  = ACLRuleProtocol("ANY")
+	ACLRuleProtocolTCP  = ACLRuleProtocol("TCP")
+	ACLRuleProtocolUDP  = ACLRuleProtocol("UDP")
+	ACLRuleProtocolICMP = ACLRuleProtocol("ICMP")
+)
+
+func (enum ACLRuleProtocol) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "ANY"
+	}
+	return string(enum)
+}
+
+func (enum ACLRuleProtocol) Values() []ACLRuleProtocol {
+	return []ACLRuleProtocol{
+		"ANY",
+		"TCP",
+		"UDP",
+		"ICMP",
+	}
+}
+
+func (enum ACLRuleProtocol) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ACLRuleProtocol) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ACLRuleProtocol(ACLRuleProtocol(tmp).String())
+	return nil
+}
+
+type Action string
+
+const (
+	ActionUnknownAction = Action("unknown_action")
+	ActionAccept        = Action("accept")
+	ActionDrop          = Action("drop")
+)
+
+func (enum Action) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_action"
+	}
+	return string(enum)
+}
+
+func (enum Action) Values() []Action {
+	return []Action{
+		"unknown_action",
+		"accept",
+		"drop",
+	}
+}
+
+func (enum Action) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *Action) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = Action(Action(tmp).String())
+	return nil
+}
+
 type ListPrivateNetworksRequestOrderBy string
 
 const (
@@ -342,6 +422,38 @@ type Route struct {
 	Region scw.Region `json:"region"`
 }
 
+// ACLRule: acl rule.
+type ACLRule struct {
+	// Protocol: protocol to which this rule applies.
+	// Default value: ANY
+	Protocol ACLRuleProtocol `json:"protocol"`
+
+	// Source: source IP range to which this rule applies (CIDR notation with subnet mask).
+	Source scw.IPNet `json:"source"`
+
+	// SrcPortLow: starting port of the source port range to which this rule applies (inclusive).
+	SrcPortLow uint32 `json:"src_port_low"`
+
+	// SrcPortHigh: ending port of the source port range to which this rule applies (inclusive).
+	SrcPortHigh uint32 `json:"src_port_high"`
+
+	// Destination: destination IP range to which this rule applies (CIDR notation with subnet mask).
+	Destination scw.IPNet `json:"destination"`
+
+	// DstPortLow: starting port of the destination port range to which this rule applies (inclusive).
+	DstPortLow uint32 `json:"dst_port_low"`
+
+	// DstPortHigh: ending port of the destination port range to which this rule applies (inclusive).
+	DstPortHigh uint32 `json:"dst_port_high"`
+
+	// Action: policy to apply to the packet.
+	// Default value: unknown_action
+	Action Action `json:"action"`
+
+	// Description: rule description.
+	Description *string `json:"description"`
+}
+
 // RouteWithNexthop: route with nexthop.
 type RouteWithNexthop struct {
 	// Route: route.
@@ -534,6 +646,26 @@ type EnableRoutingRequest struct {
 
 	// VpcID: vPC ID.
 	VpcID string `json:"-"`
+}
+
+// GetACLRequest: get acl request.
+type GetACLRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the Network ACL's VPC.
+	VpcID string `json:"-"`
+
+	// IsIPv6: defines whether this set of ACL rules is for IPv6 (false = IPv4). Each Network ACL can have rules for only one IP type.
+	IsIPv6 bool `json:"is_ipv6"`
+}
+
+// GetACLResponse: get acl response.
+type GetACLResponse struct {
+	Rules []*ACLRule `json:"rules"`
+
+	// DefaultPolicy: default value: unknown_action
+	DefaultPolicy Action `json:"default_policy"`
 }
 
 // GetPrivateNetworkRequest: get private network request.
@@ -804,6 +936,33 @@ type RoutesWithNexthopAPIListRoutesWithNexthopRequest struct {
 
 	// IsIPv6: only routes with an IPv6 destination will be returned.
 	IsIPv6 *bool `json:"-"`
+}
+
+// SetACLRequest: set acl request.
+type SetACLRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the Network ACL's VPC.
+	VpcID string `json:"-"`
+
+	// Rules: list of Network ACL rules.
+	Rules []*ACLRule `json:"rules"`
+
+	// IsIPv6: defines whether this set of ACL rules is for IPv6 (false = IPv4). Each Network ACL can have rules for only one IP type.
+	IsIPv6 bool `json:"is_ipv6"`
+
+	// DefaultPolicy: action to take for packets which do not match any rules.
+	// Default value: unknown_action
+	DefaultPolicy Action `json:"default_policy"`
+}
+
+// SetACLResponse: set acl response.
+type SetACLResponse struct {
+	Rules []*ACLRule `json:"rules"`
+
+	// DefaultPolicy: default value: unknown_action
+	DefaultPolicy Action `json:"default_policy"`
 }
 
 // SetSubnetsRequest: set subnets request.
@@ -1603,6 +1762,77 @@ func (s *API) DeleteRoute(req *DeleteRouteRequest, opts ...scw.RequestOption) er
 		return err
 	}
 	return nil
+}
+
+// GetACL: Retrieve a list of ACL rules for a VPC, specified by its VPC ID.
+func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*GetACLResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc/" + fmt.Sprint(req.VpcID) + "/acl-rules",
+		Query:  query,
+	}
+
+	var resp GetACLResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetACL: Set the list of ACL rules and the default routing policy for a VPC.
+func (s *API) SetACL(req *SetACLRequest, opts ...scw.RequestOption) (*SetACLResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc/" + fmt.Sprint(req.VpcID) + "/acl-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetACLResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type RoutesWithNexthopAPI struct {
