@@ -773,6 +773,12 @@ type UpdateDeploymentRequest struct {
 
 	// MaxSize: defines the new maximum size of the pool.
 	MaxSize *uint32 `json:"max_size,omitempty"`
+
+	// ModelID: id of the model to set to the deployment.
+	ModelID *string `json:"model_id,omitempty"`
+
+	// Quantization: quantization to use to the deployment.
+	Quantization *DeploymentQuantization `json:"quantization,omitempty"`
 }
 
 // UpdateEndpointRequest: update endpoint request.
