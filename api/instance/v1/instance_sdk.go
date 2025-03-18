@@ -1996,9 +1996,6 @@ type ServerType struct {
 	// Default value: unknown_arch
 	Arch Arch `json:"arch"`
 
-	// Baremetal: true if it is a baremetal Instance.
-	Baremetal bool `json:"baremetal"`
-
 	// Network: network available for the Instance.
 	Network *ServerTypeNetwork `json:"network"`
 
