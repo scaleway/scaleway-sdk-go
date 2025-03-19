@@ -977,6 +977,18 @@ type CreateUserRequestMember struct {
 
 	// Password: the member's password.
 	Password string `json:"password"`
+
+	// FirstName: the member's first name.
+	FirstName string `json:"first_name"`
+
+	// LastName: the member's last name.
+	LastName string `json:"last_name"`
+
+	// PhoneNumber: the member's phone number.
+	PhoneNumber string `json:"phone_number"`
+
+	// Locale: the member's locale.
+	Locale string `json:"locale"`
 }
 
 // Connection: connection.
@@ -1327,6 +1339,18 @@ type User struct {
 
 	// Username: user identifier unique to the Organization.
 	Username string `json:"username"`
+
+	// FirstName: first name of the user.
+	FirstName string `json:"first_name"`
+
+	// LastName: last name of the user.
+	LastName string `json:"last_name"`
+
+	// PhoneNumber: phone number of the user.
+	PhoneNumber string `json:"phone_number"`
+
+	// Locale: locale of the user.
+	Locale string `json:"locale"`
 
 	// CreatedAt: date user was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -2461,6 +2485,18 @@ type UpdateUserRequest struct {
 
 	// Email: iAM member email.
 	Email *string `json:"email,omitempty"`
+
+	// FirstName: iAM member first name.
+	FirstName *string `json:"first_name,omitempty"`
+
+	// LastName: iAM member last name.
+	LastName *string `json:"last_name,omitempty"`
+
+	// PhoneNumber: iAM member phone number.
+	PhoneNumber *string `json:"phone_number,omitempty"`
+
+	// Locale: iAM member locale.
+	Locale *string `json:"locale,omitempty"`
 }
 
 // UpdateUserUsernameRequest: update user username request.
