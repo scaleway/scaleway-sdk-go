@@ -113,17 +113,14 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 	return snapshot.(*Snapshot), nil
 }
 
-func (s *API) FetchLatestEngineVersion(region scw.Region) (*Version, error) {
-	resp, err := s.ListVersions(&ListVersionsRequest{
-		Region: region,
-	}, scw.WithContext(context.Background()))
-
+func (s *API) FetchLatestEngineVersion() (*Version, error) {
+	resp, err := s.ListVersions(&ListVersionsRequest{}, scw.WithContext(context.Background()))
 	if err != nil {
 		return nil, fmt.Errorf("error fetching MongoDB versions: %w", err)
 	}
 
 	if len(resp.Versions) == 0 {
-		return nil, fmt.Errorf("no MongoDB versions found")
+		return nil, errors.New("no MongoDB versions found")
 	}
 
 	sort.Slice(resp.Versions, func(i, j int) bool {
