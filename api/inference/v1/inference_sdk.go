@@ -286,9 +286,6 @@ type ModelSupportedNode struct {
 
 // DeploymentQuantization: deployment quantization.
 type DeploymentQuantization struct {
-	// Enabled: whether to enable quantization for this deployment.
-	Enabled bool `json:"enabled"`
-
 	// Bits: the number of bits each model parameter should be quantized to. The quantization method is chosen based on this value.
 	Bits uint32 `json:"bits"`
 }
