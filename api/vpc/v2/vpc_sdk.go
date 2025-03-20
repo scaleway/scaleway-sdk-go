@@ -1786,7 +1786,7 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*GetACLResp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc/" + fmt.Sprint(req.VpcID) + "/acl-rules",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpcs/" + fmt.Sprint(req.VpcID) + "/acl-rules",
 		Query:  query,
 	}
 
@@ -1818,7 +1818,7 @@ func (s *API) SetACL(req *SetACLRequest, opts ...scw.RequestOption) (*SetACLResp
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PUT",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc/" + fmt.Sprint(req.VpcID) + "/acl-rules",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpcs/" + fmt.Sprint(req.VpcID) + "/acl-rules",
 	}
 
 	err = scwReq.SetBody(req)
