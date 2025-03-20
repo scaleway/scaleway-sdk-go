@@ -1000,6 +1000,9 @@ type AutoConfigDomainDNS struct {
 
 	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
 	AllRecords bool `json:"all_records"`
+
+	// None: no automatic domain configuration. Users must configure their domain for the Web Hosting to work.
+	None bool `json:"none"`
 }
 
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
@@ -1341,8 +1344,8 @@ type DNSAPISyncDomainDNSRecordsRequest struct {
 	// Deprecated: UpdateNameservers: whether or not to synchronize domain nameservers (deprecated, use auto_config_domain_dns).
 	UpdateNameservers *bool `json:"update_nameservers,omitempty"`
 
-	// CustomRecords: custom records to synchronize.
-	CustomRecords []*SyncDomainDNSRecordsRequestRecord `json:"custom_records"`
+	// Deprecated: CustomRecords: custom records to synchronize.
+	CustomRecords *[]*SyncDomainDNSRecordsRequestRecord `json:"custom_records,omitempty"`
 
 	// AutoConfigDomainDNS: whether or not to synchronize each types of records.
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
@@ -1360,8 +1363,11 @@ type DNSRecords struct {
 	// Default value: unknown_status
 	Status DNSRecordsStatus `json:"status"`
 
-	// DNSConfig: records dns auto configuration settings.
-	DNSConfig []DomainDNSAction `json:"dns_config"`
+	// Deprecated: DNSConfig: records dns auto configuration settings (deprecated, use auto_config_domain_dns).
+	DNSConfig *[]DomainDNSAction `json:"dns_config,omitempty"`
+
+	// AutoConfigDomainDNS: whether or not to synchronize each types of records.
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
 // DatabaseAPIAssignDatabaseUserRequest: database api assign database user request.
