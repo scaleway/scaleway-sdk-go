@@ -705,6 +705,7 @@ const (
 	PipelineStatusPending = PipelineStatus("pending")
 	// An event occured and the pipeline may not work.
 	PipelineStatusWarning = PipelineStatus("warning")
+	PipelineStatusLocked  = PipelineStatus("locked")
 )
 
 func (enum PipelineStatus) String() string {
@@ -722,6 +723,7 @@ func (enum PipelineStatus) Values() []PipelineStatus {
 		"error",
 		"pending",
 		"warning",
+		"locked",
 	}
 }
 
