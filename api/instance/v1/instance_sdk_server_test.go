@@ -48,7 +48,7 @@ func TestServerUpdate(t *testing.T) {
 		serverID = createServerResponse.Server.ID
 
 		testhelpers.Assert(t, createServerResponse.Server != nil, "Should have server in response")
-		testhelpers.Assert(t, 1 == len(createServerResponse.Server.Volumes), "should have exactly one volume because we didn't pass volumes map in the requests.")
+		testhelpers.Assert(t, len(createServerResponse.Server.Volumes) == 1, "should have exactly one volume because we didn't pass volumes map in the requests.")
 		for _, volume := range createServerResponse.Server.Volumes {
 			volumeID = volume.ID
 		}
@@ -109,7 +109,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Equals(t, bootType, updateServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, updateServerResponse.Server.CommercialType)
 		testhelpers.Equals(t, *dynamicIPRequired, updateServerResponse.Server.DynamicIPRequired)
-		testhelpers.Assert(t, 1 == len(updateServerResponse.Server.Volumes), "should have exactly one volume because we didn't pass volumes map in the requests.")
+		testhelpers.Assert(t, len(updateServerResponse.Server.Volumes) == 1, "should have exactly one volume because we didn't pass volumes map in the requests.")
 
 		testhelpers.Equals(t, newName, updateServerResponse.Server.Name)
 		testhelpers.Equals(t, updatedTags, updateServerResponse.Server.Tags)
@@ -124,7 +124,7 @@ func TestServerUpdate(t *testing.T) {
 		})
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
-		testhelpers.Assert(t, 0 == len(updateServerResponse.Server.Volumes), "volume should be detached from server.")
+		testhelpers.Assert(t, len(updateServerResponse.Server.Volumes) == 0, "volume should be detached from server.")
 	})
 
 	t.Run("cleanup server and volume", func(t *testing.T) {
