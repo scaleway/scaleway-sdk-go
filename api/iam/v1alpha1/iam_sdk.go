@@ -1545,7 +1545,7 @@ type CreateUserRequest struct {
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
 
-	// Member: details of IAM member. Private Beta feature.
+	// Member: details of IAM member.
 	// Precisely one of Email, Member must be set.
 	Member *CreateUserRequestMember `json:"member,omitempty"`
 }
@@ -2800,7 +2800,7 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// UpdateUserUsername: Update an user's username. Private Beta feature.
+// UpdateUserUsername: Update an user's username.
 func (s *API) UpdateUserUsername(req *UpdateUserUsernameRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2827,7 +2827,7 @@ func (s *API) UpdateUserUsername(req *UpdateUserUsernameRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// UpdateUserPassword: Update an user's password. Private Beta feature.
+// UpdateUserPassword: Update an user's password.
 func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2854,7 +2854,7 @@ func (s *API) UpdateUserPassword(req *UpdateUserPasswordRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// CreateUserMFAOTP: Create a MFA OTP. Private Beta feature.
+// CreateUserMFAOTP: Create a MFA OTP.
 func (s *API) CreateUserMFAOTP(req *CreateUserMFAOTPRequest, opts ...scw.RequestOption) (*MFAOTP, error) {
 	var err error
 
@@ -2881,7 +2881,7 @@ func (s *API) CreateUserMFAOTP(req *CreateUserMFAOTPRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ValidateUserMFAOTP: Validate a MFA OTP. Private Beta feature.
+// ValidateUserMFAOTP: Validate a MFA OTP.
 func (s *API) ValidateUserMFAOTP(req *ValidateUserMFAOTPRequest, opts ...scw.RequestOption) (*ValidateUserMFAOTPResponse, error) {
 	var err error
 
@@ -2908,7 +2908,7 @@ func (s *API) ValidateUserMFAOTP(req *ValidateUserMFAOTPRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// DeleteUserMFAOTP: Delete a MFA OTP. Private Beta feature.
+// DeleteUserMFAOTP: Delete a MFA OTP.
 func (s *API) DeleteUserMFAOTP(req *DeleteUserMFAOTPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2933,7 +2933,7 @@ func (s *API) DeleteUserMFAOTP(req *DeleteUserMFAOTPRequest, opts ...scw.Request
 	return nil
 }
 
-// LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed. Private Beta feature.
+// LockUser: Lock a member. A locked member cannot log in or use API keys until the locked status is removed.
 func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2960,7 +2960,7 @@ func (s *API) LockUser(req *LockUserRequest, opts ...scw.RequestOption) (*User, 
 	return &resp, nil
 }
 
-// UnlockUser: Unlock a member. Private Beta feature.
+// UnlockUser: Unlock a member.
 func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
@@ -2987,7 +2987,7 @@ func (s *API) UnlockUser(req *UnlockUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// ListGracePeriods: List the grace periods of a member. Private Beta feature.
+// ListGracePeriods: List the grace periods of a member.
 func (s *API) ListGracePeriods(req *ListGracePeriodsRequest, opts ...scw.RequestOption) (*ListGracePeriodsResponse, error) {
 	var err error
 
