@@ -1,8 +1,9 @@
-package marketplace
+package marketplace_test
 
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v2"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -17,9 +18,9 @@ func TestGetImageByLabel(t *testing.T) {
 
 	t.Run("matching input for GetLocalImageIDByLabel", func(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
-		marketplaceAPI := NewAPI(client)
+		marketplaceAPI := marketplace.NewAPI(client)
 
-		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
+		image, err := marketplaceAPI.GetLocalImageByLabel(&marketplace.GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
 			ImageLabel:     "ubuntu_focal",
@@ -32,9 +33,9 @@ func TestGetImageByLabel(t *testing.T) {
 
 	t.Run("matching input for GetLocalImageIDByLabel with lowercase image label", func(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
-		marketplaceAPI := NewAPI(client)
+		marketplaceAPI := marketplace.NewAPI(client)
 
-		image, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
+		image, err := marketplaceAPI.GetLocalImageByLabel(&marketplace.GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "dev1-s",
 			ImageLabel:     "ubuntu_focal",
@@ -47,9 +48,9 @@ func TestGetImageByLabel(t *testing.T) {
 
 	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
 		// Create SDK objects for Scaleway Instance product
-		marketplaceAPI := NewAPI(client)
+		marketplaceAPI := marketplace.NewAPI(client)
 
-		_, err := marketplaceAPI.GetLocalImageByLabel(&GetLocalImageByLabelRequest{
+		_, err := marketplaceAPI.GetLocalImageByLabel(&marketplace.GetLocalImageByLabelRequest{
 			Zone:           scw.ZoneFrPar1,
 			CommercialType: "DEV1-S",
 			ImageLabel:     "foo-bar-image",
