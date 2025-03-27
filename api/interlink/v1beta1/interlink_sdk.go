@@ -78,6 +78,92 @@ func (enum *BgpStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DedicatedConnectionStatus string
+
+const (
+	DedicatedConnectionStatusUnknownStatus = DedicatedConnectionStatus("unknown_status")
+	DedicatedConnectionStatusCreated       = DedicatedConnectionStatus("created")
+	DedicatedConnectionStatusConfiguring   = DedicatedConnectionStatus("configuring")
+	DedicatedConnectionStatusFailed        = DedicatedConnectionStatus("failed")
+	DedicatedConnectionStatusActive        = DedicatedConnectionStatus("active")
+	DedicatedConnectionStatusDisabled      = DedicatedConnectionStatus("disabled")
+	DedicatedConnectionStatusDeleted       = DedicatedConnectionStatus("deleted")
+	DedicatedConnectionStatusLocked        = DedicatedConnectionStatus("locked")
+)
+
+func (enum DedicatedConnectionStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_status"
+	}
+	return string(enum)
+}
+
+func (enum DedicatedConnectionStatus) Values() []DedicatedConnectionStatus {
+	return []DedicatedConnectionStatus{
+		"unknown_status",
+		"created",
+		"configuring",
+		"failed",
+		"active",
+		"disabled",
+		"deleted",
+		"locked",
+	}
+}
+
+func (enum DedicatedConnectionStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DedicatedConnectionStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DedicatedConnectionStatus(DedicatedConnectionStatus(tmp).String())
+	return nil
+}
+
+type LinkKind string
+
+const (
+	LinkKindHosted     = LinkKind("hosted")
+	LinkKindSelfHosted = LinkKind("self_hosted")
+)
+
+func (enum LinkKind) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "hosted"
+	}
+	return string(enum)
+}
+
+func (enum LinkKind) Values() []LinkKind {
+	return []LinkKind{
+		"hosted",
+		"self_hosted",
+	}
+}
+
+func (enum LinkKind) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *LinkKind) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = LinkKind(LinkKind(tmp).String())
+	return nil
+}
+
 type LinkStatus string
 
 const (
@@ -134,6 +220,55 @@ func (enum *LinkStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = LinkStatus(LinkStatus(tmp).String())
+	return nil
+}
+
+type ListDedicatedConnectionsRequestOrderBy string
+
+const (
+	ListDedicatedConnectionsRequestOrderByCreatedAtAsc  = ListDedicatedConnectionsRequestOrderBy("created_at_asc")
+	ListDedicatedConnectionsRequestOrderByCreatedAtDesc = ListDedicatedConnectionsRequestOrderBy("created_at_desc")
+	ListDedicatedConnectionsRequestOrderByUpdatedAtAsc  = ListDedicatedConnectionsRequestOrderBy("updated_at_asc")
+	ListDedicatedConnectionsRequestOrderByUpdatedAtDesc = ListDedicatedConnectionsRequestOrderBy("updated_at_desc")
+	ListDedicatedConnectionsRequestOrderByNameAsc       = ListDedicatedConnectionsRequestOrderBy("name_asc")
+	ListDedicatedConnectionsRequestOrderByNameDesc      = ListDedicatedConnectionsRequestOrderBy("name_desc")
+	ListDedicatedConnectionsRequestOrderByStatusAsc     = ListDedicatedConnectionsRequestOrderBy("status_asc")
+	ListDedicatedConnectionsRequestOrderByStatusDesc    = ListDedicatedConnectionsRequestOrderBy("status_desc")
+)
+
+func (enum ListDedicatedConnectionsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "created_at_asc"
+	}
+	return string(enum)
+}
+
+func (enum ListDedicatedConnectionsRequestOrderBy) Values() []ListDedicatedConnectionsRequestOrderBy {
+	return []ListDedicatedConnectionsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"updated_at_asc",
+		"updated_at_desc",
+		"name_asc",
+		"name_desc",
+		"status_asc",
+		"status_desc",
+	}
+}
+
+func (enum ListDedicatedConnectionsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDedicatedConnectionsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDedicatedConnectionsRequestOrderBy(ListDedicatedConnectionsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -297,6 +432,79 @@ func (enum *ListRoutingPoliciesRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+// BgpConfig: bgp config.
+type BgpConfig struct {
+	// Asn: aS Number of the BGP peer.
+	Asn uint32 `json:"asn"`
+
+	// IPv4: iPv4 address of the BGP peer.
+	IPv4 scw.IPNet `json:"ipv4"`
+
+	// IPv6: iPv6 address of the BGP peer.
+	IPv6 scw.IPNet `json:"ipv6"`
+}
+
+// PartnerHost: partner host.
+type PartnerHost struct {
+	// PartnerID: ID of the partner facilitating the link.
+	PartnerID string `json:"partner_id"`
+
+	// PairingKey: used to identify a link from a user or partner's point of view.
+	PairingKey string `json:"pairing_key"`
+
+	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
+	DisapprovedReason *string `json:"disapproved_reason"`
+}
+
+// SelfHost: self host.
+type SelfHost struct {
+	// ConnectionID: dedicated physical connection supporting the link.
+	ConnectionID string `json:"connection_id"`
+}
+
+// DedicatedConnection: dedicated connection.
+type DedicatedConnection struct {
+	// ID: unique identifier of the dedicated connection.
+	ID string `json:"id"`
+
+	// ProjectID: project ID.
+	ProjectID string `json:"project_id"`
+
+	// OrganizationID: organization ID.
+	OrganizationID string `json:"organization_id"`
+
+	// Status: status of the dedicated connection.
+	// Default value: unknown_status
+	Status DedicatedConnectionStatus `json:"status"`
+
+	// Name: name of the dedicated connection.
+	Name string `json:"name"`
+
+	// Tags: list of tags associated with the dedicated connection.
+	Tags []string `json:"tags"`
+
+	// PopID: ID of the PoP where the dedicated connection is located.
+	PopID string `json:"pop_id"`
+
+	// BandwidthMbps: bandwidth size of the dedicated connection.
+	BandwidthMbps uint64 `json:"bandwidth_mbps"`
+
+	// AvailableLinkBandwidths: size of the links supported on this dedicated connection.
+	AvailableLinkBandwidths []uint64 `json:"available_link_bandwidths"`
+
+	// CreatedAt: creation date of the dedicated connection.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last modification date of the dedicated connection.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// DemarcationInfo: demarcation details required by the data center to set up the supporting Cross Connect. This generally includes the physical space in the facility, the cabinet or rack the connection should land in, the patch panel to go in, the port designation, and the media type.
+	DemarcationInfo *string `json:"demarcation_info"`
+
+	// Region: region of the dedicated connection.
+	Region scw.Region `json:"region"`
+}
+
 // Link: link.
 type Link struct {
 	// ID: unique identifier of the link.
@@ -314,11 +522,8 @@ type Link struct {
 	// Tags: list of tags associated with the link.
 	Tags []string `json:"tags"`
 
-	// PopID: ID of the PoP where the link's corresponding port is located.
+	// PopID: ID of the PoP where the link's corresponding connection is located.
 	PopID string `json:"pop_id"`
-
-	// PartnerID: ID of the partner facilitating this link.
-	PartnerID *string `json:"partner_id"`
 
 	// BandwidthMbps: rate limited bandwidth of the link.
 	BandwidthMbps uint64 `json:"bandwidth_mbps"`
@@ -350,11 +555,22 @@ type Link struct {
 	// UpdatedAt: last modification date of the link.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// PairingKey: used to identify a link from a user or partner's point of view.
-	PairingKey string `json:"pairing_key"`
+	// Partner: partner host information.
+	// Precisely one of Partner, Self must be set.
+	Partner *PartnerHost `json:"partner,omitempty"`
 
-	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
-	DisapprovedReason *string `json:"disapproved_reason"`
+	// Self: self-host information.
+	// Precisely one of Partner, Self must be set.
+	Self *SelfHost `json:"self,omitempty"`
+
+	// Vlan: vLAN of the link.
+	Vlan uint32 `json:"vlan"`
+
+	// ScwBgpConfig: bGP configuration on Scaleway's side.
+	ScwBgpConfig *BgpConfig `json:"scw_bgp_config"`
+
+	// PeerBgpConfig: bGP configuration on peer's side (on-premises or other hosting provider).
+	PeerBgpConfig *BgpConfig `json:"peer_bgp_config"`
 
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
@@ -404,7 +620,7 @@ type Pop struct {
 	// LogoURL: image URL of the PoP's logo.
 	LogoURL string `json:"logo_url"`
 
-	// AvailableLinkBandwidthsMbps: available bandwidth in Mbits/s for future hosted_links from available ports in this PoP.
+	// AvailableLinkBandwidthsMbps: available bandwidth in Mbits/s for future hosted links from available connections in this PoP.
 	AvailableLinkBandwidthsMbps []uint64 `json:"available_link_bandwidths_mbps"`
 
 	// Region: region of the PoP.
@@ -485,19 +701,15 @@ type CreateLinkRequest struct {
 	// PopID: poP (location) where the link will be created.
 	PopID string `json:"pop_id"`
 
-	// BandwidthMbps: desired bandwidth for the link. Must be compatible with available link bandwidths and remaining bandwidth capacity of the port.
+	// BandwidthMbps: desired bandwidth for the link. Must be compatible with available link bandwidths and remaining bandwidth capacity of the connection.
 	BandwidthMbps uint64 `json:"bandwidth_mbps"`
 
-	// Dedicated: if true, a dedicated link (1 link per port, dedicated to one customer) will be crated. It is not necessary to specify a `port_id` or `partner_id`. A new port will created and assigned to the link. Note that Scaleway has not yet enabled the creation of dedicated links, this field is reserved for future use.
-	// Precisely one of Dedicated, PortID, PartnerID must be set.
-	Dedicated *bool `json:"dedicated,omitempty"`
+	// ConnectionID: if set, creates a self-hosted link using this dedicated physical connection. As the customer, specify the ID of the physical connection you already have for this link.
+	// Precisely one of ConnectionID, PartnerID must be set.
+	ConnectionID *string `json:"connection_id,omitempty"`
 
-	// PortID: if set, a shared link (N links per port, one of which is this customer's port) will be created. As the customer, specify the ID of the port you already have for this link. Note that shared links are not currently available. Note that Scaleway has not yet enabled the creation of shared links, this field is reserved for future use.
-	// Precisely one of Dedicated, PortID, PartnerID must be set.
-	PortID *string `json:"port_id,omitempty"`
-
-	// PartnerID: if set, a hosted link (N links per port on a partner port) will be created. Specify the ID of the chosen partner, who already has a shareable port with available bandwidth. Note that this is currently the only type of link offered by Scaleway, and therefore this field must be set when creating a link.
-	// Precisely one of Dedicated, PortID, PartnerID must be set.
+	// PartnerID: if set, creates a hosted link on a partner's connection. Specify the ID of the chosen partner, who already has a shared connection with available bandwidth.
+	// Precisely one of ConnectionID, PartnerID must be set.
 	PartnerID *string `json:"partner_id,omitempty"`
 }
 
@@ -576,6 +788,15 @@ type EnableRoutePropagationRequest struct {
 	LinkID string `json:"-"`
 }
 
+// GetDedicatedConnectionRequest: get dedicated connection request.
+type GetDedicatedConnectionRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ConnectionID: ID of connection to get.
+	ConnectionID string `json:"-"`
+}
+
 // GetLinkRequest: get link request.
 type GetLinkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -610,6 +831,72 @@ type GetRoutingPolicyRequest struct {
 
 	// RoutingPolicyID: ID of the routing policy to get.
 	RoutingPolicyID string `json:"-"`
+}
+
+// ListDedicatedConnectionsRequest: list dedicated connections request.
+type ListDedicatedConnectionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: order in which to return results.
+	// Default value: created_at_asc
+	OrderBy ListDedicatedConnectionsRequestOrderBy `json:"-"`
+
+	// Page: page number to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of connections to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: project ID to filter for.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID to filter for.
+	OrganizationID *string `json:"-"`
+
+	// Name: link name to filter for.
+	Name *string `json:"-"`
+
+	// Tags: tags to filter for.
+	Tags []string `json:"-"`
+
+	// Status: connection status to filter for.
+	// Default value: unknown_status
+	Status DedicatedConnectionStatus `json:"-"`
+
+	// BandwidthMbps: filter for dedicated connections with this bandwidth size.
+	BandwidthMbps *uint64 `json:"-"`
+
+	// PopID: filter for dedicated connections present in this PoP.
+	PopID *string `json:"-"`
+}
+
+// ListDedicatedConnectionsResponse: list dedicated connections response.
+type ListDedicatedConnectionsResponse struct {
+	// Connections: list of connections on current page.
+	Connections []*DedicatedConnection `json:"connections"`
+
+	// TotalCount: total number of connections returned.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDedicatedConnectionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDedicatedConnectionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+	results, ok := res.(*ListDedicatedConnectionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Connections = append(r.Connections, results.Connections...)
+	r.TotalCount += uint64(len(results.Connections))
+	return uint64(len(results.Connections)), nil
 }
 
 // ListLinksRequest: list links request.
@@ -651,7 +938,7 @@ type ListLinksRequest struct {
 	// Default value: unknown_bgp_status
 	BgpV6Status BgpStatus `json:"-"`
 
-	// PopID: filter for links attached to this PoP (via ports).
+	// PopID: filter for links attached to this PoP (via connections).
 	PopID *string `json:"-"`
 
 	// BandwidthMbps: filter for link bandwidth (in Mbps).
@@ -668,6 +955,13 @@ type ListLinksRequest struct {
 
 	// PairingKey: filter for the link with this pairing_key.
 	PairingKey *string `json:"-"`
+
+	// Kind: filter for hosted or self-hosted links.
+	// Default value: hosted
+	Kind *LinkKind `json:"-"`
+
+	// ConnectionID: filter for links self-hosted on this connection.
+	ConnectionID *string `json:"-"`
 }
 
 // ListLinksResponse: list links response.
@@ -713,7 +1007,7 @@ type ListPartnersRequest struct {
 	// PageSize: maximum number of partners to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// PopIDs: filter for partners present (offering a port) in one of these PoPs.
+	// PopIDs: filter for partners present (offering a connection) in one of these PoPs.
 	PopIDs []string `json:"-"`
 }
 
@@ -766,11 +1060,14 @@ type ListPopsRequest struct {
 	// HostingProviderName: hosting provider name to filter for.
 	HostingProviderName *string `json:"-"`
 
-	// PartnerID: filter for PoPs hosting an available shared port from this partner.
+	// PartnerID: filter for PoPs hosting an available shared connection from this partner.
 	PartnerID *string `json:"-"`
 
-	// LinkBandwidthMbps: filter for PoPs with a shared port allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
+	// LinkBandwidthMbps: filter for PoPs with a shared connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
 	LinkBandwidthMbps *uint64 `json:"-"`
+
+	// DedicatedAvailable: filter for PoPs with a dedicated connection available for self-hosted links.
+	DedicatedAvailable *bool `json:"-"`
 }
 
 // ListPopsResponse: list pops response.
@@ -906,6 +1203,82 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
+// ListDedicatedConnections: For self-hosted users, list their dedicated physical connections in a given region. By default, the connections returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
+func (s *API) ListDedicatedConnections(req *ListDedicatedConnectionsRequest, opts ...scw.RequestOption) (*ListDedicatedConnectionsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "bandwidth_mbps", req.BandwidthMbps)
+	parameter.AddToQuery(query, "pop_id", req.PopID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/dedicated-connections",
+		Query:  query,
+	}
+
+	var resp ListDedicatedConnectionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetDedicatedConnection: For self-hosted users, get a dedicated physical connection corresponding to the given ID. The response object includes information such as the connection's name, status and total bandwidth.
+func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ...scw.RequestOption) (*DedicatedConnection, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ConnectionID) == "" {
+		return nil, errors.New("field ConnectionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/dedicated-connections/" + fmt.Sprint(req.ConnectionID) + "",
+	}
+
+	var resp DedicatedConnection
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListPartners: List all available partners. By default, the partners returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) (*ListPartnersResponse, error) {
 	var err error
@@ -998,6 +1371,7 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	parameter.AddToQuery(query, "hosting_provider_name", req.HostingProviderName)
 	parameter.AddToQuery(query, "partner_id", req.PartnerID)
 	parameter.AddToQuery(query, "link_bandwidth_mbps", req.LinkBandwidthMbps)
+	parameter.AddToQuery(query, "dedicated_available", req.DedicatedAvailable)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1080,6 +1454,8 @@ func (s *API) ListLinks(req *ListLinksRequest, opts ...scw.RequestOption) (*List
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "routing_policy_id", req.RoutingPolicyID)
 	parameter.AddToQuery(query, "pairing_key", req.PairingKey)
+	parameter.AddToQuery(query, "kind", req.Kind)
+	parameter.AddToQuery(query, "connection_id", req.ConnectionID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1100,7 +1476,7 @@ func (s *API) ListLinks(req *ListLinksRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// GetLink: Get a link (InterLink connection) for the given link ID. The response object includes information about the link's various configuration details.
+// GetLink: Get a link (InterLink session / logical InterLink resource) for the given link ID. The response object includes information about the link's various configuration details.
 func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, error) {
 	var err error
 
@@ -1131,7 +1507,7 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 	return &resp, nil
 }
 
-// CreateLink: Create a link (InterLink connection) in a given PoP, specifying its various configuration details. For the moment only hosted links (faciliated by partners) are available, though in the future dedicated and shared links will also be possible.
+// CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (faciliated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
 func (s *API) CreateLink(req *CreateLinkRequest, opts ...scw.RequestOption) (*Link, error) {
 	var err error
 
