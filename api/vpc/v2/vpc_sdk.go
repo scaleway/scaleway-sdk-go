@@ -965,23 +965,6 @@ type SetACLResponse struct {
 	DefaultPolicy Action `json:"default_policy"`
 }
 
-// SetSubnetsRequest: set subnets request.
-type SetSubnetsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
-
-	// Subnets: private Network subnets CIDR.
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
-// SetSubnetsResponse: set subnets response.
-type SetSubnetsResponse struct {
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
 // UpdatePrivateNetworkRequest: update private network request.
 type UpdatePrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1520,42 +1503,6 @@ func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp ListSubnetsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// SetSubnets: Set subnets for an existing Private Network. Note that the method is PUT and not PATCH. Any existing subnets will be removed in favor of the new specified set of subnets.
-func (s *API) SetSubnets(req *SetSubnetsRequest, opts ...scw.RequestOption) (*SetSubnetsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "PUT",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/subnets",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp SetSubnetsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
