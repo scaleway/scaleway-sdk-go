@@ -2153,7 +2153,7 @@ type ResourceSummary struct {
 	// FtpAccountsCount: total number of active FTP accounts in the Web Hosting plan.
 	FtpAccountsCount uint32 `json:"ftp_accounts_count"`
 
-	// WebsitesCount: total number of active domains in the the Web Hosting plan.
+	// WebsitesCount: total number of active domains in the Web Hosting plan.
 	WebsitesCount uint32 `json:"websites_count"`
 }
 

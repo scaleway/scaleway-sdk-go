@@ -1489,7 +1489,7 @@ type GetFunctionDownloadURLRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// FunctionID: UUID of the function to get the the download URL for.
+	// FunctionID: UUID of the function to get the download URL for.
 	FunctionID string `json:"-"`
 }
 

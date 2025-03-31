@@ -896,7 +896,7 @@ type CreateGatewayNetworkRequest struct {
 	// Precisely one of DHCPID, DHCP, Address, IpamConfig must be set.
 	DHCP *CreateDHCPRequest `json:"dhcp,omitempty"`
 
-	// Address: static IP address in CIDR format to to use without DHCP.
+	// Address: static IP address in CIDR format to use without DHCP.
 	// Precisely one of DHCPID, DHCP, Address, IpamConfig must be set.
 	Address *scw.IPNet `json:"address,omitempty"`
 

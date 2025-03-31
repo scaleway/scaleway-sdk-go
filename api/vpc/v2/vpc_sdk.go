@@ -858,7 +858,7 @@ type ListVPCsRequest struct {
 	// Name: name to filter for. Only VPCs with names containing this string will be returned.
 	Name *string `json:"-"`
 
-	// Tags: tags to filter for. Only VPCs with one more more matching tags will be returned.
+	// Tags: tags to filter for. Only VPCs with one or more matching tags will be returned.
 	Tags []string `json:"-"`
 
 	// OrganizationID: organization ID to filter for. Only VPCs belonging to this Organization will be returned.
