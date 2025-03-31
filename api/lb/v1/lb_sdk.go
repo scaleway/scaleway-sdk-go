@@ -3404,7 +3404,7 @@ type ZonedAPIAttachPrivateNetworkRequest struct {
 	LBID string `json:"-"`
 
 	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
+	PrivateNetworkID string `json:"private_network_id"`
 
 	// Deprecated: StaticConfig: object containing an array of a local IP address for the Load Balancer on this Private Network.
 	// Precisely one of StaticConfig, DHCPConfig, IpamConfig must be set.
@@ -3820,7 +3820,7 @@ type ZonedAPIDetachPrivateNetworkRequest struct {
 	LBID string `json:"-"`
 
 	// PrivateNetworkID: set your instance private network id.
-	PrivateNetworkID string `json:"-"`
+	PrivateNetworkID string `json:"private_network_id"`
 }
 
 // ZonedAPIGetACLRequest: zoned api get acl request.
@@ -6489,13 +6489,9 @@ func (s *ZonedAPI) AttachPrivateNetwork(req *ZonedAPIAttachPrivateNetworkRequest
 		return nil, errors.New("field LBID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/attach",
+		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/attach-private-network",
 	}
 
 	err = scwReq.SetBody(req)
@@ -6529,13 +6525,9 @@ func (s *ZonedAPI) DetachPrivateNetwork(req *ZonedAPIDetachPrivateNetworkRequest
 		return errors.New("field LBID cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/detach",
+		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/detach-private-network",
 	}
 
 	err = scwReq.SetBody(req)
