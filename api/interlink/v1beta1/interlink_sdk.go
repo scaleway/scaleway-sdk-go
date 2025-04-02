@@ -711,6 +711,9 @@ type CreateLinkRequest struct {
 	// PartnerID: if set, creates a hosted link on a partner's connection. Specify the ID of the chosen partner, who already has a shared connection with available bandwidth.
 	// Precisely one of ConnectionID, PartnerID must be set.
 	PartnerID *string `json:"partner_id,omitempty"`
+
+	// PeerAsn: for self-hosted links we need the peer AS Number to establish BGP session. If not given, a default one will be assigned.
+	PeerAsn *uint32 `json:"peer_asn,omitempty"`
 }
 
 // CreateRoutingPolicyRequest: create routing policy request.
@@ -1165,6 +1168,9 @@ type UpdateLinkRequest struct {
 
 	// Tags: list of tags to apply to the link.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// PeerAsn: for self-hosted links, AS Number to establish BGP session.
+	PeerAsn *uint32 `json:"peer_asn,omitempty"`
 }
 
 // UpdateRoutingPolicyRequest: update routing policy request.
