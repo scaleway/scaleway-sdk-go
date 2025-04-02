@@ -4144,7 +4144,7 @@ type setSnapshotResponse struct {
 	Snapshot *Snapshot `json:"snapshot"`
 }
 
-// This API allows you to manage your Instances.
+// This API allows you to manage your CPU and GPU Instances.
 type API struct {
 	client *scw.Client
 }
