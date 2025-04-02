@@ -1906,7 +1906,7 @@ type Task struct {
 
 	HrefResult string `json:"href_result"`
 
-	// Zone: zone in which the task is excecuted.
+	// Zone: zone in which the task is executed.
 	Zone scw.Zone `json:"zone"`
 }
 

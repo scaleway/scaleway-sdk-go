@@ -1254,7 +1254,7 @@ func (s *API) SetDeploymentACLRules(req *SetDeploymentACLRulesRequest, opts ...s
 	return &resp, nil
 }
 
-// DeleteDeploymentACLRule: Delete an exising ACL.
+// DeleteDeploymentACLRule: Delete an existing ACL.
 func (s *API) DeleteDeploymentACLRule(req *DeleteDeploymentACLRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 

@@ -499,7 +499,7 @@ type NodeTypeVolumeType struct {
 	// Description: the description of the volume.
 	Description string `json:"description"`
 
-	// MinSize: mimimum size required for the volume.
+	// MinSize: minimum size required for the volume.
 	MinSize scw.Size `json:"min_size"`
 
 	// MaxSize: maximum size required for the volume.

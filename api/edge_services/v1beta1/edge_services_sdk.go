@@ -703,7 +703,7 @@ const (
 	PipelineStatusError = PipelineStatus("error")
 	// The pipeline status is pending.
 	PipelineStatusPending = PipelineStatus("pending")
-	// An event occured and the pipeline may not work.
+	// An event occurred and the pipeline may not work.
 	PipelineStatusWarning = PipelineStatus("warning")
 	PipelineStatusLocked  = PipelineStatus("locked")
 )
@@ -788,7 +788,7 @@ type PurgeRequestStatus string
 const (
 	// Purge request status unknown (default).
 	PurgeRequestStatusUnknownStatus = PurgeRequestStatus("unknown_status")
-	// The purge request has been processed sucessfully.
+	// The purge request has been processed successfully.
 	PurgeRequestStatusDone = PurgeRequestStatus("done")
 	// An error occurred during the purge request.
 	PurgeRequestStatusError = PurgeRequestStatus("error")
