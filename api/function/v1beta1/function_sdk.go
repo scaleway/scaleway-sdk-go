@@ -1180,7 +1180,7 @@ type Token struct {
 	// Precisely one of FunctionID, NamespaceID must be set.
 	FunctionID *string `json:"function_id,omitempty"`
 
-	// NamespaceID: UUID of the namespace the token is assoicated with.
+	// NamespaceID: UUID of the namespace the token is associated with.
 	// Precisely one of FunctionID, NamespaceID must be set.
 	NamespaceID *string `json:"namespace_id,omitempty"`
 
@@ -1287,7 +1287,7 @@ type CreateFunctionRequest struct {
 	// EnvironmentVariables: environment variables of the function.
 	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
 
-	// MinScale: minumum number of instances to scale the function to.
+	// MinScale: minimum number of instances to scale the function to.
 	MinScale *uint32 `json:"min_scale,omitempty"`
 
 	// MaxScale: maximum number of instances to scale the function to.
@@ -1603,7 +1603,7 @@ type ListDomainsRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListDomainsRequestOrderBy `json:"-"`
 
-	// FunctionID: UUID of the function the domain is assoicated with.
+	// FunctionID: UUID of the function the domain is associated with.
 	FunctionID string `json:"-"`
 }
 
@@ -1690,7 +1690,7 @@ type ListFunctionsRequest struct {
 	// Name: name of the function.
 	Name *string `json:"-"`
 
-	// OrganizationID: UUID of the Organziation the function belongs to.
+	// OrganizationID: UUID of the Organization the function belongs to.
 	OrganizationID *string `json:"-"`
 
 	// ProjectID: UUID of the Project the function belongs to.
@@ -1792,7 +1792,7 @@ type ListTokensRequest struct {
 	// Default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
 
-	// FunctionID: UUID of the function the token is assoicated with.
+	// FunctionID: UUID of the function the token is associated with.
 	FunctionID *string `json:"-"`
 
 	// NamespaceID: UUID of the namespace the token is associated with.
@@ -1913,7 +1913,7 @@ type UpdateFunctionRequest struct {
 	// EnvironmentVariables: environment variables of the function to update.
 	EnvironmentVariables *map[string]string `json:"environment_variables,omitempty"`
 
-	// MinScale: minumum number of instances to scale the function to.
+	// MinScale: minimum number of instances to scale the function to.
 	MinScale *uint32 `json:"min_scale,omitempty"`
 
 	// MaxScale: maximum number of instances to scale the function to.

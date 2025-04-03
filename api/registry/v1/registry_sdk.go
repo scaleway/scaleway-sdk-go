@@ -376,7 +376,7 @@ type Namespace struct {
 	// ID: UUID of the namespace.
 	ID string `json:"id"`
 
-	// Name: name of the namespace, unique in a region accross all organizations.
+	// Name: name of the namespace, unique in a region across all organizations.
 	Name string `json:"name"`
 
 	// Description: description of the namespace.

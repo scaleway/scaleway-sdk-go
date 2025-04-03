@@ -1513,7 +1513,7 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 	return &resp, nil
 }
 
-// CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (faciliated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
+// CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (facilitated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
 func (s *API) CreateLink(req *CreateLinkRequest, opts ...scw.RequestOption) (*Link, error) {
 	var err error
 
