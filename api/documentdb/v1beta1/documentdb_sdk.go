@@ -1144,7 +1144,7 @@ type Volume struct {
 
 // NodeTypeVolumeConstraintSizes: node type volume constraint sizes.
 type NodeTypeVolumeConstraintSizes struct {
-	// MinSize: [deprecated] Mimimum size required for the Volume.
+	// MinSize: [deprecated] Minimum size required for the Volume.
 	MinSize scw.Size `json:"min_size"`
 
 	// MaxSize: [deprecated] Maximum size required for the Volume.
@@ -1160,7 +1160,7 @@ type NodeTypeVolumeType struct {
 	// Description: the description of the Volume.
 	Description string `json:"description"`
 
-	// MinSize: mimimum size required for the Volume.
+	// MinSize: minimum size required for the Volume.
 	MinSize scw.Size `json:"min_size"`
 
 	// MaxSize: maximum size required for the Volume.
@@ -3401,7 +3401,7 @@ func (s *API) DeleteInstanceSettings(req *DeleteInstanceSettingsRequest, opts ..
 	return &resp, nil
 }
 
-// SetInstanceSettings: Update an advanced setting for a Database Instance. Settings added upon database engine initalization can only be defined once, and cannot, therefore, be updated.
+// SetInstanceSettings: Update an advanced setting for a Database Instance. Settings added upon database engine initialization can only be defined once, and cannot, therefore, be updated.
 func (s *API) SetInstanceSettings(req *SetInstanceSettingsRequest, opts ...scw.RequestOption) (*SetInstanceSettingsResponse, error) {
 	var err error
 

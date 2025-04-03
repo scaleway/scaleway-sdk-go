@@ -2725,7 +2725,7 @@ type OfferSANInfo struct {
 	// Size: sAN size (in bytes).
 	Size uint64 `json:"size"`
 
-	// Ha: high availabilty offer.
+	// Ha: high availability offer.
 	Ha bool `json:"ha"`
 
 	// DeviceType: type of SAN device (hdd / ssd).
@@ -2915,10 +2915,10 @@ type OS struct {
 	// PanelPasswordRegex: regex used to validate the panel installation password.
 	PanelPasswordRegex *string `json:"panel_password_regex"`
 
-	// RequiresValidHostname: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criterias must be valid.
+	// RequiresValidHostname: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
 	RequiresValidHostname *bool `json:"requires_valid_hostname"`
 
-	// HostnameRegex: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criterias must be valid.
+	// HostnameRegex: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
 	HostnameRegex *string `json:"hostname_regex"`
 
 	// HostnameMaxLength: hostname max length.

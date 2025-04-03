@@ -1472,7 +1472,7 @@ func (s *API) DeleteClusterSetting(req *DeleteClusterSettingRequest, opts ...scw
 	return &resp, nil
 }
 
-// SetClusterSettings: Update an advanced setting for a Redis™ Database Instance (Redis™ cluster). Settings added upon database engine initalization can only be defined once, and cannot, therefore, be updated.
+// SetClusterSettings: Update an advanced setting for a Redis™ Database Instance (Redis™ cluster). Settings added upon database engine initialization can only be defined once, and cannot, therefore, be updated.
 func (s *API) SetClusterSettings(req *SetClusterSettingsRequest, opts ...scw.RequestOption) (*ClusterSettingsResponse, error) {
 	var err error
 

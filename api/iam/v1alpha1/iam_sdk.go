@@ -3243,7 +3243,7 @@ func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetGroup: Retrive information about a given group, specified by the `group_id` parameter. The group's full details, including `user_ids` and `application_ids` are returned in the response.
+// GetGroup: Retrieve information about a given group, specified by the `group_id` parameter. The group's full details, including `user_ids` and `application_ids` are returned in the response.
 func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -3740,7 +3740,7 @@ func (s *API) CreateAPIKey(req *CreateAPIKeyRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetAPIKey: Retrive information about an API key, specified by the `access_key` parameter. The API key's details, including either the `user_id` or `application_id` of its bearer are returned in the response. Note that the string value for the `secret_key` is nullable, and therefore is not displayed in the response. The `secret_key` value is only displayed upon API key creation.
+// GetAPIKey: Retrieve information about an API key, specified by the `access_key` parameter. The API key's details, including either the `user_id` or `application_id` of its bearer are returned in the response. Note that the string value for the `secret_key` is nullable, and therefore is not displayed in the response. The `secret_key` value is only displayed upon API key creation.
 func (s *API) GetAPIKey(req *GetAPIKeyRequest, opts ...scw.RequestOption) (*APIKey, error) {
 	var err error
 

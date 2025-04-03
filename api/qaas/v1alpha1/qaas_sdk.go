@@ -885,7 +885,7 @@ type Platform struct {
 	// ID: unique ID of the platform.
 	ID string `json:"id"`
 
-	// Version: verison of the platform.
+	// Version: version of the platform.
 	Version string `json:"version"`
 
 	// Name: name of the platform.
@@ -915,7 +915,7 @@ type Platform struct {
 	// Metadata: metadata provided by the platform.
 	Metadata string `json:"metadata"`
 
-	// PricePerHour: price to be payed per hour (excluding free tiers).
+	// PricePerHour: price to be paid per hour (excluding free tiers).
 	PricePerHour *scw.Money `json:"price_per_hour"`
 
 	// Hardware: specifications of the underlying hardware.

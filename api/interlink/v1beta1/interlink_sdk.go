@@ -711,6 +711,9 @@ type CreateLinkRequest struct {
 	// PartnerID: if set, creates a hosted link on a partner's connection. Specify the ID of the chosen partner, who already has a shared connection with available bandwidth.
 	// Precisely one of ConnectionID, PartnerID must be set.
 	PartnerID *string `json:"partner_id,omitempty"`
+
+	// PeerAsn: for self-hosted links we need the peer AS Number to establish BGP session. If not given, a default one will be assigned.
+	PeerAsn *uint32 `json:"peer_asn,omitempty"`
 }
 
 // CreateRoutingPolicyRequest: create routing policy request.
@@ -1165,6 +1168,9 @@ type UpdateLinkRequest struct {
 
 	// Tags: list of tags to apply to the link.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// PeerAsn: for self-hosted links, AS Number to establish BGP session.
+	PeerAsn *uint32 `json:"peer_asn,omitempty"`
 }
 
 // UpdateRoutingPolicyRequest: update routing policy request.
@@ -1507,7 +1513,7 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 	return &resp, nil
 }
 
-// CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (faciliated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
+// CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (facilitated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
 func (s *API) CreateLink(req *CreateLinkRequest, opts ...scw.RequestOption) (*Link, error) {
 	var err error
 

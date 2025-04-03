@@ -1283,7 +1283,7 @@ type ListDevicesRequest struct {
 	// HubID: hub ID to filter for, only devices attached to this Hub will be returned.
 	HubID *string `json:"-"`
 
-	// AllowInsecure: defines wheter to filter the allow_insecure flag.
+	// AllowInsecure: defines whether to filter the allow_insecure flag.
 	AllowInsecure *bool `json:"-"`
 
 	// Status: device status (enabled, disabled, etc.).

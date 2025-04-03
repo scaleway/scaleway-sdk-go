@@ -1906,7 +1906,7 @@ type Task struct {
 
 	HrefResult string `json:"href_result"`
 
-	// Zone: zone in which the task is excecuted.
+	// Zone: zone in which the task is executed.
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -4144,7 +4144,7 @@ type setSnapshotResponse struct {
 	Snapshot *Snapshot `json:"snapshot"`
 }
 
-// This API allows you to manage your Instances.
+// This API allows you to manage your CPU and GPU Instances.
 type API struct {
 	client *scw.Client
 }
