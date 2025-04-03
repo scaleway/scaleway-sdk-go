@@ -2354,6 +2354,9 @@ type CreateServerRequest struct {
 	// DynamicIPRequired: define if a dynamic IPv4 is required for the Instance.
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
+	// Instance is protected against accidental deletion.
+	Protected *bool `json:"protected,omitempty"`
+
 	// Deprecated: RoutedIPEnabled: if true, configure the Instance so it uses the new routed IP mode.
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 
