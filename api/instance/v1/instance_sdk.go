@@ -2398,6 +2398,9 @@ type CreateServerRequest struct {
 
 	// AdminPasswordEncryptionSSHKeyID: the public_key value of this key is used to encrypt the admin password.
 	AdminPasswordEncryptionSSHKeyID *string `json:"admin_password_encryption_ssh_key_id,omitempty"`
+
+	// Protected: true to activate server protection option.
+	Protected bool `json:"protected,omitempty"`
 }
 
 // CreateServerResponse: create server response.
@@ -3835,6 +3838,7 @@ type UpdateServerRequest struct {
 	// Deprecated
 	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
 
+	// Protected: true to activate server protection option.
 	Protected *bool `json:"protected,omitempty"`
 
 	SecurityGroup *SecurityGroupTemplate `json:"security_group,omitempty"`
