@@ -1669,6 +1669,9 @@ type Server struct {
 
 	// AdminPasswordEncryptedValue: this value is reset when admin_password_encryption_ssh_key_id is set to an empty string.
 	AdminPasswordEncryptedValue *string `json:"admin_password_encrypted_value"`
+
+	// EndOfService: true if the Instance type has reached end of service.
+	EndOfService bool `json:"end_of_service"`
 }
 
 // IP: ip.
