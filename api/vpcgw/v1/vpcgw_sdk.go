@@ -1698,7 +1698,7 @@ func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
 
-// ListGateways: List Public Gateways in a given Scaleway Organization or Project. By default, results are displayed in ascending order of creation date.
+// Deprecated: ListGateways: List Public Gateways in a given Scaleway Organization or Project. By default, results are displayed in ascending order of creation date.
 func (s *API) ListGateways(req *ListGatewaysRequest, opts ...scw.RequestOption) (*ListGatewaysResponse, error) {
 	var err error
 
@@ -1743,7 +1743,7 @@ func (s *API) ListGateways(req *ListGatewaysRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetGateway: Get details of a Public Gateway, specified by its gateway ID. The response object contains full details of the gateway, including its **name**, **type**, **status** and more.
+// Deprecated: GetGateway: Get details of a Public Gateway, specified by its gateway ID. The response object contains full details of the gateway, including its **name**, **type**, **status** and more.
 func (s *API) GetGateway(req *GetGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
@@ -1774,7 +1774,7 @@ func (s *API) GetGateway(req *GetGatewayRequest, opts ...scw.RequestOption) (*Ga
 	return &resp, nil
 }
 
-// CreateGateway: Create a new Public Gateway in the specified Scaleway Project, defining its **name**, **type** and other configuration details such as whether to enable SSH bastion.
+// Deprecated: CreateGateway: Create a new Public Gateway in the specified Scaleway Project, defining its **name**, **type** and other configuration details such as whether to enable SSH bastion.
 func (s *API) CreateGateway(req *CreateGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
@@ -1815,7 +1815,7 @@ func (s *API) CreateGateway(req *CreateGatewayRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// UpdateGateway: Update the parameters of an existing Public Gateway, for example, its **name**, **tags**, **SSH bastion configuration**, and **DNS servers**.
+// Deprecated: UpdateGateway: Update the parameters of an existing Public Gateway, for example, its **name**, **tags**, **SSH bastion configuration**, and **DNS servers**.
 func (s *API) UpdateGateway(req *UpdateGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
@@ -1851,7 +1851,7 @@ func (s *API) UpdateGateway(req *UpdateGatewayRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteGateway: Delete an existing Public Gateway, specified by its gateway ID. This action is irreversible.
+// Deprecated: DeleteGateway: Delete an existing Public Gateway, specified by its gateway ID. This action is irreversible.
 func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1884,7 +1884,7 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// UpgradeGateway: Upgrade a given Public Gateway to the newest software version or to a different commercial offer type. This applies the latest bugfixes and features to your Public Gateway. Note that gateway service will be interrupted during the update.
+// Deprecated: UpgradeGateway: Upgrade a given Public Gateway to the newest software version or to a different commercial offer type. This applies the latest bugfixes and features to your Public Gateway. Note that gateway service will be interrupted during the update.
 func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
@@ -1920,7 +1920,7 @@ func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// EnableIPMobility: Upgrade a Public Gateway to IP mobility (move from NAT IP to routed IP). This is idempotent: repeated calls after the first will return no error but have no effect.
+// Deprecated: EnableIPMobility: Upgrade a Public Gateway to IP mobility (move from NAT IP to routed IP). This is idempotent: repeated calls after the first will return no error but have no effect.
 func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1954,7 +1954,7 @@ func (s *API) EnableIPMobility(req *EnableIPMobilityRequest, opts ...scw.Request
 	return nil
 }
 
-// ListGatewayNetworks: List the connections between Public Gateways and Private Networks (a connection = a GatewayNetwork). You can choose to filter by `gateway-id` to list all Private Networks attached to the specified Public Gateway, or by `private_network_id` to list all Public Gateways attached to the specified Private Network. Other query parameters are also available. The result is an array of GatewayNetwork objects, each giving details of the connection between a given Public Gateway and a given Private Network.
+// Deprecated: ListGatewayNetworks: List the connections between Public Gateways and Private Networks (a connection = a GatewayNetwork). You can choose to filter by `gateway-id` to list all Private Networks attached to the specified Public Gateway, or by `private_network_id` to list all Public Gateways attached to the specified Private Network. Other query parameters are also available. The result is an array of GatewayNetwork objects, each giving details of the connection between a given Public Gateway and a given Private Network.
 func (s *API) ListGatewayNetworks(req *ListGatewayNetworksRequest, opts ...scw.RequestOption) (*ListGatewayNetworksResponse, error) {
 	var err error
 
@@ -1997,7 +1997,7 @@ func (s *API) ListGatewayNetworks(req *ListGatewayNetworksRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// GetGatewayNetwork: Get details of a given connection between a Public Gateway and a Private Network (this connection = a GatewayNetwork), specified by its `gateway_network_id`. The response object contains details of the connection including the IDs of the Public Gateway and Private Network, the dates the connection was created/updated and its configuration settings.
+// Deprecated: GetGatewayNetwork: Get details of a given connection between a Public Gateway and a Private Network (this connection = a GatewayNetwork), specified by its `gateway_network_id`. The response object contains details of the connection including the IDs of the Public Gateway and Private Network, the dates the connection was created/updated and its configuration settings.
 func (s *API) GetGatewayNetwork(req *GetGatewayNetworkRequest, opts ...scw.RequestOption) (*GatewayNetwork, error) {
 	var err error
 
@@ -2028,7 +2028,7 @@ func (s *API) GetGatewayNetwork(req *GetGatewayNetworkRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// CreateGatewayNetwork: Attach a specific Public Gateway to a specific Private Network (create a GatewayNetwork). You can configure parameters for the connection including DHCP settings, whether to enable masquerade (dynamic NAT), and more.
+// Deprecated: CreateGatewayNetwork: Attach a specific Public Gateway to a specific Private Network (create a GatewayNetwork). You can configure parameters for the connection including DHCP settings, whether to enable masquerade (dynamic NAT), and more.
 func (s *API) CreateGatewayNetwork(req *CreateGatewayNetworkRequest, opts ...scw.RequestOption) (*GatewayNetwork, error) {
 	var err error
 
@@ -2060,7 +2060,7 @@ func (s *API) CreateGatewayNetwork(req *CreateGatewayNetworkRequest, opts ...scw
 	return &resp, nil
 }
 
-// UpdateGatewayNetwork: Update the configuration parameters of a connection between a given Public Gateway and Private Network (the connection = a GatewayNetwork). Updatable parameters include DHCP settings and whether to enable traffic masquerade (dynamic NAT).
+// Deprecated: UpdateGatewayNetwork: Update the configuration parameters of a connection between a given Public Gateway and Private Network (the connection = a GatewayNetwork). Updatable parameters include DHCP settings and whether to enable traffic masquerade (dynamic NAT).
 func (s *API) UpdateGatewayNetwork(req *UpdateGatewayNetworkRequest, opts ...scw.RequestOption) (*GatewayNetwork, error) {
 	var err error
 
@@ -2096,7 +2096,7 @@ func (s *API) UpdateGatewayNetwork(req *UpdateGatewayNetworkRequest, opts ...scw
 	return &resp, nil
 }
 
-// DeleteGatewayNetwork: Detach a given Public Gateway from a given Private Network, i.e. delete a GatewayNetwork specified by a gateway_network_id.
+// Deprecated: DeleteGatewayNetwork: Detach a given Public Gateway from a given Private Network, i.e. delete a GatewayNetwork specified by a gateway_network_id.
 func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2129,7 +2129,7 @@ func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw
 	return nil
 }
 
-// ListDHCPs: List DHCP configurations, optionally filtering by Organization, Project, Public Gateway IP address or more. The response is an array of DHCP configuration objects, each identified by a DHCP ID and containing configuration settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. Note that the response does not contain the IDs of any Private Network / Public Gateway the configuration is attached to. Use the `List Public Gateway connections to Private Networks` method for that purpose, filtering on DHCP ID.
+// Deprecated: ListDHCPs: List DHCP configurations, optionally filtering by Organization, Project, Public Gateway IP address or more. The response is an array of DHCP configuration objects, each identified by a DHCP ID and containing configuration settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. Note that the response does not contain the IDs of any Private Network / Public Gateway the configuration is attached to. Use the `List Public Gateway connections to Private Networks` method for that purpose, filtering on DHCP ID.
 func (s *API) ListDHCPs(req *ListDHCPsRequest, opts ...scw.RequestOption) (*ListDHCPsResponse, error) {
 	var err error
 
@@ -2171,7 +2171,7 @@ func (s *API) ListDHCPs(req *ListDHCPsRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// GetDHCP: Get a DHCP configuration object, identified by its DHCP ID. The response object contains configuration settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. Note that the response does not contain the IDs of any Private Network / Public Gateway the configuration is attached to. Use the `List Public Gateway connections to Private Networks` method for that purpose, filtering on DHCP ID.
+// Deprecated: GetDHCP: Get a DHCP configuration object, identified by its DHCP ID. The response object contains configuration settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. Note that the response does not contain the IDs of any Private Network / Public Gateway the configuration is attached to. Use the `List Public Gateway connections to Private Networks` method for that purpose, filtering on DHCP ID.
 func (s *API) GetDHCP(req *GetDHCPRequest, opts ...scw.RequestOption) (*DHCP, error) {
 	var err error
 
@@ -2202,7 +2202,7 @@ func (s *API) GetDHCP(req *GetDHCPRequest, opts ...scw.RequestOption) (*DHCP, er
 	return &resp, nil
 }
 
-// CreateDHCP: Create a new DHCP configuration object, containing settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. The response object includes the ID of the DHCP configuration object. You can use this ID as part of a call to `Create a Public Gateway connection to a Private Network` or `Update a Public Gateway connection to a Private Network` to directly apply this DHCP configuration.
+// Deprecated: CreateDHCP: Create a new DHCP configuration object, containing settings for the assignment of IP addresses to devices on a Private Network attached to a Public Gateway. The response object includes the ID of the DHCP configuration object. You can use this ID as part of a call to `Create a Public Gateway connection to a Private Network` or `Update a Public Gateway connection to a Private Network` to directly apply this DHCP configuration.
 func (s *API) CreateDHCP(req *CreateDHCPRequest, opts ...scw.RequestOption) (*DHCP, error) {
 	var err error
 
@@ -2239,7 +2239,7 @@ func (s *API) CreateDHCP(req *CreateDHCPRequest, opts ...scw.RequestOption) (*DH
 	return &resp, nil
 }
 
-// UpdateDHCP: Update a DHCP configuration object, identified by its DHCP ID.
+// Deprecated: UpdateDHCP: Update a DHCP configuration object, identified by its DHCP ID.
 func (s *API) UpdateDHCP(req *UpdateDHCPRequest, opts ...scw.RequestOption) (*DHCP, error) {
 	var err error
 
@@ -2275,7 +2275,7 @@ func (s *API) UpdateDHCP(req *UpdateDHCPRequest, opts ...scw.RequestOption) (*DH
 	return &resp, nil
 }
 
-// DeleteDHCP: Delete a DHCP configuration object, identified by its DHCP ID. Note that you cannot delete a DHCP configuration object that is currently being used by a Gateway Network.
+// Deprecated: DeleteDHCP: Delete a DHCP configuration object, identified by its DHCP ID. Note that you cannot delete a DHCP configuration object that is currently being used by a Gateway Network.
 func (s *API) DeleteDHCP(req *DeleteDHCPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2304,7 +2304,7 @@ func (s *API) DeleteDHCP(req *DeleteDHCPRequest, opts ...scw.RequestOption) erro
 	return nil
 }
 
-// ListDHCPEntries: List DHCP entries, whether dynamically assigned and/or statically reserved. DHCP entries can be filtered by the Gateway Network they are on, their MAC address, IP address, type or hostname.
+// Deprecated: ListDHCPEntries: List DHCP entries, whether dynamically assigned and/or statically reserved. DHCP entries can be filtered by the Gateway Network they are on, their MAC address, IP address, type or hostname.
 func (s *API) ListDHCPEntries(req *ListDHCPEntriesRequest, opts ...scw.RequestOption) (*ListDHCPEntriesResponse, error) {
 	var err error
 
@@ -2347,7 +2347,7 @@ func (s *API) ListDHCPEntries(req *ListDHCPEntriesRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// GetDHCPEntry: Get a DHCP entry, specified by its DHCP entry ID.
+// Deprecated: GetDHCPEntry: Get a DHCP entry, specified by its DHCP entry ID.
 func (s *API) GetDHCPEntry(req *GetDHCPEntryRequest, opts ...scw.RequestOption) (*DHCPEntry, error) {
 	var err error
 
@@ -2378,7 +2378,7 @@ func (s *API) GetDHCPEntry(req *GetDHCPEntryRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// CreateDHCPEntry: Create a static DHCP reservation, specifying the Gateway Network for the reservation, the MAC address of the target device and the IP address to assign this device. The response is a DHCP entry object, confirming the ID and configuration details of the static DHCP reservation.
+// Deprecated: CreateDHCPEntry: Create a static DHCP reservation, specifying the Gateway Network for the reservation, the MAC address of the target device and the IP address to assign this device. The response is a DHCP entry object, confirming the ID and configuration details of the static DHCP reservation.
 func (s *API) CreateDHCPEntry(req *CreateDHCPEntryRequest, opts ...scw.RequestOption) (*DHCPEntry, error) {
 	var err error
 
@@ -2410,7 +2410,7 @@ func (s *API) CreateDHCPEntry(req *CreateDHCPEntryRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// UpdateDHCPEntry: Update the IP address for a DHCP entry, specified by its DHCP entry ID. You can update an existing DHCP entry of any type (`reservation` (static), `lease` (dynamic) or `unknown`), but in manually updating the IP address the entry will necessarily be of type `reservation` after the update.
+// Deprecated: UpdateDHCPEntry: Update the IP address for a DHCP entry, specified by its DHCP entry ID. You can update an existing DHCP entry of any type (`reservation` (static), `lease` (dynamic) or `unknown`), but in manually updating the IP address the entry will necessarily be of type `reservation` after the update.
 func (s *API) UpdateDHCPEntry(req *UpdateDHCPEntryRequest, opts ...scw.RequestOption) (*DHCPEntry, error) {
 	var err error
 
@@ -2446,7 +2446,7 @@ func (s *API) UpdateDHCPEntry(req *UpdateDHCPEntryRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// SetDHCPEntries: Set the list of DHCP reservations attached to a Gateway Network. Reservations are identified by their MAC address, and will sync the current DHCP entry list to the given list, creating, updating or deleting DHCP entries accordingly.
+// Deprecated: SetDHCPEntries: Set the list of DHCP reservations attached to a Gateway Network. Reservations are identified by their MAC address, and will sync the current DHCP entry list to the given list, creating, updating or deleting DHCP entries accordingly.
 func (s *API) SetDHCPEntries(req *SetDHCPEntriesRequest, opts ...scw.RequestOption) (*SetDHCPEntriesResponse, error) {
 	var err error
 
@@ -2478,7 +2478,7 @@ func (s *API) SetDHCPEntries(req *SetDHCPEntriesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteDHCPEntry: Delete a static DHCP reservation, identified by its DHCP entry ID. Note that you cannot delete DHCP entries of type `lease`, these are deleted automatically when their time-to-live expires.
+// Deprecated: DeleteDHCPEntry: Delete a static DHCP reservation, identified by its DHCP entry ID. Note that you cannot delete DHCP entries of type `lease`, these are deleted automatically when their time-to-live expires.
 func (s *API) DeleteDHCPEntry(req *DeleteDHCPEntryRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2507,7 +2507,7 @@ func (s *API) DeleteDHCPEntry(req *DeleteDHCPEntryRequest, opts ...scw.RequestOp
 	return nil
 }
 
-// ListPATRules: List PAT rules. You can filter by gateway ID to list all PAT rules for a particular gateway, or filter for PAT rules targeting a specific IP address or using a specific protocol.
+// Deprecated: ListPATRules: List PAT rules. You can filter by gateway ID to list all PAT rules for a particular gateway, or filter for PAT rules targeting a specific IP address or using a specific protocol.
 func (s *API) ListPATRules(req *ListPATRulesRequest, opts ...scw.RequestOption) (*ListPATRulesResponse, error) {
 	var err error
 
@@ -2548,7 +2548,7 @@ func (s *API) ListPATRules(req *ListPATRulesRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetPATRule: Get a PAT rule, specified by its PAT rule ID. The response object gives full details of the PAT rule, including the Public Gateway it belongs to and the configuration settings in terms of public / private ports, private IP and protocol.
+// Deprecated: GetPATRule: Get a PAT rule, specified by its PAT rule ID. The response object gives full details of the PAT rule, including the Public Gateway it belongs to and the configuration settings in terms of public / private ports, private IP and protocol.
 func (s *API) GetPATRule(req *GetPATRuleRequest, opts ...scw.RequestOption) (*PATRule, error) {
 	var err error
 
@@ -2579,7 +2579,7 @@ func (s *API) GetPATRule(req *GetPATRuleRequest, opts ...scw.RequestOption) (*PA
 	return &resp, nil
 }
 
-// CreatePATRule: Create a new PAT rule on a specified Public Gateway, defining the protocol to use, public port to listen on, and private port / IP address to map to.
+// Deprecated: CreatePATRule: Create a new PAT rule on a specified Public Gateway, defining the protocol to use, public port to listen on, and private port / IP address to map to.
 func (s *API) CreatePATRule(req *CreatePATRuleRequest, opts ...scw.RequestOption) (*PATRule, error) {
 	var err error
 
@@ -2611,7 +2611,7 @@ func (s *API) CreatePATRule(req *CreatePATRuleRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// UpdatePATRule: Update a PAT rule, specified by its PAT rule ID. Configuration settings including private/public port, private IP address and protocol can all be updated.
+// Deprecated: UpdatePATRule: Update a PAT rule, specified by its PAT rule ID. Configuration settings including private/public port, private IP address and protocol can all be updated.
 func (s *API) UpdatePATRule(req *UpdatePATRuleRequest, opts ...scw.RequestOption) (*PATRule, error) {
 	var err error
 
@@ -2647,7 +2647,7 @@ func (s *API) UpdatePATRule(req *UpdatePATRuleRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// SetPATRules: Set a definitive list of PAT rules attached to a Public Gateway. Each rule is identified by its public port and protocol. This will sync the current PAT rule list on the gateway with the new list, creating, updating or deleting PAT rules accordingly.
+// Deprecated: SetPATRules: Set a definitive list of PAT rules attached to a Public Gateway. Each rule is identified by its public port and protocol. This will sync the current PAT rule list on the gateway with the new list, creating, updating or deleting PAT rules accordingly.
 func (s *API) SetPATRules(req *SetPATRulesRequest, opts ...scw.RequestOption) (*SetPATRulesResponse, error) {
 	var err error
 
@@ -2679,7 +2679,7 @@ func (s *API) SetPATRules(req *SetPATRulesRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// DeletePATRule: Delete a PAT rule, identified by its PAT rule ID. This action is irreversible.
+// Deprecated: DeletePATRule: Delete a PAT rule, identified by its PAT rule ID. This action is irreversible.
 func (s *API) DeletePATRule(req *DeletePATRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2708,7 +2708,7 @@ func (s *API) DeletePATRule(req *DeletePATRuleRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// ListGatewayTypes: List the different Public Gateway commercial offer types available at Scaleway. The response is an array of objects describing the name and technical details of each available gateway type.
+// Deprecated: ListGatewayTypes: List the different Public Gateway commercial offer types available at Scaleway. The response is an array of objects describing the name and technical details of each available gateway type.
 func (s *API) ListGatewayTypes(req *ListGatewayTypesRequest, opts ...scw.RequestOption) (*ListGatewayTypesResponse, error) {
 	var err error
 
@@ -2735,7 +2735,7 @@ func (s *API) ListGatewayTypes(req *ListGatewayTypesRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ListIPs: List Public Gateway flexible IP addresses. A number of filter options are available for limiting results in the response.
+// Deprecated: ListIPs: List Public Gateway flexible IP addresses. A number of filter options are available for limiting results in the response.
 func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsResponse, error) {
 	var err error
 
@@ -2778,7 +2778,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	return &resp, nil
 }
 
-// GetIP: Get details of a Public Gateway flexible IP address, identified by its IP ID. The response object contains information including which (if any) Public Gateway using this IP address, the reverse and various other metadata.
+// Deprecated: GetIP: Get details of a Public Gateway flexible IP address, identified by its IP ID. The response object contains information including which (if any) Public Gateway using this IP address, the reverse and various other metadata.
 func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2809,7 +2809,7 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	return &resp, nil
 }
 
-// CreateIP: Create (reserve) a new flexible IP address that can be used for a Public Gateway in a specified Scaleway Project.
+// Deprecated: CreateIP: Create (reserve) a new flexible IP address that can be used for a Public Gateway in a specified Scaleway Project.
 func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2846,7 +2846,7 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 	return &resp, nil
 }
 
-// UpdateIP: Update details of an existing flexible IP address, including its tags, reverse and the Public Gateway it is assigned to.
+// Deprecated: UpdateIP: Update details of an existing flexible IP address, including its tags, reverse and the Public Gateway it is assigned to.
 func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -2882,7 +2882,7 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	return &resp, nil
 }
 
-// DeleteIP: Delete a flexible IP address from your account. This action is irreversible.
+// Deprecated: DeleteIP: Delete a flexible IP address from your account. This action is irreversible.
 func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2911,7 +2911,7 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 	return nil
 }
 
-// RefreshSSHKeys: Refresh the SSH keys of a given Public Gateway, specified by its gateway ID. This adds any new SSH keys in the gateway's Scaleway Project to the gateway itself.
+// Deprecated: RefreshSSHKeys: Refresh the SSH keys of a given Public Gateway, specified by its gateway ID. This adds any new SSH keys in the gateway's Scaleway Project to the gateway itself.
 func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOption) (*Gateway, error) {
 	var err error
 
@@ -2947,7 +2947,7 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// MigrateToV2: Put a Public Gateway in IPAM mode, so that it can be used with the Public Gateways API v2. This call is idempotent.
+// Deprecated: MigrateToV2: Put a Public Gateway in IPAM mode, so that it can be used with the Public Gateways API v2. This call is idempotent.
 func (s *API) MigrateToV2(req *MigrateToV2Request, opts ...scw.RequestOption) error {
 	var err error
 
