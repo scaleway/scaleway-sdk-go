@@ -187,6 +187,41 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type QualificationAiMachineSubUseCase string
+
+const (
+	QualificationAiMachineSubUseCaseUnknownSubUseCase = QualificationAiMachineSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationAiMachineSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationAiMachineSubUseCase) Values() []QualificationAiMachineSubUseCase {
+	return []QualificationAiMachineSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationAiMachineSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationAiMachineSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationAiMachineSubUseCase(QualificationAiMachineSubUseCase(tmp).String())
+	return nil
+}
+
 type QualificationArchitectureType string
 
 const (
@@ -244,6 +279,111 @@ func (enum *QualificationArchitectureType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = QualificationArchitectureType(QualificationArchitectureType(tmp).String())
+	return nil
+}
+
+type QualificationArchiveDataSubUseCase string
+
+const (
+	QualificationArchiveDataSubUseCaseUnknownSubUseCase = QualificationArchiveDataSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationArchiveDataSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationArchiveDataSubUseCase) Values() []QualificationArchiveDataSubUseCase {
+	return []QualificationArchiveDataSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationArchiveDataSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationArchiveDataSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationArchiveDataSubUseCase(QualificationArchiveDataSubUseCase(tmp).String())
+	return nil
+}
+
+type QualificationContainerSubUseCase string
+
+const (
+	QualificationContainerSubUseCaseUnknownSubUseCase = QualificationContainerSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationContainerSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationContainerSubUseCase) Values() []QualificationContainerSubUseCase {
+	return []QualificationContainerSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationContainerSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationContainerSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationContainerSubUseCase(QualificationContainerSubUseCase(tmp).String())
+	return nil
+}
+
+type QualificationDeploySoftwareSubUseCase string
+
+const (
+	QualificationDeploySoftwareSubUseCaseUnknownSubUseCase = QualificationDeploySoftwareSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationDeploySoftwareSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationDeploySoftwareSubUseCase) Values() []QualificationDeploySoftwareSubUseCase {
+	return []QualificationDeploySoftwareSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationDeploySoftwareSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationDeploySoftwareSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationDeploySoftwareSubUseCase(QualificationDeploySoftwareSubUseCase(tmp).String())
 	return nil
 }
 
@@ -329,6 +469,111 @@ func (enum *QualificationHostWebsiteSubUseCase) UnmarshalJSON(data []byte) error
 	return nil
 }
 
+type QualificationOtherUseCaseSubUseCase string
+
+const (
+	QualificationOtherUseCaseSubUseCaseUnknownSubUseCase = QualificationOtherUseCaseSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationOtherUseCaseSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationOtherUseCaseSubUseCase) Values() []QualificationOtherUseCaseSubUseCase {
+	return []QualificationOtherUseCaseSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationOtherUseCaseSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationOtherUseCaseSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationOtherUseCaseSubUseCase(QualificationOtherUseCaseSubUseCase(tmp).String())
+	return nil
+}
+
+type QualificationSetScalewayEnvironmentSubUseCase string
+
+const (
+	QualificationSetScalewayEnvironmentSubUseCaseUnknownSubUseCase = QualificationSetScalewayEnvironmentSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationSetScalewayEnvironmentSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationSetScalewayEnvironmentSubUseCase) Values() []QualificationSetScalewayEnvironmentSubUseCase {
+	return []QualificationSetScalewayEnvironmentSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationSetScalewayEnvironmentSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationSetScalewayEnvironmentSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationSetScalewayEnvironmentSubUseCase(QualificationSetScalewayEnvironmentSubUseCase(tmp).String())
+	return nil
+}
+
+type QualificationShareDataSubUseCase string
+
+const (
+	QualificationShareDataSubUseCaseUnknownSubUseCase = QualificationShareDataSubUseCase("unknown_sub_use_case")
+)
+
+func (enum QualificationShareDataSubUseCase) String() string {
+	if enum == "" {
+		// return default value if empty
+		return "unknown_sub_use_case"
+	}
+	return string(enum)
+}
+
+func (enum QualificationShareDataSubUseCase) Values() []QualificationShareDataSubUseCase {
+	return []QualificationShareDataSubUseCase{
+		"unknown_sub_use_case",
+	}
+}
+
+func (enum QualificationShareDataSubUseCase) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *QualificationShareDataSubUseCase) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = QualificationShareDataSubUseCase(QualificationShareDataSubUseCase(tmp).String())
+	return nil
+}
+
 // Contract: contract.
 type Contract struct {
 	// ID: ID of the contract.
@@ -353,18 +598,26 @@ type Contract struct {
 
 // QualificationAiMachine: qualification ai machine.
 type QualificationAiMachine struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationAiMachineSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationArchiveData: qualification archive data.
 type QualificationArchiveData struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationArchiveDataSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationContainer: qualification container.
 type QualificationContainer struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationContainerSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationDeploySoftware: qualification deploy software.
 type QualificationDeploySoftware struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationDeploySoftwareSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationHostApplication: qualification host application.
@@ -381,14 +634,20 @@ type QualificationHostWebsite struct {
 
 // QualificationOtherUseCase: qualification other use case.
 type QualificationOtherUseCase struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationOtherUseCaseSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationSetScalewayEnvironment: qualification set scaleway environment.
 type QualificationSetScalewayEnvironment struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationSetScalewayEnvironmentSubUseCase `json:"sub_use_case"`
 }
 
 // QualificationShareData: qualification share data.
 type QualificationShareData struct {
+	// SubUseCase: default value: unknown_sub_use_case
+	SubUseCase QualificationShareDataSubUseCase `json:"sub_use_case"`
 }
 
 // ContractSignature: contract signature.
