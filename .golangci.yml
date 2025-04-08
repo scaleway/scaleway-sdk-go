@@ -80,9 +80,10 @@ linters:
         linters:
           - stylecheck
           - gosec
-      - path: api/instance/v1/instance_sdk.go
+      - path: ^api/instance/v1/instance.*sdk\.go$
         linters:
           - unused
+          - errcheck
 
 issues:
   max-issues-per-linter: 0
