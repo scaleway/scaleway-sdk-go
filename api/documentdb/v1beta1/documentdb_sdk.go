@@ -49,7 +49,7 @@ const (
 func (enum ACLRuleAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "allow"
+		return string(ACLRuleActionAllow)
 	}
 	return string(enum)
 }
@@ -86,7 +86,7 @@ const (
 func (enum ACLRuleDirection) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "inbound"
+		return string(ACLRuleDirectionInbound)
 	}
 	return string(enum)
 }
@@ -124,7 +124,7 @@ const (
 func (enum ACLRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "tcp"
+		return string(ACLRuleProtocolTCP)
 	}
 	return string(enum)
 }
@@ -164,7 +164,7 @@ const (
 func (enum EngineSettingPropertyType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "BOOLEAN"
+		return string(EngineSettingPropertyTypeBOOLEAN)
 	}
 	return string(enum)
 }
@@ -205,7 +205,7 @@ const (
 func (enum InstanceLogStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(InstanceLogStatusUnknown)
 	}
 	return string(enum)
 }
@@ -255,7 +255,7 @@ const (
 func (enum InstanceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(InstanceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -305,7 +305,7 @@ const (
 func (enum ListDatabasesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListDatabasesRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -344,7 +344,7 @@ const (
 func (enum ListInstanceLogsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListInstanceLogsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -386,7 +386,7 @@ const (
 func (enum ListInstancesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListInstancesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -430,7 +430,7 @@ const (
 func (enum ListPrivilegesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "user_name_asc"
+		return string(ListPrivilegesRequestOrderByUserNameAsc)
 	}
 	return string(enum)
 }
@@ -473,7 +473,7 @@ const (
 func (enum ListSnapshotsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSnapshotsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -516,7 +516,7 @@ const (
 func (enum ListUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListUsersRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -558,7 +558,7 @@ const (
 func (enum MaintenanceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(MaintenanceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -599,7 +599,7 @@ const (
 func (enum NodeTypeGeneration) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_generation"
+		return string(NodeTypeGenerationUnknownGeneration)
 	}
 	return string(enum)
 }
@@ -639,7 +639,7 @@ const (
 func (enum NodeTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NodeTypeStockUnknown)
 	}
 	return string(enum)
 }
@@ -681,7 +681,7 @@ const (
 func (enum Permission) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "readonly"
+		return string(PermissionReadonly)
 	}
 	return string(enum)
 }
@@ -728,7 +728,7 @@ const (
 func (enum ReadReplicaStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ReadReplicaStatusUnknown)
 	}
 	return string(enum)
 }
@@ -777,7 +777,7 @@ const (
 func (enum SnapshotStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(SnapshotStatusUnknown)
 	}
 	return string(enum)
 }
@@ -821,7 +821,7 @@ const (
 func (enum StorageClass) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_storage_class"
+		return string(StorageClassUnknownStorageClass)
 	}
 	return string(enum)
 }
@@ -862,7 +862,7 @@ const (
 func (enum VolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "lssd"
+		return string(VolumeTypeLssd)
 	}
 	return string(enum)
 }
@@ -892,12 +892,10 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 }
 
 // EndpointDirectAccessDetails: endpoint direct access details.
-type EndpointDirectAccessDetails struct {
-}
+type EndpointDirectAccessDetails struct{}
 
 // EndpointLoadBalancerDetails: endpoint load balancer details.
-type EndpointLoadBalancerDetails struct {
-}
+type EndpointLoadBalancerDetails struct{}
 
 // EndpointPrivateNetworkDetails: endpoint private network details.
 type EndpointPrivateNetworkDetails struct {
@@ -912,12 +910,10 @@ type EndpointPrivateNetworkDetails struct {
 }
 
 // EndpointSpecPrivateNetworkIpamConfig: endpoint spec private network ipam config.
-type EndpointSpecPrivateNetworkIpamConfig struct {
-}
+type EndpointSpecPrivateNetworkIpamConfig struct{}
 
 // ReadReplicaEndpointSpecPrivateNetworkIpamConfig: read replica endpoint spec private network ipam config.
-type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct {
-}
+type ReadReplicaEndpointSpecPrivateNetworkIpamConfig struct{}
 
 // EngineSetting: engine setting.
 type EngineSetting struct {
@@ -989,8 +985,7 @@ type Endpoint struct {
 }
 
 // EndpointSpecLoadBalancer: endpoint spec load balancer.
-type EndpointSpecLoadBalancer struct {
-}
+type EndpointSpecLoadBalancer struct{}
 
 // EndpointSpecPrivateNetwork: endpoint spec private network.
 type EndpointSpecPrivateNetwork struct {
@@ -1007,8 +1002,7 @@ type EndpointSpecPrivateNetwork struct {
 }
 
 // ReadReplicaEndpointSpecDirectAccess: read replica endpoint spec direct access.
-type ReadReplicaEndpointSpecDirectAccess struct {
-}
+type ReadReplicaEndpointSpecDirectAccess struct{}
 
 // ReadReplicaEndpointSpecPrivateNetwork: read replica endpoint spec private network.
 type ReadReplicaEndpointSpecPrivateNetwork struct {
@@ -2518,6 +2512,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

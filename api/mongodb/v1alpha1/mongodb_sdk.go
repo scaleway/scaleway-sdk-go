@@ -56,7 +56,7 @@ const (
 func (enum InstanceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(InstanceStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -104,7 +104,7 @@ const (
 func (enum ListInstancesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListInstancesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -149,7 +149,7 @@ const (
 func (enum ListSnapshotsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSnapshotsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -190,7 +190,7 @@ const (
 func (enum ListUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListUsersRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -229,7 +229,7 @@ const (
 func (enum NodeTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_stock"
+		return string(NodeTypeStockUnknownStock)
 	}
 	return string(enum)
 }
@@ -270,7 +270,7 @@ const (
 func (enum SettingPropertyType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "BOOLEAN"
+		return string(SettingPropertyTypeBOOLEAN)
 	}
 	return string(enum)
 }
@@ -314,7 +314,7 @@ const (
 func (enum SnapshotStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SnapshotStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -359,7 +359,7 @@ const (
 func (enum UserRoleRole) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_role"
+		return string(UserRoleRoleUnknownRole)
 	}
 	return string(enum)
 }
@@ -400,7 +400,7 @@ const (
 func (enum VolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(VolumeTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -435,8 +435,7 @@ type EndpointPrivateNetworkDetails struct {
 }
 
 // EndpointPublicDetails: endpoint public details.
-type EndpointPublicDetails struct {
-}
+type EndpointPublicDetails struct{}
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
 type EndpointSpecPrivateNetworkDetails struct {
@@ -445,8 +444,7 @@ type EndpointSpecPrivateNetworkDetails struct {
 }
 
 // EndpointSpecPublicDetails: endpoint spec public details.
-type EndpointSpecPublicDetails struct {
-}
+type EndpointSpecPublicDetails struct{}
 
 // Endpoint: endpoint.
 type Endpoint struct {
@@ -1211,6 +1209,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }

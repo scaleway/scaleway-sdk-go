@@ -53,7 +53,7 @@ const (
 func (enum ListImagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListImagesRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -96,7 +96,7 @@ const (
 func (enum ListLocalImagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "type_asc"
+		return string(ListLocalImagesRequestOrderByTypeAsc)
 	}
 	return string(enum)
 }
@@ -135,7 +135,7 @@ const (
 func (enum ListVersionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListVersionsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -176,7 +176,7 @@ const (
 func (enum LocalImageType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(LocalImageTypeUnknownType)
 	}
 	return string(enum)
 }

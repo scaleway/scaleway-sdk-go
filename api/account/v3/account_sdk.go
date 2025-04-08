@@ -60,7 +60,7 @@ const (
 func (enum ContractType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ContractTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -111,7 +111,7 @@ const (
 func (enum ListContractSignaturesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "signed_at_asc"
+		return string(ListContractSignaturesRequestOrderBySignedAtAsc)
 	}
 	return string(enum)
 }
@@ -158,7 +158,7 @@ const (
 func (enum ListProjectsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListProjectsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -196,7 +196,7 @@ const (
 func (enum QualificationAiMachineSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationAiMachineSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -248,7 +248,7 @@ const (
 func (enum QualificationArchitectureType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_architecture_type"
+		return string(QualificationArchitectureTypeUnknownArchitectureType)
 	}
 	return string(enum)
 }
@@ -291,7 +291,7 @@ const (
 func (enum QualificationArchiveDataSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationArchiveDataSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -326,7 +326,7 @@ const (
 func (enum QualificationContainerSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationContainerSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -361,7 +361,7 @@ const (
 func (enum QualificationDeploySoftwareSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationDeploySoftwareSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -398,7 +398,7 @@ const (
 func (enum QualificationHostApplicationSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationHostApplicationSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -439,7 +439,7 @@ const (
 func (enum QualificationHostWebsiteSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationHostWebsiteSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -478,7 +478,7 @@ const (
 func (enum QualificationOtherUseCaseSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationOtherUseCaseSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -513,7 +513,7 @@ const (
 func (enum QualificationSetScalewayEnvironmentSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationSetScalewayEnvironmentSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }
@@ -548,7 +548,7 @@ const (
 func (enum QualificationShareDataSubUseCase) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sub_use_case"
+		return string(QualificationShareDataSubUseCaseUnknownSubUseCase)
 	}
 	return string(enum)
 }

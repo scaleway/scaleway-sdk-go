@@ -51,7 +51,7 @@ const (
 func (enum DNSRecordStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DNSRecordStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -94,7 +94,7 @@ const (
 func (enum DNSRecordType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DNSRecordTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum DNSRecordsStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DNSRecordsStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -181,7 +181,7 @@ const (
 func (enum DomainAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(DomainActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -226,7 +226,7 @@ const (
 func (enum DomainAvailabilityAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(DomainAvailabilityActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -275,7 +275,7 @@ const (
 func (enum DomainAvailabilityStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DomainAvailabilityStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -326,7 +326,7 @@ const (
 func (enum DomainDNSAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_dns_action"
+		return string(DomainDNSActionUnknownDNSAction)
 	}
 	return string(enum)
 }
@@ -375,7 +375,7 @@ const (
 func (enum DomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DomainStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -423,7 +423,7 @@ const (
 func (enum DomainZoneOwner) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_zone_owner"
+		return string(DomainZoneOwnerUnknownZoneOwner)
 	}
 	return string(enum)
 }
@@ -468,7 +468,7 @@ const (
 func (enum HostingStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(HostingStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -510,7 +510,7 @@ const (
 func (enum ListDatabaseUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "username_asc"
+		return string(ListDatabaseUsersRequestOrderByUsernameAsc)
 	}
 	return string(enum)
 }
@@ -547,7 +547,7 @@ const (
 func (enum ListDatabasesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "database_name_asc"
+		return string(ListDatabasesRequestOrderByDatabaseNameAsc)
 	}
 	return string(enum)
 }
@@ -584,7 +584,7 @@ const (
 func (enum ListFtpAccountsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "username_asc"
+		return string(ListFtpAccountsRequestOrderByUsernameAsc)
 	}
 	return string(enum)
 }
@@ -621,7 +621,7 @@ const (
 func (enum ListHostingsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListHostingsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -660,7 +660,7 @@ const (
 func (enum ListMailAccountsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "username_asc"
+		return string(ListMailAccountsRequestOrderByUsernameAsc)
 	}
 	return string(enum)
 }
@@ -698,7 +698,7 @@ const (
 func (enum ListOffersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "price_asc"
+		return string(ListOffersRequestOrderByPriceAsc)
 	}
 	return string(enum)
 }
@@ -734,7 +734,7 @@ const (
 func (enum ListWebsitesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "domain_asc"
+		return string(ListWebsitesRequestOrderByDomainAsc)
 	}
 	return string(enum)
 }
@@ -772,7 +772,7 @@ const (
 func (enum NameserverStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(NameserverStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -819,7 +819,7 @@ const (
 func (enum OfferOptionName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(OfferOptionNameUnknownName)
 	}
 	return string(enum)
 }
@@ -866,7 +866,7 @@ const (
 func (enum OfferOptionWarning) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_warning"
+		return string(OfferOptionWarningUnknownWarning)
 	}
 	return string(enum)
 }
@@ -905,7 +905,7 @@ const (
 func (enum PlatformPlatformGroup) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_group"
+		return string(PlatformPlatformGroupUnknownGroup)
 	}
 	return string(enum)
 }
@@ -2199,6 +2199,7 @@ func NewControlPanelAPI(client *scw.Client) *ControlPanelAPI {
 		client: client,
 	}
 }
+
 func (s *ControlPanelAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -2251,6 +2252,7 @@ func NewDatabaseAPI(client *scw.Client) *DatabaseAPI {
 		client: client,
 	}
 }
+
 func (s *DatabaseAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -2682,6 +2684,7 @@ func NewDnsAPI(client *scw.Client) *DnsAPI {
 		client: client,
 	}
 }
+
 func (s *DnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -2882,6 +2885,7 @@ func NewOfferAPI(client *scw.Client) *OfferAPI {
 		client: client,
 	}
 }
+
 func (s *OfferAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -2937,6 +2941,7 @@ func NewHostingAPI(client *scw.Client) *HostingAPI {
 		client: client,
 	}
 }
+
 func (s *HostingAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -3234,6 +3239,7 @@ func NewFtpAccountAPI(client *scw.Client) *FtpAccountAPI {
 		client: client,
 	}
 }
+
 func (s *FtpAccountAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -3403,6 +3409,7 @@ func NewMailAccountAPI(client *scw.Client) *MailAccountAPI {
 		client: client,
 	}
 }
+
 func (s *MailAccountAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -3569,6 +3576,7 @@ func NewWebsiteAPI(client *scw.Client) *WebsiteAPI {
 		client: client,
 	}
 }
+
 func (s *WebsiteAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

@@ -55,7 +55,7 @@ const (
 func (enum DNSStageType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DNSStageTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -96,7 +96,7 @@ const (
 func (enum LBOriginError) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(LBOriginErrorUnknown)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum ListBackendStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListBackendStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -176,7 +176,7 @@ const (
 func (enum ListCacheStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListCacheStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -215,7 +215,7 @@ const (
 func (enum ListDNSStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDNSStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -258,7 +258,7 @@ const (
 func (enum ListPipelinesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPipelinesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -299,7 +299,7 @@ const (
 func (enum ListPipelinesWithStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPipelinesWithStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -340,7 +340,7 @@ const (
 func (enum ListPurgeRequestsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPurgeRequestsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -377,7 +377,7 @@ const (
 func (enum ListRouteStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRouteStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -416,7 +416,7 @@ const (
 func (enum ListTLSStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTLSStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -453,7 +453,7 @@ const (
 func (enum ListWafStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListWafStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -517,7 +517,7 @@ const (
 func (enum PipelineErrorCode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_code"
+		return string(PipelineErrorCodeUnknownCode)
 	}
 	return string(enum)
 }
@@ -582,7 +582,7 @@ const (
 func (enum PipelineErrorSeverity) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_severity"
+		return string(PipelineErrorSeverityUnknownSeverity)
 	}
 	return string(enum)
 }
@@ -623,7 +623,7 @@ const (
 func (enum PipelineErrorStage) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_stage"
+		return string(PipelineErrorStageUnknownStage)
 	}
 	return string(enum)
 }
@@ -664,7 +664,7 @@ const (
 func (enum PipelineErrorType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(PipelineErrorTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -711,7 +711,7 @@ const (
 func (enum PipelineStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(PipelineStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -754,7 +754,7 @@ const (
 func (enum PlanName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(PlanNameUnknownName)
 	}
 	return string(enum)
 }
@@ -799,7 +799,7 @@ const (
 func (enum PurgeRequestStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(PurgeRequestStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -852,7 +852,7 @@ const (
 func (enum RuleHTTPMatchMethodFilter) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_method_filter"
+		return string(RuleHTTPMatchMethodFilterUnknownMethodFilter)
 	}
 	return string(enum)
 }
@@ -897,7 +897,7 @@ const (
 func (enum RuleHTTPMatchPathFilterPathFilterType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_path_filter"
+		return string(RuleHTTPMatchPathFilterPathFilterTypeUnknownPathFilter)
 	}
 	return string(enum)
 }
@@ -934,7 +934,7 @@ const (
 func (enum SearchBackendStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(SearchBackendStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -971,7 +971,7 @@ const (
 func (enum SearchWafStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(SearchWafStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1014,7 +1014,7 @@ const (
 func (enum WafStageMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_mode"
+		return string(WafStageModeUnknownMode)
 	}
 	return string(enum)
 }

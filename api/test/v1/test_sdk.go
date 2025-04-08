@@ -65,7 +65,7 @@ const (
 func (enum EyeColors) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(EyeColorsUnknown)
 	}
 	return string(enum)
 }
@@ -113,7 +113,7 @@ const (
 func (enum HumanStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(HumanStatusUnknown)
 	}
 	return string(enum)
 }
@@ -161,7 +161,7 @@ const (
 func (enum ListHumansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListHumansRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }

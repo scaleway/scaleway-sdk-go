@@ -51,7 +51,7 @@ const (
 func (enum ListServerPrivateNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerPrivateNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -94,7 +94,7 @@ const (
 func (enum ServerPrivateNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ServerPrivateNetworkStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -268,6 +268,7 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 		client: client,
 	}
 }
+
 func (s *PrivateNetworkAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

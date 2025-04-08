@@ -50,7 +50,7 @@ const (
 func (enum DataKeyAlgorithmSymmetricEncryption) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_symmetric_encryption"
+		return string(DataKeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption)
 	}
 	return string(enum)
 }
@@ -88,7 +88,7 @@ const (
 func (enum KeyAlgorithmSymmetricEncryption) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_symmetric_encryption"
+		return string(KeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption)
 	}
 	return string(enum)
 }
@@ -128,7 +128,7 @@ const (
 func (enum KeyOrigin) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_origin"
+		return string(KeyOriginUnknownOrigin)
 	}
 	return string(enum)
 }
@@ -171,7 +171,7 @@ const (
 func (enum KeyState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(KeyStateUnknownState)
 	}
 	return string(enum)
 }
@@ -214,7 +214,7 @@ const (
 func (enum ListKeysRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListKeysRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -605,6 +605,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

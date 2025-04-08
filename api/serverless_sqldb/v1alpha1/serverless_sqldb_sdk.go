@@ -51,7 +51,7 @@ const (
 func (enum DatabaseBackupStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DatabaseBackupStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -95,7 +95,7 @@ const (
 func (enum DatabaseStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DatabaseStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum ListDatabaseBackupsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListDatabaseBackupsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -176,7 +176,7 @@ const (
 func (enum ListDatabasesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDatabasesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -489,6 +489,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }

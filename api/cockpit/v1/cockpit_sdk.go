@@ -54,7 +54,7 @@ const (
 func (enum AlertState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(AlertStateUnknownState)
 	}
 	return string(enum)
 }
@@ -99,7 +99,7 @@ const (
 func (enum DataSourceOrigin) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_origin"
+		return string(DataSourceOriginUnknownOrigin)
 	}
 	return string(enum)
 }
@@ -144,7 +144,7 @@ const (
 func (enum DataSourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DataSourceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -187,7 +187,7 @@ const (
 func (enum GrafanaUserRole) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_role"
+		return string(GrafanaUserRoleUnknownRole)
 	}
 	return string(enum)
 }
@@ -229,7 +229,7 @@ const (
 func (enum ListDataSourcesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDataSourcesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -270,7 +270,7 @@ const (
 func (enum ListGrafanaUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "login_asc"
+		return string(ListGrafanaUsersRequestOrderByLoginAsc)
 	}
 	return string(enum)
 }
@@ -307,7 +307,7 @@ const (
 func (enum ListPlansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPlansRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -346,7 +346,7 @@ const (
 func (enum ListTokensRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTokensRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -387,7 +387,7 @@ const (
 func (enum PlanName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(PlanNameUnknownName)
 	}
 	return string(enum)
 }
@@ -444,7 +444,7 @@ const (
 func (enum TokenScope) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_scope"
+		return string(TokenScopeUnknownScope)
 	}
 	return string(enum)
 }
@@ -490,7 +490,7 @@ const (
 func (enum UsageUnit) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_unit"
+		return string(UsageUnitUnknownUnit)
 	}
 	return string(enum)
 }
@@ -1726,6 +1726,7 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 		client: client,
 	}
 }
+
 func (s *RegionalAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
