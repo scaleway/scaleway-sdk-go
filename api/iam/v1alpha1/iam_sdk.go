@@ -1892,7 +1892,7 @@ type ListJWTsRequest struct {
 	OrderBy ListJWTsRequestOrderBy `json:"-"`
 
 	// AudienceID: ID of the user to search.
-	AudienceID *string `json:"-"`
+	AudienceID string `json:"-"`
 
 	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`
