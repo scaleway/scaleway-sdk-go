@@ -1,4 +1,4 @@
-package serverless_sqldb //nolint:revive
+package serverless_sqldb
 
 import (
 	"time"
