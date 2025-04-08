@@ -574,28 +574,6 @@ func (enum *QualificationShareDataSubUseCase) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Contract: contract.
-type Contract struct {
-	// ID: ID of the contract.
-	ID string `json:"id"`
-
-	// Type: the type of the contract.
-	// Default value: unknown_type
-	Type ContractType `json:"type"`
-
-	// Name: the name of the contract.
-	Name string `json:"name"`
-
-	// Version: the version of the contract.
-	Version uint32 `json:"version"`
-
-	// CreatedAt: the creation date of the contract.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: the last modification date of the contract.
-	UpdatedAt *time.Time `json:"updated_at"`
-}
-
 // QualificationAiMachine: qualification ai machine.
 type QualificationAiMachine struct {
 	// SubUseCase: default value: unknown_sub_use_case
@@ -650,6 +628,62 @@ type QualificationShareData struct {
 	SubUseCase QualificationShareDataSubUseCase `json:"sub_use_case"`
 }
 
+// Contract: contract.
+type Contract struct {
+	// ID: ID of the contract.
+	ID string `json:"id"`
+
+	// Type: the type of the contract.
+	// Default value: unknown_type
+	Type ContractType `json:"type"`
+
+	// Name: the name of the contract.
+	Name string `json:"name"`
+
+	// Version: the version of the contract.
+	Version uint32 `json:"version"`
+
+	// CreatedAt: the creation date of the contract.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: the last modification date of the contract.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+// Qualification: qualification.
+type Qualification struct {
+	// ArchitectureType: architecture type of the qualification.
+	// Default value: unknown_architecture_type
+	ArchitectureType QualificationArchitectureType `json:"architecture_type"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	HostWebsite *QualificationHostWebsite `json:"host_website,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	HostApplication *QualificationHostApplication `json:"host_application,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	DeploySoftware *QualificationDeploySoftware `json:"deploy_software,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	SetScalewayEnvironment *QualificationSetScalewayEnvironment `json:"set_scaleway_environment,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	AiMachine *QualificationAiMachine `json:"ai_machine,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	Container *QualificationContainer `json:"container,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	ArchiveData *QualificationArchiveData `json:"archive_data,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	ShareData *QualificationShareData `json:"share_data,omitempty"`
+
+	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
+	OtherUseCase *QualificationOtherUseCase `json:"other_use_case,omitempty"`
+}
+
 // ContractSignature: contract signature.
 type ContractSignature struct {
 	// ID: ID of the contract signature.
@@ -690,40 +724,9 @@ type Project struct {
 
 	// Description: description of the Project.
 	Description string `json:"description"`
-}
 
-// Qualification: qualification.
-type Qualification struct {
-	// ArchitectureType: architecture type of the qualification.
-	// Default value: unknown_architecture_type
-	ArchitectureType QualificationArchitectureType `json:"architecture_type"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	HostWebsite *QualificationHostWebsite `json:"host_website,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	HostApplication *QualificationHostApplication `json:"host_application,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	DeploySoftware *QualificationDeploySoftware `json:"deploy_software,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	SetScalewayEnvironment *QualificationSetScalewayEnvironment `json:"set_scaleway_environment,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	AiMachine *QualificationAiMachine `json:"ai_machine,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	Container *QualificationContainer `json:"container,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	ArchiveData *QualificationArchiveData `json:"archive_data,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	ShareData *QualificationShareData `json:"share_data,omitempty"`
-
-	// Precisely one of HostWebsite, HostApplication, DeploySoftware, SetScalewayEnvironment, AiMachine, Container, ArchiveData, ShareData, OtherUseCase must be set.
-	OtherUseCase *QualificationOtherUseCase `json:"other_use_case,omitempty"`
+	// Qualification: qualification of the Project.
+	Qualification *Qualification `json:"qualification"`
 }
 
 // CheckContractSignatureResponse: check contract signature response.
