@@ -1,4 +1,4 @@
-package edge_services //nolint:revive
+package edge_services
 
 import (
 	"time"
