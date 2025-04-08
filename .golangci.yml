@@ -68,12 +68,6 @@ linters:
     - whitespace # Tool for detection of leading and trailing whitespace [fast: true, auto-fix: true]
     - zerologlint # Detects the wrong usage of `zerolog` that a user forgets to dispatch with `Send` or `Msg` [fast: false, auto-fix: false]
 
-  settings:
-    revive:
-      rules:
-        - name: exported
-          disabled: true
-
   exclusions:
     rules:
       - path: _test\.go
