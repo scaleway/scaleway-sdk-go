@@ -51,7 +51,7 @@ const (
 func (enum AvailableClusterSettingPropertyType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "UNKNOWN"
+		return string(AvailableClusterSettingPropertyTypeUNKNOWN)
 	}
 	return string(enum)
 }
@@ -98,7 +98,7 @@ const (
 func (enum ClusterStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ClusterStatusUnknown)
 	}
 	return string(enum)
 }
@@ -145,7 +145,7 @@ const (
 func (enum ListClustersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListClustersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -186,7 +186,7 @@ const (
 func (enum NodeTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NodeTypeStockUnknown)
 	}
 	return string(enum)
 }
@@ -225,7 +225,7 @@ const (
 func (enum PrivateNetworkProvisioningMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "static"
+		return string(PrivateNetworkProvisioningModeStatic)
 	}
 	return string(enum)
 }
@@ -253,8 +253,7 @@ func (enum *PrivateNetworkProvisioningMode) UnmarshalJSON(data []byte) error {
 }
 
 // EndpointSpecPrivateNetworkSpecIpamConfig: endpoint spec private network spec ipam config.
-type EndpointSpecPrivateNetworkSpecIpamConfig struct {
-}
+type EndpointSpecPrivateNetworkSpecIpamConfig struct{}
 
 // PrivateNetwork: private network.
 type PrivateNetwork struct {
@@ -273,8 +272,7 @@ type PrivateNetwork struct {
 }
 
 // PublicNetwork: public network.
-type PublicNetwork struct {
-}
+type PublicNetwork struct{}
 
 // EndpointSpecPrivateNetworkSpec: endpoint spec private network spec.
 type EndpointSpecPrivateNetworkSpec struct {
@@ -289,8 +287,7 @@ type EndpointSpecPrivateNetworkSpec struct {
 }
 
 // EndpointSpecPublicNetworkSpec: endpoint spec public network spec.
-type EndpointSpecPublicNetworkSpec struct {
-}
+type EndpointSpecPublicNetworkSpec struct{}
 
 // AvailableClusterSetting: available cluster setting.
 type AvailableClusterSetting struct {
@@ -996,6 +993,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw1, scw.ZonePlWaw2}
 }

@@ -51,7 +51,7 @@ const (
 func (enum Arch) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_arch"
+		return string(ArchUnknownArch)
 	}
 	return string(enum)
 }
@@ -92,7 +92,7 @@ const (
 func (enum AttachServerVolumeRequestVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_volume_type"
+		return string(AttachServerVolumeRequestVolumeTypeUnknownVolumeType)
 	}
 	return string(enum)
 }
@@ -132,7 +132,7 @@ const (
 func (enum BootType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "local"
+		return string(BootTypeLocal)
 	}
 	return string(enum)
 }
@@ -173,7 +173,7 @@ const (
 func (enum IPState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(IPStateUnknownState)
 	}
 	return string(enum)
 }
@@ -214,7 +214,7 @@ const (
 func (enum IPType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_iptype"
+		return string(IPTypeUnknownIptype)
 	}
 	return string(enum)
 }
@@ -253,7 +253,7 @@ const (
 func (enum ImageState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(ImageStateAvailable)
 	}
 	return string(enum)
 }
@@ -293,7 +293,7 @@ const (
 func (enum ListServersRequestOrder) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "creation_date_desc"
+		return string(ListServersRequestOrderCreationDateDesc)
 	}
 	return string(enum)
 }
@@ -332,7 +332,7 @@ const (
 func (enum PlacementGroupPolicyMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "optional"
+		return string(PlacementGroupPolicyModeOptional)
 	}
 	return string(enum)
 }
@@ -369,7 +369,7 @@ const (
 func (enum PlacementGroupPolicyType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "max_availability"
+		return string(PlacementGroupPolicyTypeMaxAvailability)
 	}
 	return string(enum)
 }
@@ -407,7 +407,7 @@ const (
 func (enum PrivateNICState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(PrivateNICStateAvailable)
 	}
 	return string(enum)
 }
@@ -446,7 +446,7 @@ const (
 func (enum SecurityGroupPolicy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_policy"
+		return string(SecurityGroupPolicyUnknownPolicy)
 	}
 	return string(enum)
 }
@@ -485,7 +485,7 @@ const (
 func (enum SecurityGroupRuleAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(SecurityGroupRuleActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -524,7 +524,7 @@ const (
 func (enum SecurityGroupRuleDirection) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_direction"
+		return string(SecurityGroupRuleDirectionUnknownDirection)
 	}
 	return string(enum)
 }
@@ -565,7 +565,7 @@ const (
 func (enum SecurityGroupRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_protocol"
+		return string(SecurityGroupRuleProtocolUnknownProtocol)
 	}
 	return string(enum)
 }
@@ -606,7 +606,7 @@ const (
 func (enum SecurityGroupState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(SecurityGroupStateAvailable)
 	}
 	return string(enum)
 }
@@ -649,7 +649,7 @@ const (
 func (enum ServerAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "poweron"
+		return string(ServerActionPoweron)
 	}
 	return string(enum)
 }
@@ -691,7 +691,7 @@ const (
 func (enum ServerIPIPFamily) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "inet"
+		return string(ServerIPIPFamilyInet)
 	}
 	return string(enum)
 }
@@ -729,7 +729,7 @@ const (
 func (enum ServerIPProvisioningMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "manual"
+		return string(ServerIPProvisioningModeManual)
 	}
 	return string(enum)
 }
@@ -770,7 +770,7 @@ const (
 func (enum ServerIPState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(ServerIPStateUnknownState)
 	}
 	return string(enum)
 }
@@ -814,7 +814,7 @@ const (
 func (enum ServerState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "running"
+		return string(ServerStateRunning)
 	}
 	return string(enum)
 }
@@ -856,7 +856,7 @@ const (
 func (enum ServerTypesAvailability) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(ServerTypesAvailabilityAvailable)
 	}
 	return string(enum)
 }
@@ -898,7 +898,7 @@ const (
 func (enum SnapshotState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(SnapshotStateAvailable)
 	}
 	return string(enum)
 }
@@ -941,7 +941,7 @@ const (
 func (enum SnapshotVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_volume_type"
+		return string(SnapshotVolumeTypeUnknownVolumeType)
 	}
 	return string(enum)
 }
@@ -983,7 +983,7 @@ const (
 func (enum TaskStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "pending"
+		return string(TaskStatusPending)
 	}
 	return string(enum)
 }
@@ -1028,7 +1028,7 @@ const (
 func (enum VolumeServerState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(VolumeServerStateAvailable)
 	}
 	return string(enum)
 }
@@ -1072,7 +1072,7 @@ const (
 func (enum VolumeServerVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "l_ssd"
+		return string(VolumeServerVolumeTypeLSSD)
 	}
 	return string(enum)
 }
@@ -1116,7 +1116,7 @@ const (
 func (enum VolumeState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(VolumeStateAvailable)
 	}
 	return string(enum)
 }
@@ -1162,7 +1162,7 @@ const (
 func (enum VolumeVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "l_ssd"
+		return string(VolumeVolumeTypeLSSD)
 	}
 	return string(enum)
 }
@@ -4162,6 +4162,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

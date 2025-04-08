@@ -49,7 +49,7 @@ const (
 func (enum ListEventsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "recorded_at_desc"
+		return string(ListEventsRequestOrderByRecordedAtDesc)
 	}
 	return string(enum)
 }
@@ -102,7 +102,7 @@ const (
 func (enum ResourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ResourceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -146,16 +146,13 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 }
 
 // KeyManagerKeyInfo: key manager key info.
-type KeyManagerKeyInfo struct {
-}
+type KeyManagerKeyInfo struct{}
 
 // KubernetesACLInfo: kubernetes acl info.
-type KubernetesACLInfo struct {
-}
+type KubernetesACLInfo struct{}
 
 // KubernetesClusterInfo: kubernetes cluster info.
-type KubernetesClusterInfo struct {
-}
+type KubernetesClusterInfo struct{}
 
 // KubernetesNodeInfo: kubernetes node info.
 type KubernetesNodeInfo struct {
@@ -403,6 +400,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }

@@ -51,7 +51,7 @@ const (
 func (enum IPReverseStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(IPReverseStatusUnknown)
 	}
 	return string(enum)
 }
@@ -90,7 +90,7 @@ const (
 func (enum IPVersion) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "IPv4"
+		return string(IPVersionIPv4)
 	}
 	return string(enum)
 }
@@ -127,7 +127,7 @@ const (
 func (enum ListServerEventsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerEventsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -166,7 +166,7 @@ const (
 func (enum ListServerPrivateNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerPrivateNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -205,7 +205,7 @@ const (
 func (enum ListServersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -242,7 +242,7 @@ const (
 func (enum ListSettingsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSettingsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -280,7 +280,7 @@ const (
 func (enum OfferStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "empty"
+		return string(OfferStockEmpty)
 	}
 	return string(enum)
 }
@@ -319,7 +319,7 @@ const (
 func (enum OfferSubscriptionPeriod) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_subscription_period"
+		return string(OfferSubscriptionPeriodUnknownSubscriptionPeriod)
 	}
 	return string(enum)
 }
@@ -361,7 +361,7 @@ const (
 func (enum SchemaFilesystemFormat) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_format"
+		return string(SchemaFilesystemFormatUnknownFormat)
 	}
 	return string(enum)
 }
@@ -410,7 +410,7 @@ const (
 func (enum SchemaPartitionLabel) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_partition_label"
+		return string(SchemaPartitionLabelUnknownPartitionLabel)
 	}
 	return string(enum)
 }
@@ -458,7 +458,7 @@ const (
 func (enum SchemaPoolType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(SchemaPoolTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -502,7 +502,7 @@ const (
 func (enum SchemaRAIDLevel) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_raid_level"
+		return string(SchemaRAIDLevelUnknownRaidLevel)
 	}
 	return string(enum)
 }
@@ -544,7 +544,7 @@ const (
 func (enum ServerBootType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_boot_type"
+		return string(ServerBootTypeUnknownBootType)
 	}
 	return string(enum)
 }
@@ -585,7 +585,7 @@ const (
 func (enum ServerInstallStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServerInstallStatusUnknown)
 	}
 	return string(enum)
 }
@@ -628,7 +628,7 @@ const (
 func (enum ServerOptionOptionStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "option_status_unknown"
+		return string(ServerOptionOptionStatusOptionStatusUnknown)
 	}
 	return string(enum)
 }
@@ -669,7 +669,7 @@ const (
 func (enum ServerPingStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ping_status_unknown"
+		return string(ServerPingStatusPingStatusUnknown)
 	}
 	return string(enum)
 }
@@ -711,7 +711,7 @@ const (
 func (enum ServerPrivateNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServerPrivateNetworkStatusUnknown)
 	}
 	return string(enum)
 }
@@ -763,7 +763,7 @@ const (
 func (enum ServerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServerStatusUnknown)
 	}
 	return string(enum)
 }
@@ -811,7 +811,7 @@ const (
 func (enum SettingType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(SettingTypeUnknown)
 	}
 	return string(enum)
 }
@@ -897,8 +897,7 @@ type SchemaZFS struct {
 }
 
 // CertificationOption: certification option.
-type CertificationOption struct {
-}
+type CertificationOption struct{}
 
 // LicenseOption: license option.
 type LicenseOption struct {
@@ -916,8 +915,7 @@ type PublicBandwidthOption struct {
 }
 
 // RemoteAccessOption: remote access option.
-type RemoteAccessOption struct {
-}
+type RemoteAccessOption struct{}
 
 // Schema: schema.
 type Schema struct {
@@ -2168,6 +2166,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
@@ -3175,6 +3174,7 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 		client: client,
 	}
 }
+
 func (s *PrivateNetworkAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar2}
 }

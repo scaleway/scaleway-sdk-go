@@ -54,7 +54,7 @@ const (
 func (enum FlexibleIPStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(FlexibleIPStatusUnknown)
 	}
 	return string(enum)
 }
@@ -96,7 +96,7 @@ const (
 func (enum ListFlexibleIPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListFlexibleIPsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum MACAddressStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(MACAddressStatusUnknown)
 	}
 	return string(enum)
 }
@@ -180,7 +180,7 @@ const (
 func (enum MACAddressType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(MACAddressTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -534,6 +534,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

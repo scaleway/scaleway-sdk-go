@@ -54,7 +54,7 @@ const (
 func (enum CronStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(CronStatusUnknown)
 	}
 	return string(enum)
 }
@@ -100,7 +100,7 @@ const (
 func (enum DomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DomainStatusUnknown)
 	}
 	return string(enum)
 }
@@ -142,7 +142,7 @@ const (
 func (enum FunctionHTTPOption) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_http_option"
+		return string(FunctionHTTPOptionUnknownHTTPOption)
 	}
 	return string(enum)
 }
@@ -181,7 +181,7 @@ const (
 func (enum FunctionPrivacy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_privacy"
+		return string(FunctionPrivacyUnknownPrivacy)
 	}
 	return string(enum)
 }
@@ -252,7 +252,7 @@ const (
 func (enum FunctionRuntime) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_runtime"
+		return string(FunctionRuntimeUnknownRuntime)
 	}
 	return string(enum)
 }
@@ -326,7 +326,7 @@ const (
 func (enum FunctionSandbox) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sandbox"
+		return string(FunctionSandboxUnknownSandbox)
 	}
 	return string(enum)
 }
@@ -370,7 +370,7 @@ const (
 func (enum FunctionStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(FunctionStatusUnknown)
 	}
 	return string(enum)
 }
@@ -413,7 +413,7 @@ const (
 func (enum ListCronsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListCronsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -452,7 +452,7 @@ const (
 func (enum ListDomainsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDomainsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -493,7 +493,7 @@ const (
 func (enum ListFunctionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListFunctionsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -534,7 +534,7 @@ const (
 func (enum ListNamespacesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNamespacesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -573,7 +573,7 @@ const (
 func (enum ListTokensRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTokensRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -612,7 +612,7 @@ const (
 func (enum ListTriggersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTriggersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -654,7 +654,7 @@ const (
 func (enum NamespaceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NamespaceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -700,7 +700,7 @@ const (
 func (enum RuntimeStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(RuntimeStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -744,7 +744,7 @@ const (
 func (enum TokenStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(TokenStatusUnknown)
 	}
 	return string(enum)
 }
@@ -790,7 +790,7 @@ const (
 func (enum TriggerInputType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_input_type"
+		return string(TriggerInputTypeUnknownInputType)
 	}
 	return string(enum)
 }
@@ -840,7 +840,7 @@ const (
 func (enum TriggerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(TriggerStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -2016,6 +2016,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

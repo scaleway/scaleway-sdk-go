@@ -50,7 +50,7 @@ const (
 func (enum ContainerHTTPOption) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_http_option"
+		return string(ContainerHTTPOptionUnknownHTTPOption)
 	}
 	return string(enum)
 }
@@ -89,7 +89,7 @@ const (
 func (enum ContainerPrivacy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_privacy"
+		return string(ContainerPrivacyUnknownPrivacy)
 	}
 	return string(enum)
 }
@@ -128,7 +128,7 @@ const (
 func (enum ContainerProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_protocol"
+		return string(ContainerProtocolUnknownProtocol)
 	}
 	return string(enum)
 }
@@ -170,7 +170,7 @@ const (
 func (enum ContainerSandbox) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_sandbox"
+		return string(ContainerSandboxUnknownSandbox)
 	}
 	return string(enum)
 }
@@ -214,7 +214,7 @@ const (
 func (enum ContainerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ContainerStatusUnknown)
 	}
 	return string(enum)
 }
@@ -262,7 +262,7 @@ const (
 func (enum CronStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(CronStatusUnknown)
 	}
 	return string(enum)
 }
@@ -308,7 +308,7 @@ const (
 func (enum DomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DomainStatusUnknown)
 	}
 	return string(enum)
 }
@@ -351,7 +351,7 @@ const (
 func (enum ListContainersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListContainersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -390,7 +390,7 @@ const (
 func (enum ListCronsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListCronsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -429,7 +429,7 @@ const (
 func (enum ListDomainsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDomainsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -470,7 +470,7 @@ const (
 func (enum ListNamespacesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNamespacesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -509,7 +509,7 @@ const (
 func (enum ListTokensRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTokensRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -548,7 +548,7 @@ const (
 func (enum ListTriggersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTriggersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -590,7 +590,7 @@ const (
 func (enum NamespaceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NamespaceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -635,7 +635,7 @@ const (
 func (enum TokenStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(TokenStatusUnknown)
 	}
 	return string(enum)
 }
@@ -681,7 +681,7 @@ const (
 func (enum TriggerInputType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_input_type"
+		return string(TriggerInputTypeUnknownInputType)
 	}
 	return string(enum)
 }
@@ -731,7 +731,7 @@ const (
 func (enum TriggerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(TriggerStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -769,8 +769,7 @@ type ContainerHealthCheckSpecHTTPProbe struct {
 }
 
 // ContainerHealthCheckSpecTCPProbe: container health check spec tcp probe.
-type ContainerHealthCheckSpecTCPProbe struct {
-}
+type ContainerHealthCheckSpecTCPProbe struct{}
 
 // ContainerHealthCheckSpec: container health check spec.
 type ContainerHealthCheckSpec struct {
@@ -1907,6 +1906,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

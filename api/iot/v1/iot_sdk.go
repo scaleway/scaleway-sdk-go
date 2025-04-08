@@ -50,7 +50,7 @@ const (
 func (enum DeviceMessageFiltersRulePolicy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DeviceMessageFiltersRulePolicyUnknown)
 	}
 	return string(enum)
 }
@@ -90,7 +90,7 @@ const (
 func (enum DeviceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DeviceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -131,7 +131,7 @@ const (
 func (enum HubProductPlan) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "plan_unknown"
+		return string(HubProductPlanPlanUnknown)
 	}
 	return string(enum)
 }
@@ -174,7 +174,7 @@ const (
 func (enum HubStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(HubStatusUnknown)
 	}
 	return string(enum)
 }
@@ -225,7 +225,7 @@ const (
 func (enum ListDevicesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListDevicesRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -280,7 +280,7 @@ const (
 func (enum ListHubsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListHubsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -329,7 +329,7 @@ const (
 func (enum ListNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListNetworksRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -376,7 +376,7 @@ const (
 func (enum ListRoutesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListRoutesRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -420,7 +420,7 @@ const (
 func (enum NetworkNetworkType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NetworkNetworkTypeUnknown)
 	}
 	return string(enum)
 }
@@ -459,7 +459,7 @@ const (
 func (enum RouteDatabaseConfigEngine) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RouteDatabaseConfigEngineUnknown)
 	}
 	return string(enum)
 }
@@ -501,7 +501,7 @@ const (
 func (enum RouteRestConfigHTTPVerb) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RouteRestConfigHTTPVerbUnknown)
 	}
 	return string(enum)
 }
@@ -544,7 +544,7 @@ const (
 func (enum RouteRouteType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RouteRouteTypeUnknown)
 	}
 	return string(enum)
 }
@@ -584,7 +584,7 @@ const (
 func (enum RouteS3ConfigS3Strategy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RouteS3ConfigS3StrategyUnknown)
 	}
 	return string(enum)
 }
@@ -1726,6 +1726,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }

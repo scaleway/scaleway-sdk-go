@@ -51,7 +51,7 @@ const (
 func (enum ACLRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ANY"
+		return string(ACLRuleProtocolANY)
 	}
 	return string(enum)
 }
@@ -91,7 +91,7 @@ const (
 func (enum Action) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(ActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -131,7 +131,7 @@ const (
 func (enum ListPrivateNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPrivateNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -174,7 +174,7 @@ const (
 func (enum ListRoutesWithNexthopRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRoutesWithNexthopRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -215,7 +215,7 @@ const (
 func (enum ListSubnetsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSubnetsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -254,7 +254,7 @@ const (
 func (enum ListVPCsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListVPCsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -296,7 +296,7 @@ const (
 func (enum RouteWithNexthopResourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(RouteWithNexthopResourceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -1030,6 +1030,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
