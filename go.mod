@@ -1,6 +1,8 @@
 module github.com/scaleway/scaleway-sdk-go
 
-go 1.17
+go 1.23.0
+
+toolchain go1.24.1
 
 require (
 	github.com/dnaeon/go-vcr v1.2.0
