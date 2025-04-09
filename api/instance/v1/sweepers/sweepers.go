@@ -67,22 +67,24 @@ func SweepServers(scwClient *scw.Client, zone scw.Zone) error {
 	}
 
 	for _, srv := range listServers.Servers {
-		if srv.State == instance.ServerStateStopped || srv.State == instance.ServerStateStoppedInPlace {
+		switch srv.State {
+		case instance.ServerStateStopped, instance.ServerStateStoppedInPlace:
 			err := instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 				Zone:     zone,
 				ServerID: srv.ID,
 			})
 			if err != nil {
-				return fmt.Errorf("error deleting server in sweeper: %s", err)
+				return fmt.Errorf("error deleting server in sweeper: %w", err)
 			}
-		} else if srv.State == instance.ServerStateRunning {
+
+		case instance.ServerStateRunning:
 			_, err := instanceAPI.ServerAction(&instance.ServerActionRequest{
 				Zone:     zone,
 				ServerID: srv.ID,
 				Action:   instance.ServerActionTerminate,
 			})
 			if err != nil {
-				return fmt.Errorf("error terminating server in sweeper: %s", err)
+				return fmt.Errorf("error terminating server in sweeper: %w", err)
 			}
 		}
 	}
