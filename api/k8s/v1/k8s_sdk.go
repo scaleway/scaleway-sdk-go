@@ -49,7 +49,7 @@ const (
 func (enum AutoscalerEstimator) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_estimator"
+		return string(AutoscalerEstimatorUnknownEstimator)
 	}
 	return string(enum)
 }
@@ -91,7 +91,7 @@ const (
 func (enum AutoscalerExpander) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_expander"
+		return string(AutoscalerExpanderUnknownExpander)
 	}
 	return string(enum)
 }
@@ -141,7 +141,7 @@ const (
 func (enum CNI) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_cni"
+		return string(CNIUnknownCni)
 	}
 	return string(enum)
 }
@@ -195,7 +195,7 @@ const (
 func (enum ClusterStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ClusterStatusUnknown)
 	}
 	return string(enum)
 }
@@ -242,7 +242,7 @@ const (
 func (enum ClusterTypeAvailability) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "available"
+		return string(ClusterTypeAvailabilityAvailable)
 	}
 	return string(enum)
 }
@@ -283,7 +283,7 @@ const (
 func (enum ClusterTypeResiliency) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_resiliency"
+		return string(ClusterTypeResiliencyUnknownResiliency)
 	}
 	return string(enum)
 }
@@ -329,7 +329,7 @@ const (
 func (enum ListClustersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListClustersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -382,7 +382,7 @@ const (
 func (enum ListNodesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNodesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -435,7 +435,7 @@ const (
 func (enum ListPoolsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPoolsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -486,7 +486,7 @@ const (
 func (enum MaintenanceWindowDayOfTheWeek) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "any"
+		return string(MaintenanceWindowDayOfTheWeekAny)
 	}
 	return string(enum)
 }
@@ -545,7 +545,7 @@ const (
 func (enum NodeStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NodeStatusUnknown)
 	}
 	return string(enum)
 }
@@ -603,7 +603,7 @@ const (
 func (enum PoolStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(PoolStatusUnknown)
 	}
 	return string(enum)
 }
@@ -651,7 +651,7 @@ const (
 func (enum PoolVolumeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "default_volume_type"
+		return string(PoolVolumeTypeDefaultVolumeType)
 	}
 	return string(enum)
 }
@@ -694,7 +694,7 @@ const (
 func (enum Runtime) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_runtime"
+		return string(RuntimeUnknownRuntime)
 	}
 	return string(enum)
 }
@@ -2153,6 +2153,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

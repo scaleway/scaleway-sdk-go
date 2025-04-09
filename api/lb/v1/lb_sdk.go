@@ -49,7 +49,7 @@ const (
 func (enum ACLActionRedirectRedirectType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "location"
+		return string(ACLActionRedirectRedirectTypeLocation)
 	}
 	return string(enum)
 }
@@ -87,7 +87,7 @@ const (
 func (enum ACLActionType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "allow"
+		return string(ACLActionTypeAllow)
 	}
 	return string(enum)
 }
@@ -128,7 +128,7 @@ const (
 func (enum ACLHTTPFilter) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "acl_http_filter_none"
+		return string(ACLHTTPFilterACLHTTPFilterNone)
 	}
 	return string(enum)
 }
@@ -171,7 +171,7 @@ const (
 func (enum BackendServerStatsHealthCheckStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(BackendServerStatsHealthCheckStatusUnknown)
 	}
 	return string(enum)
 }
@@ -213,7 +213,7 @@ const (
 func (enum BackendServerStatsServerState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "stopped"
+		return string(BackendServerStatsServerStateStopped)
 	}
 	return string(enum)
 }
@@ -253,7 +253,7 @@ const (
 func (enum CertificateStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "pending"
+		return string(CertificateStatusPending)
 	}
 	return string(enum)
 }
@@ -291,7 +291,7 @@ const (
 func (enum CertificateType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "letsencryt"
+		return string(CertificateTypeLetsencryt)
 	}
 	return string(enum)
 }
@@ -329,7 +329,7 @@ const (
 func (enum ForwardPortAlgorithm) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "roundrobin"
+		return string(ForwardPortAlgorithmRoundrobin)
 	}
 	return string(enum)
 }
@@ -372,7 +372,7 @@ const (
 func (enum InstanceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(InstanceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -423,7 +423,7 @@ const (
 func (enum LBStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(LBStatusUnknown)
 	}
 	return string(enum)
 }
@@ -471,7 +471,7 @@ const (
 func (enum LBTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(LBTypeStockUnknown)
 	}
 	return string(enum)
 }
@@ -512,7 +512,7 @@ const (
 func (enum ListACLRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListACLRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -553,7 +553,7 @@ const (
 func (enum ListBackendsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListBackendsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -594,7 +594,7 @@ const (
 func (enum ListCertificatesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListCertificatesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -635,7 +635,7 @@ const (
 func (enum ListFrontendsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListFrontendsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -675,7 +675,7 @@ const (
 func (enum ListIPsRequestIPType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "all"
+		return string(ListIPsRequestIPTypeAll)
 	}
 	return string(enum)
 }
@@ -715,7 +715,7 @@ const (
 func (enum ListLBsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListLBsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -754,7 +754,7 @@ const (
 func (enum ListPrivateNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPrivateNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -791,7 +791,7 @@ const (
 func (enum ListRoutesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRoutesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -830,7 +830,7 @@ const (
 func (enum ListSubscriberRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSubscriberRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -869,7 +869,7 @@ const (
 func (enum OnMarkedDownAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "on_marked_down_action_none"
+		return string(OnMarkedDownActionOnMarkedDownActionNone)
 	}
 	return string(enum)
 }
@@ -908,7 +908,7 @@ const (
 func (enum PrivateNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(PrivateNetworkStatusUnknown)
 	}
 	return string(enum)
 }
@@ -947,7 +947,7 @@ const (
 func (enum Protocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "tcp"
+		return string(ProtocolTCP)
 	}
 	return string(enum)
 }
@@ -988,7 +988,7 @@ const (
 func (enum ProxyProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "proxy_protocol_unknown"
+		return string(ProxyProtocolProxyProtocolUnknown)
 	}
 	return string(enum)
 }
@@ -1031,7 +1031,7 @@ const (
 func (enum SSLCompatibilityLevel) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ssl_compatibility_level_unknown"
+		return string(SSLCompatibilityLevelSslCompatibilityLevelUnknown)
 	}
 	return string(enum)
 }
@@ -1071,7 +1071,7 @@ const (
 func (enum StickySessionsType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "none"
+		return string(StickySessionsTypeNone)
 	}
 	return string(enum)
 }
@@ -1145,8 +1145,7 @@ type HealthCheckHTTPSConfig struct {
 }
 
 // HealthCheckLdapConfig: health check ldap config.
-type HealthCheckLdapConfig struct {
-}
+type HealthCheckLdapConfig struct{}
 
 // HealthCheckMysqlConfig: health check mysql config.
 type HealthCheckMysqlConfig struct {
@@ -1161,12 +1160,10 @@ type HealthCheckPgsqlConfig struct {
 }
 
 // HealthCheckRedisConfig: health check redis config.
-type HealthCheckRedisConfig struct {
-}
+type HealthCheckRedisConfig struct{}
 
 // HealthCheckTCPConfig: health check tcp config.
-type HealthCheckTCPConfig struct {
-}
+type HealthCheckTCPConfig struct{}
 
 // IP: ip.
 type IP struct {
@@ -1668,8 +1665,7 @@ type PrivateNetworkDHCPConfig struct {
 }
 
 // PrivateNetworkIpamConfig: private network ipam config.
-type PrivateNetworkIpamConfig struct {
-}
+type PrivateNetworkIpamConfig struct{}
 
 // PrivateNetworkStaticConfig: private network static config.
 type PrivateNetworkStaticConfig struct {
@@ -4602,6 +4598,7 @@ func NewZonedAPI(client *scw.Client) *ZonedAPI {
 		client: client,
 	}
 }
+
 func (s *ZonedAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
@@ -6556,6 +6553,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

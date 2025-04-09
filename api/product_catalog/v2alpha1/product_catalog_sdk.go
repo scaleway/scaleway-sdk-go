@@ -99,7 +99,7 @@ const (
 func (enum PublicCatalogProductPriceUnitOfMeasureCountableUnit) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_countable_unit"
+		return string(PublicCatalogProductPriceUnitOfMeasureCountableUnitUnknownCountableUnit)
 	}
 	return string(enum)
 }
@@ -168,7 +168,7 @@ const (
 func (enum PublicCatalogProductPropertiesHardwareCPUArch) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_arch"
+		return string(PublicCatalogProductPropertiesHardwareCPUArchUnknownArch)
 	}
 	return string(enum)
 }

@@ -53,7 +53,7 @@ const (
 func (enum GatewayNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(GatewayNetworkStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -101,7 +101,7 @@ const (
 func (enum GatewayStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(GatewayStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -147,7 +147,7 @@ const (
 func (enum ListGatewayNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListGatewayNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -192,7 +192,7 @@ const (
 func (enum ListGatewaysRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListGatewaysRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -239,7 +239,7 @@ const (
 func (enum ListIPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListIPsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -282,7 +282,7 @@ const (
 func (enum ListPatRulesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPatRulesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -323,7 +323,7 @@ const (
 func (enum PatRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_protocol"
+		return string(PatRuleProtocolUnknownProtocol)
 	}
 	return string(enum)
 }
@@ -1134,6 +1134,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

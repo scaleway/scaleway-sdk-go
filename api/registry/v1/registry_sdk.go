@@ -52,7 +52,7 @@ const (
 func (enum ImageStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ImageStatusUnknown)
 	}
 	return string(enum)
 }
@@ -94,7 +94,7 @@ const (
 func (enum ImageVisibility) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "visibility_unknown"
+		return string(ImageVisibilityVisibilityUnknown)
 	}
 	return string(enum)
 }
@@ -135,7 +135,7 @@ const (
 func (enum ListImagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListImagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -178,7 +178,7 @@ const (
 func (enum ListNamespacesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNamespacesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -221,7 +221,7 @@ const (
 func (enum ListTagsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTagsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -263,7 +263,7 @@ const (
 func (enum NamespaceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NamespaceStatusUnknown)
 	}
 	return string(enum)
 }
@@ -306,7 +306,7 @@ const (
 func (enum TagStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(TagStatusUnknown)
 	}
 	return string(enum)
 }
@@ -720,6 +720,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

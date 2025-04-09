@@ -50,7 +50,7 @@ const (
 func (enum DHCPEntryType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DHCPEntryTypeUnknown)
 	}
 	return string(enum)
 }
@@ -93,7 +93,7 @@ const (
 func (enum GatewayNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(GatewayNetworkStatusUnknown)
 	}
 	return string(enum)
 }
@@ -143,7 +143,7 @@ const (
 func (enum GatewayStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(GatewayStatusUnknown)
 	}
 	return string(enum)
 }
@@ -192,7 +192,7 @@ const (
 func (enum ListDHCPEntriesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDHCPEntriesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -235,7 +235,7 @@ const (
 func (enum ListDHCPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDHCPsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -276,7 +276,7 @@ const (
 func (enum ListGatewayNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListGatewayNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -321,7 +321,7 @@ const (
 func (enum ListGatewaysRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListGatewaysRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -368,7 +368,7 @@ const (
 func (enum ListIPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListIPsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -411,7 +411,7 @@ const (
 func (enum ListPATRulesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPATRulesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -452,7 +452,7 @@ const (
 func (enum PATRuleProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(PATRuleProtocolUnknown)
 	}
 	return string(enum)
 }
@@ -1694,6 +1694,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }

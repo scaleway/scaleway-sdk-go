@@ -53,7 +53,7 @@ const (
 func (enum BrowseSecretsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(BrowseSecretsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -97,7 +97,7 @@ const (
 func (enum EphemeralPolicyAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(EphemeralPolicyActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -139,7 +139,7 @@ const (
 func (enum ListSecretsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListSecretsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -180,7 +180,7 @@ const (
 func (enum Product) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_product"
+		return string(ProductUnknownProduct)
 	}
 	return string(enum)
 }
@@ -218,7 +218,7 @@ const (
 func (enum SecretStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SecretStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -267,7 +267,7 @@ const (
 func (enum SecretType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(SecretTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -312,7 +312,7 @@ const (
 func (enum SecretVersionStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SecretVersionStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -356,8 +356,7 @@ type EphemeralPolicy struct {
 }
 
 // BrowseSecretsResponseItemFolderDetails: browse secrets response item folder details.
-type BrowseSecretsResponseItemFolderDetails struct {
-}
+type BrowseSecretsResponseItemFolderDetails struct{}
 
 // BrowseSecretsResponseItemSecretDetails: browse secrets response item secret details.
 type BrowseSecretsResponseItemSecretDetails struct {
@@ -1073,6 +1072,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

@@ -53,7 +53,7 @@ const (
 func (enum ListIPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListIPsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -113,7 +113,7 @@ const (
 func (enum ResourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ResourceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -303,6 +303,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

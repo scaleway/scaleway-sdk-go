@@ -50,7 +50,7 @@ const (
 func (enum ApplicationType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ApplicationTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -92,7 +92,7 @@ const (
 func (enum JobStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(JobStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -136,7 +136,7 @@ const (
 func (enum ListApplicationsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListApplicationsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -175,7 +175,7 @@ const (
 func (enum ListJobResultsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListJobResultsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -220,7 +220,7 @@ const (
 func (enum ListJobsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListJobsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -273,7 +273,7 @@ const (
 func (enum ListPlatformsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPlatformsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -318,7 +318,7 @@ const (
 func (enum ListProcessResultsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListProcessResultsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -361,7 +361,7 @@ const (
 func (enum ListProcessesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListProcessesRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -404,7 +404,7 @@ const (
 func (enum ListSessionACLsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "access_asc"
+		return string(ListSessionACLsRequestOrderByAccessAsc)
 	}
 	return string(enum)
 }
@@ -447,7 +447,7 @@ const (
 func (enum ListSessionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListSessionsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -492,7 +492,7 @@ const (
 func (enum PlatformAvailability) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_availability"
+		return string(PlatformAvailabilityUnknownAvailability)
 	}
 	return string(enum)
 }
@@ -532,7 +532,7 @@ const (
 func (enum PlatformTechnology) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_technology"
+		return string(PlatformTechnologyUnknownTechnology)
 	}
 	return string(enum)
 }
@@ -571,7 +571,7 @@ const (
 func (enum PlatformType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(PlatformTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -614,7 +614,7 @@ const (
 func (enum ProcessStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ProcessStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -662,7 +662,7 @@ const (
 func (enum SessionAccess) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_access"
+		return string(SessionAccessUnknownAccess)
 	}
 	return string(enum)
 }
@@ -706,7 +706,7 @@ const (
 func (enum SessionOriginType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_origin_type"
+		return string(SessionOriginTypeUnknownOriginType)
 	}
 	return string(enum)
 }
@@ -747,7 +747,7 @@ const (
 func (enum SessionStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SessionStatusUnknownStatus)
 	}
 	return string(enum)
 }
