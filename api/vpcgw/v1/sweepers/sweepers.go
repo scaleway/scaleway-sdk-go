@@ -10,7 +10,7 @@ import (
 func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone) error {
 	api := vpcgwSDK.NewAPI(scwClient)
 
-	listGatewayResponse, err := api.ListGateways(&vpcgwSDK.ListGatewaysRequest{
+	listGatewayResponse, err := api.ListGateways(&vpcgwSDK.ListGatewaysRequest{ //nolint:staticcheck
 		Zone: zone,
 	}, scw.WithAllPages())
 	if err != nil {
@@ -18,7 +18,7 @@ func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone) error {
 	}
 
 	for _, gateway := range listGatewayResponse.Gateways {
-		err := api.DeleteGateway(&vpcgwSDK.DeleteGatewayRequest{
+		err := api.DeleteGateway(&vpcgwSDK.DeleteGatewayRequest{ //nolint:staticcheck
 			Zone:      zone,
 			GatewayID: gateway.ID,
 		})
@@ -32,7 +32,7 @@ func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone) error {
 func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone) error {
 	api := vpcgwSDK.NewAPI(scwClient)
 
-	listPNResponse, err := api.ListGatewayNetworks(&vpcgwSDK.ListGatewayNetworksRequest{
+	listPNResponse, err := api.ListGatewayNetworks(&vpcgwSDK.ListGatewayNetworksRequest{ //nolint:staticcheck
 		Zone: zone,
 	}, scw.WithAllPages())
 	if err != nil {
@@ -40,7 +40,7 @@ func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone) error {
 	}
 
 	for _, gn := range listPNResponse.GatewayNetworks {
-		err := api.DeleteGatewayNetwork(&vpcgwSDK.DeleteGatewayNetworkRequest{
+		err := api.DeleteGatewayNetwork(&vpcgwSDK.DeleteGatewayNetworkRequest{ //nolint:staticcheck
 			GatewayNetworkID: gn.GatewayID,
 			Zone:             zone,
 			// Cleanup the dhcp resource related. DON'T CALL THE SWEEPER DHCP
@@ -56,7 +56,7 @@ func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone) error {
 func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone) error {
 	api := vpcgwSDK.NewAPI(scwClient)
 
-	listIPResponse, err := api.ListIPs(&vpcgwSDK.ListIPsRequest{
+	listIPResponse, err := api.ListIPs(&vpcgwSDK.ListIPsRequest{ //nolint:staticcheck
 		Zone: zone,
 	}, scw.WithAllPages())
 	if err != nil {
@@ -64,7 +64,7 @@ func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone) error {
 	}
 
 	for _, ip := range listIPResponse.IPs {
-		err := api.DeleteIP(&vpcgwSDK.DeleteIPRequest{
+		err := api.DeleteIP(&vpcgwSDK.DeleteIPRequest{ //nolint:staticcheck
 			Zone: zone,
 			IPID: ip.ID,
 		})
@@ -78,7 +78,7 @@ func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone) error {
 func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone) error {
 	api := vpcgwSDK.NewAPI(scwClient)
 
-	listDHCPsResponse, err := api.ListDHCPs(&vpcgwSDK.ListDHCPsRequest{
+	listDHCPsResponse, err := api.ListDHCPs(&vpcgwSDK.ListDHCPsRequest{ //nolint:staticcheck
 		Zone: zone,
 	}, scw.WithAllPages())
 	if err != nil {
@@ -86,7 +86,7 @@ func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone) error {
 	}
 
 	for _, dhcp := range listDHCPsResponse.Dhcps {
-		err := api.DeleteDHCP(&vpcgwSDK.DeleteDHCPRequest{
+		err := api.DeleteDHCP(&vpcgwSDK.DeleteDHCPRequest{ //nolint:staticcheck
 			Zone:   zone,
 			DHCPID: dhcp.ID,
 		})
