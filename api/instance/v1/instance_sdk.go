@@ -1519,6 +1519,9 @@ type ServerTypeCapabilities struct {
 
 	// BootTypes: list of supported boot types.
 	BootTypes []BootType `json:"boot_types"`
+
+	// MaxFileSystems: max number of SFS (Scaleway File Systems) that can be attached to the Instance.
+	MaxFileSystems uint32 `json:"max_file_systems"`
 }
 
 // ServerTypeGPUInfo: server type gpu info.
