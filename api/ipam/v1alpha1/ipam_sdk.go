@@ -108,6 +108,7 @@ const (
 	ResourceTypeAppleSiliconPrivateNic = ResourceType("apple_silicon_private_nic")
 	ResourceTypeServerlessContainer    = ResourceType("serverless_container")
 	ResourceTypeServerlessFunction     = ResourceType("serverless_function")
+	ResourceTypeVpnGateway             = ResourceType("vpn_gateway")
 )
 
 func (enum ResourceType) String() string {
@@ -141,6 +142,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"apple_silicon_private_nic",
 		"serverless_container",
 		"serverless_function",
+		"vpn_gateway",
 	}
 }
 
