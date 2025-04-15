@@ -346,6 +346,15 @@ type PublicCatalogProductPropertiesInstance struct {
 	Range string `json:"range"`
 }
 
+// PublicCatalogProductEnvironmentalImpact: public catalog product environmental impact.
+type PublicCatalogProductEnvironmentalImpact struct {
+	// KgCo2Equivalent: kilograms of CO2 that would need to be released to produce the equivalent warming impact.
+	KgCo2Equivalent *float32 `json:"kg_co2_equivalent"`
+
+	// M3WaterUsage: cubic meters of water used.
+	M3WaterUsage *float32 `json:"m3_water_usage"`
+}
+
 // PublicCatalogProductLocality: public catalog product locality.
 type PublicCatalogProductLocality struct {
 	// Global: whether or not the product is global.
@@ -421,6 +430,9 @@ type PublicCatalogProduct struct {
 
 	// Properties: the properties of the product.
 	Properties *PublicCatalogProductProperties `json:"properties"`
+
+	// EnvironmentalImpact: the environmental impact of the product.
+	EnvironmentalImpact *PublicCatalogProductEnvironmentalImpact `json:"environmental_impact"`
 }
 
 // ListPublicCatalogProductsResponse: list public catalog products response.
