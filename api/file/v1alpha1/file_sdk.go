@@ -185,6 +185,9 @@ type Attachment struct {
 	// ResourceType: the type of the attached resource.
 	// Default value: unknown_resource_type
 	ResourceType AttachmentResourceType `json:"resource_type"`
+
+	// Zone: the zone where the resource is located.
+	Zone *scw.Zone `json:"zone"`
 }
 
 // FileSystem: Represents a filesystem resource and its properties.
@@ -274,6 +277,9 @@ type ListAttachmentsRequest struct {
 	// ResourceType: filter by resource type.
 	// Default value: unknown_resource_type
 	ResourceType AttachmentResourceType `json:"-"`
+
+	// Zone: filter by resource zone.
+	Zone *scw.Zone `json:"-"`
 
 	// Page: page number (starting at 1).
 	Page *int32 `json:"-"`
@@ -482,6 +488,11 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 		req.Region = defaultRegion
 	}
 
+	defaultZone, exist := s.client.GetDefaultZone()
+	if (req.Zone == nil || *req.Zone == "") && exist {
+		req.Zone = &defaultZone
+	}
+
 	defaultPageSize, exist := s.client.GetDefaultPageSize()
 	if (req.PageSize == nil || *req.PageSize == 0) && exist {
 		req.PageSize = &defaultPageSize
@@ -491,6 +502,7 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "filesystem_id", req.FilesystemID)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 	parameter.AddToQuery(query, "resource_type", req.ResourceType)
+	parameter.AddToQuery(query, "zone", req.Zone)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
