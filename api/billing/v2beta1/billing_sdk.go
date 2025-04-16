@@ -55,7 +55,7 @@ const (
 func (enum DiscountDiscountMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_discount_mode"
+		return string(DiscountDiscountModeUnknownDiscountMode)
 	}
 	return string(enum)
 }
@@ -106,7 +106,7 @@ const (
 func (enum DiscountFilterType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DiscountFilterTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -147,7 +147,7 @@ const (
 func (enum DownloadInvoiceRequestFileType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "pdf"
+		return string(DownloadInvoiceRequestFileTypePdf)
 	}
 	return string(enum)
 }
@@ -182,7 +182,7 @@ const (
 func (enum ExportInvoicesRequestFileType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "csv"
+		return string(ExportInvoicesRequestFileTypeCsv)
 	}
 	return string(enum)
 }
@@ -230,7 +230,7 @@ const (
 func (enum ExportInvoicesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "invoice_number_desc"
+		return string(ExportInvoicesRequestOrderByInvoiceNumberDesc)
 	}
 	return string(enum)
 }
@@ -280,7 +280,7 @@ const (
 func (enum InvoiceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(InvoiceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -324,7 +324,7 @@ const (
 func (enum ListConsumptionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "updated_at_desc"
+		return string(ListConsumptionsRequestOrderByUpdatedAtDesc)
 	}
 	return string(enum)
 }
@@ -373,7 +373,7 @@ const (
 func (enum ListDiscountsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "creation_date_desc"
+		return string(ListDiscountsRequestOrderByCreationDateDesc)
 	}
 	return string(enum)
 }
@@ -426,7 +426,7 @@ const (
 func (enum ListInvoicesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "invoice_number_desc"
+		return string(ListInvoicesRequestOrderByInvoiceNumberDesc)
 	}
 	return string(enum)
 }
@@ -481,7 +481,7 @@ const (
 func (enum ListTaxesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "updated_at_desc"
+		return string(ListTaxesRequestOrderByUpdatedAtDesc)
 	}
 	return string(enum)
 }

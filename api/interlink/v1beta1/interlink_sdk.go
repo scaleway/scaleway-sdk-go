@@ -50,7 +50,7 @@ const (
 func (enum BgpStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_bgp_status"
+		return string(BgpStatusUnknownBgpStatus)
 	}
 	return string(enum)
 }
@@ -94,7 +94,7 @@ const (
 func (enum DedicatedConnectionStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DedicatedConnectionStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum LinkKind) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "hosted"
+		return string(LinkKindHosted)
 	}
 	return string(enum)
 }
@@ -185,7 +185,7 @@ const (
 func (enum LinkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_link_status"
+		return string(LinkStatusUnknownLinkStatus)
 	}
 	return string(enum)
 }
@@ -239,7 +239,7 @@ const (
 func (enum ListDedicatedConnectionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDedicatedConnectionsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -286,7 +286,7 @@ const (
 func (enum ListLinksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListLinksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -327,7 +327,7 @@ const (
 func (enum ListPartnersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPartnersRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -364,7 +364,7 @@ const (
 func (enum ListPopsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPopsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -403,7 +403,7 @@ const (
 func (enum ListRoutingPoliciesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRoutingPoliciesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1205,6 +1205,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

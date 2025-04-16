@@ -50,7 +50,7 @@ const (
 func (enum LanguageCode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_language_code"
+		return string(LanguageCodeUnknownLanguageCode)
 	}
 	return string(enum)
 }

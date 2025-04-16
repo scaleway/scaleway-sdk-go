@@ -53,7 +53,7 @@ const (
 func (enum BlocklistType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(BlocklistTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -95,7 +95,7 @@ const (
 func (enum DomainLastStatusAutoconfigStateReason) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_reason"
+		return string(DomainLastStatusAutoconfigStateReasonUnknownReason)
 	}
 	return string(enum)
 }
@@ -139,7 +139,7 @@ const (
 func (enum DomainLastStatusRecordStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_record_status"
+		return string(DomainLastStatusRecordStatusUnknownRecordStatus)
 	}
 	return string(enum)
 }
@@ -186,7 +186,7 @@ const (
 func (enum DomainReputationStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DomainReputationStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -240,7 +240,7 @@ const (
 func (enum DomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DomainStatusUnknown)
 	}
 	return string(enum)
 }
@@ -299,7 +299,7 @@ const (
 func (enum EmailFlag) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_flag"
+		return string(EmailFlagUnknownFlag)
 	}
 	return string(enum)
 }
@@ -349,7 +349,7 @@ const (
 func (enum EmailRcptType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_rcpt_type"
+		return string(EmailRcptTypeUnknownRcptType)
 	}
 	return string(enum)
 }
@@ -398,7 +398,7 @@ const (
 func (enum EmailStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(EmailStatusUnknown)
 	}
 	return string(enum)
 }
@@ -445,7 +445,7 @@ const (
 func (enum ListBlocklistsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListBlocklistsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -506,7 +506,7 @@ const (
 func (enum ListEmailsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListEmailsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -553,7 +553,7 @@ const (
 func (enum ListWebhookEventsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListWebhookEventsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -590,7 +590,7 @@ const (
 func (enum ListWebhooksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListWebhooksRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -631,7 +631,7 @@ const (
 func (enum OfferName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(OfferNameUnknownName)
 	}
 	return string(enum)
 }
@@ -677,7 +677,7 @@ const (
 func (enum PoolStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(PoolStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -723,7 +723,7 @@ const (
 func (enum ProjectSettingsPeriodicReportFrequency) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_frequency"
+		return string(ProjectSettingsPeriodicReportFrequencyUnknownFrequency)
 	}
 	return string(enum)
 }
@@ -768,7 +768,7 @@ const (
 func (enum WebhookEventStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(WebhookEventStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -823,7 +823,7 @@ const (
 func (enum WebhookEventType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(WebhookEventTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -2108,6 +2108,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }

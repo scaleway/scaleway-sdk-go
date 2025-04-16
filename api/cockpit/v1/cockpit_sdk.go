@@ -54,7 +54,7 @@ const (
 func (enum AlertState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(AlertStateUnknownState)
 	}
 	return string(enum)
 }
@@ -99,7 +99,7 @@ const (
 func (enum DataSourceOrigin) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_origin"
+		return string(DataSourceOriginUnknownOrigin)
 	}
 	return string(enum)
 }
@@ -144,7 +144,7 @@ const (
 func (enum DataSourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DataSourceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -187,7 +187,7 @@ const (
 func (enum GrafanaUserRole) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_role"
+		return string(GrafanaUserRoleUnknownRole)
 	}
 	return string(enum)
 }
@@ -229,7 +229,7 @@ const (
 func (enum ListDataSourcesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDataSourcesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -270,7 +270,7 @@ const (
 func (enum ListGrafanaUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "login_asc"
+		return string(ListGrafanaUsersRequestOrderByLoginAsc)
 	}
 	return string(enum)
 }
@@ -307,7 +307,7 @@ const (
 func (enum ListPlansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPlansRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -346,7 +346,7 @@ const (
 func (enum ListTokensRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTokensRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -387,7 +387,7 @@ const (
 func (enum PlanName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(PlanNameUnknownName)
 	}
 	return string(enum)
 }
@@ -444,7 +444,7 @@ const (
 func (enum TokenScope) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_scope"
+		return string(TokenScopeUnknownScope)
 	}
 	return string(enum)
 }
@@ -490,7 +490,7 @@ const (
 func (enum UsageUnit) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_unit"
+		return string(UsageUnitUnknownUnit)
 	}
 	return string(enum)
 }
@@ -518,6 +518,18 @@ func (enum *UsageUnit) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// PreconfiguredAlertData: Structure for additional data relative to preconfigured alerts.
+type PreconfiguredAlertData struct {
+	// PreconfiguredRuleID: ID of the preconfigured rule if the alert is preconfigured.
+	PreconfiguredRuleID string `json:"preconfigured_rule_id"`
+
+	// DisplayName: human readable name of the alert.
+	DisplayName string `json:"display_name"`
+
+	// DisplayDescription: human readable description of the alert.
+	DisplayDescription string `json:"display_description"`
+}
+
 // ContactPointEmail: contact point email.
 type ContactPointEmail struct {
 	To string `json:"to"`
@@ -532,25 +544,35 @@ type GetConfigResponseRetention struct {
 	DefaultDays uint32 `json:"default_days"`
 }
 
-// Alert: alert.
+// Alert: Structure representing an alert.
 type Alert struct {
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: the region in which the alert is defined.
 	Region scw.Region `json:"region"`
 
+	// Preconfigured: indicates if the alert is preconfigured or custom.
 	Preconfigured bool `json:"preconfigured"`
 
+	// Name: name of the alert.
 	Name string `json:"name"`
 
+	// Rule: rule defining the alert condition.
 	Rule string `json:"rule"`
 
+	// Duration: duration for which the alert must be active before firing. The format of this duration follows the prometheus duration format.
 	Duration string `json:"duration"`
 
+	// Enabled: indicates if the alert is enabled or disabled. Only preconfigured alerts can be disabled.
 	Enabled bool `json:"enabled"`
 
-	// State: default value: unknown_state
+	// State: current state of the alert. Possible states are `inactive`, `pending`, and `firing`.
+	// Default value: unknown_state
 	State *AlertState `json:"state"`
 
+	// Annotations: annotations for the alert, used to provide additional information about the alert.
 	Annotations map[string]string `json:"annotations"`
+
+	// PreconfiguredData: contains additional data for preconfigured alerts, such as the rule ID, display name, and description. Only present if the alert is preconfigured.
+	PreconfiguredData *PreconfiguredAlertData `json:"preconfigured_data"`
 }
 
 // ContactPoint: Contact point.
@@ -1165,6 +1187,16 @@ type RegionalAPIDisableAlertManagerRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// RegionalAPIDisableAlertRulesRequest: regional api disable alert rules request.
+type RegionalAPIDisableAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	ProjectID string `json:"project_id"`
+
+	RuleIDs []string `json:"rule_ids"`
+}
+
 // RegionalAPIDisableManagedAlertsRequest: Disable the sending of managed alerts.
 type RegionalAPIDisableManagedAlertsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1181,6 +1213,16 @@ type RegionalAPIEnableAlertManagerRequest struct {
 
 	// ProjectID: ID of the Project to enable the Alert manager in.
 	ProjectID string `json:"project_id"`
+}
+
+// RegionalAPIEnableAlertRulesRequest: regional api enable alert rules request.
+type RegionalAPIEnableAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	ProjectID string `json:"project_id"`
+
+	RuleIDs []string `json:"rule_ids"`
 }
 
 // RegionalAPIEnableManagedAlertsRequest: Enable the sending of managed alerts.
@@ -1249,7 +1291,7 @@ type RegionalAPIListAlertsRequest struct {
 	// IsPreconfigured: true returns only preconfigured alerts. False returns only custom alerts. If omitted, no filtering is applied on alert types. Other filters may still apply.
 	IsPreconfigured *bool `json:"-"`
 
-	// State: valid values to filter on are `disabled`, `enabled`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
+	// State: valid values to filter on are `inactive`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
 	// Default value: unknown_state
 	State *AlertState `json:"-"`
 }
@@ -1370,7 +1412,7 @@ type UsageOverview struct {
 	ExternalTracesUsage *Usage `json:"external_traces_usage"`
 }
 
-// The Cockpit Global API allows you to manage your Cockpit's Grafana and plans.
+// The Cockpit Global API allows you to manage your Cockpit's Grafana.
 type GlobalAPI struct {
 	client *scw.Client
 }
@@ -1629,7 +1671,7 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 }
 
 // Deprecated: ListPlans: Retrieve a list of available pricing plan types.
-// Deprecated, retention is now managed at the data source level.
+// Deprecated: retention is now managed at the data source level.
 func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1659,7 +1701,7 @@ func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.Reques
 }
 
 // Deprecated: SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
-// Deprecated, retention is now managed at the data source level.
+// Deprecated: retention is now managed at the data source level.
 func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1688,7 +1730,7 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 }
 
 // Deprecated: GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
-// Deprecated, retention is now managed at the data source level.
+// Deprecated: retention is now managed at the data source level.
 func (s *GlobalAPI) GetCurrentPlan(req *GlobalAPIGetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1726,6 +1768,7 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 		client: client,
 	}
 }
+
 func (s *RegionalAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
@@ -2499,6 +2542,76 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// EnableAlertRules: Enable preconfigured alert rules. Enable alert rules from the list of available preconfigured rules.
+func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/enable-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DisableAlertRules: Disable preconfigured alert rules. Disable alert rules from the list of available preconfigured rules.
+func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/disable-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // TriggerTestAlert: Send a test alert to the Alert manager to make sure your contact points get notified.

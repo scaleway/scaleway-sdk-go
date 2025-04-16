@@ -56,7 +56,7 @@ const (
 func (enum ContactEmailStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "email_status_unknown"
+		return string(ContactEmailStatusEmailStatusUnknown)
 	}
 	return string(enum)
 }
@@ -109,7 +109,7 @@ const (
 func (enum ContactExtensionFRMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "mode_unknown"
+		return string(ContactExtensionFRModeModeUnknown)
 	}
 	return string(enum)
 }
@@ -190,7 +190,7 @@ const (
 func (enum ContactExtensionNLLegalForm) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "legal_form_unknown"
+		return string(ContactExtensionNLLegalFormLegalFormUnknown)
 	}
 	return string(enum)
 }
@@ -253,7 +253,7 @@ const (
 func (enum ContactLegalForm) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "legal_form_unknown"
+		return string(ContactLegalFormLegalFormUnknown)
 	}
 	return string(enum)
 }
@@ -297,7 +297,7 @@ const (
 func (enum ContactStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "status_unknown"
+		return string(ContactStatusStatusUnknown)
 	}
 	return string(enum)
 }
@@ -343,7 +343,7 @@ const (
 func (enum DNSZoneStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(DNSZoneStatusUnknown)
 	}
 	return string(enum)
 }
@@ -407,7 +407,7 @@ const (
 func (enum DSRecordAlgorithm) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "rsamd5"
+		return string(DSRecordAlgorithmRsamd5)
 	}
 	return string(enum)
 }
@@ -461,7 +461,7 @@ const (
 func (enum DSRecordDigestType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "sha_1"
+		return string(DSRecordDigestTypeSha1)
 	}
 	return string(enum)
 }
@@ -508,7 +508,7 @@ const (
 func (enum DomainFeatureStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "feature_status_unknown"
+		return string(DomainFeatureStatusFeatureStatusUnknown)
 	}
 	return string(enum)
 }
@@ -558,7 +558,7 @@ const (
 func (enum DomainRegistrationStatusTransferStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "status_unknown"
+		return string(DomainRegistrationStatusTransferStatusStatusUnknown)
 	}
 	return string(enum)
 }
@@ -625,7 +625,7 @@ const (
 func (enum DomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "status_unknown"
+		return string(DomainStatusStatusUnknown)
 	}
 	return string(enum)
 }
@@ -680,7 +680,7 @@ const (
 func (enum HostStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(HostStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -721,7 +721,7 @@ const (
 func (enum LinkedProduct) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_product"
+		return string(LinkedProductUnknownProduct)
 	}
 	return string(enum)
 }
@@ -763,7 +763,7 @@ const (
 func (enum ListContactsRequestRole) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_role"
+		return string(ListContactsRequestRoleUnknownRole)
 	}
 	return string(enum)
 }
@@ -804,7 +804,7 @@ const (
 func (enum ListDNSZoneRecordsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListDNSZoneRecordsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -855,7 +855,7 @@ const (
 func (enum ListDNSZonesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "domain_asc"
+		return string(ListDNSZonesRequestOrderByDomainAsc)
 	}
 	return string(enum)
 }
@@ -900,7 +900,7 @@ const (
 func (enum ListDomainsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "domain_asc"
+		return string(ListDomainsRequestOrderByDomainAsc)
 	}
 	return string(enum)
 }
@@ -939,7 +939,7 @@ const (
 func (enum ListRenewableDomainsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "domain_asc"
+		return string(ListRenewableDomainsRequestOrderByDomainAsc)
 	}
 	return string(enum)
 }
@@ -990,7 +990,7 @@ const (
 func (enum ListTasksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "domain_desc"
+		return string(ListTasksRequestOrderByDomainDesc)
 	}
 	return string(enum)
 }
@@ -1035,7 +1035,7 @@ const (
 func (enum ListTldsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListTldsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -1074,7 +1074,7 @@ const (
 func (enum RawFormat) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_raw_format"
+		return string(RawFormatUnknownRawFormat)
 	}
 	return string(enum)
 }
@@ -1115,7 +1115,7 @@ const (
 func (enum RecordHTTPServiceConfigStrategy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "random"
+		return string(RecordHTTPServiceConfigStrategyRandom)
 	}
 	return string(enum)
 }
@@ -1195,7 +1195,7 @@ const (
 func (enum RecordType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RecordTypeUnknown)
 	}
 	return string(enum)
 }
@@ -1258,7 +1258,7 @@ const (
 func (enum RenewableDomainStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RenewableDomainStatusUnknown)
 	}
 	return string(enum)
 }
@@ -1305,7 +1305,7 @@ const (
 func (enum SSLCertificateStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(SSLCertificateStatusUnknown)
 	}
 	return string(enum)
 }
@@ -1355,7 +1355,7 @@ const (
 func (enum TaskStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unavailable"
+		return string(TaskStatusUnavailable)
 	}
 	return string(enum)
 }
@@ -1442,7 +1442,7 @@ const (
 func (enum TaskType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(TaskTypeUnknown)
 	}
 	return string(enum)
 }
@@ -1701,8 +1701,7 @@ type RecordChangeAdd struct {
 }
 
 // RecordChangeClear: record change clear.
-type RecordChangeClear struct {
-}
+type RecordChangeClear struct{}
 
 // RecordChangeDelete: record change delete.
 type RecordChangeDelete struct {
@@ -2146,8 +2145,7 @@ type ClearDNSZoneRecordsRequest struct {
 }
 
 // ClearDNSZoneRecordsResponse: clear dns zone records response.
-type ClearDNSZoneRecordsResponse struct {
-}
+type ClearDNSZoneRecordsResponse struct{}
 
 // CloneDNSZoneRequest: clone dns zone request.
 type CloneDNSZoneRequest struct {
@@ -2193,8 +2191,7 @@ type DeleteDNSZoneRequest struct {
 }
 
 // DeleteDNSZoneResponse: delete dns zone response.
-type DeleteDNSZoneResponse struct {
-}
+type DeleteDNSZoneResponse struct{}
 
 // DeleteDNSZoneTsigKeyRequest: delete dns zone tsig key request.
 type DeleteDNSZoneTsigKeyRequest struct {
@@ -2202,8 +2199,7 @@ type DeleteDNSZoneTsigKeyRequest struct {
 }
 
 // DeleteExternalDomainResponse: delete external domain response.
-type DeleteExternalDomainResponse struct {
-}
+type DeleteExternalDomainResponse struct{}
 
 // DeleteSSLCertificateRequest: delete ssl certificate request.
 type DeleteSSLCertificateRequest struct {
@@ -2211,8 +2207,7 @@ type DeleteSSLCertificateRequest struct {
 }
 
 // DeleteSSLCertificateResponse: delete ssl certificate response.
-type DeleteSSLCertificateResponse struct {
-}
+type DeleteSSLCertificateResponse struct{}
 
 // Domain: domain.
 type Domain struct {
@@ -3188,8 +3183,7 @@ type RestoreDNSZoneVersionRequest struct {
 }
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response.
-type RestoreDNSZoneVersionResponse struct {
-}
+type RestoreDNSZoneVersionResponse struct{}
 
 // SearchAvailableDomainsResponse: search available domains response.
 type SearchAvailableDomainsResponse struct {

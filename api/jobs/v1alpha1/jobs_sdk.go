@@ -55,7 +55,7 @@ const (
 func (enum JobRunState) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_state"
+		return string(JobRunStateUnknownState)
 	}
 	return string(enum)
 }
@@ -98,7 +98,7 @@ const (
 func (enum ListJobDefinitionsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListJobDefinitionsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -135,7 +135,7 @@ const (
 func (enum ListJobRunsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListJobRunsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -668,6 +668,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }

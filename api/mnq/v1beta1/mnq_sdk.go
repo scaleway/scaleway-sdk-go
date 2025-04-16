@@ -59,7 +59,7 @@ const (
 func (enum ListNatsAccountsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNatsAccountsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -110,7 +110,7 @@ const (
 func (enum ListNatsCredentialsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListNatsCredentialsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -161,7 +161,7 @@ const (
 func (enum ListSnsCredentialsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSnsCredentialsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -212,7 +212,7 @@ const (
 func (enum ListSqsCredentialsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSqsCredentialsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -257,7 +257,7 @@ const (
 func (enum SnsInfoStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SnsInfoStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -299,7 +299,7 @@ const (
 func (enum SqsInfoStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SqsInfoStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -942,6 +942,7 @@ func NewNatsAPI(client *scw.Client) *NatsAPI {
 		client: client,
 	}
 }
+
 func (s *NatsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
@@ -1269,6 +1270,7 @@ func NewSnsAPI(client *scw.Client) *SnsAPI {
 		client: client,
 	}
 }
+
 func (s *SnsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }
@@ -1570,6 +1572,7 @@ func NewSqsAPI(client *scw.Client) *SqsAPI {
 		client: client,
 	}
 }
+
 func (s *SqsAPI) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms}
 }

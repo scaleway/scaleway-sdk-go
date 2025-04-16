@@ -53,7 +53,7 @@ const (
 func (enum BearerType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_bearer_type"
+		return string(BearerTypeUnknownBearerType)
 	}
 	return string(enum)
 }
@@ -95,7 +95,7 @@ const (
 func (enum GracePeriodType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_grace_period_type"
+		return string(GracePeriodTypeUnknownGracePeriodType)
 	}
 	return string(enum)
 }
@@ -147,7 +147,7 @@ const (
 func (enum ListAPIKeysRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListAPIKeysRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -200,7 +200,7 @@ const (
 func (enum ListApplicationsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListApplicationsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -251,7 +251,7 @@ const (
 func (enum ListGroupsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListGroupsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -298,7 +298,7 @@ const (
 func (enum ListJWTsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListJWTsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -339,7 +339,7 @@ const (
 func (enum ListLogsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListLogsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -382,7 +382,7 @@ const (
 func (enum ListPermissionSetsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListPermissionSetsRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -427,7 +427,7 @@ const (
 func (enum ListPoliciesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "policy_name_asc"
+		return string(ListPoliciesRequestOrderByPolicyNameAsc)
 	}
 	return string(enum)
 }
@@ -468,7 +468,7 @@ const (
 func (enum ListQuotaRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "name_asc"
+		return string(ListQuotaRequestOrderByNameAsc)
 	}
 	return string(enum)
 }
@@ -515,7 +515,7 @@ const (
 func (enum ListSSHKeysRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSSHKeysRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -574,7 +574,7 @@ const (
 func (enum ListUsersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListUsersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -620,7 +620,7 @@ const (
 func (enum LocalityType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "global"
+		return string(LocalityTypeGlobal)
 	}
 	return string(enum)
 }
@@ -664,7 +664,7 @@ const (
 func (enum LogAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_action"
+		return string(LogActionUnknownAction)
 	}
 	return string(enum)
 }
@@ -713,7 +713,7 @@ const (
 func (enum LogResourceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_resource_type"
+		return string(LogResourceTypeUnknownResourceType)
 	}
 	return string(enum)
 }
@@ -760,7 +760,7 @@ const (
 func (enum PermissionSetScopeType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_scope_type"
+		return string(PermissionSetScopeTypeUnknownScopeType)
 	}
 	return string(enum)
 }
@@ -803,7 +803,7 @@ const (
 func (enum UserStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(UserStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -846,7 +846,7 @@ const (
 func (enum UserType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(UserTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -1892,7 +1892,7 @@ type ListJWTsRequest struct {
 	OrderBy ListJWTsRequestOrderBy `json:"-"`
 
 	// AudienceID: ID of the user to search.
-	AudienceID *string `json:"-"`
+	AudienceID string `json:"-"`
 
 	// PageSize: number of results per page. Value must be between 1 and 100.
 	PageSize *uint32 `json:"-"`

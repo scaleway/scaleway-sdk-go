@@ -50,7 +50,7 @@ const (
 func (enum CommitmentType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "duration_24h"
+		return string(CommitmentTypeDuration24h)
 	}
 	return string(enum)
 }
@@ -88,7 +88,7 @@ const (
 func (enum ConnectivityDiagnosticActionType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "reboot_server"
+		return string(ConnectivityDiagnosticActionTypeRebootServer)
 	}
 	return string(enum)
 }
@@ -127,7 +127,7 @@ const (
 func (enum ConnectivityDiagnosticDiagnosticStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ConnectivityDiagnosticDiagnosticStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -168,7 +168,7 @@ const (
 func (enum ListServerPrivateNetworksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerPrivateNetworksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -207,7 +207,7 @@ const (
 func (enum ListServersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -248,7 +248,7 @@ const (
 func (enum ServerPrivateNetworkServerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ServerPrivateNetworkServerStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -291,7 +291,7 @@ const (
 func (enum ServerPrivateNetworkStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "vpc_unknown_status"
+		return string(ServerPrivateNetworkStatusVpcUnknownStatus)
 	}
 	return string(enum)
 }
@@ -339,7 +339,7 @@ const (
 func (enum ServerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ServerStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -387,7 +387,7 @@ const (
 func (enum ServerTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_stock"
+		return string(ServerTypeStockUnknownStock)
 	}
 	return string(enum)
 }
@@ -1005,6 +1005,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar3}
 }
@@ -1460,6 +1461,7 @@ func NewPrivateNetworkAPI(client *scw.Client) *PrivateNetworkAPI {
 		client: client,
 	}
 }
+
 func (s *PrivateNetworkAPI) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar3}
 }

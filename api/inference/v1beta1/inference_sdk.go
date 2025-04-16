@@ -54,7 +54,7 @@ const (
 func (enum DeploymentStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(DeploymentStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -98,7 +98,7 @@ const (
 func (enum ListDeploymentsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_desc"
+		return string(ListDeploymentsRequestOrderByCreatedAtDesc)
 	}
 	return string(enum)
 }
@@ -140,7 +140,7 @@ const (
 func (enum ListModelsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "display_rank_asc"
+		return string(ListModelsRequestOrderByDisplayRankAsc)
 	}
 	return string(enum)
 }
@@ -182,7 +182,7 @@ const (
 func (enum NodeTypeStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_stock"
+		return string(NodeTypeStockUnknownStock)
 	}
 	return string(enum)
 }
@@ -218,8 +218,7 @@ type EndpointPrivateNetworkDetails struct {
 }
 
 // EndpointPublicAccessDetails: endpoint public access details.
-type EndpointPublicAccessDetails struct {
-}
+type EndpointPublicAccessDetails struct{}
 
 // EndpointSpecPrivateNetwork: endpoint spec private network.
 type EndpointSpecPrivateNetwork struct {
@@ -228,8 +227,7 @@ type EndpointSpecPrivateNetwork struct {
 }
 
 // EndpointSpecPublic: endpoint spec public.
-type EndpointSpecPublic struct {
-}
+type EndpointSpecPublic struct{}
 
 // Endpoint: endpoint.
 type Endpoint struct {
@@ -827,6 +825,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }

@@ -55,7 +55,7 @@ const (
 func (enum DNSStageType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(DNSStageTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -96,7 +96,7 @@ const (
 func (enum LBOriginError) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(LBOriginErrorUnknown)
 	}
 	return string(enum)
 }
@@ -137,7 +137,7 @@ const (
 func (enum ListBackendStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListBackendStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -176,7 +176,7 @@ const (
 func (enum ListCacheStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListCacheStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -215,7 +215,7 @@ const (
 func (enum ListDNSStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListDNSStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -258,7 +258,7 @@ const (
 func (enum ListPipelinesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPipelinesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -299,7 +299,7 @@ const (
 func (enum ListPipelinesWithStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPipelinesWithStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -340,7 +340,7 @@ const (
 func (enum ListPurgeRequestsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListPurgeRequestsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -377,7 +377,7 @@ const (
 func (enum ListRouteStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRouteStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -416,7 +416,7 @@ const (
 func (enum ListTLSStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListTLSStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -453,7 +453,7 @@ const (
 func (enum ListWafStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListWafStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -517,7 +517,7 @@ const (
 func (enum PipelineErrorCode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_code"
+		return string(PipelineErrorCodeUnknownCode)
 	}
 	return string(enum)
 }
@@ -582,7 +582,7 @@ const (
 func (enum PipelineErrorSeverity) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_severity"
+		return string(PipelineErrorSeverityUnknownSeverity)
 	}
 	return string(enum)
 }
@@ -623,7 +623,7 @@ const (
 func (enum PipelineErrorStage) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_stage"
+		return string(PipelineErrorStageUnknownStage)
 	}
 	return string(enum)
 }
@@ -664,7 +664,7 @@ const (
 func (enum PipelineErrorType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(PipelineErrorTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -711,7 +711,7 @@ const (
 func (enum PipelineStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(PipelineStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -754,7 +754,7 @@ const (
 func (enum PlanName) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_name"
+		return string(PlanNameUnknownName)
 	}
 	return string(enum)
 }
@@ -799,7 +799,7 @@ const (
 func (enum PurgeRequestStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(PurgeRequestStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -852,7 +852,7 @@ const (
 func (enum RuleHTTPMatchMethodFilter) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_method_filter"
+		return string(RuleHTTPMatchMethodFilterUnknownMethodFilter)
 	}
 	return string(enum)
 }
@@ -897,7 +897,7 @@ const (
 func (enum RuleHTTPMatchPathFilterPathFilterType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_path_filter"
+		return string(RuleHTTPMatchPathFilterPathFilterTypeUnknownPathFilter)
 	}
 	return string(enum)
 }
@@ -934,7 +934,7 @@ const (
 func (enum SearchBackendStagesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(SearchBackendStagesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -961,6 +961,43 @@ func (enum *SearchBackendStagesRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+type SearchWafStagesRequestOrderBy string
+
+const (
+	SearchWafStagesRequestOrderByCreatedAtAsc  = SearchWafStagesRequestOrderBy("created_at_asc")
+	SearchWafStagesRequestOrderByCreatedAtDesc = SearchWafStagesRequestOrderBy("created_at_desc")
+)
+
+func (enum SearchWafStagesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SearchWafStagesRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum SearchWafStagesRequestOrderBy) Values() []SearchWafStagesRequestOrderBy {
+	return []SearchWafStagesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum SearchWafStagesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SearchWafStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SearchWafStagesRequestOrderBy(SearchWafStagesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type WafStageMode string
 
 const (
@@ -977,7 +1014,7 @@ const (
 func (enum WafStageMode) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_mode"
+		return string(WafStageModeUnknownMode)
 	}
 	return string(enum)
 }
@@ -2305,6 +2342,18 @@ type SearchBackendStagesRequest struct {
 	LBID *string `json:"-"`
 }
 
+// SearchWafStagesRequest: search waf stages request.
+type SearchWafStagesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy SearchWafStagesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	ProjectID string `json:"-"`
+}
+
 // SelectPlanRequest: select plan request.
 type SelectPlanRequest struct {
 	ProjectID string `json:"project_id"`
@@ -3222,6 +3271,44 @@ func (s *API) DeleteBackendStage(req *DeleteBackendStageRequest, opts ...scw.Req
 	return nil
 }
 
+// SearchBackendStages:
+func (s *API) SearchBackendStages(req *SearchBackendStagesRequest, opts ...scw.RequestOption) (*ListBackendStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "bucket_name", req.BucketName)
+	parameter.AddToQuery(query, "bucket_region", req.BucketRegion)
+	parameter.AddToQuery(query, "lb_id", req.LBID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/search-backend-stages",
+		Query:  query,
+	}
+
+	var resp ListBackendStagesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListWafStages: List all WAF stages, for a Scaleway Organization or Scaleway Project. By default, the WAF stages returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListWafStages(req *ListWafStagesRequest, opts ...scw.RequestOption) (*ListWafStagesResponse, error) {
 	var err error
@@ -3349,6 +3436,41 @@ func (s *API) DeleteWafStage(req *DeleteWafStageRequest, opts ...scw.RequestOpti
 		return err
 	}
 	return nil
+}
+
+// SearchWafStages:
+func (s *API) SearchWafStages(req *SearchWafStagesRequest, opts ...scw.RequestOption) (*ListWafStagesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/search-waf-stages",
+		Query:  query,
+	}
+
+	var resp ListWafStagesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListRouteStages: List all route stages, for a given pipeline. By default, the route stages returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
@@ -3604,44 +3726,6 @@ func (s *API) CheckPEMChain(req *CheckPEMChainRequest, opts ...scw.RequestOption
 	}
 
 	var resp CheckPEMChainResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// SearchBackendStages:
-func (s *API) SearchBackendStages(req *SearchBackendStagesRequest, opts ...scw.RequestOption) (*ListBackendStagesResponse, error) {
-	var err error
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "bucket_name", req.BucketName)
-	parameter.AddToQuery(query, "bucket_region", req.BucketRegion)
-	parameter.AddToQuery(query, "lb_id", req.LBID)
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/edge-services/v1beta1/search-backend-stages",
-		Query:  query,
-	}
-
-	var resp ListBackendStagesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

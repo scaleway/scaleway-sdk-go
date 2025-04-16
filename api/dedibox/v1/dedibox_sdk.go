@@ -51,7 +51,7 @@ const (
 func (enum AttachFailoverIPToMacAddressRequestMacType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "mac_type_unknown"
+		return string(AttachFailoverIPToMacAddressRequestMacTypeMacTypeUnknown)
 	}
 	return string(enum)
 }
@@ -92,7 +92,7 @@ const (
 func (enum BMCAccessStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(BMCAccessStatusUnknown)
 	}
 	return string(enum)
 }
@@ -133,7 +133,7 @@ const (
 func (enum BackupStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_backup_status"
+		return string(BackupStatusUnknownBackupStatus)
 	}
 	return string(enum)
 }
@@ -173,7 +173,7 @@ const (
 func (enum FailoverBlockVersion) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_version"
+		return string(FailoverBlockVersionUnknownVersion)
 	}
 	return string(enum)
 }
@@ -213,7 +213,7 @@ const (
 func (enum FailoverIPInterfaceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(FailoverIPInterfaceTypeUnknown)
 	}
 	return string(enum)
 }
@@ -254,7 +254,7 @@ const (
 func (enum FailoverIPStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(FailoverIPStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -294,7 +294,7 @@ const (
 func (enum FailoverIPVersion) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_version"
+		return string(FailoverIPVersionUnknownVersion)
 	}
 	return string(enum)
 }
@@ -333,7 +333,7 @@ const (
 func (enum GetRpnStatusResponseStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(GetRpnStatusResponseStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -378,7 +378,7 @@ const (
 func (enum IPSemantic) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(IPSemanticUnknown)
 	}
 	return string(enum)
 }
@@ -424,7 +424,7 @@ const (
 func (enum IPStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(IPStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -463,7 +463,7 @@ const (
 func (enum IPVersion) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ipv4"
+		return string(IPVersionIPv4)
 	}
 	return string(enum)
 }
@@ -501,7 +501,7 @@ const (
 func (enum IPv6BlockDelegationStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(IPv6BlockDelegationStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -543,7 +543,7 @@ const (
 func (enum InvoicePaymentMethod) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_payment_method"
+		return string(InvoicePaymentMethodUnknownPaymentMethod)
 	}
 	return string(enum)
 }
@@ -586,7 +586,7 @@ const (
 func (enum InvoiceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_invoice_status"
+		return string(InvoiceStatusUnknownInvoiceStatus)
 	}
 	return string(enum)
 }
@@ -625,7 +625,7 @@ const (
 func (enum ListFailoverIPsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ip_asc"
+		return string(ListFailoverIPsRequestOrderByIPAsc)
 	}
 	return string(enum)
 }
@@ -662,7 +662,7 @@ const (
 func (enum ListInvoicesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListInvoicesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -701,7 +701,7 @@ const (
 func (enum ListOSRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListOSRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -744,7 +744,7 @@ const (
 func (enum ListOffersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListOffersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -785,7 +785,7 @@ const (
 func (enum ListRefundsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRefundsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -822,7 +822,7 @@ const (
 func (enum ListRpnCapableSanServersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnCapableSanServersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -859,7 +859,7 @@ const (
 func (enum ListRpnCapableServersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnCapableServersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -896,7 +896,7 @@ const (
 func (enum ListRpnGroupMembersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnGroupMembersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -933,7 +933,7 @@ const (
 func (enum ListRpnGroupsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnGroupsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -970,7 +970,7 @@ const (
 func (enum ListRpnInvitesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnInvitesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1007,7 +1007,7 @@ const (
 func (enum ListRpnSansRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnSansRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1044,7 +1044,7 @@ const (
 func (enum ListRpnServerCapabilitiesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnServerCapabilitiesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1081,7 +1081,7 @@ const (
 func (enum ListRpnV2CapableResourcesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnV2CapableResourcesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1118,7 +1118,7 @@ const (
 func (enum ListRpnV2GroupLogsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnV2GroupLogsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1155,7 +1155,7 @@ const (
 func (enum ListRpnV2GroupsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnV2GroupsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1192,7 +1192,7 @@ const (
 func (enum ListRpnV2MembersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListRpnV2MembersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1230,7 +1230,7 @@ const (
 func (enum ListRpnV2MembersRequestType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ListRpnV2MembersRequestTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -1268,7 +1268,7 @@ const (
 func (enum ListServerDisksRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerDisksRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1305,7 +1305,7 @@ const (
 func (enum ListServerEventsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServerEventsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1342,7 +1342,7 @@ const (
 func (enum ListServersRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServersRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1379,7 +1379,7 @@ const (
 func (enum ListServicesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListServicesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -1424,7 +1424,7 @@ const (
 func (enum LogAction) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_log_action"
+		return string(LogActionUnknownLogAction)
 	}
 	return string(enum)
 }
@@ -1471,7 +1471,7 @@ const (
 func (enum LogStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_log_status"
+		return string(LogStatusUnknownLogStatus)
 	}
 	return string(enum)
 }
@@ -1512,7 +1512,7 @@ const (
 func (enum MemoryType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "ddr2"
+		return string(MemoryTypeDdr2)
 	}
 	return string(enum)
 }
@@ -1553,7 +1553,7 @@ const (
 func (enum NetworkInterfaceInterfaceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(NetworkInterfaceInterfaceTypeUnknown)
 	}
 	return string(enum)
 }
@@ -1595,7 +1595,7 @@ const (
 func (enum OSArch) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_arch"
+		return string(OSArchUnknownArch)
 	}
 	return string(enum)
 }
@@ -1640,7 +1640,7 @@ const (
 func (enum OSType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(OSTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -1683,7 +1683,7 @@ const (
 func (enum OfferAntiDosInfoType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "minimal"
+		return string(OfferAntiDosInfoTypeMinimal)
 	}
 	return string(enum)
 }
@@ -1727,7 +1727,7 @@ const (
 func (enum OfferCatalog) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "all"
+		return string(OfferCatalogAll)
 	}
 	return string(enum)
 }
@@ -1770,7 +1770,7 @@ const (
 func (enum OfferPaymentFrequency) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "monthly"
+		return string(OfferPaymentFrequencyMonthly)
 	}
 	return string(enum)
 }
@@ -1807,7 +1807,7 @@ const (
 func (enum OfferSANInfoType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "hdd"
+		return string(OfferSANInfoTypeHdd)
 	}
 	return string(enum)
 }
@@ -1845,7 +1845,7 @@ const (
 func (enum OfferServerInfoStock) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "empty"
+		return string(OfferServerInfoStockEmpty)
 	}
 	return string(enum)
 }
@@ -1891,7 +1891,7 @@ const (
 func (enum PartitionFileSystem) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(PartitionFileSystemUnknown)
 	}
 	return string(enum)
 }
@@ -1937,7 +1937,7 @@ const (
 func (enum PartitionType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "primary"
+		return string(PartitionTypePrimary)
 	}
 	return string(enum)
 }
@@ -1979,7 +1979,7 @@ const (
 func (enum RaidArrayRaidLevel) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "no_raid"
+		return string(RaidArrayRaidLevelNoRaid)
 	}
 	return string(enum)
 }
@@ -2023,7 +2023,7 @@ const (
 func (enum RefundMethod) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_refund_method"
+		return string(RefundMethodUnknownRefundMethod)
 	}
 	return string(enum)
 }
@@ -2065,7 +2065,7 @@ const (
 func (enum RefundStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_refund_status"
+		return string(RefundStatusUnknownRefundStatus)
 	}
 	return string(enum)
 }
@@ -2104,7 +2104,7 @@ const (
 func (enum RescueProtocol) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "vnc"
+		return string(RescueProtocolVnc)
 	}
 	return string(enum)
 }
@@ -2145,7 +2145,7 @@ const (
 func (enum RpnGroupMemberStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_rpn_member_status"
+		return string(RpnGroupMemberStatusUnknownRpnMemberStatus)
 	}
 	return string(enum)
 }
@@ -2187,7 +2187,7 @@ const (
 func (enum RpnGroupType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RpnGroupTypeUnknown)
 	}
 	return string(enum)
 }
@@ -2226,7 +2226,7 @@ const (
 func (enum RpnSanIPType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(RpnSanIPTypeUnknown)
 	}
 	return string(enum)
 }
@@ -2267,7 +2267,7 @@ const (
 func (enum RpnSanStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(RpnSanStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -2310,7 +2310,7 @@ const (
 func (enum RpnV2GroupStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_group_status"
+		return string(RpnV2GroupStatusUnknownGroupStatus)
 	}
 	return string(enum)
 }
@@ -2351,7 +2351,7 @@ const (
 func (enum RpnV2GroupType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(RpnV2GroupTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -2392,7 +2392,7 @@ const (
 func (enum RpnV2MemberStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_member_status"
+		return string(RpnV2MemberStatusUnknownMemberStatus)
 	}
 	return string(enum)
 }
@@ -2436,7 +2436,7 @@ const (
 func (enum ServerDiskType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "sata"
+		return string(ServerDiskTypeSata)
 	}
 	return string(enum)
 }
@@ -2485,7 +2485,7 @@ const (
 func (enum ServerInstallStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServerInstallStatusUnknown)
 	}
 	return string(enum)
 }
@@ -2537,7 +2537,7 @@ const (
 func (enum ServerStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServerStatusUnknown)
 	}
 	return string(enum)
 }
@@ -2582,7 +2582,7 @@ const (
 func (enum ServiceLevelLevel) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServiceLevelLevelUnknown)
 	}
 	return string(enum)
 }
@@ -2624,7 +2624,7 @@ const (
 func (enum ServiceProvisioningStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown"
+		return string(ServiceProvisioningStatusUnknown)
 	}
 	return string(enum)
 }
@@ -2666,7 +2666,7 @@ const (
 func (enum ServiceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ServiceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -5907,6 +5907,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1}
 }

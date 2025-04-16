@@ -13,7 +13,7 @@ import (
 	_ "github.com/scaleway/scaleway-sdk-go/api/dedibox/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/documentdb/v1beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/domain/v2beta1"
-	_ "github.com/scaleway/scaleway-sdk-go/api/edge_services/v1alpha1"
+	_ "github.com/scaleway/scaleway-sdk-go/api/edge_services/v1beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/flexibleip/v1alpha1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/iam/v1alpha1"

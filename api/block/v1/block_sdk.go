@@ -55,7 +55,7 @@ const (
 func (enum ListSnapshotsRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListSnapshotsRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -100,7 +100,7 @@ const (
 func (enum ListVolumesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "created_at_asc"
+		return string(ListVolumesRequestOrderByCreatedAtAsc)
 	}
 	return string(enum)
 }
@@ -151,7 +151,7 @@ const (
 func (enum ReferenceStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(ReferenceStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -199,7 +199,7 @@ const (
 func (enum ReferenceType) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_type"
+		return string(ReferenceTypeUnknownType)
 	}
 	return string(enum)
 }
@@ -252,7 +252,7 @@ const (
 func (enum SnapshotStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(SnapshotStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -302,7 +302,7 @@ const (
 func (enum StorageClass) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_storage_class"
+		return string(StorageClassUnknownStorageClass)
 	}
 	return string(enum)
 }
@@ -359,7 +359,7 @@ const (
 func (enum VolumeStatus) String() string {
 	if enum == "" {
 		// return default value if empty
-		return "unknown_status"
+		return string(VolumeStatusUnknownStatus)
 	}
 	return string(enum)
 }
@@ -888,6 +888,7 @@ func NewAPI(client *scw.Client) *API {
 		client: client,
 	}
 }
+
 func (s *API) Zones() []scw.Zone {
 	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
