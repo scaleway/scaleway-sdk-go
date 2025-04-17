@@ -493,6 +493,9 @@ type Secret struct {
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 
+	// KeyID: (Optional.) The Scaleway's Key Manager key ID used to encrypt and decrypt secret versions.
+	KeyID *string `json:"key_id"`
+
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
 }
@@ -660,6 +663,9 @@ type CreateSecretRequest struct {
 
 	// Protected: a protected secret cannot be deleted.
 	Protected bool `json:"protected"`
+
+	// KeyID: (Optional.) The Scaleway's Key Manager key ID will be used to encrypt and decrypt secret versions. If not specified, the Secret Manager will use an internal key.
+	KeyID *string `json:"key_id,omitempty"`
 }
 
 // CreateSecretVersionRequest: create secret version request.
