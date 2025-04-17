@@ -2108,6 +2108,21 @@ type ApplyBlockMigrationRequest struct {
 	ValidationKey string `json:"validation_key,omitempty"`
 }
 
+// AttachServerFileSystemRequest: attach server file system request.
+type AttachServerFileSystemRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	FilesystemID string `json:"filesystem_id,omitempty"`
+}
+
+// AttachServerFileSystemResponse: attach server file system response.
+type AttachServerFileSystemResponse struct {
+	Server *Server `json:"server"`
+}
+
 // AttachServerVolumeRequest: attach server volume request.
 type AttachServerVolumeRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2589,6 +2604,21 @@ type DeleteVolumeRequest struct {
 
 	// VolumeID: UUID of the volume you want to delete.
 	VolumeID string `json:"-"`
+}
+
+// DetachServerFileSystemRequest: detach server file system request.
+type DetachServerFileSystemRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	FilesystemID string `json:"filesystem_id,omitempty"`
+}
+
+// DetachServerFileSystemResponse: detach server file system response.
+type DetachServerFileSystemResponse struct {
+	Server *Server `json:"server"`
 }
 
 // DetachServerVolumeRequest: detach server volume request.
@@ -4753,6 +4783,78 @@ func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.Req
 	}
 
 	var resp DetachServerVolumeResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AttachServerFileSystem: Attach a filesystem volume to an Instance.
+func (s *API) AttachServerFileSystem(req *AttachServerFileSystemRequest, opts ...scw.RequestOption) (*AttachServerFileSystemResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/attach-filesystem",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AttachServerFileSystemResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DetachServerFileSystem: Detach a filesystem volume to an Instance.
+func (s *API) DetachServerFileSystem(req *DetachServerFileSystemRequest, opts ...scw.RequestOption) (*DetachServerFileSystemResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/detach-filesystem",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DetachServerFileSystemResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
