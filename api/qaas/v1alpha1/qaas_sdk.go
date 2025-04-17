@@ -487,6 +487,7 @@ const (
 	PlatformAvailabilityAvailable           = PlatformAvailability("available")
 	PlatformAvailabilityShortage            = PlatformAvailability("shortage")
 	PlatformAvailabilityScarce              = PlatformAvailability("scarce")
+	PlatformAvailabilityMaintenance         = PlatformAvailability("maintenance")
 )
 
 func (enum PlatformAvailability) String() string {
@@ -503,6 +504,7 @@ func (enum PlatformAvailability) Values() []PlatformAvailability {
 		"available",
 		"shortage",
 		"scarce",
+		"maintenance",
 	}
 }
 
@@ -527,6 +529,8 @@ const (
 	PlatformTechnologyUnknownTechnology = PlatformTechnology("unknown_technology")
 	PlatformTechnologyPhotonic          = PlatformTechnology("photonic")
 	PlatformTechnologyGeneralPurpose    = PlatformTechnology("general_purpose")
+	PlatformTechnologyTrappedIon        = PlatformTechnology("trapped_ion")
+	PlatformTechnologySuperconducting   = PlatformTechnology("superconducting")
 )
 
 func (enum PlatformTechnology) String() string {
@@ -542,6 +546,8 @@ func (enum PlatformTechnology) Values() []PlatformTechnology {
 		"unknown_technology",
 		"photonic",
 		"general_purpose",
+		"trapped_ion",
+		"superconducting",
 	}
 }
 
@@ -908,6 +914,12 @@ type Platform struct {
 	// MaxQubitCount: estimated maximum number of qubits supported by the platform.
 	MaxQubitCount uint32 `json:"max_qubit_count"`
 
+	// MaxShotCount: maximum number of shots during a circuit execution.
+	MaxShotCount uint32 `json:"max_shot_count"`
+
+	// MaxCircuitCount: maximum number of circuit that can be executed in one call.
+	MaxCircuitCount uint32 `json:"max_circuit_count"`
+
 	// Availability: availability of the platform.
 	// Default value: unknown_availability
 	Availability PlatformAvailability `json:"availability"`
@@ -917,6 +929,12 @@ type Platform struct {
 
 	// PricePerHour: price to be paid per hour (excluding free tiers).
 	PricePerHour *scw.Money `json:"price_per_hour"`
+
+	// PricePerShot: price to be paid per shot (excluding free tiers).
+	PricePerShot *scw.Money `json:"price_per_shot"`
+
+	// PricePerCircuit: price to be paid per circuit setup before its execution (excluding free tiers).
+	PricePerCircuit *scw.Money `json:"price_per_circuit"`
 
 	// Hardware: specifications of the underlying hardware.
 	Hardware *PlatformHardware `json:"hardware"`
