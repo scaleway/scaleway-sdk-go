@@ -1,8 +1,9 @@
-package generic
+package generic_test
 
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/internal/generic"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
 
@@ -15,7 +16,7 @@ func Test_SortSliceByField(t *testing.T) {
 		{"1"},
 		{"3"},
 	}
-	SortSliceByField(elems, "Field", func(i interface{}, i2 interface{}) bool {
+	generic.SortSliceByField(elems, "Field", func(i interface{}, i2 interface{}) bool {
 		return i.(string) < i2.(string)
 	})
 	testhelpers.Assert(t, elems[0].Field == "1", "slice is not sorted")
