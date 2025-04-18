@@ -198,6 +198,117 @@ func (enum *PublicCatalogProductPropertiesHardwareCPUArch) UnmarshalJSON(data []
 	return nil
 }
 
+type PublicCatalogProductUnitOfMeasureCountableUnit string
+
+const (
+	// Unknown countable unit.
+	PublicCatalogProductUnitOfMeasureCountableUnitUnknownCountableUnit = PublicCatalogProductUnitOfMeasureCountableUnit("unknown_countable_unit")
+	// Chunk.
+	PublicCatalogProductUnitOfMeasureCountableUnitChunk = PublicCatalogProductUnitOfMeasureCountableUnit("chunk")
+	// Core.
+	PublicCatalogProductUnitOfMeasureCountableUnitCore = PublicCatalogProductUnitOfMeasureCountableUnit("core")
+	// Currency.
+	PublicCatalogProductUnitOfMeasureCountableUnitCurrency = PublicCatalogProductUnitOfMeasureCountableUnit("currency")
+	// Device.
+	PublicCatalogProductUnitOfMeasureCountableUnitDevice = PublicCatalogProductUnitOfMeasureCountableUnit("device")
+	// Domain.
+	PublicCatalogProductUnitOfMeasureCountableUnitDomain = PublicCatalogProductUnitOfMeasureCountableUnit("domain")
+	// Email.
+	PublicCatalogProductUnitOfMeasureCountableUnitEmail = PublicCatalogProductUnitOfMeasureCountableUnit("email")
+	// GB/s.
+	PublicCatalogProductUnitOfMeasureCountableUnitGbS = PublicCatalogProductUnitOfMeasureCountableUnit("gb_s")
+	// Gigabyte.
+	PublicCatalogProductUnitOfMeasureCountableUnitGigabyte = PublicCatalogProductUnitOfMeasureCountableUnit("gigabyte")
+	// Hour.
+	PublicCatalogProductUnitOfMeasureCountableUnitHour = PublicCatalogProductUnitOfMeasureCountableUnit("hour")
+	// IOPS gigabyte.
+	PublicCatalogProductUnitOfMeasureCountableUnitIopsGigabyte = PublicCatalogProductUnitOfMeasureCountableUnit("iops_gigabyte")
+	// IP.
+	PublicCatalogProductUnitOfMeasureCountableUnitIP = PublicCatalogProductUnitOfMeasureCountableUnit("ip")
+	// Month.
+	PublicCatalogProductUnitOfMeasureCountableUnitMonth = PublicCatalogProductUnitOfMeasureCountableUnit("month")
+	// Node.
+	PublicCatalogProductUnitOfMeasureCountableUnitNode = PublicCatalogProductUnitOfMeasureCountableUnit("node")
+	// Plan.
+	PublicCatalogProductUnitOfMeasureCountableUnitPlan = PublicCatalogProductUnitOfMeasureCountableUnit("plan")
+	// Query.
+	PublicCatalogProductUnitOfMeasureCountableUnitQuery = PublicCatalogProductUnitOfMeasureCountableUnit("query")
+	// Request.
+	PublicCatalogProductUnitOfMeasureCountableUnitRequest = PublicCatalogProductUnitOfMeasureCountableUnit("request")
+	// Session.
+	PublicCatalogProductUnitOfMeasureCountableUnitSession = PublicCatalogProductUnitOfMeasureCountableUnit("session")
+	// VCPU/s.
+	PublicCatalogProductUnitOfMeasureCountableUnitVcpuS = PublicCatalogProductUnitOfMeasureCountableUnit("vcpu_s")
+	// Version.
+	PublicCatalogProductUnitOfMeasureCountableUnitVersion = PublicCatalogProductUnitOfMeasureCountableUnit("version")
+	// Year.
+	PublicCatalogProductUnitOfMeasureCountableUnitYear = PublicCatalogProductUnitOfMeasureCountableUnit("year")
+	// Key.
+	PublicCatalogProductUnitOfMeasureCountableUnitKey = PublicCatalogProductUnitOfMeasureCountableUnit("key")
+	// Token.
+	PublicCatalogProductUnitOfMeasureCountableUnitToken = PublicCatalogProductUnitOfMeasureCountableUnit("token")
+	// Minute.
+	PublicCatalogProductUnitOfMeasureCountableUnitMinute = PublicCatalogProductUnitOfMeasureCountableUnit("minute")
+	// The installation of a resource (software or hardware).
+	PublicCatalogProductUnitOfMeasureCountableUnitSetup = PublicCatalogProductUnitOfMeasureCountableUnit("setup")
+	// Day.
+	PublicCatalogProductUnitOfMeasureCountableUnitDay = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+)
+
+func (enum PublicCatalogProductUnitOfMeasureCountableUnit) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductUnitOfMeasureCountableUnitUnknownCountableUnit)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductUnitOfMeasureCountableUnit) Values() []PublicCatalogProductUnitOfMeasureCountableUnit {
+	return []PublicCatalogProductUnitOfMeasureCountableUnit{
+		"unknown_countable_unit",
+		"chunk",
+		"core",
+		"currency",
+		"device",
+		"domain",
+		"email",
+		"gb_s",
+		"gigabyte",
+		"hour",
+		"iops_gigabyte",
+		"ip",
+		"month",
+		"node",
+		"plan",
+		"query",
+		"request",
+		"session",
+		"vcpu_s",
+		"version",
+		"year",
+		"key",
+		"token",
+		"minute",
+		"setup",
+		"day",
+	}
+}
+
+func (enum PublicCatalogProductUnitOfMeasureCountableUnit) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductUnitOfMeasureCountableUnit) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductUnitOfMeasureCountableUnit(PublicCatalogProductUnitOfMeasureCountableUnit(tmp).String())
+	return nil
+}
+
 // PublicCatalogProductPropertiesHardwareCPUPhysical: public catalog product properties hardware cpu physical.
 type PublicCatalogProductPropertiesHardwareCPUPhysical struct {
 	// Sockets: the number of sockets of the CPU.
@@ -346,12 +457,10 @@ type PublicCatalogProductPropertiesInstance struct {
 	Range string `json:"range"`
 }
 
-// PublicCatalogProductEnvironmentalImpact: public catalog product environmental impact.
-type PublicCatalogProductEnvironmentalImpact struct {
-	// KgCo2Equivalent: kilograms of CO2 that would need to be released to produce the equivalent warming impact.
+// PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
+type PublicCatalogProductEnvironmentalImpactEstimation struct {
 	KgCo2Equivalent *float32 `json:"kg_co2_equivalent"`
 
-	// M3WaterUsage: cubic meters of water used.
 	M3WaterUsage *float32 `json:"m3_water_usage"`
 }
 
@@ -379,8 +488,8 @@ type PublicCatalogProductPrice struct {
 	// RetailPrice: the retail price of the product.
 	RetailPrice *scw.Money `json:"retail_price"`
 
-	// UnitOfMeasure: the unit of measure of the price.
-	UnitOfMeasure *PublicCatalogProductPriceUnitOfMeasure `json:"unit_of_measure"`
+	// Deprecated: UnitOfMeasure: the unit of measure of the price (deprecated).
+	UnitOfMeasure *PublicCatalogProductPriceUnitOfMeasure `json:"unit_of_measure,omitempty"`
 }
 
 // PublicCatalogProductProperties: public catalog product properties.
@@ -403,6 +512,14 @@ type PublicCatalogProductProperties struct {
 	// Instance: the properties of Instance products.
 	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
+}
+
+// PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
+type PublicCatalogProductUnitOfMeasure struct {
+	// Unit: default value: unknown_countable_unit
+	Unit PublicCatalogProductUnitOfMeasureCountableUnit `json:"unit"`
+
+	Size uint64 `json:"size"`
 }
 
 // PublicCatalogProduct: public catalog product.
@@ -431,8 +548,11 @@ type PublicCatalogProduct struct {
 	// Properties: the properties of the product.
 	Properties *PublicCatalogProductProperties `json:"properties"`
 
-	// EnvironmentalImpact: the environmental impact of the product.
-	EnvironmentalImpact *PublicCatalogProductEnvironmentalImpact `json:"environmental_impact"`
+	// EnvironmentalImpactEstimation: the environmental impact estimation of the product.
+	EnvironmentalImpactEstimation *PublicCatalogProductEnvironmentalImpactEstimation `json:"environmental_impact_estimation"`
+
+	// UnitOfMeasure: the unit of measure of the product.
+	UnitOfMeasure *PublicCatalogProductUnitOfMeasure `json:"unit_of_measure"`
 }
 
 // ListPublicCatalogProductsResponse: list public catalog products response.
