@@ -760,6 +760,16 @@ type AlertManager struct {
 	Region scw.Region `json:"region"`
 }
 
+// DisableAlertRulesResponse: disable alert rules response.
+type DisableAlertRulesResponse struct {
+	DisabledRuleIDs []string `json:"disabled_rule_ids"`
+}
+
+// EnableAlertRulesResponse: enable alert rules response.
+type EnableAlertRulesResponse struct {
+	EnabledRuleIDs []string `json:"enabled_rule_ids"`
+}
+
 // GetConfigResponse: Cockpit configuration.
 type GetConfigResponse struct {
 	// CustomMetricsRetention: custom metrics retention configuration.
@@ -2545,7 +2555,7 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 }
 
 // EnableAlertRules: Enable preconfigured alert rules. Enable alert rules from the list of available preconfigured rules.
-func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, opts ...scw.RequestOption) error {
+func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, opts ...scw.RequestOption) (*EnableAlertRulesResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2559,7 +2569,7 @@ func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, 
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2569,18 +2579,20 @@ func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, 
 
 	err = scwReq.SetBody(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = s.client.Do(scwReq, nil, opts...)
+	var resp EnableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &resp, nil
 }
 
 // DisableAlertRules: Disable preconfigured alert rules. Disable alert rules from the list of available preconfigured rules.
-func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest, opts ...scw.RequestOption) error {
+func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest, opts ...scw.RequestOption) (*DisableAlertRulesResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2594,7 +2606,7 @@ func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
@@ -2604,14 +2616,16 @@ func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest
 
 	err = scwReq.SetBody(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = s.client.Do(scwReq, nil, opts...)
+	var resp DisableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &resp, nil
 }
 
 // TriggerTestAlert: Send a test alert to the Alert manager to make sure your contact points get notified.
