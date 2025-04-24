@@ -67,7 +67,15 @@ func TestClientOptions(t *testing.T) {
 				s.apiURL = ":test"
 				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
 			},
-			errStr: "scaleway-sdk-go: invalid url :test",
+			errStr: "scaleway-sdk-go: invalid API url ':test'",
+		},
+		{
+			name: "Should throw an empty url error",
+			clientOption: func(s *settings) {
+				s.apiURL = ""
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: "scaleway-sdk-go: invalid API url ''",
 		},
 		{
 			name: "Should throw an empty organization ID error",
