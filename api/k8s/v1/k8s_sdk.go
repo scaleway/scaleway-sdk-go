@@ -1953,15 +1953,6 @@ type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
-// MigrateClusterToSBSCSIRequest: migrate cluster to sbscsi request.
-type MigrateClusterToSBSCSIRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ClusterID: cluster ID for which the latest CSI compatible with Scaleway Block Storage will be enabled.
-	ClusterID string `json:"-"`
-}
-
 // NodeMetadata: node metadata.
 type NodeMetadata struct {
 	ID string `json:"id"`
@@ -2552,43 +2543,6 @@ func (s *API) ResetClusterAdminToken(req *ResetClusterAdminTokenRequest, opts ..
 		return err
 	}
 	return nil
-}
-
-// MigrateClusterToSBSCSI: Enable the latest CSI compatible with Scaleway Block Storage (SBS) and migrate all existing PersistentVolumes/VolumeSnapshotContents to SBS.
-// Make sure to have the necessary Quota before running this command.
-func (s *API) MigrateClusterToSBSCSI(req *MigrateClusterToSBSCSIRequest, opts ...scw.RequestOption) (*Cluster, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ClusterID) == "" {
-		return nil, errors.New("field ClusterID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-to-sbs-csi",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Cluster
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }
 
 // ListClusterACLRules: List ACLs for a specific cluster.
