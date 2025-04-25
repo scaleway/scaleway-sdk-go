@@ -65,7 +65,7 @@ type WaitForCustomModelRequest struct {
 	RetryInterval *time.Duration
 }
 
-func (s *API) WaitForCustomModel(req WaitForCustomModelRequest, opts ...scw.RequestOption) (*Model, error) {
+func (s *API) WaitForCustomModel(req *WaitForCustomModelRequest, opts ...scw.RequestOption) (*Model, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
