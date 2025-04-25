@@ -57,3 +57,47 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	}
 	return deployment.(*Deployment), nil
 }
+
+type WaitForCustomModelRequest struct {
+	ModelID       string
+	Region        scw.Region
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+func (s *API) WaitForCustomModel(req WaitForCustomModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ModelStatus]struct{}{
+		ModelStatusReady: {},
+		ModelStatusError: {},
+	}
+
+	model, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			model, err := s.GetModel(&GetModelRequest{
+				Region:  req.Region,
+				ModelID: req.ModelID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+			_, isTerminal := terminalStatus[model.Status]
+			return model, isTerminal, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for model failed")
+	}
+
+	return model.(*Model), nil
+}
