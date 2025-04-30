@@ -1117,6 +1117,9 @@ type Function struct {
 
 	// ReadyAt: last date when the function was successfully deployed and set to ready.
 	ReadyAt *time.Time `json:"ready_at"`
+
+	// Tags: list of tags applied to the Serverless Function.
+	Tags []string `json:"tags"`
 }
 
 // Namespace: namespace.
@@ -1158,7 +1161,7 @@ type Namespace struct {
 	// Region: region in which the namespace is located.
 	Region scw.Region `json:"region"`
 
-	// Tags: [ALPHA] List of tags applied to the Serverless Function Namespace.
+	// Tags: list of tags applied to the Serverless Function Namespace.
 	Tags []string `json:"tags"`
 
 	// CreatedAt: creation date of the namespace.
@@ -1324,6 +1327,9 @@ type CreateFunctionRequest struct {
 	// Sandbox: execution environment of the function.
 	// Default value: unknown_sandbox
 	Sandbox FunctionSandbox `json:"sandbox"`
+
+	// Tags: tags of the Serverless Function.
+	Tags []string `json:"tags"`
 }
 
 // CreateNamespaceRequest: create namespace request.
@@ -1345,7 +1351,7 @@ type CreateNamespaceRequest struct {
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
-	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	// Tags: tags of the Serverless Function Namespace.
 	Tags []string `json:"tags"`
 }
 
@@ -1954,6 +1960,9 @@ type UpdateFunctionRequest struct {
 	// Sandbox: execution environment of the function.
 	// Default value: unknown_sandbox
 	Sandbox FunctionSandbox `json:"sandbox"`
+
+	// Tags: tags of the Serverless Function.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateNamespaceRequest: update namespace request.
@@ -1973,7 +1982,7 @@ type UpdateNamespaceRequest struct {
 	// SecretEnvironmentVariables: secret environment variables of the namespace.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
-	// Tags: [ALPHA] Tags of the Serverless Function Namespace.
+	// Tags: tags of the Serverless Function Namespace.
 	Tags *[]string `json:"tags,omitempty"`
 }
 
