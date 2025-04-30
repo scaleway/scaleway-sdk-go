@@ -39,117 +39,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type PublicCatalogProductPriceUnitOfMeasureCountableUnit string
-
-const (
-	// Unknown countable unit.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitUnknownCountableUnit = PublicCatalogProductPriceUnitOfMeasureCountableUnit("unknown_countable_unit")
-	// Chunk.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitChunk = PublicCatalogProductPriceUnitOfMeasureCountableUnit("chunk")
-	// Core.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitCore = PublicCatalogProductPriceUnitOfMeasureCountableUnit("core")
-	// Currency.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitCurrency = PublicCatalogProductPriceUnitOfMeasureCountableUnit("currency")
-	// Device.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitDevice = PublicCatalogProductPriceUnitOfMeasureCountableUnit("device")
-	// Domain.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitDomain = PublicCatalogProductPriceUnitOfMeasureCountableUnit("domain")
-	// Email.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitEmail = PublicCatalogProductPriceUnitOfMeasureCountableUnit("email")
-	// GB/s.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitGbS = PublicCatalogProductPriceUnitOfMeasureCountableUnit("gb_s")
-	// Gigabyte.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitGigabyte = PublicCatalogProductPriceUnitOfMeasureCountableUnit("gigabyte")
-	// Hour.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitHour = PublicCatalogProductPriceUnitOfMeasureCountableUnit("hour")
-	// IOPS gigabyte.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitIopsGigabyte = PublicCatalogProductPriceUnitOfMeasureCountableUnit("iops_gigabyte")
-	// IP.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitIP = PublicCatalogProductPriceUnitOfMeasureCountableUnit("ip")
-	// Month.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitMonth = PublicCatalogProductPriceUnitOfMeasureCountableUnit("month")
-	// Node.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitNode = PublicCatalogProductPriceUnitOfMeasureCountableUnit("node")
-	// Plan.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitPlan = PublicCatalogProductPriceUnitOfMeasureCountableUnit("plan")
-	// Query.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitQuery = PublicCatalogProductPriceUnitOfMeasureCountableUnit("query")
-	// Request.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitRequest = PublicCatalogProductPriceUnitOfMeasureCountableUnit("request")
-	// Session.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitSession = PublicCatalogProductPriceUnitOfMeasureCountableUnit("session")
-	// VCPU/s.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitVcpuS = PublicCatalogProductPriceUnitOfMeasureCountableUnit("vcpu_s")
-	// Version.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitVersion = PublicCatalogProductPriceUnitOfMeasureCountableUnit("version")
-	// Year.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitYear = PublicCatalogProductPriceUnitOfMeasureCountableUnit("year")
-	// Key.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitKey = PublicCatalogProductPriceUnitOfMeasureCountableUnit("key")
-	// Token.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitToken = PublicCatalogProductPriceUnitOfMeasureCountableUnit("token")
-	// Minute.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitMinute = PublicCatalogProductPriceUnitOfMeasureCountableUnit("minute")
-	// The installation of a resource (software or hardware).
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitSetup = PublicCatalogProductPriceUnitOfMeasureCountableUnit("setup")
-	// Day.
-	PublicCatalogProductPriceUnitOfMeasureCountableUnitDay = PublicCatalogProductPriceUnitOfMeasureCountableUnit("day")
-)
-
-func (enum PublicCatalogProductPriceUnitOfMeasureCountableUnit) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(PublicCatalogProductPriceUnitOfMeasureCountableUnitUnknownCountableUnit)
-	}
-	return string(enum)
-}
-
-func (enum PublicCatalogProductPriceUnitOfMeasureCountableUnit) Values() []PublicCatalogProductPriceUnitOfMeasureCountableUnit {
-	return []PublicCatalogProductPriceUnitOfMeasureCountableUnit{
-		"unknown_countable_unit",
-		"chunk",
-		"core",
-		"currency",
-		"device",
-		"domain",
-		"email",
-		"gb_s",
-		"gigabyte",
-		"hour",
-		"iops_gigabyte",
-		"ip",
-		"month",
-		"node",
-		"plan",
-		"query",
-		"request",
-		"session",
-		"vcpu_s",
-		"version",
-		"year",
-		"key",
-		"token",
-		"minute",
-		"setup",
-		"day",
-	}
-}
-
-func (enum PublicCatalogProductPriceUnitOfMeasureCountableUnit) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *PublicCatalogProductPriceUnitOfMeasureCountableUnit) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = PublicCatalogProductPriceUnitOfMeasureCountableUnit(PublicCatalogProductPriceUnitOfMeasureCountableUnit(tmp).String())
-	return nil
-}
-
 type PublicCatalogProductPropertiesHardwareCPUArch string
 
 const (
@@ -405,16 +294,6 @@ type PublicCatalogProductPropertiesHardwareStorage struct {
 	Total scw.Size `json:"total"`
 }
 
-// PublicCatalogProductPriceUnitOfMeasure: public catalog product price unit of measure.
-type PublicCatalogProductPriceUnitOfMeasure struct {
-	// Unit: the unit of measure.
-	// Default value: unknown_countable_unit
-	Unit PublicCatalogProductPriceUnitOfMeasureCountableUnit `json:"unit"`
-
-	// Size: the size of the unit.
-	Size uint64 `json:"size"`
-}
-
 // PublicCatalogProductPropertiesAppleSilicon: public catalog product properties apple silicon.
 type PublicCatalogProductPropertiesAppleSilicon struct {
 	// Range: the range of the Apple Silicon server.
@@ -487,9 +366,6 @@ type PublicCatalogProductLocality struct {
 type PublicCatalogProductPrice struct {
 	// RetailPrice: the retail price of the product.
 	RetailPrice *scw.Money `json:"retail_price"`
-
-	// Deprecated: UnitOfMeasure: the unit of measure of the price (deprecated).
-	UnitOfMeasure *PublicCatalogProductPriceUnitOfMeasure `json:"unit_of_measure,omitempty"`
 }
 
 // PublicCatalogProductProperties: public catalog product properties.
