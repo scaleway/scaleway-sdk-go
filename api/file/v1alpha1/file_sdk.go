@@ -592,7 +592,6 @@ func (s *API) DeleteFileSystem(req *DeleteFileSystemRequest, opts ...scw.Request
 }
 
 // UpdateFileSystem: Update the technical details of a filesystem, such as its name, tags or its new size.
-// You can only resize a filesystem to a larger size.
 func (s *API) UpdateFileSystem(req *UpdateFileSystemRequest, opts ...scw.RequestOption) (*FileSystem, error) {
 	var err error
 
