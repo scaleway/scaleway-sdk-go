@@ -2554,7 +2554,7 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 	return &resp, nil
 }
 
-// EnableAlertRules: Enable preconfigured alert rules. Enable alert rules from the list of available preconfigured rules.
+// EnableAlertRules: Enable alert rules from the list of available preconfigured rules.
 func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, opts ...scw.RequestOption) (*EnableAlertRulesResponse, error) {
 	var err error
 
@@ -2591,7 +2591,7 @@ func (s *RegionalAPI) EnableAlertRules(req *RegionalAPIEnableAlertRulesRequest, 
 	return &resp, nil
 }
 
-// DisableAlertRules: Disable preconfigured alert rules. Disable alert rules from the list of available preconfigured rules.
+// DisableAlertRules: Disable alert rules from the list of available preconfigured rules.
 func (s *RegionalAPI) DisableAlertRules(req *RegionalAPIDisableAlertRulesRequest, opts ...scw.RequestOption) (*DisableAlertRulesResponse, error) {
 	var err error
 
