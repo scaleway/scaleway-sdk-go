@@ -992,6 +992,9 @@ type Container struct {
 
 	// Region: region in which the container will be deployed.
 	Region scw.Region `json:"region"`
+
+	// Tags: list of tags applied to the Serverless Container.
+	Tags []string `json:"tags"`
 }
 
 // Cron: cron.
@@ -1077,7 +1080,7 @@ type Namespace struct {
 	// Region: region in which the namespace will be created.
 	Region scw.Region `json:"region"`
 
-	// Tags: [ALPHA] List of tags applied to the Serverless Container Namespace.
+	// Tags: list of tags applied to the Serverless Container Namespace.
 	Tags []string `json:"tags"`
 
 	// CreatedAt: creation date of the namespace.
@@ -1235,6 +1238,9 @@ type CreateContainerRequest struct {
 
 	// HealthCheck: health check configuration of the container.
 	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
+
+	// Tags: tags of the Serverless Container.
+	Tags []string `json:"tags"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1287,7 +1293,7 @@ type CreateNamespaceRequest struct {
 	// SecretEnvironmentVariables: secret environment variables of the namespace to create.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
-	// Tags: [ALPHA] Tags of the Serverless Container Namespace.
+	// Tags: tags of the Serverless Container Namespace.
 	Tags []string `json:"tags"`
 }
 
@@ -1832,6 +1838,9 @@ type UpdateContainerRequest struct {
 
 	// HealthCheck: health check configuration of the container.
 	HealthCheck *ContainerHealthCheckSpec `json:"health_check,omitempty"`
+
+	// Tags: tags of the Serverless Container.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
@@ -1872,7 +1881,7 @@ type UpdateNamespaceRequest struct {
 	// SecretEnvironmentVariables: secret environment variables of the namespace to update.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
-	// Tags: [ALPHA] Tags of the Serverless Container Namespace.
+	// Tags: tags of the Serverless Container Namespace.
 	Tags *[]string `json:"tags,omitempty"`
 }
 
