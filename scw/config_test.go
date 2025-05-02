@@ -847,3 +847,32 @@ profiles:
 func TestEmptyConfig(t *testing.T) {
 	testhelpers.Assert(t, (&Config{}).IsEmpty(), "Config must be empty")
 }
+
+func TestEmptyProfile(t *testing.T) {
+	incompleteProfiles := `
+profiles:
+  profile1:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-6f72-756c-6c74-68656d616c6c
+    # default_organization_id: 11111111-1111-1111-1111-111111111111
+    # default_project_id: 11111111-1111-1111-1111-111111111111
+    # default_zone: fr-par-1
+    # default_region: fr-pargs
+    # api_url: https://api.scaleway.com
+    # insecure: false
+
+  profile2:
+    # access_key: SCW1234567890ABCDEFG
+    # secret_key: 7363616c-6577-6573-6862-6f7579616161
+`
+
+	config, err := unmarshalConfV2([]byte(incompleteProfiles))
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, 2, len(config.Profiles))
+	testhelpers.Equals(t, `profiles:
+  profile1:
+    access_key: SCW234567890ABCDEFGH
+    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  profile2: null
+`, config.String())
+}
