@@ -58,14 +58,14 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	return deployment.(*Deployment), nil
 }
 
-type WaitForCustomModelRequest struct {
+type WaitForModelRequest struct {
 	ModelID       string
 	Region        scw.Region
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
 
-func (s *API) WaitForCustomModel(req *WaitForCustomModelRequest, opts ...scw.RequestOption) (*Model, error) {
+func (s *API) WaitForModel(req *WaitForModelRequest, opts ...scw.RequestOption) (*Model, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout

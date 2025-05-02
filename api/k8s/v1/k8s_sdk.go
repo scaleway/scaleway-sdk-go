@@ -1204,9 +1204,6 @@ type Cluster struct {
 	// CommitmentEndsAt: date on which it will be possible to switch to a smaller offer.
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
-	// Deprecated: SbsCsiEnabled: defines whether the SBS-enabled CSI starting from v0.3 is installed on the cluster.
-	SbsCsiEnabled *bool `json:"sbs_csi_enabled,omitempty"`
-
 	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
 	ACLAvailable *bool `json:"acl_available,omitempty"`
 
