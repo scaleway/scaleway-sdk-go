@@ -976,7 +976,7 @@ type PlatformControlPanel struct {
 	// Name: name of the control panel.
 	Name string `json:"name"`
 
-	// URLs: URL to connect to cPanel dashboard and to Webmail interface.
+	// URLs: URL to connect to control panel dashboard and to Webmail interface.
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
@@ -1074,14 +1074,17 @@ type Nameserver struct {
 
 // HostingUser: hosting user.
 type HostingUser struct {
-	// Username: main Web Hosting cPanel username.
+	// Username: main Web Hosting control panel username.
 	Username string `json:"username"`
 
-	// OneTimePassword: one-time-password used for the first login or reset password, empty after first use.
-	OneTimePassword *string `json:"one_time_password"`
+	// Deprecated: OneTimePassword: one-time-password used for the first login to the control panel, cleared after first use (deprecated, use password_b64 instead).
+	OneTimePassword *string `json:"one_time_password,omitempty"`
 
 	// ContactEmail: contact email used for the hosting.
 	ContactEmail string `json:"contact_email"`
+
+	// OneTimePasswordB64: one-time-password used for the first login to the control panel, cleared after first use, encoded in base64.
+	OneTimePasswordB64 *string `json:"one_time_password_b64"`
 }
 
 // Offer: offer.
@@ -2138,8 +2141,11 @@ type OfferAPIListOffersRequest struct {
 
 // ResetHostingPasswordResponse: reset hosting password response.
 type ResetHostingPasswordResponse struct {
-	// OneTimePassword: new temporary password.
-	OneTimePassword string `json:"one_time_password"`
+	// Deprecated: OneTimePassword: new temporary password (deprecated, use password_b64 instead).
+	OneTimePassword *string `json:"one_time_password,omitempty"`
+
+	// OneTimePasswordB64: new temporary password, encoded in base64.
+	OneTimePasswordB64 string `json:"one_time_password_b64"`
 }
 
 // ResourceSummary: resource summary.
