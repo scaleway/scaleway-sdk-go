@@ -478,6 +478,15 @@ type GetKeyRequest struct {
 	KeyID string `json:"-"`
 }
 
+// GetPublicKeyRequest: get public key request.
+type GetPublicKeyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key.
+	KeyID string `json:"-"`
+}
+
 // ImportKeyMaterialRequest: import key material request.
 type ImportKeyMaterialRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -553,6 +562,11 @@ type ProtectKeyRequest struct {
 
 	// KeyID: ID of the key to apply key protection to.
 	KeyID string `json:"-"`
+}
+
+// PublicKey: public key.
+type PublicKey struct {
+	Pem string `json:"pem"`
 }
 
 // RotateKeyRequest: rotate key request.
@@ -670,6 +684,37 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	}
 
 	var resp Key
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetPublicKey: Retrieves the public portion of an asymmetric cryptographic key in PEM format.
+func (s *API) GetPublicKey(req *GetPublicKeyRequest, opts ...scw.RequestOption) (*PublicKey, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/public-key",
+	}
+
+	var resp PublicKey
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
