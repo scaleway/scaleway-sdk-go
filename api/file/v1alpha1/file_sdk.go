@@ -334,7 +334,7 @@ type ListFileSystemsRequest struct {
 	// PageSize: number of entries per page (default: 20, max: 100).
 	PageSize *uint32 `json:"-"`
 
-	// Name: filter the return filesystems by their names.
+	// Name: filter the returned filesystems by their names.
 	Name *string `json:"-"`
 
 	// Tags: filter by tags. Only filesystems with one or more matching tags will be returned.
@@ -435,8 +435,7 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListFileSystems: Retrieve all filesystems in the specified region. Results are ordered by creation date in ascending order by default.
-// Use the order_by parameter to modify the sorting behavior.
+// ListFileSystems: Retrieve all filesystems in the specified region. By default, the filesystems listed are ordered by creation date in ascending order. This can be modified using the `order_by` field.
 func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOption) (*ListFileSystemsResponse, error) {
 	var err error
 
@@ -478,8 +477,7 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 }
 
 // ListAttachments: List all existing attachments in a specified region.
-// By default, the attachments listed are ordered by creation date in ascending order.
-// This can be modified using the `order_by` field.
+// By default, the attachments listed are ordered by creation date in ascending order. This can be modified using the `order_by` field.
 func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOption) (*ListAttachmentsResponse, error) {
 	var err error
 
@@ -525,7 +523,7 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// CreateFileSystem: To create a new filesystem, you need to provide a name, a size, and a project ID.
+// CreateFileSystem: To create a new filesystem, you must specify a name, a size, and a project ID.
 func (s *API) CreateFileSystem(req *CreateFileSystemRequest, opts ...scw.RequestOption) (*FileSystem, error) {
 	var err error
 
