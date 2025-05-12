@@ -1676,15 +1676,19 @@ type PrivateNetworkStaticConfig struct {
 // RouteMatch: route match.
 type RouteMatch struct {
 	// Sni: value to match in the Server Name Indication TLS extension (SNI) field from an incoming connection made via an SSL/TLS transport layer. This field should be set for routes on TCP Load Balancers.
-	// Precisely one of Sni, HostHeader must be set.
+	// Precisely one of Sni, HostHeader, PathBegin must be set.
 	Sni *string `json:"sni,omitempty"`
 
 	// HostHeader: value to match in the HTTP Host request header from an incoming request. This field should be set for routes on HTTP Load Balancers.
-	// Precisely one of Sni, HostHeader must be set.
+	// Precisely one of Sni, HostHeader, PathBegin must be set.
 	HostHeader *string `json:"host_header,omitempty"`
 
 	// MatchSubdomains: if true, all subdomains will match.
 	MatchSubdomains bool `json:"match_subdomains"`
+
+	// PathBegin: value to match in the URL beginning path from an incoming request.
+	// Precisely one of Sni, HostHeader, PathBegin must be set.
+	PathBegin *string `json:"path_begin,omitempty"`
 }
 
 // CreateCertificateRequestCustomCertificate: create certificate request custom certificate.
