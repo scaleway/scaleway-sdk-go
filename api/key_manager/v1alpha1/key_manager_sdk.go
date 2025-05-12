@@ -77,11 +77,114 @@ func (enum *DataKeyAlgorithmSymmetricEncryption) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
+type KeyAlgorithmAsymmetricEncryption string
+
+const (
+	KeyAlgorithmAsymmetricEncryptionUnknownAsymmetricEncryption = KeyAlgorithmAsymmetricEncryption("unknown_asymmetric_encryption")
+	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 2048-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricEncryptionRsaOaep2048Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_2048_sha256")
+	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 3072-bit key and SHA-256 hash function (recommended).
+	KeyAlgorithmAsymmetricEncryptionRsaOaep3072Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_3072_sha256")
+	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 4096-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricEncryptionRsaOaep4096Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_4096_sha256")
+)
+
+func (enum KeyAlgorithmAsymmetricEncryption) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyAlgorithmAsymmetricEncryptionUnknownAsymmetricEncryption)
+	}
+	return string(enum)
+}
+
+func (enum KeyAlgorithmAsymmetricEncryption) Values() []KeyAlgorithmAsymmetricEncryption {
+	return []KeyAlgorithmAsymmetricEncryption{
+		"unknown_asymmetric_encryption",
+		"rsa_oaep_2048_sha256",
+		"rsa_oaep_3072_sha256",
+		"rsa_oaep_4096_sha256",
+	}
+}
+
+func (enum KeyAlgorithmAsymmetricEncryption) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyAlgorithmAsymmetricEncryption) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyAlgorithmAsymmetricEncryption(KeyAlgorithmAsymmetricEncryption(tmp).String())
+	return nil
+}
+
+type KeyAlgorithmAsymmetricSigning string
+
+const (
+	KeyAlgorithmAsymmetricSigningUnknownAsymmetricSigning = KeyAlgorithmAsymmetricSigning("unknown_asymmetric_signing")
+	// ECDSA (Elliptic Curve Digital Signature Algorithm) on the P-256 Curve and SHA-256 hash function (recommended).
+	KeyAlgorithmAsymmetricSigningEcP256Sha256 = KeyAlgorithmAsymmetricSigning("ec_p256_sha256")
+	// ECDSA (Elliptic Curve Digital Signature Algorithm) on the P-384 Curve and SHA-384 hash function.
+	KeyAlgorithmAsymmetricSigningEcP384Sha384 = KeyAlgorithmAsymmetricSigning("ec_p384_sha384")
+	// RSA-PSS (Probabilistic Signature Scheme) with a 2048-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPss2048Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pss_2048_sha256")
+	// RSA-PSS (Probabilistic Signature Scheme) with a 3072-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPss3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pss_3072_sha256")
+	// RSA-PSS (Probabilistic Signature Scheme) with a 4096-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPss4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pss_4096_sha256")
+	// RSA-PKCS1 (Public Key Cryptography Standards) with a 2048-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPkcs1_2048Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_2048_sha256")
+	// RSA-PKCS1 (Public Key Cryptography Standards) with a 3072-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPkcs1_3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_3072_sha256")
+	// RSA-PKCS1 (Public Key Cryptography Standards) with a 4096-bit key and SHA-256 hash function.
+	KeyAlgorithmAsymmetricSigningRsaPkcs1_4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_4096_sha256")
+)
+
+func (enum KeyAlgorithmAsymmetricSigning) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyAlgorithmAsymmetricSigningUnknownAsymmetricSigning)
+	}
+	return string(enum)
+}
+
+func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigning {
+	return []KeyAlgorithmAsymmetricSigning{
+		"unknown_asymmetric_signing",
+		"ec_p256_sha256",
+		"ec_p384_sha384",
+		"rsa_pss_2048_sha256",
+		"rsa_pss_3072_sha256",
+		"rsa_pss_4096_sha256",
+		"rsa_pkcs1_2048_sha256",
+		"rsa_pkcs1_3072_sha256",
+		"rsa_pkcs1_4096_sha256",
+	}
+}
+
+func (enum KeyAlgorithmAsymmetricSigning) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyAlgorithmAsymmetricSigning) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyAlgorithmAsymmetricSigning(KeyAlgorithmAsymmetricSigning(tmp).String())
+	return nil
+}
+
 type KeyAlgorithmSymmetricEncryption string
 
 const (
 	KeyAlgorithmSymmetricEncryptionUnknownSymmetricEncryption = KeyAlgorithmSymmetricEncryption("unknown_symmetric_encryption")
-	// Key Manager currently only supports the `AES-GCM` (256-bits) key algorithm.
+	// 256-bit Advanced Encryption Standard (AES-256) keys in Galois Counter Mode (GCM).
 	KeyAlgorithmSymmetricEncryptionAes256Gcm = KeyAlgorithmSymmetricEncryption("aes_256_gcm")
 )
 
@@ -258,8 +361,16 @@ type KeyRotationPolicy struct {
 type KeyUsage struct {
 	// SymmetricEncryption: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
 	// Default value: unknown_symmetric_encryption
-	// Precisely one of SymmetricEncryption must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
+
+	// AsymmetricEncryption: default value: unknown_asymmetric_encryption
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	AsymmetricEncryption *KeyAlgorithmAsymmetricEncryption `json:"asymmetric_encryption,omitempty"`
+
+	// AsymmetricSigning: default value: unknown_asymmetric_signing
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
 }
 
 // Key: key.
@@ -370,13 +481,13 @@ type DecryptRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// KeyID: ID of the key to decrypt.
+	// KeyID: the key must have an usage set to `symmetric_encryption` or `asymmetric_encryption`.
 	KeyID string `json:"-"`
 
 	// Ciphertext: data size must be between 1 and 131071 bytes.
 	Ciphertext []byte `json:"ciphertext"`
 
-	// AssociatedData: the additional data must match the value passed in the encryption request.
+	// AssociatedData: the additional data must match the value passed in the encryption request. Only supported by keys with a usage set to `symmetric_encryption`.
 	AssociatedData *[]byte `json:"associated_data,omitempty"`
 }
 
@@ -433,13 +544,13 @@ type EncryptRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// KeyID: ID of the key to encrypt.
+	// KeyID: the key must have an usage set to `symmetric_encryption` or `asymmetric_encryption`.
 	KeyID string `json:"-"`
 
 	// Plaintext: data size must be between 1 and 65535 bytes.
 	Plaintext []byte `json:"plaintext"`
 
-	// AssociatedData: additional data which will not be encrypted, but authenticated and appended to the encrypted payload.
+	// AssociatedData: additional data which will not be encrypted, but authenticated and appended to the encrypted payload. Only supported by keys with a usage set to `symmetric_encryption`.
 	AssociatedData *[]byte `json:"associated_data,omitempty"`
 }
 
@@ -578,6 +689,27 @@ type RotateKeyRequest struct {
 	KeyID string `json:"-"`
 }
 
+// SignRequest: sign request.
+type SignRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key to use for signing.
+	KeyID string `json:"-"`
+
+	// Digest: the digest must be generated using the same algorithm defined in the key’s algorithm settings.
+	Digest []byte `json:"digest"`
+}
+
+// SignResponse: sign response.
+type SignResponse struct {
+	// KeyID: ID of the key used to generate the signature.
+	KeyID string `json:"key_id"`
+
+	// Signature: the message signature.
+	Signature []byte `json:"signature"`
+}
+
 // UnprotectKeyRequest: unprotect key request.
 type UnprotectKeyRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -606,6 +738,30 @@ type UpdateKeyRequest struct {
 
 	// RotationPolicy: if not specified, the key's existing rotation policy applies.
 	RotationPolicy *KeyRotationPolicy `json:"rotation_policy,omitempty"`
+}
+
+// VerifyRequest: verify request.
+type VerifyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key to use for signature verification.
+	KeyID string `json:"-"`
+
+	// Digest: must be generated using the same algorithm specified in the key’s configuration.
+	Digest []byte `json:"digest"`
+
+	// Signature: the message signature to verify.
+	Signature []byte `json:"signature"`
+}
+
+// VerifyResponse: verify response.
+type VerifyResponse struct {
+	// KeyID: ID of the key used for verification.
+	KeyID string `json:"key_id"`
+
+	// Valid: returns `true` if the signature is valid for the digest and key, `false` otherwise.
+	Valid bool `json:"valid"`
 }
 
 // This API allows you to create, manage and use cryptographic keys in a centralized and secure service.
@@ -1112,6 +1268,78 @@ func (s *API) Decrypt(req *DecryptRequest, opts ...scw.RequestOption) (*DecryptR
 	}
 
 	var resp DecryptResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// Sign: Use a given key to sign a message digest. The key must have its usage set to `asymmetric_signing`. The digest must be created using the same digest algorithm that is defined in the key's algorithm configuration.
+func (s *API) Sign(req *SignRequest, opts ...scw.RequestOption) (*SignResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/sign",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SignResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// Verify: Use a given key to verify a message signature against a message digest. The key must have its usage set to `asymmetric_signing`. The message digest must be generated using the same digest algorithm that is defined in the key's algorithm configuration.
+func (s *API) Verify(req *VerifyRequest, opts ...scw.RequestOption) (*VerifyResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/verify",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VerifyResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
