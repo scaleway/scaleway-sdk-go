@@ -87,6 +87,57 @@ func (enum *PublicCatalogProductPropertiesHardwareCPUArch) UnmarshalJSON(data []
 	return nil
 }
 
+type PublicCatalogProductStatus string
+
+const (
+	// Unknown status.
+	PublicCatalogProductStatusUnknownStatus = PublicCatalogProductStatus("unknown_status")
+	// The product is available in Public Beta.
+	PublicCatalogProductStatusPublicBeta = PublicCatalogProductStatus("public_beta")
+	// The product is available in Preview mode.
+	PublicCatalogProductStatusPreview = PublicCatalogProductStatus("preview")
+	// The product is generally available.
+	PublicCatalogProductStatusGeneralAvailability = PublicCatalogProductStatus("general_availability")
+	// The product must not be used for new deployments.
+	PublicCatalogProductStatusEndOfDeployment = PublicCatalogProductStatus("end_of_deployment")
+	// There is no longer any commercial support for this product.
+	PublicCatalogProductStatusEndOfSupport = PublicCatalogProductStatus("end_of_support")
+)
+
+func (enum PublicCatalogProductStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductStatus) Values() []PublicCatalogProductStatus {
+	return []PublicCatalogProductStatus{
+		"unknown_status",
+		"public_beta",
+		"preview",
+		"general_availability",
+		"end_of_deployment",
+		"end_of_support",
+	}
+}
+
+func (enum PublicCatalogProductStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductStatus(PublicCatalogProductStatus(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductUnitOfMeasureCountableUnit string
 
 const (
@@ -334,6 +385,12 @@ type PublicCatalogProductPropertiesHardware struct {
 type PublicCatalogProductPropertiesInstance struct {
 	// Range: the range of the Instance server.
 	Range string `json:"range"`
+
+	// OfferID: the offer ID of the Instance server.
+	OfferID string `json:"offer_id"`
+
+	// RecommendedReplacementOfferIDs: the recommended replacement offer IDs of the Instance server.
+	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
@@ -429,6 +486,13 @@ type PublicCatalogProduct struct {
 
 	// UnitOfMeasure: the unit of measure of the product.
 	UnitOfMeasure *PublicCatalogProductUnitOfMeasure `json:"unit_of_measure"`
+
+	// Status: the status of the product.
+	// Default value: unknown_status
+	Status PublicCatalogProductStatus `json:"status"`
+
+	// EndOfLifeAt: the end of life date of the product.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
 }
 
 // ListPublicCatalogProductsResponse: list public catalog products response.
