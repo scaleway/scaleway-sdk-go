@@ -384,6 +384,9 @@ type PrivateNetwork struct {
 
 	// DHCPEnabled: defines whether managed DHCP is enabled for this Private Network.
 	DHCPEnabled bool `json:"dhcp_enabled"`
+
+	// DefaultRoutePropagationEnabled: defines whether default v4 and v6 routes are propagated for this Private Network.
+	DefaultRoutePropagationEnabled bool `json:"default_route_propagation_enabled"`
 }
 
 // Route: route.
@@ -542,6 +545,9 @@ type CreatePrivateNetworkRequest struct {
 
 	// VpcID: vPC in which to create the Private Network.
 	VpcID *string `json:"vpc_id,omitempty"`
+
+	// DefaultRoutePropagationEnabled: defines whether default v4 and v6 routes are propagated for this Private Network.
+	DefaultRoutePropagationEnabled bool `json:"default_route_propagation_enabled"`
 }
 
 // CreateRouteRequest: create route request.
@@ -978,6 +984,9 @@ type UpdatePrivateNetworkRequest struct {
 
 	// Tags: tags for the Private Network.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// DefaultRoutePropagationEnabled: defines whether default v4 and v6 routes are propagated for this Private Network.
+	DefaultRoutePropagationEnabled *bool `json:"default_route_propagation_enabled,omitempty"`
 }
 
 // UpdateRouteRequest: update route request.
