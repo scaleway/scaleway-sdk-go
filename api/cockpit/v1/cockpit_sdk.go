@@ -573,6 +573,9 @@ type Alert struct {
 
 	// PreconfiguredData: contains additional data for preconfigured alerts, such as the rule ID, display name, and description. Only present if the alert is preconfigured.
 	PreconfiguredData *PreconfiguredAlertData `json:"preconfigured_data"`
+
+	// DataSourceID: ID of the data source containing the alert rule.
+	DataSourceID string `json:"data_source_id"`
 }
 
 // ContactPoint: Contact point.
@@ -1304,6 +1307,9 @@ type RegionalAPIListAlertsRequest struct {
 	// State: valid values to filter on are `inactive`, `pending` and `firing`. If omitted, no filtering is applied on alert states. Other filters may still apply.
 	// Default value: unknown_state
 	State *AlertState `json:"-"`
+
+	// DataSourceID: if omitted, only alerts from the default scaleway data source will be listed.
+	DataSourceID *string `json:"-"`
 }
 
 // RegionalAPIListContactPointsRequest: List contact points.
@@ -2460,6 +2466,7 @@ func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.
 	parameter.AddToQuery(query, "is_enabled", req.IsEnabled)
 	parameter.AddToQuery(query, "is_preconfigured", req.IsPreconfigured)
 	parameter.AddToQuery(query, "state", req.State)
+	parameter.AddToQuery(query, "data_source_id", req.DataSourceID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
