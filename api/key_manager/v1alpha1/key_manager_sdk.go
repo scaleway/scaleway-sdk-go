@@ -348,6 +348,47 @@ func (enum *ListKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListKeysRequestUsage string
+
+const (
+	ListKeysRequestUsageUnknownUsage         = ListKeysRequestUsage("unknown_usage")
+	ListKeysRequestUsageSymmetricEncryption  = ListKeysRequestUsage("symmetric_encryption")
+	ListKeysRequestUsageAsymmetricEncryption = ListKeysRequestUsage("asymmetric_encryption")
+	ListKeysRequestUsageAsymmetricSigning    = ListKeysRequestUsage("asymmetric_signing")
+)
+
+func (enum ListKeysRequestUsage) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListKeysRequestUsageUnknownUsage)
+	}
+	return string(enum)
+}
+
+func (enum ListKeysRequestUsage) Values() []ListKeysRequestUsage {
+	return []ListKeysRequestUsage{
+		"unknown_usage",
+		"symmetric_encryption",
+		"asymmetric_encryption",
+		"asymmetric_signing",
+	}
+}
+
+func (enum ListKeysRequestUsage) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListKeysRequestUsage) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListKeysRequestUsage(ListKeysRequestUsage(tmp).String())
+	return nil
+}
+
 // KeyRotationPolicy: key rotation policy.
 type KeyRotationPolicy struct {
 	// RotationPeriod: time interval between two key rotations. The minimum duration is 24 hours and the maximum duration is 1 year (876000 hours).
@@ -636,6 +677,10 @@ type ListKeysRequest struct {
 
 	// Name: (Optional) Filter by key name.
 	Name *string `json:"-"`
+
+	// Usage: select from symmetric encryption, asymmetric encryption, or asymmetric signing.
+	// Default value: unknown_usage
+	Usage ListKeysRequestUsage `json:"-"`
 }
 
 // ListKeysResponse: list keys response.
@@ -1146,6 +1191,7 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "usage", req.Usage)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
