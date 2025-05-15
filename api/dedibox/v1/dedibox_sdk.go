@@ -3128,6 +3128,9 @@ type Server struct {
 
 	// IsRpnv2Member: whether or not the server is already part of an rpnv2 group.
 	IsRpnv2Member bool `json:"is_rpnv2_member"`
+
+	// IsHds: whether or not the server is HDS.
+	IsHds bool `json:"is_hds"`
 }
 
 // FailoverBlock: failover block.
