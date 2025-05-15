@@ -2311,6 +2311,12 @@ type MFAOTP struct {
 	Secret string `json:"secret"`
 }
 
+// MigrateOrganizationGuestsRequest: migrate organization guests request.
+type MigrateOrganizationGuestsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
 // OrganizationSecuritySettings: organization security settings.
 type OrganizationSecuritySettings struct {
 	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
@@ -4091,4 +4097,29 @@ func (s *API) UpdateOrganizationSecuritySettings(req *UpdateOrganizationSecurity
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// MigrateOrganizationGuests: Migrate the organization's guests to IAM members.
+func (s *API) MigrateOrganizationGuests(req *MigrateOrganizationGuestsRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/migrate-guests",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
