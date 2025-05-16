@@ -515,12 +515,15 @@ type SnapshotVolumeType struct {
 
 // UserRole: user role.
 type UserRole struct {
-	// Role: default value: unknown_role
+	// Role: name of the preset role.
+	// Default value: unknown_role
 	Role UserRoleRole `json:"role"`
 
+	// Database: name of the database on which the preset role will be used.
 	// Precisely one of Database, AnyDatabase must be set.
 	Database *string `json:"database,omitempty"`
 
+	// AnyDatabase: flag to enable the preset role in all databases.
 	// Precisely one of Database, AnyDatabase must be set.
 	AnyDatabase *bool `json:"any_database,omitempty"`
 }
@@ -1907,7 +1910,7 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 	return nil
 }
 
-// SetUserRole:
+// SetUserRole: Apply preset roles for a user in a Database Instance.
 func (s *API) SetUserRole(req *SetUserRoleRequest, opts ...scw.RequestOption) (*User, error) {
 	var err error
 
