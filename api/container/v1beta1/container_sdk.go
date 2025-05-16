@@ -995,6 +995,8 @@ type Container struct {
 
 	// Tags: list of tags applied to the Serverless Container.
 	Tags []string `json:"tags"`
+
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // Cron: cron.
@@ -1088,6 +1090,9 @@ type Namespace struct {
 
 	// UpdatedAt: last update date of the namespace.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Deprecated
+	VpcIntegrationActivated *bool `json:"vpc_integration_activated,omitempty"`
 }
 
 // Token: token.
@@ -1241,6 +1246,8 @@ type CreateContainerRequest struct {
 
 	// Tags: tags of the Serverless Container.
 	Tags []string `json:"tags"`
+
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1295,6 +1302,8 @@ type CreateNamespaceRequest struct {
 
 	// Tags: tags of the Serverless Container Namespace.
 	Tags []string `json:"tags"`
+
+	ActivateVpcIntegration bool `json:"activate_vpc_integration"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1841,6 +1850,8 @@ type UpdateContainerRequest struct {
 
 	// Tags: tags of the Serverless Container.
 	Tags *[]string `json:"tags,omitempty"`
+
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
