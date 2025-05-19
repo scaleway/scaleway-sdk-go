@@ -1,10 +1,12 @@
-package scw
+package scw_test
 
 import (
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/scw"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/logger"
@@ -21,8 +23,8 @@ var (
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696f"
-	v2ValidDefaultRegion2         = string(RegionFrPar)
-	v2ValidDefaultZone2           = string(ZoneFrPar2)
+	v2ValidDefaultRegion2         = string(scw.RegionFrPar)
+	v2ValidDefaultZone2           = string(scw.ZoneFrPar2)
 
 	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -31,8 +33,8 @@ var (
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	v2ValidDefaultProjectID      = "6170692e-7363-616c-6577-61792e636f6e"
-	v2ValidDefaultRegion         = string(RegionNlAms)
-	v2ValidDefaultZone           = string(ZoneNlAms1)
+	v2ValidDefaultRegion         = string(scw.RegionNlAms)
+	v2ValidDefaultZone           = string(scw.ZoneNlAms1)
 	v2ValidProfile               = "flantier"
 
 	v2InvalidAccessKey             = "invalid"
@@ -42,8 +44,8 @@ var (
 	v2InvalidDefaultRegion         = "invalid"
 	v2InvalidDefaultZone           = "invalid"
 
-	v2SimpleValidConfig = &Config{
-		Profile: Profile{
+	v2SimpleValidConfig = &scw.Config{
+		Profile: scw.Profile{
 			AccessKey:             &v2ValidAccessKey,
 			SecretKey:             &v2ValidSecretKey,
 			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
@@ -133,21 +135,21 @@ func TestSaveConfig(t *testing.T) {
 		name             string
 		env              map[string]string
 		files            map[string]string
-		config           *Config
-		funcUpdateConfig func(*Config)
+		config           *scw.Config
+		funcUpdateConfig func(*scw.Config)
 
 		expectedFiles map[string]string
 	}{
 		{
 			name: "Custom-path config",
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid1/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
 			},
-			config: &Config{
-				Profile: Profile{
+			config: &scw.Config{
+				Profile: scw.Profile{
 					AccessKey:             s(v2ValidAccessKey),
 					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
@@ -164,8 +166,8 @@ func TestSaveConfig(t *testing.T) {
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
-			config: &Config{
-				Profile: Profile{
+			config: &scw.Config{
+				Profile: scw.Profile{
 					AccessKey:             s(v2ValidAccessKey),
 					SecretKey:             s(v2ValidSecretKey),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
@@ -185,9 +187,9 @@ func TestSaveConfig(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
-			config: &Config{},
-			funcUpdateConfig: func(c *Config) {
-				*c = *MustLoadConfig()
+			config: &scw.Config{},
+			funcUpdateConfig: func(c *scw.Config) {
+				*c = *scw.MustLoadConfig()
 				c.DefaultZone = s(v2ValidDefaultZone)
 			},
 			expectedFiles: map[string]string{
@@ -202,10 +204,10 @@ func TestSaveConfig(t *testing.T) {
 			files: map[string]string{
 				".config/scw/config.yaml": v2PartialValidConfigFile,
 			},
-			config: &Config{},
-			funcUpdateConfig: func(c *Config) {
-				*c = *MustLoadConfig()
-				c.Profiles = map[string]*Profile{v2ValidProfile: {
+			config: &scw.Config{},
+			funcUpdateConfig: func(c *scw.Config) {
+				*c = *scw.MustLoadConfig()
+				c.Profiles = map[string]*scw.Profile{v2ValidProfile: {
 					AccessKey:             s(v2ValidAccessKey2),
 					SecretKey:             s(v2ValidSecretKey2),
 					APIURL:                s(v2ValidAPIURL2),
@@ -285,7 +287,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid1/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/valid1/test.conf",
 			},
 			files: map[string]string{
 				"valid1/test.conf": emptyFile,
@@ -294,7 +296,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
-				ScwConfigPathEnv: "{HOME}/valid3/test.conf",
+				scw.ScwConfigPathEnv: "{HOME}/valid3/test.conf",
 			},
 			files: map[string]string{
 				"valid3/test.conf": v2SimpleValidConfigFile,
@@ -375,8 +377,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		{
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
-				"HOME":              "{HOME}",
-				ScwActiveProfileEnv: v2ValidProfile,
+				"HOME":                  "{HOME}",
+				scw.ScwActiveProfileEnv: v2ValidProfile,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -423,7 +425,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
-			config, err := LoadConfig()
+			config, err := scw.LoadConfig()
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)
 				p, err := config.GetActiveProfile()
@@ -447,14 +449,14 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 }
 
 func TestConfigString(t *testing.T) {
-	c := &Config{
-		Profile: Profile{
+	c := &scw.Config{
+		Profile: scw.Profile{
 			AccessKey:     s(v2ValidAccessKey),
 			SecretKey:     s(v2ValidSecretKey),
 			SendTelemetry: b(true),
 		},
 		ActiveProfile: s(v2ValidProfile),
-		Profiles: map[string]*Profile{
+		Profiles: map[string]*scw.Profile{
 			v2ValidProfile: {
 				AccessKey: s(v2ValidAccessKey2),
 				SecretKey: s(v2ValidSecretKey2),
@@ -483,25 +485,25 @@ send_telemetry: true
 }
 
 func TestMergeProfiles(t *testing.T) {
-	p1 := &Profile{
-		AccessKey: StringPtr("1"),
-		SecretKey: StringPtr("1"),
+	p1 := &scw.Profile{
+		AccessKey: scw.StringPtr("1"),
+		SecretKey: scw.StringPtr("1"),
 	}
-	p2 := &Profile{
-		AccessKey: StringPtr("2"),
-		Insecure:  BoolPtr(true),
+	p2 := &scw.Profile{
+		AccessKey: scw.StringPtr("2"),
+		Insecure:  scw.BoolPtr(true),
 	}
-	p3 := &Profile{
-		Insecure:    BoolPtr(false),
-		DefaultZone: StringPtr(string(ZoneFrPar1)),
+	p3 := &scw.Profile{
+		Insecure:    scw.BoolPtr(false),
+		DefaultZone: scw.StringPtr(string(scw.ZoneFrPar1)),
 	}
 
-	act := MergeProfiles(p1, p2, p3)
-	exp := &Profile{
-		AccessKey:   StringPtr("2"),
-		SecretKey:   StringPtr("1"),
-		Insecure:    BoolPtr(false),
-		DefaultZone: StringPtr(string(ZoneFrPar1)),
+	act := scw.MergeProfiles(p1, p2, p3)
+	exp := &scw.Profile{
+		AccessKey:   scw.StringPtr("2"),
+		SecretKey:   scw.StringPtr("1"),
+		Insecure:    scw.BoolPtr(false),
+		DefaultZone: scw.StringPtr(string(scw.ZoneFrPar1)),
 	}
 
 	testhelpers.Equals(t, exp, act)
@@ -556,11 +558,11 @@ func s(value string) *string {
 	return &value
 }
 
-func r(value Region) *Region {
+func r(value scw.Region) *scw.Region {
 	return &value
 }
 
-func z(value Zone) *Zone {
+func z(value scw.Zone) *scw.Zone {
 	return &value
 }
 
@@ -570,7 +572,7 @@ func b(value bool) *bool {
 
 func TestConfig_ConfigFile(t *testing.T) {
 	type testCase struct {
-		config *Config
+		config *scw.Config
 		result string
 	}
 
@@ -588,7 +590,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 	}
 
 	t.Run("empty", run(&testCase{
-		config: &Config{},
+		config: &scw.Config{},
 		result: `# Scaleway configuration file
 # https://github.com/scaleway/scaleway-sdk-go/tree/master/scw#scaleway-config
 
@@ -663,8 +665,8 @@ func TestConfig_ConfigFile(t *testing.T) {
 	}))
 
 	t.Run("partial", run(&testCase{
-		config: &Config{
-			Profile: Profile{
+		config: &scw.Config{
+			Profile: scw.Profile{
 				AccessKey: s(v2ValidAccessKey),
 			},
 		},
@@ -742,14 +744,14 @@ access_key: SCW1234567890ABCDEFG
 	}))
 
 	t.Run("full", run(&testCase{
-		config: &Config{
-			Profile: Profile{
+		config: &scw.Config{
+			Profile: scw.Profile{
 				AccessKey:     s(v2ValidAccessKey),
 				SecretKey:     s(v2ValidSecretKey),
 				SendTelemetry: b(true),
 			},
 			ActiveProfile: s(v2ValidProfile),
-			Profiles: map[string]*Profile{
+			Profiles: map[string]*scw.Profile{
 				"profile1": {
 					AccessKey: s(v2ValidAccessKey2),
 					SecretKey: s(v2ValidSecretKey2),
@@ -845,7 +847,7 @@ profiles:
 }
 
 func TestEmptyConfig(t *testing.T) {
-	testhelpers.Assert(t, (&Config{}).IsEmpty(), "Config must be empty")
+	testhelpers.Assert(t, (&scw.Config{}).IsEmpty(), "Config must be empty")
 }
 
 func TestEmptyProfile(t *testing.T) {
