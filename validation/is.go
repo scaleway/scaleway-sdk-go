@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	isUUIDRegexp  = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+	isUUIDRegexp  = regexp.MustCompile("^(?:[a-z]{2}-[a-z]{3}-[1-9]/)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 	isRegionRegex = regexp.MustCompile("^[a-z]{2}-[a-z]{3}$")
 	isZoneRegex   = regexp.MustCompile("^[a-z]{2}-[a-z]{3}-[1-9]$")
 	isAccessKey   = regexp.MustCompile("^SCW[A-Z0-9]{17}$")
