@@ -39,6 +39,54 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type ListPublicCatalogProductsRequestProductType string
+
+const (
+	// Unknown product type.
+	ListPublicCatalogProductsRequestProductTypeUnknownProductType = ListPublicCatalogProductsRequestProductType("unknown_product_type")
+	// Include the Instance information in the response.
+	ListPublicCatalogProductsRequestProductTypeInstance = ListPublicCatalogProductsRequestProductType("instance")
+	// Include the Apple Silicon information in the response.
+	ListPublicCatalogProductsRequestProductTypeAppleSilicon = ListPublicCatalogProductsRequestProductType("apple_silicon")
+	// Include the Elastic Metal information in the response.
+	ListPublicCatalogProductsRequestProductTypeElasticMetal = ListPublicCatalogProductsRequestProductType("elastic_metal")
+	// Include the Dedibox information in the response.
+	ListPublicCatalogProductsRequestProductTypeDedibox = ListPublicCatalogProductsRequestProductType("dedibox")
+)
+
+func (enum ListPublicCatalogProductsRequestProductType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListPublicCatalogProductsRequestProductTypeUnknownProductType)
+	}
+	return string(enum)
+}
+
+func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCatalogProductsRequestProductType {
+	return []ListPublicCatalogProductsRequestProductType{
+		"unknown_product_type",
+		"instance",
+		"apple_silicon",
+		"elastic_metal",
+		"dedibox",
+	}
+}
+
+func (enum ListPublicCatalogProductsRequestProductType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPublicCatalogProductsRequestProductType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPublicCatalogProductsRequestProductType(ListPublicCatalogProductsRequestProductType(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesHardwareCPUArch string
 
 const (
@@ -530,6 +578,9 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 
 	// PageSize: the number of products per page. Value must be greater or equal to 1.
 	PageSize *uint32 `json:"-"`
+
+	// ProductTypes: the list of filtered product categories.
+	ProductTypes []ListPublicCatalogProductsRequestProductType `json:"-"`
 }
 
 type PublicCatalogAPI struct {
@@ -555,6 +606,7 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "product_types", req.ProductTypes)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
