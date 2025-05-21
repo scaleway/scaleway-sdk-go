@@ -997,6 +997,12 @@ type Container struct {
 	Tags []string `json:"tags"`
 
 	PrivateNetworkID *string `json:"private_network_id"`
+
+	// Command: command executed when the container starts. This overrides the default command defined in the container image. This is usually the main executable, or entry point script to run.
+	Command []string `json:"command"`
+
+	// Args: arguments passed to the command specified in the "command" field. These override the default arguments from the container image, and behave like command-line parameters.
+	Args []string `json:"args"`
 }
 
 // Cron: cron.
@@ -1248,6 +1254,12 @@ type CreateContainerRequest struct {
 	Tags []string `json:"tags"`
 
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// Command: command executed when the container starts. This overrides the default command defined in the container image. This is usually the main executable, or entry point script to run.
+	Command []string `json:"command"`
+
+	// Args: arguments passed to the command specified in the "command" field. These override the default arguments from the container image, and behave like command-line parameters.
+	Args []string `json:"args"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1852,6 +1864,12 @@ type UpdateContainerRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// Command: command executed when the container starts. This overrides the default command defined in the container image. This is usually the main executable, or entry point script to run.
+	Command *[]string `json:"command,omitempty"`
+
+	// Args: arguments passed to the command specified in the "command" field. These override the default arguments from the container image, and behave like command-line parameters.
+	Args *[]string `json:"args,omitempty"`
 }
 
 // UpdateCronRequest: update cron request.
