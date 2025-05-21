@@ -1628,6 +1628,9 @@ type Frontend struct {
 
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit"`
+
+	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -2078,6 +2081,9 @@ type CreateFrontendRequest struct {
 
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
+
+	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
 func (m *CreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3194,6 +3200,9 @@ type UpdateFrontendRequest struct {
 
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
+
+	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	EnableAccessLogs *bool `json:"enable_access_logs,omitempty"`
 }
 
 func (m *UpdateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -3613,6 +3622,9 @@ type ZonedAPICreateFrontendRequest struct {
 
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
+
+	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
 func (m *ZonedAPICreateFrontendRequest) UnmarshalJSON(b []byte) error {
@@ -4399,6 +4411,9 @@ type ZonedAPIUpdateFrontendRequest struct {
 
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
+
+	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	EnableAccessLogs *bool `json:"enable_access_logs,omitempty"`
 }
 
 func (m *ZonedAPIUpdateFrontendRequest) UnmarshalJSON(b []byte) error {
