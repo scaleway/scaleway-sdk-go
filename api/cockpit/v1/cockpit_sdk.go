@@ -528,6 +528,12 @@ type PreconfiguredAlertData struct {
 
 	// DisplayDescription: human readable description of the alert.
 	DisplayDescription string `json:"display_description"`
+
+	// ProductName: product associated with the alert.
+	ProductName string `json:"product_name"`
+
+	// ProductFamily: family of the product associated with the alert.
+	ProductFamily string `json:"product_family"`
 }
 
 // ContactPointEmail: contact point email.
