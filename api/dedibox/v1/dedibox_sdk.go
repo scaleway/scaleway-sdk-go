@@ -3653,6 +3653,9 @@ type ServerSummary struct {
 
 	// RpnVersion: supported RPN version.
 	RpnVersion *uint32 `json:"rpn_version"`
+
+	// IsHds: whether or not the server is HDS.
+	IsHds bool `json:"is_hds"`
 }
 
 // CPU: cpu.
