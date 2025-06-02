@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestHasResponseErrorWithStatus200(t *testing.T) {
@@ -31,7 +32,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode int
 		resBody       string
 		contentType   string
-		expectedError SdkError
+		expectedError scw.SdkError
 	}
 
 	run := func(c *testCase) func(t *testing.T) {
@@ -58,8 +59,8 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusBadRequest,
 		contentType:   "application/json",
 		resBody:       `{"fields":{"volumes.5.id":["92 is not a valid UUID."],"volumes.5.name":["required key not provided"]},"message":"Validation Error","type":"invalid_request_error"}`,
-		expectedError: &InvalidArgumentsError{
-			Details: []InvalidArgumentsErrorDetail{
+		expectedError: &scw.InvalidArgumentsError{
+			Details: []scw.InvalidArgumentsErrorDetail{
 				{
 					ArgumentName: "volumes.5.id",
 					Reason:       "constraint",
@@ -80,7 +81,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusBadRequest,
 		contentType:   "application/json",
 		resBody:       `{"message": "server should be running", "type": "invalid_request_error"}`,
-		expectedError: &ResponseError{
+		expectedError: &scw.ResponseError{
 			Status:     "400 Bad Request",
 			StatusCode: http.StatusBadRequest,
 			Message:    "server should be running",
@@ -94,8 +95,8 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusForbidden,
 		contentType:   "application/json",
 		resBody:       `{"type": "invalid_request_error", "message": "Quota exceeded for this resource.", "resource": "compute_snapshots_type_b_ssd_available"}`,
-		expectedError: &QuotasExceededError{
-			Details: []QuotasExceededErrorDetail{
+		expectedError: &scw.QuotasExceededError{
+			Details: []scw.QuotasExceededErrorDetail{
 				{
 					Resource: "compute_snapshots_type_b_ssd_available",
 					Current:  0,
@@ -111,7 +112,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusNotFound,
 		contentType:   "application/json",
 		resBody:       `{"type": "unknown_resource", "message": "\"11111111-1111-4111-8111-111111111111\" not found"}`,
-		expectedError: &ResourceNotFoundError{
+		expectedError: &scw.ResourceNotFoundError{
 			ResourceID: "11111111-1111-4111-8111-111111111111",
 			RawBody:    []byte(`{"type": "unknown_resource", "message": "\"11111111-1111-4111-8111-111111111111\" not found"}`),
 		},
@@ -122,7 +123,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusNotFound,
 		contentType:   "application/json",
 		resBody:       `{"type": "unknown_resource", "message": "Security group \"11111111-1111-4111-8111-111111111111\" not found"}`,
-		expectedError: &ResourceNotFoundError{
+		expectedError: &scw.ResourceNotFoundError{
 			ResourceID: "11111111-1111-4111-8111-111111111111",
 			Resource:   "security_group",
 			RawBody:    []byte(`{"type": "unknown_resource", "message": "Security group \"11111111-1111-4111-8111-111111111111\" not found"}`),
@@ -134,7 +135,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusNotFound,
 		contentType:   "application/json",
 		resBody:       `{"type": "unknown_resource", "message": "Volume '11111111-1111-4111-8111-111111111111' not found"}`,
-		expectedError: &ResourceNotFoundError{
+		expectedError: &scw.ResourceNotFoundError{
 			ResourceID: "11111111-1111-4111-8111-111111111111",
 			Resource:   "volume",
 			RawBody:    []byte(`{"type": "unknown_resource", "message": "Volume '11111111-1111-4111-8111-111111111111' not found"}`),
@@ -146,7 +147,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusConflict,
 		contentType:   "application/json",
 		resBody:       `{"message": "Group is in use. You cannot delete it.", "type": "conflict"}`,
-		expectedError: &ResponseError{
+		expectedError: &scw.ResponseError{
 			Status:     "409 Conflict",
 			StatusCode: http.StatusConflict,
 			Message:    "Group is in use. You cannot delete it.",
@@ -160,7 +161,7 @@ func TestNonStandardError(t *testing.T) {
 		resStatusCode: http.StatusNotFound,
 		contentType:   "text/plain",
 		resBody:       ``,
-		expectedError: &ResponseError{
+		expectedError: &scw.ResponseError{
 			Status:     "404 Not Found",
 			StatusCode: http.StatusNotFound,
 			Message:    "404 Not Found",
@@ -179,7 +180,7 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	)
 
 	// Create expected error response
-	testErrorReponse := &ResponseError{
+	testErrorReponse := &scw.ResponseError{
 		Message:    errorMessage,
 		Type:       errorType,
 		Fields:     errorFields,
