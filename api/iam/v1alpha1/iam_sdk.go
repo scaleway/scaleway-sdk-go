@@ -1684,6 +1684,27 @@ type GetUserRequest struct {
 	UserID string `json:"-"`
 }
 
+// InitiateUserConnectionRequest: initiate user connection request.
+type InitiateUserConnectionRequest struct {
+	// UserID: ID of the user that will be added to your connection.
+	UserID string `json:"-"`
+}
+
+// InitiateUserConnectionResponse: initiate user connection response.
+type InitiateUserConnectionResponse struct {
+	// Token: token to be used in JoinUserConnection.
+	Token string `json:"token"`
+}
+
+// JoinUserConnectionRequest: join user connection request.
+type JoinUserConnectionRequest struct {
+	// UserID: user ID.
+	UserID string `json:"-"`
+
+	// Token: a token returned by InitiateUserConnection.
+	Token string `json:"token"`
+}
+
 // ListAPIKeysRequest: list api keys request.
 type ListAPIKeysRequest struct {
 	// OrderBy: criteria for sorting results.
@@ -2341,6 +2362,15 @@ type RemoveGroupMemberRequest struct {
 	// ApplicationID: ID of the application to remove.
 	// Precisely one of UserID, ApplicationID must be set.
 	ApplicationID *string `json:"application_id,omitempty"`
+}
+
+// RemoveUserConnectionRequest: remove user connection request.
+type RemoveUserConnectionRequest struct {
+	// UserID: ID of the user you want to manage the connection for.
+	UserID string `json:"-"`
+
+	// TargetUserID: ID of the user you want to remove from your connection.
+	TargetUserID string `json:"target_user_id"`
 }
 
 // SetGroupMembersRequest: set group members request.
@@ -3035,6 +3065,83 @@ func (s *API) GetUserConnections(req *GetUserConnectionsRequest, opts ...scw.Req
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// InitiateUserConnection:
+func (s *API) InitiateUserConnection(req *InitiateUserConnectionRequest, opts ...scw.RequestOption) (*InitiateUserConnectionResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return nil, errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/initiate-connection",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp InitiateUserConnectionResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// JoinUserConnection:
+func (s *API) JoinUserConnection(req *JoinUserConnectionRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/join-connection",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// RemoveUserConnection:
+func (s *API) RemoveUserConnection(req *RemoveUserConnectionRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.UserID) == "" {
+		return errors.New("field UserID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/users/" + fmt.Sprint(req.UserID) + "/remove-connection",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ListApplications: List the applications of an Organization. By default, the applications listed are ordered by creation date in ascending order. This can be modified via the `order_by` field. You must define the `organization_id` in the query path of your request. You can also define additional parameters for your query such as `application_ids`.
