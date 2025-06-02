@@ -1314,7 +1314,7 @@ type RegionalAPIListAlertsRequest struct {
 	// Default value: unknown_state
 	State *AlertState `json:"-"`
 
-	// DataSourceID: if omitted, only alerts from the default scaleway data source will be listed.
+	// DataSourceID: if omitted, only alerts from the default Scaleway metrics data source will be listed.
 	DataSourceID *string `json:"-"`
 }
 
@@ -2453,7 +2453,7 @@ func (s *RegionalAPI) DeleteContactPoint(req *RegionalAPIDeleteContactPointReque
 	return nil
 }
 
-// ListAlerts: List preconfigured and/or custom alerts for the specified Project.
+// ListAlerts: List preconfigured and/or custom alerts for the specified Project and data source.
 func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.RequestOption) (*ListAlertsResponse, error) {
 	var err error
 
