@@ -769,13 +769,15 @@ type AlertManager struct {
 	Region scw.Region `json:"region"`
 }
 
-// DisableAlertRulesResponse: disable alert rules response.
+// DisableAlertRulesResponse: Output returned when alert rules are disabled.
 type DisableAlertRulesResponse struct {
+	// DisabledRuleIDs: only newly disabled rules are listed. Rules that were already disabled are not returned in the output.
 	DisabledRuleIDs []string `json:"disabled_rule_ids"`
 }
 
-// EnableAlertRulesResponse: enable alert rules response.
+// EnableAlertRulesResponse: Output returned when alert rules are enabled.
 type EnableAlertRulesResponse struct {
+	// EnabledRuleIDs: only newly enabled rules are listed. Rules that were already enabled are not returned in the output.
 	EnabledRuleIDs []string `json:"enabled_rule_ids"`
 }
 
@@ -1211,8 +1213,10 @@ type RegionalAPIDisableAlertRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
 
+	// RuleIDs: list of IDs of the rules to enable. If empty, disables all preconfigured rules.
 	RuleIDs []string `json:"rule_ids"`
 }
 
@@ -1239,8 +1243,10 @@ type RegionalAPIEnableAlertRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: ID of the Project.
 	ProjectID string `json:"project_id"`
 
+	// RuleIDs: list of IDs of the rules to enable. If empty, enables all preconfigured rules.
 	RuleIDs []string `json:"rule_ids"`
 }
 
