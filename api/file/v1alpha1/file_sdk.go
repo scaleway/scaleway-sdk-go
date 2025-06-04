@@ -328,6 +328,9 @@ type ListFileSystemsRequest struct {
 	// ProjectID: filter by project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: filter by organization ID.
+	OrganizationID *string `json:"-"`
+
 	// Page: page number (starting at 1).
 	Page *int32 `json:"-"`
 
@@ -452,6 +455,7 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	query := url.Values{}
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
