@@ -477,6 +477,8 @@ type ServerTypeMemory struct {
 // ServerTypeNetwork: server type network.
 type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
 }
 
 // Commitment: commitment.
@@ -627,6 +629,9 @@ type Server struct {
 
 	// Commitment: commitment scheme applied to this server.
 	Commitment *Commitment `json:"commitment"`
+
+	// PublicBandwidthBps: public bandwidth configured for this server. Expressed in bits per second.
+	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
 // CommitmentTypeValue: commitment type value.
@@ -674,6 +679,9 @@ type CreateServerRequest struct {
 	// CommitmentType: activate commitment for this server. If not specified, there is a 24h commitment due to Apple licensing (commitment_type `duration_24h`). It can be updated with the Update Server request. Available commitment depends on server type.
 	// Default value: duration_24h
 	CommitmentType CommitmentType `json:"commitment_type"`
+
+	// PublicBandwidthBps: public bandwidth to configure for this server. This defaults to the minimum bandwidth for this server type. For compatible server types, the bandwidth can be increased which incurs additional costs.
+	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -992,6 +1000,9 @@ type UpdateServerRequest struct {
 
 	// CommitmentType: change commitment. Use 'none' to automatically cancel a renewing commitment.
 	CommitmentType *CommitmentTypeValue `json:"commitment_type,omitempty"`
+
+	// PublicBandwidthBps: public bandwidth to configure for this server. Setting an higher bandwidth incurs additional costs. Supported bandwidth levels depends on server type and can be queried using the `/server-types` endpoint.
+	PublicBandwidthBps *uint64 `json:"public_bandwidth_bps,omitempty"`
 }
 
 // This API allows you to manage your Apple silicon machines.
