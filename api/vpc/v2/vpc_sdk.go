@@ -507,6 +507,9 @@ type VPC struct {
 
 	// RoutingEnabled: defines whether the VPC routes traffic between its Private Networks.
 	RoutingEnabled bool `json:"routing_enabled"`
+
+	// CustomRoutesPropagationEnabled: defines whether the VPC advertises custom routes between its Private Networks.
+	CustomRoutesPropagationEnabled bool `json:"custom_routes_propagation_enabled"`
 }
 
 // AddSubnetsRequest: add subnets request.
@@ -629,6 +632,15 @@ type DeleteSubnetsResponse struct {
 
 // DeleteVPCRequest: delete vpc request.
 type DeleteVPCRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: vPC ID.
+	VpcID string `json:"-"`
+}
+
+// EnableCustomRoutesPropagationRequest: enable custom routes propagation request.
+type EnableCustomRoutesPropagationRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
@@ -1463,6 +1475,42 @@ func (s *API) EnableRouting(req *EnableRoutingRequest, opts ...scw.RequestOption
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpcs/" + fmt.Sprint(req.VpcID) + "/enable-routing",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPC
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableCustomRoutesPropagation: Enable custom routes propagation on an existing VPC. Note that you will not be able to deactivate it afterwards.
+func (s *API) EnableCustomRoutesPropagation(req *EnableCustomRoutesPropagationRequest, opts ...scw.RequestOption) (*VPC, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpcs/" + fmt.Sprint(req.VpcID) + "/enable-custom-routes-propagation",
 	}
 
 	err = scwReq.SetBody(req)

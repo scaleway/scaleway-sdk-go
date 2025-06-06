@@ -894,6 +894,9 @@ type Pool struct {
 	// Deprecated: NewImagesEnabled: defines whether the pool is migrated to new images.
 	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
 
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
+	SecurityGroupID string `json:"security_group_id"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
 }
@@ -1051,6 +1054,9 @@ type CreateClusterRequestPoolConfig struct {
 
 	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
 	PublicIPDisabled bool `json:"public_ip_disabled"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
+	SecurityGroupID *string `json:"security_group_id"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
@@ -1496,6 +1502,9 @@ type CreatePoolRequest struct {
 
 	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
 	PublicIPDisabled bool `json:"public_ip_disabled"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
