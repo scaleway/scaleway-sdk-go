@@ -918,6 +918,15 @@ func (r *ListTaxesResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	return uint64(len(results.Taxes)), nil
 }
 
+// RedeemCouponRequest: redeem coupon request.
+type RedeemCouponRequest struct {
+	// OrganizationID: the Organization ID of the discount.
+	OrganizationID string `json:"-"`
+
+	// Code: the code of the coupon to redeem.
+	Code string `json:"-"`
+}
+
 // This API allows you to manage and query your Scaleway billing and consumption.
 type API struct {
 	client *scw.Client
@@ -1149,6 +1158,34 @@ func (s *API) ListDiscounts(req *ListDiscountsRequest, opts ...scw.RequestOption
 	}
 
 	var resp ListDiscountsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RedeemCoupon: Redeem a coupon given the related code.
+func (s *API) RedeemCoupon(req *RedeemCouponRequest, opts ...scw.RequestOption) (*Discount, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "code", req.Code)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/billing/v2beta1/redeem-coupon",
+		Query:  query,
+	}
+
+	var resp Discount
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
