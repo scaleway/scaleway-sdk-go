@@ -1120,6 +1120,9 @@ type Function struct {
 
 	// Tags: list of tags applied to the Serverless Function.
 	Tags []string `json:"tags"`
+
+	// PrivateNetworkID: when connected to a Private Network, the function can access other Scaleway resources in this Private Network.
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // Namespace: namespace.
@@ -1169,6 +1172,10 @@ type Namespace struct {
 
 	// UpdatedAt: last update date of the namespace.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Deprecated: VpcIntegrationActivated: when activated, functions in the namespace can be connected to a Private Network.
+	// Note that activating the VPC integration can only be done when creating a new namespace.
+	VpcIntegrationActivated *bool `json:"vpc_integration_activated,omitempty"`
 }
 
 // Token: token.
@@ -1330,6 +1337,11 @@ type CreateFunctionRequest struct {
 
 	// Tags: tags of the Serverless Function.
 	Tags []string `json:"tags"`
+
+	// PrivateNetworkID: when connected to a Private Network, the function can access other Scaleway resources in this Private Network.
+	//
+	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // CreateNamespaceRequest: create namespace request.
@@ -1353,6 +1365,9 @@ type CreateNamespaceRequest struct {
 
 	// Tags: tags of the Serverless Function Namespace.
 	Tags []string `json:"tags"`
+
+	// ActivateVpcIntegration: when activated, functions in the namespace can be connected to a Private Network.
+	ActivateVpcIntegration bool `json:"activate_vpc_integration"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1963,6 +1978,11 @@ type UpdateFunctionRequest struct {
 
 	// Tags: tags of the Serverless Function.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// PrivateNetworkID: when connected to a Private Network, the function can access other Scaleway resources in this Private Network.
+	//
+	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // UpdateNamespaceRequest: update namespace request.
