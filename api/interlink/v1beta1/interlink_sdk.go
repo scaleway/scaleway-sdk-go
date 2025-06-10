@@ -543,8 +543,8 @@ type Link struct {
 	// VpcID: ID of the Scaleway VPC attached to the link.
 	VpcID *string `json:"vpc_id"`
 
-	// RoutingPolicyID: ID of the routing policy attached to the link.
-	RoutingPolicyID *string `json:"routing_policy_id"`
+	// Deprecated: RoutingPolicyID: deprecated. Use routing_policy_v4_id or routing_policy_v6_id instead.
+	RoutingPolicyID *string `json:"routing_policy_id,omitempty"`
 
 	// EnableRoutePropagation: defines whether route propagation is enabled or not. To enable or disable route propagation, use the dedicated endpoint.
 	EnableRoutePropagation bool `json:"enable_route_propagation"`
@@ -571,6 +571,12 @@ type Link struct {
 
 	// PeerBgpConfig: bGP configuration on peer's side (on-premises or other hosting provider).
 	PeerBgpConfig *BgpConfig `json:"peer_bgp_config"`
+
+	// RoutingPolicyV4ID: ID of the routing policy IPv4 attached to the link.
+	RoutingPolicyV4ID *string `json:"routing_policy_v4_id"`
+
+	// RoutingPolicyV6ID: ID of the routing policy IPv6 attached to the link.
+	RoutingPolicyV6ID *string `json:"routing_policy_v6_id"`
 
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
@@ -656,6 +662,9 @@ type RoutingPolicy struct {
 	// UpdatedAt: last modification date of the routing policy.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// IsIPv6: IP prefixes version of the routing policy.
+	IsIPv6 bool `json:"is_ipv6"`
+
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
 }
@@ -735,6 +744,9 @@ type CreateRoutingPolicyRequest struct {
 
 	// PrefixFilterOut: IP prefix filters to advertise to the peer (ranges of routes to advertise).
 	PrefixFilterOut []scw.IPNet `json:"prefix_filter_out"`
+
+	// IsIPv6: IP prefixes version of the routing policy.
+	IsIPv6 bool `json:"is_ipv6"`
 }
 
 // DeleteLinkRequest: delete link request.
@@ -762,6 +774,9 @@ type DetachRoutingPolicyRequest struct {
 
 	// LinkID: ID of the link to detach a routing policy from.
 	LinkID string `json:"-"`
+
+	// RoutingPolicyID: ID of the routing policy to be detached.
+	RoutingPolicyID string `json:"routing_policy_id"`
 }
 
 // DetachVpcRequest: detach vpc request.
@@ -1127,6 +1142,9 @@ type ListRoutingPoliciesRequest struct {
 
 	// Tags: tags to filter for.
 	Tags []string `json:"-"`
+
+	// IPv6: filter for the routing policies based on IP prefixes version.
+	IPv6 *bool `json:"-"`
 }
 
 // ListRoutingPoliciesResponse: list routing policies response.
@@ -1856,6 +1874,7 @@ func (s *API) ListRoutingPolicies(req *ListRoutingPoliciesRequest, opts ...scw.R
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "ipv6", req.IPv6)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
