@@ -681,6 +681,47 @@ func (enum *ServerAction) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ServerFilesystemState string
+
+const (
+	ServerFilesystemStateUnknownState = ServerFilesystemState("unknown_state")
+	ServerFilesystemStateAttaching    = ServerFilesystemState("attaching")
+	ServerFilesystemStateAvailable    = ServerFilesystemState("available")
+	ServerFilesystemStateDetaching    = ServerFilesystemState("detaching")
+)
+
+func (enum ServerFilesystemState) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ServerFilesystemStateUnknownState)
+	}
+	return string(enum)
+}
+
+func (enum ServerFilesystemState) Values() []ServerFilesystemState {
+	return []ServerFilesystemState{
+		"unknown_state",
+		"attaching",
+		"available",
+		"detaching",
+	}
+}
+
+func (enum ServerFilesystemState) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerFilesystemState) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerFilesystemState(ServerFilesystemState(tmp).String())
+	return nil
+}
+
 type ServerIPIPFamily string
 
 const (
@@ -1402,6 +1443,14 @@ type SecurityGroupSummary struct {
 	Name string `json:"name"`
 }
 
+// ServerFilesystem: server filesystem.
+type ServerFilesystem struct {
+	FilesystemID string `json:"filesystem_id"`
+
+	// State: default value: unknown_state
+	State ServerFilesystemState `json:"state"`
+}
+
 // ServerIP: server ip.
 type ServerIP struct {
 	// ID: unique ID of the IP address.
@@ -1672,6 +1721,9 @@ type Server struct {
 
 	// AdminPasswordEncryptedValue: this value is reset when admin_password_encryption_ssh_key_id is set to an empty string.
 	AdminPasswordEncryptedValue *string `json:"admin_password_encrypted_value"`
+
+	// Filesystems: list of attached filesystems.
+	Filesystems []*ServerFilesystem `json:"filesystems"`
 
 	// EndOfService: true if the Instance type has reached end of service.
 	EndOfService bool `json:"end_of_service"`
