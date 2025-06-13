@@ -491,7 +491,7 @@ func (r *ListNatsAccountsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNatsAccountsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListNatsAccountsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListNatsAccountsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -519,7 +519,7 @@ func (r *ListNatsCredentialsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNatsCredentialsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListNatsCredentialsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListNatsCredentialsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -547,7 +547,7 @@ func (r *ListSnsCredentialsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSnsCredentialsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListSnsCredentialsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListSnsCredentialsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -575,7 +575,7 @@ func (r *ListSqsCredentialsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSqsCredentialsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListSqsCredentialsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListSqsCredentialsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

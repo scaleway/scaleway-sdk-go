@@ -41,7 +41,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetCluster(&GetClusterRequest{
 				Zone:      req.Zone,
 				ClusterID: req.ClusterID,

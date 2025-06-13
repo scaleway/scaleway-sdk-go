@@ -41,7 +41,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	}
 
 	instance, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				InstanceID: req.InstanceID,
 				Region:     req.Region,
@@ -87,7 +87,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 	}
 
 	backup, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
 				DatabaseBackupID: req.DatabaseBackupID,
 				Region:           req.Region,
@@ -133,7 +133,7 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.Req
 	}
 
 	logs, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
 				Region:        req.Region,
 				InstanceLogID: req.InstanceLogID,
@@ -180,7 +180,7 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 	}
 
 	readReplica, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetReadReplica(&GetReadReplicaRequest{
 				ReadReplicaID: req.ReadReplicaID,
 				Region:        req.Region,
@@ -248,7 +248,7 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 	}
 
 	snapshot, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetSnapshot(&GetSnapshotRequest{
 				SnapshotID: req.SnapshotID,
 				Region:     req.Region,

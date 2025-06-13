@@ -1676,7 +1676,7 @@ func (r *ListClusterACLRulesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterACLRulesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListClusterACLRulesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListClusterACLRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1713,7 +1713,7 @@ func (r *ListClusterAvailableTypesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterAvailableTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListClusterAvailableTypesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListClusterAvailableTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1768,7 +1768,7 @@ func (r *ListClusterTypesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListClusterTypesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListClusterTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1831,7 +1831,7 @@ func (r *ListClustersResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListClustersResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListClustersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1888,7 +1888,7 @@ func (r *ListNodesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNodesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListNodesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListNodesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1942,7 +1942,7 @@ func (r *ListPoolsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPoolsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPoolsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPoolsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

@@ -47,7 +47,7 @@ func (s *API) WaitForFlexibleIP(req *WaitForFlexibleIPRequest, opts ...scw.Reque
 	}
 
 	fip, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			fip, err := s.GetFlexibleIP(&GetFlexibleIPRequest{
 				FipID: req.FipID,
 				Zone:  req.Zone,

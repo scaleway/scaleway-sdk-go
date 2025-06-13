@@ -43,7 +43,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			cluster, err := s.GetCluster(&GetClusterRequest{
 				ClusterID: req.ClusterID,
 				Region:    req.Region,
@@ -90,7 +90,7 @@ func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*
 	}
 
 	pool, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPool(&GetPoolRequest{
 				PoolID: req.PoolID,
 				Region: req.Region,
@@ -137,7 +137,7 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 	}
 
 	node, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetNode(&GetNodeRequest{
 				NodeID: req.NodeID,
 				Region: req.Region,
@@ -192,7 +192,7 @@ func (s *API) WaitForClusterPool(req *WaitForClusterRequest, opts ...scw.Request
 	optsWithAllPages := append(opts, scw.WithAllPages()) //nolint:gocritic
 
 	cluster, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			cluster, err := s.GetCluster(&GetClusterRequest{
 				ClusterID: req.ClusterID,
 				Region:    req.Region,

@@ -39,7 +39,7 @@ func (s *API) WaitForJobRun(req *WaitForJobRunRequest, opts ...scw.RequestOption
 	}
 
 	jobRun, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetJobRun(&GetJobRunRequest{
 				JobRunID: req.JobRunID,
 				Region:   req.Region,

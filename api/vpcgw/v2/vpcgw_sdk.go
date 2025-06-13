@@ -780,7 +780,7 @@ func (r *ListGatewayNetworksResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGatewayNetworksResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListGatewayNetworksResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListGatewayNetworksResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -860,7 +860,7 @@ func (r *ListGatewaysResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGatewaysResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListGatewaysResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListGatewaysResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -919,7 +919,7 @@ func (r *ListIPsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListIPsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -973,7 +973,7 @@ func (r *ListPatRulesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPatRulesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPatRulesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPatRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

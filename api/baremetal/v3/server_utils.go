@@ -41,7 +41,7 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPriva
 	}
 
 	serverPrivateNetwork, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.ListServerPrivateNetworks(&PrivateNetworkAPIListServerPrivateNetworksRequest{
 				ServerID: &req.ServerID,
 				Zone:     req.Zone,

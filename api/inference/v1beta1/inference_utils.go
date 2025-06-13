@@ -38,7 +38,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	}
 
 	deployment, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			deployment, err := s.GetDeployment(&GetDeploymentRequest{
 				Region:       req.Region,
 				DeploymentID: req.DeploymentID,

@@ -387,7 +387,7 @@ func (r *ListDatabaseBackupsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListDatabaseBackupsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListDatabaseBackupsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListDatabaseBackupsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -440,7 +440,7 @@ func (r *ListDatabasesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListDatabasesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListDatabasesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

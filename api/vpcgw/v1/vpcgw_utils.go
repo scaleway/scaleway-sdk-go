@@ -43,7 +43,7 @@ func (s *API) WaitForGateway(req *WaitForGatewayRequest, opts ...scw.RequestOpti
 	}
 
 	gateway, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			ns, err := s.GetGateway(&GetGatewayRequest{
 				Zone:      req.Zone,
 				GatewayID: req.GatewayID,
@@ -93,7 +93,7 @@ func (s *API) WaitForGatewayNetwork(req *WaitForGatewayNetworkRequest, opts ...s
 	}
 
 	gatewayNetwork, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			ns, err := s.GetGatewayNetwork(&GetGatewayNetworkRequest{
 				Zone:             req.Zone,
 				GatewayNetworkID: req.GatewayNetworkID,
@@ -139,7 +139,7 @@ func (s *API) WaitForDHCPEntries(req *WaitForDHCPEntriesRequest, opts ...scw.Req
 	}
 
 	dhcpEntries, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			entries, err := s.ListDHCPEntries(&ListDHCPEntriesRequest{
 				Zone:             req.Zone,
 				GatewayNetworkID: req.GatewayNetworkID,

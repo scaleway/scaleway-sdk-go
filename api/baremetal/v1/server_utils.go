@@ -42,7 +42,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
@@ -92,7 +92,7 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest, opts ...scw
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
@@ -181,7 +181,7 @@ func (s *API) WaitForServerOptions(req *WaitForServerOptionsRequest, opts ...scw
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,
@@ -236,7 +236,7 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetworks(req *WaitForServerPriva
 	}
 
 	serverPrivateNetwork, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.ListServerPrivateNetworks(&PrivateNetworkAPIListServerPrivateNetworksRequest{
 				ServerID: &req.ServerID,
 				Zone:     req.Zone,

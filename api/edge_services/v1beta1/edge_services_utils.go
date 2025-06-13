@@ -39,7 +39,7 @@ func (s *API) WaitForPipeline(req *WaitForPipelineRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			pipeline, err := s.GetPipeline(&GetPipelineRequest{
 				PipelineID: req.PipelineID,
 			}, opts...)
@@ -85,7 +85,7 @@ func (s *API) WaitForPurgeRequest(req *WaitForPurgeRequestRequest, opts ...scw.R
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			purgeRequest, err := s.GetPurgeRequest(&GetPurgeRequestRequest{
 				PurgeRequestID: req.PurgeRequestID,
 			}, opts...)

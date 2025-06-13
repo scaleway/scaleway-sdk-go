@@ -171,7 +171,7 @@ func (r *ListServerPrivateNetworksResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListServerPrivateNetworksResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListServerPrivateNetworksResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListServerPrivateNetworksResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

@@ -15,7 +15,7 @@ func Test_SortSliceByField(t *testing.T) {
 		{"1"},
 		{"3"},
 	}
-	SortSliceByField(elems, "Field", func(i interface{}, i2 interface{}) bool {
+	SortSliceByField(elems, "Field", func(i any, i2 any) bool {
 		return i.(string) < i2.(string)
 	})
 	testhelpers.Assert(t, elems[0].Field == "1", "slice is not sorted")

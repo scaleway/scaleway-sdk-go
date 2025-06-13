@@ -15,11 +15,11 @@ type value struct {
 	totalDuration  time.Duration
 }
 
-func getMock(iterations int, sleepTime time.Duration) func() (interface{}, bool, error) {
+func getMock(iterations int, sleepTime time.Duration) func() (any, bool, error) {
 	cpt := iterations
 	var startTime time.Time
 
-	return func() (interface{}, bool, error) {
+	return func() (any, bool, error) {
 		if cpt == iterations {
 			startTime = time.Now()
 		}
@@ -41,7 +41,7 @@ func TestWaitSync(t *testing.T) {
 	testsCases := []struct {
 		name     string
 		config   *WaitSyncConfig
-		expValue interface{}
+		expValue any
 		expErr   error
 	}{
 		{

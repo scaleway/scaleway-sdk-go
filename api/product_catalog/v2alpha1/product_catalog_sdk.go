@@ -560,7 +560,7 @@ func (r *ListPublicCatalogProductsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPublicCatalogProductsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPublicCatalogProductsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPublicCatalogProductsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

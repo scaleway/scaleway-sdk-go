@@ -40,7 +40,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	}
 
 	instance, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				InstanceID: req.InstanceID,
 				Region:     req.Region,
@@ -86,7 +86,7 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.Req
 	}
 
 	logs, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
 				Region: req.Region,
 			}, opts...)
@@ -132,7 +132,7 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 	}
 
 	readReplica, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetReadReplica(&GetReadReplicaRequest{
 				ReadReplicaID: req.ReadReplicaID,
 				Region:        req.Region,

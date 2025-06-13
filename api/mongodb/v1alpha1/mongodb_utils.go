@@ -51,7 +51,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	}
 
 	instance, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				Region:     req.Region,
 				InstanceID: req.InstanceID,
@@ -92,7 +92,7 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 	}
 
 	snapshot, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			getSnapshotResponse, err := s.GetSnapshot(&GetSnapshotRequest{
 				Region:     req.Region,
 				SnapshotID: req.SnapshotID,

@@ -508,7 +508,7 @@ func (r *AddACLRulesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *AddACLRulesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *AddACLRulesResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*AddACLRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -560,7 +560,7 @@ func (r *AddEndpointsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *AddEndpointsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *AddEndpointsResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*AddEndpointsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -757,7 +757,7 @@ func (r *ListClusterVersionsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClusterVersionsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListClusterVersionsResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*ListClusterVersionsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -814,7 +814,7 @@ func (r *ListClustersResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListClustersResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListClustersResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*ListClustersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -855,7 +855,7 @@ func (r *ListNodeTypesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListNodeTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListNodeTypesResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*ListNodeTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
