@@ -417,7 +417,7 @@ func (s *API) WaitForServerFileSystem(req *WaitForServerFileSystemRequest, opts 
 
 	terminalStatus := map[ServerFilesystemState]struct{}{
 		ServerFilesystemStateAvailable:    {},
-		ServerFilesystemStateUnknownState: {},
+		ServerFilesystemStateUnknownState: {}
 	}
 
 	result, err := async.WaitSync(&async.WaitSyncConfig{
