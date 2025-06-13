@@ -1639,6 +1639,12 @@ type GetLogRequest struct {
 	LogID string `json:"-"`
 }
 
+// GetOrganizationRequest: get organization request.
+type GetOrganizationRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
 // GetOrganizationSecuritySettingsRequest: get organization security settings request.
 type GetOrganizationSecuritySettingsRequest struct {
 	// OrganizationID: ID of the Organization.
@@ -2338,6 +2344,18 @@ type MigrateOrganizationGuestsRequest struct {
 	OrganizationID string `json:"-"`
 }
 
+// Organization: organization.
+type Organization struct {
+	// ID: ID of the Organization.
+	ID string `json:"id"`
+
+	// Name: name of the Organization.
+	Name string `json:"name"`
+
+	// Alias: alias of the Organization.
+	Alias string `json:"alias"`
+}
+
 // OrganizationSecuritySettings: organization security settings.
 type OrganizationSecuritySettings struct {
 	// EnforcePasswordRenewal: defines whether password renewal is enforced during first login.
@@ -2380,6 +2398,15 @@ type SetGroupMembersRequest struct {
 	UserIDs []string `json:"user_ids"`
 
 	ApplicationIDs []string `json:"application_ids"`
+}
+
+// SetOrganizationAliasRequest: set organization alias request.
+type SetOrganizationAliasRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// Alias: alias of the Organization.
+	Alias string `json:"alias"`
 }
 
 // SetRulesRequest: set rules request.
@@ -4198,6 +4225,65 @@ func (s *API) UpdateOrganizationSecuritySettings(req *UpdateOrganizationSecurity
 	}
 
 	var resp OrganizationSecuritySettings
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetOrganizationAlias: This will fail if an alias has already been defined. Please contact support if you need to change your Organization's alias.
+func (s *API) SetOrganizationAlias(req *SetOrganizationAliasRequest, opts ...scw.RequestOption) (*Organization, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/alias",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Organization
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetOrganization: Get your Organization's IAM information.
+func (s *API) GetOrganization(req *GetOrganizationRequest, opts ...scw.RequestOption) (*Organization, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "",
+	}
+
+	var resp Organization
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
