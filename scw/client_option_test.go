@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"os"
@@ -7,19 +7,20 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 var (
 	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
 	defaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultRegion         = RegionNlAms
-	defaultZone           = ZoneNlAms1
+	defaultRegion         = scw.RegionNlAms
+	defaultZone           = scw.ZoneNlAms1
 )
 
 func TestClientOptions(t *testing.T) {
 	testCases := []struct {
 		name         string
-		clientOption ClientOption
+		clientOption scw.ClientOption
 		errStr       string
 	}{
 		{
@@ -153,7 +154,7 @@ func TestClientOptions(t *testing.T) {
 			s := newSettings()
 
 			// Apply
-			s.apply([]ClientOption{c.clientOption})
+			s.apply([]scw.ClientOption{c.clientOption})
 
 			// Validate
 			err := s.validate()
@@ -180,20 +181,20 @@ func TestCombinedClientOptions(t *testing.T) {
 		expectedAPIURL                string
 		expectedDefaultOrganizationID *string
 		expectedDefaultProjectID      *string
-		expectedDefaultRegion         *Region
-		expectedDefaultZone           *Zone
+		expectedDefaultRegion         *scw.Region
+		expectedDefaultZone           *scw.Zone
 	}{
 		{
 			name: "Complete config file with env variables",
 			env: map[string]string{
-				"HOME":                      "{HOME}",
-				ScwAccessKeyEnv:             v2ValidAccessKey2,
-				ScwSecretKeyEnv:             v2ValidSecretKey2,
-				ScwAPIURLEnv:                v2ValidAPIURL2,
-				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID2,
-				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID2,
-				ScwDefaultRegionEnv:         v2ValidDefaultRegion2,
-				ScwDefaultZoneEnv:           v2ValidDefaultZone2,
+				"HOME":                          "{HOME}",
+				scw.ScwAccessKeyEnv:             v2ValidAccessKey2,
+				scw.ScwSecretKeyEnv:             v2ValidSecretKey2,
+				scw.ScwAPIURLEnv:                v2ValidAPIURL2,
+				scw.ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID2,
+				scw.ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID2,
+				scw.ScwDefaultRegionEnv:         v2ValidDefaultRegion2,
+				scw.ScwDefaultZoneEnv:           v2ValidDefaultZone2,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -203,21 +204,21 @@ func TestCombinedClientOptions(t *testing.T) {
 			expectedAPIURL:                v2ValidAPIURL2,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
-			expectedDefaultRegion:         r(Region(v2ValidDefaultRegion2)),
-			expectedDefaultZone:           z(Zone(v2ValidDefaultZone2)),
+			expectedDefaultRegion:         r(scw.Region(v2ValidDefaultRegion2)),
+			expectedDefaultZone:           z(scw.Zone(v2ValidDefaultZone2)),
 		},
 		{
 			name: "Complete config with active profile env variable and all env variables",
 			env: map[string]string{
-				"HOME":                      "{HOME}",
-				ScwActiveProfileEnv:         v2ValidProfile,
-				ScwAccessKeyEnv:             v2ValidAccessKey,
-				ScwSecretKeyEnv:             v2ValidSecretKey,
-				ScwAPIURLEnv:                v2ValidAPIURL,
-				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
-				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
-				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
-				ScwDefaultZoneEnv:           v2ValidDefaultZone,
+				"HOME":                          "{HOME}",
+				scw.ScwActiveProfileEnv:         v2ValidProfile,
+				scw.ScwAccessKeyEnv:             v2ValidAccessKey,
+				scw.ScwSecretKeyEnv:             v2ValidSecretKey,
+				scw.ScwAPIURLEnv:                v2ValidAPIURL,
+				scw.ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
+				scw.ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
+				scw.ScwDefaultRegionEnv:         v2ValidDefaultRegion,
+				scw.ScwDefaultZoneEnv:           v2ValidDefaultZone,
 			},
 			files: map[string]string{
 				".config/scw/config.yaml": v2CompleteValidConfigFile,
@@ -227,8 +228,8 @@ func TestCombinedClientOptions(t *testing.T) {
 			expectedAPIURL:                v2ValidAPIURL,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
-			expectedDefaultRegion:         r(Region(v2ValidDefaultRegion)),
-			expectedDefaultZone:           z(Zone(v2ValidDefaultZone)),
+			expectedDefaultRegion:         r(scw.Region(v2ValidDefaultRegion)),
+			expectedDefaultZone:           z(scw.Zone(v2ValidDefaultZone)),
 		},
 	}
 
@@ -246,13 +247,13 @@ func TestCombinedClientOptions(t *testing.T) {
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
-			config, err := LoadConfig()
+			config, err := scw.LoadConfig()
 			testhelpers.AssertNoError(t, err)
 
 			p, err := config.GetActiveProfile()
 			testhelpers.AssertNoError(t, err)
 
-			client, err := NewClient(WithProfile(p), WithEnv())
+			client, err := scw.NewClient(scw.WithProfile(p), scw.WithEnv())
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)
 

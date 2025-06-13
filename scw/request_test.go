@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 const (
@@ -26,7 +27,7 @@ const (
 )
 
 func TestGetURL(t *testing.T) {
-	req := ScalewayRequest{
+	req := scw.ScalewayRequest{
 		Path: testPath,
 		Query: url.Values{
 			testKey: []string{testValue},
@@ -42,7 +43,7 @@ func TestGetURL(t *testing.T) {
 }
 
 func TestGetHeadersWithoutBody(t *testing.T) {
-	req := ScalewayRequest{
+	req := scw.ScalewayRequest{
 		Headers: http.Header{
 			testHeaderKey: []string{testHeaderVal},
 		},
@@ -61,7 +62,7 @@ func TestGetHeadersWithoutBody(t *testing.T) {
 }
 
 func TestGetHeadersWithBody(t *testing.T) {
-	req := ScalewayRequest{
+	req := scw.ScalewayRequest{
 		Headers: http.Header{
 			testHeaderKey: []string{testHeaderVal},
 		},
@@ -83,22 +84,22 @@ func TestGetHeadersWithBody(t *testing.T) {
 
 func TestSetBody(t *testing.T) {
 	body := struct {
-		Region  Region         `json:"-"`
+		Region  scw.Region     `json:"-"`
 		ID      string         `json:"-"`
 		Name    string         `json:"name,omitempty"`
 		Slice   []string       `json:"slice,omitempty"`
 		Flag    bool           `json:"flag,omitempty"`
 		Timeout *time.Duration `json:"timeout,omitempty"`
 	}{
-		Region:  RegionNlAms,
+		Region:  scw.RegionNlAms,
 		ID:      "plop",
 		Name:    "plop",
 		Slice:   []string{"plop", "plop"},
 		Flag:    true,
-		Timeout: TimeDurationPtr(time.Second),
+		Timeout: scw.TimeDurationPtr(time.Second),
 	}
 
-	req := ScalewayRequest{
+	req := scw.ScalewayRequest{
 		Headers: http.Header{},
 	}
 
@@ -117,12 +118,12 @@ func TestSetBody(t *testing.T) {
 }
 
 func TestSetFileBody(t *testing.T) {
-	body := &File{
+	body := &scw.File{
 		Content:     bytes.NewReader([]byte(testBody)),
 		ContentType: "plain/text",
 	}
 
-	req := ScalewayRequest{
+	req := scw.ScalewayRequest{
 		Headers: http.Header{},
 	}
 

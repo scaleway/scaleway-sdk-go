@@ -1,8 +1,9 @@
-package instance
+package instance_test
 
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -15,39 +16,39 @@ func TestWaitForSnapshot(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 	snapshotName := "backup"
 	snapshot, cleanup := createSnapshot(t, instanceAPI, snapshotName)
 	defer cleanup()
 
-	res, err := instanceAPI.WaitForSnapshot(&WaitForSnapshotRequest{
+	res, err := instanceAPI.WaitForSnapshot(&instance.WaitForSnapshotRequest{
 		SnapshotID: snapshot.ID,
 	})
 
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, snapshot.ID, res.ID)
-	testhelpers.Equals(t, SnapshotStateAvailable, res.State)
+	testhelpers.Equals(t, instance.SnapshotStateAvailable, res.State)
 	testhelpers.Equals(t, snapshotName, res.Name)
 }
 
 // createSnapshot is a helper that create an snapshot.
 // It returns the newly created snapshot and a cleanup function
-func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snapshot, func()) {
+func createSnapshot(t *testing.T, instanceAPI *instance.API, snapshotName string) (*instance.Snapshot, func()) {
 	t.Helper()
-	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
+	serverRes, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 		CommercialType: "DEV1-M",
 		Image:          scw.StringPtr("ubuntu_focal"),
 	})
 	testhelpers.AssertNoError(t, err)
 
 	// Backup will create a snapshot for each volume + an image base on all snapshots.
-	snapshot, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
+	snapshot, err := instanceAPI.CreateSnapshot(&instance.CreateSnapshotRequest{
 		Name:     snapshotName,
 		VolumeID: &serverRes.Server.Volumes["0"].ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
-	snapshotRes, err := instanceAPI.GetSnapshot(&GetSnapshotRequest{
+	snapshotRes, err := instanceAPI.GetSnapshot(&instance.GetSnapshotRequest{
 		SnapshotID: snapshot.Snapshot.ID,
 	})
 	testhelpers.AssertNoError(t, err)
@@ -55,12 +56,12 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 	return snapshotRes.Snapshot, func() {
 		// Delete all created resources
 
-		err := instanceAPI.DeleteServer(&DeleteServerRequest{
+		err := instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 			ServerID: serverRes.Server.ID,
 		})
 		testhelpers.AssertNoError(t, err)
 
-		err = instanceAPI.DeleteSnapshot(&DeleteSnapshotRequest{
+		err = instanceAPI.DeleteSnapshot(&instance.DeleteSnapshotRequest{
 			SnapshotID: snapshotRes.Snapshot.ID,
 		})
 		testhelpers.AssertNoError(t, err)
@@ -74,24 +75,24 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	volumeSize := 1 * scw.GB
 
-	createVolume, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
+	createVolume, err := instanceAPI.CreateVolume(&instance.CreateVolumeRequest{
 		Name:       "volume_name",
-		VolumeType: VolumeVolumeTypeBSSD,
+		VolumeType: instance.VolumeVolumeTypeBSSD,
 		Size:       &volumeSize,
 	})
 	testhelpers.AssertNoError(t, err)
 
-	createResponse, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
+	createResponse, err := instanceAPI.CreateSnapshot(&instance.CreateSnapshotRequest{
 		Name:     "name",
 		VolumeID: &createVolume.Volume.ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
-	updateResponse, err := instanceAPI.UpdateSnapshot(&UpdateSnapshotRequest{
+	updateResponse, err := instanceAPI.UpdateSnapshot(&instance.UpdateSnapshotRequest{
 		SnapshotID: createResponse.Snapshot.ID,
 		Name:       scw.StringPtr("new_name"),
 		Tags:       scw.StringsPtr([]string{"foo", "bar"}),
@@ -100,12 +101,12 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 	testhelpers.Equals(t, "new_name", updateResponse.Snapshot.Name)
 	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.Snapshot.Tags)
 
-	_, err = instanceAPI.WaitForSnapshot(&WaitForSnapshotRequest{
+	_, err = instanceAPI.WaitForSnapshot(&instance.WaitForSnapshotRequest{
 		SnapshotID: createResponse.Snapshot.ID,
 	})
 	testhelpers.AssertNoError(t, err)
 
-	err = instanceAPI.DeleteSnapshot(&DeleteSnapshotRequest{
+	err = instanceAPI.DeleteSnapshot(&instance.DeleteSnapshotRequest{
 		SnapshotID: createResponse.Snapshot.ID,
 	})
 	testhelpers.AssertNoError(t, err)

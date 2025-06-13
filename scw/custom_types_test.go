@@ -1,4 +1,4 @@
-package scw
+package scw_test
 
 import (
 	"encoding/json"
@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 func TestMoney_NewMoneyFromFloat(t *testing.T) {
@@ -17,13 +18,13 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 		value     float64
 		currency  string
 		precision int
-		want      *Money
+		want      *scw.Money
 	}{
 		{
 			value:     0.0,
 			currency:  "EUR",
 			precision: 0,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        0,
 				Nanos:        0,
@@ -33,7 +34,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.0,
 			currency:  "EUR",
 			precision: 3,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        0,
@@ -43,7 +44,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.3,
 			currency:  "EUR",
 			precision: 3,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        300000000,
@@ -53,7 +54,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.333,
 			currency:  "EUR",
 			precision: 2,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        330000000,
@@ -63,7 +64,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.04,
 			currency:  "EUR",
 			precision: 1,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        0,
@@ -73,7 +74,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.05,
 			currency:  "EUR",
 			precision: 1,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        100000000,
@@ -83,7 +84,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.123456789,
 			currency:  "EUR",
 			precision: 9,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        123456789,
@@ -93,7 +94,7 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 			value:     1.999999999,
 			currency:  "EUR",
 			precision: 9,
-			want: &Money{
+			want: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        1,
 				Nanos:        999999999,
@@ -103,25 +104,25 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.want.String(), func(t *testing.T) {
-			testhelpers.Equals(t, c.want, NewMoneyFromFloat(c.value, c.currency, c.precision))
+			testhelpers.Equals(t, c.want, scw.NewMoneyFromFloat(c.value, c.currency, c.precision))
 		})
 	}
 }
 
 func TestMoney_String(t *testing.T) {
 	cases := []struct {
-		money *Money
+		money *scw.Money
 		want  string
 	}{
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "EUR",
 				Units:        10,
 			},
 			want: "€ 10.00",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "USD",
 				Units:        10,
 				Nanos:        1,
@@ -129,35 +130,35 @@ func TestMoney_String(t *testing.T) {
 			want: "$ 10.000000001",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "EUR",
 				Nanos:        100000000,
 			},
 			want: "€ 0.10",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "EUR",
 				Nanos:        500000,
 			},
 			want: "€ 0.0005",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "EUR",
 				Nanos:        333000000,
 			},
 			want: "€ 0.333",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "EUR",
 				Nanos:        123456789,
 			},
 			want: "€ 0.123456789",
 		},
 		{
-			money: &Money{
+			money: &scw.Money{
 				CurrencyCode: "?",
 			},
 			want: "? 0.00",
@@ -173,11 +174,11 @@ func TestMoney_String(t *testing.T) {
 
 func TestSize_String(t *testing.T) {
 	cases := []struct {
-		size Size
+		size scw.Size
 		want string
 	}{
-		{size: 42 * MB, want: "42000000"},
-		{size: 42 * B, want: "42"},
+		{size: 42 * scw.MB, want: "42000000"},
+		{size: 42 * scw.B, want: "42"},
 	}
 
 	for _, c := range cases {
@@ -190,15 +191,15 @@ func TestSize_String(t *testing.T) {
 func TestTimeSeries_MarshallJSON(t *testing.T) {
 	cases := []struct {
 		name string
-		ts   *TimeSeries
+		ts   *scw.TimeSeries
 		want string
 		err  error
 	}{
 		{
 			name: "basic",
-			ts: &TimeSeries{
+			ts: &scw.TimeSeries{
 				Name: "cpu_usage",
-				Points: []*TimeSeriesPoint{
+				Points: []*scw.TimeSeriesPoint{
 					{
 						Timestamp: time.Date(2019, time.August, 8, 15, 0, 0, 0, time.UTC),
 						Value:     0.2,
@@ -232,7 +233,7 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
-		want *TimeSeries
+		want *scw.TimeSeries
 		err  error
 	}{
 		{
@@ -249,9 +250,9 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 				  }
 				}
 			`,
-			want: &TimeSeries{
+			want: &scw.TimeSeries{
 				Name: "cpu_usage",
-				Points: []*TimeSeriesPoint{
+				Points: []*scw.TimeSeriesPoint{
 					{
 						Timestamp: time.Date(2019, time.August, 8, 15, 0o0, 0o0, 0, time.UTC),
 						Value:     0.2,
@@ -275,7 +276,7 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			ts := &TimeSeries{}
+			ts := &scw.TimeSeries{}
 			err := json.Unmarshal([]byte(c.json), ts)
 
 			testhelpers.Equals(t, c.err, err)
@@ -289,13 +290,13 @@ func TestTimeSeries_UnmarshalJSON(t *testing.T) {
 func TestFile_MarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
-		file *File
+		file *scw.File
 		want string
 		err  error
 	}{
 		{
 			name: "basic",
-			file: &File{
+			file: &scw.File{
 				Name:        "example.txt",
 				ContentType: "text/plain",
 				Content:     strings.NewReader("Hello, world!"),
@@ -304,12 +305,12 @@ func TestFile_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "empty",
-			file: &File{},
+			file: &scw.File{},
 			want: `{"name":"","content_type":"","content":""}`,
 		},
 		{
 			name: "nil content",
-			file: &File{
+			file: &scw.File{
 				Name:        "example.txt",
 				ContentType: "text/plain",
 				Content:     nil,
@@ -341,7 +342,7 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 	run := func(c *testCase) func(t *testing.T) {
 		return func(t *testing.T) {
 			t.Helper()
-			f := File{}
+			f := scw.File{}
 			err := json.Unmarshal([]byte(c.json), &f)
 			testhelpers.AssertNoError(t, err)
 			testhelpers.Equals(t, c.name, f.Name)
@@ -375,23 +376,23 @@ func TestFile_UnmarshalJSON(t *testing.T) {
 func TestIPNet_MarshallJSON(t *testing.T) {
 	cases := []struct {
 		name    string
-		ipRange IPNet
+		ipRange scw.IPNet
 		want    string
 		err     error
 	}{
 		{
 			name:    "ip",
-			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+			ipRange: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
 			want:    `"42.42.42.42/32"`,
 		},
 		{
 			name:    "network",
-			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(16, 32)}},
+			ipRange: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(16, 32)}},
 			want:    `"42.42.42.42/16"`,
 		},
 		{
 			name:    "network with ip",
-			ipRange: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
+			ipRange: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
 			want:    `"192.168.1.42/24"`,
 		},
 	}
@@ -412,38 +413,38 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
-		want IPNet
+		want scw.IPNet
 		err  string
 	}{
 		{
 			name: "IPv4 with CIDR",
 			json: `"42.42.42.42/32"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
 		},
 		{
 			name: "IPv4 with network",
 			json: `"192.0.2.1/24"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 1), Mask: net.CIDRMask(24, 32)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 0, 2, 1), Mask: net.CIDRMask(24, 32)}},
 		},
 		{
 			name: "IPv4 with network 2",
 			json: `"192.168.1.42/24"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(192, 168, 1, 42), Mask: net.CIDRMask(24, 32)}},
 		},
 		{
 			name: "IPv6 with network",
 			json: `"2001:db8:abcd:8000::/50"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(50, 128)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(50, 128)}},
 		},
 		{
 			name: "IPv4 alone",
 			json: `"42.42.42.42"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.IPv4(42, 42, 42, 42), Mask: net.CIDRMask(32, 32)}},
 		},
 		{
 			name: "IPv6 alone",
 			json: `"2001:db8:abcd:8000::"`,
-			want: IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(128, 128)}},
+			want: scw.IPNet{IPNet: net.IPNet{IP: net.ParseIP("2001:db8:abcd:8000::"), Mask: net.CIDRMask(128, 128)}},
 		},
 		{
 			name: "invalid CIDR error",
@@ -454,7 +455,7 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			ipNet := &IPNet{}
+			ipNet := &scw.IPNet{}
 			err := json.Unmarshal([]byte(c.json), ipNet)
 			if err != nil {
 				testhelpers.Equals(t, c.err, err.Error())
@@ -468,53 +469,53 @@ func TestIPNet_UnmarshalJSON(t *testing.T) {
 func TestDuration_MarshallJSON(t *testing.T) {
 	cases := []struct {
 		name     string
-		duration *Duration
+		duration *scw.Duration
 		want     string
 		err      error
 	}{
 		{
 			name:     "small seconds",
-			duration: &Duration{Seconds: 3, Nanos: 0},
+			duration: &scw.Duration{Seconds: 3, Nanos: 0},
 			want:     `"3.000000000s"`,
 		},
 		{
 			name:     "small seconds, small nanos",
-			duration: &Duration{Seconds: 3, Nanos: 12e7},
+			duration: &scw.Duration{Seconds: 3, Nanos: 12e7},
 			want:     `"3.120000000s"`,
 		},
 		{
 			name:     "small seconds, big nanos",
-			duration: &Duration{Seconds: 3, Nanos: 123456789},
+			duration: &scw.Duration{Seconds: 3, Nanos: 123456789},
 			want:     `"3.123456789s"`,
 		},
 		{
 			name:     "big seconds, big nanos",
-			duration: &Duration{Seconds: 345679384, Nanos: 123456789},
+			duration: &scw.Duration{Seconds: 345679384, Nanos: 123456789},
 			want:     `"345679384.123456789s"`,
 		},
 		{
 			name:     "negative small seconds",
-			duration: &Duration{Seconds: -3, Nanos: 0},
+			duration: &scw.Duration{Seconds: -3, Nanos: 0},
 			want:     `"-3.000000000s"`,
 		},
 		{
 			name:     "negative small seconds, small nanos",
-			duration: &Duration{Seconds: -3, Nanos: -12e7},
+			duration: &scw.Duration{Seconds: -3, Nanos: -12e7},
 			want:     `"-3.120000000s"`,
 		},
 		{
 			name:     "negative small seconds, big nanos",
-			duration: &Duration{Seconds: -3, Nanos: -123456789},
+			duration: &scw.Duration{Seconds: -3, Nanos: -123456789},
 			want:     `"-3.123456789s"`,
 		},
 		{
 			name:     "negative big seconds, big nanos",
-			duration: &Duration{Seconds: -345679384, Nanos: -123456789},
+			duration: &scw.Duration{Seconds: -345679384, Nanos: -123456789},
 			want:     `"-345679384.123456789s"`,
 		},
 		{
 			name:     "negative big seconds, big nanos",
-			duration: &Duration{},
+			duration: &scw.Duration{},
 			want:     `"0.000000000s"`,
 		},
 		{
@@ -540,7 +541,7 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
-		want *Duration
+		want *scw.Duration
 		err  string
 	}{
 		{
@@ -563,49 +564,49 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 		{
 			name: "small seconds",
 			json: `{"duration":"3.00s"}`,
-			want: &Duration{Seconds: 3, Nanos: 0},
+			want: &scw.Duration{Seconds: 3, Nanos: 0},
 		},
 		{
 			name: "small seconds, small nanos",
 			json: `{"duration":"3.12s"}`,
-			want: &Duration{Seconds: 3, Nanos: 12e7},
+			want: &scw.Duration{Seconds: 3, Nanos: 12e7},
 		},
 		{
 			name: "bug seconds",
 			json: `{"duration":"987654321.00s"}`,
-			want: &Duration{Seconds: 987654321, Nanos: 0},
+			want: &scw.Duration{Seconds: 987654321, Nanos: 0},
 		},
 		{
 			name: "big seconds, big nanos",
 			json: `{"duration":"987654321.123456789s"}`,
-			want: &Duration{Seconds: 987654321, Nanos: 123456789},
+			want: &scw.Duration{Seconds: 987654321, Nanos: 123456789},
 		},
 		{
 			name: "negative small seconds",
 			json: `{"duration":"-3.00s"}`,
-			want: &Duration{Seconds: -3, Nanos: 0},
+			want: &scw.Duration{Seconds: -3, Nanos: 0},
 		},
 		{
 			name: "negative small seconds, small nanos",
 			json: `{"duration":"-3.12s"}`,
-			want: &Duration{Seconds: -3, Nanos: -12e7},
+			want: &scw.Duration{Seconds: -3, Nanos: -12e7},
 		},
 		{
 			name: "negative bug seconds",
 			json: `{"duration":"-987654321.00s"}`,
-			want: &Duration{Seconds: -987654321, Nanos: 0},
+			want: &scw.Duration{Seconds: -987654321, Nanos: 0},
 		},
 		{
 			name: "negative big seconds, big nanos",
 			json: `{"duration":"-987654321.123456789s"}`,
-			want: &Duration{Seconds: -987654321, Nanos: -123456789},
+			want: &scw.Duration{Seconds: -987654321, Nanos: -123456789},
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var testType struct {
-				Duration *Duration
+				Duration *scw.Duration
 			}
 			err := json.Unmarshal([]byte(c.json), &testType)
 			if err != nil {
@@ -620,7 +621,7 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 func TestDuration_ToTimeDuration(t *testing.T) {
 	cases := []struct {
 		name     string
-		duration *Duration
+		duration *scw.Duration
 		want     time.Duration
 	}{
 		{
@@ -630,37 +631,37 @@ func TestDuration_ToTimeDuration(t *testing.T) {
 		},
 		{
 			name:     "zero duration",
-			duration: &Duration{Seconds: 0, Nanos: 0},
+			duration: &scw.Duration{Seconds: 0, Nanos: 0},
 			want:     time.Duration(0),
 		},
 		{
 			name:     "seconds only",
-			duration: &Duration{Seconds: 10, Nanos: 0},
+			duration: &scw.Duration{Seconds: 10, Nanos: 0},
 			want:     time.Duration(10) * time.Second,
 		},
 		{
 			name:     "nanoseconds only",
-			duration: &Duration{Seconds: 0, Nanos: 500},
+			duration: &scw.Duration{Seconds: 0, Nanos: 500},
 			want:     time.Duration(500),
 		},
 		{
 			name:     "seconds and nanoseconds",
-			duration: &Duration{Seconds: 10, Nanos: 500},
+			duration: &scw.Duration{Seconds: 10, Nanos: 500},
 			want:     time.Duration(10)*time.Second + time.Duration(500),
 		},
 		{
 			name:     "negative seconds",
-			duration: &Duration{Seconds: -10, Nanos: 0},
+			duration: &scw.Duration{Seconds: -10, Nanos: 0},
 			want:     time.Duration(-10) * time.Second,
 		},
 		{
 			name:     "negative nanoseconds",
-			duration: &Duration{Seconds: 0, Nanos: -500},
+			duration: &scw.Duration{Seconds: 0, Nanos: -500},
 			want:     time.Duration(-500),
 		},
 		{
 			name:     "negative seconds and nanoseconds",
-			duration: &Duration{Seconds: -10, Nanos: -500},
+			duration: &scw.Duration{Seconds: -10, Nanos: -500},
 			want:     time.Duration(-10)*time.Second + time.Duration(-500),
 		},
 	}
@@ -683,48 +684,48 @@ func TestDuration_FromTimeDuration(t *testing.T) {
 	cases := []struct {
 		name     string
 		duration time.Duration
-		want     *Duration
+		want     *scw.Duration
 	}{
 		{
 			name:     "zero duration",
-			want:     &Duration{Seconds: 0, Nanos: 0},
+			want:     &scw.Duration{Seconds: 0, Nanos: 0},
 			duration: time.Duration(0),
 		},
 		{
 			name:     "seconds only",
-			want:     &Duration{Seconds: 10, Nanos: 0},
+			want:     &scw.Duration{Seconds: 10, Nanos: 0},
 			duration: time.Duration(10) * time.Second,
 		},
 		{
 			name:     "nanoseconds only",
-			want:     &Duration{Seconds: 0, Nanos: 500},
+			want:     &scw.Duration{Seconds: 0, Nanos: 500},
 			duration: time.Duration(500),
 		},
 		{
 			name:     "seconds and nanoseconds",
-			want:     &Duration{Seconds: 10, Nanos: 500},
+			want:     &scw.Duration{Seconds: 10, Nanos: 500},
 			duration: time.Duration(10)*time.Second + time.Duration(500),
 		},
 		{
 			name:     "negative seconds",
-			want:     &Duration{Seconds: -10, Nanos: 0},
+			want:     &scw.Duration{Seconds: -10, Nanos: 0},
 			duration: time.Duration(-10) * time.Second,
 		},
 		{
 			name:     "negative nanoseconds",
-			want:     &Duration{Seconds: 0, Nanos: -500},
+			want:     &scw.Duration{Seconds: 0, Nanos: -500},
 			duration: time.Duration(-500),
 		},
 		{
 			name:     "negative seconds and nanoseconds",
-			want:     &Duration{Seconds: -10, Nanos: -500},
+			want:     &scw.Duration{Seconds: -10, Nanos: -500},
 			duration: time.Duration(-10)*time.Second + time.Duration(-500),
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got := NewDurationFromTimeDuration(c.duration)
+			got := scw.NewDurationFromTimeDuration(c.duration)
 			if got == nil {
 				t.Errorf("got nil, want %v", c.want)
 			} else if got.Seconds != c.want.Seconds && got.Nanos != c.want.Nanos {
@@ -738,7 +739,7 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 	cases := []struct {
 		name string
 		json string
-		want *JSONObject
+		want *scw.JSONObject
 		err  error
 	}{
 		{
@@ -748,7 +749,7 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 					"test": "scw"
 				}
 			`,
-			want: &JSONObject{
+			want: &scw.JSONObject{
 				"test": "scw",
 			},
 		},
@@ -766,7 +767,7 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 				}
 			}
 			`,
-			want: &JSONObject{
+			want: &scw.JSONObject{
 				"firstName": "John",
 				"lastName":  "Smith",
 				"isAlive":   true,
@@ -781,7 +782,7 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			ts, err := DecodeJSONObject(c.json, NoEscape)
+			ts, err := scw.DecodeJSONObject(c.json, scw.NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
 				testhelpers.Equals(t, *c.want, ts)
@@ -793,13 +794,13 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 func TestJSONObject_MarshalJSON(t *testing.T) {
 	cases := []struct {
 		name      string
-		jsonValue *JSONObject
+		jsonValue *scw.JSONObject
 		want      string
 		err       error
 	}{
 		{
 			name: "basic",
-			jsonValue: &JSONObject{
+			jsonValue: &scw.JSONObject{
 				"test": "scw",
 			},
 			want: `{"test":"scw"}`,
@@ -807,7 +808,7 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 		{
 			name: "multi-types",
 			want: `{"address":{"city":"Paris","country":"FR"},"age":23,"firstName":"John","isAlive":true,"lastName":"Smith"}`,
-			jsonValue: &JSONObject{
+			jsonValue: &scw.JSONObject{
 				"firstName": "John",
 				"lastName":  "Smith",
 				"isAlive":   true,
@@ -822,7 +823,7 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got, err := EncodeJSONObject(*c.jsonValue, NoEscape)
+			got, err := scw.EncodeJSONObject(*c.jsonValue, scw.NoEscape)
 			testhelpers.Equals(t, c.err, err)
 			if c.err == nil {
 				testhelpers.Equals(t, c.want, got)
@@ -832,10 +833,10 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 }
 
 func TestDecimal(t *testing.T) {
-	d := Decimal("1.22")
+	d := scw.Decimal("1.22")
 	testhelpers.Equals(t, "1.22", d.String())
 
-	dPtr := new(Decimal)
+	dPtr := new(scw.Decimal)
 	testhelpers.Equals(t, "", dPtr.String())
 
 	*dPtr = "1.22"

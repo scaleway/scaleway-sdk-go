@@ -1,6 +1,10 @@
-package strcase
+package strcase_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/scaleway/scaleway-sdk-go/strcase"
+)
 
 func TestToPascal(t *testing.T) {
 	cases := [][]string{
@@ -17,7 +21,7 @@ func TestToPascal(t *testing.T) {
 	for _, i := range cases {
 		in := i[0]
 		out := i[1]
-		result := ToPascal(in)
+		result := strcase.ToPascal(in)
 		if result != out {
 			t.Error("'" + result + "' != '" + out + "'")
 		}

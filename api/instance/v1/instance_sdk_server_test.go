@@ -1,8 +1,9 @@
-package instance
+package instance_test
 
 import (
 	"testing"
 
+	"github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -15,7 +16,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	var (
 		serverID          string
@@ -26,14 +27,14 @@ func TestServerUpdate(t *testing.T) {
 		commercialType    = "START1-S"
 		image             = scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d")
 		enableIPv6        = scw.BoolPtr(true)
-		bootType          = BootTypeLocal
+		bootType          = instance.BootTypeLocal
 		tags              = []string{"foo", "bar"}
 		project           = "14d2f7ae-9775-414c-9bed-6810e060d500"
 	)
 
 	t.Run("create server", func(t *testing.T) {
 		// Create server
-		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
+		createServerResponse, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 			Zone:              zone,
 			Name:              name,
 			Project:           &project,
@@ -66,7 +67,7 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("create server with orga (deprecated)", func(t *testing.T) {
 		// Create server
-		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
+		createServerResponse, err := instanceAPI.CreateServer(&instance.CreateServerRequest{
 			Zone:         zone,
 			Name:         name,
 			Organization: &project,
@@ -78,7 +79,7 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Equals(t, project, createServerResponse.Server.Organization)
 
 		// Delete Server
-		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		err = instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 			Zone:     zone,
 			ServerID: createServerResponse.Server.ID,
 		})
@@ -92,7 +93,7 @@ func TestServerUpdate(t *testing.T) {
 		)
 
 		// Update server
-		updateServerResponse, err := instanceAPI.updateServer(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.UpdateServer(&instance.UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
 			Name:     &newName,
@@ -117,10 +118,10 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("remove server volumes", func(t *testing.T) {
 		// Remove/detach volumes
-		updateServerResponse, err := instanceAPI.updateServer(&UpdateServerRequest{
+		updateServerResponse, err := instanceAPI.UpdateServer(&instance.UpdateServerRequest{
 			ServerID: serverID,
 			Zone:     zone,
-			Volumes:  &map[string]*VolumeServerTemplate{},
+			Volumes:  &map[string]*instance.VolumeServerTemplate{},
 		})
 		testhelpers.AssertNoError(t, err)
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
@@ -129,14 +130,14 @@ func TestServerUpdate(t *testing.T) {
 
 	t.Run("cleanup server and volume", func(t *testing.T) {
 		// Delete Server
-		err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		err = instanceAPI.DeleteServer(&instance.DeleteServerRequest{
 			Zone:     zone,
 			ServerID: serverID,
 		})
 		testhelpers.AssertNoError(t, err)
 
 		// Delete Volume
-		err = instanceAPI.DeleteVolume(&DeleteVolumeRequest{
+		err = instanceAPI.DeleteVolume(&instance.DeleteVolumeRequest{
 			Zone:     zone,
 			VolumeID: volumeID,
 		})
@@ -151,12 +152,12 @@ func TestCreateServerWithIncorrectBody(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	zone := scw.ZoneFrPar1
 
 	// Create server
-	_, err = instanceAPI.CreateServer(&CreateServerRequest{
+	_, err = instanceAPI.CreateServer(&instance.CreateServerRequest{
 		Zone: zone,
 	})
 	testhelpers.Assert(t, err != nil, "This request should error")
@@ -169,9 +170,9 @@ func TestListServerMultipleZones(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
-	instanceAPI := NewAPI(client)
+	instanceAPI := instance.NewAPI(client)
 
 	// Create server
-	_, err = instanceAPI.ListServers(&ListServersRequest{}, scw.WithZones(instanceAPI.Zones()...))
+	_, err = instanceAPI.ListServers(&instance.ListServersRequest{}, scw.WithZones(instanceAPI.Zones()...))
 	testhelpers.Assert(t, err == nil, "This request should not error: %s", err)
 }
