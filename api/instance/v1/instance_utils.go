@@ -397,3 +397,55 @@ func (s *API) WaitForServerRDPPassword(req *WaitForServerRDPPasswordRequest, opt
 	}
 	return server.(*Server), nil
 }
+
+type WaitForServerFileSystemRequest struct {
+	ServerID      string
+	Zone          scw.Zone
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+func (s *API) WaitForServerFileSystem(req *WaitForServerFileSystemRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	terminalStatus := map[ServerFilesystemState]struct{}{
+		ServerFilesystemStateAvailable:    {},
+		ServerFilesystemStateUnknownState: {},
+	}
+
+	result, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				ServerID: req.ServerID,
+				Zone:     req.Zone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			allFilesystemsReady := true
+			for _, fs := range res.Server.Filesystems {
+				if _, ok := terminalStatus[fs.State]; !ok {
+					allFilesystemsReady = false
+					break
+				}
+			}
+
+			return res.Server, allFilesystemsReady, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for server filesystems failed")
+	}
+
+	return result.(*Server), nil
+}
