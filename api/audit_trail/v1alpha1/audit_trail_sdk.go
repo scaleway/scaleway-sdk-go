@@ -155,6 +155,8 @@ type AccountOrganizationInfo struct{}
 // AccountUserInfo: account user info.
 type AccountUserInfo struct {
 	Email string `json:"email"`
+
+	PhoneNumber *string `json:"phone_number"`
 }
 
 // KeyManagerKeyInfo: key manager key info.
