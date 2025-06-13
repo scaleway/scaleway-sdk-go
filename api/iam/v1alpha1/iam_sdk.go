@@ -1639,6 +1639,12 @@ type GetLogRequest struct {
 	LogID string `json:"-"`
 }
 
+// GetOrganizationRequest: get organization request.
+type GetOrganizationRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
 // GetOrganizationSecuritySettingsRequest: get organization security settings request.
 type GetOrganizationSecuritySettingsRequest struct {
 	// OrganizationID: ID of the Organization.
@@ -1768,7 +1774,7 @@ func (r *ListAPIKeysResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListAPIKeysResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListAPIKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListAPIKeysResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1824,7 +1830,7 @@ func (r *ListApplicationsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListApplicationsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListApplicationsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListApplicationsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1895,7 +1901,7 @@ func (r *ListGroupsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGroupsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListGroupsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListGroupsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1940,7 +1946,7 @@ func (r *ListJWTsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListJWTsResponse) UnsafeAppend(res any) (uint64, error) {
+func (r *ListJWTsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListJWTsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2001,7 +2007,7 @@ func (r *ListLogsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLogsResponse) UnsafeAppend(res any) (uint64, error) {
+func (r *ListLogsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListLogsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2045,7 +2051,7 @@ func (r *ListPermissionSetsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPermissionSetsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListPermissionSetsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListPermissionSetsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2113,7 +2119,7 @@ func (r *ListPoliciesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPoliciesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListPoliciesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListPoliciesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2160,7 +2166,7 @@ func (r *ListQuotaResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListQuotaResponse) UnsafeAppend(res any) (uint64, error) {
+func (r *ListQuotaResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListQuotaResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2200,7 +2206,7 @@ func (r *ListRulesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListRulesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListRulesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2253,7 +2259,7 @@ func (r *ListSSHKeysResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSSHKeysResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListSSHKeysResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListSSHKeysResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2310,7 +2316,7 @@ func (r *ListUsersResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListUsersResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListUsersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListUsersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2336,6 +2342,18 @@ type MFAOTP struct {
 type MigrateOrganizationGuestsRequest struct {
 	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"-"`
+}
+
+// Organization: organization.
+type Organization struct {
+	// ID: ID of the Organization.
+	ID string `json:"id"`
+
+	// Name: name of the Organization.
+	Name string `json:"name"`
+
+	// Alias: alias of the Organization.
+	Alias string `json:"alias"`
 }
 
 // OrganizationSecuritySettings: organization security settings.
@@ -2380,6 +2398,15 @@ type SetGroupMembersRequest struct {
 	UserIDs []string `json:"user_ids"`
 
 	ApplicationIDs []string `json:"application_ids"`
+}
+
+// SetOrganizationAliasRequest: set organization alias request.
+type SetOrganizationAliasRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// Alias: alias of the Organization.
+	Alias string `json:"alias"`
 }
 
 // SetRulesRequest: set rules request.
@@ -4198,6 +4225,65 @@ func (s *API) UpdateOrganizationSecuritySettings(req *UpdateOrganizationSecurity
 	}
 
 	var resp OrganizationSecuritySettings
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetOrganizationAlias: This will fail if an alias has already been defined. Please contact support if you need to change your Organization's alias.
+func (s *API) SetOrganizationAlias(req *SetOrganizationAliasRequest, opts ...scw.RequestOption) (*Organization, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/alias",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Organization
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetOrganization: Get your Organization's IAM information.
+func (s *API) GetOrganization(req *GetOrganizationRequest, opts ...scw.RequestOption) (*Organization, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "",
+	}
+
+	var resp Organization
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
