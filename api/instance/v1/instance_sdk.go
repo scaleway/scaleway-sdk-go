@@ -2877,7 +2877,7 @@ func (r *GetServerTypesAvailabilityResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *GetServerTypesAvailabilityResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *GetServerTypesAvailabilityResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*GetServerTypesAvailabilityResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -2971,7 +2971,7 @@ func (r *ListIPsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListIPsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3021,7 +3021,7 @@ func (r *ListImagesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListImagesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListImagesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListImagesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3073,7 +3073,7 @@ func (r *ListPlacementGroupsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPlacementGroupsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListPlacementGroupsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListPlacementGroupsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3117,7 +3117,7 @@ func (r *ListPrivateNICsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPrivateNICsResponse) UnsafeAppend(res any) (uint64, error) {
+func (r *ListPrivateNICsResponse) UnsafeAppend(res interface{}) (uint64, error) {
 	results, ok := res.(*ListPrivateNICsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3160,7 +3160,7 @@ func (r *ListSecurityGroupRulesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListSecurityGroupRulesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListSecurityGroupRulesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3215,7 +3215,7 @@ func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecurityGroupsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListSecurityGroupsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListSecurityGroupsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3326,7 +3326,7 @@ func (r *ListServersResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListServersResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListServersResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListServersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3364,7 +3364,7 @@ func (r *ListServersTypesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListServersTypesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListServersTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListServersTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3424,7 +3424,7 @@ func (r *ListSnapshotsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSnapshotsResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListSnapshotsResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListSnapshotsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3480,7 +3480,7 @@ func (r *ListVolumesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListVolumesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListVolumesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListVolumesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -3518,7 +3518,7 @@ func (r *ListVolumesTypesResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListVolumesTypesResponse) UnsafeAppend(res any) (uint32, error) {
+func (r *ListVolumesTypesResponse) UnsafeAppend(res interface{}) (uint32, error) {
 	results, ok := res.(*ListVolumesTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -4627,11 +4627,11 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 // * `stop_in_place`: Stop the Instance, but keep the slot on the hypervisor.
 // * `reboot`: Stop the instance and restart it.
 // * `backup`:  Create an image with all the volumes of an Instance.
-// * `terminate`: Delete the Instance along with its attached volumes, except for SBS volumes.
+// * `terminate`: Delete the Instance along with its attached local volumes.
 // * `enable_routed_ip`: Migrate the Instance to the new network stack.
 //
-// The `terminate` action will result in the deletion of `l_ssd`, `b_ssd` and `scratch` volumes types, `sbs_volume` volumes type will only be detached.
-// If you want to preserve your volumes, you should detach them before the Instance deletion or `terminate` action.
+// The `terminate` action will result in the deletion of `l_ssd` and `scratch` volumes types, `sbs_volume` volumes will only be detached.
+// If you want to preserve your `l_ssd` volumes, you should stop your Instance, detach the volumes to be preserved, then delete your Instance.
 //
 // The `backup` action can be done with:
 // * No `volumes` key in the body: an image is created with snapshots of all the server volumes, except for the `scratch` volumes types.
@@ -5518,7 +5518,7 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*GetV
 	return &resp, nil
 }
 
-// UpdateVolume: Replace the name and/or size properties of a volume specified by its ID, with the specified value(s). Any volume name can be changed, however only `b_ssd` volumes can currently be increased in size.
+// UpdateVolume: Replace the name and/or size properties of a volume specified by its ID, with the specified value(s).
 func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) (*UpdateVolumeResponse, error) {
 	var err error
 
