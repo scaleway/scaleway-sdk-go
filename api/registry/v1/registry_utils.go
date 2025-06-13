@@ -41,7 +41,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 	}
 
 	namespace, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			ns, err := s.GetNamespace(&GetNamespaceRequest{
 				Region:      req.Region,
 				NamespaceID: req.NamespaceID,

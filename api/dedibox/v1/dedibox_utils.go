@@ -35,7 +35,7 @@ func (s *API) WaitForService(req *WaitForServiceRequest, opts ...scw.RequestOpti
 		ServiceProvisioningStatusExpired: {},
 	}
 	service, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			service, err := s.GetService(&GetServiceRequest{
 				Zone:      req.Zone,
 				ServiceID: req.ServiceID,
@@ -80,7 +80,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 		ServerStatusRescue:  {},
 	}
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			server, err := s.GetServer(&GetServerRequest{
 				Zone:     req.Zone,
 				ServerID: req.ServerID,

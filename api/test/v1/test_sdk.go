@@ -297,7 +297,7 @@ func (r *ListHumansResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListHumansResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListHumansResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*ListHumansResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

@@ -305,7 +305,7 @@ func (r *ListAttachmentsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListAttachmentsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListAttachmentsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListAttachmentsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -361,7 +361,7 @@ func (r *ListFileSystemsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListFileSystemsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListFileSystemsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListFileSystemsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

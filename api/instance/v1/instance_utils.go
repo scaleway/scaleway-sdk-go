@@ -278,7 +278,7 @@ func (s *API) WaitForPrivateNIC(req *WaitForPrivateNICRequest, opts ...scw.Reque
 	}
 
 	pn, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPrivateNIC(&GetPrivateNICRequest{
 				ServerID:     req.ServerID,
 				Zone:         req.Zone,
@@ -322,7 +322,7 @@ func (s *API) WaitForMACAddress(req *WaitForMACAddressRequest, opts ...scw.Reque
 	}
 
 	pn, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPrivateNIC(&GetPrivateNICRequest{
 				ServerID:     req.ServerID,
 				Zone:         req.Zone,
@@ -374,7 +374,7 @@ func (s *API) WaitForServerRDPPassword(req *WaitForServerRDPPasswordRequest, opt
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				ServerID: req.ServerID,
 				Zone:     req.Zone,

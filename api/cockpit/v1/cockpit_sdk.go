@@ -933,7 +933,7 @@ func (r *ListAlertsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListAlertsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListAlertsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListAlertsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -967,7 +967,7 @@ func (r *ListContactPointsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListContactPointsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListContactPointsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListContactPointsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -995,7 +995,7 @@ func (r *ListDataSourcesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListDataSourcesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListDataSourcesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListDataSourcesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1023,7 +1023,7 @@ func (r *ListGrafanaProductDashboardsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListGrafanaProductDashboardsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1051,7 +1051,7 @@ func (r *ListGrafanaUsersResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListGrafanaUsersResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListGrafanaUsersResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListGrafanaUsersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1079,7 +1079,7 @@ func (r *ListPlansResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPlansResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPlansResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPlansResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1107,7 +1107,7 @@ func (r *ListTokensResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListTokensResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListTokensResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListTokensResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

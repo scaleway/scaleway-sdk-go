@@ -43,7 +43,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 	}
 
 	namespace, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			namespace, err := s.GetNamespace(&GetNamespaceRequest{
 				NamespaceID: req.NamespaceID,
 				Region:      req.Region,
@@ -92,7 +92,7 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 	}
 
 	container, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			container, err := s.GetContainer(&GetContainerRequest{
 				ContainerID: req.ContainerID,
 				Region:      req.Region,
@@ -140,7 +140,7 @@ func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*
 	}
 
 	cron, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			cron, err := s.GetCron(&GetCronRequest{
 				CronID: req.CronID,
 				Region: req.Region,
@@ -187,7 +187,7 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	}
 
 	domain, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			domain, err := s.GetDomain(&GetDomainRequest{
 				DomainID: req.DomainID,
 				Region:   req.Region,
@@ -234,7 +234,7 @@ func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOpti
 	}
 
 	trigger, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			trigger, err := s.GetTrigger(&GetTriggerRequest{
 				TriggerID: req.TriggerID,
 				Region:    req.Region,

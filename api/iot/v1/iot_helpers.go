@@ -39,7 +39,7 @@ func (s *API) WaitForHub(req *WaitForHubRequest, opts ...scw.RequestOption) (*Hu
 	}
 
 	hub, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			hub, err := s.GetHub(&GetHubRequest{
 				HubID:  req.HubID,
 				Region: req.Region,

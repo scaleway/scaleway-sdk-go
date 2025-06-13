@@ -451,7 +451,7 @@ func (r *ListJobDefinitionSecretsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListJobDefinitionSecretsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListJobDefinitionSecretsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListJobDefinitionSecretsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -494,7 +494,7 @@ func (r *ListJobDefinitionsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListJobDefinitionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListJobDefinitionsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListJobDefinitionsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -544,7 +544,7 @@ func (r *ListJobRunsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListJobRunsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListJobRunsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListJobRunsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

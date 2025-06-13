@@ -41,7 +41,7 @@ func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.Requ
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			hosting, err := s.GetHosting(&HostingAPIGetHostingRequest{
 				HostingID: req.HostingID,
 				Region:    req.Region,

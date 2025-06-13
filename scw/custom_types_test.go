@@ -771,7 +771,7 @@ func TestJSONObject_UnmarshalJSON(t *testing.T) {
 				"lastName":  "Smith",
 				"isAlive":   true,
 				"age":       float64(23),
-				"address": map[string]interface{}{
+				"address": map[string]any{
 					"city":    "Paris",
 					"country": "FR",
 				},
@@ -812,7 +812,7 @@ func TestJSONObject_MarshalJSON(t *testing.T) {
 				"lastName":  "Smith",
 				"isAlive":   true,
 				"age":       float64(23),
-				"address": map[string]interface{}{
+				"address": map[string]any{
 					"city":    "Paris",
 					"country": "FR",
 				},

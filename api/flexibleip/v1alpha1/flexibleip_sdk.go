@@ -312,7 +312,7 @@ func (r *AttachFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *AttachFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *AttachFlexibleIPsResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*AttachFlexibleIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -391,7 +391,7 @@ func (r *DetachFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *DetachFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *DetachFlexibleIPsResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*DetachFlexibleIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -484,7 +484,7 @@ func (r *ListFlexibleIPsResponse) UnsafeGetTotalCount() uint32 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListFlexibleIPsResponse) UnsafeAppend(res interface{}) (uint32, error) {
+func (r *ListFlexibleIPsResponse) UnsafeAppend(res any) (uint32, error) {
 	results, ok := res.(*ListFlexibleIPsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

@@ -36,7 +36,7 @@ func (s *API) WaitForTag(req *WaitForTagRequest, opts ...scw.RequestOption) (*Ta
 	}
 
 	tag, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			t, err := s.GetTag(&GetTagRequest{
 				Region: req.Region,
 				TagID:  req.TagID,

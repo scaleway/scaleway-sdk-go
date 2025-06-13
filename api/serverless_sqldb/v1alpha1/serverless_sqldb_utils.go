@@ -40,7 +40,7 @@ func (s *API) WaitForDatabase(req *WaitForDatabaseRequest, opts ...scw.RequestOp
 	}
 
 	database, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDatabase(&GetDatabaseRequest{
 				DatabaseID: req.DatabaseID,
 				Region:     req.Region,
@@ -88,7 +88,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 	}
 
 	backup, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
 				BackupID: req.BackupID,
 				Region:   req.Region,

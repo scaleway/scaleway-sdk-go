@@ -906,7 +906,7 @@ func (r *ListDedicatedConnectionsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListDedicatedConnectionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListDedicatedConnectionsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListDedicatedConnectionsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -999,7 +999,7 @@ func (r *ListLinksResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListLinksResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListLinksResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListLinksResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1046,7 +1046,7 @@ func (r *ListPartnersResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPartnersResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPartnersResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPartnersResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1105,7 +1105,7 @@ func (r *ListPopsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListPopsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListPopsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListPopsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -1162,7 +1162,7 @@ func (r *ListRoutingPoliciesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListRoutingPoliciesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListRoutingPoliciesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListRoutingPoliciesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)

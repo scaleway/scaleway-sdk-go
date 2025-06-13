@@ -52,7 +52,7 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	}
 
 	domain, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			img, err := s.GetDomain(&GetDomainRequest{
 				Region:   req.Region,
 				DomainID: req.DomainID,

@@ -5,7 +5,7 @@ import "testing"
 func TestHasField(t *testing.T) {
 	tests := []struct {
 		name      string
-		i         interface{}
+		i         any
 		fieldName string
 		want      bool
 	}{

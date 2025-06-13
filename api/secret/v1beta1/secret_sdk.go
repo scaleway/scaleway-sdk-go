@@ -623,7 +623,7 @@ func (r *BrowseSecretsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *BrowseSecretsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *BrowseSecretsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*BrowseSecretsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -818,7 +818,7 @@ func (r *ListSecretTypesResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecretTypesResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListSecretTypesResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListSecretTypesResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -862,7 +862,7 @@ func (r *ListSecretVersionsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecretVersionsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListSecretVersionsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListSecretVersionsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -928,7 +928,7 @@ func (r *ListSecretsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListSecretsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListSecretsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListSecretsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
@@ -969,7 +969,7 @@ func (r *ListTagsResponse) UnsafeGetTotalCount() uint64 {
 
 // UnsafeAppend should not be used
 // Internal usage only
-func (r *ListTagsResponse) UnsafeAppend(res interface{}) (uint64, error) {
+func (r *ListTagsResponse) UnsafeAppend(res any) (uint64, error) {
 	results, ok := res.(*ListTagsResponse)
 	if !ok {
 		return 0, errors.New("%T type cannot be appended to type %T", res, r)
