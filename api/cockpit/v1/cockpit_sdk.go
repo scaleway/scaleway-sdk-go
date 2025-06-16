@@ -628,7 +628,7 @@ type DataSource struct {
 	// SynchronizedWithGrafana: indicates whether the data source is synchronized with Grafana.
 	SynchronizedWithGrafana bool `json:"synchronized_with_grafana"`
 
-	// RetentionDays: bETA - Duration for which the data will be retained in the data source.
+	// RetentionDays: duration for which the data will be retained in the data source.
 	RetentionDays uint32 `json:"retention_days"`
 
 	// Region: region of the data source.
@@ -1149,7 +1149,7 @@ type RegionalAPICreateDataSourceRequest struct {
 	// Default value: unknown_type
 	Type DataSourceType `json:"type"`
 
-	// RetentionDays: default values are 30 days for metrics, 7 days for logs and traces.
+	// RetentionDays: default values are 31 days for metrics, 7 days for logs and traces.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
 }
 
@@ -1357,11 +1357,11 @@ type RegionalAPIListDataSourcesRequest struct {
 	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
 	ProjectID string `json:"-"`
 
-	// Origin: origin to filter for, only data sources with matching origin will be returned.
+	// Origin: origin to filter for, only data sources with matching origin will be returned. If omitted, all types will be returned.
 	// Default value: unknown_origin
 	Origin DataSourceOrigin `json:"-"`
 
-	// Types: types to filter for, only data sources with matching types will be returned.
+	// Types: types to filter for (metrics, logs, traces), only data sources with matching types will be returned. If omitted, all types will be returned.
 	Types []DataSourceType `json:"-"`
 }
 
@@ -1423,7 +1423,7 @@ type RegionalAPIUpdateDataSourceRequest struct {
 	// Name: updated name of the data source.
 	Name *string `json:"name,omitempty"`
 
-	// RetentionDays: bETA - Duration for which the data will be retained in the data source.
+	// RetentionDays: duration for which the data will be retained in the data source.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
 }
 
@@ -1828,11 +1828,7 @@ func (s *RegionalAPI) GetConfig(req *RegionalAPIGetConfigRequest, opts ...scw.Re
 	return &resp, nil
 }
 
-// CreateDataSource: You must specify the data source type upon creation. Available data source types include:
-//   - metrics
-//   - logs
-//   - traces
-//
+// CreateDataSource: You must specify the data source name and type (metrics, logs, traces) upon creation.
 // The name of the data source will then be used as reference to name the associated Grafana data source.
 func (s *RegionalAPI) CreateDataSource(req *RegionalAPICreateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
@@ -1901,7 +1897,7 @@ func (s *RegionalAPI) GetDataSource(req *RegionalAPIGetDataSourceRequest, opts .
 	return &resp, nil
 }
 
-// DeleteDataSource: Delete a given data source, specified by the data source ID. Note that deleting a data source is irreversible, and cannot be undone.
+// DeleteDataSource: Delete a given data source. Note that this action will permanently delete this data source and any data associated with it.
 func (s *RegionalAPI) DeleteDataSource(req *RegionalAPIDeleteDataSourceRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1931,7 +1927,6 @@ func (s *RegionalAPI) DeleteDataSource(req *RegionalAPIDeleteDataSourceRequest, 
 }
 
 // ListDataSources: Retrieve the list of data sources available in the specified region. By default, the data sources returned in the list are ordered by creation date, in ascending order.
-// You can list data sources by Project, type and origin.
 func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, opts ...scw.RequestOption) (*ListDataSourcesResponse, error) {
 	var err error
 
@@ -1977,7 +1972,7 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	return &resp, nil
 }
 
-// UpdateDataSource: Update a given data source name, specified by the data source ID.
+// UpdateDataSource: Update a given data source attributes (name and/or retention_days).
 func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
 
@@ -2013,7 +2008,7 @@ func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, 
 	return &resp, nil
 }
 
-// GetUsageOverview: Retrieve the data source usage overview per type for the specified Project.
+// GetUsageOverview: Retrieve the volume of data ingested for each of your data sources in the specified project and region.
 func (s *RegionalAPI) GetUsageOverview(req *RegionalAPIGetUsageOverviewRequest, opts ...scw.RequestOption) (*UsageOverview, error) {
 	var err error
 
