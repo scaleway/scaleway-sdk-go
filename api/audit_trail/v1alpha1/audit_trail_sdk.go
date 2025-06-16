@@ -185,6 +185,8 @@ type KubernetesPoolInfo struct {
 // SecretManagerSecretInfo: secret manager secret info.
 type SecretManagerSecretInfo struct {
 	Path string `json:"path"`
+
+	KeyID *string `json:"key_id"`
 }
 
 // SecretManagerSecretVersionInfo: secret manager secret version info.
