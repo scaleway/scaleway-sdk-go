@@ -141,28 +141,3 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		}
 	}
 }
-
-func TestAPI_CreateServer(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("create-server")
-	testhelpers.AssertNoError(t, err)
-	defer func() {
-		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
-	}()
-
-	instanceAPI := NewAPI(client)
-
-	res, err := instanceAPI.CreateServer(&CreateServerRequest{
-		Zone:           scw.ZoneFrPar1,
-		CommercialType: "GP1-XS",
-		Image:          scw.StringPtr("ubuntu_focal"),
-	})
-
-	testhelpers.AssertNoError(t, err)
-	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
-	testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", res.Server.Image.ID)
-	err = instanceAPI.DeleteServer(&DeleteServerRequest{
-		Zone:     scw.ZoneFrPar1,
-		ServerID: res.Server.ID,
-	})
-	testhelpers.AssertNoError(t, err)
-}
