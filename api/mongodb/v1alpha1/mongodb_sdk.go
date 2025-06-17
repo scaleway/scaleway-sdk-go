@@ -478,6 +478,19 @@ type InstanceSetting struct {
 	Value string `json:"value"`
 }
 
+// InstanceSnapshotSchedule: instance snapshot schedule.
+type InstanceSnapshotSchedule struct {
+	FrequencyHours int32 `json:"frequency_hours"`
+
+	RetentionDays int32 `json:"retention_days"`
+
+	Enabled bool `json:"enabled"`
+
+	NextUpdate *time.Time `json:"next_update"`
+
+	LastRun *time.Time `json:"last_run"`
+}
+
 // Volume: volume.
 type Volume struct {
 	// Type: type of volume where data is stored.
@@ -622,6 +635,9 @@ type Instance struct {
 
 	// CreatedAt: creation date (must follow the ISO 8601 format).
 	CreatedAt *time.Time `json:"created_at"`
+
+	// SnapshotSchedule: snapshot schedule configuration of the Database Instance.
+	SnapshotSchedule *InstanceSnapshotSchedule `json:"snapshot_schedule"`
 
 	// Region: region the Database Instance is in.
 	Region scw.Region `json:"region"`
