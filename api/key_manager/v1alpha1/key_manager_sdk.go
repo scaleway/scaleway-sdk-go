@@ -463,6 +463,9 @@ type Key struct {
 	// Default value: unknown_origin
 	Origin KeyOrigin `json:"origin"`
 
+	// DeletionRequestedAt: returns the time at which deletion was requested.
+	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
+
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
 }
@@ -681,6 +684,9 @@ type ListKeysRequest struct {
 	// Usage: select from symmetric encryption, asymmetric encryption, or asymmetric signing.
 	// Default value: unknown_usage
 	Usage ListKeysRequestUsage `json:"-"`
+
+	// ScheduledForDeletion: filter keys based on their deletion status. By default, only keys not scheduled for deletion are returned in the output.
+	ScheduledForDeletion bool `json:"-"`
 }
 
 // ListKeysResponse: list keys response.
@@ -723,6 +729,14 @@ type ProtectKeyRequest struct {
 // PublicKey: public key.
 type PublicKey struct {
 	Pem string `json:"pem"`
+}
+
+// RestoreKeyRequest: restore key request.
+type RestoreKeyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	KeyID string `json:"-"`
 }
 
 // RotateKeyRequest: rotate key request.
@@ -1192,6 +1206,7 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "usage", req.Usage)
+	parameter.AddToQuery(query, "scheduled_for_deletion", req.ScheduledForDeletion)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1462,4 +1477,40 @@ func (s *API) DeleteKeyMaterial(req *DeleteKeyMaterialRequest, opts ...scw.Reque
 		return err
 	}
 	return nil
+}
+
+// RestoreKey: Restore a key and all its rotations scheduled for deletion specified by the `region` and `key_id` parameters.
+func (s *API) RestoreKey(req *RestoreKeyRequest, opts ...scw.RequestOption) (*Key, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/restore",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Key
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
