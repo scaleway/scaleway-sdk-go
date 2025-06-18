@@ -416,6 +416,14 @@ func (enum *ServerTypeStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Commitment: commitment.
+type Commitment struct {
+	// Type: default value: duration_24h
+	Type CommitmentType `json:"type"`
+
+	Cancelled bool `json:"cancelled"`
+}
+
 // OS: os.
 type OS struct {
 	// ID: unique ID of the OS.
@@ -481,12 +489,72 @@ type ServerTypeNetwork struct {
 	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
 }
 
-// Commitment: commitment.
-type Commitment struct {
-	// Type: default value: duration_24h
-	Type CommitmentType `json:"type"`
+// Server: server.
+type Server struct {
+	// ID: UUID of the server.
+	ID string `json:"id"`
 
-	Cancelled bool `json:"cancelled"`
+	// Type: type of the server.
+	Type string `json:"type"`
+
+	// Name: name of the server.
+	Name string `json:"name"`
+
+	// ProjectID: project this server is associated with.
+	ProjectID string `json:"project_id"`
+
+	// OrganizationID: organization this server is associated with.
+	OrganizationID string `json:"organization_id"`
+
+	// IP: iPv4 address of the server.
+	IP net.IP `json:"ip"`
+
+	// VncURL: vnc:// URL to access Apple Remote Desktop.
+	VncURL string `json:"vnc_url"`
+
+	// SSHUsername: SSH Username for remote shell.
+	SSHUsername string `json:"ssh_username"`
+
+	// SudoPassword: admin password required to execute commands.
+	SudoPassword string `json:"sudo_password"`
+
+	// VncPort: vNC port to use for remote desktop connection.
+	VncPort uint32 `json:"vnc_port"`
+
+	// Os: initially installed OS, this does not necessarily reflect the current OS version.
+	Os *OS `json:"os"`
+
+	// Status: current status of the server.
+	// Default value: unknown_status
+	Status ServerStatus `json:"status"`
+
+	// CreatedAt: date on which the server was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date on which the server was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// DeletableAt: date from which the server can be deleted.
+	DeletableAt *time.Time `json:"deletable_at"`
+
+	// DeletionScheduled: set to true to mark the server for automatic deletion depending on `deletable_at` date. Set to false to cancel an existing deletion schedule. Leave unset otherwise.
+	DeletionScheduled bool `json:"deletion_scheduled"`
+
+	// Zone: zone of the server.
+	Zone scw.Zone `json:"zone"`
+
+	// Delivered: set to true once the server has completed its provisioning steps and is ready to use. Some OS configurations might require a reinstallation of the server before delivery depending on the available stock. A reinstallation after the initial delivery will not change this flag and can be tracked using the server status.
+	Delivered bool `json:"delivered"`
+
+	// VpcStatus: activation status of optional Private Network feature support for this server.
+	// Default value: vpc_unknown_status
+	VpcStatus ServerPrivateNetworkStatus `json:"vpc_status"`
+
+	// Commitment: commitment scheme applied to this server.
+	Commitment *Commitment `json:"commitment"`
+
+	// PublicBandwidthBps: public bandwidth configured for this server. Expressed in bits per second.
+	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
@@ -564,74 +632,6 @@ type ServerType struct {
 
 	// DefaultOs: the default OS for this server type.
 	DefaultOs *OS `json:"default_os"`
-}
-
-// Server: server.
-type Server struct {
-	// ID: UUID of the server.
-	ID string `json:"id"`
-
-	// Type: type of the server.
-	Type string `json:"type"`
-
-	// Name: name of the server.
-	Name string `json:"name"`
-
-	// ProjectID: project this server is associated with.
-	ProjectID string `json:"project_id"`
-
-	// OrganizationID: organization this server is associated with.
-	OrganizationID string `json:"organization_id"`
-
-	// IP: iPv4 address of the server.
-	IP net.IP `json:"ip"`
-
-	// VncURL: vnc:// URL to access Apple Remote Desktop.
-	VncURL string `json:"vnc_url"`
-
-	// SSHUsername: SSH Username for remote shell.
-	SSHUsername string `json:"ssh_username"`
-
-	// SudoPassword: admin password required to execute commands.
-	SudoPassword string `json:"sudo_password"`
-
-	// VncPort: vNC port to use for remote desktop connection.
-	VncPort uint32 `json:"vnc_port"`
-
-	// Os: initially installed OS, this does not necessarily reflect the current OS version.
-	Os *OS `json:"os"`
-
-	// Status: current status of the server.
-	// Default value: unknown_status
-	Status ServerStatus `json:"status"`
-
-	// CreatedAt: date on which the server was created.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date on which the server was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// DeletableAt: date from which the server can be deleted.
-	DeletableAt *time.Time `json:"deletable_at"`
-
-	// DeletionScheduled: set to true to mark the server for automatic deletion depending on `deletable_at` date. Set to false to cancel an existing deletion schedule. Leave unset otherwise.
-	DeletionScheduled bool `json:"deletion_scheduled"`
-
-	// Zone: zone of the server.
-	Zone scw.Zone `json:"zone"`
-
-	// Delivered: set to true once the server has completed its provisioning steps and is ready to use. Some OS configurations might require a reinstallation of the server before delivery depending on the available stock. A reinstallation after the initial delivery will not change this flag and can be tracked using the server status.
-	Delivered bool `json:"delivered"`
-
-	// VpcStatus: activation status of optional Private Network feature support for this server.
-	// Default value: vpc_unknown_status
-	VpcStatus ServerPrivateNetworkStatus `json:"vpc_status"`
-
-	// Commitment: commitment scheme applied to this server.
-	Commitment *Commitment `json:"commitment"`
-
-	// PublicBandwidthBps: public bandwidth configured for this server. Expressed in bits per second.
-	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 }
 
 // CommitmentTypeValue: commitment type value.
