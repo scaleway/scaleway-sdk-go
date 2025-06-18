@@ -110,6 +110,7 @@ const (
 	ResourceTypeServerlessFunction     = ResourceType("serverless_function")
 	ResourceTypeVpnGateway             = ResourceType("vpn_gateway")
 	ResourceTypeDdlDatalab             = ResourceType("ddl_datalab")
+	ResourceTypeKafkaCluster           = ResourceType("kafka_cluster")
 )
 
 func (enum ResourceType) String() string {
@@ -145,6 +146,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"serverless_function",
 		"vpn_gateway",
 		"ddl_datalab",
+		"kafka_cluster",
 	}
 }
 
