@@ -52,6 +52,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeElasticMetal = ListPublicCatalogProductsRequestProductType("elastic_metal")
 	// Include the Dedibox information in the response.
 	ListPublicCatalogProductsRequestProductTypeDedibox = ListPublicCatalogProductsRequestProductType("dedibox")
+	// Include the Block Storage information in the response.
+	ListPublicCatalogProductsRequestProductTypeBlockStorage = ListPublicCatalogProductsRequestProductType("block_storage")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -69,6 +71,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"apple_silicon",
 		"elastic_metal",
 		"dedibox",
+		"block_storage",
 	}
 }
 
