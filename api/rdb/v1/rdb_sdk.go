@@ -1233,6 +1233,9 @@ type Maintenance struct {
 
 	// ForcedAt: time when Scaleway-side maintenance will be applied.
 	ForcedAt *time.Time `json:"forced_at"`
+
+	// IsApplicable: indicate if the maintenance can be applied by the user.
+	IsApplicable bool `json:"is_applicable"`
 }
 
 // ReadReplica: read replica.
@@ -2353,6 +2356,9 @@ type ListInstancesRequest struct {
 	// ProjectID: project ID to list the Database Instance of.
 	ProjectID *string `json:"-"`
 
+	// HasMaintenances: filter to only list instances with a scheduled maintenance.
+	HasMaintenances *bool `json:"-"`
+
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
@@ -3247,6 +3253,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "has_maintenances", req.HasMaintenances)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
