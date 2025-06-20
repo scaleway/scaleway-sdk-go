@@ -584,6 +584,9 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 
 	// ProductTypes: the list of filtered product categories.
 	ProductTypes []ListPublicCatalogProductsRequestProductType `json:"-"`
+
+	// Locality: the locality of the products to filter by. If not set, all localities are returned.
+	Locality *PublicCatalogProductLocality `json:"-"`
 }
 
 type PublicCatalogAPI struct {
@@ -610,6 +613,7 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "product_types", req.ProductTypes)
+	parameter.AddToQuery(query, "locality", req.Locality)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
