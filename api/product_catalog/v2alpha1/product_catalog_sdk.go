@@ -584,6 +584,22 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 
 	// ProductTypes: the list of filtered product categories.
 	ProductTypes []ListPublicCatalogProductsRequestProductType `json:"-"`
+
+	// Global: filter global products.
+	// Precisely one of Global, Region, Zone, Datacenter must be set.
+	Global *bool `json:"global,omitempty"`
+
+	// Region: filter products by region.
+	// Precisely one of Global, Region, Zone, Datacenter must be set.
+	Region *scw.Region `json:"region,omitempty"`
+
+	// Zone: filter products by zone.
+	// Precisely one of Global, Region, Zone, Datacenter must be set.
+	Zone *scw.Zone `json:"zone,omitempty"`
+
+	// Datacenter: filter products by datacenter.
+	// Precisely one of Global, Region, Zone, Datacenter must be set.
+	Datacenter *string `json:"datacenter,omitempty"`
 }
 
 type PublicCatalogAPI struct {
@@ -606,10 +622,24 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 		req.PageSize = &defaultPageSize
 	}
 
+	defaultRegion, exist := s.client.GetDefaultRegion()
+	if exist && req.Global == nil && req.Region == nil && req.Zone == nil && req.Datacenter == nil {
+		req.Region = &defaultRegion
+	}
+
+	defaultZone, exist := s.client.GetDefaultZone()
+	if exist && req.Global == nil && req.Region == nil && req.Zone == nil && req.Datacenter == nil {
+		req.Zone = &defaultZone
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "product_types", req.ProductTypes)
+	parameter.AddToQuery(query, "global", req.Global)
+	parameter.AddToQuery(query, "region", req.Region)
+	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "datacenter", req.Datacenter)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
