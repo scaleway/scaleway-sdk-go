@@ -1158,6 +1158,9 @@ type CacheStage struct {
 	// FallbackTTL: time To Live (TTL) in seconds. Defines how long content is cached.
 	FallbackTTL *scw.Duration `json:"fallback_ttl"`
 
+	// IncludeCookies: defines whether responses to requests with cookies must be stored in the cache.
+	IncludeCookies bool `json:"include_cookies"`
+
 	// CreatedAt: date the cache stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -1548,6 +1551,9 @@ type CreateCacheStageRequest struct {
 
 	// FallbackTTL: time To Live (TTL) in seconds. Defines how long content is cached.
 	FallbackTTL *scw.Duration `json:"fallback_ttl,omitempty"`
+
+	// IncludeCookies: defines whether responses to requests with cookies must be stored in the cache.
+	IncludeCookies *bool `json:"include_cookies,omitempty"`
 
 	// BackendStageID: backend stage ID the cache stage will be linked to.
 	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
@@ -2420,6 +2426,9 @@ type UpdateCacheStageRequest struct {
 	// FallbackTTL: time To Live (TTL) in seconds. Defines how long content is cached.
 	FallbackTTL *scw.Duration `json:"fallback_ttl,omitempty"`
 
+	// IncludeCookies: defines whether responses to requests with cookies must be stored in the cache.
+	IncludeCookies *bool `json:"include_cookies,omitempty"`
+
 	// BackendStageID: backend stage ID the cache stage will be linked to.
 	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
@@ -3092,7 +3101,7 @@ func (s *API) GetCacheStage(req *GetCacheStageRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// UpdateCacheStage: Update the parameters of an existing cache stage, specified by its `cache_stage_id`. Parameters which can be updated include the `fallback_ttl` and `backend_stage_id`.
+// UpdateCacheStage: Update the parameters of an existing cache stage, specified by its `cache_stage_id`. Parameters which can be updated include the `fallback_ttl`, `include_cookies` and `backend_stage_id`.
 func (s *API) UpdateCacheStage(req *UpdateCacheStageRequest, opts ...scw.RequestOption) (*CacheStage, error) {
 	var err error
 
