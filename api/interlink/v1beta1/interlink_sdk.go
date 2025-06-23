@@ -723,6 +723,9 @@ type CreateLinkRequest struct {
 
 	// PeerAsn: for self-hosted links we need the peer AS Number to establish BGP session. If not given, a default one will be assigned.
 	PeerAsn *uint32 `json:"peer_asn,omitempty"`
+
+	// Vlan: for self-hosted links only, it is possible to choose the VLAN ID. If the VLAN is not available (ie already taken or out of range), an error is returned.
+	Vlan *uint32 `json:"vlan,omitempty"`
 }
 
 // CreateRoutingPolicyRequest: create routing policy request.
