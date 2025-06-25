@@ -77,6 +77,53 @@ func (enum *ApplicationType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type BookingStatus string
+
+const (
+	BookingStatusUnknownStatus = BookingStatus("unknown_status")
+	BookingStatusWaiting       = BookingStatus("waiting")
+	BookingStatusValidating    = BookingStatus("validating")
+	BookingStatusValidated     = BookingStatus("validated")
+	BookingStatusCancelling    = BookingStatus("cancelling")
+	BookingStatusCancelled     = BookingStatus("cancelled")
+	BookingStatusError         = BookingStatus("error")
+)
+
+func (enum BookingStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BookingStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum BookingStatus) Values() []BookingStatus {
+	return []BookingStatus{
+		"unknown_status",
+		"waiting",
+		"validating",
+		"validated",
+		"cancelling",
+		"cancelled",
+		"error",
+	}
+}
+
+func (enum BookingStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BookingStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BookingStatus(BookingStatus(tmp).String())
+	return nil
+}
+
 type JobStatus string
 
 const (
@@ -162,6 +209,47 @@ func (enum *ListApplicationsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListApplicationsRequestOrderBy(ListApplicationsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListBookingsRequestOrderBy string
+
+const (
+	ListBookingsRequestOrderByCreatedAtDesc = ListBookingsRequestOrderBy("created_at_desc")
+	ListBookingsRequestOrderByCreatedAtAsc  = ListBookingsRequestOrderBy("created_at_asc")
+	ListBookingsRequestOrderByStartedAtDesc = ListBookingsRequestOrderBy("started_at_desc")
+	ListBookingsRequestOrderByStartedAtAsc  = ListBookingsRequestOrderBy("started_at_asc")
+)
+
+func (enum ListBookingsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListBookingsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListBookingsRequestOrderBy) Values() []ListBookingsRequestOrderBy {
+	return []ListBookingsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"started_at_desc",
+		"started_at_asc",
+	}
+}
+
+func (enum ListBookingsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListBookingsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListBookingsRequestOrderBy(ListBookingsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -531,6 +619,7 @@ const (
 	PlatformTechnologyGeneralPurpose    = PlatformTechnology("general_purpose")
 	PlatformTechnologyTrappedIon        = PlatformTechnology("trapped_ion")
 	PlatformTechnologySuperconducting   = PlatformTechnology("superconducting")
+	PlatformTechnologyNeutralAtom       = PlatformTechnology("neutral_atom")
 )
 
 func (enum PlatformTechnology) String() string {
@@ -548,6 +637,7 @@ func (enum PlatformTechnology) Values() []PlatformTechnology {
 		"general_purpose",
 		"trapped_ion",
 		"superconducting",
+		"neutral_atom",
 	}
 }
 
@@ -783,6 +873,21 @@ func (enum *SessionStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// PlatformBookingRequirement: platform booking requirement.
+type PlatformBookingRequirement struct {
+	// MinDuration: minimal duration of any booking based on this platform.
+	MinDuration *scw.Duration `json:"min_duration"`
+
+	// MaxDuration: maximal duration of any bookings based on this platform.
+	MaxDuration *scw.Duration `json:"max_duration"`
+
+	// MaxCancellationDuration: allowed time to cancel a booking attached to this platform before the beginning of the session.
+	MaxCancellationDuration *scw.Duration `json:"max_cancellation_duration"`
+
+	// MaxPlanificationDuration: allowed planification time from now where the platform can be booked in the future.
+	MaxPlanificationDuration *scw.Duration `json:"max_planification_duration"`
+}
+
 // PlatformHardware: platform hardware.
 type PlatformHardware struct {
 	// Name: product name of the hardware.
@@ -815,6 +920,15 @@ type JobCircuit struct {
 	QiskitCircuit *string `json:"qiskit_circuit,omitempty"`
 }
 
+// CreateSessionRequestBookingDemand: create session request booking demand.
+type CreateSessionRequestBookingDemand struct {
+	StartedAt *time.Time `json:"started_at"`
+
+	FinishedAt *time.Time `json:"finished_at"`
+
+	Description *string `json:"description"`
+}
+
 // Application: application.
 type Application struct {
 	// ID: unique ID of the application.
@@ -832,6 +946,34 @@ type Application struct {
 
 	// InputTemplate: JSON format describing the expected input.
 	InputTemplate string `json:"input_template"`
+}
+
+// Booking: booking.
+type Booking struct {
+	// ID: unique ID of the booking.
+	ID string `json:"id"`
+
+	// CreatedAt: time at which the booking was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// StartedAt: time at which the booking starts.
+	StartedAt *time.Time `json:"started_at"`
+
+	// UpdatedAt: time at which the booking was updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// FinishedAt: time at which the booking finishes.
+	FinishedAt *time.Time `json:"finished_at"`
+
+	// Status: status of the booking.
+	// Default value: unknown_status
+	Status BookingStatus `json:"status"`
+
+	// Description: description of the booking slot.
+	Description string `json:"description"`
+
+	// ProgressMessage: any progress message of the booking.
+	ProgressMessage string `json:"progress_message"`
 }
 
 // JobResult: job result.
@@ -938,6 +1080,18 @@ type Platform struct {
 
 	// Hardware: specifications of the underlying hardware.
 	Hardware *PlatformHardware `json:"hardware"`
+
+	// BookingRequirement: booking constraints to fit if the platform is bookable.
+	BookingRequirement *PlatformBookingRequirement `json:"booking_requirement"`
+
+	// Description: english description of the platform.
+	Description string `json:"description"`
+
+	// DocumentationURL: documentation link to external documentation to learn more on this platform.
+	DocumentationURL string `json:"documentation_url"`
+
+	// IsBookable: specify if the platform is bookable.
+	IsBookable bool `json:"is_bookable"`
 }
 
 // ProcessResult: process result.
@@ -969,7 +1123,7 @@ type Process struct {
 	// AttachedSessionIDs: list of sessions generated by the process.
 	AttachedSessionIDs []string `json:"attached_session_ids"`
 
-	// CreatedAt: tme at which the process was created.
+	// CreatedAt: time at which the process was created.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// StartedAt: time at which the process started.
@@ -1058,6 +1212,9 @@ type Session struct {
 
 	// ProgressMessage: any progress of the session.
 	ProgressMessage *string `json:"progress_message"`
+
+	// BookingID: an optional booking unique ID of an attached booking.
+	BookingID *string `json:"booking_id"`
 }
 
 // CancelJobRequest: cancel job request.
@@ -1133,6 +1290,9 @@ type CreateSessionRequest struct {
 
 	// DeduplicationID: deduplication ID of the session.
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
+
+	// BookingDemand: a booking demand to schedule the session, only applicable if the platform is bookable.
+	BookingDemand *CreateSessionRequestBookingDemand `json:"booking_demand,omitempty"`
 }
 
 // DeleteJobRequest: delete job request.
@@ -1157,6 +1317,12 @@ type DeleteSessionRequest struct {
 type GetApplicationRequest struct {
 	// ApplicationID: unique ID of the application.
 	ApplicationID string `json:"-"`
+}
+
+// GetBookingRequest: get booking request.
+type GetBookingRequest struct {
+	// BookingID: unique ID of the booking.
+	BookingID string `json:"-"`
 }
 
 // GetJobCircuitRequest: get job circuit request.
@@ -1235,6 +1401,53 @@ func (r *ListApplicationsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Applications = append(r.Applications, results.Applications...)
 	r.TotalCount += uint64(len(results.Applications))
 	return uint64(len(results.Applications)), nil
+}
+
+// ListBookingsRequest: list bookings request.
+type ListBookingsRequest struct {
+	// ProjectID: list bookings belonging to this project ID.
+	ProjectID *string `json:"-"`
+
+	// PlatformID: list bookings attached to this platform ID.
+	PlatformID *string `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of results to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order of the returned results.
+	// Default value: created_at_desc
+	OrderBy ListBookingsRequestOrderBy `json:"-"`
+}
+
+// ListBookingsResponse: list bookings response.
+type ListBookingsResponse struct {
+	// TotalCount: total number of bookings.
+	TotalCount uint64 `json:"total_count"`
+
+	// Bookings: list of bookings.
+	Bookings []*Booking `json:"bookings"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBookingsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBookingsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListBookingsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Bookings = append(r.Bookings, results.Bookings...)
+	r.TotalCount += uint64(len(results.Bookings))
+	return uint64(len(results.Bookings)), nil
 }
 
 // ListJobResultsRequest: list job results request.
@@ -1577,6 +1790,15 @@ func (r *ListSessionsResponse) UnsafeAppend(res any) (uint64, error) {
 type TerminateSessionRequest struct {
 	// SessionID: unique ID of the session.
 	SessionID string `json:"-"`
+}
+
+// UpdateBookingRequest: update booking request.
+type UpdateBookingRequest struct {
+	// BookingID: unique ID of the booking.
+	BookingID string `json:"-"`
+
+	// Description: description of the booking slot.
+	Description *string `json:"description,omitempty"`
 }
 
 // UpdateJobRequest: update job request.
@@ -2014,7 +2236,7 @@ func (s *API) UpdateSession(req *UpdateSessionRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs.
+// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs and booking.
 func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2041,7 +2263,7 @@ func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteSession: Delete a session by its unique ID and delete all its attached jobs.
+// DeleteSession: Delete a session by its unique ID and delete all its attached job and booking.
 func (s *API) DeleteSession(req *DeleteSessionRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2333,6 +2555,86 @@ func (s *API) ListApplications(req *ListApplicationsRequest, opts ...scw.Request
 	}
 
 	var resp ListApplicationsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetBooking: Retrieve information about the provided **booking ID**, such as description, status and progress message.
+func (s *API) GetBooking(req *GetBookingRequest, opts ...scw.RequestOption) (*Booking, error) {
+	var err error
+
+	if fmt.Sprint(req.BookingID) == "" {
+		return nil, errors.New("field BookingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/bookings/" + fmt.Sprint(req.BookingID) + "",
+	}
+
+	var resp Booking
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListBookings: Retrieve information about all bookings of the provided **project ID** or ** platform ID**.
+func (s *API) ListBookings(req *ListBookingsRequest, opts ...scw.RequestOption) (*ListBookingsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "platform_id", req.PlatformID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/bookings",
+		Query:  query,
+	}
+
+	var resp ListBookingsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateBooking: Update booking information of the provided **booking ID**.
+func (s *API) UpdateBooking(req *UpdateBookingRequest, opts ...scw.RequestOption) (*Booking, error) {
+	var err error
+
+	if fmt.Sprint(req.BookingID) == "" {
+		return nil, errors.New("field BookingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/qaas/v1alpha1/bookings/" + fmt.Sprint(req.BookingID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Booking
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
