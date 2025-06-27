@@ -4400,9 +4400,9 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// createServer: Create a new Instance of the specified commercial type in the specified zone. Pay attention to the volumes parameter, which takes an object which can be used in different ways to achieve different behaviors.
+// CreateServer: Create a new Instance of the specified commercial type in the specified zone. Pay attention to the volumes parameter, which takes an object which can be used in different ways to achieve different behaviors.
 // Get more information in the [Technical Information](#technical-information) section of the introduction.
-func (s *API) createServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
+func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*CreateServerResponse, error) {
 	var err error
 
 	if req.Zone == "" {
