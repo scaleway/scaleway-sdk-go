@@ -550,6 +550,18 @@ type GetConfigResponseRetention struct {
 	DefaultDays uint32 `json:"default_days"`
 }
 
+// RulesCount: rules count.
+type RulesCount struct {
+	// DataSourceID: ID of the data source.
+	DataSourceID string `json:"data_source_id"`
+
+	// DataSourceName: name of the data source.
+	DataSourceName string `json:"data_source_name"`
+
+	// RulesCount: total count of rules associated with this data source.
+	RulesCount int32 `json:"rules_count"`
+}
+
 // Alert: Structure representing an alert.
 type Alert struct {
 	// Region: the region in which the alert is defined.
@@ -797,6 +809,18 @@ type GetConfigResponse struct {
 
 	// ProductLogsRetention: scaleway logs retention configuration.
 	ProductLogsRetention *GetConfigResponseRetention `json:"product_logs_retention"`
+}
+
+// GetRulesCountResponse: get rules count response.
+type GetRulesCountResponse struct {
+	// RulesCountByDatasource: total count of rules grouped by data source.
+	RulesCountByDatasource []*RulesCount `json:"rules_count_by_datasource"`
+
+	// PreconfiguredRulesCount: total count of preconfigured rules.
+	PreconfiguredRulesCount int32 `json:"preconfigured_rules_count"`
+
+	// CustomRulesCount: total count of custom rules.
+	CustomRulesCount int32 `json:"custom_rules_count"`
 }
 
 // GlobalAPICreateGrafanaUserRequest: Create a Grafana user.
@@ -1281,6 +1305,15 @@ type RegionalAPIGetDataSourceRequest struct {
 
 	// DataSourceID: ID of the relevant data source.
 	DataSourceID string `json:"-"`
+}
+
+// RegionalAPIGetRulesCountRequest: regional api get rules count request.
+type RegionalAPIGetRulesCountRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: ID of the Project to retrieve the rule count for.
+	ProjectID string `json:"project_id"`
 }
 
 // RegionalAPIGetTokenRequest: Get a token.
@@ -2292,6 +2325,42 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	}
 
 	var resp AlertManager
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetRulesCount: Get a detailed count of enabled rules in the specified Project. Includes preconfigured and custom alerting and recording rules.
+func (s *RegionalAPI) GetRulesCount(req *RegionalAPIGetRulesCountRequest, opts ...scw.RequestOption) (*GetRulesCountResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/rules/count",
+		Query:  query,
+	}
+
+	var resp GetRulesCountResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
