@@ -1995,11 +1995,23 @@ type NodeMetadata struct {
 
 	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
 
+	ProviderID string `json:"provider_id"`
+
+	ResolvconfPath string `json:"resolvconf_path"`
+
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
 
 	RepoURI string `json:"repo_uri"`
+
+	InstallerTags string `json:"installer_tags"`
+
+	UpdaterBinURL string `json:"updater_bin_url"`
+
+	UpdaterBinVersion string `json:"updater_bin_version"`
+
+	UpdaterBinPath string `json:"updater_bin_path"`
 }
 
 // RebootNodeRequest: reboot node request.
