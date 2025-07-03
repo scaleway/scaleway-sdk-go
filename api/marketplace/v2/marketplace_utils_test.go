@@ -26,8 +26,8 @@ func TestGetImageByLabel(t *testing.T) {
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu_focal DEV1-S at par1: 68cf470e-6c35-4741-bbff-4ce788616461
-		testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", image.ID)
+		// ubuntu_focal DEV1-S at par1: 4a4d2994-e7e0-4b29-a760-36235e6ba258
+		testhelpers.Equals(t, "4a4d2994-e7e0-4b29-a760-36235e6ba258", image.ID)
 	})
 
 	t.Run("matching input for GetLocalImageIDByLabel with lowercase image label", func(t *testing.T) {
@@ -41,8 +41,8 @@ func TestGetImageByLabel(t *testing.T) {
 		})
 		testhelpers.AssertNoError(t, err)
 
-		// ubuntu_focal DEV1-S at par1: 9c41e95b-add2-4ef8-b1b1-af8899748eda
-		testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", image.ID)
+		// ubuntu_focal DEV1-S at par1: 4a4d2994-e7e0-4b29-a760-36235e6ba258
+		testhelpers.Equals(t, "4a4d2994-e7e0-4b29-a760-36235e6ba258", image.ID)
 	})
 
 	t.Run("non-matching label for GetLocalImageIDByLabel", func(t *testing.T) {
