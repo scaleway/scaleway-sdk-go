@@ -52,7 +52,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
-		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
+		// Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -91,7 +91,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
-		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
+		// Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -163,7 +163,7 @@ func TestAPI_CreateServer(t *testing.T) {
 
 	testhelpers.AssertNoError(t, err)
 	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
-	testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", res.Server.Image.ID)
+	testhelpers.Equals(t, "4a4d2994-e7e0-4b29-a760-36235e6ba258", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,

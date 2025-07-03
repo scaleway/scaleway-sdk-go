@@ -18,8 +18,8 @@ func TestUpdateVolume(t *testing.T) {
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone          = scw.ZoneFrPar1
-		project       = "951df375-e094-4d26-97c1-ba548eeb9c42"
+		zone = scw.ZoneFrPar1
+		// project       = "951df375-e094-4d26-97c1-ba548eeb9c42"
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
 		volumeType    = VolumeVolumeTypeLSSD
@@ -30,9 +30,9 @@ func TestUpdateVolume(t *testing.T) {
 
 	// Create volume
 	createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
-		Zone:       zone,
-		Name:       volumeName,
-		Project:    &project,
+		Zone: zone,
+		Name: volumeName,
+		// Project:    &project,
 		Size:       &volumeSize,
 		VolumeType: volumeType,
 	})

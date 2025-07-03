@@ -3,6 +3,7 @@ package instance
 import (
 	"net"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
@@ -52,6 +53,8 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, false, updateResponse.SecurityGroup.ProjectDefault)
 	testhelpers.Equals(t, false, *updateResponse.SecurityGroup.OrganizationDefault)
 	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.SecurityGroup.Tags)
+
+	time.Sleep(1 * time.Second)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 		SecurityGroupID: createResponse.SecurityGroup.ID,
