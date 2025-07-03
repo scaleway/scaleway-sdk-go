@@ -1,6 +1,7 @@
 package scw
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -201,16 +202,16 @@ func (c *Client) do(req *ScalewayRequest, res any) (sdkErr error) {
 	logger.Debugf("creating %s request on %s\n", req.Method, url.String())
 
 	// build request
-	httpRequest, err := http.NewRequest(req.Method, url.String(), req.Body)
+	ctx := req.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	httpRequest, err := http.NewRequestWithContext(ctx, req.Method, url.String(), req.Body)
 	if err != nil {
 		return errors.Wrap(err, "could not create request")
 	}
 
 	httpRequest.Header = req.getAllHeaders(req.auth, c.userAgent, false)
-
-	if req.ctx != nil {
-		httpRequest = httpRequest.WithContext(req.ctx)
-	}
 
 	// execute request
 	httpResponse, err := c.httpClient.Do(httpRequest)
