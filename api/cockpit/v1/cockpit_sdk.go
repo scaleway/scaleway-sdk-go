@@ -83,6 +83,53 @@ func (enum *AlertState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type AlertStatus string
+
+const (
+	AlertStatusUnknownStatus = AlertStatus("unknown_status")
+	// The alert is enabled and may trigger based on its conditions.
+	AlertStatusEnabled = AlertStatus("enabled")
+	// The alert is disabled. It will never trigger, and will not be evaluated.
+	AlertStatusDisabled = AlertStatus("disabled")
+	// The alert has been marked for activation. It will be enabled momentarily.
+	AlertStatusEnabling = AlertStatus("enabling")
+	// The alert has been marked for deactivation. It will be disabled momentarily.
+	AlertStatusDisabling = AlertStatus("disabling")
+)
+
+func (enum AlertStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AlertStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum AlertStatus) Values() []AlertStatus {
+	return []AlertStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+		"enabling",
+		"disabling",
+	}
+}
+
+func (enum AlertStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AlertStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AlertStatus(AlertStatus(tmp).String())
+	return nil
+}
+
 type DataSourceOrigin string
 
 const (
@@ -579,8 +626,9 @@ type Alert struct {
 	// Duration: duration for which the alert must be active before firing. The format of this duration follows the prometheus duration format.
 	Duration string `json:"duration"`
 
-	// Enabled: indicates if the alert is enabled or disabled. Only preconfigured alerts can be disabled.
-	Enabled bool `json:"enabled"`
+	// RuleStatus: indicates if the alert is enabled, enabling, disabled or disabling. Preconfigured alerts can have any of these values, whereas custom alerts can only have the status "enabled".
+	// Default value: unknown_status
+	RuleStatus AlertStatus `json:"rule_status"`
 
 	// State: current state of the alert. Possible states are `inactive`, `pending`, and `firing`.
 	// Default value: unknown_state
@@ -1343,8 +1391,9 @@ type RegionalAPIListAlertsRequest struct {
 	// ProjectID: project ID to filter for, only alerts from this Project will be returned.
 	ProjectID string `json:"-"`
 
-	// IsEnabled: true returns only enabled alerts. False returns only disabled alerts. If omitted, no alert filtering is applied. Other filters may still apply.
-	IsEnabled *bool `json:"-"`
+	// RuleStatus: returns only alerts with the given activation status. If omitted, no alert filtering is applied. Other filters may still apply.
+	// Default value: unknown_status
+	RuleStatus *AlertStatus `json:"-"`
 
 	// IsPreconfigured: true returns only preconfigured alerts. False returns only custom alerts. If omitted, no filtering is applied on alert types. Other filters may still apply.
 	IsPreconfigured *bool `json:"-"`
@@ -2539,7 +2588,7 @@ func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "is_enabled", req.IsEnabled)
+	parameter.AddToQuery(query, "rule_status", req.RuleStatus)
 	parameter.AddToQuery(query, "is_preconfigured", req.IsPreconfigured)
 	parameter.AddToQuery(query, "state", req.State)
 	parameter.AddToQuery(query, "data_source_id", req.DataSourceID)
