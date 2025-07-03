@@ -489,6 +489,11 @@ type ServerTypeNetwork struct {
 	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
 }
 
+// BatchCreateServersRequestBatchInnerCreateServerRequest: batch create servers request batch inner create server request.
+type BatchCreateServersRequestBatchInnerCreateServerRequest struct {
+	Name string `json:"name"`
+}
+
 // Server: server.
 type Server struct {
 	// ID: UUID of the server.
@@ -638,6 +643,40 @@ type ServerType struct {
 type CommitmentTypeValue struct {
 	// CommitmentType: default value: duration_24h
 	CommitmentType CommitmentType `json:"commitment_type"`
+}
+
+// BatchCreateServersRequest: batch create servers request.
+type BatchCreateServersRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ProjectID: create servers in the given project ID.
+	ProjectID string `json:"project_id"`
+
+	// Type: create servers of the given type.
+	Type string `json:"type"`
+
+	// OsID: create servers & install the given os_id, when no os_id provided the default OS for this server type is chosen. Requesting a non-default OS will induce an extended delivery time.
+	OsID *string `json:"os_id,omitempty"`
+
+	// EnableVpc: activate the Private Network feature for these servers. This feature is configured through the Apple Silicon - Private Networks API.
+	EnableVpc bool `json:"enable_vpc"`
+
+	// CommitmentType: activate commitment for these servers. If not specified, there is a 24h commitment due to Apple licensing (commitment_type `duration_24h`). It can be updated with the Update Server request. Available commitment depends on server type.
+	// Default value: duration_24h
+	CommitmentType CommitmentType `json:"commitment_type"`
+
+	// PublicBandwidthBps: public bandwidth to configure for these servers. This defaults to the minimum bandwidth for the corresponding server type. For compatible server types, the bandwidth can be increased which incurs additional costs.
+	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	// Requests: list of servers to create.
+	Requests []*BatchCreateServersRequestBatchInnerCreateServerRequest `json:"requests"`
+}
+
+// BatchCreateServersResponse: batch create servers response.
+type BatchCreateServersResponse struct {
+	// Servers: list of created servers.
+	Servers []*Server `json:"servers"`
 }
 
 // ConnectivityDiagnostic: connectivity diagnostic.
@@ -1112,6 +1151,43 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// BatchCreateServers: Create multiple servers in the targeted zone specifying their configurations. If the request cannot entirely be fullfilled, no servers are created.
+func (s *API) BatchCreateServers(req *BatchCreateServersRequest, opts ...scw.RequestOption) (*BatchCreateServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/batch-create-servers",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp BatchCreateServersResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
