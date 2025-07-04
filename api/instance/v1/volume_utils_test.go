@@ -3,6 +3,7 @@ package instance
 import (
 	"testing"
 
+	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -15,11 +16,14 @@ func TestUpdateVolume(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 
 	var (
-		zone = scw.ZoneFrPar1
-		// project       = "951df375-e094-4d26-97c1-ba548eeb9c42"
+		zone          = scw.ZoneFrPar1
 		volumeName    = "test volume"
 		volumeSize    = 20 * scw.GB
 		volumeType    = VolumeVolumeTypeLSSD
@@ -30,9 +34,9 @@ func TestUpdateVolume(t *testing.T) {
 
 	// Create volume
 	createVolumeResponse, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
-		Zone: zone,
-		Name: volumeName,
-		// Project:    &project,
+		Zone:       zone,
+		Name:       volumeName,
+		Project:    &project,
 		Size:       &volumeSize,
 		VolumeType: volumeType,
 	})

@@ -3,6 +3,7 @@ package instance
 import (
 	"testing"
 
+	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
@@ -15,6 +16,10 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 
 	var (
@@ -27,15 +32,14 @@ func TestServerUpdate(t *testing.T) {
 		image             = scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d")
 		bootType          = BootTypeLocal
 		tags              = []string{"foo", "bar"}
-		// project           = "14d2f7ae-9775-414c-9bed-6810e060d500"
 	)
 
 	t.Run("create server", func(t *testing.T) {
 		// Create server
 		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
-			Zone: zone,
-			Name: name,
-			// Project:           &project,
+			Zone:              zone,
+			Name:              name,
+			Project:           &project,
 			Image:             image,
 			CommercialType:    commercialType,
 			Tags:              tags,
@@ -52,13 +56,14 @@ func TestServerUpdate(t *testing.T) {
 		}
 
 		testhelpers.Equals(t, name, createServerResponse.Server.Name)
-		// testhelpers.Equals(t, project, createServerResponse.Server.Project)
-		// testhelpers.Equals(t, project, createServerResponse.Server.Organization)
 		testhelpers.Equals(t, *image, createServerResponse.Server.Image.ID)
 		testhelpers.Equals(t, bootType, createServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, createServerResponse.Server.CommercialType)
 		testhelpers.Equals(t, tags, createServerResponse.Server.Tags)
 		testhelpers.Equals(t, *dynamicIPRequired, createServerResponse.Server.DynamicIPRequired)
+		if r.Mode() == recorder.ModeRecording {
+			testhelpers.Equals(t, project, createServerResponse.Server.Project)
+		}
 	})
 
 	t.Run("update server", func(t *testing.T) {
@@ -78,16 +83,16 @@ func TestServerUpdate(t *testing.T) {
 		testhelpers.Assert(t, updateServerResponse.Server != nil, "Should have server in response")
 
 		// Initial values that are not altered in the above request should remaining the same
-		// testhelpers.Equals(t, project, updateServerResponse.Server.Project)
-		// testhelpers.Equals(t, project, updateServerResponse.Server.Organization)
 		testhelpers.Equals(t, *image, updateServerResponse.Server.Image.ID)
 		testhelpers.Equals(t, bootType, updateServerResponse.Server.BootType)
 		testhelpers.Equals(t, commercialType, updateServerResponse.Server.CommercialType)
 		testhelpers.Equals(t, *dynamicIPRequired, updateServerResponse.Server.DynamicIPRequired)
 		testhelpers.Assert(t, len(updateServerResponse.Server.Volumes) == 1, "should have exactly one volume because we didn't pass volumes map in the requests.")
-
 		testhelpers.Equals(t, newName, updateServerResponse.Server.Name)
 		testhelpers.Equals(t, updatedTags, updateServerResponse.Server.Tags)
+		if r.Mode() == recorder.ModeRecording {
+			testhelpers.Equals(t, project, updateServerResponse.Server.Project)
+		}
 	})
 
 	t.Run("remove server volumes", func(t *testing.T) {

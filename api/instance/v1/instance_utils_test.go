@@ -3,6 +3,7 @@ package instance
 import (
 	"testing"
 
+	"github.com/dnaeon/go-vcr/recorder"
 	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
@@ -16,6 +17,10 @@ func TestInstanceHelpers(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 
 	var (
@@ -23,15 +28,14 @@ func TestInstanceHelpers(t *testing.T) {
 		ipID     string
 		volumeID string
 		zone     = scw.ZoneFrPar1
-		// project  = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
-		image = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
+		image    = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
 	)
 
 	t.Run("create server", func(t *testing.T) {
 		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
-			Zone: zone,
-			Name: "instance_utils_test",
-			// Project:        &project,
+			Zone:           zone,
+			Name:           "instance_utils_test",
+			Project:        &project,
 			Image:          image,
 			CommercialType: "PRO2-XXS",
 		})
@@ -45,8 +49,8 @@ func TestInstanceHelpers(t *testing.T) {
 	t.Run("test ip related functions", func(t *testing.T) {
 		// Create IP
 		createIPResponse, err := instanceAPI.CreateIP(&CreateIPRequest{
-			Zone: zone,
-			// Project: &project,
+			Zone:    zone,
+			Project: &project,
 		})
 		testhelpers.AssertNoError(t, err)
 		ipID = createIPResponse.IP.ID
@@ -126,6 +130,10 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 	blockAPI := block.NewAPI(client)
 
@@ -134,15 +142,14 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		volumeID  string
 		volumeID2 string
 		zone      = scw.ZoneFrPar1
-		// project   = "ee7bd9e1-9cbd-4724-b2f4-19e50f3cf38b"
-		image = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
+		image     = scw.StringPtr("81b9475d-e1b5-43c2-ac48-4c1a3b640686")
 	)
 
 	t.Run("create server and volume", func(t *testing.T) {
 		createVolumeResponse, err := blockAPI.CreateVolume(&block.CreateVolumeRequest{
-			Zone: zone,
-			Name: "instance_utils_test",
-			// ProjectID: project,
+			Zone:      zone,
+			Name:      "instance_utils_test",
+			ProjectID: project,
 			FromEmpty: &block.CreateVolumeRequestFromEmpty{
 				Size: scw.GB * 20,
 			},
@@ -153,9 +160,9 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		volumeID = createVolumeResponse.ID
 
 		createVolumeResponse, err = blockAPI.CreateVolume(&block.CreateVolumeRequest{
-			Zone: zone,
-			Name: "instance_utils_test2",
-			// ProjectID: project,
+			Zone:      zone,
+			Name:      "instance_utils_test2",
+			ProjectID: project,
 			FromEmpty: &block.CreateVolumeRequestFromEmpty{
 				Size: scw.GB * 20,
 			},
@@ -166,9 +173,9 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		volumeID2 = createVolumeResponse.ID
 
 		createServerResponse, err := instanceAPI.CreateServer(&CreateServerRequest{
-			Zone: zone,
-			Name: "instance_utils_test",
-			// Project:        &project,
+			Zone:           zone,
+			Name:           "instance_utils_test",
+			Project:        &project,
 			Image:          image,
 			CommercialType: "PRO2-XXS",
 			Volumes: map[string]*VolumeServerTemplate{
