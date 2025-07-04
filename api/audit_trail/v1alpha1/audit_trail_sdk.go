@@ -306,9 +306,6 @@ type Event struct {
 	// MethodName: API method called to trigger the event.
 	MethodName string `json:"method_name"`
 
-	// Deprecated: Resource: resource attached to the event.
-	Resource *Resource `json:"resource,omitempty"`
-
 	// Resources: resources attached to the event.
 	Resources []*Resource `json:"resources"`
 
