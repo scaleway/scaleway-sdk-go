@@ -191,8 +191,9 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 
 	t.Run("Test attach and detach volume", func(t *testing.T) {
 		detachVolumeResponse, err := instanceAPI.DetachVolume(&DetachVolumeRequest{
-			Zone:     zone,
-			VolumeID: volumeID,
+			Zone:          zone,
+			VolumeID:      volumeID,
+			IsBlockVolume: scw.BoolPtr(true),
 		})
 		testhelpers.AssertNoError(t, err)
 
@@ -203,6 +204,12 @@ func TestInstanceHelpers_BlockVolume(t *testing.T) {
 		_, err = instanceAPI.WaitForServer(&WaitForServerRequest{
 			Zone:     zone,
 			ServerID: serverID,
+		})
+		testhelpers.AssertNoError(t, err)
+
+		_, err = blockAPI.WaitForVolume(&block.WaitForVolumeRequest{
+			VolumeID: volumeID,
+			Zone:     zone,
 		})
 		testhelpers.AssertNoError(t, err)
 
