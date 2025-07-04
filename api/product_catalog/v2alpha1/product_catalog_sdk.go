@@ -402,6 +402,15 @@ type PublicCatalogProductPropertiesAppleSilicon struct {
 	Range string `json:"range"`
 }
 
+// PublicCatalogProductPropertiesBlockStorage: public catalog product properties block storage.
+type PublicCatalogProductPropertiesBlockStorage struct {
+	// MinVolumeSize: the minimum size of storage volume for this product in bytes.
+	MinVolumeSize scw.Size `json:"min_volume_size"`
+
+	// MaxVolumeSize: the maximum size of storage volume for this product in bytes.
+	MaxVolumeSize scw.Size `json:"max_volume_size"`
+}
+
 // PublicCatalogProductPropertiesDedibox: public catalog product properties dedibox.
 type PublicCatalogProductPropertiesDedibox struct {
 	// Range: the range of the Dedibox server.
@@ -482,20 +491,24 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
+
+	// BlockStorage: the properties of Block Storage products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
