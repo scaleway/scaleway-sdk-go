@@ -96,8 +96,10 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		return createSecurityGroupResponse.SecurityGroup, createRuleResponse.Rule, func() {
+			time.Sleep(1 * time.Second)
 			err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 				SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
+				Zone:            createSecurityGroupResponse.SecurityGroup.Zone,
 			})
 			testhelpers.AssertNoError(t, err)
 		}
