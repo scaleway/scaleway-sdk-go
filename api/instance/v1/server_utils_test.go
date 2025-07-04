@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dnaeon/go-vcr/recorder"
 	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v2"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -42,6 +43,10 @@ func TestAPI_ServerUserData(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 
 	key := "hello"
@@ -52,7 +57,7 @@ func TestAPI_ServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
-		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
+		Project:        &project,
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -84,6 +89,10 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
+	project, ok := client.GetDefaultProjectID()
+	if !ok && r.Mode() == recorder.ModeRecording {
+		t.Fatal("default project ID is required to record this test")
+	}
 	instanceAPI := NewAPI(client)
 
 	serverRes, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -91,7 +100,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 		CommercialType: "DEV1-S",
 		Name:           namegenerator.GetRandomName("srv"),
 		Image:          scw.StringPtr("f974feac-abae-4365-b988-8ec7d1cec10d"),
-		Project:        scw.StringPtr("14d2f7ae-9775-414c-9bed-6810e060d500"),
+		Project:        &project,
 	})
 	testhelpers.AssertNoError(t, err)
 
@@ -163,7 +172,7 @@ func TestAPI_CreateServer(t *testing.T) {
 
 	testhelpers.AssertNoError(t, err)
 	// this UUID might change when running the cassette later when the image "ubuntu_focal" got a new version
-	testhelpers.Equals(t, "9c41e95b-add2-4ef8-b1b1-af8899748eda", res.Server.Image.ID)
+	testhelpers.Equals(t, "4a4d2994-e7e0-4b29-a760-36235e6ba258", res.Server.Image.ID)
 	err = instanceAPI.DeleteServer(&DeleteServerRequest{
 		Zone:     scw.ZoneFrPar1,
 		ServerID: res.Server.ID,
