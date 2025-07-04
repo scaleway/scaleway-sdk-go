@@ -2005,7 +2005,7 @@ type NodeMetadata struct {
 
 	RepoURI string `json:"repo_uri"`
 
-	InstallerTags string `json:"installer_tags"`
+	InstallerTags []string `json:"installer_tags"`
 
 	UpdaterBinURL string `json:"updater_bin_url"`
 
