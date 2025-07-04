@@ -179,11 +179,17 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 	}()
 
 	instanceAPI := NewAPI(client)
-	serverID := ""
 	commercialType := "GP1-XS"
 	imageLabel := "ubuntu_noble"
 	size := 15 * scw.GB
 	zone := scw.ZoneFrPar1
+
+	expectedImage := expectedImageSpecs{
+		ImageLabel:     imageLabel,
+		CommercialType: commercialType,
+		Zone:           zone,
+		Arch:           ArchX86_64,
+	}
 
 	t.Run("default-root-volume", func(t *testing.T) {
 		// Create a server with default settings
@@ -193,17 +199,19 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			Image:          &imageLabel,
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceLocal
 
 		testhelpers.Equals(t, VolumeVolumeTypeLSSD.String(), res.Server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceLocal)
-		err = cleanupTestResources(client, serverID)
+		err = cleanupTestResources(client, zone, server.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
 	t.Run("sbs-root-volume", func(t *testing.T) {
 		volumeType := VolumeVolumeTypeSbsVolume
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceSbs
 
 		// Create server with an SBS root volume
 		res, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -218,15 +226,18 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
-		testhelpers.Equals(t, volumeType.String(), res.Server.Volumes["0"].VolumeType.String())
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceSbs)
-		err = cleanupTestResources(client, serverID)
+		server := res.Server
+
+		testhelpers.Equals(t, volumeType.String(), server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
+
+		err = cleanupTestResources(client, zone, server.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
 	t.Run("local-root-volume", func(t *testing.T) {
 		volumeType := VolumeVolumeTypeLSSD
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceLocal
 
 		// Create server with a local root volume
 		res, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -241,19 +252,20 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
 
-		testhelpers.Equals(t, volumeType.String(), res.Server.Volumes["0"].VolumeType.String())
+		testhelpers.Equals(t, volumeType.String(), server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceLocal)
-		err = cleanupTestResources(client, serverID)
+		err = cleanupTestResources(client, zone, server.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
 	t.Run("sbs-snapshot-volume", func(t *testing.T) {
 		volumeType := VolumeVolumeTypeSbsVolume
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceSbs
 
-		sbsSnapshot := createSBSSnapshot(t, client)
+		sbsSnapshot := createSBSSnapshot(t, client, zone)
 
 		// Create a server with the sbs snapshot
 		res, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -269,19 +281,20 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
 
-		testhelpers.Equals(t, volumeType.String(), res.Server.Volumes["0"].VolumeType.String())
+		testhelpers.Equals(t, volumeType.String(), server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceSbs)
-		err = cleanupTestResources(client, serverID, sbsSnapshot.ID)
+		err = cleanupTestResources(client, zone, server.ID, sbsSnapshot.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
 	t.Run("local-snapshot-volume", func(t *testing.T) {
 		volumeType := VolumeVolumeTypeLSSD
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceLocal
 
-		localSnapshot := createLocalSnapshot(t, client)
+		localSnapshot := createLocalSnapshot(t, client, zone)
 
 		// Create a server with the local snapshot
 		res, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -297,12 +310,12 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
 
-		testhelpers.Equals(t, volumeType.String(), res.Server.Volumes["0"].VolumeType.String())
+		testhelpers.Equals(t, volumeType.String(), server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceLocal)
-		err = cleanupTestResources(client, serverID, localSnapshot.ID)
+		err = cleanupTestResources(client, zone, server.ID, localSnapshot.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
@@ -310,6 +323,7 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 		blockAPI := block.NewAPI(client)
 		localVolumeType := VolumeVolumeTypeLSSD
 		blockVolumeType := VolumeVolumeTypeSbsVolume
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceSbs
 		boot := true
 
 		// Create sbs volume to boot on
@@ -341,28 +355,29 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
 
-		testhelpers.Equals(t, localVolumeType.String(), res.Server.Volumes["0"].VolumeType.String())
-		testhelpers.Equals(t, blockVolumeType.String(), res.Server.Volumes["1"].VolumeType.String())
-		testhelpers.Equals(t, false, res.Server.Volumes["0"].Boot)
-		testhelpers.Equals(t, true, res.Server.Volumes["1"].Boot)
+		testhelpers.Equals(t, localVolumeType.String(), server.Volumes["0"].VolumeType.String())
+		testhelpers.Equals(t, blockVolumeType.String(), server.Volumes["1"].VolumeType.String())
+		testhelpers.Equals(t, false, server.Volumes["0"].Boot)
+		testhelpers.Equals(t, true, server.Volumes["1"].Boot)
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceSbs)
-		err = cleanupTestResources(client, serverID)
+		err = cleanupTestResources(client, zone, server.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 
 	t.Run("local-boot-on-custom-index", func(t *testing.T) {
 		localVolumeType := VolumeVolumeTypeLSSD
 		blockVolumeType := VolumeVolumeTypeSbsVolume
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceLocal
 		boot := true
 
 		// Create local snapshot for the additional volume to boot on
-		localSnapshot := createLocalSnapshot(t, client)
+		localSnapshot := createLocalSnapshot(t, client, zone)
 
 		// Create block snapshot for the root volume
-		sbsSnapshot := createSBSSnapshot(t, client)
+		sbsSnapshot := createSBSSnapshot(t, client, zone)
 
 		// Create a server that boots on an additional local volume
 		res, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -384,28 +399,55 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 			},
 		})
 		testhelpers.AssertNoError(t, err)
-		serverID = res.Server.ID
+		server := res.Server
 
-		testhelpers.Equals(t, blockVolumeType.String(), res.Server.Volumes["0"].VolumeType.String())
-		testhelpers.Equals(t, localVolumeType.String(), res.Server.Volumes["1"].VolumeType.String())
-		testhelpers.Equals(t, false, res.Server.Volumes["0"].Boot)
-		testhelpers.Equals(t, true, res.Server.Volumes["1"].Boot)
+		testhelpers.Equals(t, blockVolumeType.String(), server.Volumes["0"].VolumeType.String())
+		testhelpers.Equals(t, localVolumeType.String(), server.Volumes["1"].VolumeType.String())
+		testhelpers.Equals(t, false, server.Volumes["0"].Boot)
+		testhelpers.Equals(t, true, server.Volumes["1"].Boot)
+		checkImage(t, client, server.Image.ID, expectedImage)
 
-		checkImage(t, client, res.Server.Image.ID, imageLabel, commercialType, marketplace.LocalImageTypeInstanceLocal)
-		err = cleanupTestResources(client, serverID, localSnapshot.ID, sbsSnapshot.ID)
+		err = cleanupTestResources(client, zone, server.ID, localSnapshot.ID, sbsSnapshot.ID)
+		testhelpers.AssertNoError(t, err)
+	})
+
+	t.Run("block-arm", func(t *testing.T) {
+		volumeType := VolumeVolumeTypeSbsVolume
+		commercialType = "COPARM1-2C-8G"
+		zone = scw.ZoneFrPar2
+		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceSbs
+		expectedImage.CommercialType = commercialType
+		expectedImage.Arch = ArchArm64
+		expectedImage.Zone = zone
+
+		// Create an ARM server with a block root volume
+		res, err := instanceAPI.CreateServer(&CreateServerRequest{
+			Zone:           zone,
+			CommercialType: commercialType,
+			Image:          &imageLabel,
+			Volumes: map[string]*VolumeServerTemplate{
+				"0": {
+					Size:       &size,
+					VolumeType: volumeType,
+				},
+			},
+		})
+		testhelpers.AssertNoError(t, err)
+		server := res.Server
+
+		testhelpers.Equals(t, volumeType.String(), server.Volumes["0"].VolumeType.String())
+		checkImage(t, client, server.Image.ID, expectedImage)
+
+		err = cleanupTestResources(client, zone, server.ID)
 		testhelpers.AssertNoError(t, err)
 	})
 }
 
-func createLocalSnapshot(t *testing.T, client *scw.Client) *Snapshot {
+func createLocalSnapshot(t *testing.T, client *scw.Client, zone scw.Zone) *Snapshot {
 	t.Helper()
 
 	instanceAPI := NewAPI(client)
 	size := 15 * scw.GB
-	zone, ok := client.GetDefaultZone()
-	if !ok {
-		zone = scw.ZoneFrPar1
-	}
 
 	// Create a server with a local volume to be snapshot
 	tmpServer, err := instanceAPI.CreateServer(&CreateServerRequest{
@@ -438,15 +480,11 @@ func createLocalSnapshot(t *testing.T, client *scw.Client) *Snapshot {
 	return localSnap.Snapshot
 }
 
-func createSBSSnapshot(t *testing.T, client *scw.Client) *block.Snapshot {
+func createSBSSnapshot(t *testing.T, client *scw.Client, zone scw.Zone) *block.Snapshot {
 	t.Helper()
 
 	blockAPI := block.NewAPI(client)
 	size := 15 * scw.GB
-	zone, ok := client.GetDefaultZone()
-	if !ok {
-		zone = scw.ZoneFrPar1
-	}
 
 	// Create sbs volume to be snapshot
 	tmpVolume, err := blockAPI.CreateVolume(&block.CreateVolumeRequest{
@@ -487,7 +525,15 @@ func createSBSSnapshot(t *testing.T, client *scw.Client) *block.Snapshot {
 	return sbsSnap
 }
 
-func checkImage(t *testing.T, client *scw.Client, actualImageID string, expectedImageLabel string, commercialType string, expectedLocalImageType marketplace.LocalImageType) {
+type expectedImageSpecs struct {
+	ImageLabel     string
+	CommercialType string
+	LocalImageType marketplace.LocalImageType
+	Arch           Arch
+	Zone           scw.Zone
+}
+
+func checkImage(t *testing.T, client *scw.Client, actualImageID string, expected expectedImageSpecs) {
 	t.Helper()
 
 	// Get the expected marketplace image for comparison
@@ -496,14 +542,14 @@ func checkImage(t *testing.T, client *scw.Client, actualImageID string, expected
 		LocalImageID: actualImageID,
 	})
 	testhelpers.AssertNoError(t, err)
-	testhelpers.Equals(t, expectedImageLabel, actualImage.Label)
-	testhelpers.Equals(t, expectedLocalImageType, actualImage.Type)
-	testhelpers.Equals(t, scw.ZoneFrPar1, actualImage.Zone)
-	testhelpers.Equals(t, ArchX86_64.String(), actualImage.Arch)
+	testhelpers.Equals(t, expected.ImageLabel, actualImage.Label)
+	testhelpers.Equals(t, expected.LocalImageType, actualImage.Type)
+	testhelpers.Equals(t, expected.Zone, actualImage.Zone)
+	testhelpers.Equals(t, expected.Arch.String(), actualImage.Arch)
 
 	isCompatible := false
 	for _, compatibleOffer := range actualImage.CompatibleCommercialTypes {
-		if compatibleOffer == commercialType {
+		if compatibleOffer == expected.CommercialType {
 			isCompatible = true
 		}
 	}
@@ -524,14 +570,12 @@ func deleteServerAndVolumes(client *scw.Client, serverID string, zone scw.Zone) 
 	}
 
 	// Delete server first so volumes get detached
-	if serverID != "" {
-		err = instanceAPI.DeleteServer(&DeleteServerRequest{
-			Zone:     scw.ZoneFrPar1,
-			ServerID: serverID,
-		})
-		if err != nil {
-			errs = append(errs, fmt.Errorf("- failed to delete server %s: %w\n", serverID, err))
-		}
+	err = instanceAPI.DeleteServer(&DeleteServerRequest{
+		Zone:     zone,
+		ServerID: serverID,
+	})
+	if err != nil {
+		errs = append(errs, fmt.Errorf("- failed to delete server %s: %w\n", serverID, err))
 	}
 
 	// Delete volumes
@@ -568,10 +612,9 @@ func deleteServerAndVolumes(client *scw.Client, serverID string, zone scw.Zone) 
 	return errs
 }
 
-func cleanupTestResources(client *scw.Client, serverID string, snapshotIDs ...string) error {
+func cleanupTestResources(client *scw.Client, zone scw.Zone, serverID string, snapshotIDs ...string) error {
 	instanceAPI := NewAPI(client)
 	blockAPI := block.NewAPI(client)
-	zone := scw.ZoneFrPar1
 
 	errs := deleteServerAndVolumes(client, serverID, zone)
 
