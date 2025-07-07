@@ -961,6 +961,43 @@ func (enum *SearchBackendStagesRequestOrderBy) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
+type SearchRouteRulesRequestOrderBy string
+
+const (
+	SearchRouteRulesRequestOrderByCreatedAtAsc  = SearchRouteRulesRequestOrderBy("created_at_asc")
+	SearchRouteRulesRequestOrderByCreatedAtDesc = SearchRouteRulesRequestOrderBy("created_at_desc")
+)
+
+func (enum SearchRouteRulesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SearchRouteRulesRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum SearchRouteRulesRequestOrderBy) Values() []SearchRouteRulesRequestOrderBy {
+	return []SearchRouteRulesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum SearchRouteRulesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SearchRouteRulesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SearchRouteRulesRequestOrderBy(SearchRouteRulesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type SearchWafStagesRequestOrderBy string
 
 const (
@@ -2184,6 +2221,28 @@ type ListRouteRulesRequest struct {
 type ListRouteRulesResponse struct {
 	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
+
+	// TotalCount: count of all route rules matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRouteRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRouteRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListRouteRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.RouteRules = append(r.RouteRules, results.RouteRules...)
+	r.TotalCount += uint64(len(results.RouteRules))
+	return uint64(len(results.RouteRules)), nil
 }
 
 // ListRouteStagesRequest: list route stages request.
@@ -2346,6 +2405,20 @@ type SearchBackendStagesRequest struct {
 	BucketRegion *string `json:"-"`
 
 	LBID *string `json:"-"`
+}
+
+// SearchRouteRulesRequest: search route rules request.
+type SearchRouteRulesRequest struct {
+	// OrderBy: default value: created_at_asc
+	OrderBy SearchRouteRulesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
 // SearchWafStagesRequest: search waf stages request.
@@ -3679,6 +3752,37 @@ func (s *API) AddRouteRules(req *AddRouteRulesRequest, opts ...scw.RequestOption
 	}
 
 	var resp AddRouteRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SearchRouteRules: List all route rules of an organization or project.
+func (s *API) SearchRouteRules(req *SearchRouteRulesRequest, opts ...scw.RequestOption) (*ListRouteRulesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/search-route-rules",
+		Query:  query,
+	}
+
+	var resp ListRouteRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
