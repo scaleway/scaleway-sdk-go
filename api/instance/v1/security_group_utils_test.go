@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -54,10 +55,12 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, false, *updateResponse.SecurityGroup.OrganizationDefault)
 	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.SecurityGroup.Tags)
 
-	time.Sleep(1 * time.Second)
+	err = waitForSecurityGroup(client, createResponse.SecurityGroup.Zone, createResponse.SecurityGroup.ID, 10)
+	testhelpers.AssertNoError(t, err)
 
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 		SecurityGroupID: createResponse.SecurityGroup.ID,
+		Zone:            createResponse.SecurityGroup.Zone,
 	})
 	testhelpers.AssertNoError(t, err)
 }
@@ -96,10 +99,15 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		return createSecurityGroupResponse.SecurityGroup, createRuleResponse.Rule, func() {
-			time.Sleep(1 * time.Second)
+			zone := createSecurityGroupResponse.SecurityGroup.Zone
+			sgID := createSecurityGroupResponse.SecurityGroup.ID
+
+			err = waitForSecurityGroup(client, zone, sgID, 10)
+			testhelpers.AssertNoError(t, err)
+
 			err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
-				SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
-				Zone:            createSecurityGroupResponse.SecurityGroup.Zone,
+				SecurityGroupID: sgID,
+				Zone:            zone,
 			})
 			testhelpers.AssertNoError(t, err)
 		}
@@ -193,4 +201,32 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
 		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
 	})
+}
+
+func waitForSecurityGroup(client *scw.Client, zone scw.Zone, sgID string, maxRetries int) error {
+	instanceAPI := NewAPI(client)
+
+	sg, err := instanceAPI.GetSecurityGroup(&GetSecurityGroupRequest{
+		SecurityGroupID: sgID,
+		Zone:            zone,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch sg.SecurityGroup.State {
+	case SecurityGroupStateAvailable:
+		return nil
+	case SecurityGroupStateSyncingError:
+		return nil
+	case SecurityGroupStateSyncing:
+		if maxRetries == 0 {
+			return fmt.Errorf("max retries exceeded")
+		}
+		time.Sleep(100 * time.Millisecond)
+
+		return waitForSecurityGroup(client, zone, sgID, maxRetries-1)
+	default:
+		return fmt.Errorf("unknown state: %s", sg.SecurityGroup.State)
+	}
 }
