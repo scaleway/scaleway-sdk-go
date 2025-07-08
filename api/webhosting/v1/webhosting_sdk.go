@@ -1552,6 +1552,9 @@ type Domain struct {
 	// Default value: unknown_zone_owner
 	Owner DomainZoneOwner `json:"owner"`
 
+	// ZoneDomainName: main domain for this zone.
+	ZoneDomainName string `json:"zone_domain_name"`
+
 	// AvailableActions: a list of actions that can be performed on the domain.
 	AvailableActions []DomainAction `json:"available_actions"`
 
