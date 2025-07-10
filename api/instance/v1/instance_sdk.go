@@ -2424,7 +2424,7 @@ type CreateServerRequest struct {
 	// Name: instance name.
 	Name string `json:"name,omitempty"`
 
-	// DynamicIPRequired: define if a dynamic IPv4 is required for the Instance.
+	// DynamicIPRequired: by default, `dynamic_ip_required` is true, a dynamic ip is attached to the instance (if no flexible ip is already attached).
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
 	// Deprecated: RoutedIPEnabled: if true, configure the Instance so it uses the new routed IP mode.
