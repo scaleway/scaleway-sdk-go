@@ -1428,6 +1428,9 @@ type SamlCertificate struct {
 
 	// Content: content of the SAML certificate.
 	Content string `json:"content"`
+
+	// ExpiresAt: date and time of the SAML certificate expiration.
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // User: user.
