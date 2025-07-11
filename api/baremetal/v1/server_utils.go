@@ -132,15 +132,20 @@ func (s *API) GetServerOffer(server *Server) (*Offer, error) {
 }
 
 type GetOfferByNameRequest struct {
-	OfferName string
-	Zone      scw.Zone
+	OfferName          string
+	SubscriptionPeriod string
+	Zone               scw.Zone
 }
 
 // GetOfferByName returns an offer from its commercial name
 func (s *API) GetOfferByName(req *GetOfferByNameRequest) (*Offer, error) {
-	res, err := s.ListOffers(&ListOffersRequest{
+	reqList := &ListOffersRequest{
 		Zone: req.Zone,
-	}, scw.WithAllPages())
+	}
+	if req.SubscriptionPeriod != "" {
+		reqList.SubscriptionPeriod = OfferSubscriptionPeriod(req.SubscriptionPeriod)
+	}
+	res, err := s.ListOffers(reqList, scw.WithAllPages())
 	if err != nil {
 		return nil, err
 	}
