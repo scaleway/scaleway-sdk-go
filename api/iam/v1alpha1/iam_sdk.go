@@ -789,6 +789,90 @@ func (enum *PermissionSetScopeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SamlCertificateOrigin string
+
+const (
+	// Unknown certificate origin.
+	SamlCertificateOriginUnknownCertificateOrigin = SamlCertificateOrigin("unknown_certificate_origin")
+	// Certificate from Scaleway.
+	SamlCertificateOriginScaleway = SamlCertificateOrigin("scaleway")
+	// Certificate from Identity Provider.
+	SamlCertificateOriginIdentityProvider = SamlCertificateOrigin("identity_provider")
+)
+
+func (enum SamlCertificateOrigin) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SamlCertificateOriginUnknownCertificateOrigin)
+	}
+	return string(enum)
+}
+
+func (enum SamlCertificateOrigin) Values() []SamlCertificateOrigin {
+	return []SamlCertificateOrigin{
+		"unknown_certificate_origin",
+		"scaleway",
+		"identity_provider",
+	}
+}
+
+func (enum SamlCertificateOrigin) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SamlCertificateOrigin) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SamlCertificateOrigin(SamlCertificateOrigin(tmp).String())
+	return nil
+}
+
+type SamlCertificateType string
+
+const (
+	// Unknown certificate type.
+	SamlCertificateTypeUnknownCertificateType = SamlCertificateType("unknown_certificate_type")
+	// Signing certificate.
+	SamlCertificateTypeSigning = SamlCertificateType("signing")
+	// Encryption certificate.
+	SamlCertificateTypeEncryption = SamlCertificateType("encryption")
+)
+
+func (enum SamlCertificateType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SamlCertificateTypeUnknownCertificateType)
+	}
+	return string(enum)
+}
+
+func (enum SamlCertificateType) Values() []SamlCertificateType {
+	return []SamlCertificateType{
+		"unknown_certificate_type",
+		"signing",
+		"encryption",
+	}
+}
+
+func (enum SamlCertificateType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SamlCertificateType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SamlCertificateType(SamlCertificateType(tmp).String())
+	return nil
+}
+
 type UserStatus string
 
 const (
@@ -1329,6 +1413,26 @@ type SSHKey struct {
 	Disabled bool `json:"disabled"`
 }
 
+// SamlCertificate: saml certificate.
+type SamlCertificate struct {
+	// ID: ID of the SAML certificate.
+	ID string `json:"id"`
+
+	// Type: type of the SAML certificate.
+	// Default value: unknown_certificate_type
+	Type SamlCertificateType `json:"type"`
+
+	// Origin: origin of the SAML certificate.
+	// Default value: unknown_certificate_origin
+	Origin SamlCertificateOrigin `json:"origin"`
+
+	// Content: content of the SAML certificate.
+	Content string `json:"content"`
+
+	// ExpiresAt: date and time of the SAML certificate expiration.
+	ExpiresAt *time.Time `json:"expires_at"`
+}
+
 // User: user.
 type User struct {
 	// ID: ID of user.
@@ -1417,6 +1521,19 @@ type AddGroupMembersRequest struct {
 	ApplicationIDs []string `json:"application_ids"`
 }
 
+// AddSamlCertificateRequest: add saml certificate request.
+type AddSamlCertificateRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+
+	// Type: type of the SAML certificate.
+	// Default value: unknown_certificate_type
+	Type SamlCertificateType `json:"type"`
+
+	// Content: content of the SAML certificate.
+	Content string `json:"content"`
+}
+
 // ClonePolicyRequest: clone policy request.
 type ClonePolicyRequest struct {
 	PolicyID string `json:"-"`
@@ -1479,6 +1596,18 @@ type CreateJWTRequest struct {
 
 	// Referrer: referrer of the JWT.
 	Referrer string `json:"referrer"`
+}
+
+// CreateOrganizationSamlRequest: create organization saml request.
+type CreateOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// EntityID: entity ID of the SAML Identity Provider.
+	EntityID string `json:"entity_id"`
+
+	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
+	SingleSignOnURL string `json:"single_sign_on_url"`
 }
 
 // CreatePolicyRequest: create policy request.
@@ -1574,6 +1703,12 @@ type DeleteJWTRequest struct {
 	Jti string `json:"-"`
 }
 
+// DeleteOrganizationSamlRequest: delete organization saml request.
+type DeleteOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
 // DeletePolicyRequest: delete policy request.
 type DeletePolicyRequest struct {
 	// PolicyID: id of policy to delete.
@@ -1583,6 +1718,12 @@ type DeletePolicyRequest struct {
 // DeleteSSHKeyRequest: delete ssh key request.
 type DeleteSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
+}
+
+// DeleteSamlCertificateRequest: delete saml certificate request.
+type DeleteSamlCertificateRequest struct {
+	// CertificateID: ID of the certificate to delete.
+	CertificateID string `json:"-"`
 }
 
 // DeleteUserMFAOTPRequest: delete user mfaotp request.
@@ -1641,6 +1782,12 @@ type GetLogRequest struct {
 
 // GetOrganizationRequest: get organization request.
 type GetOrganizationRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
+// GetOrganizationSamlRequest: get organization saml request.
+type GetOrganizationSamlRequest struct {
 	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"-"`
 }
@@ -2270,6 +2417,18 @@ func (r *ListSSHKeysResponse) UnsafeAppend(res any) (uint32, error) {
 	return uint32(len(results.SSHKeys)), nil
 }
 
+// ListSamlCertificatesRequest: list saml certificates request.
+type ListSamlCertificatesRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+}
+
+// ListSamlCertificatesResponse: list saml certificates response.
+type ListSamlCertificatesResponse struct {
+	// Certificates: list of SAML certificates.
+	Certificates []*SamlCertificate `json:"certificates"`
+}
+
 // ListUsersRequest: list users request.
 type ListUsersRequest struct {
 	// OrderBy: criteria for sorting results.
@@ -2391,6 +2550,18 @@ type RemoveUserConnectionRequest struct {
 	TargetUserID string `json:"target_user_id"`
 }
 
+// Saml: saml.
+type Saml struct {
+	// ID: ID of the SAML configuration.
+	ID string `json:"id"`
+
+	// EntityID: entity ID of the SAML Identity Provider.
+	EntityID string `json:"entity_id"`
+
+	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
+	SingleSignOnURL string `json:"single_sign_on_url"`
+}
+
 // SetGroupMembersRequest: set group members request.
 type SetGroupMembersRequest struct {
 	GroupID string `json:"-"`
@@ -2470,6 +2641,18 @@ type UpdateGroupRequest struct {
 
 	// Tags: new tags for the group (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateOrganizationSamlRequest: update organization saml request.
+type UpdateOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// EntityID: entity ID of the SAML Identity Provider.
+	EntityID *string `json:"entity_id,omitempty"`
+
+	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
+	SingleSignOnURL *string `json:"single_sign_on_url,omitempty"`
 }
 
 // UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
@@ -4308,6 +4491,191 @@ func (s *API) MigrateOrganizationGuests(req *MigrateOrganizationGuestsRequest, o
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/migrate-guests",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetOrganizationSaml: Get SAML Identity Provider configuration of an Organization.
+func (s *API) GetOrganizationSaml(req *GetOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+	}
+
+	var resp Saml
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateOrganizationSaml: Create a SAML Identity Provider configuration for an Organization.
+func (s *API) CreateOrganizationSaml(req *CreateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Saml
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateOrganizationSaml: Update a SAML Identity Provider configuration for an Organization.
+func (s *API) UpdateOrganizationSaml(req *UpdateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Saml
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteOrganizationSaml: Delete a SAML Identity Provider configuration for an Organization.
+func (s *API) DeleteOrganizationSaml(req *DeleteOrganizationSamlRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListSamlCertificates: List SAML certificates.
+func (s *API) ListSamlCertificates(req *ListSamlCertificatesRequest, opts ...scw.RequestOption) (*ListSamlCertificatesResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.SamlID) == "" {
+		return nil, errors.New("field SamlID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "/certificates",
+	}
+
+	var resp ListSamlCertificatesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddSamlCertificate: Add a SAML certificate.
+func (s *API) AddSamlCertificate(req *AddSamlCertificateRequest, opts ...scw.RequestOption) (*SamlCertificate, error) {
+	var err error
+
+	if fmt.Sprint(req.SamlID) == "" {
+		return nil, errors.New("field SamlID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "/certificates",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SamlCertificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteSamlCertificate: Delete a SAML certificate.
+func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/saml-certificates/" + fmt.Sprint(req.CertificateID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
