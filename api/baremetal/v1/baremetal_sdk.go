@@ -1437,6 +1437,9 @@ type Server struct {
 
 	// RescueServer: configuration of rescue boot.
 	RescueServer *ServerRescueServer `json:"rescue_server"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected bool `json:"protected"`
 }
 
 // Setting: setting.
@@ -1515,6 +1518,9 @@ type CreateServerRequest struct {
 
 	// OptionIDs: iDs of options to enable on server.
 	OptionIDs []string `json:"option_ids"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected bool `json:"protected"`
 }
 
 // DeleteOptionServerRequest: delete option server request.
@@ -2126,6 +2132,9 @@ type UpdateServerRequest struct {
 
 	// Tags: tags associated with the server, not updated if null.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected *bool `json:"protected,omitempty"`
 }
 
 // UpdateSettingRequest: update setting request.
@@ -2288,7 +2297,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UpdateServer: Update the server associated with the ID. You can update parameters such as the server's name, tags and description. Any parameters left null in the request body are not updated.
+// UpdateServer: Update the server associated with the ID. You can update parameters such as the server's name, tags, description and protection flag. Any parameters left null in the request body are not updated.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
