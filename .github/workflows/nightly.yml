@@ -1,0 +1,139 @@
+name: Nightly Acceptance Tests
+
+on:
+  schedule:
+    # Will run at 00:00 every day
+    - cron: "0 0 * * *"
+
+jobs:
+  nightly:
+    strategy:
+      fail-fast: false
+      matrix:
+        products:
+          - account/v3
+          - applesilicon/v1alpha1
+          - audit_trail/v1alpha1
+          - autoscaling/v1alpha1
+          - baremetal/v1
+          - baremetal/v3
+          - billing/v2beta1
+          - block/v1
+          - block/v1alpha1
+          - cockpit/v1
+          - container/v1beta1
+          - dedibox/v1
+          - documentdb/v1beta1
+          - domain/v2beta1
+          - edge_services/v1beta1
+          - file/v1alpha1
+          - flexibleip/v1alpha1
+          - function/v1beta1
+          - iam/v1alpha1
+          - inference/v1
+          - inference/v1beta1
+          - instance/v1
+          - interlink/v1beta1
+          - iot/v1
+          - ipam/v1
+          - ipam/v1alpha1
+          - jobs/v1alpha1
+          - k8s/v1
+          - key_manager/v1alpha1
+          - lb/v1
+          - marketplace/v2
+          - mnq/v1beta1
+          - mongodb/v1
+          - mongodb/v1alpha1
+          - product_catalog/v2alpha1
+          - qaas/v1alpha1
+          - rdb/v1
+          - redis/v1
+          - registry/v1
+          - secret/v1beta1
+          - serverless_sqldb/v1alpha1
+          - std
+          - tem/v1alpha1
+          - test/v1
+          - vpc/v2
+          - vpcgw/v1
+          - vpcgw/v2
+          - webhosting/v1
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout should always be before setup-go to ensure caching is working
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+      - name: Run Acceptance Tests
+        run: go test -v ./internal/services/${{ matrix.products }} -timeout=4h
+        env:
+          SDK_UPDATE_CASSETTES: true
+          SCW_DEBUG: 1
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+          SCW_DEFAULT_ORGANIZATION_ID: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
+          SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+      - name: Ping on failure
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+          	"blocks": [
+              {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "'"Scaleway Sdk-Go Nightly workflow failed: <https://github.com/scaleway/scaleway-sdk-go/actions/runs/${GITHUB_RUN_ID}|${FAILED_PRODUCT}>"'"
+                  }
+              }
+            ]
+          }' \
+          ${SLACK_WEBHOOK_NIGHTLY};
+        env:
+          SLACK_WEBHOOK_NIGHTLY: ${{ secrets.SLACK_WEBHOOK_NIGHTLY }}
+          FAILED_PRODUCT: ${{ matrix.products }}
+
+  # sweeper needs to run after nightly completed
+  # no matter what are the results of the jobs
+  sweeper:
+    runs-on: ubuntu-latest
+    needs: nightly
+    if: always()
+    steps:
+      # Checkout should always be before setup-go to ensure caching is working
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+      - name: Run sweepers
+        run: go run -v ./cmd/sdk-sweeper
+        env:
+          SCW_DEBUG: 1
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+          SCW_DEFAULT_ORGANIZATION_ID: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
+          SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+      - name: Ping on failure
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+          	"blocks": [
+              {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "'"Scaleway Sdk-Go sweepers in Nightly workflow failed: <https://github.com/scaleway/scaleway-sdk-go/actions/runs/${GITHUB_RUN_ID}>"'"
+                  }
+              }
+            ]
+          }' \
+          ${SLACK_WEBHOOK_NIGHTLY};
+        env:
+          SLACK_WEBHOOK_NIGHTLY: ${{ secrets.SLACK_WEBHOOK_NIGHTLY }}
