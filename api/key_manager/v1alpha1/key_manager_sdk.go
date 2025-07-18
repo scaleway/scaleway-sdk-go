@@ -268,7 +268,8 @@ const (
 	// The key cannot be used for cryptographic operations.
 	KeyStateDisabled = KeyState("disabled")
 	// Key material must be imported before the key can be used for cryptographic operations.
-	KeyStatePendingKeyMaterial = KeyState("pending_key_material")
+	KeyStatePendingKeyMaterial   = KeyState("pending_key_material")
+	KeyStateScheduledForDeletion = KeyState("scheduled_for_deletion")
 )
 
 func (enum KeyState) String() string {
@@ -285,6 +286,7 @@ func (enum KeyState) Values() []KeyState {
 		"enabled",
 		"disabled",
 		"pending_key_material",
+		"scheduled_for_deletion",
 	}
 }
 
