@@ -72,7 +72,7 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 	var client *scw.Client
 
 	if UpdateCassette {
-		// When updating the recoreded test requests, we need the access key and secret key.
+		// When updating the recorded test requests, we need the access key and secret key.
 		client, err = scw.NewClient(
 			scw.WithHTTPClient(httpClient),
 			scw.WithProfile(activeProfile),
