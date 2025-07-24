@@ -1629,7 +1629,7 @@ type Frontend struct {
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit"`
 
-	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
@@ -1740,7 +1740,7 @@ type ACL struct {
 	// Name: ACL name.
 	Name string `json:"name"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` & `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` & `http_filter_value` are required.
 	Match *ACLMatch `json:"match"`
 
 	// Action: action to take when incoming traffic matches an ACL filter.
@@ -1844,7 +1844,7 @@ type ACLSpec struct {
 	// Action: action to take when incoming traffic matches an ACL filter.
 	Action *ACLAction `json:"action"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` and `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` and `http_filter_value` are required.
 	Match *ACLMatch `json:"match"`
 
 	// Index: priority of this ACL (ACLs are applied in ascending order, 0 is the first ACL executed).
@@ -1907,7 +1907,7 @@ type CreateACLRequest struct {
 	// Action: action to take when incoming traffic matches an ACL filter.
 	Action *ACLAction `json:"action"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` & `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` & `http_filter_value` are required.
 	Match *ACLMatch `json:"match,omitempty"`
 
 	// Index: priority of this ACL (ACLs are applied in ascending order, 0 is the first ACL executed).
@@ -2082,7 +2082,7 @@ type CreateFrontendRequest struct {
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 
-	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
@@ -3040,7 +3040,7 @@ type UpdateACLRequest struct {
 	// Action: action to take when incoming traffic matches an ACL filter.
 	Action *ACLAction `json:"action"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` & `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` & `http_filter_value` are required.
 	Match *ACLMatch `json:"match,omitempty"`
 
 	// Index: priority of this ACL (ACLs are applied in ascending order, 0 is the first ACL executed).
@@ -3201,7 +3201,7 @@ type UpdateFrontendRequest struct {
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 
-	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs *bool `json:"enable_access_logs,omitempty"`
 }
 
@@ -3448,7 +3448,7 @@ type ZonedAPICreateACLRequest struct {
 	// Action: action to take when incoming traffic matches an ACL filter.
 	Action *ACLAction `json:"action"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` & `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` & `http_filter_value` are required.
 	Match *ACLMatch `json:"match,omitempty"`
 
 	// Index: priority of this ACL (ACLs are applied in ascending order, 0 is the first ACL executed).
@@ -3623,7 +3623,7 @@ type ZonedAPICreateFrontendRequest struct {
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 
-	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs bool `json:"enable_access_logs"`
 }
 
@@ -4251,7 +4251,7 @@ type ZonedAPIUpdateACLRequest struct {
 	// Action: action to take when incoming traffic matches an ACL filter.
 	Action *ACLAction `json:"action"`
 
-	// Match: ACL match filter object. One of `ip_subnet` or `http_filter` & `http_filter_value` are required.
+	// Match: ACL match filter object. One of `ip_subnet`, `ips_edge_services` or `http_filter` & `http_filter_value` are required.
 	Match *ACLMatch `json:"match,omitempty"`
 
 	// Index: priority of this ACL (ACLs are applied in ascending order, 0 is the first ACL executed).
@@ -4412,7 +4412,7 @@ type ZonedAPIUpdateFrontendRequest struct {
 	// ConnectionRateLimit: rate limit for new connections established on this frontend. Use 0 value to disable, else value is connections per second.
 	ConnectionRateLimit *uint32 `json:"connection_rate_limit,omitempty"`
 
-	// EnableAccessLogs: defines wether to enable access logs on the frontend.
+	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs *bool `json:"enable_access_logs,omitempty"`
 }
 
