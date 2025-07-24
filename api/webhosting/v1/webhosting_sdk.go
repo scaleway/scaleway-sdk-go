@@ -463,6 +463,7 @@ const (
 	HostingStatusError         = HostingStatus("error")
 	HostingStatusLocked        = HostingStatus("locked")
 	HostingStatusMigrating     = HostingStatus("migrating")
+	HostingStatusUpdating      = HostingStatus("updating")
 )
 
 func (enum HostingStatus) String() string {
@@ -482,6 +483,7 @@ func (enum HostingStatus) Values() []HostingStatus {
 		"error",
 		"locked",
 		"migrating",
+		"updating",
 	}
 }
 
