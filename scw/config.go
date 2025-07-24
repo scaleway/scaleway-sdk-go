@@ -192,6 +192,13 @@ func LoadConfig() (*Config, error) {
 	configPath := GetConfigPath()
 	cfg, err := LoadConfigFromPath(configPath)
 
+	// The nightly tests should run without config by using the credentials in the environment
+	if err != nil && os.Getenv("RUNNING_NIGHTLY_TESTS") == "true" {
+		return &Config{
+			Profile: *LoadEnvProfile(),
+		}, nil
+	}
+
 	// Special case if using default config path
 	// if config.yaml does not exist, we should try to read config.yml
 	if os.Getenv(ScwConfigPathEnv) == "" {
