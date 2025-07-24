@@ -37,7 +37,14 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		recorderMode = recorder.ModeRecording
 		config, err := scw.LoadConfig()
 		if err != nil {
-			return nil, nil, err
+			// The nightly tests should run without config by using the credentials in the environment
+			if os.Getenv("RUNNING_NIGHTLY_TESTS") == "true" {
+				config = &scw.Config{
+					Profile: *scw.LoadEnvProfile(),
+				}
+			} else {
+				return nil, nil, err
+			}
 		}
 		activeProfile, err = config.GetActiveProfile()
 		if err != nil {
