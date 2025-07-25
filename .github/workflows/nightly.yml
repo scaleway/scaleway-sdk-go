@@ -29,7 +29,6 @@ jobs:
         run: go test -v ./api/${{ matrix.products }} -timeout=4h
         env:
           SDK_UPDATE_CASSETTES: true
-          RUNNING_NIGHTLY_TESTS: true
           SCW_DEBUG: 1
           SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
           SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
