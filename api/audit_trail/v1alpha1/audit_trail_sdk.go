@@ -99,7 +99,11 @@ const (
 	ResourceTypeKeyManagerKey        = ResourceType("key_manager_key")
 	ResourceTypeAccountUser          = ResourceType("account_user")
 	ResourceTypeAccountOrganization  = ResourceType("account_organization")
+	ResourceTypeAccountProject       = ResourceType("account_project")
 	ResourceTypeInstanceServer       = ResourceType("instance_server")
+	ResourceTypeAppleSiliconServer   = ResourceType("apple_silicon_server")
+	ResourceTypeBaremetalServer      = ResourceType("baremetal_server")
+	ResourceTypeBaremetalSetting     = ResourceType("baremetal_setting")
 )
 
 func (enum ResourceType) String() string {
@@ -132,7 +136,11 @@ func (enum ResourceType) Values() []ResourceType {
 		"key_manager_key",
 		"account_user",
 		"account_organization",
+		"account_project",
 		"instance_server",
+		"apple_silicon_server",
+		"baremetal_server",
+		"baremetal_setting",
 	}
 }
 
@@ -154,11 +162,35 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 // AccountOrganizationInfo: account organization info.
 type AccountOrganizationInfo struct{}
 
+// AccountProjectInfo: account project info.
+type AccountProjectInfo struct {
+	Description string `json:"description"`
+}
+
 // AccountUserInfo: account user info.
 type AccountUserInfo struct {
 	Email string `json:"email"`
 
 	PhoneNumber *string `json:"phone_number"`
+}
+
+// AppleSiliconServerInfo: apple silicon server info.
+type AppleSiliconServerInfo struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+}
+
+// BaremetalServerInfo: baremetal server info.
+type BaremetalServerInfo struct {
+	Description string `json:"description"`
+
+	Tags []string `json:"tags"`
+}
+
+// BaremetalSettingInfo: baremetal setting info.
+type BaremetalSettingInfo struct {
+	Type string `json:"type"`
 }
 
 // InstanceServerInfo: instance server info.
@@ -222,46 +254,58 @@ type Resource struct {
 	Name *string `json:"name"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KeymKeyInfo *KeyManagerKeyInfo `json:"keym_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	SecretManagerSecretInfo *SecretManagerSecretInfo `json:"secret_manager_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	SecretManagerVersionInfo *SecretManagerSecretVersionInfo `json:"secret_manager_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	KeyManagerKeyInfo *KeyManagerKeyInfo `json:"key_manager_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	AccountUserInfo *AccountUserInfo `json:"account_user_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	AccountOrganizationInfo *AccountOrganizationInfo `json:"account_organization_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
 	InstanceServerInfo *InstanceServerInfo `json:"instance_server_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
+	AppleSiliconServerInfo *AppleSiliconServerInfo `json:"apple_silicon_server_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
+	AccountProjectInfo *AccountProjectInfo `json:"account_project_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
+	BaremetalServerInfo *BaremetalServerInfo `json:"baremetal_server_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo must be set.
+	BaremetalSettingInfo *BaremetalSettingInfo `json:"baremetal_setting_info,omitempty"`
 }
 
 // ProductService: product service.
@@ -305,9 +349,6 @@ type Event struct {
 
 	// MethodName: API method called to trigger the event.
 	MethodName string `json:"method_name"`
-
-	// Deprecated: Resource: resource attached to the event.
-	Resource *Resource `json:"resource,omitempty"`
 
 	// Resources: resources attached to the event.
 	Resources []*Resource `json:"resources"`

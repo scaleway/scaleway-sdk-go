@@ -48,6 +48,10 @@ const (
 	ListIPsRequestOrderByUpdatedAtAsc   = ListIPsRequestOrderBy("updated_at_asc")
 	ListIPsRequestOrderByAttachedAtDesc = ListIPsRequestOrderBy("attached_at_desc")
 	ListIPsRequestOrderByAttachedAtAsc  = ListIPsRequestOrderBy("attached_at_asc")
+	ListIPsRequestOrderByIPAddressDesc  = ListIPsRequestOrderBy("ip_address_desc")
+	ListIPsRequestOrderByIPAddressAsc   = ListIPsRequestOrderBy("ip_address_asc")
+	ListIPsRequestOrderByMacAddressDesc = ListIPsRequestOrderBy("mac_address_desc")
+	ListIPsRequestOrderByMacAddressAsc  = ListIPsRequestOrderBy("mac_address_asc")
 )
 
 func (enum ListIPsRequestOrderBy) String() string {
@@ -66,6 +70,10 @@ func (enum ListIPsRequestOrderBy) Values() []ListIPsRequestOrderBy {
 		"updated_at_asc",
 		"attached_at_desc",
 		"attached_at_asc",
+		"ip_address_desc",
+		"ip_address_asc",
+		"mac_address_desc",
+		"mac_address_asc",
 	}
 }
 

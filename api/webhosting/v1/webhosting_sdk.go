@@ -463,6 +463,7 @@ const (
 	HostingStatusError         = HostingStatus("error")
 	HostingStatusLocked        = HostingStatus("locked")
 	HostingStatusMigrating     = HostingStatus("migrating")
+	HostingStatusUpdating      = HostingStatus("updating")
 )
 
 func (enum HostingStatus) String() string {
@@ -482,6 +483,7 @@ func (enum HostingStatus) Values() []HostingStatus {
 		"error",
 		"locked",
 		"migrating",
+		"updating",
 	}
 }
 
@@ -1551,6 +1553,9 @@ type Domain struct {
 	// Owner: zone owner of the domain.
 	// Default value: unknown_zone_owner
 	Owner DomainZoneOwner `json:"owner"`
+
+	// ZoneDomainName: main domain for this zone.
+	ZoneDomainName string `json:"zone_domain_name"`
 
 	// AvailableActions: a list of actions that can be performed on the domain.
 	AvailableActions []DomainAction `json:"available_actions"`

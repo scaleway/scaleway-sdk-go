@@ -1159,7 +1159,7 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// BatchCreateServers: Create multiple servers in the targeted zone specifying their configurations. If the request cannot entirely be fullfilled, no servers are created.
+// BatchCreateServers: Create multiple servers in the targeted zone specifying their configurations. If the request cannot entirely be fulfilled, no servers are created.
 func (s *API) BatchCreateServers(req *BatchCreateServersRequest, opts ...scw.RequestOption) (*BatchCreateServersResponse, error) {
 	var err error
 

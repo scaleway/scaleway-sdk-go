@@ -200,8 +200,22 @@ func (fakeHTTPClient) Do(*http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func (fakeHTTPClient) RoundTrip(*http.Request) (*http.Response, error) {
+type fakeTransport struct{}
+
+func (fakeTransport) RoundTrip(*http.Request) (*http.Response, error) {
 	return nil, nil
+}
+
+type fakeAltTransport struct {
+	insecure bool
+}
+
+func (f *fakeAltTransport) RoundTrip(*http.Request) (*http.Response, error) {
+	return nil, nil
+}
+
+func (f *fakeAltTransport) SetInsecureTransport() {
+	f.insecure = true
 }
 
 // TestSetInsecureMode test if setInsecureMode panic when given custom HTTP client
@@ -211,8 +225,14 @@ func TestSetInsecureMode(t *testing.T) {
 
 	// custom Transport client
 	clientWithFakeTransport := newHTTPClient()
-	clientWithFakeTransport.Transport = fakeHTTPClient{}
+	clientWithFakeTransport.Transport = fakeTransport{}
 	setInsecureMode(clientWithFakeTransport)
+
+	// custom Alt transport client
+	customTransport := &fakeAltTransport{}
+	clientWithFakeTransport.Transport = customTransport
+	setInsecureMode(clientWithFakeTransport)
+	testhelpers.Equals(t, true, customTransport.insecure)
 
 	// custom HTTP client
 	setInsecureMode(fakeHTTPClient{})
@@ -222,7 +242,7 @@ func TestSetInsecureMode(t *testing.T) {
 	getLogMessage := func(s string) string {
 		return strings.Join(strings.Split(s, " ")[3:], " ")
 	}
-	testhelpers.Equals(t, "client: cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
+	testhelpers.Equals(t, "client: cannot use insecure mode with Transport client of type scw.fakeTransport", getLogMessage(lines[0]))
 	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)

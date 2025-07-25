@@ -76,23 +76,12 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 
 	instanceAPI := NewAPI(client)
 
-	volumeSize := 1 * scw.GB
-
-	createVolume, err := instanceAPI.CreateVolume(&CreateVolumeRequest{
-		Name:       "volume_name",
-		VolumeType: VolumeVolumeTypeBSSD,
-		Size:       &volumeSize,
-	})
-	testhelpers.AssertNoError(t, err)
-
-	createResponse, err := instanceAPI.CreateSnapshot(&CreateSnapshotRequest{
-		Name:     "name",
-		VolumeID: &createVolume.Volume.ID,
-	})
-	testhelpers.AssertNoError(t, err)
+	zone := scw.ZoneFrPar1
+	localSnapshot := createLocalSnapshot(t, client, zone)
 
 	updateResponse, err := instanceAPI.UpdateSnapshot(&UpdateSnapshotRequest{
-		SnapshotID: createResponse.Snapshot.ID,
+		SnapshotID: localSnapshot.ID,
+		Zone:       zone,
 		Name:       scw.StringPtr("new_name"),
 		Tags:       scw.StringsPtr([]string{"foo", "bar"}),
 	})
@@ -101,12 +90,14 @@ func TestAPI_UpdateSnapshot(t *testing.T) {
 	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.Snapshot.Tags)
 
 	_, err = instanceAPI.WaitForSnapshot(&WaitForSnapshotRequest{
-		SnapshotID: createResponse.Snapshot.ID,
+		SnapshotID: localSnapshot.ID,
+		Zone:       zone,
 	})
 	testhelpers.AssertNoError(t, err)
 
 	err = instanceAPI.DeleteSnapshot(&DeleteSnapshotRequest{
-		SnapshotID: createResponse.Snapshot.ID,
+		SnapshotID: localSnapshot.ID,
+		Zone:       zone,
 	})
 	testhelpers.AssertNoError(t, err)
 }

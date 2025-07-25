@@ -2424,7 +2424,7 @@ type CreateServerRequest struct {
 	// Name: instance name.
 	Name string `json:"name,omitempty"`
 
-	// DynamicIPRequired: define if a dynamic IPv4 is required for the Instance.
+	// DynamicIPRequired: by default, `dynamic_ip_required` is true, a dynamic ip is attached to the instance (if no flexible ip is already attached).
 	DynamicIPRequired *bool `json:"dynamic_ip_required,omitempty"`
 
 	// Deprecated: RoutedIPEnabled: if true, configure the Instance so it uses the new routed IP mode.
@@ -4771,7 +4771,7 @@ func (s *API) GetServerCompatibleTypes(req *GetServerCompatibleTypesRequest, opt
 	return &resp, nil
 }
 
-// AttachServerVolume:
+// AttachServerVolume: Attach a volume to an Instance.
 func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.RequestOption) (*AttachServerVolumeResponse, error) {
 	var err error
 
@@ -4807,7 +4807,7 @@ func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// DetachServerVolume:
+// DetachServerVolume: Detach a volume from an Instance.
 func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.RequestOption) (*DetachServerVolumeResponse, error) {
 	var err error
 
@@ -4879,7 +4879,7 @@ func (s *API) AttachServerFileSystem(req *AttachServerFileSystemRequest, opts ..
 	return &resp, nil
 }
 
-// DetachServerFileSystem: Detach a filesystem volume to an Instance.
+// DetachServerFileSystem: Detach a filesystem volume from an Instance.
 func (s *API) DetachServerFileSystem(req *DetachServerFileSystemRequest, opts ...scw.RequestOption) (*DetachServerFileSystemResponse, error) {
 	var err error
 
