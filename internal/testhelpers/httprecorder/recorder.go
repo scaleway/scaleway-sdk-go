@@ -37,11 +37,12 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		recorderMode = recorder.ModeRecording
 		config, err := scw.LoadConfig()
 		if err != nil {
-			return nil, nil, err
-		}
-		activeProfile, err = config.GetActiveProfile()
-		if err != nil {
-			return nil, nil, err
+			activeProfile = &scw.Profile{}
+		} else {
+			activeProfile, err = config.GetActiveProfile()
+			if err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 
@@ -57,7 +58,12 @@ func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Record
 		delete(i.Request.Headers, "X-Auth-Token")
 
 		if UpdateCassette {
-			secretKey := *activeProfile.SecretKey
+			var secretKey string
+			if activeProfile != nil && activeProfile.SecretKey != nil {
+				secretKey = *activeProfile.SecretKey
+			} else {
+				secretKey = os.Getenv("SCW_SECRET_KEY")
+			}
 			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
 				panic(errors.New("found secret key in cassette"))
 			}
