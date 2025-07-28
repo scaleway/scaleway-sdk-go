@@ -1221,6 +1221,15 @@ type Cluster struct {
 
 	// Deprecated: NewImagesEnabled: defines whether all pools are migrated to new images.
 	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
+
+	// PodCidr: subnet used for the Pod CIDR.
+	PodCidr scw.IPNet `json:"pod_cidr"`
+
+	// ServiceCidr: subnet used for the Service CIDR.
+	ServiceCidr scw.IPNet `json:"service_cidr"`
+
+	// ServiceDNSIP: IP used for the DNS Service.
+	ServiceDNSIP net.IP `json:"service_dns_ip"`
 }
 
 // Node: node.
@@ -1432,6 +1441,15 @@ type CreateClusterRequest struct {
 
 	// PrivateNetworkID: private network ID for internal cluster communication (cannot be changed later).
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// PodCidr: subnet used for the Pod CIDR (cannot be changed later).
+	PodCidr *scw.IPNet `json:"pod_cidr,omitempty"`
+
+	// ServiceCidr: subnet used for the Service CIDR (cannot be changed later).
+	ServiceCidr *scw.IPNet `json:"service_cidr,omitempty"`
+
+	// ServiceDNSIP: IP used for the DNS Service (cannot be changes later). If unset, default to Service CIDR's network + 10.
+	ServiceDNSIP *net.IP `json:"service_dns_ip,omitempty"`
 }
 
 // CreateExternalNodeRequest: create external node request.
