@@ -90,6 +90,43 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDatabasesRequestOrderBy string
+
+const (
+	ListDatabasesRequestOrderByNameAsc  = ListDatabasesRequestOrderBy("name_asc")
+	ListDatabasesRequestOrderByNameDesc = ListDatabasesRequestOrderBy("name_desc")
+)
+
+func (enum ListDatabasesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListDatabasesRequestOrderByNameAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListDatabasesRequestOrderBy) Values() []ListDatabasesRequestOrderBy {
+	return []ListDatabasesRequestOrderBy{
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListDatabasesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDatabasesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDatabasesRequestOrderBy(ListDatabasesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListInstancesRequestOrderBy string
 
 const (
@@ -491,6 +528,11 @@ type EndpointSpec struct {
 	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
+// Database: database.
+type Database struct {
+	Name string `json:"name"`
+}
+
 // Instance: instance.
 type Instance struct {
 	// ID: UUID of the Database Instance.
@@ -769,6 +811,51 @@ type GetSnapshotRequest struct {
 
 	// SnapshotID: UUID of the snapshot.
 	SnapshotID string `json:"-"`
+}
+
+// ListDatabasesRequest: list databases request.
+type ListDatabasesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance.
+	InstanceID string `json:"-"`
+
+	// OrderBy: criteria to use when requesting user listing.
+	// Default value: name_asc
+	OrderBy ListDatabasesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDatabasesResponse: list databases response.
+type ListDatabasesResponse struct {
+	// Databases: list of the databases.
+	Databases []*Database `json:"databases"`
+
+	// TotalCount: total count of databases present on a Database Instance.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatabasesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDatabasesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Databases = append(r.Databases, results.Databases...)
+	r.TotalCount += uint64(len(results.Databases))
+	return uint64(len(results.Databases)), nil
 }
 
 // ListInstancesRequest: list instances request.
@@ -1840,6 +1927,48 @@ func (s *API) SetUserRole(req *SetUserRoleRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp User
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDatabases: List all databases of a given Database Instance.
+func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption) (*ListDatabasesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mongodb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/databases",
+		Query:  query,
+	}
+
+	var resp ListDatabasesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
