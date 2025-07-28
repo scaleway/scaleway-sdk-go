@@ -556,6 +556,15 @@ func setInsecureMode(c httpClient) {
 		logger.Warningf("client: cannot use insecure mode with HTTP client of type %T", c)
 		return
 	}
+
+	altTransport, ok := standardHTTPClient.Transport.(interface {
+		SetInsecureTransport()
+	})
+	if ok {
+		altTransport.SetInsecureTransport()
+		return
+	}
+
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
 		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
