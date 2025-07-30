@@ -43,10 +43,10 @@ lint:
 	./scripts/lint.sh
 
 test:
-	go test -v -race -cover $(PKGS)
+	CGO_ENABLED=0 go test -v -race -cover $(PKGS)
 
 test-coverage:
-	go test -coverprofile=coverage.out $(PKGS)
+	CGO_ENABLED=0 go test -coverprofile=coverage.out $(PKGS)
 	go tool cover -func=coverage.out
 	go tool cover -html=coverage.out -o coverage.html
 
