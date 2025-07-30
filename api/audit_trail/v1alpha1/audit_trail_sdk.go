@@ -238,6 +238,11 @@ type EventPrincipal struct {
 	ID string `json:"id"`
 }
 
+// EventSystem: event system.
+type EventSystem struct {
+	Name string `json:"name"`
+}
+
 // Resource: resource.
 type Resource struct {
 	ID string `json:"id"`
@@ -327,7 +332,12 @@ type Event struct {
 	Locality string `json:"locality"`
 
 	// Principal: user or IAM application at the origin of the event.
-	Principal *EventPrincipal `json:"principal"`
+	// Precisely one of Principal, System must be set.
+	Principal *EventPrincipal `json:"principal,omitempty"`
+
+	// System: the Scaleway system that performed an action on behalf of the client.
+	// Precisely one of Principal, System must be set.
+	System *EventSystem `json:"system,omitempty"`
 
 	// OrganizationID: organization ID containing the event.
 	OrganizationID string `json:"organization_id"`
