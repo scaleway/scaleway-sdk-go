@@ -137,6 +137,55 @@ func (s *API) WaitForDNSRecordExist(
 	return dns.(*Record), nil
 }
 
+// WaitForDNSRecordNotExistRequest is used by WaitForDNSRecordNotExist method.
+type WaitForDNSRecordNotExistRequest struct {
+	DNSZone       string
+	RecordName    string
+	RecordType    RecordType
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+func (s *API) WaitForDNSRecordNotExist(
+	req *WaitForDNSRecordNotExistRequest,
+	opts ...scw.RequestOption,
+) error {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	_, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			DNSRecords, err := s.ListDNSZoneRecords(&ListDNSZoneRecordsRequest{
+				Name:    req.RecordName,
+				Type:    req.RecordType,
+				DNSZone: req.DNSZone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			if DNSRecords.TotalCount == 0 {
+				return nil, true, nil
+			}
+
+			return nil, false, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return errors.Wrap(err, "waiting for DNS record to not exist failed")
+	}
+
+	return nil
+}
+
 // WaitForOrderDomainRequest is used by WaitForOrderDomain method.
 type WaitForOrderDomainRequest struct {
 	Domain        string
