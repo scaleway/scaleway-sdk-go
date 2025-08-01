@@ -935,6 +935,24 @@ func (enum *PlatformPlatformGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// AutoConfigDomainDNS: auto config domain dns.
+type AutoConfigDomainDNS struct {
+	// Nameservers: whether or not to synchronize domain nameservers.
+	Nameservers bool `json:"nameservers"`
+
+	// WebRecords: whether or not to synchronize web records.
+	WebRecords bool `json:"web_records"`
+
+	// MailRecords: whether or not to synchronize mail records.
+	MailRecords bool `json:"mail_records"`
+
+	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
+	AllRecords bool `json:"all_records"`
+
+	// None: no automatic domain configuration. Users must configure their domain for the Web Hosting to work.
+	None bool `json:"none"`
+}
+
 // PlatformControlPanelURLs: platform control panel ur ls.
 type PlatformControlPanelURLs struct {
 	// Dashboard: URL to connect to the hosting control panel dashboard.
@@ -942,6 +960,23 @@ type PlatformControlPanelURLs struct {
 
 	// Webmail: URL to connect to the hosting Webmail interface.
 	Webmail string `json:"webmail"`
+}
+
+// HostingDomainCustomDomain: hosting domain custom domain.
+type HostingDomainCustomDomain struct {
+	// Domain: custom domain linked to the hosting plan.
+	Domain string `json:"domain"`
+
+	// DomainStatus: status of the custom domain verification.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
+
+	// DNSStatus: status of the DNS configuration for the custom domain.
+	// Default value: unknown_status
+	DNSStatus DNSRecordsStatus `json:"dns_status"`
+
+	// AutoConfigDomainDNS: indicates whether to auto-configure DNS for this domain.
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
 // OfferOption: offer option.
@@ -982,29 +1017,20 @@ type PlatformControlPanel struct {
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
+// HostingDomain: hosting domain.
+type HostingDomain struct {
+	// Subdomain: optional free subdomain linked to the Web Hosting plan.
+	Subdomain string `json:"subdomain"`
+
+	// CustomDomain: optional custom domain linked to the Web Hosting plan.
+	CustomDomain *HostingDomainCustomDomain `json:"custom_domain"`
+}
+
 // CreateDatabaseRequestUser: create database request user.
 type CreateDatabaseRequestUser struct {
 	Username string `json:"username"`
 
 	Password string `json:"password"`
-}
-
-// AutoConfigDomainDNS: auto config domain dns.
-type AutoConfigDomainDNS struct {
-	// Nameservers: whether or not to synchronize domain nameservers.
-	Nameservers bool `json:"nameservers"`
-
-	// WebRecords: whether or not to synchronize web records.
-	WebRecords bool `json:"web_records"`
-
-	// MailRecords: whether or not to synchronize mail records.
-	MailRecords bool `json:"mail_records"`
-
-	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
-	AllRecords bool `json:"all_records"`
-
-	// None: no automatic domain configuration. Users must configure their domain for the Web Hosting to work.
-	None bool `json:"none"`
 }
 
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
@@ -1202,8 +1228,8 @@ type HostingSummary struct {
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
-	// Domain: main domain associated with the Web Hosting plan.
-	Domain string `json:"domain"`
+	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
+	Domain *string `json:"domain,omitempty"`
 
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
@@ -1215,12 +1241,15 @@ type HostingSummary struct {
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
 
-	// DomainStatus: main domain status of the Web Hosting plan.
+	// Deprecated: DomainStatus: main domain status of the Web Hosting plan.
 	// Default value: unknown_status
-	DomainStatus DomainStatus `json:"domain_status"`
+	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
+
+	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
+	DomainInfo *HostingDomain `json:"domain_info"`
 }
 
 // MailAccount: mail account.
@@ -1652,8 +1681,8 @@ type Hosting struct {
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
-	// Domain: main domain associated with the Web Hosting plan.
-	Domain string `json:"domain"`
+	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
+	Domain *string `json:"domain,omitempty"`
 
 	// Offer: details of the Web Hosting plan offer and options.
 	Offer *Offer `json:"offer"`
@@ -1664,7 +1693,7 @@ type Hosting struct {
 	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
-	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
 	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
@@ -1677,12 +1706,15 @@ type Hosting struct {
 	// User: details of the hosting user.
 	User *HostingUser `json:"user"`
 
-	// DomainStatus: main domain status of the Web Hosting plan.
+	// Deprecated: DomainStatus: main domain status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
-	DomainStatus DomainStatus `json:"domain_status"`
+	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
+
+	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
+	DomainInfo *HostingDomain `json:"domain_info"`
 }
 
 // HostingAPICreateHostingRequest: hosting api create hosting request.
@@ -1704,6 +1736,9 @@ type HostingAPICreateHostingRequest struct {
 
 	// Domain: domain name to link to the Web Hosting plan. You must already own this domain name, and have completed the DNS validation process beforehand.
 	Domain string `json:"domain"`
+
+	// Subdomain: the name prefix to use as a free subdomain (for example, `mysite`) assigned to the Web Hosting plan. The full domain will be automatically created by adding it to the fixed base domain (e.g. `mysite.scw.site`). You do not need to include the base domain yourself.
+	Subdomain *string `json:"subdomain,omitempty"`
 
 	// OfferOptions: list of the Web Hosting plan options IDs with their quantities.
 	OfferOptions []*OfferOptionRequest `json:"offer_options"`
@@ -1790,6 +1825,9 @@ type HostingAPIListHostingsRequest struct {
 
 	// ControlPanels: name of the control panel to filter for, only Web Hosting plans from this control panel will be returned.
 	ControlPanels []string `json:"-"`
+
+	// Subdomain: optional free subdomain linked to the Web Hosting plan.
+	Subdomain *string `json:"-"`
 }
 
 // HostingAPIResetHostingPasswordRequest: hosting api reset hosting password request.
@@ -3018,6 +3056,7 @@ func (s *HostingAPI) ListHostings(req *HostingAPIListHostingsRequest, opts ...sc
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "control_panels", req.ControlPanels)
+	parameter.AddToQuery(query, "subdomain", req.Subdomain)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
