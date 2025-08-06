@@ -153,6 +153,8 @@ const (
 	PublicCatalogProductStatusEndOfDeployment = PublicCatalogProductStatus("end_of_deployment")
 	// There is no longer any commercial support for this product.
 	PublicCatalogProductStatusEndOfSupport = PublicCatalogProductStatus("end_of_support")
+	// The product is not sold anymore but is still in use.
+	PublicCatalogProductStatusEndOfSale = PublicCatalogProductStatus("end_of_sale")
 )
 
 func (enum PublicCatalogProductStatus) String() string {
@@ -171,6 +173,7 @@ func (enum PublicCatalogProductStatus) Values() []PublicCatalogProductStatus {
 		"general_availability",
 		"end_of_deployment",
 		"end_of_support",
+		"end_of_sale",
 	}
 }
 
