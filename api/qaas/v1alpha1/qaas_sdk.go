@@ -343,6 +343,43 @@ func (enum *ListJobsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListModelsRequestOrderBy string
+
+const (
+	ListModelsRequestOrderByCreatedAtDesc = ListModelsRequestOrderBy("created_at_desc")
+	ListModelsRequestOrderByCreatedAtAsc  = ListModelsRequestOrderBy("created_at_asc")
+)
+
+func (enum ListModelsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListModelsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListModelsRequestOrderBy) Values() []ListModelsRequestOrderBy {
+	return []ListModelsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListModelsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListModelsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListModelsRequestOrderBy(ListModelsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPlatformsRequestOrderBy string
 
 const (
@@ -1026,6 +1063,27 @@ type Job struct {
 
 	// ResultDistribution: result of the job, if the job is finished.
 	ResultDistribution *string `json:"result_distribution"`
+
+	// ModelID: computation model ID executed by the job.
+	ModelID *string `json:"model_id"`
+
+	// Parameters: execution parameters for this job.
+	Parameters *string `json:"parameters"`
+}
+
+// Model: model.
+type Model struct {
+	// ID: unique ID of the model.
+	ID string `json:"id"`
+
+	// CreatedAt: time at which the model was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// URL: storage URL of the model.
+	URL *string `json:"url"`
+
+	// ProjectID: project ID in which the model has been created.
+	ProjectID string `json:"project_id"`
 }
 
 // Platform: platform.
@@ -1215,6 +1273,9 @@ type Session struct {
 
 	// BookingID: an optional booking unique ID of an attached booking.
 	BookingID *string `json:"booking_id"`
+
+	// ModelID: default computation model ID to be executed by job assigned to this session.
+	ModelID *string `json:"model_id"`
 }
 
 // CancelJobRequest: cancel job request.
@@ -1245,6 +1306,21 @@ type CreateJobRequest struct {
 
 	// MaxDuration: maximum duration of the job.
 	MaxDuration *scw.Duration `json:"max_duration,omitempty"`
+
+	// ModelID: computation model ID to be executed by the job.
+	ModelID *string `json:"model_id,omitempty"`
+
+	// Parameters: execution parameters for this job.
+	Parameters *string `json:"parameters,omitempty"`
+}
+
+// CreateModelRequest: create model request.
+type CreateModelRequest struct {
+	// ProjectID: project ID to attach this model.
+	ProjectID string `json:"project_id"`
+
+	// Payload: the serialized model data.
+	Payload *string `json:"payload,omitempty"`
 }
 
 // CreateProcessRequest: create process request.
@@ -1293,6 +1369,9 @@ type CreateSessionRequest struct {
 
 	// BookingDemand: a booking demand to schedule the session, only applicable if the platform is bookable.
 	BookingDemand *CreateSessionRequestBookingDemand `json:"booking_demand,omitempty"`
+
+	// ModelID: default computation model ID to be executed by job assigned to this session.
+	ModelID *string `json:"model_id,omitempty"`
 }
 
 // DeleteJobRequest: delete job request.
@@ -1335,6 +1414,12 @@ type GetJobCircuitRequest struct {
 type GetJobRequest struct {
 	// JobID: unique ID of the job you want to get.
 	JobID string `json:"-"`
+}
+
+// GetModelRequest: get model request.
+type GetModelRequest struct {
+	// ModelID: unique ID of the model.
+	ModelID string `json:"-"`
 }
 
 // GetPlatformRequest: get platform request.
@@ -1544,6 +1629,50 @@ func (r *ListJobsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Jobs = append(r.Jobs, results.Jobs...)
 	r.TotalCount += uint64(len(results.Jobs))
 	return uint64(len(results.Jobs)), nil
+}
+
+// ListModelsRequest: list models request.
+type ListModelsRequest struct {
+	// ProjectID: list models belonging to this project ID.
+	ProjectID string `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of results to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order of the returned results.
+	// Default value: created_at_desc
+	OrderBy ListModelsRequestOrderBy `json:"-"`
+}
+
+// ListModelsResponse: list models response.
+type ListModelsResponse struct {
+	// TotalCount: total number of models.
+	TotalCount uint64 `json:"total_count"`
+
+	// Models: list of models.
+	Models []*Model `json:"models"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListModelsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListModelsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListModelsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Models = append(r.Models, results.Models...)
+	r.TotalCount += uint64(len(results.Models))
+	return uint64(len(results.Models)), nil
 }
 
 // ListPlatformsRequest: list platforms request.
@@ -2635,6 +2764,91 @@ func (s *API) UpdateBooking(req *UpdateBookingRequest, opts ...scw.RequestOption
 	}
 
 	var resp Booking
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateModel: Create and register a new model that can be executed through next jobs. A model can also be assigned to a Session.
+func (s *API) CreateModel(req *CreateModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/qaas/v1alpha1/models",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Model
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetModel: Retrieve information about of the provided **model ID**.
+func (s *API) GetModel(req *GetModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	var err error
+
+	if fmt.Sprint(req.ModelID) == "" {
+		return nil, errors.New("field ModelID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/models/" + fmt.Sprint(req.ModelID) + "",
+	}
+
+	var resp Model
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListModels: Retrieve information about all models of the provided **project ID**.
+func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*ListModelsResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/models",
+		Query:  query,
+	}
+
+	var resp ListModelsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
