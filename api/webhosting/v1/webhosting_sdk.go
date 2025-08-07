@@ -40,6 +40,120 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type BackupItemType string
+
+const (
+	// Default type returned when the backup item type is not specified.
+	BackupItemTypeUnknownBackupItemType = BackupItemType("unknown_backup_item_type")
+	// Complete system backup.
+	BackupItemTypeFull = BackupItemType("full")
+	// Backup item containing website-related files.
+	BackupItemTypeWeb = BackupItemType("web")
+	// Backup item for mail service data.
+	BackupItemTypeMail = BackupItemType("mail")
+	// Backup item for databases.
+	BackupItemTypeDb = BackupItemType("db")
+	// Backup item for database user accounts.
+	BackupItemTypeDbUser = BackupItemType("db_user")
+	// Backup item for FTP user accounts.
+	BackupItemTypeFtpUser = BackupItemType("ftp_user")
+	// Backup item for DNS zone configurations.
+	BackupItemTypeDNSZone = BackupItemType("dns_zone")
+	// Backup item for scheduled cron jobs.
+	BackupItemTypeCronJob = BackupItemType("cron_job")
+	// Backup item for SSL certificates.
+	BackupItemTypeSslCertificate = BackupItemType("ssl_certificate")
+)
+
+func (enum BackupItemType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BackupItemTypeUnknownBackupItemType)
+	}
+	return string(enum)
+}
+
+func (enum BackupItemType) Values() []BackupItemType {
+	return []BackupItemType{
+		"unknown_backup_item_type",
+		"full",
+		"web",
+		"mail",
+		"db",
+		"db_user",
+		"ftp_user",
+		"dns_zone",
+		"cron_job",
+		"ssl_certificate",
+	}
+}
+
+func (enum BackupItemType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackupItemType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackupItemType(BackupItemType(tmp).String())
+	return nil
+}
+
+type BackupStatus string
+
+const (
+	// Default status returned when the backup status is not specified.
+	BackupStatusUnknownBackupStatus = BackupStatus("unknown_backup_status")
+	// Backup is active and available.
+	BackupStatusActive = BackupStatus("active")
+	// Backup is locked and cannot be changed.
+	BackupStatusLocked = BackupStatus("locked")
+	// Backup is currently disabled.
+	BackupStatusDisabled = BackupStatus("disabled")
+	// Backup is incomplete, damaged, or corrupted.
+	BackupStatusDamaged = BackupStatus("damaged")
+	// Backup is being restored.
+	BackupStatusRestoring = BackupStatus("restoring")
+)
+
+func (enum BackupStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BackupStatusUnknownBackupStatus)
+	}
+	return string(enum)
+}
+
+func (enum BackupStatus) Values() []BackupStatus {
+	return []BackupStatus{
+		"unknown_backup_status",
+		"active",
+		"locked",
+		"disabled",
+		"damaged",
+		"restoring",
+	}
+}
+
+func (enum BackupStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackupStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackupStatus(BackupStatus(tmp).String())
+	return nil
+}
+
 type DNSRecordStatus string
 
 const (
@@ -499,6 +613,45 @@ func (enum *HostingStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = HostingStatus(HostingStatus(tmp).String())
+	return nil
+}
+
+type ListBackupsRequestOrderBy string
+
+const (
+	// Order by backup creation date, most recent first (default).
+	ListBackupsRequestOrderByCreatedAtDesc = ListBackupsRequestOrderBy("created_at_desc")
+	// Order by backup creation date, oldest first.
+	ListBackupsRequestOrderByCreatedAtAsc = ListBackupsRequestOrderBy("created_at_asc")
+)
+
+func (enum ListBackupsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListBackupsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListBackupsRequestOrderBy) Values() []ListBackupsRequestOrderBy {
+	return []ListBackupsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListBackupsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListBackupsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListBackupsRequestOrderBy(ListBackupsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -1017,6 +1170,29 @@ type PlatformControlPanel struct {
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
+// BackupItem: backup item.
+type BackupItem struct {
+	// ID: ID of the item.
+	ID string `json:"id"`
+
+	// Name: name of the item (e.g., `database name`, `email address`).
+	Name string `json:"name"`
+
+	// Type: type of the item (e.g., email, database, FTP).
+	// Default value: unknown_backup_item_type
+	Type BackupItemType `json:"type"`
+
+	// Size: size of the item in bytes.
+	Size scw.Size `json:"size"`
+
+	// Status: status of the item. Available values are `active`, `damaged`, and `restoring`.
+	// Default value: unknown_backup_status
+	Status BackupStatus `json:"status"`
+
+	// CreatedAt: date and time at which this item was backed up.
+	CreatedAt *time.Time `json:"created_at"`
+}
+
 // HostingDomain: hosting domain.
 type HostingDomain struct {
 	// Subdomain: optional free subdomain linked to the Web Hosting plan.
@@ -1168,6 +1344,35 @@ type Platform struct {
 	ControlPanel *PlatformControlPanel `json:"control_panel"`
 }
 
+// BackupItemGroup: backup item group.
+type BackupItemGroup struct {
+	// Type: type of items (e.g., email, database, FTP).
+	// Default value: unknown_backup_item_type
+	Type BackupItemType `json:"type"`
+
+	// Items: list of individual backup items of this type.
+	Items []*BackupItem `json:"items"`
+}
+
+// Backup: backup.
+type Backup struct {
+	// ID: ID of the backup.
+	ID string `json:"id"`
+
+	// Size: total size of the backup in bytes.
+	Size scw.Size `json:"size"`
+
+	// CreatedAt: creation date of the backup.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Status: status of the backup. Available values are `active`, `locked`, and `restoring`.
+	// Default value: unknown_backup_status
+	Status BackupStatus `json:"status"`
+
+	// TotalItems: total number of restorable items in the backup.
+	TotalItems uint32 `json:"total_items"`
+}
+
 // ControlPanel: control panel.
 type ControlPanel struct {
 	// Name: control panel name.
@@ -1293,6 +1498,73 @@ type DomainAvailability struct {
 
 	// Price: price for registering the domain.
 	Price *scw.Money `json:"price"`
+}
+
+// BackupAPIGetBackupRequest: backup api get backup request.
+type BackupAPIGetBackupRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to retrieve.
+	BackupID string `json:"-"`
+}
+
+// BackupAPIListBackupItemsRequest: backup api list backup items request.
+type BackupAPIListBackupItemsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to list items from.
+	BackupID string `json:"backup_id"`
+}
+
+// BackupAPIListBackupsRequest: backup api list backups request.
+type BackupAPIListBackupsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// Page: page number to retrieve.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of backups to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order in which to return the list of backups.
+	// Default value: created_at_desc
+	OrderBy ListBackupsRequestOrderBy `json:"-"`
+}
+
+// BackupAPIRestoreBackupItemsRequest: backup api restore backup items request.
+type BackupAPIRestoreBackupItemsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// ItemIDs: list of backup item IDs to restore individually.
+	ItemIDs []string `json:"item_ids"`
+}
+
+// BackupAPIRestoreBackupRequest: backup api restore backup request.
+type BackupAPIRestoreBackupRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to fully restore.
+	BackupID string `json:"-"`
 }
 
 // CheckUserOwnsDomainResponse: check user owns domain response.
@@ -1863,6 +2135,62 @@ type HostingAPIUpdateHostingRequest struct {
 	Protected *bool `json:"protected,omitempty"`
 }
 
+// ListBackupItemsResponse: list backup items response.
+type ListBackupItemsResponse struct {
+	// TotalCount: total number of backup item groups.
+	TotalCount uint64 `json:"total_count"`
+
+	// Groups: list of backup item groups categorized by type.
+	Groups []*BackupItemGroup `json:"groups"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBackupItemsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBackupItemsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListBackupItemsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Groups = append(r.Groups, results.Groups...)
+	r.TotalCount += uint64(len(results.Groups))
+	return uint64(len(results.Groups)), nil
+}
+
+// ListBackupsResponse: list backups response.
+type ListBackupsResponse struct {
+	// TotalCount: total number of available backups.
+	TotalCount uint64 `json:"total_count"`
+
+	// Backups: list of available backups.
+	Backups []*Backup `json:"backups"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBackupsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBackupsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListBackupsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Backups = append(r.Backups, results.Backups...)
+	r.TotalCount += uint64(len(results.Backups))
+	return uint64(len(results.Backups)), nil
+}
+
 // ListControlPanelsResponse: list control panels response.
 type ListControlPanelsResponse struct {
 	// TotalCount: number of control panels returned.
@@ -2206,6 +2534,12 @@ type ResourceSummary struct {
 	WebsitesCount uint32 `json:"websites_count"`
 }
 
+// RestoreBackupItemsResponse: restore backup items response.
+type RestoreBackupItemsResponse struct{}
+
+// RestoreBackupResponse: restore backup response.
+type RestoreBackupResponse struct{}
+
 // SearchDomainsResponse: search domains response.
 type SearchDomainsResponse struct {
 	// DomainsAvailable: list of domains availability.
@@ -2235,6 +2569,210 @@ type WebsiteAPIListWebsitesRequest struct {
 	// OrderBy: sort order for Web Hosting websites in the response.
 	// Default value: domain_asc
 	OrderBy ListWebsitesRequestOrderBy `json:"-"`
+}
+
+// This API allows you to list and restore backups for your cPanel and WordPress Web Hosting service.
+type BackupAPI struct {
+	client *scw.Client
+}
+
+// NewBackupAPI returns a BackupAPI object from a Scaleway client.
+func NewBackupAPI(client *scw.Client) *BackupAPI {
+	return &BackupAPI{
+		client: client,
+	}
+}
+
+func (s *BackupAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// ListBackups: List all available backups for a hosting account.
+func (s *BackupAPI) ListBackups(req *BackupAPIListBackupsRequest, opts ...scw.RequestOption) (*ListBackupsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups",
+		Query:  query,
+	}
+
+	var resp ListBackupsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetBackup: Get info about a backup specified by the backup ID.
+func (s *BackupAPI) GetBackup(req *BackupAPIGetBackupRequest, opts ...scw.RequestOption) (*Backup, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackupID) == "" {
+		return nil, errors.New("field BackupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups/" + fmt.Sprint(req.BackupID) + "",
+	}
+
+	var resp Backup
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RestoreBackup: Restore an entire backup to your hosting environment.
+func (s *BackupAPI) RestoreBackup(req *BackupAPIRestoreBackupRequest, opts ...scw.RequestOption) (*RestoreBackupResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackupID) == "" {
+		return nil, errors.New("field BackupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups/" + fmt.Sprint(req.BackupID) + "/restore",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RestoreBackupResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListBackupItems: List items within a specific backup, grouped by type.
+func (s *BackupAPI) ListBackupItems(req *BackupAPIListBackupItemsRequest, opts ...scw.RequestOption) (*ListBackupItemsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "backup_id", req.BackupID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backup-items",
+		Query:  query,
+	}
+
+	var resp ListBackupItemsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RestoreBackupItems: Restore specific items from a backup (e.g., a database or mailbox).
+func (s *BackupAPI) RestoreBackupItems(req *BackupAPIRestoreBackupItemsRequest, opts ...scw.RequestOption) (*RestoreBackupItemsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/restore-backup-items",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RestoreBackupItemsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // This API allows you to manage your Web Hosting services.
