@@ -49,6 +49,7 @@ const (
 	DeploymentStatusError         = DeploymentStatus("error")
 	DeploymentStatusDeleting      = DeploymentStatus("deleting")
 	DeploymentStatusLocked        = DeploymentStatus("locked")
+	DeploymentStatusScaling       = DeploymentStatus("scaling")
 )
 
 func (enum DeploymentStatus) String() string {
@@ -68,6 +69,7 @@ func (enum DeploymentStatus) Values() []DeploymentStatus {
 		"error",
 		"deleting",
 		"locked",
+		"scaling",
 	}
 }
 
