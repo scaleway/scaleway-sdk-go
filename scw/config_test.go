@@ -277,7 +277,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		},
 		{
 			name:          "No config",
-			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/.config/scw/config.yaml: no such file or directory",
+			expectedError: ErrConfigFileNotFound.Error(),
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -633,7 +633,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
-# You can set properties of the default profile by running either scw init or scw config set. 
+# You can set properties of the default profile by running either scw init or scw config set.
 # This single default configuration is suitable for most use cases.
 # active_profile: myProfile
 
@@ -712,7 +712,7 @@ access_key: SCW1234567890ABCDEFG
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
-# You can set properties of the default profile by running either scw init or scw config set. 
+# You can set properties of the default profile by running either scw init or scw config set.
 # This single default configuration is suitable for most use cases.
 # active_profile: myProfile
 
@@ -804,7 +804,7 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
-# You can set properties of the default profile by running either scw init or scw config set. 
+# You can set properties of the default profile by running either scw init or scw config set.
 # This single default configuration is suitable for most use cases.
 active_profile: flantier
 
