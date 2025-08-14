@@ -1989,6 +1989,18 @@ type Hosting struct {
 	DomainInfo *HostingDomain `json:"domain_info"`
 }
 
+// HostingAPIAddCustomDomainRequest: hosting api add custom domain request.
+type HostingAPIAddCustomDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the custom domain is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the custom domain name to attach to the hosting.
+	DomainName string `json:"domain_name"`
+}
+
 // HostingAPICreateHostingRequest: hosting api create hosting request.
 type HostingAPICreateHostingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2100,6 +2112,15 @@ type HostingAPIListHostingsRequest struct {
 
 	// Subdomain: optional free subdomain linked to the Web Hosting plan.
 	Subdomain *string `json:"-"`
+}
+
+// HostingAPIRemoveCustomDomainRequest: hosting api remove custom domain request.
+type HostingAPIRemoveCustomDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the custom domain is detached from.
+	HostingID string `json:"-"`
 }
 
 // HostingAPIResetHostingPasswordRequest: hosting api reset hosting password request.
@@ -3808,6 +3829,78 @@ func (s *HostingAPI) GetResourceSummary(req *HostingAPIGetResourceSummaryRequest
 	}
 
 	var resp ResourceSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddCustomDomain: Attach a custom domain to a webhosting.
+func (s *HostingAPI) AddCustomDomain(req *HostingAPIAddCustomDomainRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/add-custom-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RemoveCustomDomain: Detach a custom domain from a webhosting.
+func (s *HostingAPI) RemoveCustomDomain(req *HostingAPIRemoveCustomDomainRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/remove-custom-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HostingSummary
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
