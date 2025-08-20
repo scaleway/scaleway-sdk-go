@@ -1098,8 +1098,7 @@ type Namespace struct {
 	// UpdatedAt: last update date of the namespace.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Deprecated: VpcIntegrationActivated: when activated, containers in the namespace can be connected to a Private Network.
-	// Note that activating the VPC integration can only be done when creating a new namespace.
+	// Deprecated: VpcIntegrationActivated: the value of this field doesn't matter anymore, and will be removed in a near future.
 	VpcIntegrationActivated *bool `json:"vpc_integration_activated,omitempty"`
 }
 
@@ -1256,8 +1255,6 @@ type CreateContainerRequest struct {
 	Tags []string `json:"tags"`
 
 	// PrivateNetworkID: when connected to a Private Network, the container can access other Scaleway resources in this Private Network.
-	//
-	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// Command: command executed when the container starts. This overrides the default command defined in the container image. This is usually the main executable, or entry point script to run.
@@ -1320,8 +1317,8 @@ type CreateNamespaceRequest struct {
 	// Tags: tags of the Serverless Container Namespace.
 	Tags []string `json:"tags"`
 
-	// ActivateVpcIntegration: when activated, containers in the namespace can be connected to a Private Network.
-	ActivateVpcIntegration bool `json:"activate_vpc_integration"`
+	// Deprecated: ActivateVpcIntegration: setting this field to true doesn't matter anymore. It will be removed in a near future.
+	ActivateVpcIntegration *bool `json:"activate_vpc_integration,omitempty"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1873,8 +1870,6 @@ type UpdateContainerRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	// PrivateNetworkID: when connected to a Private Network, the container can access other Scaleway resources in this Private Network.
-	//
-	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// Command: command executed when the container starts. This overrides the default command defined in the container image. This is usually the main executable, or entry point script to run.
