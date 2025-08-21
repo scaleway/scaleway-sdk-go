@@ -711,6 +711,9 @@ type ListSnapshotsRequest struct {
 
 	// Tags: filter by tags. Only snapshots with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// IncludeDeleted: display deleted snapshots not erased yet.
+	IncludeDeleted bool `json:"-"`
 }
 
 // ListSnapshotsResponse: list snapshots response.
@@ -810,6 +813,9 @@ type ListVolumesRequest struct {
 
 	// Tags: filter by tags. Only volumes with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// IncludeDeleted: display deleted volumes not erased yet.
+	IncludeDeleted bool `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -953,6 +959,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "product_resource_id", req.ProductResourceID)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -1135,6 +1142,7 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "volume_id", req.VolumeID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
