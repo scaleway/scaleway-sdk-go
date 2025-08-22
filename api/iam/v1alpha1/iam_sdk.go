@@ -1819,6 +1819,9 @@ type GetSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
+// GetSamlInformationRequest: get saml information request.
+type GetSamlInformationRequest struct{}
+
 // GetUserConnectionsRequest: get user connections request.
 type GetUserConnectionsRequest struct {
 	// UserID: ID of the user to list connections for.
@@ -2560,6 +2563,15 @@ type Saml struct {
 
 	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
 	SingleSignOnURL string `json:"single_sign_on_url"`
+}
+
+// SamlInformation: saml information.
+type SamlInformation struct {
+	// EntityID: entity ID.
+	EntityID string `json:"entity_id"`
+
+	// AssertionConsumerServiceURL: sAML Assertion Consumer Service url.
+	AssertionConsumerServiceURL string `json:"assertion_consumer_service_url"`
 }
 
 // SetGroupMembersRequest: set group members request.
@@ -4683,4 +4695,22 @@ func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...s
 		return err
 	}
 	return nil
+}
+
+// GetSamlInformation: Get SAML information.
+func (s *API) GetSamlInformation(req *GetSamlInformationRequest, opts ...scw.RequestOption) (*SamlInformation, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/saml-information",
+	}
+
+	var resp SamlInformation
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
