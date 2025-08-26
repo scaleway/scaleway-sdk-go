@@ -3328,7 +3328,7 @@ func (s *DnsAPI) GetDomainDNSRecords(req *DNSAPIGetDomainDNSRecordsRequest, opts
 	return &resp, nil
 }
 
-// CheckUserOwnsDomain: Check whether you own this domain or not.
+// Deprecated: CheckUserOwnsDomain: Check whether you own this domain or not.
 func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
 	var err error
 
