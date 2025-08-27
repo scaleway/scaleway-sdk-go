@@ -305,6 +305,47 @@ func (enum *KeyState) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListAlgorithmsRequestUsage string
+
+const (
+	ListAlgorithmsRequestUsageUnknownUsage         = ListAlgorithmsRequestUsage("unknown_usage")
+	ListAlgorithmsRequestUsageSymmetricEncryption  = ListAlgorithmsRequestUsage("symmetric_encryption")
+	ListAlgorithmsRequestUsageAsymmetricEncryption = ListAlgorithmsRequestUsage("asymmetric_encryption")
+	ListAlgorithmsRequestUsageAsymmetricSigning    = ListAlgorithmsRequestUsage("asymmetric_signing")
+)
+
+func (enum ListAlgorithmsRequestUsage) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListAlgorithmsRequestUsageUnknownUsage)
+	}
+	return string(enum)
+}
+
+func (enum ListAlgorithmsRequestUsage) Values() []ListAlgorithmsRequestUsage {
+	return []ListAlgorithmsRequestUsage{
+		"unknown_usage",
+		"symmetric_encryption",
+		"asymmetric_encryption",
+		"asymmetric_signing",
+	}
+}
+
+func (enum ListAlgorithmsRequestUsage) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAlgorithmsRequestUsage) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAlgorithmsRequestUsage(ListAlgorithmsRequestUsage(tmp).String())
+	return nil
+}
+
 type ListKeysRequestOrderBy string
 
 const (
@@ -414,6 +455,15 @@ type KeyUsage struct {
 	// AsymmetricSigning: default value: unknown_asymmetric_signing
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
+}
+
+// ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
+type ListAlgorithmsResponseAlgorithm struct {
+	Usage string `json:"usage"`
+
+	Name string `json:"name"`
+
+	Recommended bool `json:"recommended"`
 }
 
 // Key: key.
@@ -657,6 +707,21 @@ type ImportKeyMaterialRequest struct {
 
 	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
 	Salt *[]byte `json:"salt,omitempty"`
+}
+
+// ListAlgorithmsRequest: list algorithms request.
+type ListAlgorithmsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Usages: filter by key usage.
+	Usages []ListAlgorithmsRequestUsage `json:"usages"`
+}
+
+// ListAlgorithmsResponse: list algorithms response.
+type ListAlgorithmsResponse struct {
+	// Algorithms: returns a list of algorithms matching the requested criteria.
+	Algorithms []*ListAlgorithmsResponseAlgorithm `json:"algorithms"`
 }
 
 // ListKeysRequest: list keys request.
@@ -1509,6 +1574,37 @@ func (s *API) RestoreKey(req *RestoreKeyRequest, opts ...scw.RequestOption) (*Ke
 	}
 
 	var resp Key
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAlgorithms: Lists all cryptographic algorithms supported by the Key Manager service.
+func (s *API) ListAlgorithms(req *ListAlgorithmsRequest, opts ...scw.RequestOption) (*ListAlgorithmsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "usages", req.Usages)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/algorithms",
+		Query:  query,
+	}
+
+	var resp ListAlgorithmsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
