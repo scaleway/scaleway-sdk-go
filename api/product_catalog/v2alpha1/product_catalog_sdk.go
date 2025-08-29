@@ -406,6 +406,9 @@ type PublicCatalogProductPropertiesHardwareStorage struct {
 type PublicCatalogProductPropertiesAppleSilicon struct {
 	// Range: the range of the Apple Silicon server.
 	Range string `json:"range"`
+
+	// ServerType: the server type of the Apple Silicon server.
+	ServerType string `json:"server_type"`
 }
 
 // PublicCatalogProductPropertiesBlockStorage: public catalog product properties block storage.
@@ -421,12 +424,18 @@ type PublicCatalogProductPropertiesBlockStorage struct {
 type PublicCatalogProductPropertiesDedibox struct {
 	// Range: the range of the Dedibox server.
 	Range string `json:"range"`
+
+	// OfferID: the offer ID of the Dedibox server.
+	OfferID int64 `json:"offer_id"`
 }
 
 // PublicCatalogProductPropertiesElasticMetal: public catalog product properties elastic metal.
 type PublicCatalogProductPropertiesElasticMetal struct {
 	// Range: the range of the Elastic Metal server.
 	Range string `json:"range"`
+
+	// OfferID: the offer ID of the Elastic Metal server.
+	OfferID string `json:"offer_id"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
