@@ -14,7 +14,7 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 1
     - name: Install Go
@@ -34,7 +34,7 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 1
     - name: Install Go
@@ -53,7 +53,7 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 1
     - name: Install Go
