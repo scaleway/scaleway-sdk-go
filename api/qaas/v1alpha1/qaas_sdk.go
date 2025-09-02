@@ -1276,6 +1276,9 @@ type Session struct {
 
 	// ModelID: default computation model ID to be executed by job assigned to this session.
 	ModelID *string `json:"model_id"`
+
+	// Parameters: platform configuration parameters applied to this session.
+	Parameters *string `json:"parameters"`
 }
 
 // CancelJobRequest: cancel job request.
@@ -1372,6 +1375,9 @@ type CreateSessionRequest struct {
 
 	// ModelID: default computation model ID to be executed by job assigned to this session.
 	ModelID *string `json:"model_id,omitempty"`
+
+	// Parameters: optional platform configuration parameters applied to this session.
+	Parameters *string `json:"parameters,omitempty"`
 }
 
 // DeleteJobRequest: delete job request.
