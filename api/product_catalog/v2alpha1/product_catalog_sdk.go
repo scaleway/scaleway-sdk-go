@@ -549,6 +549,9 @@ type PublicCatalogProduct struct {
 	// ServiceCategory: the category of the product.
 	ServiceCategory string `json:"service_category"`
 
+	// ProductCategory: the product category of the product.
+	ProductCategory string `json:"product_category"`
+
 	// Product: the product name.
 	Product string `json:"product"`
 
