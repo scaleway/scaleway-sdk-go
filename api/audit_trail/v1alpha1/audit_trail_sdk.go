@@ -103,10 +103,15 @@ const (
 	ResourceTypeInstanceServer         = ResourceType("instance_server")
 	ResourceTypeInstancePlacementGroup = ResourceType("instance_placement_group")
 	ResourceTypeInstanceSecurityGroup  = ResourceType("instance_security_group")
+	ResourceTypeInstanceVolume         = ResourceType("instance_volume")
+	ResourceTypeInstanceSnapshot       = ResourceType("instance_snapshot")
+	ResourceTypeInstanceImage          = ResourceType("instance_image")
 	ResourceTypeAppleSiliconServer     = ResourceType("apple_silicon_server")
 	ResourceTypeBaremetalServer        = ResourceType("baremetal_server")
 	ResourceTypeBaremetalSetting       = ResourceType("baremetal_setting")
 	ResourceTypeIpamIP                 = ResourceType("ipam_ip")
+	ResourceTypeSbsVolume              = ResourceType("sbs_volume")
+	ResourceTypeSbsSnapshot            = ResourceType("sbs_snapshot")
 )
 
 func (enum ResourceType) String() string {
@@ -143,10 +148,15 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_server",
 		"instance_placement_group",
 		"instance_security_group",
+		"instance_volume",
+		"instance_snapshot",
+		"instance_image",
 		"apple_silicon_server",
 		"baremetal_server",
 		"baremetal_setting",
 		"ipam_ip",
+		"sbs_volume",
+		"sbs_snapshot",
 	}
 }
 
@@ -308,6 +318,7 @@ type Resource struct {
 	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
 	AccountOrganizationInfo *AccountOrganizationInfo `json:"account_organization_info,omitempty"`
 
+	// Deprecated
 	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
 	InstanceServerInfo *InstanceServerInfo `json:"instance_server_info,omitempty"`
 
