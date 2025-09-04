@@ -2253,6 +2253,9 @@ func (s *API) CreateContainer(req *CreateContainerRequest, opts ...scw.RequestOp
 }
 
 // UpdateContainer: Update the container associated with the specified ID.
+//
+// When updating a container, the container is automatically redeployed to apply the changes.
+// This behavior can be changed by setting the `redeploy` field to `false` in the request.
 func (s *API) UpdateContainer(req *UpdateContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 

@@ -2346,6 +2346,9 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 }
 
 // UpdateFunction: Update the function associated with the specified ID.
+//
+// When updating a function, the function is automatically redeployed to apply the changes.
+// This behavior can be changed by setting the `redeploy` field to `false` in the request.
 func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
