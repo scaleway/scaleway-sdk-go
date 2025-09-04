@@ -1841,7 +1841,18 @@ type UpdateContainerRequest struct {
 	// Port: port the container listens on.
 	Port *uint32 `json:"port,omitempty"`
 
-	// SecretEnvironmentVariables: secret environment variables of the container.
+	// SecretEnvironmentVariables: during an update, secret environment variables that are not specified in this field will be kept unchanged.
+	//
+	// In order to delete a specific secret environment variable, you must reference its key, but not provide any value for it.
+	// For example, the following payload will delete the `TO_DELETE` secret environment variable:
+	//
+	// ```json
+	// {
+	//   "secret_environment_variables":[
+	//     {"key":"TO_DELETE"}
+	//   ]
+	// }
+	// ```.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
 	// HTTPOption: possible values:
