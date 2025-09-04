@@ -1332,7 +1332,7 @@ func (s *API) GenerateDataKey(req *GenerateDataKeyRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// Encrypt: Encrypt a payload using an existing key, specified by the `key_id` parameter. Only keys with a usage set to `symmetric_encryption` are supported by this method. The maximum payload size that can be encrypted is 64 KB of plaintext.
+// Encrypt: Encrypt a payload using an existing key, specified by the `key_id` parameter. The maximum payload size that can be encrypted is 64 KB of plaintext.
 func (s *API) Encrypt(req *EncryptRequest, opts ...scw.RequestOption) (*EncryptResponse, error) {
 	var err error
 
