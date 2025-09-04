@@ -873,6 +873,49 @@ func (enum *SamlCertificateType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SamlStatus string
+
+const (
+	SamlStatusUnknownSamlStatus      = SamlStatus("unknown_saml_status")
+	SamlStatusValid                  = SamlStatus("valid")
+	SamlStatusMissingCertificate     = SamlStatus("missing_certificate")
+	SamlStatusMissingEntityID        = SamlStatus("missing_entity_id")
+	SamlStatusMissingSingleSignOnURL = SamlStatus("missing_single_sign_on_url")
+)
+
+func (enum SamlStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SamlStatusUnknownSamlStatus)
+	}
+	return string(enum)
+}
+
+func (enum SamlStatus) Values() []SamlStatus {
+	return []SamlStatus{
+		"unknown_saml_status",
+		"valid",
+		"missing_certificate",
+		"missing_entity_id",
+		"missing_single_sign_on_url",
+	}
+}
+
+func (enum SamlStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SamlStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SamlStatus(SamlStatus(tmp).String())
+	return nil
+}
+
 type UserStatus string
 
 const (
@@ -1495,6 +1538,13 @@ type User struct {
 	Locked bool `json:"locked"`
 }
 
+// SamlServiceProvider: saml service provider.
+type SamlServiceProvider struct {
+	EntityID string `json:"entity_id"`
+
+	AssertionConsumerServiceURL string `json:"assertion_consumer_service_url"`
+}
+
 // AddGroupMemberRequest: add group member request.
 type AddGroupMemberRequest struct {
 	// GroupID: ID of the group.
@@ -1598,18 +1648,6 @@ type CreateJWTRequest struct {
 	Referrer string `json:"referrer"`
 }
 
-// CreateOrganizationSamlRequest: create organization saml request.
-type CreateOrganizationSamlRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-
-	// EntityID: entity ID of the SAML Identity Provider.
-	EntityID string `json:"entity_id"`
-
-	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
-	SingleSignOnURL string `json:"single_sign_on_url"`
-}
-
 // CreatePolicyRequest: create policy request.
 type CreatePolicyRequest struct {
 	// Name: name of the policy to create (max length is 64 characters).
@@ -1703,12 +1741,6 @@ type DeleteJWTRequest struct {
 	Jti string `json:"-"`
 }
 
-// DeleteOrganizationSamlRequest: delete organization saml request.
-type DeleteOrganizationSamlRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-}
-
 // DeletePolicyRequest: delete policy request.
 type DeletePolicyRequest struct {
 	// PolicyID: id of policy to delete.
@@ -1726,6 +1758,12 @@ type DeleteSamlCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
+// DeleteSamlRequest: delete saml request.
+type DeleteSamlRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+}
+
 // DeleteUserMFAOTPRequest: delete user mfaotp request.
 type DeleteUserMFAOTPRequest struct {
 	// UserID: user ID of the MFA OTP.
@@ -1736,6 +1774,12 @@ type DeleteUserMFAOTPRequest struct {
 type DeleteUserRequest struct {
 	// UserID: ID of the user to delete.
 	UserID string `json:"-"`
+}
+
+// EnableOrganizationSamlRequest: enable organization saml request.
+type EnableOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
 }
 
 // EncodedJWT: encoded jwt.
@@ -1818,9 +1862,6 @@ type GetSSHKeyRequest struct {
 	// SSHKeyID: ID of the SSH key.
 	SSHKeyID string `json:"-"`
 }
-
-// GetSamlInformationRequest: get saml information request.
-type GetSamlInformationRequest struct{}
 
 // GetUserConnectionsRequest: get user connections request.
 type GetUserConnectionsRequest struct {
@@ -2558,20 +2599,18 @@ type Saml struct {
 	// ID: ID of the SAML configuration.
 	ID string `json:"id"`
 
+	// Status: status of the SAML configuration.
+	// Default value: unknown_saml_status
+	Status SamlStatus `json:"status"`
+
+	// ServiceProvider: service Provider information.
+	ServiceProvider *SamlServiceProvider `json:"service_provider"`
+
 	// EntityID: entity ID of the SAML Identity Provider.
 	EntityID string `json:"entity_id"`
 
 	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
 	SingleSignOnURL string `json:"single_sign_on_url"`
-}
-
-// SamlInformation: saml information.
-type SamlInformation struct {
-	// EntityID: entity ID.
-	EntityID string `json:"entity_id"`
-
-	// AssertionConsumerServiceURL: sAML Assertion Consumer Service url.
-	AssertionConsumerServiceURL string `json:"assertion_consumer_service_url"`
 }
 
 // SetGroupMembersRequest: set group members request.
@@ -2655,18 +2694,6 @@ type UpdateGroupRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
-// UpdateOrganizationSamlRequest: update organization saml request.
-type UpdateOrganizationSamlRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-
-	// EntityID: entity ID of the SAML Identity Provider.
-	EntityID *string `json:"entity_id,omitempty"`
-
-	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
-	SingleSignOnURL *string `json:"single_sign_on_url,omitempty"`
-}
-
 // UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
 type UpdateOrganizationSecuritySettingsRequest struct {
 	// OrganizationID: ID of the Organization.
@@ -2722,6 +2749,18 @@ type UpdateSSHKeyRequest struct {
 
 	// Disabled: enable or disable the SSH key.
 	Disabled *bool `json:"disabled,omitempty"`
+}
+
+// UpdateSamlRequest: update saml request.
+type UpdateSamlRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+
+	// EntityID: entity ID of the SAML Identity Provider.
+	EntityID *string `json:"entity_id,omitempty"`
+
+	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
+	SingleSignOnURL *string `json:"single_sign_on_url,omitempty"`
 }
 
 // UpdateUserPasswordRequest: update user password request.
@@ -4539,8 +4578,8 @@ func (s *API) GetOrganizationSaml(req *GetOrganizationSamlRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// CreateOrganizationSaml: Create a SAML Identity Provider configuration for an Organization.
-func (s *API) CreateOrganizationSaml(req *CreateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+// EnableOrganizationSaml: Enable SAML Identity Provider for an Organization.
+func (s *API) EnableOrganizationSaml(req *EnableOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
 	var err error
 
 	if req.OrganizationID == "" {
@@ -4571,22 +4610,17 @@ func (s *API) CreateOrganizationSaml(req *CreateOrganizationSamlRequest, opts ..
 	return &resp, nil
 }
 
-// UpdateOrganizationSaml: Update a SAML Identity Provider configuration for an Organization.
-func (s *API) UpdateOrganizationSaml(req *UpdateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+// UpdateSaml: Update SAML Identity Provider configuration.
+func (s *API) UpdateSaml(req *UpdateSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
-	}
-
-	if fmt.Sprint(req.OrganizationID) == "" {
-		return nil, errors.New("field OrganizationID cannot be empty in request")
+	if fmt.Sprint(req.SamlID) == "" {
+		return nil, errors.New("field SamlID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -4603,22 +4637,17 @@ func (s *API) UpdateOrganizationSaml(req *UpdateOrganizationSamlRequest, opts ..
 	return &resp, nil
 }
 
-// DeleteOrganizationSaml: Delete a SAML Identity Provider configuration for an Organization.
-func (s *API) DeleteOrganizationSaml(req *DeleteOrganizationSamlRequest, opts ...scw.RequestOption) error {
+// DeleteSaml: Disable SAML Identity Provider for an Organization.
+func (s *API) DeleteSaml(req *DeleteSamlRequest, opts ...scw.RequestOption) error {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
-	}
-
-	if fmt.Sprint(req.OrganizationID) == "" {
-		return errors.New("field OrganizationID cannot be empty in request")
+	if fmt.Sprint(req.SamlID) == "" {
+		return errors.New("field SamlID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -4695,22 +4724,4 @@ func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...s
 		return err
 	}
 	return nil
-}
-
-// GetSamlInformation: Get SAML information.
-func (s *API) GetSamlInformation(req *GetSamlInformationRequest, opts ...scw.RequestOption) (*SamlInformation, error) {
-	var err error
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/iam/v1alpha1/saml-information",
-	}
-
-	var resp SamlInformation
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
 }

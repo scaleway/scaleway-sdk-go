@@ -709,6 +709,72 @@ func (enum *HostStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type InboundTransferStatus string
+
+const (
+	// Unknown status.
+	InboundTransferStatusUnknown = InboundTransferStatus("unknown")
+	// Domain transfer in progress.
+	InboundTransferStatusInProgress = InboundTransferStatus("in_progress")
+	// Domain successfully transferred.
+	InboundTransferStatusDone = InboundTransferStatus("done")
+	// Internal error.
+	InboundTransferStatusErrInternal = InboundTransferStatus("err_internal")
+	// Domain is in a pending status.
+	InboundTransferStatusErrDomainPending = InboundTransferStatus("err_domain_pending")
+	// Domain is already being transferred.
+	InboundTransferStatusErrAlreadyTransferring = InboundTransferStatus("err_already_transferring")
+	// Domain transfer is prohibited (transfer/update prohibited status or is currently locked).
+	InboundTransferStatusErrTransferProhibited = InboundTransferStatus("err_transfer_prohibited")
+	// Transfer is not supported for this TLD or the domain is premium.
+	InboundTransferStatusErrTransferImpossible = InboundTransferStatus("err_transfer_impossible")
+	// Invalid authcode.
+	InboundTransferStatusErrInvalidAuthcode = InboundTransferStatus("err_invalid_authcode")
+	// Domain name was created less than 60 days ago.
+	InboundTransferStatusErrDomainTooYoung = InboundTransferStatus("err_domain_too_young")
+	// Too many transfer requests for this domain name.
+	InboundTransferStatusErrTooManyRequests = InboundTransferStatus("err_too_many_requests")
+)
+
+func (enum InboundTransferStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(InboundTransferStatusUnknown)
+	}
+	return string(enum)
+}
+
+func (enum InboundTransferStatus) Values() []InboundTransferStatus {
+	return []InboundTransferStatus{
+		"unknown",
+		"in_progress",
+		"done",
+		"err_internal",
+		"err_domain_pending",
+		"err_already_transferring",
+		"err_transfer_prohibited",
+		"err_transfer_impossible",
+		"err_invalid_authcode",
+		"err_domain_too_young",
+		"err_too_many_requests",
+	}
+}
+
+func (enum InboundTransferStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InboundTransferStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InboundTransferStatus(InboundTransferStatus(tmp).String())
+	return nil
+}
+
 type LinkedProduct string
 
 const (
@@ -2027,6 +2093,34 @@ type DomainSummary struct {
 	PendingTrade bool `json:"pending_trade"`
 }
 
+// InboundTransfer: inbound transfer.
+type InboundTransfer struct {
+	// ID: the unique identifier of the inbound transfer.
+	ID string `json:"id"`
+
+	// CreatedAt: the creation date of the inbound transfer.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// LastUpdatedAt: the last modification date of the inbound transfer.
+	LastUpdatedAt *time.Time `json:"last_updated_at"`
+
+	// ProjectID: the project ID associated with the inbound transfer.
+	ProjectID string `json:"project_id"`
+
+	// Domain: the domain associated with the inbound transfer.
+	Domain string `json:"domain"`
+
+	// Status: inbound transfer status.
+	// Default value: unknown
+	Status InboundTransferStatus `json:"status"`
+
+	// Message: human-friendly message to describe the current inbound transfer status.
+	Message string `json:"message"`
+
+	// TaskID: the unique identifier of the associated task.
+	TaskID string `json:"task_id"`
+}
+
 // RenewableDomain: renewable domain.
 type RenewableDomain struct {
 	Domain string `json:"domain"`
@@ -2650,6 +2744,32 @@ func (r *ListDomainsResponse) UnsafeAppend(res any) (uint32, error) {
 	return uint32(len(results.Domains)), nil
 }
 
+// ListInboundTransfersResponse: list inbound transfers response.
+type ListInboundTransfersResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	InboundTransfers []*InboundTransfer `json:"inbound_transfers"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListInboundTransfersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListInboundTransfersResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListInboundTransfersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.InboundTransfers = append(r.InboundTransfers, results.InboundTransfers...)
+	r.TotalCount += uint32(len(results.InboundTransfers))
+	return uint32(len(results.InboundTransfers)), nil
+}
+
 // ListRenewableDomainsResponse: list renewable domains response.
 type ListRenewableDomainsResponse struct {
 	TotalCount uint32 `json:"total_count"`
@@ -2970,6 +3090,19 @@ type RegistrarAPIListDomainsRequest struct {
 	IsExternal *bool `json:"-"`
 
 	Domain *string `json:"-"`
+}
+
+// RegistrarAPIListInboundTransfersRequest: registrar api list inbound transfers request.
+type RegistrarAPIListInboundTransfersRequest struct {
+	Page int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	ProjectID string `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	Domain string `json:"-"`
 }
 
 // RegistrarAPIListRenewableDomainsRequest: registrar api list renewable domains request.
@@ -3964,6 +4097,47 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	}
 
 	var resp ListTasksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListInboundTransfers:
+func (s *RegistrarAPI) ListInboundTransfers(req *RegistrarAPIListInboundTransfersRequest, opts ...scw.RequestOption) (*ListInboundTransfersResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain", req.Domain)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/domain/v2beta1/inbound-transfers",
+		Query:  query,
+	}
+
+	var resp ListInboundTransfersResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
