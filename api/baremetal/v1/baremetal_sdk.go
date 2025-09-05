@@ -2051,6 +2051,9 @@ type RebootServerRequest struct {
 	// BootType: the type of boot.
 	// Default value: unknown_boot_type
 	BootType ServerBootType `json:"boot_type"`
+
+	// SSHKeyIDs: additional SSH public key IDs to configure on rescue image.
+	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
 // SetServerPrivateNetworksResponse: set server private networks response.
@@ -2081,6 +2084,9 @@ type StartServerRequest struct {
 	// BootType: the type of boot.
 	// Default value: unknown_boot_type
 	BootType ServerBootType `json:"boot_type"`
+
+	// SSHKeyIDs: additional SSH public key IDs to configure on rescue image.
+	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
 // StopBMCAccessRequest: stop bmc access request.
