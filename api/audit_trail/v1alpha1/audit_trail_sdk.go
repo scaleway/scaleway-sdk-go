@@ -79,39 +79,46 @@ func (enum *ListEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType            = ResourceType("unknown_type")
-	ResourceTypeSecmSecret             = ResourceType("secm_secret")
-	ResourceTypeSecmSecretVersion      = ResourceType("secm_secret_version")
-	ResourceTypeKubeCluster            = ResourceType("kube_cluster")
-	ResourceTypeKubePool               = ResourceType("kube_pool")
-	ResourceTypeKubeNode               = ResourceType("kube_node")
-	ResourceTypeKubeACL                = ResourceType("kube_acl")
-	ResourceTypeKeymKey                = ResourceType("keym_key")
-	ResourceTypeIamUser                = ResourceType("iam_user")
-	ResourceTypeIamApplication         = ResourceType("iam_application")
-	ResourceTypeIamGroup               = ResourceType("iam_group")
-	ResourceTypeIamPolicy              = ResourceType("iam_policy")
-	ResourceTypeIamAPIKey              = ResourceType("iam_api_key")
-	ResourceTypeIamSSHKey              = ResourceType("iam_ssh_key")
-	ResourceTypeIamRule                = ResourceType("iam_rule")
-	ResourceTypeSecretManagerSecret    = ResourceType("secret_manager_secret")
-	ResourceTypeSecretManagerVersion   = ResourceType("secret_manager_version")
-	ResourceTypeKeyManagerKey          = ResourceType("key_manager_key")
-	ResourceTypeAccountUser            = ResourceType("account_user")
-	ResourceTypeAccountOrganization    = ResourceType("account_organization")
-	ResourceTypeAccountProject         = ResourceType("account_project")
-	ResourceTypeInstanceServer         = ResourceType("instance_server")
-	ResourceTypeInstancePlacementGroup = ResourceType("instance_placement_group")
-	ResourceTypeInstanceSecurityGroup  = ResourceType("instance_security_group")
-	ResourceTypeInstanceVolume         = ResourceType("instance_volume")
-	ResourceTypeInstanceSnapshot       = ResourceType("instance_snapshot")
-	ResourceTypeInstanceImage          = ResourceType("instance_image")
-	ResourceTypeAppleSiliconServer     = ResourceType("apple_silicon_server")
-	ResourceTypeBaremetalServer        = ResourceType("baremetal_server")
-	ResourceTypeBaremetalSetting       = ResourceType("baremetal_setting")
-	ResourceTypeIpamIP                 = ResourceType("ipam_ip")
-	ResourceTypeSbsVolume              = ResourceType("sbs_volume")
-	ResourceTypeSbsSnapshot            = ResourceType("sbs_snapshot")
+	ResourceTypeUnknownType             = ResourceType("unknown_type")
+	ResourceTypeSecmSecret              = ResourceType("secm_secret")
+	ResourceTypeSecmSecretVersion       = ResourceType("secm_secret_version")
+	ResourceTypeKubeCluster             = ResourceType("kube_cluster")
+	ResourceTypeKubePool                = ResourceType("kube_pool")
+	ResourceTypeKubeNode                = ResourceType("kube_node")
+	ResourceTypeKubeACL                 = ResourceType("kube_acl")
+	ResourceTypeKeymKey                 = ResourceType("keym_key")
+	ResourceTypeIamUser                 = ResourceType("iam_user")
+	ResourceTypeIamApplication          = ResourceType("iam_application")
+	ResourceTypeIamGroup                = ResourceType("iam_group")
+	ResourceTypeIamPolicy               = ResourceType("iam_policy")
+	ResourceTypeIamAPIKey               = ResourceType("iam_api_key")
+	ResourceTypeIamSSHKey               = ResourceType("iam_ssh_key")
+	ResourceTypeIamRule                 = ResourceType("iam_rule")
+	ResourceTypeSecretManagerSecret     = ResourceType("secret_manager_secret")
+	ResourceTypeSecretManagerVersion    = ResourceType("secret_manager_version")
+	ResourceTypeKeyManagerKey           = ResourceType("key_manager_key")
+	ResourceTypeAccountUser             = ResourceType("account_user")
+	ResourceTypeAccountOrganization     = ResourceType("account_organization")
+	ResourceTypeAccountProject          = ResourceType("account_project")
+	ResourceTypeInstanceServer          = ResourceType("instance_server")
+	ResourceTypeInstancePlacementGroup  = ResourceType("instance_placement_group")
+	ResourceTypeInstanceSecurityGroup   = ResourceType("instance_security_group")
+	ResourceTypeInstanceVolume          = ResourceType("instance_volume")
+	ResourceTypeInstanceSnapshot        = ResourceType("instance_snapshot")
+	ResourceTypeInstanceImage           = ResourceType("instance_image")
+	ResourceTypeAppleSiliconServer      = ResourceType("apple_silicon_server")
+	ResourceTypeBaremetalServer         = ResourceType("baremetal_server")
+	ResourceTypeBaremetalSetting        = ResourceType("baremetal_setting")
+	ResourceTypeIpamIP                  = ResourceType("ipam_ip")
+	ResourceTypeSbsVolume               = ResourceType("sbs_volume")
+	ResourceTypeSbsSnapshot             = ResourceType("sbs_snapshot")
+	ResourceTypeLoadBalancerLB          = ResourceType("load_balancer_lb")
+	ResourceTypeLoadBalancerIP          = ResourceType("load_balancer_ip")
+	ResourceTypeLoadBalancerFrontend    = ResourceType("load_balancer_frontend")
+	ResourceTypeLoadBalancerBackend     = ResourceType("load_balancer_backend")
+	ResourceTypeLoadBalancerRoute       = ResourceType("load_balancer_route")
+	ResourceTypeLoadBalancerACL         = ResourceType("load_balancer_acl")
+	ResourceTypeLoadBalancerCertificate = ResourceType("load_balancer_certificate")
 )
 
 func (enum ResourceType) String() string {
@@ -157,6 +164,13 @@ func (enum ResourceType) Values() []ResourceType {
 		"ipam_ip",
 		"sbs_volume",
 		"sbs_snapshot",
+		"load_balancer_lb",
+		"load_balancer_ip",
+		"load_balancer_frontend",
+		"load_balancer_backend",
+		"load_balancer_route",
+		"load_balancer_acl",
+		"load_balancer_certificate",
 	}
 }
 
@@ -242,6 +256,51 @@ type KubernetesPoolInfo struct {
 	Name string `json:"name"`
 }
 
+// LoadBalancerACLInfo: load balancer acl info.
+type LoadBalancerACLInfo struct {
+	FrontendID string `json:"frontend_id"`
+}
+
+// LoadBalancerBackendInfo: load balancer backend info.
+type LoadBalancerBackendInfo struct {
+	LBID string `json:"lb_id"`
+
+	Name string `json:"name"`
+}
+
+// LoadBalancerCertificateInfo: load balancer certificate info.
+type LoadBalancerCertificateInfo struct {
+	LBID string `json:"lb_id"`
+
+	Name string `json:"name"`
+}
+
+// LoadBalancerFrontendInfo: load balancer frontend info.
+type LoadBalancerFrontendInfo struct {
+	LBID string `json:"lb_id"`
+
+	Name string `json:"name"`
+}
+
+// LoadBalancerIPInfo: load balancer ip info.
+type LoadBalancerIPInfo struct {
+	IPAddress string `json:"ip_address"`
+
+	LBID *string `json:"lb_id"`
+}
+
+// LoadBalancerLBInfo: load balancer lb info.
+type LoadBalancerLBInfo struct {
+	Name string `json:"name"`
+}
+
+// LoadBalancerRouteInfo: load balancer route info.
+type LoadBalancerRouteInfo struct {
+	FrontendID string `json:"frontend_id"`
+
+	BackendID string `json:"backend_id"`
+}
+
 // SecretManagerSecretInfo: secret manager secret info.
 type SecretManagerSecretInfo struct {
 	Path string `json:"path"`
@@ -280,62 +339,83 @@ type Resource struct {
 	Name *string `json:"name"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KeymKeyInfo *KeyManagerKeyInfo `json:"keym_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	SecretManagerSecretInfo *SecretManagerSecretInfo `json:"secret_manager_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	SecretManagerVersionInfo *SecretManagerSecretVersionInfo `json:"secret_manager_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	KeyManagerKeyInfo *KeyManagerKeyInfo `json:"key_manager_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	AccountUserInfo *AccountUserInfo `json:"account_user_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	AccountOrganizationInfo *AccountOrganizationInfo `json:"account_organization_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	InstanceServerInfo *InstanceServerInfo `json:"instance_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	AppleSiliconServerInfo *AppleSiliconServerInfo `json:"apple_silicon_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	AccountProjectInfo *AccountProjectInfo `json:"account_project_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	BaremetalServerInfo *BaremetalServerInfo `json:"baremetal_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	BaremetalSettingInfo *BaremetalSettingInfo `json:"baremetal_setting_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
 	IpamIPInfo *IpamIPInfo `json:"ipam_ip_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerLBInfo *LoadBalancerLBInfo `json:"load_balancer_lb_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerIPInfo *LoadBalancerIPInfo `json:"load_balancer_ip_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerFrontendInfo *LoadBalancerFrontendInfo `json:"load_balancer_frontend_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerBackendInfo *LoadBalancerBackendInfo `json:"load_balancer_backend_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerRouteInfo *LoadBalancerRouteInfo `json:"load_balancer_route_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerACLInfo *LoadBalancerACLInfo `json:"load_balancer_acl_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo must be set.
+	LoadBalancerCertificateInfo *LoadBalancerCertificateInfo `json:"load_balancer_certificate_info,omitempty"`
 }
 
 // ProductService: product service.
@@ -421,7 +501,7 @@ type ListEventsRequest struct {
 	// OrganizationID: ID of the Organization containing the Audit Trail events.
 	OrganizationID string `json:"-"`
 
-	// ResourceType: (Optional) Returns a paginated list of Scaleway resources' features.
+	// ResourceType: (Optional) Type of the Scaleway resource.
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
 
@@ -444,11 +524,14 @@ type ListEventsRequest struct {
 
 	PageToken *string `json:"-"`
 
-	// ProductName: (Optional) Name of the Scaleway resource in a hyphenated format.
+	// ProductName: (Optional) Name of the Scaleway product in a hyphenated format.
 	ProductName *string `json:"-"`
 
 	// ServiceName: (Optional) Name of the service of the API call performed.
 	ServiceName *string `json:"-"`
+
+	// ResourceID: (Optional) ID of the Scaleway resource.
+	ResourceID *string `json:"-"`
 }
 
 // ListEventsResponse: list events response.
@@ -545,6 +628,7 @@ func (s *API) ListEvents(req *ListEventsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_token", req.PageToken)
 	parameter.AddToQuery(query, "product_name", req.ProductName)
 	parameter.AddToQuery(query, "service_name", req.ServiceName)
+	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
