@@ -421,7 +421,7 @@ type ListEventsRequest struct {
 	// OrganizationID: ID of the Organization containing the Audit Trail events.
 	OrganizationID string `json:"-"`
 
-	// ResourceType: (Optional) Returns a paginated list of Scaleway resources' features.
+	// ResourceType: (Optional) Type of the Scaleway resource.
 	// Default value: unknown_type
 	ResourceType ResourceType `json:"-"`
 
@@ -444,11 +444,14 @@ type ListEventsRequest struct {
 
 	PageToken *string `json:"-"`
 
-	// ProductName: (Optional) Name of the Scaleway resource in a hyphenated format.
+	// ProductName: (Optional) Name of the Scaleway product in a hyphenated format.
 	ProductName *string `json:"-"`
 
 	// ServiceName: (Optional) Name of the service of the API call performed.
 	ServiceName *string `json:"-"`
+
+	// ResourceID: (Optional) ID of the Scaleway resource.
+	ResourceID *string `json:"-"`
 }
 
 // ListEventsResponse: list events response.
@@ -545,6 +548,7 @@ func (s *API) ListEvents(req *ListEventsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page_token", req.PageToken)
 	parameter.AddToQuery(query, "product_name", req.ProductName)
 	parameter.AddToQuery(query, "service_name", req.ServiceName)
+	parameter.AddToQuery(query, "resource_id", req.ResourceID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
