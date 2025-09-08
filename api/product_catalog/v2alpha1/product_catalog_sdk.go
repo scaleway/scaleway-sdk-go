@@ -249,7 +249,8 @@ const (
 	// The installation of a resource (software or hardware).
 	PublicCatalogProductUnitOfMeasureCountableUnitSetup = PublicCatalogProductUnitOfMeasureCountableUnit("setup")
 	// Day.
-	PublicCatalogProductUnitOfMeasureCountableUnitDay = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+	PublicCatalogProductUnitOfMeasureCountableUnitDay    = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+	PublicCatalogProductUnitOfMeasureCountableUnitSecond = PublicCatalogProductUnitOfMeasureCountableUnit("second")
 )
 
 func (enum PublicCatalogProductUnitOfMeasureCountableUnit) String() string {
@@ -288,6 +289,7 @@ func (enum PublicCatalogProductUnitOfMeasureCountableUnit) Values() []PublicCata
 		"minute",
 		"setup",
 		"day",
+		"second",
 	}
 }
 
