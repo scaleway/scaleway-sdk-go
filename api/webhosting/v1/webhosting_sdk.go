@@ -154,6 +154,55 @@ func (enum *BackupStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CheckFreeDomainAvailabilityResponseUnavailableReason string
+
+const (
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonUnknown                 = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_unknown")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonAlreadyUsed             = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_already_used")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonTooShort                = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_too_short")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonTooLong                 = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_too_long")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonInvalidCharacters       = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_invalid_characters")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonStartsOrEndsWithHyphen  = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_starts_or_ends_with_hyphen")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonContainsDots            = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_contains_dots")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonContainsReservedKeyword = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_contains_reserved_keyword")
+)
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonUnknown)
+	}
+	return string(enum)
+}
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) Values() []CheckFreeDomainAvailabilityResponseUnavailableReason {
+	return []CheckFreeDomainAvailabilityResponseUnavailableReason{
+		"unavailable_reason_unknown",
+		"unavailable_reason_already_used",
+		"unavailable_reason_too_short",
+		"unavailable_reason_too_long",
+		"unavailable_reason_invalid_characters",
+		"unavailable_reason_starts_or_ends_with_hyphen",
+		"unavailable_reason_contains_dots",
+		"unavailable_reason_contains_reserved_keyword",
+	}
+}
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CheckFreeDomainAvailabilityResponseUnavailableReason) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CheckFreeDomainAvailabilityResponseUnavailableReason(CheckFreeDomainAvailabilityResponseUnavailableReason(tmp).String())
+	return nil
+}
+
 type DNSRecordStatus string
 
 const (
@@ -1202,6 +1251,15 @@ type HostingDomain struct {
 	CustomDomain *HostingDomainCustomDomain `json:"custom_domain"`
 }
 
+// FreeDomain: free domain.
+type FreeDomain struct {
+	// Slug: custom prefix used for the free domain.
+	Slug string `json:"slug"`
+
+	// RootDomain: free root domain provided by Web Hosting, selected from the list returned by `ListFreeRootDomains`.
+	RootDomain string `json:"root_domain"`
+}
+
 // CreateDatabaseRequestUser: create database request user.
 type CreateDatabaseRequestUser struct {
 	Username string `json:"username"`
@@ -1567,6 +1625,19 @@ type BackupAPIRestoreBackupRequest struct {
 	BackupID string `json:"-"`
 }
 
+// CheckFreeDomainAvailabilityResponse: check free domain availability response.
+type CheckFreeDomainAvailabilityResponse struct {
+	// FreeDomain: the free domain that was checked.
+	FreeDomain *FreeDomain `json:"free_domain"`
+
+	// IsAvailable: whether the free domain is available.
+	IsAvailable bool `json:"is_available"`
+
+	// Reason: reason the domain is unavailable, if applicable.
+	// Default value: unavailable_reason_unknown
+	Reason *CheckFreeDomainAvailabilityResponseUnavailableReason `json:"reason"`
+}
+
 // CheckUserOwnsDomainResponse: check user owns domain response.
 type CheckUserOwnsDomainResponse struct {
 	// OwnsDomain: indicates whether the specified project owns the domain.
@@ -1866,6 +1937,30 @@ type Domain struct {
 
 	// AutoConfigDomainDNS: whether or not to synchronize each type of record.
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
+}
+
+// FreeDomainAPICheckFreeDomainAvailabilityRequest: free domain api check free domain availability request.
+type FreeDomainAPICheckFreeDomainAvailabilityRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Slug: custom prefix used for the free domain.
+	Slug string `json:"slug"`
+
+	// RootDomain: free root domain provided by Web Hosting, selected from the list returned by `ListFreeRootDomains`.
+	RootDomain string `json:"root_domain"`
+}
+
+// FreeDomainAPIListFreeRootDomainsRequest: free domain api list free root domains request.
+type FreeDomainAPIListFreeRootDomainsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return, from the paginated results (must be a positive integer).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of free root domains to return (must be a positive integer lower or equal to 100).
+	PageSize *uint32 `json:"-"`
 }
 
 // FtpAccountAPIChangeFtpAccountPasswordRequest: ftp account api change ftp account password request.
@@ -2294,6 +2389,34 @@ func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Databases = append(r.Databases, results.Databases...)
 	r.TotalCount += uint64(len(results.Databases))
 	return uint64(len(results.Databases)), nil
+}
+
+// ListFreeRootDomainsResponse: list free root domains response.
+type ListFreeRootDomainsResponse struct {
+	// RootDomains: list of free root domains available for the Web Hosting.
+	RootDomains []string `json:"root_domains"`
+
+	// TotalCount: total number of free root domains available.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFreeRootDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFreeRootDomainsResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListFreeRootDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.RootDomains = append(r.RootDomains, results.RootDomains...)
+	r.TotalCount += uint32(len(results.RootDomains))
+	return uint32(len(results.RootDomains)), nil
 }
 
 // ListFtpAccountsResponse: list ftp accounts response.
@@ -3901,6 +4024,91 @@ func (s *HostingAPI) RemoveCustomDomain(req *HostingAPIRemoveCustomDomainRequest
 	}
 
 	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// This API allows you to list and check a free domain's validity.
+type FreeDomainAPI struct {
+	client *scw.Client
+}
+
+// NewFreeDomainAPI returns a FreeDomainAPI object from a Scaleway client.
+func NewFreeDomainAPI(client *scw.Client) *FreeDomainAPI {
+	return &FreeDomainAPI{
+		client: client,
+	}
+}
+
+func (s *FreeDomainAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// CheckFreeDomainAvailability: Check whether a given slug and free domain combination is available.
+func (s *FreeDomainAPI) CheckFreeDomainAvailability(req *FreeDomainAPICheckFreeDomainAvailabilityRequest, opts ...scw.RequestOption) (*CheckFreeDomainAvailabilityResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/free-domains/check-availability",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckFreeDomainAvailabilityResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListFreeRootDomains: Retrieve the list of free root domains available for a Web Hosting.
+func (s *FreeDomainAPI) ListFreeRootDomains(req *FreeDomainAPIListFreeRootDomainsRequest, opts ...scw.RequestOption) (*ListFreeRootDomainsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/free-domains/root-domains",
+		Query:  query,
+	}
+
+	var resp ListFreeRootDomainsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
