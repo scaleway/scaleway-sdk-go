@@ -119,6 +119,7 @@ const (
 	ResourceTypeLoadBalancerRoute       = ResourceType("load_balancer_route")
 	ResourceTypeLoadBalancerACL         = ResourceType("load_balancer_acl")
 	ResourceTypeLoadBalancerCertificate = ResourceType("load_balancer_certificate")
+	ResourceTypeSfsFilesystem           = ResourceType("sfs_filesystem")
 )
 
 func (enum ResourceType) String() string {
@@ -171,6 +172,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"load_balancer_route",
 		"load_balancer_acl",
 		"load_balancer_certificate",
+		"sfs_filesystem",
 	}
 }
 
