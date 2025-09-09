@@ -395,7 +395,7 @@ L: // We gather potential errors and return them all together
 	for {
 		select {
 		case newErr := <-errChan:
-			err = errors.Wrap(err, newErr.Error())
+			err = errors.Wrap(err, "%s", newErr.Error())
 		default:
 			break L
 		}
