@@ -2216,6 +2216,9 @@ type HostingAPIRemoveCustomDomainRequest struct {
 
 	// HostingID: hosting ID to which the custom domain is detached from.
 	HostingID string `json:"-"`
+
+	// DomainName: the custom domain name to detach from the hosting.
+	DomainName string `json:"domain_name"`
 }
 
 // HostingAPIResetHostingPasswordRequest: hosting api reset hosting password request.
