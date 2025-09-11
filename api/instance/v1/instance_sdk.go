@@ -1059,10 +1059,11 @@ type VolumeServerState string
 const (
 	VolumeServerStateAvailable    = VolumeServerState("available")
 	VolumeServerStateSnapshotting = VolumeServerState("snapshotting")
-	VolumeServerStateFetching     = VolumeServerState("fetching")
 	VolumeServerStateResizing     = VolumeServerState("resizing")
+	VolumeServerStateFetching     = VolumeServerState("fetching")
 	VolumeServerStateSaving       = VolumeServerState("saving")
 	VolumeServerStateHotsyncing   = VolumeServerState("hotsyncing")
+	VolumeServerStateAttaching    = VolumeServerState("attaching")
 	VolumeServerStateError        = VolumeServerState("error")
 )
 
@@ -1078,10 +1079,11 @@ func (enum VolumeServerState) Values() []VolumeServerState {
 	return []VolumeServerState{
 		"available",
 		"snapshotting",
-		"fetching",
 		"resizing",
+		"fetching",
 		"saving",
 		"hotsyncing",
+		"attaching",
 		"error",
 	}
 }
@@ -1148,8 +1150,8 @@ const (
 	VolumeStateAvailable    = VolumeState("available")
 	VolumeStateSnapshotting = VolumeState("snapshotting")
 	VolumeStateFetching     = VolumeState("fetching")
-	VolumeStateResizing     = VolumeState("resizing")
 	VolumeStateSaving       = VolumeState("saving")
+	VolumeStateResizing     = VolumeState("resizing")
 	VolumeStateHotsyncing   = VolumeState("hotsyncing")
 	VolumeStateError        = VolumeState("error")
 )
@@ -1167,8 +1169,8 @@ func (enum VolumeState) Values() []VolumeState {
 		"available",
 		"snapshotting",
 		"fetching",
-		"resizing",
 		"saving",
+		"resizing",
 		"hotsyncing",
 		"error",
 	}
