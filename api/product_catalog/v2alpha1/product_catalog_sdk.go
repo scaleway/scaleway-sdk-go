@@ -249,8 +249,13 @@ const (
 	// The installation of a resource (software or hardware).
 	PublicCatalogProductUnitOfMeasureCountableUnitSetup = PublicCatalogProductUnitOfMeasureCountableUnit("setup")
 	// Day.
-	PublicCatalogProductUnitOfMeasureCountableUnitDay    = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+	PublicCatalogProductUnitOfMeasureCountableUnitDay = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+	// Second.
 	PublicCatalogProductUnitOfMeasureCountableUnitSecond = PublicCatalogProductUnitOfMeasureCountableUnit("second")
+	// Sample per day.
+	PublicCatalogProductUnitOfMeasureCountableUnitSampleDay = PublicCatalogProductUnitOfMeasureCountableUnit("sample_day")
+	// Gigabyte per day.
+	PublicCatalogProductUnitOfMeasureCountableUnitGigabyteDay = PublicCatalogProductUnitOfMeasureCountableUnit("gigabyte_day")
 )
 
 func (enum PublicCatalogProductUnitOfMeasureCountableUnit) String() string {
@@ -290,6 +295,8 @@ func (enum PublicCatalogProductUnitOfMeasureCountableUnit) Values() []PublicCata
 		"setup",
 		"day",
 		"second",
+		"sample_day",
+		"gigabyte_day",
 	}
 }
 
