@@ -15,6 +15,17 @@ import (
 	"gopkg.in/dnaeon/go-vcr.v4/pkg/cassette"
 )
 
+const (
+	windowsDockerEngine     = "//./pipe/docker_engine"
+	unixDockerEngine        = "/var/run/docker.sock"
+	escapedUnixDockerEngine = "%2Fvar%2Frun%2Fdocker.sock"
+)
+
+// QueryMatcherIgnore contains the list of query value that should be ignored when matching requests with cassettes
+var QueryMatcherIgnore = []string{
+	"organization_id",
+}
+
 func customDockerMatcher(r *http.Request, i cassette.Request) bool {
 	escapedRecordedURL := regexp.MustCompile(`http://`+unixDockerEngine+`(.+)?`).
 		ReplaceAllString(
@@ -155,6 +166,12 @@ func CassetteMatcher(request *http.Request, cassette cassette.Request) bool {
 	requestURL.RawQuery = requestURLValues.Encode()
 	cassetteURL.RawQuery = cassetteURLValues.Encode()
 
+	// Make API key generic for URL comparison
+	request.URL.Path = regexp.MustCompile(`(.+)?SCW[0-9A-Z]{17}(.+)?`).
+		ReplaceAllString(
+			request.URL.Path,
+			"${1}SCWXXXXXXXXXXXXXXXXX${2}")
+
 	// Specific handling of s3 URLs
 	// URL format is https://test-acc-scaleway-object-bucket-lifecycle-8445817190507446251.s3.fr-par.scw.cloud/?lifecycle=
 	if strings.HasSuffix(requestURL.Host, "scw.cloud") {
@@ -173,12 +190,6 @@ func CassetteMatcher(request *http.Request, cassette cassette.Request) bool {
 	if request.URL.Host == unixDockerEngine || request.URL.Host == windowsDockerEngine {
 		return customDockerMatcher(request, cassette)
 	}
-
-	// Make API key generic for URL comparison
-	request.URL.Path = regexp.MustCompile(`(.+)?SCW[0-9A-Z]{17}(.+)?`).
-		ReplaceAllString(
-			request.URL.Path,
-			"${1}SCWXXXXXXXXXXXXXXXXX${2}")
 
 	return request.Method == cassette.Method &&
 		request.URL.Path == cassetteURL.Path &&

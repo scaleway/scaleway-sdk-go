@@ -36,7 +36,7 @@ func CreateRecordedScwClient(t *testing.T) (*scw.Client, *recorder.Recorder, err
 	}
 
 	// Setup recorder
-	r, err := vcr.NewHTTPRecorder(t, pkgFolder, UpdateCassette)
+	r, err := vcr.NewHTTPRecorder(t, pkgFolder, UpdateCassette, nil)
 	if err != nil {
 		return nil, nil, err
 	}
