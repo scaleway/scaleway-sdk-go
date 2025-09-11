@@ -448,11 +448,13 @@ type KeyUsage struct {
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
 
-	// AsymmetricEncryption: default value: unknown_asymmetric_encryption
+	// AsymmetricEncryption: see the `Key.Algorithm.AsymmetricEncryption` enum for a description of values.
+	// Default value: unknown_asymmetric_encryption
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	AsymmetricEncryption *KeyAlgorithmAsymmetricEncryption `json:"asymmetric_encryption,omitempty"`
 
-	// AsymmetricSigning: default value: unknown_asymmetric_signing
+	// AsymmetricSigning: see the `Key.Algorithm.AsymmetricSigning` enum for a description of values.
+	// Default value: unknown_asymmetric_signing
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
 }
@@ -477,7 +479,7 @@ type Key struct {
 	// Name: name of the key.
 	Name string `json:"name"`
 
-	// Usage: keys with a usage set to `symmetric_encryption` can encrypt and decrypt data using the `AES-256-GCM` key algorithm. Key Manager currently only supports `AES-256-GCM`.
+	// Usage: see the `Key.Usage` enum for a description of possible values.
 	Usage *KeyUsage `json:"usage"`
 
 	// State: see the `Key.State` enum for a description of possible values.
@@ -533,7 +535,7 @@ type CreateKeyRequest struct {
 	// Name: (Optional) Name of the key.
 	Name *string `json:"name,omitempty"`
 
-	// Usage: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
+	// Usage: see the `Key.Usage` enum for a description of possible values.
 	Usage *KeyUsage `json:"usage,omitempty"`
 
 	// Description: (Optional) Description of the key.
@@ -886,7 +888,7 @@ type VerifyResponse struct {
 	// KeyID: ID of the key used for verification.
 	KeyID string `json:"key_id"`
 
-	// Valid: returns `true` if the signature is valid for the digest and key, `false` otherwise.
+	// Valid: returns `true` if the signature is valid for the digest and key, and `false` otherwise.
 	Valid bool `json:"valid"`
 }
 
@@ -906,7 +908,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateKey: Create a key in a given region specified by the `region` parameter. Keys only support symmetric encryption. You can use keys to encrypt or decrypt arbitrary payloads, or to generate data encryption keys. **Data encryption keys are not stored in Key Manager**.
+// CreateKey: Create a key in a given region specified by the `region` parameter. You can use keys to encrypt or decrypt arbitrary payloads, to sign and verify messages or to generate data encryption keys. **Data encryption keys are not stored in Key Manager**.
 func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
