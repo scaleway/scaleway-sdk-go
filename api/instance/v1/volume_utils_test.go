@@ -3,21 +3,21 @@ package instance
 import (
 	"testing"
 
-	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
 
 func TestUpdateVolume(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("volume-utils-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	project, ok := client.GetDefaultProjectID()
-	if !ok && r.Mode() == recorder.ModeRecording {
+	if !ok && r.Mode() == recorder.ModeRecordOnly {
 		t.Fatal("default project ID is required to record this test")
 	}
 	instanceAPI := NewAPI(client)

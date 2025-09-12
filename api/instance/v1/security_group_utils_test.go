@@ -12,7 +12,7 @@ import (
 )
 
 func TestAPI_UpdateSecurityGroup(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("security-group-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -66,7 +66,7 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 }
 
 func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("security-group-rule-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it

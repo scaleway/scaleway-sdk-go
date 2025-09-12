@@ -1,0 +1,38 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 80
+    host: api.scaleway.com
+    body: "{\"name\":\"srv-intelligent-bohr\",\"project\":\"105bdce1-64c0-48ab-899d-868455867ecf\"}"
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 373
+    body: "{\"type\": \"invalid_arguments\", \"message\": \"invalid argument(s)\", \"details\": [{\"argument_name\": \"commercial_type\", \"reason\": \"required\", \"help_message\": \"required key not provided\"}, {\"argument_name\": \"image\", \"reason\": \"required\", \"help_message\": \"required key not provided\"}, {\"argument_name\": \"volumes\", \"reason\": \"required\", \"help_message\": \"required key not provided\"}]}"
+    headers:
+      Content-Length:
+      - "373"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:45:55 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 0217029e-4222-4231-a240-dad5ef13e5a8
+    status: 400 Bad Request
+    code: 400
+    duration: 78.582631ms

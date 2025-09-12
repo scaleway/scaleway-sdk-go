@@ -9,7 +9,7 @@ import (
 )
 
 func TestWaitForSnapshot(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("snapshot-wait-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -68,7 +68,7 @@ func createSnapshot(t *testing.T, instanceAPI *API, snapshotName string) (*Snaps
 }
 
 func TestAPI_UpdateSnapshot(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("snapshot-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it

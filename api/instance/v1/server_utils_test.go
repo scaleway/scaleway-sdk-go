@@ -8,17 +8,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dnaeon/go-vcr/recorder"
 	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v2"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
 
 func TestAPI_GetServerType(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("get-server-type")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -37,14 +37,14 @@ func TestAPI_GetServerType(t *testing.T) {
 }
 
 func TestAPI_ServerUserData(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("server-user-data")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	project, ok := client.GetDefaultProjectID()
-	if !ok && r.Mode() == recorder.ModeRecording {
+	if !ok && r.Mode() == recorder.ModeRecordOnly {
 		t.Fatal("default project ID is required to record this test")
 	}
 	instanceAPI := NewAPI(client)
@@ -83,14 +83,14 @@ func TestAPI_ServerUserData(t *testing.T) {
 }
 
 func TestAPI_AllServerUserData(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("all-server-user-data")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
 	}()
 
 	project, ok := client.GetDefaultProjectID()
-	if !ok && r.Mode() == recorder.ModeRecording {
+	if !ok && r.Mode() == recorder.ModeRecordOnly {
 		t.Fatal("default project ID is required to record this test")
 	}
 	instanceAPI := NewAPI(client)
@@ -156,7 +156,7 @@ func TestAPI_AllServerUserData(t *testing.T) {
 }
 
 func TestAPI_CreateServer(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("create-server")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -181,7 +181,7 @@ func TestAPI_CreateServer(t *testing.T) {
 }
 
 func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("create-server-image-label-resolution")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it

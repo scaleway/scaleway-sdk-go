@@ -1,0 +1,105 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 112
+    host: api.scaleway.com
+    body: "{\"name\":\"test volume\",\"project\":\"105bdce1-64c0-48ab-899d-868455867ecf\",\"volume_type\":\"l_ssd\",\"size\":20000000000}"
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 433
+    body: "{\"volume\": {\"id\": \"35b5dd5b-380d-46d5-8a17-4d14fa381794\", \"name\": \"test volume\", \"volume_type\": \"l_ssd\", \"export_uri\": null, \"organization\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"project\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"server\": null, \"size\": 20000000000, \"state\": \"available\", \"creation_date\": \"2025-09-05T15:47:02.576022+00:00\", \"modification_date\": \"2025-09-05T15:47:02.576022+00:00\", \"tags\": [], \"zone\": \"fr-par-1\"}}"
+    headers:
+      Content-Length:
+      - "433"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:47:02 GMT
+      Location:
+      - https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/35b5dd5b-380d-46d5-8a17-4d14fa381794
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 8e51c039-3a5a-42a6-8c57-75055bf15ce2
+    status: 201 Created
+    code: 201
+    duration: 196.056835ms
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 31
+    host: api.scaleway.com
+    body: "{\"name\":\"some new volume name\"}"
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/35b5dd5b-380d-46d5-8a17-4d14fa381794
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 442
+    body: "{\"volume\": {\"id\": \"35b5dd5b-380d-46d5-8a17-4d14fa381794\", \"name\": \"some new volume name\", \"volume_type\": \"l_ssd\", \"export_uri\": null, \"organization\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"project\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"server\": null, \"size\": 20000000000, \"state\": \"available\", \"creation_date\": \"2025-09-05T15:47:02.576022+00:00\", \"modification_date\": \"2025-09-05T15:47:02.653226+00:00\", \"tags\": [], \"zone\": \"fr-par-1\"}}"
+    headers:
+      Content-Length:
+      - "442"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:47:02 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 2a939846-2181-4bde-9899-bf38fe3ab1e5
+    status: 200 OK
+    code: 200
+    duration: 116.12956ms
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/volumes/35b5dd5b-380d-46d5-8a17-4d14fa381794
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:47:02 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 53c5e97f-57ef-46de-a734-5bbfb95fd29a
+    status: 204 No Content
+    code: 204
+    duration: 151.306747ms
