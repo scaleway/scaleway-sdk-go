@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
@@ -38,6 +39,240 @@ var (
 	_ = parameter.AddToQuery
 	_ = namegenerator.GetRandomName
 )
+
+type AuthenticationEventFailureReason string
+
+const (
+	AuthenticationEventFailureReasonUnknownFailureReason = AuthenticationEventFailureReason("unknown_failure_reason")
+	AuthenticationEventFailureReasonInvalidMfa           = AuthenticationEventFailureReason("invalid_mfa")
+	AuthenticationEventFailureReasonInvalidPassword      = AuthenticationEventFailureReason("invalid_password")
+)
+
+func (enum AuthenticationEventFailureReason) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AuthenticationEventFailureReasonUnknownFailureReason)
+	}
+	return string(enum)
+}
+
+func (enum AuthenticationEventFailureReason) Values() []AuthenticationEventFailureReason {
+	return []AuthenticationEventFailureReason{
+		"unknown_failure_reason",
+		"invalid_mfa",
+		"invalid_password",
+	}
+}
+
+func (enum AuthenticationEventFailureReason) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AuthenticationEventFailureReason) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AuthenticationEventFailureReason(AuthenticationEventFailureReason(tmp).String())
+	return nil
+}
+
+type AuthenticationEventMFAType string
+
+const (
+	AuthenticationEventMFATypeUnknownMfaType = AuthenticationEventMFAType("unknown_mfa_type")
+	AuthenticationEventMFATypeTotp           = AuthenticationEventMFAType("totp")
+)
+
+func (enum AuthenticationEventMFAType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AuthenticationEventMFATypeUnknownMfaType)
+	}
+	return string(enum)
+}
+
+func (enum AuthenticationEventMFAType) Values() []AuthenticationEventMFAType {
+	return []AuthenticationEventMFAType{
+		"unknown_mfa_type",
+		"totp",
+	}
+}
+
+func (enum AuthenticationEventMFAType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AuthenticationEventMFAType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AuthenticationEventMFAType(AuthenticationEventMFAType(tmp).String())
+	return nil
+}
+
+type AuthenticationEventMethod string
+
+const (
+	AuthenticationEventMethodUnknownMethod      = AuthenticationEventMethod("unknown_method")
+	AuthenticationEventMethodPassword           = AuthenticationEventMethod("password")
+	AuthenticationEventMethodAuthenticationCode = AuthenticationEventMethod("authentication_code")
+	AuthenticationEventMethodOauth2             = AuthenticationEventMethod("oauth2")
+	AuthenticationEventMethodSaml               = AuthenticationEventMethod("saml")
+)
+
+func (enum AuthenticationEventMethod) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AuthenticationEventMethodUnknownMethod)
+	}
+	return string(enum)
+}
+
+func (enum AuthenticationEventMethod) Values() []AuthenticationEventMethod {
+	return []AuthenticationEventMethod{
+		"unknown_method",
+		"password",
+		"authentication_code",
+		"oauth2",
+		"saml",
+	}
+}
+
+func (enum AuthenticationEventMethod) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AuthenticationEventMethod) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AuthenticationEventMethod(AuthenticationEventMethod(tmp).String())
+	return nil
+}
+
+type AuthenticationEventOrigin string
+
+const (
+	AuthenticationEventOriginUnknownOrigin = AuthenticationEventOrigin("unknown_origin")
+	AuthenticationEventOriginPublicAPI     = AuthenticationEventOrigin("public_api")
+	AuthenticationEventOriginAdminAPI      = AuthenticationEventOrigin("admin_api")
+)
+
+func (enum AuthenticationEventOrigin) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AuthenticationEventOriginUnknownOrigin)
+	}
+	return string(enum)
+}
+
+func (enum AuthenticationEventOrigin) Values() []AuthenticationEventOrigin {
+	return []AuthenticationEventOrigin{
+		"unknown_origin",
+		"public_api",
+		"admin_api",
+	}
+}
+
+func (enum AuthenticationEventOrigin) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AuthenticationEventOrigin) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AuthenticationEventOrigin(AuthenticationEventOrigin(tmp).String())
+	return nil
+}
+
+type AuthenticationEventResult string
+
+const (
+	AuthenticationEventResultUnknownResult = AuthenticationEventResult("unknown_result")
+	AuthenticationEventResultSuccess       = AuthenticationEventResult("success")
+	AuthenticationEventResultFailure       = AuthenticationEventResult("failure")
+)
+
+func (enum AuthenticationEventResult) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AuthenticationEventResultUnknownResult)
+	}
+	return string(enum)
+}
+
+func (enum AuthenticationEventResult) Values() []AuthenticationEventResult {
+	return []AuthenticationEventResult{
+		"unknown_result",
+		"success",
+		"failure",
+	}
+}
+
+func (enum AuthenticationEventResult) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AuthenticationEventResult) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AuthenticationEventResult(AuthenticationEventResult(tmp).String())
+	return nil
+}
+
+type ListAuthenticationEventsRequestOrderBy string
+
+const (
+	ListAuthenticationEventsRequestOrderByRecordedAtDesc = ListAuthenticationEventsRequestOrderBy("recorded_at_desc")
+	ListAuthenticationEventsRequestOrderByRecordedAtAsc  = ListAuthenticationEventsRequestOrderBy("recorded_at_asc")
+)
+
+func (enum ListAuthenticationEventsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListAuthenticationEventsRequestOrderByRecordedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListAuthenticationEventsRequestOrderBy) Values() []ListAuthenticationEventsRequestOrderBy {
+	return []ListAuthenticationEventsRequestOrderBy{
+		"recorded_at_desc",
+		"recorded_at_asc",
+	}
+}
+
+func (enum ListAuthenticationEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAuthenticationEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAuthenticationEventsRequestOrderBy(ListAuthenticationEventsRequestOrderBy(tmp).String())
+	return nil
+}
 
 type ListEventsRequestOrderBy string
 
@@ -120,6 +355,7 @@ const (
 	ResourceTypeLoadBalancerACL         = ResourceType("load_balancer_acl")
 	ResourceTypeLoadBalancerCertificate = ResourceType("load_balancer_certificate")
 	ResourceTypeSfsFilesystem           = ResourceType("sfs_filesystem")
+	ResourceTypeVpcPrivateNetwork       = ResourceType("vpc_private_network")
 )
 
 func (enum ResourceType) String() string {
@@ -173,6 +409,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"load_balancer_acl",
 		"load_balancer_certificate",
 		"sfs_filesystem",
+		"vpc_private_network",
 	}
 }
 
@@ -315,16 +552,6 @@ type SecretManagerSecretVersionInfo struct {
 	Revision uint32 `json:"revision"`
 }
 
-// EventPrincipal: event principal.
-type EventPrincipal struct {
-	ID string `json:"id"`
-}
-
-// EventSystem: event system.
-type EventSystem struct {
-	Name string `json:"name"`
-}
-
 // Resource: resource.
 type Resource struct {
 	ID string `json:"id"`
@@ -420,11 +647,66 @@ type Resource struct {
 	LoadBalancerCertificateInfo *LoadBalancerCertificateInfo `json:"load_balancer_certificate_info,omitempty"`
 }
 
+// EventPrincipal: event principal.
+type EventPrincipal struct {
+	ID string `json:"id"`
+}
+
+// EventSystem: event system.
+type EventSystem struct {
+	Name string `json:"name"`
+}
+
 // ProductService: product service.
 type ProductService struct {
 	Name string `json:"name"`
 
 	Methods []string `json:"methods"`
+}
+
+// AuthenticationEvent: authentication event.
+type AuthenticationEvent struct {
+	// ID: ID of the event.
+	ID string `json:"id"`
+
+	// RecordedAt: timestamp of the event.
+	RecordedAt *time.Time `json:"recorded_at"`
+
+	// OrganizationID: organization ID containing the event.
+	OrganizationID string `json:"organization_id"`
+
+	// SourceIP: IP address at the origin of the event.
+	SourceIP net.IP `json:"source_ip"`
+
+	// UserAgent: user Agent at the origin of the event.
+	UserAgent *string `json:"user_agent"`
+
+	// Resources: resources attached to the event.
+	Resources []*Resource `json:"resources"`
+
+	// Result: result of the authentication attempt.
+	// Default value: unknown_result
+	Result AuthenticationEventResult `json:"result"`
+
+	// FailureReason: (Optional) Reason for authentication failure.
+	// Default value: unknown_failure_reason
+	FailureReason *AuthenticationEventFailureReason `json:"failure_reason"`
+
+	// CountryCode: (Optional) ISO 3166-1 alpha-2 country code of the source IP.
+	// Default value: unknown_country_code
+	CountryCode *std.CountryCode `json:"country_code"`
+
+	// Method: authentication method used.
+	// Default value: unknown_method
+	Method AuthenticationEventMethod `json:"method"`
+
+	// Origin: origin of the authentication attempt.
+	// Default value: unknown_origin
+	Origin AuthenticationEventOrigin `json:"origin"`
+
+	// MfaType: (Optional) MFA type used for the authentication attempt.
+	// Default value: unknown_mfa_type
+	MfaType *AuthenticationEventMFAType `json:"mfa_type"`
 }
 
 // Event: event.
@@ -492,6 +774,32 @@ type Product struct {
 	Services []*ProductService `json:"services"`
 }
 
+// ListAuthenticationEventsRequest: list authentication events request.
+type ListAuthenticationEventsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	RecordedAfter *time.Time `json:"-"`
+
+	RecordedBefore *time.Time `json:"-"`
+
+	// OrderBy: default value: recorded_at_desc
+	OrderBy ListAuthenticationEventsRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	PageToken *string `json:"-"`
+}
+
+// ListAuthenticationEventsResponse: list authentication events response.
+type ListAuthenticationEventsResponse struct {
+	Events []*AuthenticationEvent `json:"events"`
+
+	NextPageToken *string `json:"next_page_token"`
+}
+
 // ListEventsRequest: list events request.
 type ListEventsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -534,6 +842,12 @@ type ListEventsRequest struct {
 
 	// ResourceID: (Optional) ID of the Scaleway resource.
 	ResourceID *string `json:"-"`
+
+	// PrincipalID: (Optional) ID of the User or IAM application at the origin of the event.
+	PrincipalID *string `json:"-"`
+
+	// SourceIP: (Optional) IP address at the origin of the event.
+	SourceIP *string `json:"-"`
 }
 
 // ListEventsResponse: list events response.
@@ -631,6 +945,8 @@ func (s *API) ListEvents(req *ListEventsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "product_name", req.ProductName)
 	parameter.AddToQuery(query, "service_name", req.ServiceName)
 	parameter.AddToQuery(query, "resource_id", req.ResourceID)
+	parameter.AddToQuery(query, "principal_id", req.PrincipalID)
+	parameter.AddToQuery(query, "source_ip", req.SourceIP)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -643,6 +959,52 @@ func (s *API) ListEvents(req *ListEventsRequest, opts ...scw.RequestOption) (*Li
 	}
 
 	var resp ListEventsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAuthenticationEvents: Retrieve the list of Audit Trail authentication events for a Scaleway Organization. You must specify the `organization_id`.
+func (s *API) ListAuthenticationEvents(req *ListAuthenticationEventsRequest, opts ...scw.RequestOption) (*ListAuthenticationEventsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "recorded_after", req.RecordedAfter)
+	parameter.AddToQuery(query, "recorded_before", req.RecordedBefore)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/authentication-events",
+		Query:  query,
+	}
+
+	var resp ListAuthenticationEventsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
