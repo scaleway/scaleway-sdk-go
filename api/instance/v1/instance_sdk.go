@@ -3562,6 +3562,15 @@ type PlanBlockMigrationRequest struct {
 	SnapshotID *string `json:"snapshot_id,omitempty"`
 }
 
+// ReleaseIPToIpamRequest: release ip to ipam request.
+type ReleaseIPToIpamRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// IPID: ID of the IP you want to release from the Instance but retain in IPAM.
+	IPID string `json:"-"`
+}
+
 // ServerActionRequest: server action request.
 type ServerActionRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -6903,6 +6912,40 @@ func (s *API) CheckBlockMigrationOrganizationQuotas(req *CheckBlockMigrationOrga
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/block-migration/check-organization-quotas",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ReleaseIPToIpam: **The IP remains available in IPAM**, which means that it is still reserved by the Organization, and can be reattached to another resource (Instance or other product).
+func (s *API) ReleaseIPToIpam(req *ReleaseIPToIpamRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "/release-to-ipam",
 	}
 
 	err = scwReq.SetBody(req)
