@@ -88,6 +88,32 @@ type MetadataIP struct {
 	Tags             []string `json:"tags"`
 }
 
+// RootVolume represents the root volume of the instance image
+type RootVolume struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Size       int    `json:"size"`
+	VolumeType string `json:"volume_type"`
+}
+
+// Image represents the image of the instance
+type Image struct {
+	Arch             string         `json:"arch"`
+	CreationDate     string         `json:"creation_date"`
+	ExtraVolumes     map[string]any `json:"extra_volumes"`
+	FromServer       string         `json:"from_server"`
+	ID               string         `json:"id"`
+	ModificationDate string         `json:"modification_date"`
+	Name             string         `json:"name"`
+	Organization     string         `json:"organization"`
+	Project          string         `json:"project"`
+	Public           bool           `json:"public"`
+	RootVolume       RootVolume     `json:"root_volume"`
+	State            string         `json:"state"`
+	Tags             []string       `json:"tags"`
+	Zone             string         `json:"zone"`
+}
+
 // Metadata represents the struct return by the metadata API
 type Metadata struct {
 	ID             string `json:"id,omitempty"`
@@ -96,6 +122,7 @@ type Metadata struct {
 	Organization   string `json:"organization,omitempty"`
 	Project        string `json:"project,omitempty"`
 	CommercialType string `json:"commercial_type,omitempty"`
+	Image          Image  `json:"image,omitempty"`
 	// PublicIP IPv4 only
 	PublicIP struct {
 		ID               string `json:"id"`
