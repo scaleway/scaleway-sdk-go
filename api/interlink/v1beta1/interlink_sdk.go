@@ -1805,7 +1805,7 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// SetRoutingPolicy: Replace a routing policy from an existing link. This is usefull when route propagation is enabled because it changes the routing policy "in place", without blocking all routes like a attach / detach would do.
+// SetRoutingPolicy: Replace a routing policy from an existing link. This is useful when route propagation is enabled because it changes the routing policy "in place", without blocking all routes like a attach / detach would do.
 func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.RequestOption) (*Link, error) {
 	var err error
 
