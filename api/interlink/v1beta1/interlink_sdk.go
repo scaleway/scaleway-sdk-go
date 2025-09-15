@@ -45,6 +45,7 @@ const (
 	BgpStatusUnknownBgpStatus = BgpStatus("unknown_bgp_status")
 	BgpStatusUp               = BgpStatus("up")
 	BgpStatusDown             = BgpStatus("down")
+	BgpStatusDisabled         = BgpStatus("disabled")
 )
 
 func (enum BgpStatus) String() string {
@@ -60,6 +61,7 @@ func (enum BgpStatus) Values() []BgpStatus {
 		"unknown_bgp_status",
 		"up",
 		"down",
+		"disabled",
 	}
 }
 
@@ -180,6 +182,7 @@ const (
 	LinkStatusDeprovisioning      = LinkStatus("deprovisioning")
 	LinkStatusDeleted             = LinkStatus("deleted")
 	LinkStatusLocked              = LinkStatus("locked")
+	LinkStatusReady               = LinkStatus("ready")
 )
 
 func (enum LinkStatus) String() string {
@@ -205,6 +208,7 @@ func (enum LinkStatus) Values() []LinkStatus {
 		"deprovisioning",
 		"deleted",
 		"locked",
+		"ready",
 	}
 }
 
@@ -726,6 +730,12 @@ type CreateLinkRequest struct {
 
 	// Vlan: for self-hosted links only, it is possible to choose the VLAN ID. If the VLAN is not available (ie already taken or out of range), an error is returned.
 	Vlan *uint32 `json:"vlan,omitempty"`
+
+	// RoutingPolicyV4ID: if set, attaches this routing policy containing IPv4 prefixes to the Link. Hence, a BGP IPv4 session will be created.
+	RoutingPolicyV4ID *string `json:"routing_policy_v4_id,omitempty"`
+
+	// RoutingPolicyV6ID: if set, attaches this routing policy containing IPv6 prefixes to the Link. Hence, a BGP IPv6 session will be created.
+	RoutingPolicyV6ID *string `json:"routing_policy_v6_id,omitempty"`
 }
 
 // CreateRoutingPolicyRequest: create routing policy request.
@@ -1174,6 +1184,18 @@ func (r *ListRoutingPoliciesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.RoutingPolicies = append(r.RoutingPolicies, results.RoutingPolicies...)
 	r.TotalCount += uint64(len(results.RoutingPolicies))
 	return uint64(len(results.RoutingPolicies)), nil
+}
+
+// SetRoutingPolicyRequest: set routing policy request.
+type SetRoutingPolicyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// LinkID: ID of the link to set a routing policy from.
+	LinkID string `json:"-"`
+
+	// RoutingPolicyID: ID of the routing policy to be set.
+	RoutingPolicyID string `json:"routing_policy_id"`
 }
 
 // UpdateLinkRequest: update link request.
@@ -1767,6 +1789,42 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/links/" + fmt.Sprint(req.LinkID) + "/detach-routing-policy",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Link
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetRoutingPolicy: Replace a routing policy from an existing link. This is usefull when route propagation is enabled because it changes the routing policy "in place", without blocking all routes like a attach / detach would do.
+func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.RequestOption) (*Link, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LinkID) == "" {
+		return nil, errors.New("field LinkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/links/" + fmt.Sprint(req.LinkID) + "/set-routing-policy",
 	}
 
 	err = scwReq.SetBody(req)
