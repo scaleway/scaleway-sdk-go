@@ -136,6 +136,8 @@ const (
 	CNIKilo = CNI("kilo")
 	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
 	CNINone = CNI("none")
+	// Cilium CNI will be configured in native routing mode (https://docs.cilium.io/en/stable/network/concepts/routing/#native-routing).
+	CNICiliumNative = CNI("cilium_native")
 )
 
 func (enum CNI) String() string {
@@ -155,6 +157,7 @@ func (enum CNI) Values() []CNI {
 		"flannel",
 		"kilo",
 		"none",
+		"cilium_native",
 	}
 }
 
