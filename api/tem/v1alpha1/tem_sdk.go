@@ -1067,6 +1067,19 @@ type DomainLastStatusDmarcRecord struct {
 	Error *string `json:"error"`
 }
 
+// DomainLastStatusMXRecord: domain last status mx record.
+type DomainLastStatusMXRecord struct {
+	// Status: status of the MX record's configuration. This record is optional to validate a domain, but highly recommended.
+	// Default value: unknown_record_status
+	Status DomainLastStatusRecordStatus `json:"status"`
+
+	// LastValidAt: time and date the MX record was last valid.
+	LastValidAt *time.Time `json:"last_valid_at"`
+
+	// Error: an error text displays in case the record is not valid.
+	Error *string `json:"error"`
+}
+
 // DomainLastStatusSpfRecord: domain last status spf record.
 type DomainLastStatusSpfRecord struct {
 	// Status: status of the SPF record's configuration.
@@ -1487,6 +1500,9 @@ type DomainLastStatus struct {
 	// DmarcRecord: the DMARC record verification data.
 	DmarcRecord *DomainLastStatusDmarcRecord `json:"dmarc_record"`
 
+	// MxRecord: the MX record verification data.
+	MxRecord *DomainLastStatusMXRecord `json:"mx_record"`
+
 	// AutoconfigState: the verification state of domain auto-configuration.
 	AutoconfigState *DomainLastStatusAutoconfigState `json:"autoconfig_state"`
 }
@@ -1496,7 +1512,7 @@ type GetDomainLastStatusRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DomainID: ID of the domain to delete.
+	// DomainID: ID of the domain to get records status.
 	DomainID string `json:"-"`
 }
 
@@ -2483,7 +2499,7 @@ func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetDomainLastStatus: Display SPF and DKIM records status and potential errors, including the found records to make debugging easier.
+// GetDomainLastStatus: Display SPF, DKIM, DMARC and MX records status and potential errors, including the found records to make debugging easier.
 func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.RequestOption) (*DomainLastStatus, error) {
 	var err error
 
