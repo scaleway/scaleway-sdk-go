@@ -1436,6 +1436,9 @@ type PrivateNIC struct {
 
 	// Tags: private NIC tags.
 	Tags []string `json:"tags"`
+
+	// CreationDate: private NIC creation date.
+	CreationDate *time.Time `json:"creation_date"`
 }
 
 // SecurityGroupSummary: security group summary.
