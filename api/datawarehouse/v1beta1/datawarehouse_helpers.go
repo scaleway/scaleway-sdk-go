@@ -14,7 +14,7 @@ const (
 )
 
 type WaitForDeploymentRequest struct {
-	DeploymentID   string
+	DeploymentID  string
 	Region        scw.Region
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
@@ -41,7 +41,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 		Get: func() (interface{}, bool, error) {
 			res, err := s.GetDeployment(&GetDeploymentRequest{
 				DeploymentID: req.DeploymentID,
-				Region:      req.Region,
+				Region:       req.Region,
 			}, opts...)
 
 			if err != nil {
