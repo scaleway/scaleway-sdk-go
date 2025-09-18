@@ -3,6 +3,7 @@ package scw
 import (
 	"bytes"
 	goerrors "errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -200,7 +201,7 @@ func LoadConfig() (*Config, error) {
 			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
 			cfgYml, errYml := LoadConfigFromPath(configPath)
 			// If .yml config is not found, return first error when reading .yaml
-			if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
+			if errYml == nil || !goerrors.As(errYml, &configNotFoundError) {
 				return cfgYml, errYml
 			}
 		}
@@ -211,12 +212,18 @@ func LoadConfig() (*Config, error) {
 
 // LoadConfigFromPath read the config from the given path.
 func LoadConfigFromPath(path string) (*Config, error) {
-	_, err := os.Stat(path)
+	fileInfo, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return nil, configFileNotFound(path)
 	}
 	if err != nil {
 		return nil, err
+	}
+
+	filePerms := fileInfo.Mode().Perm()
+	if filePerms > defaultConfigPermission {
+		fmt.Printf("WARNING: scaleway-sdk-go config file is too permissive. That is insecure.\n"+
+			"You can fix it with the command 'chmod 0600 %s'\n", path)
 	}
 
 	file, err := os.ReadFile(path)
