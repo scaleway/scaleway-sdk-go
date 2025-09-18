@@ -3,6 +3,7 @@ package scw
 import (
 	"bytes"
 	goerrors "errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -200,7 +201,7 @@ func LoadConfig() (*Config, error) {
 			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
 			cfgYml, errYml := LoadConfigFromPath(configPath)
 			// If .yml config is not found, return first error when reading .yaml
-			if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
+			if errYml == nil || !goerrors.As(errYml, &configNotFoundError) {
 				return cfgYml, errYml
 			}
 		}
