@@ -1,12 +1,12 @@
 package datawarehouse
 
 import (
-    "errors"
-    "net/http"
-    "time"
+	"errors"
+	"net/http"
+	"time"
 
-    "github.com/scaleway/scaleway-sdk-go/internal/async"
-    "github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
+	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
 const (
@@ -39,20 +39,18 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	}
 
 	deployment, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDeployment(&GetDeploymentRequest{
 				DeploymentID: req.DeploymentID,
 				Region:       req.Region,
 			}, opts...)
-
-            if err != nil {
-                // Don't consider 404 as an error, deployment might not be created yet
-                var respErr *scw.ResponseError
-                if errors.As(err, &respErr) && respErr.StatusCode == http.StatusNotFound {
-                    return nil, false, nil
-                }
-                return nil, false, err
-            }
+			if err != nil {
+				var respErr *scw.ResponseError
+				if errors.As(err, &respErr) && respErr.StatusCode == http.StatusNotFound {
+					return nil, false, nil
+				}
+				return nil, false, err
+			}
 
 			_, isTerminal := terminalStatus[res.Status]
 			return res, isTerminal, nil
