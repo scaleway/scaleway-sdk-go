@@ -82,7 +82,7 @@ func TestLoadEnvProfile(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, nil, dir)
+			setEnv(t, test.env, nil, defaultConfigPermission, dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, nil, dir)

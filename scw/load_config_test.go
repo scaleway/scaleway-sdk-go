@@ -117,7 +117,7 @@ func TestLoad(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, test.files, dir)
+			setEnv(t, test.env, test.files, defaultConfigPermission, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
 
 			// remove config file(s)
