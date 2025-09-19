@@ -1151,6 +1151,7 @@ const (
 	VolumeStateSnapshotting = VolumeState("snapshotting")
 	VolumeStateFetching     = VolumeState("fetching")
 	VolumeStateSaving       = VolumeState("saving")
+	VolumeStateAttaching    = VolumeState("attaching")
 	VolumeStateResizing     = VolumeState("resizing")
 	VolumeStateHotsyncing   = VolumeState("hotsyncing")
 	VolumeStateError        = VolumeState("error")
@@ -1170,6 +1171,7 @@ func (enum VolumeState) Values() []VolumeState {
 		"snapshotting",
 		"fetching",
 		"saving",
+		"attaching",
 		"resizing",
 		"hotsyncing",
 		"error",
