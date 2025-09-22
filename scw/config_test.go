@@ -453,6 +453,23 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			files: map[string]string{
 				".config/scw/config.yml": v2SimpleValidConfigFile,
 			},
+			perms:                         0o477,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+		},
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
 			perms:                         0o605,
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
