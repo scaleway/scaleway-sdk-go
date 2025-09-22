@@ -18,6 +18,7 @@ import (
 const (
 	documentationLink       = "https://github.com/scaleway/scaleway-sdk-go/blob/master/scw/README.md"
 	defaultConfigPermission = 0o600
+	minimalConfigPermission = 0o400
 
 	// Reserved name for the default profile.
 	DefaultProfileName = "default"
@@ -223,6 +224,9 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	filePerms := fileInfo.Mode().Perm()
 	if filePerms > defaultConfigPermission {
 		fmt.Printf("WARNING: Scaleway configuration file permissions are too permissive. That is insecure.\n"+
+			"You can fix it with the command 'chmod 0600 %s'\n", path)
+	} else if filePerms < minimalConfigPermission {
+		fmt.Printf("WARNING: Scaleway configuration file permissions are too restrictive. It is not readable.\n"+
 			"You can fix it with the command 'chmod 0600 %s'\n", path)
 	}
 
