@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetImageByLabel(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("go-vcr")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
