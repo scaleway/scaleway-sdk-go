@@ -425,9 +425,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: scaleway-sdk-go config file is too permissive. That is insecure.` + `
-You can fix is with the command 'chmod 0600 /tmp/home1208930814/.config/scw/config.yml'
-`,
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
 		{
 			name: "Read config.yml too permissive",
@@ -443,8 +442,8 @@ You can fix is with the command 'chmod 0600 /tmp/home1208930814/.config/scw/conf
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: scaleway-sdk-go config file is too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600`,
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
 		{
 			name: "Read config.yml too permissive",
@@ -460,8 +459,9 @@ You can fix it with the command 'chmod 0600`,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: scaleway-sdk-go config file is too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600`,
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+		},
 		},
 	}
 
@@ -476,6 +476,7 @@ You can fix it with the command 'chmod 0600`,
 			// set up env and config file(s)
 			setEnv(t, test.env, test.files, test.perms, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
+			test.expectedOutput = strings.ReplaceAll(test.expectedOutput, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
