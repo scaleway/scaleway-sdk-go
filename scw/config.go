@@ -222,7 +222,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 
 	filePerms := fileInfo.Mode().Perm()
 	if filePerms > defaultConfigPermission {
-		fmt.Printf("WARNING: scaleway-sdk-go config file is too permissive. That is insecure.\n"+
+		fmt.Printf("WARNING: Scaleway configuration file permissions are too permissive. That is insecure.\n"+
 			"You can fix it with the command 'chmod 0600 %s'\n", path)
 	}
 
