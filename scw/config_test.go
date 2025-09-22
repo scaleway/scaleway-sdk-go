@@ -497,16 +497,6 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 				p, err := config.GetActiveProfile()
 				testhelpers.AssertNoError(t, err)
 
-				// Reading captured stdout
-				var buf bytes.Buffer
-				_, err = io.Copy(&buf, r)
-				testhelpers.AssertNoError(t, err)
-				testhelpers.Assert(
-					t,
-					strings.Contains(buf.String(), test.expectedOutput),
-					fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
-				)
-
 				// assert getters
 				testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 				testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
@@ -520,6 +510,16 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
+
+			// In both cases, read captured stdout
+			var buf bytes.Buffer
+			_, err = io.Copy(&buf, r)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Assert(
+				t,
+				strings.Contains(buf.String(), test.expectedOutput),
+				fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
+			)
 		})
 	}
 }
