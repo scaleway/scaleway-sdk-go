@@ -462,6 +462,31 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
 You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
+		{
+			name: "Read config.yml too restrictive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:         0o300,
+			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yml: permission denied",
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too restrictive. Is it not readable.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+		},
+		{
+			name: "Read config.yml too restrictive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:         0o355,
+			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yml: permission denied",
+			expectedOutput: `WARNING: Scaleway configuration file permissions are too restrictive. It is not readable.` + `
+You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
 	}
 
