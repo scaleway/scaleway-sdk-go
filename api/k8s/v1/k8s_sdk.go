@@ -2020,6 +2020,8 @@ type NodeMetadata struct {
 
 	ResolvconfPath string `json:"resolvconf_path"`
 
+	TemplateArgs map[string]string `json:"template_args"`
+
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
