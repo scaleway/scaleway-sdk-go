@@ -857,12 +857,39 @@ func (enum *WebhookEventType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// DomainRecordsDKIM: domain records dkim.
+type DomainRecordsDKIM struct {
+	// Name: name of the DKIM TXT record.
+	Name string `json:"name"`
+
+	// Value: value of the DKIM TXT record.
+	Value string `json:"value"`
+}
+
 // DomainRecordsDMARC: domain records dmarc.
 type DomainRecordsDMARC struct {
 	// Name: name of the DMARC TXT record.
 	Name string `json:"name"`
 
 	// Value: value of the DMARC TXT record.
+	Value string `json:"value"`
+}
+
+// DomainRecordsMX: domain records mx.
+type DomainRecordsMX struct {
+	// Name: name of the MX record.
+	Name string `json:"name"`
+
+	// Value: value of the MX record.
+	Value string `json:"value"`
+}
+
+// DomainRecordsSPF: domain records spf.
+type DomainRecordsSPF struct {
+	// Name: name of the SPF TXT record.
+	Name string `json:"name"`
+
+	// Value: value of the SPF TXT record.
 	Value string `json:"value"`
 }
 
@@ -885,6 +912,15 @@ type EmailTry struct {
 type DomainRecords struct {
 	// Dmarc: dMARC TXT record specification.
 	Dmarc *DomainRecordsDMARC `json:"dmarc"`
+
+	// Dkim: dKIM TXT record specification.
+	Dkim *DomainRecordsDKIM `json:"dkim"`
+
+	// Spf: sPF TXT record specification.
+	Spf *DomainRecordsSPF `json:"spf"`
+
+	// Mx: mX record specification.
+	Mx *DomainRecordsMX `json:"mx"`
 }
 
 // DomainReputation: domain reputation.
