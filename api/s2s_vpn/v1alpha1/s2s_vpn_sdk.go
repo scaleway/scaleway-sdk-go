@@ -667,6 +667,9 @@ type Connection struct {
 	// Default value: unknown_status
 	Status ConnectionStatus `json:"status"`
 
+	// IsIPv6: IP version of the IPSec Tunnel.
+	IsIPv6 bool `json:"is_ipv6"`
+
 	// InitiationPolicy: who initiates the IPsec tunnel.
 	// Default value: unknown_initiation_policy
 	InitiationPolicy ConnectionInitiationPolicy `json:"initiation_policy"`
@@ -686,13 +689,17 @@ type Connection struct {
 	// CustomerGatewayID: ID of the customer gateway attached to the connection.
 	CustomerGatewayID string `json:"customer_gateway_id"`
 
-	// TunnelStatusIPv4: status of the IPv4 IPsec tunnel.
+	// TunnelStatus: status of the IPsec tunnel.
 	// Default value: unknown_tunnel_status
-	TunnelStatusIPv4 TunnelStatus `json:"tunnel_status_ipv4"`
+	TunnelStatus TunnelStatus `json:"tunnel_status"`
 
-	// TunnelStatusIPv6: status of the IPv6 IPsec tunnel.
+	// Deprecated: TunnelStatusIPv4: status of the IPv4 IPsec tunnel.
 	// Default value: unknown_tunnel_status
-	TunnelStatusIPv6 TunnelStatus `json:"tunnel_status_ipv6"`
+	TunnelStatusIPv4 *TunnelStatus `json:"tunnel_status_ipv4,omitempty"`
+
+	// Deprecated: TunnelStatusIPv6: status of the IPv6 IPsec tunnel.
+	// Default value: unknown_tunnel_status
+	TunnelStatusIPv6 *TunnelStatus `json:"tunnel_status_ipv6,omitempty"`
 
 	// BgpStatusIPv4: status of the BGP IPv4 session.
 	// Default value: unknown_status
@@ -869,6 +876,9 @@ type CreateConnectionRequest struct {
 
 	// Tags: list of tags to apply to the connection.
 	Tags []string `json:"tags"`
+
+	// IsIPv6: defines IP version of the IPSec Tunnel.
+	IsIPv6 bool `json:"is_ipv6"`
 
 	// InitiationPolicy: who initiates the IPsec tunnel.
 	// Default value: unknown_initiation_policy
@@ -1120,6 +1130,9 @@ type ListConnectionsRequest struct {
 
 	// Statuses: connection statuses to filter for.
 	Statuses []ConnectionStatus `json:"-"`
+
+	// IsIPv6: filter connections with IP version of IPSec tunnel.
+	IsIPv6 *bool `json:"-"`
 
 	// RoutingPolicyIDs: filter for connections using these routing policies.
 	RoutingPolicyIDs []string `json:"-"`
@@ -1750,6 +1763,7 @@ func (s *API) ListConnections(req *ListConnectionsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
+	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "routing_policy_ids", req.RoutingPolicyIDs)
 	parameter.AddToQuery(query, "route_propagation_enabled", req.RoutePropagationEnabled)
 	parameter.AddToQuery(query, "vpn_gateway_ids", req.VpnGatewayIDs)
