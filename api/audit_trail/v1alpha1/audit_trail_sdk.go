@@ -274,6 +274,43 @@ func (enum *ListAuthenticationEventsRequestOrderBy) UnmarshalJSON(data []byte) e
 	return nil
 }
 
+type ListCombinedEventsRequestOrderBy string
+
+const (
+	ListCombinedEventsRequestOrderByRecordedAtDesc = ListCombinedEventsRequestOrderBy("recorded_at_desc")
+	ListCombinedEventsRequestOrderByRecordedAtAsc  = ListCombinedEventsRequestOrderBy("recorded_at_asc")
+)
+
+func (enum ListCombinedEventsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListCombinedEventsRequestOrderByRecordedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListCombinedEventsRequestOrderBy) Values() []ListCombinedEventsRequestOrderBy {
+	return []ListCombinedEventsRequestOrderBy{
+		"recorded_at_desc",
+		"recorded_at_asc",
+	}
+}
+
+func (enum ListCombinedEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListCombinedEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListCombinedEventsRequestOrderBy(ListCombinedEventsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListEventsRequestOrderBy string
 
 const (
@@ -429,6 +466,45 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ResourceType(ResourceType(tmp).String())
+	return nil
+}
+
+type SystemEventKind string
+
+const (
+	SystemEventKindUnknownKind  = SystemEventKind("unknown_kind")
+	SystemEventKindCron         = SystemEventKind("cron")
+	SystemEventKindNotification = SystemEventKind("notification")
+)
+
+func (enum SystemEventKind) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SystemEventKindUnknownKind)
+	}
+	return string(enum)
+}
+
+func (enum SystemEventKind) Values() []SystemEventKind {
+	return []SystemEventKind{
+		"unknown_kind",
+		"cron",
+		"notification",
+	}
+}
+
+func (enum SystemEventKind) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SystemEventKind) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SystemEventKind(SystemEventKind(tmp).String())
 	return nil
 }
 
@@ -656,18 +732,6 @@ type EventPrincipal struct {
 	ID string `json:"id"`
 }
 
-// EventSystem: event system.
-type EventSystem struct {
-	Name string `json:"name"`
-}
-
-// ProductService: product service.
-type ProductService struct {
-	Name string `json:"name"`
-
-	Methods []string `json:"methods"`
-}
-
 // AuthenticationEvent: authentication event.
 type AuthenticationEvent struct {
 	// ID: ID of the event.
@@ -725,12 +789,8 @@ type Event struct {
 	Locality string `json:"locality"`
 
 	// Principal: user or IAM application at the origin of the event.
-	// Precisely one of Principal, System must be set.
+	// Precisely one of Principal must be set.
 	Principal *EventPrincipal `json:"principal,omitempty"`
-
-	// System: the Scaleway system that performed an action on behalf of the client.
-	// Precisely one of Principal, System must be set.
-	System *EventSystem `json:"system,omitempty"`
 
 	// OrganizationID: organization ID containing the event.
 	OrganizationID string `json:"organization_id"`
@@ -764,6 +824,49 @@ type Event struct {
 
 	// StatusCode: HTTP status code resulting of the API call.
 	StatusCode uint32 `json:"status_code"`
+}
+
+// SystemEvent: system event.
+type SystemEvent struct {
+	ID string `json:"id"`
+
+	RecordedAt *time.Time `json:"recorded_at"`
+
+	Locality string `json:"locality"`
+
+	OrganizationID string `json:"organization_id"`
+
+	ProjectID *string `json:"project_id"`
+
+	Source string `json:"source"`
+
+	SystemName string `json:"system_name"`
+
+	Resources []*Resource `json:"resources"`
+
+	// Kind: default value: unknown_kind
+	Kind SystemEventKind `json:"kind"`
+
+	ProductName string `json:"product_name"`
+}
+
+// ProductService: product service.
+type ProductService struct {
+	Name string `json:"name"`
+
+	Methods []string `json:"methods"`
+}
+
+// ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
+type ListCombinedEventsResponseCombinedEvent struct {
+	// Precisely one of API, Auth, System must be set.
+	API *Event `json:"api,omitempty"`
+
+	// Precisely one of API, Auth, System must be set.
+	Auth *AuthenticationEvent `json:"auth,omitempty"`
+
+	// Precisely one of API, Auth, System must be set.
+	System *SystemEvent `json:"system,omitempty"`
 }
 
 // Product: product.
@@ -800,6 +903,37 @@ type ListAuthenticationEventsRequest struct {
 // ListAuthenticationEventsResponse: list authentication events response.
 type ListAuthenticationEventsResponse struct {
 	Events []*AuthenticationEvent `json:"events"`
+
+	NextPageToken *string `json:"next_page_token"`
+}
+
+// ListCombinedEventsRequest: list combined events request.
+type ListCombinedEventsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	// ResourceType: default value: unknown_type
+	ResourceType ResourceType `json:"-"`
+
+	RecordedAfter *time.Time `json:"-"`
+
+	RecordedBefore *time.Time `json:"-"`
+
+	// OrderBy: default value: recorded_at_desc
+	OrderBy ListCombinedEventsRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	PageToken *string `json:"-"`
+}
+
+// ListCombinedEventsResponse: list combined events response.
+type ListCombinedEventsResponse struct {
+	Events []*ListCombinedEventsResponseCombinedEvent `json:"events"`
 
 	NextPageToken *string `json:"next_page_token"`
 }
@@ -1009,6 +1143,54 @@ func (s *API) ListAuthenticationEvents(req *ListAuthenticationEventsRequest, opt
 	}
 
 	var resp ListAuthenticationEventsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListCombinedEvents:
+func (s *API) ListCombinedEvents(req *ListCombinedEventsRequest, opts ...scw.RequestOption) (*ListCombinedEventsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "resource_type", req.ResourceType)
+	parameter.AddToQuery(query, "recorded_after", req.RecordedAfter)
+	parameter.AddToQuery(query, "recorded_before", req.RecordedBefore)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/combined-events",
+		Query:  query,
+	}
+
+	var resp ListCombinedEventsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
