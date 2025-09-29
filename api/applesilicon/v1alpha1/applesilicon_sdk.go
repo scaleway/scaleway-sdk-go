@@ -234,6 +234,45 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RunnerConfigurationProvider string
+
+const (
+	RunnerConfigurationProviderUnknownProvider = RunnerConfigurationProvider("unknown_provider")
+	RunnerConfigurationProviderGithub          = RunnerConfigurationProvider("github")
+	RunnerConfigurationProviderGitlab          = RunnerConfigurationProvider("gitlab")
+)
+
+func (enum RunnerConfigurationProvider) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RunnerConfigurationProviderUnknownProvider)
+	}
+	return string(enum)
+}
+
+func (enum RunnerConfigurationProvider) Values() []RunnerConfigurationProvider {
+	return []RunnerConfigurationProvider{
+		"unknown_provider",
+		"github",
+		"gitlab",
+	}
+}
+
+func (enum RunnerConfigurationProvider) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RunnerConfigurationProvider) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RunnerConfigurationProvider(RunnerConfigurationProvider(tmp).String())
+	return nil
+}
+
 type ServerPrivateNetworkServerStatus string
 
 const (
@@ -416,6 +455,13 @@ func (enum *ServerTypeStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// OSSupportedServerType: os supported server type.
+type OSSupportedServerType struct {
+	ServerType string `json:"server_type"`
+
+	FastDeliveryAvailable bool `json:"fast_delivery_available"`
+}
+
 // Commitment: commitment.
 type Commitment struct {
 	// Type: default value: duration_24h
@@ -450,8 +496,32 @@ type OS struct {
 	// XcodeVersion: the current xcode version for this OS.
 	XcodeVersion string `json:"xcode_version"`
 
-	// CompatibleServerTypes: list of compatible server types.
-	CompatibleServerTypes []string `json:"compatible_server_types"`
+	// Deprecated: CompatibleServerTypes: list of compatible server types. Deprecated.
+	CompatibleServerTypes *[]string `json:"compatible_server_types,omitempty"`
+
+	// ReleaseNotesURL: url of the release notes for the OS image or softwares pre-installed.
+	ReleaseNotesURL string `json:"release_notes_url"`
+
+	// Description: a summary of the OS image content and configuration.
+	Description string `json:"description"`
+
+	// Tags: list of tags for the OS configuration.
+	Tags []string `json:"tags"`
+
+	// SupportedServerTypes: list of server types which supports the OS configuration. Also gives information about immediate stock availability.
+	SupportedServerTypes []*OSSupportedServerType `json:"supported_server_types"`
+}
+
+// RunnerConfiguration: runner configuration.
+type RunnerConfiguration struct {
+	Name string `json:"name"`
+
+	URL string `json:"url"`
+
+	Token string `json:"token"`
+
+	// Provider: default value: unknown_provider
+	Provider RunnerConfigurationProvider `json:"provider"`
 }
 
 // ServerTypeCPU: server type cpu.
@@ -461,6 +531,10 @@ type ServerTypeCPU struct {
 	CoreCount uint32 `json:"core_count"`
 
 	Frequency uint64 `json:"frequency"`
+
+	Sockets uint32 `json:"sockets"`
+
+	ThreadsPerCore uint32 `json:"threads_per_core"`
 }
 
 // ServerTypeDisk: server type disk.
@@ -482,11 +556,18 @@ type ServerTypeMemory struct {
 	Type string `json:"type"`
 }
 
+// ServerTypeNPU: server type npu.
+type ServerTypeNPU struct {
+	Count uint64 `json:"count"`
+}
+
 // ServerTypeNetwork: server type network.
 type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 
 	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
+
+	DefaultPublicBandwidth uint64 `json:"default_public_bandwidth"`
 }
 
 // BatchCreateServersRequestBatchInnerCreateServerRequest: batch create servers request batch inner create server request.
@@ -560,6 +641,12 @@ type Server struct {
 
 	// PublicBandwidthBps: public bandwidth configured for this server. Expressed in bits per second.
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	// RunnerConfiguration: current runner configuration, empty if none is installed.
+	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration"`
+
+	// Tags: a list of tags attached to the server.
+	Tags []string `json:"tags"`
 }
 
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
@@ -637,6 +724,9 @@ type ServerType struct {
 
 	// DefaultOs: the default OS for this server type.
 	DefaultOs *OS `json:"default_os"`
+
+	// Npu: nPU description.
+	Npu *ServerTypeNPU `json:"npu"`
 }
 
 // CommitmentTypeValue: commitment type value.
@@ -721,6 +811,9 @@ type CreateServerRequest struct {
 
 	// PublicBandwidthBps: public bandwidth to configure for this server. This defaults to the minimum bandwidth for this server type. For compatible server types, the bandwidth can be increased which incurs additional costs.
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	// RunnerConfiguration: specify the configuration to install an optional CICD runner on the server during installation.
+	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration,omitempty"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -1000,6 +1093,9 @@ type ReinstallServerRequest struct {
 
 	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
 	OsID *string `json:"os_id,omitempty"`
+
+	// RunnerConfiguration: specify the configuration to install an optional CICD runner on the server during installation.
+	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration,omitempty"`
 }
 
 // SetServerPrivateNetworksResponse: set server private networks response.
