@@ -923,6 +923,15 @@ type PlatformBookingRequirement struct {
 
 	// MaxPlanificationDuration: allowed planification time from now where the platform can be booked in the future.
 	MaxPlanificationDuration *scw.Duration `json:"max_planification_duration"`
+
+	// MinPlanificationDuration: minimum planification time before a platform can be booked.
+	MinPlanificationDuration *scw.Duration `json:"min_planification_duration"`
+
+	// MaxBookingPerWeek: maximum amount of booking allowed for one organization per week.
+	MaxBookingPerWeek uint32 `json:"max_booking_per_week"`
+
+	// MaxBookingPerDay: maximum amount of booking allowed for one organization per day.
+	MaxBookingPerDay uint32 `json:"max_booking_per_day"`
 }
 
 // PlatformHardware: platform hardware.
