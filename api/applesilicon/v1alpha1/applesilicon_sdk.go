@@ -461,6 +461,10 @@ type ServerTypeCPU struct {
 	CoreCount uint32 `json:"core_count"`
 
 	Frequency uint64 `json:"frequency"`
+
+	Sockets uint32 `json:"sockets"`
+
+	ThreadsPerCore uint32 `json:"threads_per_core"`
 }
 
 // ServerTypeDisk: server type disk.
@@ -482,11 +486,18 @@ type ServerTypeMemory struct {
 	Type string `json:"type"`
 }
 
+// ServerTypeNPU: server type npu.
+type ServerTypeNPU struct {
+	Count uint64 `json:"count"`
+}
+
 // ServerTypeNetwork: server type network.
 type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 
 	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
+
+	DefaultPublicBandwidth uint64 `json:"default_public_bandwidth"`
 }
 
 // BatchCreateServersRequestBatchInnerCreateServerRequest: batch create servers request batch inner create server request.
@@ -637,6 +648,9 @@ type ServerType struct {
 
 	// DefaultOs: the default OS for this server type.
 	DefaultOs *OS `json:"default_os"`
+
+	// Npu: nPU description.
+	Npu *ServerTypeNPU `json:"npu"`
 }
 
 // CommitmentTypeValue: commitment type value.
