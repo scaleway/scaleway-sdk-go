@@ -3176,6 +3176,18 @@ type RegistrarAPIRenewDomainsRequest struct {
 	ForceLateRenewal *bool `json:"force_late_renewal,omitempty"`
 }
 
+// RegistrarAPIRetryInboundTransferRequest: registrar api retry inbound transfer request.
+type RegistrarAPIRetryInboundTransferRequest struct {
+	// Domain: the domain being transfered.
+	Domain string `json:"domain"`
+
+	// ProjectID: the project ID to associated with the inbound transfer.
+	ProjectID string `json:"project_id"`
+
+	// AuthCode: an optional new auth code to replace the previous one for the retry.
+	AuthCode *string `json:"auth_code,omitempty"`
+}
+
 // RegistrarAPISearchAvailableDomainsRequest: registrar api search available domains request.
 type RegistrarAPISearchAvailableDomainsRequest struct {
 	// Domains: a list of domain to search, TLD is optional.
@@ -3317,6 +3329,9 @@ type RestoreDNSZoneVersionRequest struct {
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response.
 type RestoreDNSZoneVersionResponse struct{}
+
+// RetryInboundTransferResponse: retry inbound transfer response.
+type RetryInboundTransferResponse struct{}
 
 // SearchAvailableDomainsResponse: search available domains response.
 type SearchAvailableDomainsResponse struct {
@@ -4138,6 +4153,34 @@ func (s *RegistrarAPI) ListInboundTransfers(req *RegistrarAPIListInboundTransfer
 	}
 
 	var resp ListInboundTransfersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RetryInboundTransfer: Request a retry for the transfer of a domain from another registrar to Scaleway Domains and DNS.
+func (s *RegistrarAPI) RetryInboundTransfer(req *RegistrarAPIRetryInboundTransferRequest, opts ...scw.RequestOption) (*RetryInboundTransferResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/domain/v2beta1/retry-inbound-transfer",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RetryInboundTransferResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
