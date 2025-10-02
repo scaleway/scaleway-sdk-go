@@ -395,6 +395,9 @@ type NatsCredentials struct {
 	// NatsAccountID: nATS account containing the credentials.
 	NatsAccountID string `json:"nats_account_id"`
 
+	// Region: region where the NATS account is deployed.
+	Region scw.Region `json:"region"`
+
 	// CreatedAt: nATS credentials creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
