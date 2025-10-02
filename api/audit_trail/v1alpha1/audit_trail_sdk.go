@@ -857,6 +857,18 @@ type ProductService struct {
 	Methods []string `json:"methods"`
 }
 
+// ExportJobS3: export job s3.
+type ExportJobS3 struct {
+	Bucket string `json:"bucket"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	Prefix *string `json:"prefix"`
+
+	ProjectID *string `json:"project_id"`
+}
+
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
 type ListCombinedEventsResponseCombinedEvent struct {
 	// Precisely one of API, Auth, System must be set.
@@ -879,6 +891,50 @@ type Product struct {
 
 	// Services: specifies the API versions of the products integrated with Audit Trail. Each version defines the methods logged by Audit Trail.
 	Services []*ProductService `json:"services"`
+}
+
+// CreateExportJobRequest: create export job request.
+type CreateExportJobRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the export.
+	Name string `json:"name"`
+
+	// S3: the configuration specifying the bucket where the audit trail events will be exported.
+	// Precisely one of S3 must be set.
+	S3 *ExportJobS3 `json:"s3,omitempty"`
+
+	// Tags: tags of the export.
+	Tags map[string]string `json:"tags"`
+}
+
+// ExportJob: export job.
+type ExportJob struct {
+	// ID: ID of the export job.
+	ID string `json:"id"`
+
+	// OrganizationID: ID of the targeted Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the export.
+	Name string `json:"name"`
+
+	// S3: destination in an S3 storage.
+	// Precisely one of S3 must be set.
+	S3 *ExportJobS3 `json:"s3,omitempty"`
+
+	// CreatedAt: export job creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// LastRunAt: last export date.
+	LastRunAt *time.Time `json:"last_run_at"`
+
+	// Tags: tags of the export.
+	Tags map[string]string `json:"tags"`
 }
 
 // ListAuthenticationEventsRequest: list authentication events request.
@@ -1227,6 +1283,43 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp ListProductsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateExportJob: Create an export job for a specified organization. This allows you to export audit trail events to a destination, such as an S3 bucket. The request requires the organization ID, a name for the export, and a destination configuration.
+func (s *API) CreateExportJob(req *CreateExportJobRequest, opts ...scw.RequestOption) (*ExportJob, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/export-jobs",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ExportJob
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
