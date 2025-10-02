@@ -5451,9 +5451,6 @@ type RpnV1ApiLeaveRpnGroupRequest struct {
 	// GroupID: the RPN V1 group ID.
 	GroupID uint64 `json:"-"`
 
-	// ProjectID: a project ID.
-	ProjectID string `json:"project_id"`
-
 	// MemberIDs: a collection of rpn v1 group members IDs.
 	MemberIDs []uint64 `json:"member_ids"`
 }
@@ -8368,11 +8365,6 @@ func (s *RpnV1API) RpnGroupInvite(req *RpnV1ApiRpnGroupInviteRequest, opts ...sc
 // LeaveRpnGroup:
 func (s *RpnV1API) LeaveRpnGroup(req *RpnV1ApiLeaveRpnGroupRequest, opts ...scw.RequestOption) error {
 	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
 
 	if fmt.Sprint(req.GroupID) == "" {
 		return errors.New("field GroupID cannot be empty in request")

@@ -1138,6 +1138,12 @@ type Version struct {
 
 	// AvailableKubeletArgs: supported kubelet arguments for this version.
 	AvailableKubeletArgs map[string]string `json:"available_kubelet_args"`
+
+	// DeprecatedAt: date from which this version will no longer be available for provisioning.
+	DeprecatedAt *time.Time `json:"deprecated_at"`
+
+	// EndOfLifeAt: date from which any remaining clusters on this version will begin to be forcibly upgraded to the next minor version.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
 }
 
 // Cluster: cluster.
