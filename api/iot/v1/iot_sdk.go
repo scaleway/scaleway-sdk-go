@@ -685,6 +685,9 @@ type Device struct {
 
 	// UpdatedAt: date at which the device was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the device.
+	Region scw.Region `json:"region"`
 }
 
 // Network: network.
@@ -710,6 +713,9 @@ type Network struct {
 
 	// TopicPrefix: this prefix will be prepended to all topics for this Network.
 	TopicPrefix string `json:"topic_prefix"`
+
+	// Region: region of the network.
+	Region scw.Region `json:"region"`
 }
 
 // CreateRouteRequestDatabaseConfig: create route request database config.
@@ -835,6 +841,9 @@ type RouteSummary struct {
 
 	// UpdatedAt: date at which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the route.
+	Region scw.Region `json:"region"`
 }
 
 // ListTwinDocumentsResponseDocumentSummary: list twin documents response document summary.
@@ -1584,6 +1593,9 @@ type Route struct {
 
 	// UpdatedAt: date at which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the route.
+	Region scw.Region `json:"region"`
 }
 
 // SetDeviceCertificateRequest: set device certificate request.
