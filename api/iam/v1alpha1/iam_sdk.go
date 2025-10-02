@@ -2569,6 +2569,9 @@ type OrganizationSecuritySettings struct {
 
 	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
 	LoginAttemptsBeforeLocked uint32 `json:"login_attempts_before_locked"`
+
+	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
+	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration"`
 }
 
 // RemoveGroupMemberRequest: remove group member request.
@@ -2707,6 +2710,9 @@ type UpdateOrganizationSecuritySettingsRequest struct {
 
 	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
 	LoginAttemptsBeforeLocked *uint32 `json:"login_attempts_before_locked,omitempty"`
+
+	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
+	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
