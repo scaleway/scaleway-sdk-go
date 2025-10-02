@@ -912,6 +912,15 @@ type CreateExportJobRequest struct {
 	Tags map[string]string `json:"tags"`
 }
 
+// DeleteExportJobRequest: delete export job request.
+type DeleteExportJobRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ExportJobID: ID of the export job.
+	ExportJobID string `json:"-"`
+}
+
 // ExportJob: export job.
 type ExportJob struct {
 	// ID: ID of the export job.
@@ -1326,4 +1335,33 @@ func (s *API) CreateExportJob(req *CreateExportJobRequest, opts ...scw.RequestOp
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// DeleteExportJob: Deletes an export job for a specified id.
+func (s *API) DeleteExportJob(req *DeleteExportJobRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ExportJobID) == "" {
+		return errors.New("field ExportJobID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/export-jobs/" + fmt.Sprint(req.ExportJobID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
