@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: 1.23.0
       - name: Run Acceptance Tests
@@ -67,7 +67,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: 1.23.0
       - name: Run sweepers
