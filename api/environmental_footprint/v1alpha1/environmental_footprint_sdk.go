@@ -256,10 +256,10 @@ type UserAPIDownloadImpactReportRequest struct {
 	// OrganizationID: the UUID of the Organization for which you want to download a report.
 	OrganizationID string `json:"organization_id"`
 
-	// Date: the start date of the period for which you want to download a report (ISO 8601 format, e.g., 2025-05-01T00:00:00Z).
+	// Date: the start date of the period for which you want to download a report (ISO 8601 format, e.g. 2025-05-01T00:00:00Z).
 	Date *time.Time `json:"date,omitempty"`
 
-	// Type: type of report to download (e.g., monthly). Defaults to monthly.
+	// Type: type of report to download (e.g. `monthly`).
 	// Default value: unknown_report_type
 	Type ReportType `json:"type"`
 }
@@ -269,16 +269,16 @@ type UserAPIGetImpactDataRequest struct {
 	// OrganizationID: the UUID of the Organization for which you want to download a report.
 	OrganizationID string `json:"-"`
 
-	// StartDate: start date (inclusive) of the period for which you want to retrieve impact data (ISO 8601 format, e.g., 2025-05-01T00:00:00Z).
+	// StartDate: start date (inclusive) of the period for which you want to retrieve impact data (ISO 8601 format, e.g. 2025-05-01T00:00:00Z).
 	StartDate *time.Time `json:"-"`
 
 	// EndDate: end date (exclusive) of the period for which you want to retrieve impact data (ISO 8601 format, with time in UTC, `YYYY-MM-DDTHH:MM:SSZ`). Defaults to today's date.
 	EndDate *time.Time `json:"-"`
 
-	// Regions: list of regions to filter by (\"fr-par\"). Defaults to all regions.
+	// Regions: list of regions to filter by (e.g. `fr-par`). Defaults to all regions.
 	Regions []string `json:"-"`
 
-	// Zones: list of zones to filter by (\"fr-par-1\"). Defaults to all zones.
+	// Zones: list of zones to filter by (e.g. `fr-par-1`). Defaults to all zones.
 	Zones []string `json:"-"`
 
 	// ProjectIDs: list of Project IDs to filter by. Defaults to all Projects in the Organization.
@@ -299,7 +299,7 @@ type UserAPIGetImpactReportAvailabilityRequest struct {
 	// StartDate: start date of the search period (ISO 8601 format, with time in UTC, `YYYY-MM-DDTHH:MM:SSZ`). The date is inclusive.
 	StartDate *time.Time `json:"-"`
 
-	// EndDate: end date of the search period (ISO 8601 format, with time in UTC, `YYYY-MM-DDTHH:MM:SSZ`). The date is exclusive. Defaults to today's date.
+	// EndDate: end date of the search period (ISO 8601 format, with time in UTC, `YYYY-MM-DDTHH:MM:SSZ`). The date is inclusive. Defaults to today's date.
 	EndDate *time.Time `json:"-"`
 }
 
