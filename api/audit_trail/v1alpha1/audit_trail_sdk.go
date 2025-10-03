@@ -348,6 +348,47 @@ func (enum *ListEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListExportJobsRequestOrderBy string
+
+const (
+	ListExportJobsRequestOrderByNameAsc       = ListExportJobsRequestOrderBy("name_asc")
+	ListExportJobsRequestOrderByNameDesc      = ListExportJobsRequestOrderBy("name_desc")
+	ListExportJobsRequestOrderByCreatedAtAsc  = ListExportJobsRequestOrderBy("created_at_asc")
+	ListExportJobsRequestOrderByCreatedAtDesc = ListExportJobsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListExportJobsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListExportJobsRequestOrderByNameAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListExportJobsRequestOrderBy) Values() []ListExportJobsRequestOrderBy {
+	return []ListExportJobsRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListExportJobsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListExportJobsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListExportJobsRequestOrderBy(ListExportJobsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ResourceType string
 
 const (
@@ -850,13 +891,6 @@ type SystemEvent struct {
 	ProductName string `json:"product_name"`
 }
 
-// ProductService: product service.
-type ProductService struct {
-	Name string `json:"name"`
-
-	Methods []string `json:"methods"`
-}
-
 // ExportJobS3: export job s3.
 type ExportJobS3 struct {
 	Bucket string `json:"bucket"`
@@ -869,6 +903,13 @@ type ExportJobS3 struct {
 	ProjectID *string `json:"project_id"`
 }
 
+// ProductService: product service.
+type ProductService struct {
+	Name string `json:"name"`
+
+	Methods []string `json:"methods"`
+}
+
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
 type ListCombinedEventsResponseCombinedEvent struct {
 	// Precisely one of API, Auth, System must be set.
@@ -879,6 +920,31 @@ type ListCombinedEventsResponseCombinedEvent struct {
 
 	// Precisely one of API, Auth, System must be set.
 	System *SystemEvent `json:"system,omitempty"`
+}
+
+// ExportJob: export job.
+type ExportJob struct {
+	// ID: ID of the export job.
+	ID string `json:"id"`
+
+	// OrganizationID: ID of the targeted Organization.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the export.
+	Name string `json:"name"`
+
+	// S3: destination in an S3 storage.
+	// Precisely one of S3 must be set.
+	S3 *ExportJobS3 `json:"s3,omitempty"`
+
+	// CreatedAt: export job creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// LastRunAt: last export date.
+	LastRunAt *time.Time `json:"last_run_at"`
+
+	// Tags: tags of the export.
+	Tags map[string]string `json:"tags"`
 }
 
 // Product: product.
@@ -919,31 +985,6 @@ type DeleteExportJobRequest struct {
 
 	// ExportJobID: ID of the export job.
 	ExportJobID string `json:"-"`
-}
-
-// ExportJob: export job.
-type ExportJob struct {
-	// ID: ID of the export job.
-	ID string `json:"id"`
-
-	// OrganizationID: ID of the targeted Organization.
-	OrganizationID string `json:"organization_id"`
-
-	// Name: name of the export.
-	Name string `json:"name"`
-
-	// S3: destination in an S3 storage.
-	// Precisely one of S3 must be set.
-	S3 *ExportJobS3 `json:"s3,omitempty"`
-
-	// CreatedAt: export job creation date.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// LastRunAt: last export date.
-	LastRunAt *time.Time `json:"last_run_at"`
-
-	// Tags: tags of the export.
-	Tags map[string]string `json:"tags"`
 }
 
 // ListAuthenticationEventsRequest: list authentication events request.
@@ -1060,6 +1101,56 @@ type ListEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// ListExportJobsRequest: list export jobs request.
+type ListExportJobsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: filter by Organization ID.
+	OrganizationID string `json:"-"`
+
+	// Name: (Optional) Filter by export name.
+	Name *string `json:"-"`
+
+	// Tags: (Optional) List of tags to filter on.
+	Tags map[string]string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: name_asc
+	OrderBy ListExportJobsRequestOrderBy `json:"-"`
+}
+
+// ListExportJobsResponse: list export jobs response.
+type ListExportJobsResponse struct {
+	// ExportJobs: single page of export jobs matching the requested criteria.
+	ExportJobs []*ExportJob `json:"export_jobs"`
+
+	// TotalCount: total count of export jobs matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListExportJobsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListExportJobsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListExportJobsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ExportJobs = append(r.ExportJobs, results.ExportJobs...)
+	r.TotalCount += uint64(len(results.ExportJobs))
+	return uint64(len(results.ExportJobs)), nil
 }
 
 // ListProductsRequest: list products request.
@@ -1364,4 +1455,50 @@ func (s *API) DeleteExportJob(req *DeleteExportJobRequest, opts ...scw.RequestOp
 		return err
 	}
 	return nil
+}
+
+// ListExportJobs:
+func (s *API) ListExportJobs(req *ListExportJobsRequest, opts ...scw.RequestOption) (*ListExportJobsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/export-jobs",
+		Query:  query,
+	}
+
+	var resp ListExportJobsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
