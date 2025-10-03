@@ -1443,7 +1443,7 @@ type Database struct {
 	// Managed: defines whether the database is managed or not.
 	Managed bool `json:"managed"`
 
-	// Size: size of the database.
+	// Size: size of the database. Set to 0 if the size retrieval is too time-consuming or `skip_size_retrieval` is set to true.
 	Size scw.Size `json:"size"`
 }
 
@@ -2226,6 +2226,9 @@ type ListDatabasesRequest struct {
 	// OrderBy: criteria to use when ordering database listing.
 	// Default value: name_asc
 	OrderBy ListDatabasesRequestOrderBy `json:"-"`
+
+	// SkipSizeRetrieval: whether to skip the retrieval of each database size. If true, the size of each returned database will be set to 0.
+	SkipSizeRetrieval bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -4392,6 +4395,7 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "managed", req.Managed)
 	parameter.AddToQuery(query, "owner", req.Owner)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "skip_size_retrieval", req.SkipSizeRetrieval)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
