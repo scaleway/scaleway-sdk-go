@@ -10,7 +10,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepSQSCredentials(scwClient *scw.Client, region scw.Region) error {
+func SweepSQSCredentials(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	mnqAPI := mnq.NewSqsAPI(scwClient)
 	projectID, _ := scwClient.GetDefaultProjectID()
 	logger.Warningf("sweeper: destroying the mnq sqs credentials in (%s)", region)
@@ -44,38 +44,59 @@ func SweepSQSCredentials(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepSQS(scwClient *scw.Client, region scw.Region) error {
+func SweepSQS(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	accountAPI := accountSDK.NewProjectAPI(scwClient)
 	mnqAPI := mnq.NewSqsAPI(scwClient)
 
 	logger.Warningf("sweeper: destroying the mnq sqss in (%s)", region)
-
-	listProjects, err := accountAPI.ListProjects(&accountSDK.ProjectAPIListProjectsRequest{}, scw.WithAllPages())
-	if err != nil {
-		return fmt.Errorf("failed to list projects: %w", err)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
 	}
-	for _, project := range listProjects.Projects {
-		if !strings.HasPrefix(project.Name, "tf_tests") {
-			continue
-		}
-
+	if projectScoped && exists && defaultProjectID != "" {
 		_, err := mnqAPI.DeactivateSqs(&mnq.SqsAPIDeactivateSqsRequest{
 			Region:    region,
-			ProjectID: project.ID,
+			ProjectID: defaultProjectID,
 		})
 		if err != nil {
 			return err
 		}
+	} else {
+		listProjects, err := accountAPI.ListProjects(&accountSDK.ProjectAPIListProjectsRequest{}, scw.WithAllPages())
+		if err != nil {
+			return fmt.Errorf("failed to list projects: %w", err)
+		}
+		for _, project := range listProjects.Projects {
+			if !strings.HasPrefix(project.Name, "tf_tests") {
+				continue
+			}
+
+			_, err := mnqAPI.DeactivateSqs(&mnq.SqsAPIDeactivateSqsRequest{
+				Region:    region,
+				ProjectID: project.ID,
+			})
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
-func SweepSNSCredentials(scwClient *scw.Client, region scw.Region) error {
+func SweepSNSCredentials(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	mnqAPI := mnq.NewSnsAPI(scwClient)
-	projectID, _ := scwClient.GetDefaultProjectID()
 	logger.Warningf("sweeper: destroying the mnq sns credentials in (%s)", region)
-	snsInfo, err := mnqAPI.GetSnsInfo(&mnq.SnsAPIGetSnsInfoRequest{Region: region})
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped && exists && defaultProjectID != "" {
+		projectID = &defaultProjectID
+	}
+	snsInfo, err := mnqAPI.GetSnsInfo(&mnq.SnsAPIGetSnsInfoRequest{Region: region, ProjectID: *projectID})
 	if err != nil {
 		return fmt.Errorf("error getting sns info in sweeper: %s", err)
 	}
@@ -86,7 +107,7 @@ func SweepSNSCredentials(scwClient *scw.Client, region scw.Region) error {
 	listSnsCredentials, err := mnqAPI.ListSnsCredentials(
 		&mnq.SnsAPIListSnsCredentialsRequest{
 			Region:    region,
-			ProjectID: scw.StringPtr(projectID),
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing sns credentials in (%s) in sweeper: %s", region, err)
@@ -105,40 +126,64 @@ func SweepSNSCredentials(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepSNS(scwClient *scw.Client, region scw.Region) error {
+func SweepSNS(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	accountAPI := accountSDK.NewProjectAPI(scwClient)
 	mnqAPI := mnq.NewSnsAPI(scwClient)
 
 	logger.Warningf("sweeper: destroying the mnq sns in (%s)", region)
-
-	listProjects, err := accountAPI.ListProjects(&accountSDK.ProjectAPIListProjectsRequest{}, scw.WithAllPages())
-	if err != nil {
-		return fmt.Errorf("failed to list projects: %w", err)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
 	}
-	for _, project := range listProjects.Projects {
-		if !strings.HasPrefix(project.Name, "tf_tests") {
-			continue
-		}
-
+	if projectScoped && exists && defaultProjectID != "" {
 		_, err := mnqAPI.DeactivateSns(&mnq.SnsAPIDeactivateSnsRequest{
 			Region:    region,
-			ProjectID: project.ID,
+			ProjectID: defaultProjectID,
 		})
 		if err != nil {
 			logger.Debugf("sweeper: error (%s)", err)
 			return err
 		}
+	} else {
+		listProjects, err := accountAPI.ListProjects(&accountSDK.ProjectAPIListProjectsRequest{}, scw.WithAllPages())
+		if err != nil {
+			return fmt.Errorf("failed to list projects: %w", err)
+		}
+		for _, project := range listProjects.Projects {
+			if !strings.HasPrefix(project.Name, "tf_tests") {
+				continue
+			}
+
+			_, err := mnqAPI.DeactivateSns(&mnq.SnsAPIDeactivateSnsRequest{
+				Region:    region,
+				ProjectID: project.ID,
+			})
+			if err != nil {
+				logger.Debugf("sweeper: error (%s)", err)
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
-func SweepNatsAccount(scwClient *scw.Client, region scw.Region) error {
+func SweepNatsAccount(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	mnqAPI := mnq.NewNatsAPI(scwClient)
 	logger.Warningf("sweeper: destroying the mnq nats accounts in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped && exists && defaultProjectID != "" {
+		projectID = &defaultProjectID
+	}
 	listNatsAccounts, err := mnqAPI.ListNatsAccounts(
 		&mnq.NatsAPIListNatsAccountsRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing nats account in (%s) in sweeper: %s", region, err)
@@ -159,14 +204,14 @@ func SweepNatsAccount(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllSNS(scwClient *scw.Client) error {
+func SweepAllSNS(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&mnq.SnsAPI{}).Regions() {
-		err := SweepSNSCredentials(scwClient, region)
+		err := SweepSNSCredentials(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
 
-		err = SweepSNS(scwClient, region)
+		err = SweepSNS(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
@@ -175,13 +220,13 @@ func SweepAllSNS(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepAllSQS(scwClient *scw.Client) error {
+func SweepAllSQS(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&mnq.SqsAPI{}).Regions() {
-		err := SweepSQSCredentials(scwClient, region)
+		err := SweepSQSCredentials(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepSQS(scwClient, region)
+		err = SweepSQS(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
@@ -190,9 +235,9 @@ func SweepAllSQS(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepAllNats(scwClient *scw.Client) error {
+func SweepAllNats(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&mnq.NatsAPI{}).Regions() {
-		err := SweepNatsAccount(scwClient, region)
+		err := SweepNatsAccount(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
@@ -200,18 +245,18 @@ func SweepAllNats(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
-	err := SweepAllSNS(scwClient)
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
+	err := SweepAllSNS(scwClient, projectScoped)
 	if err != nil {
 		return err
 	}
 
-	err = SweepAllSQS(scwClient)
+	err = SweepAllSQS(scwClient, projectScoped)
 	if err != nil {
 		return err
 	}
 
-	err = SweepAllNats(scwClient)
+	err = SweepAllNats(scwClient, projectScoped)
 	if err != nil {
 		return err
 	}

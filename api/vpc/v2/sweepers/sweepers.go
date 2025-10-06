@@ -8,19 +8,34 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepVPC(scwClient *scw.Client, region scw.Region) error {
+func SweepVPC(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	vpcAPI := vpcSDK.NewAPI(scwClient)
+	logger.Warningf("sweeper: destroying the vpcs in (%s)", region)
 
-	listVPCs, err := vpcAPI.ListVPCs(&vpcSDK.ListVPCsRequest{Region: region}, scw.WithAllPages())
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+
+	listVPCs, err := vpcAPI.ListVPCs(&vpcSDK.ListVPCsRequest{Region: region, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing secrets in (%s) in sweeper: %s", region, err)
 	}
 
 	for _, v := range listVPCs.Vpcs {
+		// Only custom routes are still there after delete all pvn in a vpc
+		err := SweepRoute(scwClient, v.Region, scw.StringPtr(v.ID))
+		if err != nil {
+			return err
+		}
 		if v.IsDefault {
 			continue
 		}
-		err := vpcAPI.DeleteVPC(&vpcSDK.DeleteVPCRequest{
+		err = vpcAPI.DeleteVPC(&vpcSDK.DeleteVPCRequest{
 			VpcID:  v.ID,
 			Region: region,
 		})
@@ -32,13 +47,22 @@ func SweepVPC(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepPrivateNetwork(scwClient *scw.Client, region scw.Region) error {
+func SweepPrivateNetwork(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	vpcAPI := vpcSDK.NewAPI(scwClient)
 
-	logger.Debugf("sweeper: destroying the private network in (%s)", region)
+	logger.Warningf("sweeper: destroying private networks in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listPNResponse, err := vpcAPI.ListPrivateNetworks(&vpcSDK.ListPrivateNetworksRequest{
-		Region: region,
+		Region:    region,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing private network in sweeper: %s", err)
@@ -57,7 +81,7 @@ func SweepPrivateNetwork(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepRoute(scwClient *scw.Client, region scw.Region) error {
+func SweepRoute(scwClient *scw.Client, region scw.Region, vpcId *string) error {
 	vpcAPI := vpcSDK.NewAPI(scwClient)
 	vpcRouteAPI := vpcSDK.NewRoutesWithNexthopAPI(scwClient)
 
@@ -65,6 +89,7 @@ func SweepRoute(scwClient *scw.Client, region scw.Region) error {
 
 	listRoutesResponse, err := vpcRouteAPI.ListRoutesWithNexthop(&vpcSDK.RoutesWithNexthopAPIListRoutesWithNexthopRequest{
 		Region: region,
+		VpcID:  vpcId,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing route in sweeper: %s", err)
@@ -87,19 +112,14 @@ func SweepRoute(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&vpcSDK.API{}).Regions() {
-		err := SweepVPC(scwClient, region)
+		err := SweepPrivateNetwork(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
 
-		err = SweepPrivateNetwork(scwClient, region)
-		if err != nil {
-			return err
-		}
-
-		err = SweepRoute(scwClient, region)
+		err = SweepVPC(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}

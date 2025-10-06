@@ -7,10 +7,17 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepServer(scwClient *scw.Client, zone scw.Zone) error {
+func SweepServer(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	asAPI := applesilicon.NewAPI(scwClient)
-
-	listServers, err := asAPI.ListServers(&applesilicon.ListServersRequest{Zone: zone}, scw.WithAllPages())
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+	listServers, err := asAPI.ListServers(&applesilicon.ListServersRequest{Zone: zone, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing apple silicon servers in (%s) in sweeper: %s", zone, err)
 	}
@@ -28,9 +35,9 @@ func SweepServer(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, zone := range (&applesilicon.API{}).Zones() {
-		err := SweepServer(scwClient, zone)
+		err := SweepServer(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
