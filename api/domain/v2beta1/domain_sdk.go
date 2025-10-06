@@ -3178,7 +3178,7 @@ type RegistrarAPIRenewDomainsRequest struct {
 
 // RegistrarAPIRetryInboundTransferRequest: registrar api retry inbound transfer request.
 type RegistrarAPIRetryInboundTransferRequest struct {
-	// Domain: the domain being transfered.
+	// Domain: the domain being transferred.
 	Domain string `json:"domain"`
 
 	// ProjectID: the project ID to associated with the inbound transfer.
