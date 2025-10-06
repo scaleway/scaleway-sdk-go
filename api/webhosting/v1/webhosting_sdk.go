@@ -1378,6 +1378,9 @@ type Offer struct {
 	// QuotaWarning: defines a warning if the maximum value for an option in the offer is exceeded.
 	// Default value: unknown_warning
 	QuotaWarning OfferOptionWarning `json:"quota_warning"`
+
+	// Region: region where the offer is hosted.
+	Region scw.Region `json:"region"`
 }
 
 // Platform: platform.
