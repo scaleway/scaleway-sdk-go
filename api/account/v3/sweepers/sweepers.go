@@ -8,8 +8,12 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepProjects(scwClient *scw.Client) error {
+func SweepProjects(scwClient *scw.Client, projectScoped bool) error {
 	accountAPI := account.NewProjectAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
 
 	req := &account.ProjectAPIListProjectsRequest{}
 	listProjects, err := accountAPI.ListProjects(req, scw.WithAllPages())
@@ -18,7 +22,7 @@ func SweepProjects(scwClient *scw.Client) error {
 	}
 	for _, project := range listProjects.Projects {
 		// Do not delete default project
-		if project.ID == req.OrganizationID || !testhelpers.IsTestResource(project.Name) {
+		if project.ID == req.OrganizationID || !testhelpers.IsTestResource(project.Name) || (projectScoped && (project.ID != defaultProjectID)) {
 			continue
 		}
 		err = accountAPI.DeleteProject(&account.ProjectAPIDeleteProjectRequest{
@@ -31,8 +35,8 @@ func SweepProjects(scwClient *scw.Client) error {
 	return nil
 }
 
-func SweepAll(scwClient *scw.Client) error {
-	if err := SweepProjects(scwClient); err != nil {
+func SweepAll(scwClient *scw.Client, projectScoped bool) error {
+	if err := SweepProjects(scwClient, projectScoped); err != nil {
 		return err
 	}
 	return nil

@@ -8,11 +8,19 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepNamespace(scwClient *scw.Client, region scw.Region) error {
+func SweepNamespace(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	registryAPI := registry.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the registry namespaces in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listNamespaces, err := registryAPI.ListNamespaces(
-		&registry.ListNamespacesRequest{Region: region}, scw.WithAllPages())
+		&registry.ListNamespacesRequest{Region: region, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing namespaces in (%s) in sweeper: %s", region, err)
 	}
@@ -30,9 +38,9 @@ func SweepNamespace(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&registry.API{}).Regions() {
-		err := SweepNamespace(scwClient, region)
+		err := SweepNamespace(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}

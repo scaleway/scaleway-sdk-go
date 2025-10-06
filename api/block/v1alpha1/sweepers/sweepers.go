@@ -7,12 +7,21 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepVolumes(scwClient *scw.Client, zone scw.Zone) error {
+func SweepVolumes(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	blockAPI := block.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listVolumes, err := blockAPI.ListVolumes(
 		&block.ListVolumesRequest{
-			Zone: zone,
+			Zone:      zone,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing volume in (%s) in sweeper: %s", zone, err)
@@ -31,12 +40,21 @@ func SweepVolumes(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepSnapshots(scwClient *scw.Client, zone scw.Zone) error {
+func SweepSnapshots(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	blockAPI := block.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listSnapshots, err := blockAPI.ListSnapshots(
 		&block.ListSnapshotsRequest{
-			Zone: zone,
+			Zone:      zone,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing snapshot in (%s) in sweeper: %s", zone, err)
@@ -55,13 +73,13 @@ func SweepSnapshots(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, zone := range (&block.API{}).Zones() {
-		err := SweepVolumes(scwClient, zone)
+		err := SweepVolumes(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepSnapshots(scwClient, zone)
+		err = SweepSnapshots(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
