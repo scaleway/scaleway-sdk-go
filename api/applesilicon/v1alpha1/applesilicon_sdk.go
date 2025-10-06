@@ -1093,9 +1093,6 @@ type ReinstallServerRequest struct {
 
 	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
 	OsID *string `json:"os_id,omitempty"`
-
-	// RunnerConfiguration: specify the configuration to install an optional CICD runner on the server during installation.
-	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration,omitempty"`
 }
 
 // SetServerPrivateNetworksResponse: set server private networks response.
