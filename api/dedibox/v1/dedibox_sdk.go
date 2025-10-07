@@ -3400,6 +3400,31 @@ type ListIPv6BlockSubnetsAvailableResponseSubnet struct {
 	Cidr uint32 `json:"cidr"`
 }
 
+// IPv6Block: i pv6 block.
+type IPv6Block struct {
+	// ID: ID of the IPv6.
+	ID uint64 `json:"id"`
+
+	// Address: address of the IPv6.
+	Address net.IP `json:"address"`
+
+	// Duid: dUID of the IPv6.
+	Duid string `json:"duid"`
+
+	// Nameservers: DNS linked to the IPv6.
+	Nameservers []string `json:"nameservers"`
+
+	// Cidr: classless InterDomain Routing notation of the IPv6.
+	Cidr uint32 `json:"cidr"`
+
+	// Subnets: all IPv6 subnets.
+	Subnets []*IPv6Block `json:"subnets"`
+
+	// DelegationStatus: the nameservers delegation status.
+	// Default value: unknown_status
+	DelegationStatus IPv6BlockDelegationStatus `json:"delegation_status"`
+}
+
 // InvoiceSummary: invoice summary.
 type InvoiceSummary struct {
 	ID uint64 `json:"id"`
@@ -4207,31 +4232,6 @@ type GetServiceRequest struct {
 	ServiceID uint64 `json:"-"`
 }
 
-// IPv6Block: i pv6 block.
-type IPv6Block struct {
-	// ID: ID of the IPv6.
-	ID uint64 `json:"id"`
-
-	// Address: address of the IPv6.
-	Address net.IP `json:"address"`
-
-	// Duid: dUID of the IPv6.
-	Duid string `json:"duid"`
-
-	// Nameservers: DNS linked to the IPv6.
-	Nameservers []string `json:"nameservers"`
-
-	// Cidr: classless InterDomain Routing notation of the IPv6.
-	Cidr uint32 `json:"cidr"`
-
-	// Subnets: all IPv6 subnets.
-	Subnets []*IPv6Block `json:"subnets"`
-
-	// DelegationStatus: the nameservers delegation status.
-	// Default value: unknown_status
-	DelegationStatus IPv6BlockDelegationStatus `json:"delegation_status"`
-}
-
 // IPv6BlockAPICreateIPv6BlockRequest: i pv6 block api create i pv6 block request.
 type IPv6BlockAPICreateIPv6BlockRequest struct {
 	// ProjectID: ID of the project.
@@ -4272,6 +4272,11 @@ type IPv6BlockAPIGetIPv6BlockRequest struct {
 type IPv6BlockAPIListIPv6BlockSubnetsAvailableRequest struct {
 	// BlockID: ID of the IPv6 block.
 	BlockID uint64 `json:"-"`
+}
+
+// IPv6BlockAPIListIPv6BlocksRequest: i pv6 block api list i pv6 blocks request.
+type IPv6BlockAPIListIPv6BlocksRequest struct {
+	ProjectID *string `json:"-"`
 }
 
 // IPv6BlockAPIUpdateIPv6BlockRequest: i pv6 block api update i pv6 block request.
@@ -4453,6 +4458,32 @@ func (r *ListIPv6BlockSubnetsAvailableResponse) UnsafeAppend(res any) (uint32, e
 	r.SubnetAvailables = append(r.SubnetAvailables, results.SubnetAvailables...)
 	r.TotalCount += uint32(len(results.SubnetAvailables))
 	return uint32(len(results.SubnetAvailables)), nil
+}
+
+// ListIPv6BlocksResponse: list i pv6 blocks response.
+type ListIPv6BlocksResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	IPv6Blocks []*IPv6Block `json:"ipv6_blocks"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListIPv6BlocksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListIPv6BlocksResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListIPv6BlocksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.IPv6Blocks = append(r.IPv6Blocks, results.IPv6Blocks...)
+	r.TotalCount += uint32(len(results.IPv6Blocks))
+	return uint32(len(results.IPv6Blocks)), nil
 }
 
 // ListInvoicesResponse: list invoices response.
@@ -7758,7 +7789,29 @@ func (s *IPv6BlockAPI) CreateIPv6Block(req *IPv6BlockAPICreateIPv6BlockRequest, 
 	return &resp, nil
 }
 
-// GetIPv6Block: Get the IPv6 block associated with the given ID.
+// ListIPv6Blocks: List IPv6 blocks associated given project ID.
+func (s *IPv6BlockAPI) ListIPv6Blocks(req *IPv6BlockAPIListIPv6BlocksRequest, opts ...scw.RequestOption) (*ListIPv6BlocksResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/dedibox/v1/ipv6-blocks",
+		Query:  query,
+	}
+
+	var resp ListIPv6BlocksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetIPv6Block: Get the first IPv6 block associated with the given project ID.
 func (s *IPv6BlockAPI) GetIPv6Block(req *IPv6BlockAPIGetIPv6BlockRequest, opts ...scw.RequestOption) (*IPv6Block, error) {
 	var err error
 
