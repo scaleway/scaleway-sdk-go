@@ -510,6 +510,7 @@ const (
 	PipelineErrorCodeTLSRootMissing            = PipelineErrorCode("tls_root_missing")
 	PipelineErrorCodeTLSSanMismatch            = PipelineErrorCode("tls_san_mismatch")
 	PipelineErrorCodeTLSSelfSigned             = PipelineErrorCode("tls_self_signed")
+	PipelineErrorCodeTLSCaaMalfunction         = PipelineErrorCode("tls_caa_malfunction")
 	PipelineErrorCodePipelineInvalidWorkflow   = PipelineErrorCode("pipeline_invalid_workflow")
 	PipelineErrorCodePipelineMissingHeadStage  = PipelineErrorCode("pipeline_missing_head_stage")
 )
@@ -551,6 +552,7 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_root_missing",
 		"tls_san_mismatch",
 		"tls_self_signed",
+		"tls_caa_malfunction",
 		"pipeline_invalid_workflow",
 		"pipeline_missing_head_stage",
 	}
