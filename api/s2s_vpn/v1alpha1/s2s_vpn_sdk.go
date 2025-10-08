@@ -611,6 +611,8 @@ type BgpSession struct {
 	RoutingPolicyID string `json:"routing_policy_id"`
 
 	PrivateIP scw.IPNet `json:"private_ip"`
+
+	PeerPrivateIP scw.IPNet `json:"peer_private_ip"`
 }
 
 // ConnectionCipher: connection cipher.
@@ -638,6 +640,10 @@ type VpnGatewayPublicConfig struct {
 // CreateConnectionRequestBgpConfig: create connection request bgp config.
 type CreateConnectionRequestBgpConfig struct {
 	RoutingPolicyID string `json:"routing_policy_id"`
+
+	PrivateIP *scw.IPNet `json:"private_ip"`
+
+	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
 }
 
 // Connection: connection.
