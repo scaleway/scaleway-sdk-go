@@ -237,6 +237,45 @@ func (enum *AuthenticationEventResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ExportJobStatusCode string
+
+const (
+	ExportJobStatusCodeUnknownCode = ExportJobStatusCode("unknown_code")
+	ExportJobStatusCodeSuccess     = ExportJobStatusCode("success")
+	ExportJobStatusCodeFailure     = ExportJobStatusCode("failure")
+)
+
+func (enum ExportJobStatusCode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ExportJobStatusCodeUnknownCode)
+	}
+	return string(enum)
+}
+
+func (enum ExportJobStatusCode) Values() []ExportJobStatusCode {
+	return []ExportJobStatusCode{
+		"unknown_code",
+		"success",
+		"failure",
+	}
+}
+
+func (enum ExportJobStatusCode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ExportJobStatusCode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ExportJobStatusCode(ExportJobStatusCode(tmp).String())
+	return nil
+}
+
 type ListAuthenticationEventsRequestOrderBy string
 
 const (
@@ -903,6 +942,14 @@ type ExportJobS3 struct {
 	ProjectID *string `json:"project_id"`
 }
 
+// ExportJobStatus: export job status.
+type ExportJobStatus struct {
+	// Code: default value: unknown_code
+	Code ExportJobStatusCode `json:"code"`
+
+	Message *string `json:"message"`
+}
+
 // ProductService: product service.
 type ProductService struct {
 	Name string `json:"name"`
@@ -930,7 +977,7 @@ type ExportJob struct {
 	// OrganizationID: ID of the targeted Organization.
 	OrganizationID string `json:"organization_id"`
 
-	// Name: name of the export.
+	// Name: name of the export job.
 	Name string `json:"name"`
 
 	// S3: destination in an S3 storage.
@@ -940,11 +987,14 @@ type ExportJob struct {
 	// CreatedAt: export job creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// LastRunAt: last export date.
+	// LastRunAt: last run of export job.
 	LastRunAt *time.Time `json:"last_run_at"`
 
-	// Tags: tags of the export.
+	// Tags: tags of the export job.
 	Tags map[string]string `json:"tags"`
+
+	// LastStatus: status of last export job.
+	LastStatus *ExportJobStatus `json:"last_status"`
 }
 
 // Product: product.
