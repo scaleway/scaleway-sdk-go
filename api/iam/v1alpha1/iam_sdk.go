@@ -2557,6 +2557,18 @@ type Organization struct {
 
 	// Alias: alias of the Organization.
 	Alias string `json:"alias"`
+
+	// LoginPasswordEnabled: defines whether login with a password is enabled for the Organization.
+	LoginPasswordEnabled bool `json:"login_password_enabled"`
+
+	// LoginMagicCodeEnabled: defines whether login with an authentication code is enabled for the Organization.
+	LoginMagicCodeEnabled bool `json:"login_magic_code_enabled"`
+
+	// LoginOauth2Enabled: defines whether login through OAuth2 is enabled for the Organization.
+	LoginOauth2Enabled bool `json:"login_oauth2_enabled"`
+
+	// LoginSamlEnabled: defines whether login through SAML is enabled for the Organization.
+	LoginSamlEnabled bool `json:"login_saml_enabled"`
 }
 
 // OrganizationSecuritySettings: organization security settings.
@@ -2695,6 +2707,24 @@ type UpdateGroupRequest struct {
 
 	// Tags: new tags for the group (maximum of 10 tags).
 	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateOrganizationLoginMethodsRequest: update organization login methods request.
+type UpdateOrganizationLoginMethodsRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+
+	// LoginPasswordEnabled: defines whether login with a password is enabled for the Organization.
+	LoginPasswordEnabled *bool `json:"-"`
+
+	// LoginOauth2Enabled: defines whether login through OAuth2 is enabled for the Organization.
+	LoginOauth2Enabled *bool `json:"-"`
+
+	// LoginMagicCodeEnabled: defines whether login with an authentication code is enabled for the Organization.
+	LoginMagicCodeEnabled *bool `json:"-"`
+
+	// LoginSamlEnabled: defines whether login through SAML is enabled for the Organization.
+	LoginSamlEnabled *bool `json:"-"`
 }
 
 // UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
@@ -4555,6 +4585,40 @@ func (s *API) MigrateOrganizationGuests(req *MigrateOrganizationGuestsRequest, o
 		return err
 	}
 	return nil
+}
+
+// UpdateOrganizationLoginMethods: Set your Organization's allowed login methods.
+func (s *API) UpdateOrganizationLoginMethods(req *UpdateOrganizationLoginMethodsRequest, opts ...scw.RequestOption) (*Organization, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "login_password_enabled", req.LoginPasswordEnabled)
+	parameter.AddToQuery(query, "login_oauth2_enabled", req.LoginOauth2Enabled)
+	parameter.AddToQuery(query, "login_magic_code_enabled", req.LoginMagicCodeEnabled)
+	parameter.AddToQuery(query, "login_saml_enabled", req.LoginSamlEnabled)
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/login-methods",
+		Query:  query,
+	}
+
+	var resp Organization
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // GetOrganizationSaml: Get SAML Identity Provider configuration of an Organization.
