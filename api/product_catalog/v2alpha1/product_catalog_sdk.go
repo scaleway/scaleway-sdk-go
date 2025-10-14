@@ -256,6 +256,7 @@ const (
 	PublicCatalogProductUnitOfMeasureCountableUnitSampleDay = PublicCatalogProductUnitOfMeasureCountableUnit("sample_day")
 	// Gigabyte per day.
 	PublicCatalogProductUnitOfMeasureCountableUnitGigabyteDay = PublicCatalogProductUnitOfMeasureCountableUnit("gigabyte_day")
+	PublicCatalogProductUnitOfMeasureCountableUnitMvcpu       = PublicCatalogProductUnitOfMeasureCountableUnit("mvcpu")
 )
 
 func (enum PublicCatalogProductUnitOfMeasureCountableUnit) String() string {
@@ -297,6 +298,7 @@ func (enum PublicCatalogProductUnitOfMeasureCountableUnit) Values() []PublicCata
 		"second",
 		"sample_day",
 		"gigabyte_day",
+		"mvcpu",
 	}
 }
 
