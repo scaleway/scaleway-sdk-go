@@ -963,8 +963,6 @@ type UserType string
 const (
 	// Unknown type.
 	UserTypeUnknownType = UserType("unknown_type")
-	// Guest.
-	UserTypeGuest = UserType("guest")
 	// Owner.
 	UserTypeOwner  = UserType("owner")
 	UserTypeMember = UserType("member")
@@ -981,7 +979,6 @@ func (enum UserType) String() string {
 func (enum UserType) Values() []UserType {
 	return []UserType{
 		"unknown_type",
-		"guest",
 		"owner",
 		"member",
 	}
