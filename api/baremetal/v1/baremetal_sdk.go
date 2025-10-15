@@ -1320,6 +1320,9 @@ type OS struct {
 
 	// CustomPartitioningSupported: defines if custom partitioning is supported by this OS.
 	CustomPartitioningSupported bool `json:"custom_partitioning_supported"`
+
+	// Zone: zone in which is the OS is available.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Offer: offer.
@@ -1400,6 +1403,9 @@ type Offer struct {
 
 	// MonthlyOfferID: exist only for hourly offers, to migrate to the monthly offer.
 	MonthlyOfferID *string `json:"monthly_offer_id"`
+
+	// Zone: zone in which is the offer is available.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Option: option.
