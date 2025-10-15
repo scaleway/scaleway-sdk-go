@@ -1144,6 +1144,9 @@ type Version struct {
 
 	// EndOfLifeAt: date from which any remaining clusters on this version will begin to be forcibly upgraded to the next minor version.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date at which this version was made available by Kapsule product.
+	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // Cluster: cluster.
