@@ -3,7 +3,7 @@ package sweepers
 import (
 	"fmt"
 
-	inference "github.com/scaleway/scaleway-sdk-go/api/inference/v1beta1"
+	inference "github.com/scaleway/scaleway-sdk-go/api/inference/v1"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
