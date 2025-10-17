@@ -1222,7 +1222,10 @@ type DNSStage struct {
 	// ID: ID of the DNS stage.
 	ID string `json:"id"`
 
-	// Fqdns: list of Fully Qualified Domain Names attached to the stage.
+	// DefaultFqdn: default Fully Qualified Domain Name attached to the stage.
+	DefaultFqdn string `json:"default_fqdn"`
+
+	// Fqdns: list of additional (custom) Fully Qualified Domain Names attached to the stage.
 	Fqdns []string `json:"fqdns"`
 
 	// Type: type of the stage.
