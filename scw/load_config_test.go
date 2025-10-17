@@ -74,7 +74,7 @@ func TestLoad(t *testing.T) {
 			env: map[string]string{
 				ScwConfigPathEnv: "{HOME}/fake/test.conf",
 			},
-			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/fake/test.conf: no such file or directory",
+			expectedError: ErrConfigFileNotFound.Error(),
 		},
 		{
 			name: "Err: custom-path config with invalid V2",
