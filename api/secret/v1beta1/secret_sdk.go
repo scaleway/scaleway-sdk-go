@@ -438,6 +438,9 @@ type SecretVersion struct {
 
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
+
+	// Region: region of the version.
+	Region scw.Region `json:"region"`
 }
 
 // Secret: secret.
