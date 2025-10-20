@@ -1137,6 +1137,63 @@ func (enum *PlatformPlatformGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ProgressStatus string
+
+const (
+	// Default status returned when no specific progress status is defined.
+	ProgressStatusUnknownStatus = ProgressStatus("unknown_status")
+	// Progress item currently in the pending queue.
+	ProgressStatusPending = ProgressStatus("pending")
+	// Progress item that is being processed.
+	ProgressStatusProcessing = ProgressStatus("processing")
+	// Progress item fully completed.
+	ProgressStatusCompleted = ProgressStatus("completed")
+	// Progress item partially completed.
+	ProgressStatusPartiallyCompleted = ProgressStatus("partially_completed")
+	// Progress item that failed during execution.
+	ProgressStatusFailed = ProgressStatus("failed")
+	// Progress item manually or automatically aborted.
+	ProgressStatusAborted = ProgressStatus("aborted")
+	// Progress item that did not reach completion.
+	ProgressStatusNeverFinished = ProgressStatus("never_finished")
+)
+
+func (enum ProgressStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ProgressStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ProgressStatus) Values() []ProgressStatus {
+	return []ProgressStatus{
+		"unknown_status",
+		"pending",
+		"processing",
+		"completed",
+		"partially_completed",
+		"failed",
+		"aborted",
+		"never_finished",
+	}
+}
+
+func (enum ProgressStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ProgressStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ProgressStatus(ProgressStatus(tmp).String())
+	return nil
+}
+
 // AutoConfigDomainDNS: auto config domain dns.
 type AutoConfigDomainDNS struct {
 	// Nameservers: whether or not to synchronize domain nameservers.
@@ -1527,6 +1584,22 @@ type MailAccount struct {
 	Username string `json:"username"`
 }
 
+// ProgressSummary: progress summary.
+type ProgressSummary struct {
+	// ID: ID of the progress.
+	ID string `json:"id"`
+
+	// BackupItemsCount: total number of backup items included in the progress.
+	BackupItemsCount uint64 `json:"backup_items_count"`
+
+	// Percentage: completion percentage of the progress.
+	Percentage uint64 `json:"percentage"`
+
+	// Status: current status of the progress operation.
+	// Default value: unknown_status
+	Status ProgressStatus `json:"status"`
+}
+
 // Website: website.
 type Website struct {
 	// Domain: the domain of the website.
@@ -1573,6 +1646,18 @@ type BackupAPIGetBackupRequest struct {
 	BackupID string `json:"-"`
 }
 
+// BackupAPIGetProgressRequest: backup api get progress request.
+type BackupAPIGetProgressRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: ID of the hosting associated with the progress.
+	HostingID string `json:"-"`
+
+	// ProgressID: ID of the progress to retrieve.
+	ProgressID string `json:"-"`
+}
+
 // BackupAPIListBackupItemsRequest: backup api list backup items request.
 type BackupAPIListBackupItemsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1602,6 +1687,15 @@ type BackupAPIListBackupsRequest struct {
 	// OrderBy: order in which to return the list of backups.
 	// Default value: created_at_desc
 	OrderBy ListBackupsRequestOrderBy `json:"-"`
+}
+
+// BackupAPIListRecentProgressesRequest: backup api list recent progresses request.
+type BackupAPIListRecentProgressesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: ID of the hosting linked to the progress.
+	HostingID string `json:"-"`
 }
 
 // BackupAPIRestoreBackupItemsRequest: backup api restore backup items request.
@@ -2537,6 +2631,12 @@ func (r *ListOffersResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Offers)), nil
 }
 
+// ListRecentProgressesResponse: list recent progresses response.
+type ListRecentProgressesResponse struct {
+	// Progresses: list of summarized progress entries.
+	Progresses []*ProgressSummary `json:"progresses"`
+}
+
 // ListWebsitesResponse: list websites response.
 type ListWebsitesResponse struct {
 	// TotalCount: total number of websites.
@@ -2660,6 +2760,22 @@ type OfferAPIListOffersRequest struct {
 	ControlPanels []string `json:"-"`
 }
 
+// Progress: progress.
+type Progress struct {
+	// ID: ID of the progress.
+	ID string `json:"id"`
+
+	// BackupItemGroups: groups of backup items included in this progress.
+	BackupItemGroups []*BackupItemGroup `json:"backup_item_groups"`
+
+	// Percentage: completion percentage of the progress.
+	Percentage uint64 `json:"percentage"`
+
+	// Status: current status of the progress operation.
+	// Default value: unknown_status
+	Status ProgressStatus `json:"status"`
+}
+
 // ResetHostingPasswordResponse: reset hosting password response.
 type ResetHostingPasswordResponse struct {
 	// Deprecated: OneTimePassword: new temporary password (deprecated, use password_b64 instead).
@@ -2685,10 +2801,16 @@ type ResourceSummary struct {
 }
 
 // RestoreBackupItemsResponse: restore backup items response.
-type RestoreBackupItemsResponse struct{}
+type RestoreBackupItemsResponse struct {
+	// ProgressID: identifier used to track the item restoration progress.
+	ProgressID string `json:"progress_id"`
+}
 
 // RestoreBackupResponse: restore backup response.
-type RestoreBackupResponse struct{}
+type RestoreBackupResponse struct {
+	// ProgressID: identifier used to track the backup restoration progress.
+	ProgressID string `json:"progress_id"`
+}
 
 // SearchDomainsResponse: search domains response.
 type SearchDomainsResponse struct {
@@ -2917,6 +3039,72 @@ func (s *BackupAPI) RestoreBackupItems(req *BackupAPIRestoreBackupItemsRequest, 
 	}
 
 	var resp RestoreBackupItemsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetProgress: Retrieve detailed information about a specific progress by its ID.
+func (s *BackupAPI) GetProgress(req *BackupAPIGetProgressRequest, opts ...scw.RequestOption) (*Progress, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ProgressID) == "" {
+		return nil, errors.New("field ProgressID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/progresses/" + fmt.Sprint(req.ProgressID) + "",
+	}
+
+	var resp Progress
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListRecentProgresses: List recent progresses associated with a specific backup, grouped by type.
+func (s *BackupAPI) ListRecentProgresses(req *BackupAPIListRecentProgressesRequest, opts ...scw.RequestOption) (*ListRecentProgressesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/progresses",
+	}
+
+	var resp ListRecentProgressesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
