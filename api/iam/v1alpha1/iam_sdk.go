@@ -2706,16 +2706,16 @@ type UpdateOrganizationLoginMethodsRequest struct {
 	OrganizationID string `json:"-"`
 
 	// LoginPasswordEnabled: defines whether login with a password is enabled for the Organization.
-	LoginPasswordEnabled *bool `json:"-"`
+	LoginPasswordEnabled *bool `json:"login_password_enabled,omitempty"`
 
 	// LoginOauth2Enabled: defines whether login through OAuth2 is enabled for the Organization.
-	LoginOauth2Enabled *bool `json:"-"`
+	LoginOauth2Enabled *bool `json:"login_oauth2_enabled,omitempty"`
 
 	// LoginMagicCodeEnabled: defines whether login with an authentication code is enabled for the Organization.
-	LoginMagicCodeEnabled *bool `json:"-"`
+	LoginMagicCodeEnabled *bool `json:"login_magic_code_enabled,omitempty"`
 
 	// LoginSamlEnabled: defines whether login through SAML is enabled for the Organization.
-	LoginSamlEnabled *bool `json:"-"`
+	LoginSamlEnabled *bool `json:"login_saml_enabled,omitempty"`
 }
 
 // UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
@@ -4562,12 +4562,6 @@ func (s *API) UpdateOrganizationLoginMethods(req *UpdateOrganizationLoginMethods
 		req.OrganizationID = defaultOrganizationID
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "login_password_enabled", req.LoginPasswordEnabled)
-	parameter.AddToQuery(query, "login_oauth2_enabled", req.LoginOauth2Enabled)
-	parameter.AddToQuery(query, "login_magic_code_enabled", req.LoginMagicCodeEnabled)
-	parameter.AddToQuery(query, "login_saml_enabled", req.LoginSamlEnabled)
-
 	if fmt.Sprint(req.OrganizationID) == "" {
 		return nil, errors.New("field OrganizationID cannot be empty in request")
 	}
@@ -4575,7 +4569,11 @@ func (s *API) UpdateOrganizationLoginMethods(req *UpdateOrganizationLoginMethods
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
 		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/login-methods",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Organization
