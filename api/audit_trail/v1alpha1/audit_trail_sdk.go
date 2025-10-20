@@ -991,7 +991,7 @@ type ExportJob struct {
 	LastRunAt *time.Time `json:"last_run_at"`
 
 	// Tags: tags of the export job.
-	Tags map[string]string `json:"tags"`
+	Tags []string `json:"tags"`
 
 	// LastStatus: status of last export job.
 	LastStatus *ExportJobStatus `json:"last_status"`
@@ -1025,7 +1025,7 @@ type CreateExportJobRequest struct {
 	S3 *ExportJobS3 `json:"s3,omitempty"`
 
 	// Tags: tags of the export.
-	Tags map[string]string `json:"tags"`
+	Tags []string `json:"tags"`
 }
 
 // DeleteExportJobRequest: delete export job request.
@@ -1165,7 +1165,7 @@ type ListExportJobsRequest struct {
 	Name *string `json:"-"`
 
 	// Tags: (Optional) List of tags to filter on.
-	Tags map[string]string `json:"-"`
+	Tags []string `json:"-"`
 
 	Page *int32 `json:"-"`
 
