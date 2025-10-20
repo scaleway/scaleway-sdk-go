@@ -1292,15 +1292,6 @@ type RegionalAPIDisableAlertRulesRequest struct {
 	RuleIDs []string `json:"rule_ids"`
 }
 
-// RegionalAPIDisableManagedAlertsRequest: Disable the sending of managed alerts.
-type RegionalAPIDisableManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-}
-
 // RegionalAPIEnableAlertManagerRequest: Enable the Alert manager.
 type RegionalAPIEnableAlertManagerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1320,15 +1311,6 @@ type RegionalAPIEnableAlertRulesRequest struct {
 
 	// RuleIDs: list of IDs of the rules to enable. If empty, enables all preconfigured rules.
 	RuleIDs []string `json:"rule_ids"`
-}
-
-// RegionalAPIEnableManagedAlertsRequest: Enable the sending of managed alerts.
-type RegionalAPIEnableManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
 }
 
 // RegionalAPIGetAlertManagerRequest: Get the Alert manager.
@@ -2382,7 +2364,7 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	return &resp, nil
 }
 
-// GetRulesCount: Get a detailed count of enabled rules in the specified Project. Includes preconfigured and custom alerting and recording rules.
+// GetRulesCount: Get the number of enabled rules Get a detailed count of enabled rules in the specified Project. Includes preconfigured and custom alerting and recording rules.
 func (s *RegionalAPI) GetRulesCount(req *RegionalAPIGetRulesCountRequest, opts ...scw.RequestOption) (*GetRulesCountResponse, error) {
 	var err error
 
@@ -2604,80 +2586,6 @@ func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.
 	}
 
 	var resp ListAlertsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project. Managed alerts are predefined alerts that apply to Scaleway recources integrated with Cockpit by default.
-func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/managed-alerts/enable",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AlertManager
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project.
-func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/managed-alerts/disable",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AlertManager
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
