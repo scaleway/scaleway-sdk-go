@@ -2577,6 +2577,20 @@ type OrganizationSecuritySettings struct {
 	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration"`
 }
 
+// ParseSamlMetadataRequest: parse saml metadata request.
+type ParseSamlMetadataRequest struct {
+	File scw.File `json:"file"`
+}
+
+// ParseSamlMetadataResponse: parse saml metadata response.
+type ParseSamlMetadataResponse struct {
+	SingleSignOnURL string `json:"single_sign_on_url"`
+
+	EntityID string `json:"entity_id"`
+
+	SigningCertificates []string `json:"signing_certificates"`
+}
+
 // RemoveGroupMemberRequest: remove group member request.
 type RemoveGroupMemberRequest struct {
 	// GroupID: ID of the group.
@@ -4689,6 +4703,29 @@ func (s *API) DeleteSaml(req *DeleteSamlRequest, opts ...scw.RequestOption) erro
 		return err
 	}
 	return nil
+}
+
+// ParseSamlMetadata: Parse SAML xml metadata file.
+func (s *API) ParseSamlMetadata(req *ParseSamlMetadataRequest, opts ...scw.RequestOption) (*ParseSamlMetadataResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/parse-saml-metadata",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ParseSamlMetadataResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListSamlCertificates: List SAML certificates.
