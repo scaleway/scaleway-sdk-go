@@ -973,6 +973,8 @@ type CreateSessionRequestBookingDemand struct {
 	FinishedAt *time.Time `json:"finished_at"`
 
 	Description *string `json:"description"`
+
+	TimeZone *string `json:"time_zone"`
 }
 
 // Application: application.
@@ -1020,6 +1022,9 @@ type Booking struct {
 
 	// ProgressMessage: any progress message of the booking.
 	ProgressMessage string `json:"progress_message"`
+
+	// TimeZone: time zone for the booking schedule, in tz database format (e.g. 'Europe/Paris').
+	TimeZone *string `json:"time_zone"`
 }
 
 // JobResult: job result.
