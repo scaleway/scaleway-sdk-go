@@ -1441,6 +1441,9 @@ type PrivateNIC struct {
 
 	// CreationDate: private NIC creation date.
 	CreationDate *time.Time `json:"creation_date"`
+
+	// Zone: the zone in which the Private NIC is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // SecurityGroupSummary: security group summary.
