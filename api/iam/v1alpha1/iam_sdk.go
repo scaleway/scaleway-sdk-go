@@ -2575,6 +2575,9 @@ type OrganizationSecuritySettings struct {
 
 	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
 	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration"`
+
+	// MaxAPIKeyExpirationDuration: maximum duration the `expires_at` field of an API key can represent. A value of 0 means there is no maximum duration.
+	MaxAPIKeyExpirationDuration *scw.Duration `json:"max_api_key_expiration_duration"`
 }
 
 // ParseSamlMetadataRequest: parse saml metadata request.
@@ -2748,6 +2751,9 @@ type UpdateOrganizationSecuritySettingsRequest struct {
 
 	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
 	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration,omitempty"`
+
+	// MaxAPIKeyExpirationDuration: maximum duration the `expires_at` field of an API key can represent. A value of 0 means there is no maximum duration.
+	MaxAPIKeyExpirationDuration *scw.Duration `json:"max_api_key_expiration_duration,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
