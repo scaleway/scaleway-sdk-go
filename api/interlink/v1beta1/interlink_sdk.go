@@ -633,6 +633,9 @@ type Pop struct {
 	// AvailableLinkBandwidthsMbps: available bandwidth in Mbits/s for future hosted links from available connections in this PoP.
 	AvailableLinkBandwidthsMbps []uint64 `json:"available_link_bandwidths_mbps"`
 
+	// DisplayName: pretty name of the PoP. Includes name, hosting provider and location information (ex: Paris - TeleHouse TH2).
+	DisplayName string `json:"display_name"`
+
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
 }
