@@ -4,9 +4,6 @@ GOARCH ?=
 GOCMD := go
 GOCLEAN := $(GOCMD) clean
 GOTEST := $(GOCMD) test
-GOMOD := $(GOCMD) mod
-GOFMT := $(GOCMD) fmt
-GOVET := $(GOCMD) vet
 
 PKGS := ./...
 GOFLAGS ?=
@@ -23,7 +20,7 @@ NC := \033[0m
 
 .DEFAULT_GOAL := help
 
-.PHONY: help clean fmt vet lint lint-fix test check-tokens deps deps-update check version install-tools dev-setup
+.PHONY: help clean lint lint-fix test check-tokens check version install-tools
 
 help: ## Show available commands
 	@echo "$(BLUE)Scaleway Go SDK - Available Commands$(NC)\n"
@@ -34,14 +31,6 @@ help: ## Show available commands
 clean: ## Clean build artifacts
 	@echo "$(BLUE)Cleaning...$(NC)"
 	$(GOCLEAN)
-
-fmt: ## Format Go code
-	@echo "$(BLUE)Formatting...$(NC)"
-	$(GOFMT) $(PKGS)
-
-vet: ## Run go vet
-	@echo "$(BLUE)Vetting...$(NC)"
-	$(GOVET) $(PKGS)
 
 lint: ## Run linters
 	@echo "$(BLUE)Linting...$(NC)"
@@ -59,16 +48,7 @@ check-tokens: ## Check for exposed tokens
 	@echo "$(BLUE)Checking for exposed tokens...$(NC)"
 	@./scripts/check_for_tokens.sh
 
-deps: ## Download dependencies
-	@echo "$(BLUE)Downloading deps...$(NC)"
-	$(GOMOD) download
-
-deps-update: ## Tidy and update dependencies
-	@echo "$(BLUE)Updating dependencies...$(NC)"
-	$(GOMOD) tidy
-	$(GOMOD) download
-
-check: deps check-tokens fmt vet lint test ## Run full local checks
+check: check-tokens lint test ## Run full local checks
 	@echo "$(GREEN)All checks passed!$(NC)"
 
 version: ## Show tool versions
@@ -83,7 +63,3 @@ install-tools: ## Install dev tools
 	@echo "$(BLUE)Installing tools...$(NC)"
 	@echo "$(YELLOW)Installing golangci-lint $(GOLANGCI_LINT_VER)$(NC)"
 	@$(GOCMD) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VER)
-
-dev-setup: install-tools deps ## Setup dev environment
-	@echo "$(GREEN)Development environment setup complete!$(NC)"
-	@echo "$(YELLOW)Run 'make help' to see available commands$(NC)"
