@@ -1212,6 +1212,9 @@ type CreateServerRequest struct {
 
 	// Protected: if enabled, the server can not be deleted.
 	Protected bool `json:"protected"`
+
+	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *[]byte `json:"user_data,omitempty"`
 }
 
 // Server: server.
@@ -1278,6 +1281,9 @@ type Server struct {
 
 	// Protected: if enabled, the server can not be deleted.
 	Protected bool `json:"protected"`
+
+	// UserData: optional configuration data passed to cloud-init.
+	UserData *[]byte `json:"user_data"`
 }
 
 // OS: os.
@@ -1653,6 +1659,9 @@ type InstallServerRequest struct {
 
 	// PartitioningSchema: partitioning schema.
 	PartitioningSchema *Schema `json:"partitioning_schema,omitempty"`
+
+	// Deprecated: UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *scw.File `json:"user_data,omitempty"`
 }
 
 // ListOSRequest: list os request.
@@ -2147,6 +2156,9 @@ type UpdateServerRequest struct {
 
 	// Protected: if enabled, the server can not be deleted.
 	Protected *bool `json:"protected,omitempty"`
+
+	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *[]byte `json:"user_data,omitempty"`
 }
 
 // UpdateSettingRequest: update setting request.
