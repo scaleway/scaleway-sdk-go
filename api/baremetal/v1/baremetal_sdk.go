@@ -1327,6 +1327,12 @@ type OS struct {
 	// CustomPartitioningSupported: defines if custom partitioning is supported by this OS.
 	CustomPartitioningSupported bool `json:"custom_partitioning_supported"`
 
+	// CloudInitSupported: defines if cloud-init is supported by this OS.
+	CloudInitSupported bool `json:"cloud_init_supported"`
+
+	// CloudInitVersion: defines the cloud-init API version used by this OS.
+	CloudInitVersion *string `json:"cloud_init_version"`
+
 	// Zone: zone in which is the OS is available.
 	Zone scw.Zone `json:"zone"`
 }
