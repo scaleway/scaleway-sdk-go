@@ -2685,6 +2685,9 @@ type UpdateAPIKeyRequest struct {
 
 	// Description: new description to update.
 	Description *string `json:"description,omitempty"`
+
+	// ExpiresAt: new expiration date of the API key.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }
 
 // UpdateApplicationRequest: update application request.
