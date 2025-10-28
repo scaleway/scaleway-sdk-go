@@ -554,6 +554,9 @@ type ListConsumptionsResponseConsumption struct {
 
 	// BilledQuantity: consumed quantity.
 	BilledQuantity string `json:"billed_quantity"`
+
+	// ConsumerID: organization ID of the consumer for this consumption.
+	ConsumerID string `json:"consumer_id"`
 }
 
 // Discount: discount.
