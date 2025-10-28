@@ -340,7 +340,7 @@ type Deployment struct {
 	// UpdatedAt: last modification date of the deployment.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Version: clickhouse version.
+	// Version: clickHouse® version.
 	Version string `json:"version"`
 
 	// ReplicaCount: number of replicas for the deployment.
@@ -427,7 +427,7 @@ type CreateDeploymentRequest struct {
 	// Tags: tags to apply to the deployment.
 	Tags []string `json:"tags"`
 
-	// Version: clickhouse version to use for the deployment.
+	// Version: clickHouse® version to use for the deployment.
 	Version string `json:"version"`
 
 	// ReplicaCount: number of replicas for the deployment.
@@ -861,7 +861,7 @@ func (s *API) ListPresets(req *ListPresetsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// ListVersions: List available Clickhouse versions.
+// ListVersions: List available ClickHouse® versions.
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
@@ -1045,7 +1045,7 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteDeployment: Delete a given deployment, specified by the `region` and `deployment_id` parameters. Deleting a deployment is permanent, and cannot be undone. Upon deletion, deletion all your data will be lost.
+// DeleteDeployment: Delete a given deployment, specified by the `region` and `deployment_id` parameters. Deleting a deployment is permanent, and cannot be undone. Upon deletion, all your data will be lost.
 func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
