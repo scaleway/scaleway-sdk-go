@@ -175,6 +175,7 @@ type Product string
 const (
 	ProductUnknownProduct = Product("unknown_product")
 	ProductEdgeServices   = Product("edge_services")
+	ProductS2sVpn         = Product("s2s_vpn")
 )
 
 func (enum Product) String() string {
@@ -189,6 +190,7 @@ func (enum Product) Values() []Product {
 	return []Product{
 		"unknown_product",
 		"edge_services",
+		"s2s_vpn",
 	}
 }
 
