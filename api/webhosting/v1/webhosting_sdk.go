@@ -2824,6 +2824,30 @@ type Session struct {
 	URL string `json:"url"`
 }
 
+// WebsiteAPICreateWebsiteRequest: website api create website request.
+type WebsiteAPICreateWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the new domain name or subdomain to use for the website.
+	DomainName string `json:"domain_name"`
+}
+
+// WebsiteAPIDeleteWebsiteRequest: website api delete website request.
+type WebsiteAPIDeleteWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is detached from.
+	HostingID string `json:"-"`
+
+	// DomainName: the new domain name or subdomain attached to the website.
+	DomainName string `json:"-"`
+}
+
 // WebsiteAPIListWebsitesRequest: website api list websites request.
 type WebsiteAPIListWebsitesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -4154,7 +4178,7 @@ func (s *HostingAPI) GetResourceSummary(req *HostingAPIGetResourceSummaryRequest
 	return &resp, nil
 }
 
-// AddCustomDomain: Attach a custom domain to a webhosting.
+// AddCustomDomain: Attach a custom domain to a webhosting as an alias to the main domain.
 func (s *HostingAPI) AddCustomDomain(req *HostingAPIAddCustomDomainRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
 	var err error
 
@@ -4704,4 +4728,73 @@ func (s *WebsiteAPI) ListWebsites(req *WebsiteAPIListWebsitesRequest, opts ...sc
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// CreateWebsite: Create a new website and attach it to a webhosting.
+func (s *WebsiteAPI) CreateWebsite(req *WebsiteAPICreateWebsiteRequest, opts ...scw.RequestOption) (*Website, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Website
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteWebsite: Delete a website from a webhosting.
+func (s *WebsiteAPI) DeleteWebsite(req *WebsiteAPIDeleteWebsiteRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainName) == "" {
+		return errors.New("field DomainName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites/" + fmt.Sprint(req.DomainName) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
