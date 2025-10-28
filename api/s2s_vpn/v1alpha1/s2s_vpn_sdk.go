@@ -680,6 +680,12 @@ type Connection struct {
 	// Default value: unknown_initiation_policy
 	InitiationPolicy ConnectionInitiationPolicy `json:"initiation_policy"`
 
+	// SecretID: ID of the secret in Secret Manager which contains the PSK.
+	SecretID string `json:"secret_id"`
+
+	// SecretRevision: version number of the secret in Secret Manager which contains the PSK.
+	SecretRevision uint32 `json:"secret_revision"`
+
 	// Ikev2Ciphers: list of IKE v2 ciphers proposed for the IPsec tunnel.
 	Ikev2Ciphers []*ConnectionCipher `json:"ikev2_ciphers"`
 
@@ -917,8 +923,8 @@ type CreateConnectionResponse struct {
 	// Connection: this connection.
 	Connection *Connection `json:"connection"`
 
-	// PreSharedKey: new PSK generated for this connection.
-	PreSharedKey string `json:"pre_shared_key"`
+	// Deprecated: PreSharedKey: deprecated, use secret_id & secret_revision fields.
+	PreSharedKey *string `json:"pre_shared_key,omitempty"`
 }
 
 // CreateCustomerGatewayRequest: create customer gateway request.
@@ -1404,8 +1410,8 @@ type RenewConnectionPskResponse struct {
 	// Connection: this connection.
 	Connection *Connection `json:"connection"`
 
-	// PreSharedKey: new PSK generated for this connection.
-	PreSharedKey string `json:"pre_shared_key"`
+	// Deprecated: PreSharedKey: deprecated, use secret_id & secret_revision fields.
+	PreSharedKey *string `json:"pre_shared_key,omitempty"`
 }
 
 // SetRoutingPolicyRequest: set routing policy request.
