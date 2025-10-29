@@ -866,7 +866,7 @@ type Pool struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
@@ -1033,7 +1033,7 @@ type CreateClusterRequestPoolConfig struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -1508,7 +1508,7 @@ type CreatePoolRequest struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
