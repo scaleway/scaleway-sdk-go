@@ -1098,6 +1098,9 @@ type ScalewayLB struct {
 
 	// DomainName: fully Qualified Domain Name (in the format subdomain.example.com) to use in HTTP requests sent towards your Load Balancer.
 	DomainName *string `json:"domain_name"`
+
+	// HasWebsocket: defines whether to forward websocket requests to the load balancer.
+	HasWebsocket *bool `json:"has_websocket"`
 }
 
 // RuleHTTPMatchPathFilter: rule http match path filter.
