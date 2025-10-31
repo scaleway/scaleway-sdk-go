@@ -1007,17 +1007,18 @@ func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
 type OfferOptionName string
 
 const (
-	OfferOptionNameUnknownName    = OfferOptionName("unknown_name")
-	OfferOptionNameDomainCount    = OfferOptionName("domain_count")
-	OfferOptionNameEmailCount     = OfferOptionName("email_count")
-	OfferOptionNameStorageGb      = OfferOptionName("storage_gb")
-	OfferOptionNameVcpuCount      = OfferOptionName("vcpu_count")
-	OfferOptionNameRAMGb          = OfferOptionName("ram_gb")
-	OfferOptionNameBackup         = OfferOptionName("backup")
-	OfferOptionNameDedicatedIP    = OfferOptionName("dedicated_ip")
-	OfferOptionNameEmailStorageGb = OfferOptionName("email_storage_gb")
-	OfferOptionNameDatabaseCount  = OfferOptionName("database_count")
-	OfferOptionNameSupport        = OfferOptionName("support")
+	OfferOptionNameUnknownName     = OfferOptionName("unknown_name")
+	OfferOptionNameDomainCount     = OfferOptionName("domain_count")
+	OfferOptionNameEmailCount      = OfferOptionName("email_count")
+	OfferOptionNameStorageGb       = OfferOptionName("storage_gb")
+	OfferOptionNameVcpuCount       = OfferOptionName("vcpu_count")
+	OfferOptionNameRAMGb           = OfferOptionName("ram_gb")
+	OfferOptionNameBackup          = OfferOptionName("backup")
+	OfferOptionNameDedicatedIP     = OfferOptionName("dedicated_ip")
+	OfferOptionNameEmailStorageGb  = OfferOptionName("email_storage_gb")
+	OfferOptionNameDatabaseCount   = OfferOptionName("database_count")
+	OfferOptionNameSupport         = OfferOptionName("support")
+	OfferOptionNameAdditionalEmail = OfferOptionName("additional_email")
 )
 
 func (enum OfferOptionName) String() string {
@@ -1041,6 +1042,7 @@ func (enum OfferOptionName) Values() []OfferOptionName {
 		"email_storage_gb",
 		"database_count",
 		"support",
+		"additional_email",
 	}
 }
 
