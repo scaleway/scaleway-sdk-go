@@ -2228,7 +2228,7 @@ type ListDatabasesRequest struct {
 	OrderBy ListDatabasesRequestOrderBy `json:"-"`
 
 	// SkipSizeRetrieval: whether to skip the retrieval of each database size. If true, the size of each returned database will be set to 0.
-	SkipSizeRetrieval bool `json:"-"`
+	SkipSizeRetrieval *bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
