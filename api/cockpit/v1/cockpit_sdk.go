@@ -2364,7 +2364,7 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	return &resp, nil
 }
 
-// GetRulesCount: Get the number of enabled rules Get a detailed count of enabled rules in the specified Project. Includes preconfigured and custom alerting and recording rules.
+// GetRulesCount: Get a detailed count of enabled rules in the specified Project. Includes preconfigured and custom alerting and recording rules.
 func (s *RegionalAPI) GetRulesCount(req *RegionalAPIGetRulesCountRequest, opts ...scw.RequestOption) (*GetRulesCountResponse, error) {
 	var err error
 
