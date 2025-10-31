@@ -2228,7 +2228,7 @@ type ListDatabasesRequest struct {
 	OrderBy ListDatabasesRequestOrderBy `json:"-"`
 
 	// SkipSizeRetrieval: whether to skip the retrieval of each database size. If true, the size of each returned database will be set to 0.
-	SkipSizeRetrieval bool `json:"-"`
+	SkipSizeRetrieval *bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -3560,7 +3560,7 @@ func (s *API) RenewInstanceCertificate(req *RenewInstanceCertificateRequest, opt
 	return nil
 }
 
-// GetInstanceMetrics: Retrieve the time series metrics of a given Database Instance. You can define the period from which to retrieve metrics by specifying the `start_date` and `end_date`.
+// Deprecated: GetInstanceMetrics: Retrieve the time series metrics of a given Database Instance. You can define the period from which to retrieve metrics by specifying the `start_date` and `end_date`. This method is deprecated and will be removed in a future version.
 func (s *API) GetInstanceMetrics(req *GetInstanceMetricsRequest, opts ...scw.RequestOption) (*InstanceMetrics, error) {
 	var err error
 
