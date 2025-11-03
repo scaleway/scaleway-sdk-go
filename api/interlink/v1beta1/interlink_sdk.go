@@ -448,6 +448,13 @@ type BgpConfig struct {
 	IPv6 scw.IPNet `json:"ipv6"`
 }
 
+// Range: range.
+type Range struct {
+	Start uint32 `json:"start"`
+
+	End uint32 `json:"end"`
+}
+
 // PartnerHost: partner host.
 type PartnerHost struct {
 	// PartnerID: ID of the partner facilitating the link.
@@ -504,6 +511,9 @@ type DedicatedConnection struct {
 
 	// DemarcationInfo: demarcation details required by the data center to set up the supporting Cross Connect. This generally includes the physical space in the facility, the cabinet or rack the connection should land in, the patch panel to go in, the port designation, and the media type.
 	DemarcationInfo *string `json:"demarcation_info"`
+
+	// VlanRange: range in which to pick vlan for self-hosted links on this dedicated connection. Both start & end are included. Any range defined here must be itself included in the greater allowed range of vlans from 1500 to 3899 (this range is hardware dependent and can change over time, but actual range will be enforced).
+	VlanRange *Range `json:"vlan_range"`
 
 	// Region: region of the dedicated connection.
 	Region scw.Region `json:"region"`
