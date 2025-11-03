@@ -1763,7 +1763,7 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 }
 
 // Deprecated: ListPlans: Retrieve a list of available pricing plan types.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1793,7 +1793,7 @@ func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.Reques
 }
 
 // Deprecated: SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1822,7 +1822,7 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 }
 
 // Deprecated: GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) GetCurrentPlan(req *GlobalAPIGetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
