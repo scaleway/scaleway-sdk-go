@@ -546,6 +546,43 @@ func (enum *ListSSHKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListScimTokensRequestOrderBy string
+
+const (
+	ListScimTokensRequestOrderByCreatedAtAsc  = ListScimTokensRequestOrderBy("created_at_asc")
+	ListScimTokensRequestOrderByCreatedAtDesc = ListScimTokensRequestOrderBy("created_at_desc")
+)
+
+func (enum ListScimTokensRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListScimTokensRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListScimTokensRequestOrderBy) Values() []ListScimTokensRequestOrderBy {
+	return []ListScimTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListScimTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListScimTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListScimTokensRequestOrderBy(ListScimTokensRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListUsersRequestOrderBy string
 
 const (
@@ -1083,6 +1120,17 @@ type RuleSpecs struct {
 	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
+}
+
+// ScimToken: scim token.
+type ScimToken struct {
+	ID string `json:"id"`
+
+	ScimID string `json:"scim_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CreateUserRequestMember: create user request member.
@@ -1691,6 +1739,21 @@ type CreateSSHKeyRequest struct {
 	ProjectID string `json:"project_id"`
 }
 
+// CreateScimTokenRequest: create scim token request.
+type CreateScimTokenRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+}
+
+// CreateScimTokenResponse: create scim token response.
+type CreateScimTokenResponse struct {
+	// Token: the SCIM token metadata.
+	Token *ScimToken `json:"token"`
+
+	// BearerToken: the Bearer Token to use to authenticate to SCIM endpoints.
+	BearerToken string `json:"bearer_token"`
+}
+
 // CreateUserMFAOTPRequest: create user mfaotp request.
 type CreateUserMFAOTPRequest struct {
 	// UserID: user ID of the MFA OTP.
@@ -1761,6 +1824,18 @@ type DeleteSamlRequest struct {
 	SamlID string `json:"-"`
 }
 
+// DeleteScimRequest: delete scim request.
+type DeleteScimRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+}
+
+// DeleteScimTokenRequest: delete scim token request.
+type DeleteScimTokenRequest struct {
+	// TokenID: the SCIM token ID.
+	TokenID string `json:"-"`
+}
+
 // DeleteUserMFAOTPRequest: delete user mfaotp request.
 type DeleteUserMFAOTPRequest struct {
 	// UserID: user ID of the MFA OTP.
@@ -1775,6 +1850,12 @@ type DeleteUserRequest struct {
 
 // EnableOrganizationSamlRequest: enable organization saml request.
 type EnableOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
+// EnableOrganizationScimRequest: enable organization scim request.
+type EnableOrganizationScimRequest struct {
 	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"-"`
 }
@@ -2470,6 +2551,50 @@ type ListSamlCertificatesResponse struct {
 	Certificates []*SamlCertificate `json:"certificates"`
 }
 
+// ListScimTokensRequest: list scim tokens request.
+type ListScimTokensRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+
+	// OrderBy: sort order of SCIM tokens.
+	// Default value: created_at_asc
+	OrderBy ListScimTokensRequestOrderBy `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of items per page. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListScimTokensResponse: list scim tokens response.
+type ListScimTokensResponse struct {
+	// ScimTokens: list of SCIM tokens.
+	ScimTokens []*ScimToken `json:"scim_tokens"`
+
+	// TotalCount: total count of SCIM tokens.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListScimTokensResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListScimTokensResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListScimTokensResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ScimTokens = append(r.ScimTokens, results.ScimTokens...)
+	r.TotalCount += uint64(len(results.ScimTokens))
+	return uint64(len(results.ScimTokens)), nil
+}
+
 // ListUsersRequest: list users request.
 type ListUsersRequest struct {
 	// OrderBy: criteria for sorting results.
@@ -2634,6 +2759,15 @@ type Saml struct {
 
 	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
 	SingleSignOnURL string `json:"single_sign_on_url"`
+}
+
+// Scim: scim.
+type Scim struct {
+	// ID: ID of the SCIM configuration.
+	ID string `json:"id"`
+
+	// CreatedAt: date and time of SCIM configuration creation.
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // SetGroupMembersRequest: set group members request.
@@ -4797,6 +4931,133 @@ func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...s
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/iam/v1alpha1/saml-certificates/" + fmt.Sprint(req.CertificateID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// EnableOrganizationScim:
+func (s *API) EnableOrganizationScim(req *EnableOrganizationScimRequest, opts ...scw.RequestOption) (*Scim, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/scim",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Scim
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteScim:
+func (s *API) DeleteScim(req *DeleteScimRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListScimTokens:
+func (s *API) ListScimTokens(req *ListScimTokensRequest, opts ...scw.RequestOption) (*ListScimTokensResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return nil, errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "/tokens",
+		Query:  query,
+	}
+
+	var resp ListScimTokensResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateScimToken:
+func (s *API) CreateScimToken(req *CreateScimTokenRequest, opts ...scw.RequestOption) (*CreateScimTokenResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return nil, errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "/tokens",
+	}
+
+	var resp CreateScimTokenResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteScimToken:
+func (s *API) DeleteScimToken(req *DeleteScimTokenRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/scim-tokens/" + fmt.Sprint(req.TokenID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
