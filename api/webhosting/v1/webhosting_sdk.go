@@ -1240,6 +1240,21 @@ type HostingDomainCustomDomain struct {
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
+// ControlPanel: control panel.
+type ControlPanel struct {
+	// Name: control panel name.
+	Name string `json:"name"`
+
+	// Available: define if the control panel type is available to order.
+	Available bool `json:"available"`
+
+	// LogoURL: URL of the control panel's logo.
+	LogoURL string `json:"logo_url"`
+
+	// AvailableLanguages: list of available languages for the control panel.
+	AvailableLanguages []std.LanguageCode `json:"available_languages"`
+}
+
 // OfferOption: offer option.
 type OfferOption struct {
 	// ID: option ID.
@@ -1438,6 +1453,9 @@ type Offer struct {
 	// Default value: unknown_warning
 	QuotaWarning OfferOptionWarning `json:"quota_warning"`
 
+	// ControlPanels: lists available control panels for the specified offer.
+	ControlPanels []*ControlPanel `json:"control_panels"`
+
 	// Region: region where the offer is hosted.
 	Region scw.Region `json:"region"`
 }
@@ -1491,21 +1509,6 @@ type Backup struct {
 
 	// TotalItems: total number of restorable items in the backup.
 	TotalItems uint32 `json:"total_items"`
-}
-
-// ControlPanel: control panel.
-type ControlPanel struct {
-	// Name: control panel name.
-	Name string `json:"name"`
-
-	// Available: define if the control panel type is available to order.
-	Available bool `json:"available"`
-
-	// LogoURL: URL of the control panel's logo.
-	LogoURL string `json:"logo_url"`
-
-	// AvailableLanguages: list of available languages for the control panel.
-	AvailableLanguages []std.LanguageCode `json:"available_languages"`
 }
 
 // DatabaseUser: database user.
