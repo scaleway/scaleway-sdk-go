@@ -1003,7 +1003,7 @@ type Domain struct {
 	// URL: URL of the function.
 	URL string `json:"url"`
 
-	// Status: state of the doamin.
+	// Status: state of the domain.
 	// Default value: unknown
 	Status DomainStatus `json:"status"`
 
@@ -1275,7 +1275,7 @@ type CreateDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Hostname: hostame to create.
+	// Hostname: hostname to create.
 	Hostname string `json:"hostname"`
 
 	// FunctionID: UUID of the function to associate the domain with.

@@ -1106,7 +1106,7 @@ func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res any) (uint64, er
 	return uint64(len(results.Dashboards)), nil
 }
 
-// ListGrafanaUsersResponse: Ouptut returned when listing Grafana users.
+// ListGrafanaUsersResponse: Output returned when listing Grafana users.
 type ListGrafanaUsersResponse struct {
 	// TotalCount: total count of Grafana users.
 	TotalCount uint64 `json:"total_count"`

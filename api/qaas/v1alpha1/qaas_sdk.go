@@ -2659,7 +2659,7 @@ func (s *API) ListProcessResults(req *ListProcessResultsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// GetApplication: Retrieve information about the provided **applcation ID**, such as name, type and compatible platforms.
+// GetApplication: Retrieve information about the provided **application ID**, such as name, type and compatible platforms.
 func (s *API) GetApplication(req *GetApplicationRequest, opts ...scw.RequestOption) (*Application, error) {
 	var err error
 

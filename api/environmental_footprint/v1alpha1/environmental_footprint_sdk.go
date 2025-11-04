@@ -41,13 +41,20 @@ var (
 type ProductCategory string
 
 const (
+	// Unknown product category.
 	ProductCategoryUnknownProductCategory = ProductCategory("unknown_product_category")
-	ProductCategoryAppleSilicon           = ProductCategory("apple_silicon")
-	ProductCategoryBlockStorage           = ProductCategory("block_storage")
-	ProductCategoryDedibox                = ProductCategory("dedibox")
-	ProductCategoryElasticMetal           = ProductCategory("elastic_metal")
-	ProductCategoryInstances              = ProductCategory("instances")
-	ProductCategoryObjectStorage          = ProductCategory("object_storage")
+	// The Apple Silicon product category.
+	ProductCategoryAppleSilicon = ProductCategory("apple_silicon")
+	// The Block Storage product category.
+	ProductCategoryBlockStorage = ProductCategory("block_storage")
+	// The Dedibox product category.
+	ProductCategoryDedibox = ProductCategory("dedibox")
+	// The Elastic Metal product category.
+	ProductCategoryElasticMetal = ProductCategory("elastic_metal")
+	// The Instances product category.
+	ProductCategoryInstances = ProductCategory("instances")
+	// The Object Storage product category.
+	ProductCategoryObjectStorage = ProductCategory("object_storage")
 )
 
 func (enum ProductCategory) String() string {
@@ -130,10 +137,14 @@ func (enum *ReportType) UnmarshalJSON(data []byte) error {
 type ServiceCategory string
 
 const (
+	// Unknown service category.
 	ServiceCategoryUnknownServiceCategory = ServiceCategory("unknown_service_category")
-	ServiceCategoryBaremetal              = ServiceCategory("baremetal")
-	ServiceCategoryCompute                = ServiceCategory("compute")
-	ServiceCategoryStorage                = ServiceCategory("storage")
+	// The Bare Metal service category.
+	ServiceCategoryBaremetal = ServiceCategory("baremetal")
+	// The Compute service category.
+	ServiceCategoryCompute = ServiceCategory("compute")
+	// The Storage service category.
+	ServiceCategoryStorage = ServiceCategory("storage")
 )
 
 func (enum ServiceCategory) String() string {

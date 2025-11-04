@@ -3592,7 +3592,7 @@ type Log struct {
 	// Group: rPN V2 group.
 	Group *RpnV2Group `json:"group"`
 
-	// Member: rPN V2 member (if appliable).
+	// Member: rPN V2 member (if applicable).
 	Member *RpnV2Member `json:"member"`
 
 	// Action: which action was performed.
@@ -3822,10 +3822,10 @@ type BMCAccess struct {
 	// URL: URL to access to the server console.
 	URL string `json:"url"`
 
-	// Login: the login to use for the BMC (Baseboard Management Controller) access authentification.
+	// Login: the login to use for the BMC (Baseboard Management Controller) access authentication.
 	Login string `json:"login"`
 
-	// Password: the password to use for the BMC (Baseboard Management Controller) access authentification.
+	// Password: the password to use for the BMC (Baseboard Management Controller) access authentication.
 	Password string `json:"password"`
 
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed.
@@ -5315,7 +5315,7 @@ type Rescue struct {
 	// Password: password of the rescue.
 	Password string `json:"password"`
 
-	// Protocol: protocol of the resuce.
+	// Protocol: protocol of the rescue.
 	// Default value: vnc
 	Protocol RescueProtocol `json:"protocol"`
 }

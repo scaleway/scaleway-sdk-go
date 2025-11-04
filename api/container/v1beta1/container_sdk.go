@@ -1014,7 +1014,7 @@ type Cron struct {
 	// ContainerID: UUID of the container invoked by this cron.
 	ContainerID string `json:"container_id"`
 
-	// Schedule: uNIX cron shedule.
+	// Schedule: uNIX cron schedule.
 	Schedule string `json:"schedule"`
 
 	// Args: arguments to pass with the cron.
@@ -1272,7 +1272,7 @@ type CreateCronRequest struct {
 	// ContainerID: UUID of the container to invoke by the cron.
 	ContainerID string `json:"container_id"`
 
-	// Schedule: uNIX cron shedule.
+	// Schedule: uNIX cron schedule.
 	Schedule string `json:"schedule"`
 
 	// Args: arguments to pass with the cron.

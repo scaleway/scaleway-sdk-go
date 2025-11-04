@@ -499,7 +499,7 @@ type OS struct {
 	// Deprecated: CompatibleServerTypes: list of compatible server types. Deprecated.
 	CompatibleServerTypes *[]string `json:"compatible_server_types,omitempty"`
 
-	// ReleaseNotesURL: url of the release notes for the OS image or softwares pre-installed.
+	// ReleaseNotesURL: url of the release notes for the OS image or software pre-installed.
 	ReleaseNotesURL string `json:"release_notes_url"`
 
 	// Description: a summary of the OS image content and configuration.
@@ -1531,7 +1531,7 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// ReinstallServer: Reinstall an existing Apple silicon server (specified by its server ID) from a new image (OS). All the data on the disk is deleted and all configuration is reset to the defailt configuration values of the image (OS).
+// ReinstallServer: Reinstall an existing Apple silicon server (specified by its server ID) from a new image (OS). All the data on the disk is deleted and all configuration is reset to the default configuration values of the image (OS).
 func (s *API) ReinstallServer(req *ReinstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 

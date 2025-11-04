@@ -3934,7 +3934,7 @@ func (s *API) RestoreDNSZoneVersion(req *RestoreDNSZoneVersionRequest, opts ...s
 	return &resp, nil
 }
 
-// GetSSLCertificate: Get the DNS zone's TLS certificate. If you do not have a certificate, the ouptut returns `no certificate found`.
+// GetSSLCertificate: Get the DNS zone's TLS certificate. If you do not have a certificate, the output returns `no certificate found`.
 func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
 
@@ -4680,7 +4680,7 @@ func (s *RegistrarAPI) DisableDomainAutoRenew(req *RegistrarAPIDisableDomainAuto
 	return &resp, nil
 }
 
-// GetDomainAuthCode: Retrieve the authorization code to tranfer an unlocked domain. The output returns an error if the domain is locked.
+// GetDomainAuthCode: Retrieve the authorization code to transfer an unlocked domain. The output returns an error if the domain is locked.
 // Some TLDs may have a different procedure to retrieve the authorization code. In that case, the information displays in the message field.
 func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeRequest, opts ...scw.RequestOption) (*GetDomainAuthCodeResponse, error) {
 	var err error
