@@ -1315,7 +1315,7 @@ func (s *SnsAPI) ActivateSns(req *SnsAPIActivateSnsRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-// GetSnsInfo: Retrieve the Topics and Events information of the specified Project ID. Informations include the activation status and the Topics and Events API endpoint URL.
+// GetSnsInfo: Retrieve the Topics and Events information of the specified Project ID. information include the activation status and the Topics and Events API endpoint URL.
 func (s *SnsAPI) GetSnsInfo(req *SnsAPIGetSnsInfoRequest, opts ...scw.RequestOption) (*SnsInfo, error) {
 	var err error
 
@@ -1617,7 +1617,7 @@ func (s *SqsAPI) ActivateSqs(req *SqsAPIActivateSqsRequest, opts ...scw.RequestO
 	return &resp, nil
 }
 
-// GetSqsInfo: Retrieve the Queues information of the specified Project ID. Informations include the activation status and the Queues API endpoint URL.
+// GetSqsInfo: Retrieve the Queues information of the specified Project ID. information include the activation status and the Queues API endpoint URL.
 func (s *SqsAPI) GetSqsInfo(req *SqsAPIGetSqsInfoRequest, opts ...scw.RequestOption) (*SqsInfo, error) {
 	var err error
 

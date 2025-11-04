@@ -4053,7 +4053,7 @@ func (s *API) CreatePolicy(req *CreatePolicyRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetPolicy: Retrieve information about a policy, speficified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
+// GetPolicy: Retrieve information about a policy, specified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
 func (s *API) GetPolicy(req *GetPolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
