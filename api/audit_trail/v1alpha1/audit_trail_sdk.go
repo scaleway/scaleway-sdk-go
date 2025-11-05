@@ -448,6 +448,8 @@ const (
 	ResourceTypeIamRule                  = ResourceType("iam_rule")
 	ResourceTypeIamSaml                  = ResourceType("iam_saml")
 	ResourceTypeIamSamlCertificate       = ResourceType("iam_saml_certificate")
+	ResourceTypeIamScim                  = ResourceType("iam_scim")
+	ResourceTypeIamScimToken             = ResourceType("iam_scim_token")
 	ResourceTypeSecretManagerSecret      = ResourceType("secret_manager_secret")
 	ResourceTypeSecretManagerVersion     = ResourceType("secret_manager_version")
 	ResourceTypeKeyManagerKey            = ResourceType("key_manager_key")
@@ -513,6 +515,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_rule",
 		"iam_saml",
 		"iam_saml_certificate",
+		"iam_scim",
+		"iam_scim_token",
 		"secret_manager_secret",
 		"secret_manager_version",
 		"key_manager_key",
