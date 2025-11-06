@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultTemRetryInterval = 15 * time.Second
+	defaultTemTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -2233,6 +2239,53 @@ func (s *API) GetEmail(req *GetEmailRequest, opts ...scw.RequestOption) (*Email,
 	return &resp, nil
 }
 
+// WaitForEmailRequest is used by WaitForEmail method.
+type WaitForEmailRequest struct {
+	GetEmailRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForEmail waits for the Email to reach a terminal state.
+func (s *API) WaitForEmail(req *WaitForEmailRequest, opts ...scw.RequestOption) (*Email, error) {
+	timeout := defaultTemTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultTemRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[EmailStatus]struct{}{
+		EmailStatusNew:     {},
+		EmailStatusSending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetEmail(&GetEmailRequest{
+				Region:  req.Region,
+				EmailID: req.EmailID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Email failed")
+	}
+
+	return res.(*Email), nil
+}
+
 // ListEmails: Retrieve the list of emails sent from a specific domain or for a specific Project or Organization. You must specify the `region`.
 func (s *API) ListEmails(req *ListEmailsRequest, opts ...scw.RequestOption) (*ListEmailsResponse, error) {
 	var err error
@@ -2420,6 +2473,53 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	GetDomainRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultTemTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultTemRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusPending:         {},
+		DomainStatusAutoconfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDomain(&GetDomainRequest{
+				Region:   req.Region,
+				DomainID: req.DomainID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
 }
 
 // ListDomains: Retrieve domains in a specific Project or in a specific Organization using the `region` parameter.

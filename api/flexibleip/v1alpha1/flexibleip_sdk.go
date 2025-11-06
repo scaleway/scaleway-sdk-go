@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultFlexibleipRetryInterval = 15 * time.Second
+	defaultFlexibleipTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -605,6 +611,53 @@ func (s *API) GetFlexibleIP(req *GetFlexibleIPRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForFlexibleIPRequest is used by WaitForFlexibleIP method.
+type WaitForFlexibleIPRequest struct {
+	GetFlexibleIPRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForFlexibleIP waits for the FlexibleIP to reach a terminal state.
+func (s *API) WaitForFlexibleIP(req *WaitForFlexibleIPRequest, opts ...scw.RequestOption) (*FlexibleIP, error) {
+	timeout := defaultFlexibleipTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFlexibleipRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[FlexibleIPStatus]struct{}{
+		FlexibleIPStatusUpdating:  {},
+		FlexibleIPStatusDetaching: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetFlexibleIP(&GetFlexibleIPRequest{
+				Zone:  req.Zone,
+				FipID: req.FipID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for FlexibleIP failed")
+	}
+
+	return res.(*FlexibleIP), nil
 }
 
 // ListFlexibleIPs: List all flexible IPs within a given zone.

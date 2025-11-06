@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultInferenceRetryInterval = 15 * time.Second
+	defaultInferenceTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -881,6 +887,55 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
+// WaitForDeploymentRequest is used by WaitForDeployment method.
+type WaitForDeploymentRequest struct {
+	GetDeploymentRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDeployment waits for the Deployment to reach a terminal state.
+func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
+	timeout := defaultInferenceTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInferenceRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DeploymentStatus]struct{}{
+		DeploymentStatusCreating:  {},
+		DeploymentStatusDeploying: {},
+		DeploymentStatusDeleting:  {},
+		DeploymentStatusScaling:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDeployment(&GetDeploymentRequest{
+				Region:       req.Region,
+				DeploymentID: req.DeploymentID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Deployment failed")
+	}
+
+	return res.(*Deployment), nil
+}
+
 // CreateDeployment: Create a new inference deployment related to a specific model.
 func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
@@ -1188,6 +1243,53 @@ func (s *API) GetModel(req *GetModelRequest, opts ...scw.RequestOption) (*Model,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForModelRequest is used by WaitForModel method.
+type WaitForModelRequest struct {
+	GetModelRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForModel waits for the Model to reach a terminal state.
+func (s *API) WaitForModel(req *WaitForModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	timeout := defaultInferenceTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInferenceRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ModelStatus]struct{}{
+		ModelStatusPreparing:   {},
+		ModelStatusDownloading: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetModel(&GetModelRequest{
+				Region:  req.Region,
+				ModelID: req.ModelID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Model failed")
+	}
+
+	return res.(*Model), nil
 }
 
 // CreateModel: Import a new model to your model library.

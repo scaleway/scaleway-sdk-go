@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultBlockRetryInterval = 15 * time.Second
+	defaultBlockTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -1070,6 +1076,56 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 	return &resp, nil
 }
 
+// WaitForVolumeRequest is used by WaitForVolume method.
+type WaitForVolumeRequest struct {
+	GetVolumeRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForVolume waits for the Volume to reach a terminal state.
+func (s *API) WaitForVolume(req *WaitForVolumeRequest, opts ...scw.RequestOption) (*Volume, error) {
+	timeout := defaultBlockTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultBlockRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[VolumeStatus]struct{}{
+		VolumeStatusCreating:     {},
+		VolumeStatusDeleting:     {},
+		VolumeStatusResizing:     {},
+		VolumeStatusSnapshotting: {},
+		VolumeStatusUpdating:     {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetVolume(&GetVolumeRequest{
+				Zone:     req.Zone,
+				VolumeID: req.VolumeID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Volume failed")
+	}
+
+	return res.(*Volume), nil
+}
+
 // DeleteVolume: You must specify the `volume_id` of the volume you want to delete. The volume must not be in the `in_use` status.
 func (s *API) DeleteVolume(req *DeleteVolumeRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -1208,6 +1264,54 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForSnapshotRequest is used by WaitForSnapshot method.
+type WaitForSnapshotRequest struct {
+	GetSnapshotRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSnapshot waits for the Snapshot to reach a terminal state.
+func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	timeout := defaultBlockTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultBlockRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SnapshotStatus]struct{}{
+		SnapshotStatusCreating:  {},
+		SnapshotStatusDeleting:  {},
+		SnapshotStatusExporting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetSnapshot(&GetSnapshotRequest{
+				Zone:       req.Zone,
+				SnapshotID: req.SnapshotID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Snapshot failed")
+	}
+
+	return res.(*Snapshot), nil
 }
 
 // CreateSnapshot: To create a snapshot, the volume must be in the `in_use` or the `available` status.

@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultLBRetryInterval = 15 * time.Second
+	defaultLBTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -4741,6 +4747,57 @@ func (s *ZonedAPI) GetLB(req *ZonedAPIGetLBRequest, opts ...scw.RequestOption) (
 	return &resp, nil
 }
 
+// WaitForLBRequest is used by WaitForLB method.
+type WaitForLBRequest struct {
+	ZonedAPIGetLBRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLB waits for the LB to reach a terminal state.
+func (s *ZonedAPI) WaitForLB(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, error) {
+	timeout := defaultLBTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultLBRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[LBStatus]struct{}{
+		LBStatusPending:   {},
+		LBStatusMigrating: {},
+		LBStatusToCreate:  {},
+		LBStatusCreating:  {},
+		LBStatusToDelete:  {},
+		LBStatusDeleting:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetLB(&ZonedAPIGetLBRequest{
+				Zone: req.Zone,
+				LBID: req.LBID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for LB failed")
+	}
+
+	return res.(*LB), nil
+}
+
 // UpdateLB: Update the parameters of an existing Load Balancer, specified by its Load Balancer ID. Note that the request type is PUT and not PATCH. You must set all parameters.
 func (s *ZonedAPI) UpdateLB(req *ZonedAPIUpdateLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	var err error
@@ -6101,6 +6158,52 @@ func (s *ZonedAPI) GetCertificate(req *ZonedAPIGetCertificateRequest, opts ...sc
 	return &resp, nil
 }
 
+// WaitForCertificateRequest is used by WaitForCertificate method.
+type WaitForCertificateRequest struct {
+	ZonedAPIGetCertificateRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCertificate waits for the Certificate to reach a terminal state.
+func (s *ZonedAPI) WaitForCertificate(req *WaitForCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	timeout := defaultLBTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultLBRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[CertificateStatus]struct{}{
+		CertificateStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetCertificate(&ZonedAPIGetCertificateRequest{
+				Zone:          req.Zone,
+				CertificateID: req.CertificateID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Certificate failed")
+	}
+
+	return res.(*Certificate), nil
+}
+
 // UpdateCertificate: Update the name of a particular SSL/TLS certificate, specified by its certificate ID.
 func (s *ZonedAPI) UpdateCertificate(req *ZonedAPIUpdateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
 	var err error
@@ -6694,6 +6797,57 @@ func (s *API) GetLB(req *GetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForLBRequest is used by WaitForLB method.
+type WaitForLBRequest struct {
+	GetLBRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLB waits for the LB to reach a terminal state.
+func (s *API) WaitForLB(req *WaitForLBRequest, opts ...scw.RequestOption) (*LB, error) {
+	timeout := defaultLBTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultLBRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[LBStatus]struct{}{
+		LBStatusPending:   {},
+		LBStatusMigrating: {},
+		LBStatusToCreate:  {},
+		LBStatusCreating:  {},
+		LBStatusToDelete:  {},
+		LBStatusDeleting:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetLB(&GetLBRequest{
+				Region: req.Region,
+				LBID:   req.LBID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for LB failed")
+	}
+
+	return res.(*LB), nil
 }
 
 // UpdateLB: Update a load balancer.
@@ -8018,6 +8172,52 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForCertificateRequest is used by WaitForCertificate method.
+type WaitForCertificateRequest struct {
+	GetCertificateRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCertificate waits for the Certificate to reach a terminal state.
+func (s *API) WaitForCertificate(req *WaitForCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	timeout := defaultLBTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultLBRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[CertificateStatus]struct{}{
+		CertificateStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetCertificate(&GetCertificateRequest{
+				Region:        req.Region,
+				CertificateID: req.CertificateID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Certificate failed")
+	}
+
+	return res.(*Certificate), nil
 }
 
 // UpdateCertificate: Update a TLS certificate.
