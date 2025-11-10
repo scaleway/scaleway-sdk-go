@@ -93,6 +93,66 @@ func (enum *ListPublicCatalogProductsRequestProductType) UnmarshalJSON(data []by
 	return nil
 }
 
+type ListPublicCatalogProductsRequestStatus string
+
+const (
+	// Unknown status.
+	ListPublicCatalogProductsRequestStatusUnknownStatus = ListPublicCatalogProductsRequestStatus("unknown_status")
+	// The product is available in Public Beta.
+	ListPublicCatalogProductsRequestStatusPublicBeta = ListPublicCatalogProductsRequestStatus("public_beta")
+	// The product is available in Preview mode.
+	ListPublicCatalogProductsRequestStatusPreview = ListPublicCatalogProductsRequestStatus("preview")
+	// The product is generally available.
+	ListPublicCatalogProductsRequestStatusGeneralAvailability = ListPublicCatalogProductsRequestStatus("general_availability")
+	// The product must not be used for new deployments.
+	ListPublicCatalogProductsRequestStatusEndOfDeployment = ListPublicCatalogProductsRequestStatus("end_of_deployment")
+	// There is no longer any commercial support for this product.
+	ListPublicCatalogProductsRequestStatusEndOfSupport = ListPublicCatalogProductsRequestStatus("end_of_support")
+	// The product is not sold anymore but is still in use.
+	ListPublicCatalogProductsRequestStatusEndOfSale = ListPublicCatalogProductsRequestStatus("end_of_sale")
+	// The product is no longer supported or maintained.
+	ListPublicCatalogProductsRequestStatusEndOfLife = ListPublicCatalogProductsRequestStatus("end_of_life")
+	// The product is deprecated and is no longer accessible.
+	ListPublicCatalogProductsRequestStatusRetired = ListPublicCatalogProductsRequestStatus("retired")
+)
+
+func (enum ListPublicCatalogProductsRequestStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListPublicCatalogProductsRequestStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ListPublicCatalogProductsRequestStatus) Values() []ListPublicCatalogProductsRequestStatus {
+	return []ListPublicCatalogProductsRequestStatus{
+		"unknown_status",
+		"public_beta",
+		"preview",
+		"general_availability",
+		"end_of_deployment",
+		"end_of_support",
+		"end_of_sale",
+		"end_of_life",
+		"retired",
+	}
+}
+
+func (enum ListPublicCatalogProductsRequestStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPublicCatalogProductsRequestStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPublicCatalogProductsRequestStatus(ListPublicCatalogProductsRequestStatus(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesHardwareCPUArch string
 
 const (
@@ -158,6 +218,10 @@ const (
 	PublicCatalogProductStatusEndOfSupport = PublicCatalogProductStatus("end_of_support")
 	// The product is not sold anymore but is still in use.
 	PublicCatalogProductStatusEndOfSale = PublicCatalogProductStatus("end_of_sale")
+	// The product is at its end of life.
+	PublicCatalogProductStatusEndOfLife = PublicCatalogProductStatus("end_of_life")
+	// The product is retired.
+	PublicCatalogProductStatusRetired = PublicCatalogProductStatus("retired")
 )
 
 func (enum PublicCatalogProductStatus) String() string {
@@ -177,6 +241,8 @@ func (enum PublicCatalogProductStatus) Values() []PublicCatalogProductStatus {
 		"end_of_deployment",
 		"end_of_support",
 		"end_of_sale",
+		"end_of_life",
+		"retired",
 	}
 }
 
@@ -649,6 +715,9 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 	// Datacenter: filter products by datacenter.
 	// Precisely one of Global, Region, Zone, Datacenter must be set.
 	Datacenter *string `json:"datacenter,omitempty"`
+
+	// Status: the lists of filtered product status, if empty only products with status public_beta, general_availability, preview, end_of_deployment, end_of_support, end_of_sale, end_of_life or retired will be returned.
+	Status []ListPublicCatalogProductsRequestStatus `json:"-"`
 }
 
 type PublicCatalogAPI struct {
@@ -685,6 +754,7 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "product_types", req.ProductTypes)
+	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "global", req.Global)
 	parameter.AddToQuery(query, "region", req.Region)
 	parameter.AddToQuery(query, "zone", req.Zone)
