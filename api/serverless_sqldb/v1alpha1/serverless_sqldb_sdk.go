@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultServerlessSqldbRetryInterval = 15 * time.Second
+	defaultServerlessSqldbTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -560,6 +566,54 @@ func (s *API) GetDatabase(req *GetDatabaseRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForDatabaseRequest is used by WaitForDatabase method.
+type WaitForDatabaseRequest struct {
+	GetDatabaseRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDatabase waits for the Database to reach a terminal state.
+func (s *API) WaitForDatabase(req *WaitForDatabaseRequest, opts ...scw.RequestOption) (*Database, error) {
+	timeout := defaultServerlessSqldbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultServerlessSqldbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DatabaseStatus]struct{}{
+		DatabaseStatusCreating:  {},
+		DatabaseStatusDeleting:  {},
+		DatabaseStatusRestoring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDatabase(&GetDatabaseRequest{
+				Region:     req.Region,
+				DatabaseID: req.DatabaseID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Database failed")
+	}
+
+	return res.(*Database), nil
 }
 
 // DeleteDatabase: Deletes a database. You must provide the `database_id` parameter. All data stored in the database will be permanently deleted.

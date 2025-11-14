@@ -56,6 +56,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeBlockStorage = ListPublicCatalogProductsRequestProductType("block_storage")
 	// Include the Object Storage information in the response.
 	ListPublicCatalogProductsRequestProductTypeObjectStorage = ListPublicCatalogProductsRequestProductType("object_storage")
+	// Include the Managed Inference information in the response.
+	ListPublicCatalogProductsRequestProductTypeManagedInference = ListPublicCatalogProductsRequestProductType("managed_inference")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -75,6 +77,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"dedibox",
 		"block_storage",
 		"object_storage",
+		"managed_inference",
 	}
 }
 
@@ -545,6 +548,12 @@ type PublicCatalogProductPropertiesInstance struct {
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
 
+// PublicCatalogProductPropertiesManagedInference: public catalog product properties managed inference.
+type PublicCatalogProductPropertiesManagedInference struct {
+	// InstanceGpuName: the name of the associated instance GPU to this node type.
+	InstanceGpuName string `json:"instance_gpu_name"`
+}
+
 // PublicCatalogProductPropertiesObjectStorage: public catalog product properties object storage.
 type PublicCatalogProductPropertiesObjectStorage struct{}
 
@@ -586,28 +595,32 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
+
+	// ManagedInference: the properties of Managed Inference products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.

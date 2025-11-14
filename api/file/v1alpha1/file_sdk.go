@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultFileRetryInterval = 15 * time.Second
+	defaultFileTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -436,6 +442,53 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForFileSystemRequest is used by WaitForFileSystem method.
+type WaitForFileSystemRequest struct {
+	GetFileSystemRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForFileSystem waits for the FileSystem to reach a terminal state.
+func (s *API) WaitForFileSystem(req *WaitForFileSystemRequest, opts ...scw.RequestOption) (*FileSystem, error) {
+	timeout := defaultFileTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFileRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[FileSystemStatus]struct{}{
+		FileSystemStatusCreating: {},
+		FileSystemStatusUpdating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetFileSystem(&GetFileSystemRequest{
+				Region:       req.Region,
+				FilesystemID: req.FilesystemID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for FileSystem failed")
+	}
+
+	return res.(*FileSystem), nil
 }
 
 // ListFileSystems: Retrieve all filesystems in the specified region. By default, the filesystems listed are ordered by creation date in ascending order. This can be modified using the `order_by` field.

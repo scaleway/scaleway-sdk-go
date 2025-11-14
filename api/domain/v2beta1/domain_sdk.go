@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultDomainRetryInterval = 15 * time.Second
+	defaultDomainTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -3956,6 +3962,51 @@ func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
+// WaitForSSLCertificateRequest is used by WaitForSSLCertificate method.
+type WaitForSSLCertificateRequest struct {
+	GetSSLCertificateRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSSLCertificate waits for the SSLCertificate to reach a terminal state.
+func (s *API) WaitForSSLCertificate(req *WaitForSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
+	timeout := defaultDomainTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDomainRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SSLCertificateStatus]struct{}{
+		SSLCertificateStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetSSLCertificate(&GetSSLCertificateRequest{
+				DNSZone: req.DNSZone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for SSLCertificate failed")
+	}
+
+	return res.(*SSLCertificate), nil
+}
+
 // CreateSSLCertificate: Create a new TLS certificate or retrieve information about an existing TLS certificate.
 func (s *API) CreateSSLCertificate(req *CreateSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
@@ -4542,6 +4593,57 @@ func (s *RegistrarAPI) GetDomain(req *RegistrarAPIGetDomainRequest, opts ...scw.
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	RegistrarAPIGetDomainRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *RegistrarAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultDomainTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDomainRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusCreating: {},
+		DomainStatusRenewing: {},
+		DomainStatusXfering:  {},
+		DomainStatusExpiring: {},
+		DomainStatusUpdating: {},
+		DomainStatusChecking: {},
+		DomainStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
 }
 
 // UpdateDomain: Update contacts for a specific domain or create a new contact.<br/>
