@@ -381,6 +381,51 @@ func (enum *ListPlansRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListProductsRequestOrderBy string
+
+const (
+	ListProductsRequestOrderByCreatedAtAsc    = ListProductsRequestOrderBy("created_at_asc")
+	ListProductsRequestOrderByCreatedAtDesc   = ListProductsRequestOrderBy("created_at_desc")
+	ListProductsRequestOrderByDisplayNameAsc  = ListProductsRequestOrderBy("display_name_asc")
+	ListProductsRequestOrderByDisplayNameDesc = ListProductsRequestOrderBy("display_name_desc")
+	ListProductsRequestOrderByFamilyNameAsc   = ListProductsRequestOrderBy("family_name_asc")
+	ListProductsRequestOrderByFamilyNameDesc  = ListProductsRequestOrderBy("family_name_desc")
+)
+
+func (enum ListProductsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListProductsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListProductsRequestOrderBy) Values() []ListProductsRequestOrderBy {
+	return []ListProductsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"display_name_asc",
+		"display_name_desc",
+		"family_name_asc",
+		"family_name_desc",
+	}
+}
+
+func (enum ListProductsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListProductsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListProductsRequestOrderBy(ListProductsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListTokensRequestOrderBy string
 
 const (
@@ -755,6 +800,17 @@ type Plan struct {
 
 	// MonthlyPrice: retention price in euros per month.
 	MonthlyPrice uint32 `json:"monthly_price"`
+}
+
+// Product: product.
+type Product struct {
+	Name string `json:"name"`
+
+	DisplayName string `json:"display_name"`
+
+	FamilyName string `json:"family_name"`
+
+	ResourceTypes []string `json:"resource_types"`
 }
 
 // Token: Token.
@@ -1162,6 +1218,32 @@ func (r *ListPlansResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Plans)), nil
 }
 
+// ListProductsResponse: list products response.
+type ListProductsResponse struct {
+	ProductsList []*Product `json:"products_list"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListProductsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListProductsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListProductsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ProductsList = append(r.ProductsList, results.ProductsList...)
+	r.TotalCount += uint64(len(results.ProductsList))
+	return uint64(len(results.ProductsList)), nil
+}
+
 // ListTokensResponse: Response returned when listing tokens.
 type ListTokensResponse struct {
 	// TotalCount: total count of tokens matching the request.
@@ -1427,6 +1509,22 @@ type RegionalAPIListDataSourcesRequest struct {
 
 	// Types: types to filter for (metrics, logs, traces), only data sources with matching types will be returned. If omitted, all types will be returned.
 	Types []DataSourceType `json:"-"`
+}
+
+// RegionalAPIListProductsRequest: List all Scaleway products that send metrics and/or logs to Cockpit.
+type RegionalAPIListProductsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of products to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for products in the response.
+	// Default value: created_at_asc
+	OrderBy ListProductsRequestOrderBy `json:"-"`
 }
 
 // RegionalAPIListTokensRequest: List tokens.
@@ -2255,6 +2353,44 @@ func (s *RegionalAPI) DeleteToken(req *RegionalAPIDeleteTokenRequest, opts ...sc
 		return err
 	}
 	return nil
+}
+
+// ListProducts: List all Scaleway products that send metrics and/or logs to Cockpit.
+func (s *RegionalAPI) ListProducts(req *RegionalAPIListProductsRequest, opts ...scw.RequestOption) (*ListProductsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/products",
+		Query:  query,
+	}
+
+	var resp ListProductsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // GetAlertManager: Retrieve information about the Alert manager which is unique per Project and region. By default the Alert manager is disabled.
