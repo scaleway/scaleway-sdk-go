@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultContainerRetryInterval = 15 * time.Second
+	defaultContainerTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -2039,6 +2045,54 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
+// WaitForNamespaceRequest is used by WaitForNamespace method.
+type WaitForNamespaceRequest struct {
+	GetNamespaceRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForNamespace waits for the Namespace to reach a terminal state.
+func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[NamespaceStatus]struct{}{
+		NamespaceStatusDeleting: {},
+		NamespaceStatusCreating: {},
+		NamespaceStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetNamespace(&GetNamespaceRequest{
+				Region:      req.Region,
+				NamespaceID: req.NamespaceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Namespace failed")
+	}
+
+	return res.(*Namespace), nil
+}
+
 // CreateNamespace: Create a new namespace in a specified region.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
@@ -2218,6 +2272,54 @@ func (s *API) GetContainer(req *GetContainerRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForContainerRequest is used by WaitForContainer method.
+type WaitForContainerRequest struct {
+	GetContainerRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForContainer waits for the Container to reach a terminal state.
+func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.RequestOption) (*Container, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ContainerStatus]struct{}{
+		ContainerStatusDeleting: {},
+		ContainerStatusCreating: {},
+		ContainerStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetContainer(&GetContainerRequest{
+				Region:      req.Region,
+				ContainerID: req.ContainerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Container failed")
+	}
+
+	return res.(*Container), nil
 }
 
 // CreateContainer: Create a new container in the specified region.
@@ -2428,6 +2530,54 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 	return &resp, nil
 }
 
+// WaitForCronRequest is used by WaitForCron method.
+type WaitForCronRequest struct {
+	GetCronRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCron waits for the Cron to reach a terminal state.
+func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*Cron, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[CronStatus]struct{}{
+		CronStatusDeleting: {},
+		CronStatusCreating: {},
+		CronStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetCron(&GetCronRequest{
+				Region: req.Region,
+				CronID: req.CronID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Cron failed")
+	}
+
+	return res.(*Cron), nil
+}
+
 // CreateCron: Create a new cron.
 func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
@@ -2597,6 +2747,54 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	GetDomainRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusDeleting: {},
+		DomainStatusCreating: {},
+		DomainStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDomain(&GetDomainRequest{
+				Region:   req.Region,
+				DomainID: req.DomainID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // CreateDomain: Create a custom domain for the container with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2721,6 +2919,53 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForTokenRequest is used by WaitForToken method.
+type WaitForTokenRequest struct {
+	GetTokenRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForToken waits for the Token to reach a terminal state.
+func (s *API) WaitForToken(req *WaitForTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[TokenStatus]struct{}{
+		TokenStatusDeleting: {},
+		TokenStatusCreating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetToken(&GetTokenRequest{
+				Region:  req.Region,
+				TokenID: req.TokenID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Token failed")
+	}
+
+	return res.(*Token), nil
 }
 
 // ListTokens: List all tokens belonging to a specified Organization or Project.
@@ -2855,6 +3100,54 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForTriggerRequest is used by WaitForTrigger method.
+type WaitForTriggerRequest struct {
+	GetTriggerRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForTrigger waits for the Trigger to reach a terminal state.
+func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	timeout := defaultContainerTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultContainerRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[TriggerStatus]struct{}{
+		TriggerStatusDeleting: {},
+		TriggerStatusCreating: {},
+		TriggerStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetTrigger(&GetTriggerRequest{
+				Region:    req.Region,
+				TriggerID: req.TriggerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Trigger failed")
+	}
+
+	return res.(*Trigger), nil
 }
 
 // ListTriggers: List all triggers belonging to a specified Organization or Project.

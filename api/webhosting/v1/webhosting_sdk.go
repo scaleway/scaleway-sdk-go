@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultWebhostingRetryInterval = 15 * time.Second
+	defaultWebhostingTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -2965,6 +2971,53 @@ func (s *BackupAPI) GetBackup(req *BackupAPIGetBackupRequest, opts ...scw.Reques
 	return &resp, nil
 }
 
+// WaitForBackupRequest is used by WaitForBackup method.
+type WaitForBackupRequest struct {
+	BackupAPIGetBackupRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBackup waits for the Backup to reach a terminal state.
+func (s *BackupAPI) WaitForBackup(req *WaitForBackupRequest, opts ...scw.RequestOption) (*Backup, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BackupStatus]struct{}{
+		BackupStatusRestoring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetBackup(&BackupAPIGetBackupRequest{
+				Region:    req.Region,
+				HostingID: req.HostingID,
+				BackupID:  req.BackupID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Backup failed")
+	}
+
+	return res.(*Backup), nil
+}
+
 // RestoreBackup: Restore an entire backup to your hosting environment.
 func (s *BackupAPI) RestoreBackup(req *BackupAPIRestoreBackupRequest, opts ...scw.RequestOption) (*RestoreBackupResponse, error) {
 	var err error
@@ -3828,6 +3881,53 @@ func (s *DnsAPI) GetDomain(req *DNSAPIGetDomainRequest, opts ...scw.RequestOptio
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	DNSAPIGetDomainRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *DnsAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusValidating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDomain(&DNSAPIGetDomainRequest{
+				Region:     req.Region,
+				DomainName: req.DomainName,
+				ProjectID:  req.ProjectID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // This API allows you to manage your offer for your Web Hosting services.
 type OfferAPI struct {
 	client *scw.Client
@@ -4011,6 +4111,55 @@ func (s *HostingAPI) GetHosting(req *HostingAPIGetHostingRequest, opts ...scw.Re
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForHostingRequest is used by WaitForHosting method.
+type WaitForHostingRequest struct {
+	HostingAPIGetHostingRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForHosting waits for the Hosting to reach a terminal state.
+func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[HostingStatus]struct{}{
+		HostingStatusDelivering: {},
+		HostingStatusDeleting:   {},
+		HostingStatusMigrating:  {},
+		HostingStatusUpdating:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetHosting(&HostingAPIGetHostingRequest{
+				Region:    req.Region,
+				HostingID: req.HostingID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Hosting failed")
+	}
+
+	return res.(*Hosting), nil
 }
 
 // UpdateHosting: Update the details of one of your existing Web Hosting plans, specified by its `hosting_id`. You can update parameters including the contact email address, tags, options and offer.

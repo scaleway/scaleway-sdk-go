@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultEdgeServicesRetryInterval = 15 * time.Second
+	defaultEdgeServicesTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -2701,6 +2707,51 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+// WaitForPipelineRequest is used by WaitForPipeline method.
+type WaitForPipelineRequest struct {
+	GetPipelineRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForPipeline waits for the Pipeline to reach a terminal state.
+func (s *API) WaitForPipeline(req *WaitForPipelineRequest, opts ...scw.RequestOption) (*Pipeline, error) {
+	timeout := defaultEdgeServicesTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultEdgeServicesRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[PipelineStatus]struct{}{
+		PipelineStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetPipeline(&GetPipelineRequest{
+				PipelineID: req.PipelineID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Pipeline failed")
+	}
+
+	return res.(*Pipeline), nil
+}
+
 // ListPipelinesWithStages:
 func (s *API) ListPipelinesWithStages(req *ListPipelinesWithStagesRequest, opts ...scw.RequestOption) (*ListPipelinesWithStagesResponse, error) {
 	var err error
@@ -3930,6 +3981,51 @@ func (s *API) GetPurgeRequest(req *GetPurgeRequestRequest, opts ...scw.RequestOp
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForPurgeRequestRequest is used by WaitForPurgeRequest method.
+type WaitForPurgeRequestRequest struct {
+	GetPurgeRequestRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForPurgeRequest waits for the PurgeRequest to reach a terminal state.
+func (s *API) WaitForPurgeRequest(req *WaitForPurgeRequestRequest, opts ...scw.RequestOption) (*PurgeRequest, error) {
+	timeout := defaultEdgeServicesTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultEdgeServicesRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[PurgeRequestStatus]struct{}{
+		PurgeRequestStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetPurgeRequest(&GetPurgeRequestRequest{
+				PurgeRequestID: req.PurgeRequestID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for PurgeRequest failed")
+	}
+
+	return res.(*PurgeRequest), nil
 }
 
 // CheckLBOrigin:

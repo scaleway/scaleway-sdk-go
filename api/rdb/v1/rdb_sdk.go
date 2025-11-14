@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultRdbRetryInterval = 15 * time.Second
+	defaultRdbTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -3061,6 +3067,55 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
+// WaitForDatabaseBackupRequest is used by WaitForDatabaseBackup method.
+type WaitForDatabaseBackupRequest struct {
+	GetDatabaseBackupRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDatabaseBackup waits for the DatabaseBackup to reach a terminal state.
+func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
+	timeout := defaultRdbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRdbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DatabaseBackupStatus]struct{}{
+		DatabaseBackupStatusCreating:  {},
+		DatabaseBackupStatusRestoring: {},
+		DatabaseBackupStatusDeleting:  {},
+		DatabaseBackupStatusExporting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
+				Region:           req.Region,
+				DatabaseBackupID: req.DatabaseBackupID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for DatabaseBackup failed")
+	}
+
+	return res.(*DatabaseBackup), nil
+}
+
 // UpdateDatabaseBackup: Update the parameters of a backup, including name and expiration date.
 func (s *API) UpdateDatabaseBackup(req *UpdateDatabaseBackupRequest, opts ...scw.RequestOption) (*DatabaseBackup, error) {
 	var err error
@@ -3308,6 +3363,59 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForInstanceRequest is used by WaitForInstance method.
+type WaitForInstanceRequest struct {
+	GetInstanceRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForInstance waits for the Instance to reach a terminal state.
+func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	timeout := defaultRdbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRdbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[InstanceStatus]struct{}{
+		InstanceStatusProvisioning: {},
+		InstanceStatusConfiguring:  {},
+		InstanceStatusDeleting:     {},
+		InstanceStatusAutohealing:  {},
+		InstanceStatusInitializing: {},
+		InstanceStatusBackuping:    {},
+		InstanceStatusSnapshotting: {},
+		InstanceStatusRestarting:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetInstance(&GetInstanceRequest{
+				Region:     req.Region,
+				InstanceID: req.InstanceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Instance failed")
+	}
+
+	return res.(*Instance), nil
 }
 
 // CreateInstance: Create a new Database Instance. You must set the `engine`, `user_name`, `password` and `node_type` parameters. Optionally, you can specify the volume type and size.
@@ -3660,6 +3768,56 @@ func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+// WaitForReadReplicaRequest is used by WaitForReadReplica method.
+type WaitForReadReplicaRequest struct {
+	GetReadReplicaRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForReadReplica waits for the ReadReplica to reach a terminal state.
+func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
+	timeout := defaultRdbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRdbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ReadReplicaStatus]struct{}{
+		ReadReplicaStatusProvisioning: {},
+		ReadReplicaStatusInitializing: {},
+		ReadReplicaStatusDeleting:     {},
+		ReadReplicaStatusConfiguring:  {},
+		ReadReplicaStatusPromoting:    {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetReadReplica(&GetReadReplicaRequest{
+				Region:        req.Region,
+				ReadReplicaID: req.ReadReplicaID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for ReadReplica failed")
+	}
+
+	return res.(*ReadReplica), nil
+}
+
 // DeleteReadReplica: Delete a Read Replica of a Database Instance. You must specify the `region` and `read_replica_id` parameters of the Read Replica you want to delete.
 func (s *API) DeleteReadReplica(req *DeleteReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
@@ -3900,6 +4058,52 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForInstanceLogRequest is used by WaitForInstanceLog method.
+type WaitForInstanceLogRequest struct {
+	GetInstanceLogRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForInstanceLog waits for the InstanceLog to reach a terminal state.
+func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.RequestOption) (*InstanceLog, error) {
+	timeout := defaultRdbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRdbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[InstanceLogStatus]struct{}{
+		InstanceLogStatusCreating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
+				Region:        req.Region,
+				InstanceLogID: req.InstanceLogID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for InstanceLog failed")
+	}
+
+	return res.(*InstanceLog), nil
 }
 
 // PurgeInstanceLogs: Purge a given remote log from a Database Instance. You can specify the `log_name` of the log you wish to clean from your Database Instance.
@@ -4642,6 +4846,54 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForSnapshotRequest is used by WaitForSnapshot method.
+type WaitForSnapshotRequest struct {
+	GetSnapshotRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSnapshot waits for the Snapshot to reach a terminal state.
+func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	timeout := defaultRdbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRdbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SnapshotStatus]struct{}{
+		SnapshotStatusCreating:  {},
+		SnapshotStatusRestoring: {},
+		SnapshotStatusDeleting:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetSnapshot(&GetSnapshotRequest{
+				Region:     req.Region,
+				SnapshotID: req.SnapshotID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Snapshot failed")
+	}
+
+	return res.(*Snapshot), nil
 }
 
 // CreateSnapshot: Create a new snapshot of a Database Instance. You must define the `name` parameter in the request.

@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultDatawarehouseRetryInterval = 15 * time.Second
+	defaultDatawarehouseTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -970,6 +976,56 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForDeploymentRequest is used by WaitForDeployment method.
+type WaitForDeploymentRequest struct {
+	GetDeploymentRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDeployment waits for the Deployment to reach a terminal state.
+func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
+	timeout := defaultDatawarehouseTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDatawarehouseRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DeploymentStatus]struct{}{
+		DeploymentStatusCreating:    {},
+		DeploymentStatusConfiguring: {},
+		DeploymentStatusDeleting:    {},
+		DeploymentStatusLocking:     {},
+		DeploymentStatusUnlocking:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDeployment(&GetDeploymentRequest{
+				Region:       req.Region,
+				DeploymentID: req.DeploymentID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Deployment failed")
+	}
+
+	return res.(*Deployment), nil
 }
 
 // CreateDeployment: Create a new deployment.

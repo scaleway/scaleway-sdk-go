@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultBaremetalRetryInterval = 15 * time.Second
+	defaultBaremetalTimeout       = 2 * time.Hour
 )
 
 // always import dependencies
@@ -2283,6 +2289,58 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	GetServerRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultBaremetalTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultBaremetalRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusDelivering: {},
+		ServerStatusStopping:   {},
+		ServerStatusStarting:   {},
+		ServerStatusDeleting:   {},
+		ServerStatusOrdered:    {},
+		ServerStatusResetting:  {},
+		ServerStatusMigrating:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
 }
 
 // CreateServer: Create a new Elastic Metal server. Once the server is created, proceed with the [installation of an OS](#post-3e949e).

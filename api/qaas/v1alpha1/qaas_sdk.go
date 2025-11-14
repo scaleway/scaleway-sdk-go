@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultQaasRetryInterval = 15 * time.Second
+	defaultQaasTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -2026,6 +2032,53 @@ func (s *API) GetJob(req *GetJobRequest, opts ...scw.RequestOption) (*Job, error
 	return &resp, nil
 }
 
+// WaitForJobRequest is used by WaitForJob method.
+type WaitForJobRequest struct {
+	GetJobRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForJob waits for the Job to reach a terminal state.
+func (s *API) WaitForJob(req *WaitForJobRequest, opts ...scw.RequestOption) (*Job, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[JobStatus]struct{}{
+		JobStatusWaiting:    {},
+		JobStatusRunning:    {},
+		JobStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetJob(&GetJobRequest{
+				JobID: req.JobID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Job failed")
+	}
+
+	return res.(*Job), nil
+}
+
 // ListJobs: Retrieve information about all jobs within a given project or session.
 func (s *API) ListJobs(req *ListJobsRequest, opts ...scw.RequestOption) (*ListJobsResponse, error) {
 	var err error
@@ -2293,6 +2346,52 @@ func (s *API) GetSession(req *GetSessionRequest, opts ...scw.RequestOption) (*Se
 	return &resp, nil
 }
 
+// WaitForSessionRequest is used by WaitForSession method.
+type WaitForSessionRequest struct {
+	GetSessionRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSession waits for the Session to reach a terminal state.
+func (s *API) WaitForSession(req *WaitForSessionRequest, opts ...scw.RequestOption) (*Session, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SessionStatus]struct{}{
+		SessionStatusStarting: {},
+		SessionStatusStopping: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetSession(&GetSessionRequest{
+				SessionID: req.SessionID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Session failed")
+	}
+
+	return res.(*Session), nil
+}
+
 // ListSessions: Retrieve information about all sessions.
 func (s *API) ListSessions(req *ListSessionsRequest, opts ...scw.RequestOption) (*ListSessionsResponse, error) {
 	var err error
@@ -2515,6 +2614,53 @@ func (s *API) GetProcess(req *GetProcessRequest, opts ...scw.RequestOption) (*Pr
 	return &resp, nil
 }
 
+// WaitForProcessRequest is used by WaitForProcess method.
+type WaitForProcessRequest struct {
+	GetProcessRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForProcess waits for the Process to reach a terminal state.
+func (s *API) WaitForProcess(req *WaitForProcessRequest, opts ...scw.RequestOption) (*Process, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ProcessStatus]struct{}{
+		ProcessStatusStarting:   {},
+		ProcessStatusRunning:    {},
+		ProcessStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetProcess(&GetProcessRequest{
+				ProcessID: req.ProcessID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Process failed")
+	}
+
+	return res.(*Process), nil
+}
+
 // ListProcesses: Retrieve information about all processes.
 func (s *API) ListProcesses(req *ListProcessesRequest, opts ...scw.RequestOption) (*ListProcessesResponse, error) {
 	var err error
@@ -2732,6 +2878,53 @@ func (s *API) GetBooking(req *GetBookingRequest, opts ...scw.RequestOption) (*Bo
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForBookingRequest is used by WaitForBooking method.
+type WaitForBookingRequest struct {
+	GetBookingRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBooking waits for the Booking to reach a terminal state.
+func (s *API) WaitForBooking(req *WaitForBookingRequest, opts ...scw.RequestOption) (*Booking, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BookingStatus]struct{}{
+		BookingStatusWaiting:    {},
+		BookingStatusValidating: {},
+		BookingStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetBooking(&GetBookingRequest{
+				BookingID: req.BookingID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Booking failed")
+	}
+
+	return res.(*Booking), nil
 }
 
 // ListBookings: Retrieve information about all bookings of the provided **project ID** or ** platform ID**.

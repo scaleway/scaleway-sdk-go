@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultInterlinkRetryInterval = 15 * time.Second
+	defaultInterlinkTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -1342,6 +1348,52 @@ func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ..
 	return &resp, nil
 }
 
+// WaitForDedicatedConnectionRequest is used by WaitForDedicatedConnection method.
+type WaitForDedicatedConnectionRequest struct {
+	GetDedicatedConnectionRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDedicatedConnection waits for the DedicatedConnection to reach a terminal state.
+func (s *API) WaitForDedicatedConnection(req *WaitForDedicatedConnectionRequest, opts ...scw.RequestOption) (*DedicatedConnection, error) {
+	timeout := defaultInterlinkTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInterlinkRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DedicatedConnectionStatus]struct{}{
+		DedicatedConnectionStatusConfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetDedicatedConnection(&GetDedicatedConnectionRequest{
+				Region:       req.Region,
+				ConnectionID: req.ConnectionID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for DedicatedConnection failed")
+	}
+
+	return res.(*DedicatedConnection), nil
+}
+
 // ListPartners: List all available partners. By default, the partners returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) (*ListPartnersResponse, error) {
 	var err error
@@ -1568,6 +1620,52 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForLinkRequest is used by WaitForLink method.
+type WaitForLinkRequest struct {
+	GetLinkRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLink waits for the Link to reach a terminal state.
+func (s *API) WaitForLink(req *WaitForLinkRequest, opts ...scw.RequestOption) (*Link, error) {
+	timeout := defaultInterlinkTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInterlinkRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[LinkStatus]struct{}{
+		LinkStatusConfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetLink(&GetLinkRequest{
+				Region: req.Region,
+				LinkID: req.LinkID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Link failed")
+	}
+
+	return res.(*Link), nil
 }
 
 // CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (facilitated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).

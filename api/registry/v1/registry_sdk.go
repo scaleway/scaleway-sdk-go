@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultRegistryRetryInterval = 15 * time.Second
+	defaultRegistryTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -797,6 +803,52 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
+// WaitForNamespaceRequest is used by WaitForNamespace method.
+type WaitForNamespaceRequest struct {
+	GetNamespaceRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForNamespace waits for the Namespace to reach a terminal state.
+func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
+	timeout := defaultRegistryTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRegistryRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[NamespaceStatus]struct{}{
+		NamespaceStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetNamespace(&GetNamespaceRequest{
+				Region:      req.Region,
+				NamespaceID: req.NamespaceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Namespace failed")
+	}
+
+	return res.(*Namespace), nil
+}
+
 // CreateNamespace: Create a new Container Registry namespace. You must specify the namespace name and region in which you want it to be created. Optionally, you can specify the `project_id` and `is_public` in the request payload.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
@@ -983,6 +1035,52 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*Image,
 	return &resp, nil
 }
 
+// WaitForImageRequest is used by WaitForImage method.
+type WaitForImageRequest struct {
+	GetImageRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForImage waits for the Image to reach a terminal state.
+func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) (*Image, error) {
+	timeout := defaultRegistryTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRegistryRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ImageStatus]struct{}{
+		ImageStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetImage(&GetImageRequest{
+				Region:  req.Region,
+				ImageID: req.ImageID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Image failed")
+	}
+
+	return res.(*Image), nil
+}
+
 // UpdateImage: Update the parameters of a given image, specified by its `image_id` and `region`. You can update the `visibility` parameter.
 func (s *API) UpdateImage(req *UpdateImageRequest, opts ...scw.RequestOption) (*Image, error) {
 	var err error
@@ -1122,6 +1220,52 @@ func (s *API) GetTag(req *GetTagRequest, opts ...scw.RequestOption) (*Tag, error
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForTagRequest is used by WaitForTag method.
+type WaitForTagRequest struct {
+	GetTagRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForTag waits for the Tag to reach a terminal state.
+func (s *API) WaitForTag(req *WaitForTagRequest, opts ...scw.RequestOption) (*Tag, error) {
+	timeout := defaultRegistryTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRegistryRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[TagStatus]struct{}{
+		TagStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetTag(&GetTagRequest{
+				Region: req.Region,
+				TagID:  req.TagID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Tag failed")
+	}
+
+	return res.(*Tag), nil
 }
 
 // DeleteTag: Delete a given image tag. You must specify, in the endpoint, the `region` and `tag_id` parameters of the tag you want to delete.

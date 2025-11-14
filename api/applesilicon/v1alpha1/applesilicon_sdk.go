@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultApplesiliconRetryInterval = 15 * time.Second
+	defaultApplesiliconTimeout       = 1 * time.Hour
 )
 
 // always import dependencies
@@ -1430,6 +1436,58 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	return &resp, nil
 }
 
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	GetServerRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultApplesiliconTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultApplesiliconRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusStarting:     {},
+		ServerStatusRebooting:    {},
+		ServerStatusUpdating:     {},
+		ServerStatusLocking:      {},
+		ServerStatusUnlocking:    {},
+		ServerStatusReinstalling: {},
+		ServerStatusBusy:         {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
+}
+
 // UpdateServer: Update the parameters of an existing Apple silicon server, specified by its server ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
@@ -1679,6 +1737,54 @@ func (s *PrivateNetworkAPI) GetServerPrivateNetwork(req *PrivateNetworkAPIGetSer
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForServerPrivateNetworkRequest is used by WaitForServerPrivateNetwork method.
+type WaitForServerPrivateNetworkRequest struct {
+	PrivateNetworkAPIGetServerPrivateNetworkRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServerPrivateNetwork waits for the ServerPrivateNetwork to reach a terminal state.
+func (s *PrivateNetworkAPI) WaitForServerPrivateNetwork(req *WaitForServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+	timeout := defaultApplesiliconTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultApplesiliconRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerPrivateNetworkServerStatus]struct{}{
+		ServerPrivateNetworkServerStatusAttaching: {},
+		ServerPrivateNetworkServerStatusDetaching: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServerPrivateNetwork(&PrivateNetworkAPIGetServerPrivateNetworkRequest{
+				Zone:             req.Zone,
+				ServerID:         req.ServerID,
+				PrivateNetworkID: req.PrivateNetworkID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for ServerPrivateNetwork failed")
+	}
+
+	return res.(*ServerPrivateNetwork), nil
 }
 
 // AddServerPrivateNetwork: Add an Apple silicon server to a Private Network.
