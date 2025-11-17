@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultRedisRetryInterval = 15 * time.Second
+	defaultRedisTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -1104,6 +1110,56 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForClusterRequest is used by WaitForCluster method.
+type WaitForClusterRequest struct {
+	GetClusterRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCluster waits for the Cluster to reach a terminal state.
+func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	timeout := defaultRedisTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultRedisRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ClusterStatus]struct{}{
+		ClusterStatusProvisioning: {},
+		ClusterStatusConfiguring:  {},
+		ClusterStatusDeleting:     {},
+		ClusterStatusAutohealing:  {},
+		ClusterStatusInitializing: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetCluster(&GetClusterRequest{
+				Zone:      req.Zone,
+				ClusterID: req.ClusterID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Cluster failed")
+	}
+
+	return res.(*Cluster), nil
 }
 
 // ListClusters: List all Redis™ Database Instances (Redis™ cluster) in the specified zone. By default, the Database Instances returned in the list are ordered by creation date in ascending order, though this can be modified via the order_by field. You can define additional parameters for your query, such as `tags`, `name`, `organization_id` and `version`.

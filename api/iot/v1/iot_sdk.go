@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultIotRetryInterval = 15 * time.Second
+	defaultIotTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -1854,6 +1860,53 @@ func (s *API) GetHub(req *GetHubRequest, opts ...scw.RequestOption) (*Hub, error
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForHubRequest is used by WaitForHub method.
+type WaitForHubRequest struct {
+	GetHubRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForHub waits for the Hub to reach a terminal state.
+func (s *API) WaitForHub(req *WaitForHubRequest, opts ...scw.RequestOption) (*Hub, error) {
+	timeout := defaultIotTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultIotRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[HubStatus]struct{}{
+		HubStatusEnabling:  {},
+		HubStatusDisabling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetHub(&GetHubRequest{
+				Region: req.Region,
+				HubID:  req.HubID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Hub failed")
+	}
+
+	return res.(*Hub), nil
 }
 
 // UpdateHub: Update the parameters of an existing IoT Hub, specified by its Hub ID.
