@@ -16,62 +16,12 @@ const (
 	defaultInstanceTimeout       = 15 * time.Minute
 )
 
-// WaitForInstanceRequest is used by WaitForInstance method.
-type WaitForInstanceRequest struct {
-	InstanceID    string
-	Region        scw.Region
-	Timeout       *time.Duration
-	RetryInterval *time.Duration
-}
-
 type WaitForSnapshotRequest struct {
 	InstanceID    string
 	SnapshotID    string
 	Region        scw.Region
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
-}
-
-// WaitForInstance waits for the instance to be in a "terminal state" before returning.
-// This function can be used to wait for an instance to be ready or in another final state.
-func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
-	timeout := defaultInstanceTimeout
-	if req.Timeout != nil {
-		timeout = *req.Timeout
-	}
-	retryInterval := defaultInstanceRetryInterval
-	if req.RetryInterval != nil {
-		retryInterval = *req.RetryInterval
-	}
-
-	terminalStatus := map[InstanceStatus]struct{}{
-		InstanceStatusReady:  {},
-		InstanceStatusLocked: {},
-		InstanceStatusError:  {},
-	}
-
-	instance, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (any, bool, error) {
-			res, err := s.GetInstance(&GetInstanceRequest{
-				Region:     req.Region,
-				InstanceID: req.InstanceID,
-			}, opts...)
-			if err != nil {
-				return nil, false, err
-			}
-
-			// Check if the instance has reached a terminal state
-			_, isTerminal := terminalStatus[res.Status]
-
-			return res, isTerminal, nil
-		},
-		Timeout:          timeout,
-		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "waiting for instance failed")
-	}
-	return instance.(*Instance), nil
 }
 
 // WaitForSnapshot waits for the snapshot to reach a "terminal state" before returning.
