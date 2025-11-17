@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultDediboxRetryInterval = 15 * time.Second
+	defaultDediboxTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -6017,6 +6023,53 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	return &resp, nil
 }
 
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	GetServerRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusDelivering: {},
+		ServerStatusInstalling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
+}
+
 // GetServerBackup:
 func (s *API) GetServerBackup(req *GetServerBackupRequest, opts ...scw.RequestOption) (*Backup, error) {
 	var err error
@@ -6725,6 +6778,59 @@ func (s *API) GetServerInstall(req *GetServerInstallRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+// WaitForServerInstallRequest is used by WaitForServerInstall method.
+type WaitForServerInstallRequest struct {
+	GetServerInstallRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServerInstall waits for the ServerInstall to reach a terminal state.
+func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest, opts ...scw.RequestOption) (*ServerInstall, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerInstallStatus]struct{}{
+		ServerInstallStatusBooting:               {},
+		ServerInstallStatusSettingUpRaid:         {},
+		ServerInstallStatusPartitioning:          {},
+		ServerInstallStatusFormatting:            {},
+		ServerInstallStatusInstalling:            {},
+		ServerInstallStatusConfiguring:           {},
+		ServerInstallStatusConfiguringBootloader: {},
+		ServerInstallStatusRebooting:             {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetServerInstall(&GetServerInstallRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for ServerInstall failed")
+	}
+
+	return res.(*ServerInstall), nil
+}
+
 // CancelServerInstall: Cancels the current server installation associated with the given server ID.
 func (s *API) CancelServerInstall(req *CancelServerInstallRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -6853,6 +6959,53 @@ func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForBMCAccessRequest is used by WaitForBMCAccess method.
+type WaitForBMCAccessRequest struct {
+	GetBMCAccessRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBMCAccess waits for the BMCAccess to reach a terminal state.
+func (s *API) WaitForBMCAccess(req *WaitForBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BMCAccessStatus]struct{}{
+		BMCAccessStatusCreating: {},
+		BMCAccessStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetBMCAccess(&GetBMCAccessRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for BMCAccess failed")
+	}
+
+	return res.(*BMCAccess), nil
 }
 
 // StopBMCAccess: Stop BMC (Baseboard Management Controller) access associated with the given ID.
@@ -8062,6 +8215,52 @@ func (s *RpnSanAPI) GetRpnSan(req *RpnSanAPIGetRpnSanRequest, opts ...scw.Reques
 	return &resp, nil
 }
 
+// WaitForRpnSanRequest is used by WaitForRpnSan method.
+type WaitForRpnSanRequest struct {
+	RpnSanAPIGetRpnSanRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForRpnSan waits for the RpnSan to reach a terminal state.
+func (s *RpnSanAPI) WaitForRpnSan(req *WaitForRpnSanRequest, opts ...scw.RequestOption) (*RpnSan, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[RpnSanStatus]struct{}{
+		RpnSanStatusCreating: {},
+		RpnSanStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetRpnSan(&RpnSanAPIGetRpnSanRequest{
+				RpnSanID: req.RpnSanID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for RpnSan failed")
+	}
+
+	return res.(*RpnSan), nil
+}
+
 // DeleteRpnSan:
 func (s *RpnSanAPI) DeleteRpnSan(req *RpnSanAPIDeleteRpnSanRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -8725,6 +8924,53 @@ func (s *RpnV2API) GetRpnV2Group(req *RpnV2ApiGetRpnV2GroupRequest, opts ...scw.
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForRpnV2GroupRequest is used by WaitForRpnV2Group method.
+type WaitForRpnV2GroupRequest struct {
+	RpnV2ApiGetRpnV2GroupRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForRpnV2Group waits for the RpnV2Group to reach a terminal state.
+func (s *RpnV2API) WaitForRpnV2Group(req *WaitForRpnV2GroupRequest, opts ...scw.RequestOption) (*RpnV2Group, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[RpnV2GroupStatus]struct{}{
+		RpnV2GroupStatusCreating: {},
+		RpnV2GroupStatusUpdating: {},
+		RpnV2GroupStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetRpnV2Group(&RpnV2ApiGetRpnV2GroupRequest{
+				GroupID: req.GroupID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for RpnV2Group failed")
+	}
+
+	return res.(*RpnV2Group), nil
 }
 
 // CreateRpnV2Group:

@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultS2sVpnRetryInterval = 15 * time.Second
+	defaultS2sVpnTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -1642,6 +1648,54 @@ func (s *API) GetVpnGateway(req *GetVpnGatewayRequest, opts ...scw.RequestOption
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForVpnGatewayRequest is used by WaitForVpnGateway method.
+type WaitForVpnGatewayRequest struct {
+	GetVpnGatewayRequest
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForVpnGateway waits for the VpnGateway to reach a terminal state.
+func (s *API) WaitForVpnGateway(req *WaitForVpnGatewayRequest, opts ...scw.RequestOption) (*VpnGateway, error) {
+	timeout := defaultS2sVpnTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultS2sVpnRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[VpnGatewayStatus]struct{}{
+		VpnGatewayStatusConfiguring:    {},
+		VpnGatewayStatusProvisioning:   {},
+		VpnGatewayStatusDeprovisioning: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (interface{}, bool, error) {
+			res, err := s.GetVpnGateway(&GetVpnGatewayRequest{
+				Region:    req.Region,
+				GatewayID: req.GatewayID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for VpnGateway failed")
+	}
+
+	return res.(*VpnGateway), nil
 }
 
 // CreateVpnGateway: Create VPN gateway.
