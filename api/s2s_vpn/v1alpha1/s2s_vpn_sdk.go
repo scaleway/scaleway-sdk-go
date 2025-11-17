@@ -1652,7 +1652,8 @@ func (s *API) GetVpnGateway(req *GetVpnGatewayRequest, opts ...scw.RequestOption
 
 // WaitForVpnGatewayRequest is used by WaitForVpnGateway method.
 type WaitForVpnGatewayRequest struct {
-	GetVpnGatewayRequest
+	Region        scw.Region
+	GatewayID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1675,7 +1676,7 @@ func (s *API) WaitForVpnGateway(req *WaitForVpnGatewayRequest, opts ...scw.Reque
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetVpnGateway(&GetVpnGatewayRequest{
 				Region:    req.Region,
 				GatewayID: req.GatewayID,

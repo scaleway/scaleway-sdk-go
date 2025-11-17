@@ -2241,7 +2241,8 @@ func (s *API) GetEmail(req *GetEmailRequest, opts ...scw.RequestOption) (*Email,
 
 // WaitForEmailRequest is used by WaitForEmail method.
 type WaitForEmailRequest struct {
-	GetEmailRequest
+	Region        scw.Region
+	EmailID       string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2263,7 +2264,7 @@ func (s *API) WaitForEmail(req *WaitForEmailRequest, opts ...scw.RequestOption) 
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetEmail(&GetEmailRequest{
 				Region:  req.Region,
 				EmailID: req.EmailID,
@@ -2477,7 +2478,8 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 
 // WaitForDomainRequest is used by WaitForDomain method.
 type WaitForDomainRequest struct {
-	GetDomainRequest
+	Region        scw.Region
+	DomainID      string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2499,7 +2501,7 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDomain(&GetDomainRequest{
 				Region:   req.Region,
 				DomainID: req.DomainID,

@@ -1783,7 +1783,8 @@ func (s *API) GetGateway(req *GetGatewayRequest, opts ...scw.RequestOption) (*Ga
 
 // WaitForGatewayRequest is used by WaitForGateway method.
 type WaitForGatewayRequest struct {
-	GetGatewayRequest
+	Zone          scw.Zone
+	GatewayID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1807,7 +1808,7 @@ func (s *API) WaitForGateway(req *WaitForGatewayRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetGateway(&GetGatewayRequest{
 				Zone:      req.Zone,
 				GatewayID: req.GatewayID,
@@ -2086,9 +2087,10 @@ func (s *API) GetGatewayNetwork(req *GetGatewayNetworkRequest, opts ...scw.Reque
 
 // WaitForGatewayNetworkRequest is used by WaitForGatewayNetwork method.
 type WaitForGatewayNetworkRequest struct {
-	GetGatewayNetworkRequest
-	Timeout       *time.Duration
-	RetryInterval *time.Duration
+	Zone             scw.Zone
+	GatewayNetworkID string
+	Timeout          *time.Duration
+	RetryInterval    *time.Duration
 }
 
 // WaitForGatewayNetwork waits for the GatewayNetwork to reach a terminal state.
@@ -2109,7 +2111,7 @@ func (s *API) WaitForGatewayNetwork(req *WaitForGatewayNetworkRequest, opts ...s
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetGatewayNetwork(&GetGatewayNetworkRequest{
 				Zone:             req.Zone,
 				GatewayNetworkID: req.GatewayNetworkID,

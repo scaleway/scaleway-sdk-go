@@ -456,7 +456,7 @@ func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human,
 
 // WaitForHumanRequest is used by WaitForHuman method.
 type WaitForHumanRequest struct {
-	GetHumanRequest
+	HumanID       string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -477,7 +477,7 @@ func (s *API) WaitForHuman(req *WaitForHumanRequest, opts ...scw.RequestOption) 
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetHuman(&GetHumanRequest{
 				HumanID: req.HumanID,
 			}, opts...)

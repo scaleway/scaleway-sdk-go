@@ -1372,7 +1372,8 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 
 // WaitForInstanceRequest is used by WaitForInstance method.
 type WaitForInstanceRequest struct {
-	GetInstanceRequest
+	Region        scw.Region
+	InstanceID    string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1397,7 +1398,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				Region:     req.Region,
 				InstanceID: req.InstanceID,

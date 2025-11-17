@@ -1350,7 +1350,8 @@ func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ..
 
 // WaitForDedicatedConnectionRequest is used by WaitForDedicatedConnection method.
 type WaitForDedicatedConnectionRequest struct {
-	GetDedicatedConnectionRequest
+	Region        scw.Region
+	ConnectionID  string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1371,7 +1372,7 @@ func (s *API) WaitForDedicatedConnection(req *WaitForDedicatedConnectionRequest,
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDedicatedConnection(&GetDedicatedConnectionRequest{
 				Region:       req.Region,
 				ConnectionID: req.ConnectionID,
@@ -1624,7 +1625,8 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 
 // WaitForLinkRequest is used by WaitForLink method.
 type WaitForLinkRequest struct {
-	GetLinkRequest
+	Region        scw.Region
+	LinkID        string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1645,7 +1647,7 @@ func (s *API) WaitForLink(req *WaitForLinkRequest, opts ...scw.RequestOption) (*
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetLink(&GetLinkRequest{
 				Region: req.Region,
 				LinkID: req.LinkID,

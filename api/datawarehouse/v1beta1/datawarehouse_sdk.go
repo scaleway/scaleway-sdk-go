@@ -980,7 +980,8 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 
 // WaitForDeploymentRequest is used by WaitForDeployment method.
 type WaitForDeploymentRequest struct {
-	GetDeploymentRequest
+	Region        scw.Region
+	DeploymentID  string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1005,7 +1006,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDeployment(&GetDeploymentRequest{
 				Region:       req.Region,
 				DeploymentID: req.DeploymentID,

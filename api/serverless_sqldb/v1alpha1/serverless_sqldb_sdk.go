@@ -570,7 +570,8 @@ func (s *API) GetDatabase(req *GetDatabaseRequest, opts ...scw.RequestOption) (*
 
 // WaitForDatabaseRequest is used by WaitForDatabase method.
 type WaitForDatabaseRequest struct {
-	GetDatabaseRequest
+	Region        scw.Region
+	DatabaseID    string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -593,7 +594,7 @@ func (s *API) WaitForDatabase(req *WaitForDatabaseRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDatabase(&GetDatabaseRequest{
 				Region:     req.Region,
 				DatabaseID: req.DatabaseID,

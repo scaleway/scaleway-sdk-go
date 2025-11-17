@@ -2034,7 +2034,7 @@ func (s *API) GetJob(req *GetJobRequest, opts ...scw.RequestOption) (*Job, error
 
 // WaitForJobRequest is used by WaitForJob method.
 type WaitForJobRequest struct {
-	GetJobRequest
+	JobID         string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2057,7 +2057,7 @@ func (s *API) WaitForJob(req *WaitForJobRequest, opts ...scw.RequestOption) (*Jo
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetJob(&GetJobRequest{
 				JobID: req.JobID,
 			}, opts...)
@@ -2348,7 +2348,7 @@ func (s *API) GetSession(req *GetSessionRequest, opts ...scw.RequestOption) (*Se
 
 // WaitForSessionRequest is used by WaitForSession method.
 type WaitForSessionRequest struct {
-	GetSessionRequest
+	SessionID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2370,7 +2370,7 @@ func (s *API) WaitForSession(req *WaitForSessionRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetSession(&GetSessionRequest{
 				SessionID: req.SessionID,
 			}, opts...)
@@ -2616,7 +2616,7 @@ func (s *API) GetProcess(req *GetProcessRequest, opts ...scw.RequestOption) (*Pr
 
 // WaitForProcessRequest is used by WaitForProcess method.
 type WaitForProcessRequest struct {
-	GetProcessRequest
+	ProcessID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2639,7 +2639,7 @@ func (s *API) WaitForProcess(req *WaitForProcessRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetProcess(&GetProcessRequest{
 				ProcessID: req.ProcessID,
 			}, opts...)
@@ -2882,7 +2882,7 @@ func (s *API) GetBooking(req *GetBookingRequest, opts ...scw.RequestOption) (*Bo
 
 // WaitForBookingRequest is used by WaitForBooking method.
 type WaitForBookingRequest struct {
-	GetBookingRequest
+	BookingID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2905,7 +2905,7 @@ func (s *API) WaitForBooking(req *WaitForBookingRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetBooking(&GetBookingRequest{
 				BookingID: req.BookingID,
 			}, opts...)

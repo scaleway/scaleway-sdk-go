@@ -2709,7 +2709,7 @@ func (s *API) GetPipeline(req *GetPipelineRequest, opts ...scw.RequestOption) (*
 
 // WaitForPipelineRequest is used by WaitForPipeline method.
 type WaitForPipelineRequest struct {
-	GetPipelineRequest
+	PipelineID    string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2730,7 +2730,7 @@ func (s *API) WaitForPipeline(req *WaitForPipelineRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPipeline(&GetPipelineRequest{
 				PipelineID: req.PipelineID,
 			}, opts...)
@@ -3985,9 +3985,9 @@ func (s *API) GetPurgeRequest(req *GetPurgeRequestRequest, opts ...scw.RequestOp
 
 // WaitForPurgeRequestRequest is used by WaitForPurgeRequest method.
 type WaitForPurgeRequestRequest struct {
-	GetPurgeRequestRequest
-	Timeout       *time.Duration
-	RetryInterval *time.Duration
+	PurgeRequestID string
+	Timeout        *time.Duration
+	RetryInterval  *time.Duration
 }
 
 // WaitForPurgeRequest waits for the PurgeRequest to reach a terminal state.
@@ -4006,7 +4006,7 @@ func (s *API) WaitForPurgeRequest(req *WaitForPurgeRequestRequest, opts ...scw.R
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPurgeRequest(&GetPurgeRequestRequest{
 				PurgeRequestID: req.PurgeRequestID,
 			}, opts...)

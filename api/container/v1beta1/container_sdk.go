@@ -2047,7 +2047,8 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 
 // WaitForNamespaceRequest is used by WaitForNamespace method.
 type WaitForNamespaceRequest struct {
-	GetNamespaceRequest
+	Region        scw.Region
+	NamespaceID   string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2070,7 +2071,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetNamespace(&GetNamespaceRequest{
 				Region:      req.Region,
 				NamespaceID: req.NamespaceID,
@@ -2276,7 +2277,8 @@ func (s *API) GetContainer(req *GetContainerRequest, opts ...scw.RequestOption) 
 
 // WaitForContainerRequest is used by WaitForContainer method.
 type WaitForContainerRequest struct {
-	GetContainerRequest
+	Region        scw.Region
+	ContainerID   string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2299,7 +2301,7 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetContainer(&GetContainerRequest{
 				Region:      req.Region,
 				ContainerID: req.ContainerID,
@@ -2532,7 +2534,8 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 
 // WaitForCronRequest is used by WaitForCron method.
 type WaitForCronRequest struct {
-	GetCronRequest
+	Region        scw.Region
+	CronID        string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2555,7 +2558,7 @@ func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetCron(&GetCronRequest{
 				Region: req.Region,
 				CronID: req.CronID,
@@ -2749,7 +2752,8 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 
 // WaitForDomainRequest is used by WaitForDomain method.
 type WaitForDomainRequest struct {
-	GetDomainRequest
+	Region        scw.Region
+	DomainID      string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2772,7 +2776,7 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDomain(&GetDomainRequest{
 				Region:   req.Region,
 				DomainID: req.DomainID,
@@ -2923,7 +2927,8 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 
 // WaitForTokenRequest is used by WaitForToken method.
 type WaitForTokenRequest struct {
-	GetTokenRequest
+	Region        scw.Region
+	TokenID       string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2945,7 +2950,7 @@ func (s *API) WaitForToken(req *WaitForTokenRequest, opts ...scw.RequestOption) 
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetToken(&GetTokenRequest{
 				Region:  req.Region,
 				TokenID: req.TokenID,
@@ -3104,7 +3109,8 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 
 // WaitForTriggerRequest is used by WaitForTrigger method.
 type WaitForTriggerRequest struct {
-	GetTriggerRequest
+	Region        scw.Region
+	TriggerID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3127,7 +3133,7 @@ func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetTrigger(&GetTriggerRequest{
 				Region:    req.Region,
 				TriggerID: req.TriggerID,
