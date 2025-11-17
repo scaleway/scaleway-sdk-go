@@ -1114,7 +1114,8 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 
 // WaitForClusterRequest is used by WaitForCluster method.
 type WaitForClusterRequest struct {
-	GetClusterRequest
+	Zone          scw.Zone
+	ClusterID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1139,7 +1140,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetCluster(&GetClusterRequest{
 				Zone:      req.Zone,
 				ClusterID: req.ClusterID,

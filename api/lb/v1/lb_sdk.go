@@ -4749,7 +4749,8 @@ func (s *ZonedAPI) GetLB(req *ZonedAPIGetLBRequest, opts ...scw.RequestOption) (
 
 // WaitForLBRequest is used by WaitForLB method.
 type WaitForLBRequest struct {
-	ZonedAPIGetLBRequest
+	Zone          scw.Zone
+	LBID          string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -4775,7 +4776,7 @@ func (s *ZonedAPI) WaitForLB(req *WaitForLBRequest, opts ...scw.RequestOption) (
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetLB(&ZonedAPIGetLBRequest{
 				Zone: req.Zone,
 				LBID: req.LBID,
@@ -6160,7 +6161,8 @@ func (s *ZonedAPI) GetCertificate(req *ZonedAPIGetCertificateRequest, opts ...sc
 
 // WaitForCertificateRequest is used by WaitForCertificate method.
 type WaitForCertificateRequest struct {
-	ZonedAPIGetCertificateRequest
+	Zone          scw.Zone
+	CertificateID string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -6181,7 +6183,7 @@ func (s *ZonedAPI) WaitForCertificate(req *WaitForCertificateRequest, opts ...sc
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetCertificate(&ZonedAPIGetCertificateRequest{
 				Zone:          req.Zone,
 				CertificateID: req.CertificateID,

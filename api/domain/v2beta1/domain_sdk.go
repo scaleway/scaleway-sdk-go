@@ -3964,7 +3964,7 @@ func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.Reque
 
 // WaitForSSLCertificateRequest is used by WaitForSSLCertificate method.
 type WaitForSSLCertificateRequest struct {
-	GetSSLCertificateRequest
+	DNSZone       string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3985,7 +3985,7 @@ func (s *API) WaitForSSLCertificate(req *WaitForSSLCertificateRequest, opts ...s
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetSSLCertificate(&GetSSLCertificateRequest{
 				DNSZone: req.DNSZone,
 			}, opts...)
@@ -4597,7 +4597,7 @@ func (s *RegistrarAPI) GetDomain(req *RegistrarAPIGetDomainRequest, opts ...scw.
 
 // WaitForDomainRequest is used by WaitForDomain method.
 type WaitForDomainRequest struct {
-	RegistrarAPIGetDomainRequest
+	Domain        string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -4624,7 +4624,7 @@ func (s *RegistrarAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.Requ
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
 				Domain: req.Domain,
 			}, opts...)

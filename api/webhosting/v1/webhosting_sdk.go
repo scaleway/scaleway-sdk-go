@@ -2973,7 +2973,9 @@ func (s *BackupAPI) GetBackup(req *BackupAPIGetBackupRequest, opts ...scw.Reques
 
 // WaitForBackupRequest is used by WaitForBackup method.
 type WaitForBackupRequest struct {
-	BackupAPIGetBackupRequest
+	Region        scw.Region
+	HostingID     string
+	BackupID      string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2994,7 +2996,7 @@ func (s *BackupAPI) WaitForBackup(req *WaitForBackupRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetBackup(&BackupAPIGetBackupRequest{
 				Region:    req.Region,
 				HostingID: req.HostingID,
@@ -3883,7 +3885,9 @@ func (s *DnsAPI) GetDomain(req *DNSAPIGetDomainRequest, opts ...scw.RequestOptio
 
 // WaitForDomainRequest is used by WaitForDomain method.
 type WaitForDomainRequest struct {
-	DNSAPIGetDomainRequest
+	Region        scw.Region
+	DomainName    string
+	ProjectID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3904,7 +3908,7 @@ func (s *DnsAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOpt
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDomain(&DNSAPIGetDomainRequest{
 				Region:     req.Region,
 				DomainName: req.DomainName,
@@ -4115,7 +4119,8 @@ func (s *HostingAPI) GetHosting(req *HostingAPIGetHostingRequest, opts ...scw.Re
 
 // WaitForHostingRequest is used by WaitForHosting method.
 type WaitForHostingRequest struct {
-	HostingAPIGetHostingRequest
+	Region        scw.Region
+	HostingID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -4139,7 +4144,7 @@ func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.Requ
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetHosting(&HostingAPIGetHostingRequest{
 				Region:    req.Region,
 				HostingID: req.HostingID,

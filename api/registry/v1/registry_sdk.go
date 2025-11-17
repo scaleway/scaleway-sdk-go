@@ -805,7 +805,8 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 
 // WaitForNamespaceRequest is used by WaitForNamespace method.
 type WaitForNamespaceRequest struct {
-	GetNamespaceRequest
+	Region        scw.Region
+	NamespaceID   string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -826,7 +827,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetNamespace(&GetNamespaceRequest{
 				Region:      req.Region,
 				NamespaceID: req.NamespaceID,
@@ -1037,7 +1038,8 @@ func (s *API) GetImage(req *GetImageRequest, opts ...scw.RequestOption) (*Image,
 
 // WaitForImageRequest is used by WaitForImage method.
 type WaitForImageRequest struct {
-	GetImageRequest
+	Region        scw.Region
+	ImageID       string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1058,7 +1060,7 @@ func (s *API) WaitForImage(req *WaitForImageRequest, opts ...scw.RequestOption) 
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetImage(&GetImageRequest{
 				Region:  req.Region,
 				ImageID: req.ImageID,
@@ -1224,7 +1226,8 @@ func (s *API) GetTag(req *GetTagRequest, opts ...scw.RequestOption) (*Tag, error
 
 // WaitForTagRequest is used by WaitForTag method.
 type WaitForTagRequest struct {
-	GetTagRequest
+	Region        scw.Region
+	TagID         string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1245,7 +1248,7 @@ func (s *API) WaitForTag(req *WaitForTagRequest, opts ...scw.RequestOption) (*Ta
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetTag(&GetTagRequest{
 				Region: req.Region,
 				TagID:  req.TagID,

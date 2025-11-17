@@ -446,7 +446,8 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 
 // WaitForFileSystemRequest is used by WaitForFileSystem method.
 type WaitForFileSystemRequest struct {
-	GetFileSystemRequest
+	Region        scw.Region
+	FilesystemID  string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -468,7 +469,7 @@ func (s *API) WaitForFileSystem(req *WaitForFileSystemRequest, opts ...scw.Reque
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetFileSystem(&GetFileSystemRequest{
 				Region:       req.Region,
 				FilesystemID: req.FilesystemID,

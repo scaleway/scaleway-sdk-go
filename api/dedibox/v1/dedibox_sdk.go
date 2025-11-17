@@ -6025,7 +6025,8 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 
 // WaitForServerRequest is used by WaitForServer method.
 type WaitForServerRequest struct {
-	GetServerRequest
+	Zone          scw.Zone
+	ServerID      uint64
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -6047,7 +6048,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				Zone:     req.Zone,
 				ServerID: req.ServerID,
@@ -6780,7 +6781,8 @@ func (s *API) GetServerInstall(req *GetServerInstallRequest, opts ...scw.Request
 
 // WaitForServerInstallRequest is used by WaitForServerInstall method.
 type WaitForServerInstallRequest struct {
-	GetServerInstallRequest
+	Zone          scw.Zone
+	ServerID      uint64
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -6808,7 +6810,7 @@ func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest, opts ...scw
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServerInstall(&GetServerInstallRequest{
 				Zone:     req.Zone,
 				ServerID: req.ServerID,
@@ -6963,7 +6965,8 @@ func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) 
 
 // WaitForBMCAccessRequest is used by WaitForBMCAccess method.
 type WaitForBMCAccessRequest struct {
-	GetBMCAccessRequest
+	Zone          scw.Zone
+	ServerID      uint64
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -6985,7 +6988,7 @@ func (s *API) WaitForBMCAccess(req *WaitForBMCAccessRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetBMCAccess(&GetBMCAccessRequest{
 				Zone:     req.Zone,
 				ServerID: req.ServerID,
@@ -8217,7 +8220,7 @@ func (s *RpnSanAPI) GetRpnSan(req *RpnSanAPIGetRpnSanRequest, opts ...scw.Reques
 
 // WaitForRpnSanRequest is used by WaitForRpnSan method.
 type WaitForRpnSanRequest struct {
-	RpnSanAPIGetRpnSanRequest
+	RpnSanID      uint64
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -8239,7 +8242,7 @@ func (s *RpnSanAPI) WaitForRpnSan(req *WaitForRpnSanRequest, opts ...scw.Request
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetRpnSan(&RpnSanAPIGetRpnSanRequest{
 				RpnSanID: req.RpnSanID,
 			}, opts...)
@@ -8928,7 +8931,7 @@ func (s *RpnV2API) GetRpnV2Group(req *RpnV2ApiGetRpnV2GroupRequest, opts ...scw.
 
 // WaitForRpnV2GroupRequest is used by WaitForRpnV2Group method.
 type WaitForRpnV2GroupRequest struct {
-	RpnV2ApiGetRpnV2GroupRequest
+	GroupID       uint64
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -8951,7 +8954,7 @@ func (s *RpnV2API) WaitForRpnV2Group(req *WaitForRpnV2GroupRequest, opts ...scw.
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetRpnV2Group(&RpnV2ApiGetRpnV2GroupRequest{
 				GroupID: req.GroupID,
 			}, opts...)

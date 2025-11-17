@@ -1864,7 +1864,8 @@ func (s *API) GetHub(req *GetHubRequest, opts ...scw.RequestOption) (*Hub, error
 
 // WaitForHubRequest is used by WaitForHub method.
 type WaitForHubRequest struct {
-	GetHubRequest
+	Region        scw.Region
+	HubID         string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1886,7 +1887,7 @@ func (s *API) WaitForHub(req *WaitForHubRequest, opts ...scw.RequestOption) (*Hu
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetHub(&GetHubRequest{
 				Region: req.Region,
 				HubID:  req.HubID,

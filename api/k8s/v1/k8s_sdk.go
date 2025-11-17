@@ -2344,7 +2344,8 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 
 // WaitForClusterRequest is used by WaitForCluster method.
 type WaitForClusterRequest struct {
-	GetClusterRequest
+	Region        scw.Region
+	ClusterID     string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2367,7 +2368,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetCluster(&GetClusterRequest{
 				Region:    req.Region,
 				ClusterID: req.ClusterID,
@@ -2929,7 +2930,8 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 
 // WaitForPoolRequest is used by WaitForPool method.
 type WaitForPoolRequest struct {
-	GetPoolRequest
+	Region        scw.Region
+	PoolID        string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -2952,7 +2954,7 @@ func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetPool(&GetPoolRequest{
 				Region: req.Region,
 				PoolID: req.PoolID,
@@ -3290,7 +3292,8 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 
 // WaitForNodeRequest is used by WaitForNode method.
 type WaitForNodeRequest struct {
-	GetNodeRequest
+	Region        scw.Region
+	NodeID        string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3316,7 +3319,7 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetNode(&GetNodeRequest{
 				Region: req.Region,
 				NodeID: req.NodeID,

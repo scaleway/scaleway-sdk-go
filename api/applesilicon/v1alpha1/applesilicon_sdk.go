@@ -1438,7 +1438,8 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 
 // WaitForServerRequest is used by WaitForServer method.
 type WaitForServerRequest struct {
-	GetServerRequest
+	Zone          scw.Zone
+	ServerID      string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -1465,7 +1466,7 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServer(&GetServerRequest{
 				Zone:     req.Zone,
 				ServerID: req.ServerID,
@@ -1741,9 +1742,11 @@ func (s *PrivateNetworkAPI) GetServerPrivateNetwork(req *PrivateNetworkAPIGetSer
 
 // WaitForServerPrivateNetworkRequest is used by WaitForServerPrivateNetwork method.
 type WaitForServerPrivateNetworkRequest struct {
-	PrivateNetworkAPIGetServerPrivateNetworkRequest
-	Timeout       *time.Duration
-	RetryInterval *time.Duration
+	Zone             scw.Zone
+	ServerID         string
+	PrivateNetworkID string
+	Timeout          *time.Duration
+	RetryInterval    *time.Duration
 }
 
 // WaitForServerPrivateNetwork waits for the ServerPrivateNetwork to reach a terminal state.
@@ -1763,7 +1766,7 @@ func (s *PrivateNetworkAPI) WaitForServerPrivateNetwork(req *WaitForServerPrivat
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetServerPrivateNetwork(&PrivateNetworkAPIGetServerPrivateNetworkRequest{
 				Zone:             req.Zone,
 				ServerID:         req.ServerID,

@@ -3069,9 +3069,10 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 
 // WaitForDatabaseBackupRequest is used by WaitForDatabaseBackup method.
 type WaitForDatabaseBackupRequest struct {
-	GetDatabaseBackupRequest
-	Timeout       *time.Duration
-	RetryInterval *time.Duration
+	Region           scw.Region
+	DatabaseBackupID string
+	Timeout          *time.Duration
+	RetryInterval    *time.Duration
 }
 
 // WaitForDatabaseBackup waits for the DatabaseBackup to reach a terminal state.
@@ -3093,7 +3094,7 @@ func (s *API) WaitForDatabaseBackup(req *WaitForDatabaseBackupRequest, opts ...s
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetDatabaseBackup(&GetDatabaseBackupRequest{
 				Region:           req.Region,
 				DatabaseBackupID: req.DatabaseBackupID,
@@ -3367,7 +3368,8 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 
 // WaitForInstanceRequest is used by WaitForInstance method.
 type WaitForInstanceRequest struct {
-	GetInstanceRequest
+	Region        scw.Region
+	InstanceID    string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3395,7 +3397,7 @@ func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstance(&GetInstanceRequest{
 				Region:     req.Region,
 				InstanceID: req.InstanceID,
@@ -3770,7 +3772,8 @@ func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOpti
 
 // WaitForReadReplicaRequest is used by WaitForReadReplica method.
 type WaitForReadReplicaRequest struct {
-	GetReadReplicaRequest
+	Region        scw.Region
+	ReadReplicaID string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -3795,7 +3798,7 @@ func (s *API) WaitForReadReplica(req *WaitForReadReplicaRequest, opts ...scw.Req
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetReadReplica(&GetReadReplicaRequest{
 				Region:        req.Region,
 				ReadReplicaID: req.ReadReplicaID,
@@ -4062,7 +4065,8 @@ func (s *API) GetInstanceLog(req *GetInstanceLogRequest, opts ...scw.RequestOpti
 
 // WaitForInstanceLogRequest is used by WaitForInstanceLog method.
 type WaitForInstanceLogRequest struct {
-	GetInstanceLogRequest
+	Region        scw.Region
+	InstanceLogID string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -4083,7 +4087,7 @@ func (s *API) WaitForInstanceLog(req *WaitForInstanceLogRequest, opts ...scw.Req
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetInstanceLog(&GetInstanceLogRequest{
 				Region:        req.Region,
 				InstanceLogID: req.InstanceLogID,
@@ -4850,7 +4854,8 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 
 // WaitForSnapshotRequest is used by WaitForSnapshot method.
 type WaitForSnapshotRequest struct {
-	GetSnapshotRequest
+	Region        scw.Region
+	SnapshotID    string
 	Timeout       *time.Duration
 	RetryInterval *time.Duration
 }
@@ -4873,7 +4878,7 @@ func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOp
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
-		Get: func() (interface{}, bool, error) {
+		Get: func() (any, bool, error) {
 			res, err := s.GetSnapshot(&GetSnapshotRequest{
 				Region:     req.Region,
 				SnapshotID: req.SnapshotID,
