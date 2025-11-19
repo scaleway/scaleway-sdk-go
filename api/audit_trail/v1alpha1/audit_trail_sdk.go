@@ -486,6 +486,10 @@ const (
 	ResourceTypeEdgeServicesRouteRules   = ResourceType("edge_services_route_rules")
 	ResourceTypeEdgeServicesWafStage     = ResourceType("edge_services_waf_stage")
 	ResourceTypeEdgeServicesBackendStage = ResourceType("edge_services_backend_stage")
+	ResourceTypeS2sVpnGateway            = ResourceType("s2s_vpn_gateway")
+	ResourceTypeS2sCustomerGateway       = ResourceType("s2s_customer_gateway")
+	ResourceTypeS2sRoutingPolicy         = ResourceType("s2s_routing_policy")
+	ResourceTypeS2sConnection            = ResourceType("s2s_connection")
 )
 
 func (enum ResourceType) String() string {
@@ -553,6 +557,10 @@ func (enum ResourceType) Values() []ResourceType {
 		"edge_services_route_rules",
 		"edge_services_waf_stage",
 		"edge_services_backend_stage",
+		"s2s_vpn_gateway",
+		"s2s_customer_gateway",
+		"s2s_routing_policy",
+		"s2s_connection",
 	}
 }
 
