@@ -58,6 +58,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeObjectStorage = ListPublicCatalogProductsRequestProductType("object_storage")
 	// Include the Managed Inference information in the response.
 	ListPublicCatalogProductsRequestProductTypeManagedInference = ListPublicCatalogProductsRequestProductType("managed_inference")
+	// Include the Generative APIs information in the response.
+	ListPublicCatalogProductsRequestProductTypeGenerativeAPIs = ListPublicCatalogProductsRequestProductType("generative_apis")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -78,6 +80,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"block_storage",
 		"object_storage",
 		"managed_inference",
+		"generative_apis",
 	}
 }
 
@@ -153,6 +156,49 @@ func (enum *ListPublicCatalogProductsRequestStatus) UnmarshalJSON(data []byte) e
 	}
 
 	*enum = ListPublicCatalogProductsRequestStatus(ListPublicCatalogProductsRequestStatus(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductProductBadge string
+
+const (
+	PublicCatalogProductProductBadgeUnknownProductBadge = PublicCatalogProductProductBadge("unknown_product_badge")
+	PublicCatalogProductProductBadgeNewProduct          = PublicCatalogProductProductBadge("new_product")
+	PublicCatalogProductProductBadgeBestSeller          = PublicCatalogProductProductBadge("best_seller")
+	PublicCatalogProductProductBadgeBestValue           = PublicCatalogProductProductBadge("best_value")
+	PublicCatalogProductProductBadgePopular             = PublicCatalogProductProductBadge("popular")
+)
+
+func (enum PublicCatalogProductProductBadge) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductProductBadgeUnknownProductBadge)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductProductBadge) Values() []PublicCatalogProductProductBadge {
+	return []PublicCatalogProductProductBadge{
+		"unknown_product_badge",
+		"new_product",
+		"best_seller",
+		"best_value",
+		"popular",
+	}
+}
+
+func (enum PublicCatalogProductProductBadge) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductProductBadge) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductProductBadge(PublicCatalogProductProductBadge(tmp).String())
 	return nil
 }
 
@@ -518,6 +564,13 @@ type PublicCatalogProductPropertiesElasticMetal struct {
 	OfferID string `json:"offer_id"`
 }
 
+// PublicCatalogProductPropertiesGenerativeAPIs: public catalog product properties generative ap is.
+type PublicCatalogProductPropertiesGenerativeAPIs struct {
+	Reasoning bool `json:"reasoning"`
+
+	SupportedAPIs []string `json:"supported_apis"`
+}
+
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
 type PublicCatalogProductPropertiesHardware struct {
 	// CPU: the CPU hardware properties.
@@ -595,32 +648,36 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
+
+	// GenerativeAPIs: the properties of Generative APIs products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
@@ -672,6 +729,9 @@ type PublicCatalogProduct struct {
 
 	// EndOfLifeAt: the end of life date of the product.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// Badges: different badges that can be associated with the product.
+	Badges []PublicCatalogProductProductBadge `json:"badges"`
 }
 
 // ListPublicCatalogProductsResponse: list public catalog products response.
