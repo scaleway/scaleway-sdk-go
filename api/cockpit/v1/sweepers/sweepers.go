@@ -57,6 +57,7 @@ func SweepGrafanaUser(scwClient *scw.Client) error {
 			continue
 		}
 
+		//nolint:staticcheck // ListGrafanaUsers is deprecated but still required for sweeper functionality
 		listGrafanaUsers, err := cockpitAPI.ListGrafanaUsers(&cockpit.GlobalAPIListGrafanaUsersRequest{
 			ProjectID: project.ID,
 		}, scw.WithAllPages())
@@ -65,6 +66,7 @@ func SweepGrafanaUser(scwClient *scw.Client) error {
 		}
 
 		for _, grafanaUser := range listGrafanaUsers.GrafanaUsers {
+			//nolint:staticcheck // DeleteGrafanaUser is deprecated but still required for sweeper functionality
 			err = cockpitAPI.DeleteGrafanaUser(&cockpit.GlobalAPIDeleteGrafanaUserRequest{
 				ProjectID:     project.ID,
 				GrafanaUserID: grafanaUser.ID,
