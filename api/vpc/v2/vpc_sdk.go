@@ -283,6 +283,51 @@ func (enum *ListVPCsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RouteType string
+
+const (
+	RouteTypeUnknownRouteType = RouteType("unknown_route_type")
+	RouteTypeSubnet           = RouteType("subnet")
+	RouteTypeDefault          = RouteType("default")
+	RouteTypeCustom           = RouteType("custom")
+	RouteTypeInterlink        = RouteType("interlink")
+	RouteTypeS2sVpn           = RouteType("s2s_vpn")
+)
+
+func (enum RouteType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RouteTypeUnknownRouteType)
+	}
+	return string(enum)
+}
+
+func (enum RouteType) Values() []RouteType {
+	return []RouteType{
+		"unknown_route_type",
+		"subnet",
+		"default",
+		"custom",
+		"interlink",
+		"s2s_vpn",
+	}
+}
+
+func (enum RouteType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RouteType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RouteType(RouteType(tmp).String())
+	return nil
+}
+
 type RouteWithNexthopResourceType string
 
 const (
@@ -420,6 +465,10 @@ type Route struct {
 
 	// IsReadOnly: defines whether the route can be modified or deleted by the user.
 	IsReadOnly bool `json:"is_read_only"`
+
+	// Type: type of the Route.
+	// Default value: unknown_route_type
+	Type *RouteType `json:"type"`
 
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`
