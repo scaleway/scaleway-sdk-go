@@ -27,6 +27,14 @@ type WaitForPreconfiguredAlertsRequest struct {
 // This function can be used to wait for alerts to be enabled or disabled after calling
 // EnableAlertRules or DisableAlertRules.
 func (s *RegionalAPI) WaitForPreconfiguredAlerts(req *WaitForPreconfiguredAlertsRequest, opts ...scw.RequestOption) ([]*Alert, error) {
+	if req == nil {
+		return nil, errors.New("WaitForPreconfiguredAlertsRequest cannot be nil")
+	}
+
+	if len(req.PreconfiguredRules) == 0 {
+		return []*Alert{}, nil
+	}
+
 	timeout := defaultTimeout
 	if req.Timeout != nil {
 		timeout = *req.Timeout
@@ -36,23 +44,7 @@ func (s *RegionalAPI) WaitForPreconfiguredAlerts(req *WaitForPreconfiguredAlerts
 		retryInterval = *req.RetryInterval
 	}
 
-	var terminalStatus map[AlertStatus]struct{}
-	switch req.TargetStatus {
-	case AlertStatusEnabled:
-		terminalStatus = map[AlertStatus]struct{}{
-			AlertStatusEnabled:  {},
-			AlertStatusEnabling: {},
-		}
-	case AlertStatusDisabled:
-		terminalStatus = map[AlertStatus]struct{}{
-			AlertStatusDisabled:  {},
-			AlertStatusDisabling: {},
-		}
-	default:
-		terminalStatus = map[AlertStatus]struct{}{
-			req.TargetStatus: {},
-		}
-	}
+	listOpts := append([]scw.RequestOption{scw.WithAllPages()}, opts...)
 
 	result, err := async.WaitSync(&async.WaitSyncConfig{
 		Get: func() (any, bool, error) {
@@ -60,27 +52,26 @@ func (s *RegionalAPI) WaitForPreconfiguredAlerts(req *WaitForPreconfiguredAlerts
 				Region:          req.Region,
 				ProjectID:       req.ProjectID,
 				IsPreconfigured: scw.BoolPtr(true),
-			}, opts...)
+			}, listOpts...)
 			if err != nil {
 				return nil, false, err
 			}
 
-			alertsByRuleID := make(map[string]*Alert)
+			alertsByRuleID := make(map[string]*Alert, len(res.Alerts))
 			for _, alert := range res.Alerts {
 				if alert.PreconfiguredData != nil && alert.PreconfiguredData.PreconfiguredRuleID != "" {
 					alertsByRuleID[alert.PreconfiguredData.PreconfiguredRuleID] = alert
 				}
 			}
 
-			var matchedAlerts []*Alert
+			matchedAlerts := make([]*Alert, 0, len(req.PreconfiguredRules))
 			for _, ruleID := range req.PreconfiguredRules {
 				alert, found := alertsByRuleID[ruleID]
 				if !found {
-					return nil, false, errors.New("preconfigured alert with rule ID %s not found", ruleID)
+					return nil, false, nil
 				}
 
-				_, isTerminal := terminalStatus[alert.RuleStatus]
-				if !isTerminal {
+				if !isAlertInTargetStatus(req.TargetStatus, alert.RuleStatus) {
 					return nil, false, nil
 				}
 
@@ -96,4 +87,15 @@ func (s *RegionalAPI) WaitForPreconfiguredAlerts(req *WaitForPreconfiguredAlerts
 		return nil, errors.Wrap(err, "waiting for preconfigured alerts failed")
 	}
 	return result.([]*Alert), nil
+}
+
+func isAlertInTargetStatus(target, current AlertStatus) bool {
+	switch target {
+	case AlertStatusEnabled:
+		return current == AlertStatusEnabled
+	case AlertStatusDisabled:
+		return current == AlertStatusDisabled
+	default:
+		return current == target
+	}
 }
