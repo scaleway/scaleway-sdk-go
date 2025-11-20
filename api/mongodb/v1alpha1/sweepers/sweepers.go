@@ -8,6 +8,30 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
+func SweepSnapshots(scwClient *scw.Client, region scw.Region) error {
+	mongodbAPI := mongodb.NewAPI(scwClient)
+	logger.Warningf("sweeper: destroying mongodb snapshots in (%s)", region)
+
+	listSnapshots, err := mongodbAPI.ListSnapshots(&mongodb.ListSnapshotsRequest{
+		Region: region,
+	}, scw.WithAllPages())
+	if err != nil {
+		return fmt.Errorf("error listing mongodb snapshots in (%s) in sweeper: %w", region, err)
+	}
+
+	for _, snapshot := range listSnapshots.Snapshots {
+		_, err := mongodbAPI.DeleteSnapshot(&mongodb.DeleteSnapshotRequest{
+			Region:     region,
+			SnapshotID: snapshot.ID,
+		})
+		if err != nil {
+			logger.Warningf("error deleting mongodb snapshot %s in sweeper: %s", snapshot.ID, err)
+		}
+	}
+
+	return nil
+}
+
 func SweepInstances(scwClient *scw.Client, region scw.Region) error {
 	mongodbAPI := mongodb.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the mongodb instance in (%s)", region)
@@ -33,7 +57,11 @@ func SweepInstances(scwClient *scw.Client, region scw.Region) error {
 
 func SweepAllLocalities(scwClient *scw.Client) error {
 	for _, region := range (&mongodb.API{}).Regions() {
-		err := SweepInstances(scwClient, region)
+		err := SweepSnapshots(scwClient, region)
+		if err != nil {
+			return err
+		}
+		err = SweepInstances(scwClient, region)
 		if err != nil {
 			return err
 		}

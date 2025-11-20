@@ -120,6 +120,8 @@ const (
 	ResourceTypeDdlDatalab             = ResourceType("ddl_datalab")
 	ResourceTypeKafkaCluster           = ResourceType("kafka_cluster")
 	ResourceTypeBgpEndpoint            = ResourceType("bgp_endpoint")
+	ResourceTypeScblSedbCluster        = ResourceType("scbl_sedb_cluster")
+	ResourceTypeDtwhDeployment         = ResourceType("dtwh_deployment")
 )
 
 func (enum ResourceType) String() string {
@@ -157,6 +159,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"ddl_datalab",
 		"kafka_cluster",
 		"bgp_endpoint",
+		"scbl_sedb_cluster",
+		"dtwh_deployment",
 	}
 }
 

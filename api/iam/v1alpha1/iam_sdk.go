@@ -546,6 +546,43 @@ func (enum *ListSSHKeysRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListScimTokensRequestOrderBy string
+
+const (
+	ListScimTokensRequestOrderByCreatedAtAsc  = ListScimTokensRequestOrderBy("created_at_asc")
+	ListScimTokensRequestOrderByCreatedAtDesc = ListScimTokensRequestOrderBy("created_at_desc")
+)
+
+func (enum ListScimTokensRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListScimTokensRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListScimTokensRequestOrderBy) Values() []ListScimTokensRequestOrderBy {
+	return []ListScimTokensRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListScimTokensRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListScimTokensRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListScimTokensRequestOrderBy(ListScimTokensRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListUsersRequestOrderBy string
 
 const (
@@ -873,6 +910,49 @@ func (enum *SamlCertificateType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type SamlStatus string
+
+const (
+	SamlStatusUnknownSamlStatus      = SamlStatus("unknown_saml_status")
+	SamlStatusValid                  = SamlStatus("valid")
+	SamlStatusMissingCertificate     = SamlStatus("missing_certificate")
+	SamlStatusMissingEntityID        = SamlStatus("missing_entity_id")
+	SamlStatusMissingSingleSignOnURL = SamlStatus("missing_single_sign_on_url")
+)
+
+func (enum SamlStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SamlStatusUnknownSamlStatus)
+	}
+	return string(enum)
+}
+
+func (enum SamlStatus) Values() []SamlStatus {
+	return []SamlStatus{
+		"unknown_saml_status",
+		"valid",
+		"missing_certificate",
+		"missing_entity_id",
+		"missing_single_sign_on_url",
+	}
+}
+
+func (enum SamlStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SamlStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SamlStatus(SamlStatus(tmp).String())
+	return nil
+}
+
 type UserStatus string
 
 const (
@@ -920,8 +1000,6 @@ type UserType string
 const (
 	// Unknown type.
 	UserTypeUnknownType = UserType("unknown_type")
-	// Guest.
-	UserTypeGuest = UserType("guest")
 	// Owner.
 	UserTypeOwner  = UserType("owner")
 	UserTypeMember = UserType("member")
@@ -938,7 +1016,6 @@ func (enum UserType) String() string {
 func (enum UserType) Values() []UserType {
 	return []UserType{
 		"unknown_type",
-		"guest",
 		"owner",
 		"member",
 	}
@@ -1043,6 +1120,17 @@ type RuleSpecs struct {
 	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
+}
+
+// ScimToken: scim token.
+type ScimToken struct {
+	ID string `json:"id"`
+
+	ScimID string `json:"scim_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	ExpiresAt *time.Time `json:"expires_at"`
 }
 
 // CreateUserRequestMember: create user request member.
@@ -1495,6 +1583,13 @@ type User struct {
 	Locked bool `json:"locked"`
 }
 
+// SamlServiceProvider: saml service provider.
+type SamlServiceProvider struct {
+	EntityID string `json:"entity_id"`
+
+	AssertionConsumerServiceURL string `json:"assertion_consumer_service_url"`
+}
+
 // AddGroupMemberRequest: add group member request.
 type AddGroupMemberRequest struct {
 	// GroupID: ID of the group.
@@ -1598,18 +1693,6 @@ type CreateJWTRequest struct {
 	Referrer string `json:"referrer"`
 }
 
-// CreateOrganizationSamlRequest: create organization saml request.
-type CreateOrganizationSamlRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-
-	// EntityID: entity ID of the SAML Identity Provider.
-	EntityID string `json:"entity_id"`
-
-	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
-	SingleSignOnURL string `json:"single_sign_on_url"`
-}
-
 // CreatePolicyRequest: create policy request.
 type CreatePolicyRequest struct {
 	// Name: name of the policy to create (max length is 64 characters).
@@ -1654,6 +1737,21 @@ type CreateSSHKeyRequest struct {
 
 	// ProjectID: project the resource is attributed to.
 	ProjectID string `json:"project_id"`
+}
+
+// CreateScimTokenRequest: create scim token request.
+type CreateScimTokenRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+}
+
+// CreateScimTokenResponse: create scim token response.
+type CreateScimTokenResponse struct {
+	// Token: the SCIM token metadata.
+	Token *ScimToken `json:"token"`
+
+	// BearerToken: the Bearer Token to use to authenticate to SCIM endpoints.
+	BearerToken string `json:"bearer_token"`
 }
 
 // CreateUserMFAOTPRequest: create user mfaotp request.
@@ -1703,12 +1801,6 @@ type DeleteJWTRequest struct {
 	Jti string `json:"-"`
 }
 
-// DeleteOrganizationSamlRequest: delete organization saml request.
-type DeleteOrganizationSamlRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-}
-
 // DeletePolicyRequest: delete policy request.
 type DeletePolicyRequest struct {
 	// PolicyID: id of policy to delete.
@@ -1726,6 +1818,24 @@ type DeleteSamlCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
+// DeleteSamlRequest: delete saml request.
+type DeleteSamlRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+}
+
+// DeleteScimRequest: delete scim request.
+type DeleteScimRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+}
+
+// DeleteScimTokenRequest: delete scim token request.
+type DeleteScimTokenRequest struct {
+	// TokenID: the SCIM token ID.
+	TokenID string `json:"-"`
+}
+
 // DeleteUserMFAOTPRequest: delete user mfaotp request.
 type DeleteUserMFAOTPRequest struct {
 	// UserID: user ID of the MFA OTP.
@@ -1736,6 +1846,18 @@ type DeleteUserMFAOTPRequest struct {
 type DeleteUserRequest struct {
 	// UserID: ID of the user to delete.
 	UserID string `json:"-"`
+}
+
+// EnableOrganizationSamlRequest: enable organization saml request.
+type EnableOrganizationSamlRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
+}
+
+// EnableOrganizationScimRequest: enable organization scim request.
+type EnableOrganizationScimRequest struct {
+	// OrganizationID: ID of the Organization.
+	OrganizationID string `json:"-"`
 }
 
 // EncodedJWT: encoded jwt.
@@ -2429,6 +2551,50 @@ type ListSamlCertificatesResponse struct {
 	Certificates []*SamlCertificate `json:"certificates"`
 }
 
+// ListScimTokensRequest: list scim tokens request.
+type ListScimTokensRequest struct {
+	// ScimID: ID of the SCIM configuration.
+	ScimID string `json:"-"`
+
+	// OrderBy: sort order of SCIM tokens.
+	// Default value: created_at_asc
+	OrderBy ListScimTokensRequestOrderBy `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of items per page. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListScimTokensResponse: list scim tokens response.
+type ListScimTokensResponse struct {
+	// ScimTokens: list of SCIM tokens.
+	ScimTokens []*ScimToken `json:"scim_tokens"`
+
+	// TotalCount: total count of SCIM tokens.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListScimTokensResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListScimTokensResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListScimTokensResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ScimTokens = append(r.ScimTokens, results.ScimTokens...)
+	r.TotalCount += uint64(len(results.ScimTokens))
+	return uint64(len(results.ScimTokens)), nil
+}
+
 // ListUsersRequest: list users request.
 type ListUsersRequest struct {
 	// OrderBy: criteria for sorting results.
@@ -2497,12 +2663,6 @@ type MFAOTP struct {
 	Secret string `json:"secret"`
 }
 
-// MigrateOrganizationGuestsRequest: migrate organization guests request.
-type MigrateOrganizationGuestsRequest struct {
-	// OrganizationID: ID of the Organization.
-	OrganizationID string `json:"-"`
-}
-
 // Organization: organization.
 type Organization struct {
 	// ID: ID of the Organization.
@@ -2513,6 +2673,18 @@ type Organization struct {
 
 	// Alias: alias of the Organization.
 	Alias string `json:"alias"`
+
+	// LoginPasswordEnabled: defines whether login with a password is enabled for the Organization.
+	LoginPasswordEnabled bool `json:"login_password_enabled"`
+
+	// LoginMagicCodeEnabled: defines whether login with an authentication code is enabled for the Organization.
+	LoginMagicCodeEnabled bool `json:"login_magic_code_enabled"`
+
+	// LoginOauth2Enabled: defines whether login through OAuth2 is enabled for the Organization.
+	LoginOauth2Enabled bool `json:"login_oauth2_enabled"`
+
+	// LoginSamlEnabled: defines whether login through SAML is enabled for the Organization.
+	LoginSamlEnabled bool `json:"login_saml_enabled"`
 }
 
 // OrganizationSecuritySettings: organization security settings.
@@ -2525,6 +2697,26 @@ type OrganizationSecuritySettings struct {
 
 	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
 	LoginAttemptsBeforeLocked uint32 `json:"login_attempts_before_locked"`
+
+	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
+	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration"`
+
+	// MaxAPIKeyExpirationDuration: maximum duration the `expires_at` field of an API key can represent. A value of 0 means there is no maximum duration.
+	MaxAPIKeyExpirationDuration *scw.Duration `json:"max_api_key_expiration_duration"`
+}
+
+// ParseSamlMetadataRequest: parse saml metadata request.
+type ParseSamlMetadataRequest struct {
+	File scw.File `json:"file"`
+}
+
+// ParseSamlMetadataResponse: parse saml metadata response.
+type ParseSamlMetadataResponse struct {
+	SingleSignOnURL string `json:"single_sign_on_url"`
+
+	EntityID string `json:"entity_id"`
+
+	SigningCertificates []string `json:"signing_certificates"`
 }
 
 // RemoveGroupMemberRequest: remove group member request.
@@ -2555,11 +2747,27 @@ type Saml struct {
 	// ID: ID of the SAML configuration.
 	ID string `json:"id"`
 
+	// Status: status of the SAML configuration.
+	// Default value: unknown_saml_status
+	Status SamlStatus `json:"status"`
+
+	// ServiceProvider: service Provider information.
+	ServiceProvider *SamlServiceProvider `json:"service_provider"`
+
 	// EntityID: entity ID of the SAML Identity Provider.
 	EntityID string `json:"entity_id"`
 
 	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
 	SingleSignOnURL string `json:"single_sign_on_url"`
+}
+
+// Scim: scim.
+type Scim struct {
+	// ID: ID of the SCIM configuration.
+	ID string `json:"id"`
+
+	// CreatedAt: date and time of SCIM configuration creation.
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // SetGroupMembersRequest: set group members request.
@@ -2611,6 +2819,9 @@ type UpdateAPIKeyRequest struct {
 
 	// Description: new description to update.
 	Description *string `json:"description,omitempty"`
+
+	// ExpiresAt: new expiration date of the API key.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }
 
 // UpdateApplicationRequest: update application request.
@@ -2643,16 +2854,22 @@ type UpdateGroupRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
-// UpdateOrganizationSamlRequest: update organization saml request.
-type UpdateOrganizationSamlRequest struct {
+// UpdateOrganizationLoginMethodsRequest: update organization login methods request.
+type UpdateOrganizationLoginMethodsRequest struct {
 	// OrganizationID: ID of the Organization.
 	OrganizationID string `json:"-"`
 
-	// EntityID: entity ID of the SAML Identity Provider.
-	EntityID *string `json:"entity_id,omitempty"`
+	// LoginPasswordEnabled: defines whether login with a password is enabled for the Organization.
+	LoginPasswordEnabled *bool `json:"login_password_enabled,omitempty"`
 
-	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
-	SingleSignOnURL *string `json:"single_sign_on_url,omitempty"`
+	// LoginOauth2Enabled: defines whether login through OAuth2 is enabled for the Organization.
+	LoginOauth2Enabled *bool `json:"login_oauth2_enabled,omitempty"`
+
+	// LoginMagicCodeEnabled: defines whether login with an authentication code is enabled for the Organization.
+	LoginMagicCodeEnabled *bool `json:"login_magic_code_enabled,omitempty"`
+
+	// LoginSamlEnabled: defines whether login through SAML is enabled for the Organization.
+	LoginSamlEnabled *bool `json:"login_saml_enabled,omitempty"`
 }
 
 // UpdateOrganizationSecuritySettingsRequest: update organization security settings request.
@@ -2668,6 +2885,12 @@ type UpdateOrganizationSecuritySettingsRequest struct {
 
 	// LoginAttemptsBeforeLocked: number of login attempts before the account is locked.
 	LoginAttemptsBeforeLocked *uint32 `json:"login_attempts_before_locked,omitempty"`
+
+	// MaxLoginSessionDuration: maximum duration a login session will stay active before needing to relogin.
+	MaxLoginSessionDuration *scw.Duration `json:"max_login_session_duration,omitempty"`
+
+	// MaxAPIKeyExpirationDuration: maximum duration the `expires_at` field of an API key can represent. A value of 0 means there is no maximum duration.
+	MaxAPIKeyExpirationDuration *scw.Duration `json:"max_api_key_expiration_duration,omitempty"`
 }
 
 // UpdatePolicyRequest: update policy request.
@@ -2710,6 +2933,18 @@ type UpdateSSHKeyRequest struct {
 
 	// Disabled: enable or disable the SSH key.
 	Disabled *bool `json:"disabled,omitempty"`
+}
+
+// UpdateSamlRequest: update saml request.
+type UpdateSamlRequest struct {
+	// SamlID: ID of the SAML configuration.
+	SamlID string `json:"-"`
+
+	// EntityID: entity ID of the SAML Identity Provider.
+	EntityID *string `json:"entity_id,omitempty"`
+
+	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
+	SingleSignOnURL *string `json:"single_sign_on_url,omitempty"`
 }
 
 // UpdateUserPasswordRequest: update user password request.
@@ -3818,7 +4053,7 @@ func (s *API) CreatePolicy(req *CreatePolicyRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// GetPolicy: Retrieve information about a policy, speficified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
+// GetPolicy: Retrieve information about a policy, specified by the `policy_id` parameter. The policy's full details, including `id`, `name`, `organization_id`, `nb_rules` and `nb_scopes`, `nb_permission_sets` are returned in the response.
 func (s *API) GetPolicy(req *GetPolicyRequest, opts ...scw.RequestOption) (*Policy, error) {
 	var err error
 
@@ -4475,8 +4710,8 @@ func (s *API) GetOrganization(req *GetOrganizationRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// MigrateOrganizationGuests: Migrate the organization's guests to IAM members.
-func (s *API) MigrateOrganizationGuests(req *MigrateOrganizationGuestsRequest, opts ...scw.RequestOption) error {
+// UpdateOrganizationLoginMethods: Set your Organization's allowed login methods.
+func (s *API) UpdateOrganizationLoginMethods(req *UpdateOrganizationLoginMethodsRequest, opts ...scw.RequestOption) (*Organization, error) {
 	var err error
 
 	if req.OrganizationID == "" {
@@ -4485,19 +4720,26 @@ func (s *API) MigrateOrganizationGuests(req *MigrateOrganizationGuestsRequest, o
 	}
 
 	if fmt.Sprint(req.OrganizationID) == "" {
-		return errors.New("field OrganizationID cannot be empty in request")
+		return nil, errors.New("field OrganizationID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/migrate-guests",
+		Method: "PATCH",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/login-methods",
 	}
 
-	err = s.client.Do(scwReq, nil, opts...)
+	err = scwReq.SetBody(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var resp Organization
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // GetOrganizationSaml: Get SAML Identity Provider configuration of an Organization.
@@ -4527,8 +4769,8 @@ func (s *API) GetOrganizationSaml(req *GetOrganizationSamlRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// CreateOrganizationSaml: Create a SAML Identity Provider configuration for an Organization.
-func (s *API) CreateOrganizationSaml(req *CreateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+// EnableOrganizationSaml: Enable SAML Identity Provider for an Organization.
+func (s *API) EnableOrganizationSaml(req *EnableOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
 	var err error
 
 	if req.OrganizationID == "" {
@@ -4559,22 +4801,17 @@ func (s *API) CreateOrganizationSaml(req *CreateOrganizationSamlRequest, opts ..
 	return &resp, nil
 }
 
-// UpdateOrganizationSaml: Update a SAML Identity Provider configuration for an Organization.
-func (s *API) UpdateOrganizationSaml(req *UpdateOrganizationSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
+// UpdateSaml: Update SAML Identity Provider configuration.
+func (s *API) UpdateSaml(req *UpdateSamlRequest, opts ...scw.RequestOption) (*Saml, error) {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
-	}
-
-	if fmt.Sprint(req.OrganizationID) == "" {
-		return nil, errors.New("field OrganizationID cannot be empty in request")
+	if fmt.Sprint(req.SamlID) == "" {
+		return nil, errors.New("field SamlID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "",
 	}
 
 	err = scwReq.SetBody(req)
@@ -4591,22 +4828,17 @@ func (s *API) UpdateOrganizationSaml(req *UpdateOrganizationSamlRequest, opts ..
 	return &resp, nil
 }
 
-// DeleteOrganizationSaml: Delete a SAML Identity Provider configuration for an Organization.
-func (s *API) DeleteOrganizationSaml(req *DeleteOrganizationSamlRequest, opts ...scw.RequestOption) error {
+// DeleteSaml: Disable SAML Identity Provider for an Organization.
+func (s *API) DeleteSaml(req *DeleteSamlRequest, opts ...scw.RequestOption) error {
 	var err error
 
-	if req.OrganizationID == "" {
-		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
-		req.OrganizationID = defaultOrganizationID
-	}
-
-	if fmt.Sprint(req.OrganizationID) == "" {
-		return errors.New("field OrganizationID cannot be empty in request")
+	if fmt.Sprint(req.SamlID) == "" {
+		return errors.New("field SamlID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/saml",
+		Path:   "/iam/v1alpha1/saml/" + fmt.Sprint(req.SamlID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
@@ -4614,6 +4846,29 @@ func (s *API) DeleteOrganizationSaml(req *DeleteOrganizationSamlRequest, opts ..
 		return err
 	}
 	return nil
+}
+
+// ParseSamlMetadata: Parse SAML xml metadata file.
+func (s *API) ParseSamlMetadata(req *ParseSamlMetadataRequest, opts ...scw.RequestOption) (*ParseSamlMetadataResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/parse-saml-metadata",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ParseSamlMetadataResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListSamlCertificates: List SAML certificates.
@@ -4676,6 +4931,133 @@ func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...s
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/iam/v1alpha1/saml-certificates/" + fmt.Sprint(req.CertificateID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// EnableOrganizationScim:
+func (s *API) EnableOrganizationScim(req *EnableOrganizationScimRequest, opts ...scw.RequestOption) (*Scim, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/scim",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Scim
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteScim:
+func (s *API) DeleteScim(req *DeleteScimRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListScimTokens:
+func (s *API) ListScimTokens(req *ListScimTokensRequest, opts ...scw.RequestOption) (*ListScimTokensResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return nil, errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "/tokens",
+		Query:  query,
+	}
+
+	var resp ListScimTokensResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateScimToken:
+func (s *API) CreateScimToken(req *CreateScimTokenRequest, opts ...scw.RequestOption) (*CreateScimTokenResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.ScimID) == "" {
+		return nil, errors.New("field ScimID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/iam/v1alpha1/scim/" + fmt.Sprint(req.ScimID) + "/tokens",
+	}
+
+	var resp CreateScimTokenResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteScimToken:
+func (s *API) DeleteScimToken(req *DeleteScimTokenRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.TokenID) == "" {
+		return errors.New("field TokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/iam/v1alpha1/scim-tokens/" + fmt.Sprint(req.TokenID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)

@@ -381,6 +381,51 @@ func (enum *ListPlansRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListProductsRequestOrderBy string
+
+const (
+	ListProductsRequestOrderByCreatedAtAsc    = ListProductsRequestOrderBy("created_at_asc")
+	ListProductsRequestOrderByCreatedAtDesc   = ListProductsRequestOrderBy("created_at_desc")
+	ListProductsRequestOrderByDisplayNameAsc  = ListProductsRequestOrderBy("display_name_asc")
+	ListProductsRequestOrderByDisplayNameDesc = ListProductsRequestOrderBy("display_name_desc")
+	ListProductsRequestOrderByFamilyNameAsc   = ListProductsRequestOrderBy("family_name_asc")
+	ListProductsRequestOrderByFamilyNameDesc  = ListProductsRequestOrderBy("family_name_desc")
+)
+
+func (enum ListProductsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListProductsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListProductsRequestOrderBy) Values() []ListProductsRequestOrderBy {
+	return []ListProductsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"display_name_asc",
+		"display_name_desc",
+		"family_name_asc",
+		"family_name_desc",
+	}
+}
+
+func (enum ListProductsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListProductsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListProductsRequestOrderBy(ListProductsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListTokensRequestOrderBy string
 
 const (
@@ -757,6 +802,17 @@ type Plan struct {
 	MonthlyPrice uint32 `json:"monthly_price"`
 }
 
+// Product: product.
+type Product struct {
+	Name string `json:"name"`
+
+	DisplayName string `json:"display_name"`
+
+	FamilyName string `json:"family_name"`
+
+	ResourceTypes []string `json:"resource_types"`
+}
+
 // Token: Token.
 type Token struct {
 	// ID: ID of the token.
@@ -1106,7 +1162,7 @@ func (r *ListGrafanaProductDashboardsResponse) UnsafeAppend(res any) (uint64, er
 	return uint64(len(results.Dashboards)), nil
 }
 
-// ListGrafanaUsersResponse: Ouptut returned when listing Grafana users.
+// ListGrafanaUsersResponse: Output returned when listing Grafana users.
 type ListGrafanaUsersResponse struct {
 	// TotalCount: total count of Grafana users.
 	TotalCount uint64 `json:"total_count"`
@@ -1160,6 +1216,32 @@ func (r *ListPlansResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Plans = append(r.Plans, results.Plans...)
 	r.TotalCount += uint64(len(results.Plans))
 	return uint64(len(results.Plans)), nil
+}
+
+// ListProductsResponse: list products response.
+type ListProductsResponse struct {
+	ProductsList []*Product `json:"products_list"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListProductsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListProductsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListProductsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ProductsList = append(r.ProductsList, results.ProductsList...)
+	r.TotalCount += uint64(len(results.ProductsList))
+	return uint64(len(results.ProductsList)), nil
 }
 
 // ListTokensResponse: Response returned when listing tokens.
@@ -1292,15 +1374,6 @@ type RegionalAPIDisableAlertRulesRequest struct {
 	RuleIDs []string `json:"rule_ids"`
 }
 
-// RegionalAPIDisableManagedAlertsRequest: Disable the sending of managed alerts.
-type RegionalAPIDisableManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
-}
-
 // RegionalAPIEnableAlertManagerRequest: Enable the Alert manager.
 type RegionalAPIEnableAlertManagerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1320,15 +1393,6 @@ type RegionalAPIEnableAlertRulesRequest struct {
 
 	// RuleIDs: list of IDs of the rules to enable. If empty, enables all preconfigured rules.
 	RuleIDs []string `json:"rule_ids"`
-}
-
-// RegionalAPIEnableManagedAlertsRequest: Enable the sending of managed alerts.
-type RegionalAPIEnableManagedAlertsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
 }
 
 // RegionalAPIGetAlertManagerRequest: Get the Alert manager.
@@ -1445,6 +1509,22 @@ type RegionalAPIListDataSourcesRequest struct {
 
 	// Types: types to filter for (metrics, logs, traces), only data sources with matching types will be returned. If omitted, all types will be returned.
 	Types []DataSourceType `json:"-"`
+}
+
+// RegionalAPIListProductsRequest: List all Scaleway products that send metrics and/or logs to Cockpit.
+type RegionalAPIListProductsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of products to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for products in the response.
+	// Default value: created_at_asc
+	OrderBy ListProductsRequestOrderBy `json:"-"`
 }
 
 // RegionalAPIListTokensRequest: List tokens.
@@ -1588,7 +1668,8 @@ func (s *GlobalAPI) SyncGrafanaDataSources(req *GlobalAPISyncGrafanaDataSourcesR
 	return nil
 }
 
-// CreateGrafanaUser: Create a Grafana user to connect to your Cockpit's Grafana. Upon creation, your user password displays only once, so make sure that you save it.
+// Deprecated: CreateGrafanaUser: Create a Grafana user
+// Create a Grafana user to connect to your Cockpit's Grafana. Upon creation, your user password displays only once, so make sure that you save it.
 // Each Grafana user is associated with a role: viewer or editor. A viewer can only view dashboards, whereas an editor can create and edit dashboards. Note that the `admin` username is not available for creation.
 func (s *GlobalAPI) CreateGrafanaUser(req *GlobalAPICreateGrafanaUserRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
@@ -1617,7 +1698,8 @@ func (s *GlobalAPI) CreateGrafanaUser(req *GlobalAPICreateGrafanaUserRequest, op
 	return &resp, nil
 }
 
-// ListGrafanaUsers: List all Grafana users created in your Cockpit's Grafana. By default, the Grafana users returned in the list are ordered in ascending order.
+// Deprecated: ListGrafanaUsers: List Grafana users
+// List all Grafana users created in your Cockpit's Grafana. By default, the Grafana users returned in the list are ordered in ascending order.
 func (s *GlobalAPI) ListGrafanaUsers(req *GlobalAPIListGrafanaUsersRequest, opts ...scw.RequestOption) (*ListGrafanaUsersResponse, error) {
 	var err error
 
@@ -1652,7 +1734,8 @@ func (s *GlobalAPI) ListGrafanaUsers(req *GlobalAPIListGrafanaUsersRequest, opts
 	return &resp, nil
 }
 
-// DeleteGrafanaUser: Delete a Grafana user from your Cockpit's Grafana, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
+// Deprecated: DeleteGrafanaUser: Delete a Grafana user
+// Delete a Grafana user from your Cockpit's Grafana, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
 func (s *GlobalAPI) DeleteGrafanaUser(req *GlobalAPIDeleteGrafanaUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1681,7 +1764,8 @@ func (s *GlobalAPI) DeleteGrafanaUser(req *GlobalAPIDeleteGrafanaUserRequest, op
 	return nil
 }
 
-// ResetGrafanaUserPassword: Reset the password of a Grafana user, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
+// Deprecated: ResetGrafanaUserPassword: Reset a Grafana user password
+// Reset the password of a Grafana user, specified by the ID of the Project the Cockpit belongs to, and the ID of the Grafana user.
 // A new password regenerates and only displays once. Make sure that you save it.
 func (s *GlobalAPI) ResetGrafanaUserPassword(req *GlobalAPIResetGrafanaUserPasswordRequest, opts ...scw.RequestOption) (*GrafanaUser, error) {
 	var err error
@@ -1781,7 +1865,7 @@ func (s *GlobalAPI) GetGrafanaProductDashboard(req *GlobalAPIGetGrafanaProductDa
 }
 
 // Deprecated: ListPlans: Retrieve a list of available pricing plan types.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -1811,7 +1895,7 @@ func (s *GlobalAPI) ListPlans(req *GlobalAPIListPlansRequest, opts ...scw.Reques
 }
 
 // Deprecated: SelectPlan: Apply a pricing plan on a given Project. You must specify the ID of the pricing plan type. Note that you will be billed for the plan you apply.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -1840,7 +1924,7 @@ func (s *GlobalAPI) SelectPlan(req *GlobalAPISelectPlanRequest, opts ...scw.Requ
 }
 
 // Deprecated: GetCurrentPlan: Retrieve a pricing plan for the given Project, specified by the ID of the Project.
-// Deprecated: retention is now managed at the data source level.
+// Deprecated due to retention now being managed at the data source level.
 func (s *GlobalAPI) GetCurrentPlan(req *GlobalAPIGetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -2271,6 +2355,44 @@ func (s *RegionalAPI) DeleteToken(req *RegionalAPIDeleteTokenRequest, opts ...sc
 	return nil
 }
 
+// ListProducts: List all Scaleway products that send metrics and/or logs to Cockpit.
+func (s *RegionalAPI) ListProducts(req *RegionalAPIListProductsRequest, opts ...scw.RequestOption) (*ListProductsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/products",
+		Query:  query,
+	}
+
+	var resp ListProductsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // GetAlertManager: Retrieve information about the Alert manager which is unique per Project and region. By default the Alert manager is disabled.
 // The output returned displays a URL to access the Alert manager, and whether the Alert manager and managed alerts are enabled.
 func (s *RegionalAPI) GetAlertManager(req *RegionalAPIGetAlertManagerRequest, opts ...scw.RequestOption) (*AlertManager, error) {
@@ -2604,80 +2726,6 @@ func (s *RegionalAPI) ListAlerts(req *RegionalAPIListAlertsRequest, opts ...scw.
 	}
 
 	var resp ListAlertsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// EnableManagedAlerts: Enable the sending of managed alerts for the specified Project. Managed alerts are predefined alerts that apply to Scaleway recources integrated with Cockpit by default.
-func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/managed-alerts/enable",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AlertManager
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// DisableManagedAlerts: Disable the sending of managed alerts for the specified Project.
-func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsRequest, opts ...scw.RequestOption) (*AlertManager, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/alert-manager/managed-alerts/disable",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AlertManager
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

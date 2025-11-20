@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultWebhostingRetryInterval = 15 * time.Second
+	defaultWebhostingTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -39,6 +45,169 @@ var (
 	_ = parameter.AddToQuery
 	_ = namegenerator.GetRandomName
 )
+
+type BackupItemType string
+
+const (
+	// Default type returned when the backup item type is not specified.
+	BackupItemTypeUnknownBackupItemType = BackupItemType("unknown_backup_item_type")
+	// Complete system backup.
+	BackupItemTypeFull = BackupItemType("full")
+	// Backup item containing website-related files.
+	BackupItemTypeWeb = BackupItemType("web")
+	// Backup item for mail service data.
+	BackupItemTypeMail = BackupItemType("mail")
+	// Backup item for databases.
+	BackupItemTypeDb = BackupItemType("db")
+	// Backup item for database user accounts.
+	BackupItemTypeDbUser = BackupItemType("db_user")
+	// Backup item for FTP user accounts.
+	BackupItemTypeFtpUser = BackupItemType("ftp_user")
+	// Backup item for DNS zone configurations.
+	BackupItemTypeDNSZone = BackupItemType("dns_zone")
+	// Backup item for scheduled cron jobs.
+	BackupItemTypeCronJob = BackupItemType("cron_job")
+	// Backup item for SSL certificates.
+	BackupItemTypeSslCertificate = BackupItemType("ssl_certificate")
+)
+
+func (enum BackupItemType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BackupItemTypeUnknownBackupItemType)
+	}
+	return string(enum)
+}
+
+func (enum BackupItemType) Values() []BackupItemType {
+	return []BackupItemType{
+		"unknown_backup_item_type",
+		"full",
+		"web",
+		"mail",
+		"db",
+		"db_user",
+		"ftp_user",
+		"dns_zone",
+		"cron_job",
+		"ssl_certificate",
+	}
+}
+
+func (enum BackupItemType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackupItemType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackupItemType(BackupItemType(tmp).String())
+	return nil
+}
+
+type BackupStatus string
+
+const (
+	// Default status returned when the backup status is not specified.
+	BackupStatusUnknownBackupStatus = BackupStatus("unknown_backup_status")
+	// Backup is active and available.
+	BackupStatusActive = BackupStatus("active")
+	// Backup is locked and cannot be changed.
+	BackupStatusLocked = BackupStatus("locked")
+	// Backup is currently disabled.
+	BackupStatusDisabled = BackupStatus("disabled")
+	// Backup is incomplete, damaged, or corrupted.
+	BackupStatusDamaged = BackupStatus("damaged")
+	// Backup is being restored.
+	BackupStatusRestoring = BackupStatus("restoring")
+)
+
+func (enum BackupStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BackupStatusUnknownBackupStatus)
+	}
+	return string(enum)
+}
+
+func (enum BackupStatus) Values() []BackupStatus {
+	return []BackupStatus{
+		"unknown_backup_status",
+		"active",
+		"locked",
+		"disabled",
+		"damaged",
+		"restoring",
+	}
+}
+
+func (enum BackupStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BackupStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BackupStatus(BackupStatus(tmp).String())
+	return nil
+}
+
+type CheckFreeDomainAvailabilityResponseUnavailableReason string
+
+const (
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonUnknown                 = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_unknown")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonAlreadyUsed             = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_already_used")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonTooShort                = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_too_short")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonTooLong                 = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_too_long")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonInvalidCharacters       = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_invalid_characters")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonStartsOrEndsWithHyphen  = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_starts_or_ends_with_hyphen")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonContainsDots            = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_contains_dots")
+	CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonContainsReservedKeyword = CheckFreeDomainAvailabilityResponseUnavailableReason("unavailable_reason_contains_reserved_keyword")
+)
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CheckFreeDomainAvailabilityResponseUnavailableReasonUnavailableReasonUnknown)
+	}
+	return string(enum)
+}
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) Values() []CheckFreeDomainAvailabilityResponseUnavailableReason {
+	return []CheckFreeDomainAvailabilityResponseUnavailableReason{
+		"unavailable_reason_unknown",
+		"unavailable_reason_already_used",
+		"unavailable_reason_too_short",
+		"unavailable_reason_too_long",
+		"unavailable_reason_invalid_characters",
+		"unavailable_reason_starts_or_ends_with_hyphen",
+		"unavailable_reason_contains_dots",
+		"unavailable_reason_contains_reserved_keyword",
+	}
+}
+
+func (enum CheckFreeDomainAvailabilityResponseUnavailableReason) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CheckFreeDomainAvailabilityResponseUnavailableReason) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CheckFreeDomainAvailabilityResponseUnavailableReason(CheckFreeDomainAvailabilityResponseUnavailableReason(tmp).String())
+	return nil
+}
 
 type DNSRecordStatus string
 
@@ -502,6 +671,45 @@ func (enum *HostingStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListBackupsRequestOrderBy string
+
+const (
+	// Order by backup creation date, most recent first (default).
+	ListBackupsRequestOrderByCreatedAtDesc = ListBackupsRequestOrderBy("created_at_desc")
+	// Order by backup creation date, oldest first.
+	ListBackupsRequestOrderByCreatedAtAsc = ListBackupsRequestOrderBy("created_at_asc")
+)
+
+func (enum ListBackupsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListBackupsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListBackupsRequestOrderBy) Values() []ListBackupsRequestOrderBy {
+	return []ListBackupsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListBackupsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListBackupsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListBackupsRequestOrderBy(ListBackupsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListDatabaseUsersRequestOrderBy string
 
 const (
@@ -805,17 +1013,18 @@ func (enum *NameserverStatus) UnmarshalJSON(data []byte) error {
 type OfferOptionName string
 
 const (
-	OfferOptionNameUnknownName    = OfferOptionName("unknown_name")
-	OfferOptionNameDomainCount    = OfferOptionName("domain_count")
-	OfferOptionNameEmailCount     = OfferOptionName("email_count")
-	OfferOptionNameStorageGb      = OfferOptionName("storage_gb")
-	OfferOptionNameVcpuCount      = OfferOptionName("vcpu_count")
-	OfferOptionNameRAMGb          = OfferOptionName("ram_gb")
-	OfferOptionNameBackup         = OfferOptionName("backup")
-	OfferOptionNameDedicatedIP    = OfferOptionName("dedicated_ip")
-	OfferOptionNameEmailStorageGb = OfferOptionName("email_storage_gb")
-	OfferOptionNameDatabaseCount  = OfferOptionName("database_count")
-	OfferOptionNameSupport        = OfferOptionName("support")
+	OfferOptionNameUnknownName     = OfferOptionName("unknown_name")
+	OfferOptionNameDomainCount     = OfferOptionName("domain_count")
+	OfferOptionNameEmailCount      = OfferOptionName("email_count")
+	OfferOptionNameStorageGb       = OfferOptionName("storage_gb")
+	OfferOptionNameVcpuCount       = OfferOptionName("vcpu_count")
+	OfferOptionNameRAMGb           = OfferOptionName("ram_gb")
+	OfferOptionNameBackup          = OfferOptionName("backup")
+	OfferOptionNameDedicatedIP     = OfferOptionName("dedicated_ip")
+	OfferOptionNameEmailStorageGb  = OfferOptionName("email_storage_gb")
+	OfferOptionNameDatabaseCount   = OfferOptionName("database_count")
+	OfferOptionNameSupport         = OfferOptionName("support")
+	OfferOptionNameAdditionalEmail = OfferOptionName("additional_email")
 )
 
 func (enum OfferOptionName) String() string {
@@ -839,6 +1048,7 @@ func (enum OfferOptionName) Values() []OfferOptionName {
 		"email_storage_gb",
 		"database_count",
 		"support",
+		"additional_email",
 	}
 }
 
@@ -935,6 +1145,81 @@ func (enum *PlatformPlatformGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ProgressStatus string
+
+const (
+	// Default status returned when no specific progress status is defined.
+	ProgressStatusUnknownStatus = ProgressStatus("unknown_status")
+	// Progress item currently in the pending queue.
+	ProgressStatusPending = ProgressStatus("pending")
+	// Progress item that is being processed.
+	ProgressStatusProcessing = ProgressStatus("processing")
+	// Progress item fully completed.
+	ProgressStatusCompleted = ProgressStatus("completed")
+	// Progress item partially completed.
+	ProgressStatusPartiallyCompleted = ProgressStatus("partially_completed")
+	// Progress item that failed during execution.
+	ProgressStatusFailed = ProgressStatus("failed")
+	// Progress item manually or automatically aborted.
+	ProgressStatusAborted = ProgressStatus("aborted")
+	// Progress item that did not reach completion.
+	ProgressStatusNeverFinished = ProgressStatus("never_finished")
+)
+
+func (enum ProgressStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ProgressStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ProgressStatus) Values() []ProgressStatus {
+	return []ProgressStatus{
+		"unknown_status",
+		"pending",
+		"processing",
+		"completed",
+		"partially_completed",
+		"failed",
+		"aborted",
+		"never_finished",
+	}
+}
+
+func (enum ProgressStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ProgressStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ProgressStatus(ProgressStatus(tmp).String())
+	return nil
+}
+
+// AutoConfigDomainDNS: auto config domain dns.
+type AutoConfigDomainDNS struct {
+	// Nameservers: whether or not to synchronize domain nameservers.
+	Nameservers bool `json:"nameservers"`
+
+	// WebRecords: whether or not to synchronize web records.
+	WebRecords bool `json:"web_records"`
+
+	// MailRecords: whether or not to synchronize mail records.
+	MailRecords bool `json:"mail_records"`
+
+	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
+	AllRecords bool `json:"all_records"`
+
+	// None: no automatic domain configuration. Users must configure their domain for the Web Hosting to work.
+	None bool `json:"none"`
+}
+
 // PlatformControlPanelURLs: platform control panel ur ls.
 type PlatformControlPanelURLs struct {
 	// Dashboard: URL to connect to the hosting control panel dashboard.
@@ -942,6 +1227,38 @@ type PlatformControlPanelURLs struct {
 
 	// Webmail: URL to connect to the hosting Webmail interface.
 	Webmail string `json:"webmail"`
+}
+
+// HostingDomainCustomDomain: hosting domain custom domain.
+type HostingDomainCustomDomain struct {
+	// Domain: custom domain linked to the hosting plan.
+	Domain string `json:"domain"`
+
+	// DomainStatus: status of the custom domain verification.
+	// Default value: unknown_status
+	DomainStatus DomainStatus `json:"domain_status"`
+
+	// DNSStatus: status of the DNS configuration for the custom domain.
+	// Default value: unknown_status
+	DNSStatus DNSRecordsStatus `json:"dns_status"`
+
+	// AutoConfigDomainDNS: indicates whether to auto-configure DNS for this domain.
+	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
+}
+
+// ControlPanel: control panel.
+type ControlPanel struct {
+	// Name: control panel name.
+	Name string `json:"name"`
+
+	// Available: define if the control panel type is available to order.
+	Available bool `json:"available"`
+
+	// LogoURL: URL of the control panel's logo.
+	LogoURL string `json:"logo_url"`
+
+	// AvailableLanguages: list of available languages for the control panel.
+	AvailableLanguages []std.LanguageCode `json:"available_languages"`
 }
 
 // OfferOption: offer option.
@@ -982,29 +1299,52 @@ type PlatformControlPanel struct {
 	URLs *PlatformControlPanelURLs `json:"urls"`
 }
 
+// BackupItem: backup item.
+type BackupItem struct {
+	// ID: ID of the item.
+	ID string `json:"id"`
+
+	// Name: name of the item (e.g., `database name`, `email address`).
+	Name string `json:"name"`
+
+	// Type: type of the item (e.g., email, database, FTP).
+	// Default value: unknown_backup_item_type
+	Type BackupItemType `json:"type"`
+
+	// Size: size of the item in bytes.
+	Size scw.Size `json:"size"`
+
+	// Status: status of the item. Available values are `active`, `damaged`, and `restoring`.
+	// Default value: unknown_backup_status
+	Status BackupStatus `json:"status"`
+
+	// CreatedAt: date and time at which this item was backed up.
+	CreatedAt *time.Time `json:"created_at"`
+}
+
+// HostingDomain: hosting domain.
+type HostingDomain struct {
+	// Subdomain: optional free subdomain linked to the Web Hosting plan.
+	Subdomain string `json:"subdomain"`
+
+	// CustomDomain: optional custom domain linked to the Web Hosting plan.
+	CustomDomain *HostingDomainCustomDomain `json:"custom_domain"`
+}
+
+// FreeDomain: free domain.
+type FreeDomain struct {
+	// Slug: custom prefix used for the free domain.
+	Slug string `json:"slug"`
+
+	// RootDomain: free root domain provided by Web Hosting, selected from the list returned by `ListFreeRootDomains`.
+	RootDomain string `json:"root_domain"`
+}
+
 // CreateDatabaseRequestUser: create database request user.
 type CreateDatabaseRequestUser struct {
 	Username string `json:"username"`
 
 	Password string `json:"password"`
-}
-
-// AutoConfigDomainDNS: auto config domain dns.
-type AutoConfigDomainDNS struct {
-	// Nameservers: whether or not to synchronize domain nameservers.
-	Nameservers bool `json:"nameservers"`
-
-	// WebRecords: whether or not to synchronize web records.
-	WebRecords bool `json:"web_records"`
-
-	// MailRecords: whether or not to synchronize mail records.
-	MailRecords bool `json:"mail_records"`
-
-	// AllRecords: whether or not to synchronize all types of records. Takes priority over the other fields.
-	AllRecords bool `json:"all_records"`
-
-	// None: no automatic domain configuration. Users must configure their domain for the Web Hosting to work.
-	None bool `json:"none"`
 }
 
 // CreateHostingRequestDomainConfiguration: create hosting request domain configuration.
@@ -1118,6 +1458,12 @@ type Offer struct {
 	// QuotaWarning: defines a warning if the maximum value for an option in the offer is exceeded.
 	// Default value: unknown_warning
 	QuotaWarning OfferOptionWarning `json:"quota_warning"`
+
+	// ControlPanels: lists available control panels for the specified offer.
+	ControlPanels []*ControlPanel `json:"control_panels"`
+
+	// Region: region where the offer is hosted.
+	Region scw.Region `json:"region"`
 }
 
 // Platform: platform.
@@ -1142,19 +1488,33 @@ type Platform struct {
 	ControlPanel *PlatformControlPanel `json:"control_panel"`
 }
 
-// ControlPanel: control panel.
-type ControlPanel struct {
-	// Name: control panel name.
-	Name string `json:"name"`
+// BackupItemGroup: backup item group.
+type BackupItemGroup struct {
+	// Type: type of items (e.g., email, database, FTP).
+	// Default value: unknown_backup_item_type
+	Type BackupItemType `json:"type"`
 
-	// Available: define if the control panel type is available to order.
-	Available bool `json:"available"`
+	// Items: list of individual backup items of this type.
+	Items []*BackupItem `json:"items"`
+}
 
-	// LogoURL: URL of the control panel's logo.
-	LogoURL string `json:"logo_url"`
+// Backup: backup.
+type Backup struct {
+	// ID: ID of the backup.
+	ID string `json:"id"`
 
-	// AvailableLanguages: list of available languages for the control panel.
-	AvailableLanguages []std.LanguageCode `json:"available_languages"`
+	// Size: total size of the backup in bytes.
+	Size scw.Size `json:"size"`
+
+	// CreatedAt: creation date of the backup.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Status: status of the backup. Available values are `active`, `locked`, and `restoring`.
+	// Default value: unknown_backup_status
+	Status BackupStatus `json:"status"`
+
+	// TotalItems: total number of restorable items in the backup.
+	TotalItems uint32 `json:"total_items"`
 }
 
 // DatabaseUser: database user.
@@ -1202,8 +1562,8 @@ type HostingSummary struct {
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
-	// Domain: main domain associated with the Web Hosting plan.
-	Domain string `json:"domain"`
+	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
+	Domain *string `json:"domain,omitempty"`
 
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
@@ -1215,12 +1575,15 @@ type HostingSummary struct {
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
 
-	// DomainStatus: main domain status of the Web Hosting plan.
+	// Deprecated: DomainStatus: main domain status of the Web Hosting plan.
 	// Default value: unknown_status
-	DomainStatus DomainStatus `json:"domain_status"`
+	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
+
+	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
+	DomainInfo *HostingDomain `json:"domain_info"`
 }
 
 // MailAccount: mail account.
@@ -1230,6 +1593,22 @@ type MailAccount struct {
 
 	// Username: username part address of the mail account address.
 	Username string `json:"username"`
+}
+
+// ProgressSummary: progress summary.
+type ProgressSummary struct {
+	// ID: ID of the progress.
+	ID string `json:"id"`
+
+	// BackupItemsCount: total number of backup items included in the progress.
+	BackupItemsCount uint64 `json:"backup_items_count"`
+
+	// Percentage: completion percentage of the progress.
+	Percentage uint64 `json:"percentage"`
+
+	// Status: current status of the progress operation.
+	// Default value: unknown_status
+	Status ProgressStatus `json:"status"`
 }
 
 // Website: website.
@@ -1264,6 +1643,107 @@ type DomainAvailability struct {
 
 	// Price: price for registering the domain.
 	Price *scw.Money `json:"price"`
+}
+
+// BackupAPIGetBackupRequest: backup api get backup request.
+type BackupAPIGetBackupRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to retrieve.
+	BackupID string `json:"-"`
+}
+
+// BackupAPIGetProgressRequest: backup api get progress request.
+type BackupAPIGetProgressRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: ID of the hosting associated with the progress.
+	HostingID string `json:"-"`
+
+	// ProgressID: ID of the progress to retrieve.
+	ProgressID string `json:"-"`
+}
+
+// BackupAPIListBackupItemsRequest: backup api list backup items request.
+type BackupAPIListBackupItemsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to list items from.
+	BackupID string `json:"backup_id"`
+}
+
+// BackupAPIListBackupsRequest: backup api list backups request.
+type BackupAPIListBackupsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// Page: page number to retrieve.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of backups to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order in which to return the list of backups.
+	// Default value: created_at_desc
+	OrderBy ListBackupsRequestOrderBy `json:"-"`
+}
+
+// BackupAPIListRecentProgressesRequest: backup api list recent progresses request.
+type BackupAPIListRecentProgressesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: ID of the hosting linked to the progress.
+	HostingID string `json:"-"`
+}
+
+// BackupAPIRestoreBackupItemsRequest: backup api restore backup items request.
+type BackupAPIRestoreBackupItemsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// ItemIDs: list of backup item IDs to restore individually.
+	ItemIDs []string `json:"item_ids"`
+}
+
+// BackupAPIRestoreBackupRequest: backup api restore backup request.
+type BackupAPIRestoreBackupRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: UUID of the hosting account.
+	HostingID string `json:"-"`
+
+	// BackupID: ID of the backup to fully restore.
+	BackupID string `json:"-"`
+}
+
+// CheckFreeDomainAvailabilityResponse: check free domain availability response.
+type CheckFreeDomainAvailabilityResponse struct {
+	// FreeDomain: the free domain that was checked.
+	FreeDomain *FreeDomain `json:"free_domain"`
+
+	// IsAvailable: whether the free domain is available.
+	IsAvailable bool `json:"is_available"`
+
+	// Reason: reason the domain is unavailable, if applicable.
+	// Default value: unavailable_reason_unknown
+	Reason *CheckFreeDomainAvailabilityResponseUnavailableReason `json:"reason"`
 }
 
 // CheckUserOwnsDomainResponse: check user owns domain response.
@@ -1567,6 +2047,30 @@ type Domain struct {
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
+// FreeDomainAPICheckFreeDomainAvailabilityRequest: free domain api check free domain availability request.
+type FreeDomainAPICheckFreeDomainAvailabilityRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Slug: custom prefix used for the free domain.
+	Slug string `json:"slug"`
+
+	// RootDomain: free root domain provided by Web Hosting, selected from the list returned by `ListFreeRootDomains`.
+	RootDomain string `json:"root_domain"`
+}
+
+// FreeDomainAPIListFreeRootDomainsRequest: free domain api list free root domains request.
+type FreeDomainAPIListFreeRootDomainsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number to return, from the paginated results (must be a positive integer).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of free root domains to return (must be a positive integer lower or equal to 100).
+	PageSize *uint32 `json:"-"`
+}
+
 // FtpAccountAPIChangeFtpAccountPasswordRequest: ftp account api change ftp account password request.
 type FtpAccountAPIChangeFtpAccountPasswordRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1652,8 +2156,8 @@ type Hosting struct {
 	// Default value: unknown_status
 	Status HostingStatus `json:"status"`
 
-	// Domain: main domain associated with the Web Hosting plan.
-	Domain string `json:"domain"`
+	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
+	Domain *string `json:"domain,omitempty"`
 
 	// Offer: details of the Web Hosting plan offer and options.
 	Offer *Offer `json:"offer"`
@@ -1664,7 +2168,7 @@ type Hosting struct {
 	// Tags: list of tags associated with the Web Hosting plan.
 	Tags []string `json:"tags"`
 
-	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
+	// Deprecated: DNSStatus: DNS status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
 	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
 
@@ -1677,12 +2181,27 @@ type Hosting struct {
 	// User: details of the hosting user.
 	User *HostingUser `json:"user"`
 
-	// DomainStatus: main domain status of the Web Hosting plan.
+	// Deprecated: DomainStatus: main domain status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
-	DomainStatus DomainStatus `json:"domain_status"`
+	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
+
+	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
+	DomainInfo *HostingDomain `json:"domain_info"`
+}
+
+// HostingAPIAddCustomDomainRequest: hosting api add custom domain request.
+type HostingAPIAddCustomDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the custom domain is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the custom domain name to attach to the hosting.
+	DomainName string `json:"domain_name"`
 }
 
 // HostingAPICreateHostingRequest: hosting api create hosting request.
@@ -1704,6 +2223,9 @@ type HostingAPICreateHostingRequest struct {
 
 	// Domain: domain name to link to the Web Hosting plan. You must already own this domain name, and have completed the DNS validation process beforehand.
 	Domain string `json:"domain"`
+
+	// Subdomain: the name prefix to use as a free subdomain (for example, `mysite`) assigned to the Web Hosting plan. The full domain will be automatically created by adding it to the fixed base domain (e.g. `mysite.scw.site`). You do not need to include the base domain yourself.
+	Subdomain *string `json:"subdomain,omitempty"`
 
 	// OfferOptions: list of the Web Hosting plan options IDs with their quantities.
 	OfferOptions []*OfferOptionRequest `json:"offer_options"`
@@ -1790,6 +2312,21 @@ type HostingAPIListHostingsRequest struct {
 
 	// ControlPanels: name of the control panel to filter for, only Web Hosting plans from this control panel will be returned.
 	ControlPanels []string `json:"-"`
+
+	// Subdomain: optional free subdomain linked to the Web Hosting plan.
+	Subdomain *string `json:"-"`
+}
+
+// HostingAPIRemoveCustomDomainRequest: hosting api remove custom domain request.
+type HostingAPIRemoveCustomDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the custom domain is detached from.
+	HostingID string `json:"-"`
+
+	// DomainName: the custom domain name to detach from the hosting.
+	DomainName string `json:"domain_name"`
 }
 
 // HostingAPIResetHostingPasswordRequest: hosting api reset hosting password request.
@@ -1823,6 +2360,62 @@ type HostingAPIUpdateHostingRequest struct {
 
 	// Protected: whether the hosting is protected or not.
 	Protected *bool `json:"protected,omitempty"`
+}
+
+// ListBackupItemsResponse: list backup items response.
+type ListBackupItemsResponse struct {
+	// TotalCount: total number of backup item groups.
+	TotalCount uint64 `json:"total_count"`
+
+	// Groups: list of backup item groups categorized by type.
+	Groups []*BackupItemGroup `json:"groups"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBackupItemsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBackupItemsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListBackupItemsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Groups = append(r.Groups, results.Groups...)
+	r.TotalCount += uint64(len(results.Groups))
+	return uint64(len(results.Groups)), nil
+}
+
+// ListBackupsResponse: list backups response.
+type ListBackupsResponse struct {
+	// TotalCount: total number of available backups.
+	TotalCount uint64 `json:"total_count"`
+
+	// Backups: list of available backups.
+	Backups []*Backup `json:"backups"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListBackupsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListBackupsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListBackupsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Backups = append(r.Backups, results.Backups...)
+	r.TotalCount += uint64(len(results.Backups))
+	return uint64(len(results.Backups)), nil
 }
 
 // ListControlPanelsResponse: list control panels response.
@@ -1907,6 +2500,34 @@ func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Databases = append(r.Databases, results.Databases...)
 	r.TotalCount += uint64(len(results.Databases))
 	return uint64(len(results.Databases)), nil
+}
+
+// ListFreeRootDomainsResponse: list free root domains response.
+type ListFreeRootDomainsResponse struct {
+	// RootDomains: list of free root domains available for the Web Hosting.
+	RootDomains []string `json:"root_domains"`
+
+	// TotalCount: total number of free root domains available.
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFreeRootDomainsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFreeRootDomainsResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListFreeRootDomainsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.RootDomains = append(r.RootDomains, results.RootDomains...)
+	r.TotalCount += uint32(len(results.RootDomains))
+	return uint32(len(results.RootDomains)), nil
 }
 
 // ListFtpAccountsResponse: list ftp accounts response.
@@ -2019,6 +2640,12 @@ func (r *ListOffersResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Offers = append(r.Offers, results.Offers...)
 	r.TotalCount += uint64(len(results.Offers))
 	return uint64(len(results.Offers)), nil
+}
+
+// ListRecentProgressesResponse: list recent progresses response.
+type ListRecentProgressesResponse struct {
+	// Progresses: list of summarized progress entries.
+	Progresses []*ProgressSummary `json:"progresses"`
 }
 
 // ListWebsitesResponse: list websites response.
@@ -2144,6 +2771,22 @@ type OfferAPIListOffersRequest struct {
 	ControlPanels []string `json:"-"`
 }
 
+// Progress: progress.
+type Progress struct {
+	// ID: ID of the progress.
+	ID string `json:"id"`
+
+	// BackupItemGroups: groups of backup items included in this progress.
+	BackupItemGroups []*BackupItemGroup `json:"backup_item_groups"`
+
+	// Percentage: completion percentage of the progress.
+	Percentage uint64 `json:"percentage"`
+
+	// Status: current status of the progress operation.
+	// Default value: unknown_status
+	Status ProgressStatus `json:"status"`
+}
+
 // ResetHostingPasswordResponse: reset hosting password response.
 type ResetHostingPasswordResponse struct {
 	// Deprecated: OneTimePassword: new temporary password (deprecated, use password_b64 instead).
@@ -2168,6 +2811,18 @@ type ResourceSummary struct {
 	WebsitesCount uint32 `json:"websites_count"`
 }
 
+// RestoreBackupItemsResponse: restore backup items response.
+type RestoreBackupItemsResponse struct {
+	// ProgressID: identifier used to track the item restoration progress.
+	ProgressID string `json:"progress_id"`
+}
+
+// RestoreBackupResponse: restore backup response.
+type RestoreBackupResponse struct {
+	// ProgressID: identifier used to track the backup restoration progress.
+	ProgressID string `json:"progress_id"`
+}
+
 // SearchDomainsResponse: search domains response.
 type SearchDomainsResponse struct {
 	// DomainsAvailable: list of domains availability.
@@ -2178,6 +2833,30 @@ type SearchDomainsResponse struct {
 type Session struct {
 	// URL: logged user's session URL.
 	URL string `json:"url"`
+}
+
+// WebsiteAPICreateWebsiteRequest: website api create website request.
+type WebsiteAPICreateWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the new domain name or subdomain to use for the website.
+	DomainName string `json:"domain_name"`
+}
+
+// WebsiteAPIDeleteWebsiteRequest: website api delete website request.
+type WebsiteAPIDeleteWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is detached from.
+	HostingID string `json:"-"`
+
+	// DomainName: the new domain name or subdomain attached to the website.
+	DomainName string `json:"-"`
 }
 
 // WebsiteAPIListWebsitesRequest: website api list websites request.
@@ -2197,6 +2876,325 @@ type WebsiteAPIListWebsitesRequest struct {
 	// OrderBy: sort order for Web Hosting websites in the response.
 	// Default value: domain_asc
 	OrderBy ListWebsitesRequestOrderBy `json:"-"`
+}
+
+// This API allows you to list and restore backups for your cPanel and WordPress Web Hosting service.
+type BackupAPI struct {
+	client *scw.Client
+}
+
+// NewBackupAPI returns a BackupAPI object from a Scaleway client.
+func NewBackupAPI(client *scw.Client) *BackupAPI {
+	return &BackupAPI{
+		client: client,
+	}
+}
+
+func (s *BackupAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// ListBackups: List all available backups for a hosting account.
+func (s *BackupAPI) ListBackups(req *BackupAPIListBackupsRequest, opts ...scw.RequestOption) (*ListBackupsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups",
+		Query:  query,
+	}
+
+	var resp ListBackupsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetBackup: Get info about a backup specified by the backup ID.
+func (s *BackupAPI) GetBackup(req *BackupAPIGetBackupRequest, opts ...scw.RequestOption) (*Backup, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackupID) == "" {
+		return nil, errors.New("field BackupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups/" + fmt.Sprint(req.BackupID) + "",
+	}
+
+	var resp Backup
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForBackupRequest is used by WaitForBackup method.
+type WaitForBackupRequest struct {
+	Region        scw.Region
+	HostingID     string
+	BackupID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBackup waits for the Backup to reach a terminal state.
+func (s *BackupAPI) WaitForBackup(req *WaitForBackupRequest, opts ...scw.RequestOption) (*Backup, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BackupStatus]struct{}{
+		BackupStatusRestoring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetBackup(&BackupAPIGetBackupRequest{
+				Region:    req.Region,
+				HostingID: req.HostingID,
+				BackupID:  req.BackupID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Backup failed")
+	}
+
+	return res.(*Backup), nil
+}
+
+// RestoreBackup: Restore an entire backup to your hosting environment.
+func (s *BackupAPI) RestoreBackup(req *BackupAPIRestoreBackupRequest, opts ...scw.RequestOption) (*RestoreBackupResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.BackupID) == "" {
+		return nil, errors.New("field BackupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backups/" + fmt.Sprint(req.BackupID) + "/restore",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RestoreBackupResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListBackupItems: List items within a specific backup, grouped by type.
+func (s *BackupAPI) ListBackupItems(req *BackupAPIListBackupItemsRequest, opts ...scw.RequestOption) (*ListBackupItemsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "backup_id", req.BackupID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/backup-items",
+		Query:  query,
+	}
+
+	var resp ListBackupItemsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RestoreBackupItems: Restore specific items from a backup (e.g., a database or mailbox).
+func (s *BackupAPI) RestoreBackupItems(req *BackupAPIRestoreBackupItemsRequest, opts ...scw.RequestOption) (*RestoreBackupItemsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/restore-backup-items",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RestoreBackupItemsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetProgress: Retrieve detailed information about a specific progress by its ID.
+func (s *BackupAPI) GetProgress(req *BackupAPIGetProgressRequest, opts ...scw.RequestOption) (*Progress, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ProgressID) == "" {
+		return nil, errors.New("field ProgressID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/progresses/" + fmt.Sprint(req.ProgressID) + "",
+	}
+
+	var resp Progress
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListRecentProgresses: List recent progresses associated with a specific backup, grouped by type.
+func (s *BackupAPI) ListRecentProgresses(req *BackupAPIListRecentProgressesRequest, opts ...scw.RequestOption) (*ListRecentProgressesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/progresses",
+	}
+
+	var resp ListRecentProgressesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // This API allows you to manage your Web Hosting services.
@@ -2731,7 +3729,7 @@ func (s *DnsAPI) GetDomainDNSRecords(req *DNSAPIGetDomainDNSRecordsRequest, opts
 	return &resp, nil
 }
 
-// CheckUserOwnsDomain: Check whether you own this domain or not.
+// Deprecated: CheckUserOwnsDomain: Check whether you own this domain or not.
 func (s *DnsAPI) CheckUserOwnsDomain(req *DNSAPICheckUserOwnsDomainRequest, opts ...scw.RequestOption) (*CheckUserOwnsDomainResponse, error) {
 	var err error
 
@@ -2885,6 +3883,55 @@ func (s *DnsAPI) GetDomain(req *DNSAPIGetDomainRequest, opts ...scw.RequestOptio
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	Region        scw.Region
+	DomainName    string
+	ProjectID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *DnsAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusValidating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetDomain(&DNSAPIGetDomainRequest{
+				Region:     req.Region,
+				DomainName: req.DomainName,
+				ProjectID:  req.ProjectID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // This API allows you to manage your offer for your Web Hosting services.
 type OfferAPI struct {
 	client *scw.Client
@@ -3018,6 +4065,7 @@ func (s *HostingAPI) ListHostings(req *HostingAPIListHostingsRequest, opts ...sc
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "control_panels", req.ControlPanels)
+	parameter.AddToQuery(query, "subdomain", req.Subdomain)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3067,6 +4115,56 @@ func (s *HostingAPI) GetHosting(req *HostingAPIGetHostingRequest, opts ...scw.Re
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForHostingRequest is used by WaitForHosting method.
+type WaitForHostingRequest struct {
+	Region        scw.Region
+	HostingID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForHosting waits for the Hosting to reach a terminal state.
+func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
+	timeout := defaultWebhostingTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultWebhostingRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[HostingStatus]struct{}{
+		HostingStatusDelivering: {},
+		HostingStatusDeleting:   {},
+		HostingStatusMigrating:  {},
+		HostingStatusUpdating:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetHosting(&HostingAPIGetHostingRequest{
+				Region:    req.Region,
+				HostingID: req.HostingID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Hosting failed")
+	}
+
+	return res.(*Hosting), nil
 }
 
 // UpdateHosting: Update the details of one of your existing Web Hosting plans, specified by its `hosting_id`. You can update parameters including the contact email address, tags, options and offer.
@@ -3231,6 +4329,163 @@ func (s *HostingAPI) GetResourceSummary(req *HostingAPIGetResourceSummaryRequest
 	}
 
 	var resp ResourceSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// AddCustomDomain: Attach a custom domain to a webhosting as an alias to the main domain.
+func (s *HostingAPI) AddCustomDomain(req *HostingAPIAddCustomDomainRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/add-custom-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RemoveCustomDomain: Detach a custom domain from a webhosting.
+func (s *HostingAPI) RemoveCustomDomain(req *HostingAPIRemoveCustomDomainRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/remove-custom-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// This API allows you to list and check a free domain's validity.
+type FreeDomainAPI struct {
+	client *scw.Client
+}
+
+// NewFreeDomainAPI returns a FreeDomainAPI object from a Scaleway client.
+func NewFreeDomainAPI(client *scw.Client) *FreeDomainAPI {
+	return &FreeDomainAPI{
+		client: client,
+	}
+}
+
+func (s *FreeDomainAPI) Regions() []scw.Region {
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+}
+
+// CheckFreeDomainAvailability: Check whether a given slug and free domain combination is available.
+func (s *FreeDomainAPI) CheckFreeDomainAvailability(req *FreeDomainAPICheckFreeDomainAvailabilityRequest, opts ...scw.RequestOption) (*CheckFreeDomainAvailabilityResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/free-domains/check-availability",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CheckFreeDomainAvailabilityResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListFreeRootDomains: Retrieve the list of free root domains available for a Web Hosting.
+func (s *FreeDomainAPI) ListFreeRootDomains(req *FreeDomainAPIListFreeRootDomainsRequest, opts ...scw.RequestOption) (*ListFreeRootDomainsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/free-domains/root-domains",
+		Query:  query,
+	}
+
+	var resp ListFreeRootDomainsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3632,4 +4887,73 @@ func (s *WebsiteAPI) ListWebsites(req *WebsiteAPIListWebsitesRequest, opts ...sc
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// CreateWebsite: Create a new website and attach it to a webhosting.
+func (s *WebsiteAPI) CreateWebsite(req *WebsiteAPICreateWebsiteRequest, opts ...scw.RequestOption) (*Website, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Website
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteWebsite: Delete a website from a webhosting.
+func (s *WebsiteAPI) DeleteWebsite(req *WebsiteAPIDeleteWebsiteRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainName) == "" {
+		return errors.New("field DomainName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites/" + fmt.Sprint(req.DomainName) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }

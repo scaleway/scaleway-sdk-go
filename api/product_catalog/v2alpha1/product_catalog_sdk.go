@@ -54,6 +54,10 @@ const (
 	ListPublicCatalogProductsRequestProductTypeDedibox = ListPublicCatalogProductsRequestProductType("dedibox")
 	// Include the Block Storage information in the response.
 	ListPublicCatalogProductsRequestProductTypeBlockStorage = ListPublicCatalogProductsRequestProductType("block_storage")
+	// Include the Object Storage information in the response.
+	ListPublicCatalogProductsRequestProductTypeObjectStorage = ListPublicCatalogProductsRequestProductType("object_storage")
+	// Include the Managed Inference information in the response.
+	ListPublicCatalogProductsRequestProductTypeManagedInference = ListPublicCatalogProductsRequestProductType("managed_inference")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -72,6 +76,8 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"elastic_metal",
 		"dedibox",
 		"block_storage",
+		"object_storage",
+		"managed_inference",
 	}
 }
 
@@ -87,6 +93,66 @@ func (enum *ListPublicCatalogProductsRequestProductType) UnmarshalJSON(data []by
 	}
 
 	*enum = ListPublicCatalogProductsRequestProductType(ListPublicCatalogProductsRequestProductType(tmp).String())
+	return nil
+}
+
+type ListPublicCatalogProductsRequestStatus string
+
+const (
+	// Unknown status.
+	ListPublicCatalogProductsRequestStatusUnknownStatus = ListPublicCatalogProductsRequestStatus("unknown_status")
+	// The product is available in Public Beta.
+	ListPublicCatalogProductsRequestStatusPublicBeta = ListPublicCatalogProductsRequestStatus("public_beta")
+	// The product is available in Preview mode.
+	ListPublicCatalogProductsRequestStatusPreview = ListPublicCatalogProductsRequestStatus("preview")
+	// The product is generally available.
+	ListPublicCatalogProductsRequestStatusGeneralAvailability = ListPublicCatalogProductsRequestStatus("general_availability")
+	// The product must not be used for new deployments.
+	ListPublicCatalogProductsRequestStatusEndOfDeployment = ListPublicCatalogProductsRequestStatus("end_of_deployment")
+	// There is no longer any commercial support for this product.
+	ListPublicCatalogProductsRequestStatusEndOfSupport = ListPublicCatalogProductsRequestStatus("end_of_support")
+	// The product is not sold anymore but is still in use.
+	ListPublicCatalogProductsRequestStatusEndOfSale = ListPublicCatalogProductsRequestStatus("end_of_sale")
+	// The product is no longer supported or maintained.
+	ListPublicCatalogProductsRequestStatusEndOfLife = ListPublicCatalogProductsRequestStatus("end_of_life")
+	// The product is deprecated and is no longer accessible.
+	ListPublicCatalogProductsRequestStatusRetired = ListPublicCatalogProductsRequestStatus("retired")
+)
+
+func (enum ListPublicCatalogProductsRequestStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListPublicCatalogProductsRequestStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ListPublicCatalogProductsRequestStatus) Values() []ListPublicCatalogProductsRequestStatus {
+	return []ListPublicCatalogProductsRequestStatus{
+		"unknown_status",
+		"public_beta",
+		"preview",
+		"general_availability",
+		"end_of_deployment",
+		"end_of_support",
+		"end_of_sale",
+		"end_of_life",
+		"retired",
+	}
+}
+
+func (enum ListPublicCatalogProductsRequestStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListPublicCatalogProductsRequestStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListPublicCatalogProductsRequestStatus(ListPublicCatalogProductsRequestStatus(tmp).String())
 	return nil
 }
 
@@ -153,6 +219,12 @@ const (
 	PublicCatalogProductStatusEndOfDeployment = PublicCatalogProductStatus("end_of_deployment")
 	// There is no longer any commercial support for this product.
 	PublicCatalogProductStatusEndOfSupport = PublicCatalogProductStatus("end_of_support")
+	// The product is not sold anymore but is still in use.
+	PublicCatalogProductStatusEndOfSale = PublicCatalogProductStatus("end_of_sale")
+	// The product is at its end of life.
+	PublicCatalogProductStatusEndOfLife = PublicCatalogProductStatus("end_of_life")
+	// The product is retired.
+	PublicCatalogProductStatusRetired = PublicCatalogProductStatus("retired")
 )
 
 func (enum PublicCatalogProductStatus) String() string {
@@ -171,6 +243,9 @@ func (enum PublicCatalogProductStatus) Values() []PublicCatalogProductStatus {
 		"general_availability",
 		"end_of_deployment",
 		"end_of_support",
+		"end_of_sale",
+		"end_of_life",
+		"retired",
 	}
 }
 
@@ -244,6 +319,13 @@ const (
 	PublicCatalogProductUnitOfMeasureCountableUnitSetup = PublicCatalogProductUnitOfMeasureCountableUnit("setup")
 	// Day.
 	PublicCatalogProductUnitOfMeasureCountableUnitDay = PublicCatalogProductUnitOfMeasureCountableUnit("day")
+	// Second.
+	PublicCatalogProductUnitOfMeasureCountableUnitSecond = PublicCatalogProductUnitOfMeasureCountableUnit("second")
+	// Sample per day.
+	PublicCatalogProductUnitOfMeasureCountableUnitSampleDay = PublicCatalogProductUnitOfMeasureCountableUnit("sample_day")
+	// Gigabyte per day.
+	PublicCatalogProductUnitOfMeasureCountableUnitGigabyteDay = PublicCatalogProductUnitOfMeasureCountableUnit("gigabyte_day")
+	PublicCatalogProductUnitOfMeasureCountableUnitMvcpu       = PublicCatalogProductUnitOfMeasureCountableUnit("mvcpu")
 )
 
 func (enum PublicCatalogProductUnitOfMeasureCountableUnit) String() string {
@@ -282,6 +364,10 @@ func (enum PublicCatalogProductUnitOfMeasureCountableUnit) Values() []PublicCata
 		"minute",
 		"setup",
 		"day",
+		"second",
+		"sample_day",
+		"gigabyte_day",
+		"mvcpu",
 	}
 }
 
@@ -400,27 +486,36 @@ type PublicCatalogProductPropertiesHardwareStorage struct {
 type PublicCatalogProductPropertiesAppleSilicon struct {
 	// Range: the range of the Apple Silicon server.
 	Range string `json:"range"`
+
+	// ServerType: the server type of the Apple Silicon server.
+	ServerType string `json:"server_type"`
 }
 
 // PublicCatalogProductPropertiesBlockStorage: public catalog product properties block storage.
 type PublicCatalogProductPropertiesBlockStorage struct {
-	// MinVolumeSize: the minimum size of storage volume for this product in bytes.
-	MinVolumeSize scw.Size `json:"min_volume_size"`
+	// Deprecated: MinVolumeSize: the minimum size of storage volume for this product in bytes. Deprecated.
+	MinVolumeSize *scw.Size `json:"min_volume_size,omitempty"`
 
-	// MaxVolumeSize: the maximum size of storage volume for this product in bytes.
-	MaxVolumeSize scw.Size `json:"max_volume_size"`
+	// Deprecated: MaxVolumeSize: the maximum size of storage volume for this product in bytes. Deprecated.
+	MaxVolumeSize *scw.Size `json:"max_volume_size,omitempty"`
 }
 
 // PublicCatalogProductPropertiesDedibox: public catalog product properties dedibox.
 type PublicCatalogProductPropertiesDedibox struct {
 	// Range: the range of the Dedibox server.
 	Range string `json:"range"`
+
+	// OfferID: the offer ID of the Dedibox server.
+	OfferID int64 `json:"offer_id"`
 }
 
 // PublicCatalogProductPropertiesElasticMetal: public catalog product properties elastic metal.
 type PublicCatalogProductPropertiesElasticMetal struct {
 	// Range: the range of the Elastic Metal server.
 	Range string `json:"range"`
+
+	// OfferID: the offer ID of the Elastic Metal server.
+	OfferID string `json:"offer_id"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
@@ -452,6 +547,15 @@ type PublicCatalogProductPropertiesInstance struct {
 	// RecommendedReplacementOfferIDs: the recommended replacement offer IDs of the Instance server.
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
+
+// PublicCatalogProductPropertiesManagedInference: public catalog product properties managed inference.
+type PublicCatalogProductPropertiesManagedInference struct {
+	// InstanceGpuName: the name of the associated instance GPU to this node type.
+	InstanceGpuName string `json:"instance_gpu_name"`
+}
+
+// PublicCatalogProductPropertiesObjectStorage: public catalog product properties object storage.
+type PublicCatalogProductPropertiesObjectStorage struct{}
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
@@ -491,24 +595,32 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
+
+	// ObjectStorage: the properties of Object Storage products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
+
+	// ManagedInference: the properties of Managed Inference products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference must be set.
+	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
@@ -526,6 +638,9 @@ type PublicCatalogProduct struct {
 
 	// ServiceCategory: the category of the product.
 	ServiceCategory string `json:"service_category"`
+
+	// ProductCategory: the product category of the product.
+	ProductCategory string `json:"product_category"`
 
 	// Product: the product name.
 	Product string `json:"product"`
@@ -613,6 +728,9 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 	// Datacenter: filter products by datacenter.
 	// Precisely one of Global, Region, Zone, Datacenter must be set.
 	Datacenter *string `json:"datacenter,omitempty"`
+
+	// Status: the lists of filtered product status, if empty only products with status public_beta, general_availability, preview, end_of_deployment, end_of_support, end_of_sale, end_of_life or retired will be returned.
+	Status []ListPublicCatalogProductsRequestStatus `json:"-"`
 }
 
 type PublicCatalogAPI struct {
@@ -649,6 +767,7 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "product_types", req.ProductTypes)
+	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "global", req.Global)
 	parameter.AddToQuery(query, "region", req.Region)
 	parameter.AddToQuery(query, "zone", req.Zone)

@@ -1059,10 +1059,11 @@ type VolumeServerState string
 const (
 	VolumeServerStateAvailable    = VolumeServerState("available")
 	VolumeServerStateSnapshotting = VolumeServerState("snapshotting")
-	VolumeServerStateFetching     = VolumeServerState("fetching")
 	VolumeServerStateResizing     = VolumeServerState("resizing")
+	VolumeServerStateFetching     = VolumeServerState("fetching")
 	VolumeServerStateSaving       = VolumeServerState("saving")
 	VolumeServerStateHotsyncing   = VolumeServerState("hotsyncing")
+	VolumeServerStateAttaching    = VolumeServerState("attaching")
 	VolumeServerStateError        = VolumeServerState("error")
 )
 
@@ -1078,10 +1079,11 @@ func (enum VolumeServerState) Values() []VolumeServerState {
 	return []VolumeServerState{
 		"available",
 		"snapshotting",
-		"fetching",
 		"resizing",
+		"fetching",
 		"saving",
 		"hotsyncing",
+		"attaching",
 		"error",
 	}
 }
@@ -1148,8 +1150,9 @@ const (
 	VolumeStateAvailable    = VolumeState("available")
 	VolumeStateSnapshotting = VolumeState("snapshotting")
 	VolumeStateFetching     = VolumeState("fetching")
-	VolumeStateResizing     = VolumeState("resizing")
 	VolumeStateSaving       = VolumeState("saving")
+	VolumeStateAttaching    = VolumeState("attaching")
+	VolumeStateResizing     = VolumeState("resizing")
 	VolumeStateHotsyncing   = VolumeState("hotsyncing")
 	VolumeStateError        = VolumeState("error")
 )
@@ -1167,8 +1170,9 @@ func (enum VolumeState) Values() []VolumeState {
 		"available",
 		"snapshotting",
 		"fetching",
-		"resizing",
 		"saving",
+		"attaching",
+		"resizing",
 		"hotsyncing",
 		"error",
 	}
@@ -1277,9 +1281,6 @@ type Volume struct {
 
 	// Name: volume name.
 	Name string `json:"name"`
-
-	// Deprecated: ExportURI: show the volume NBD export URI.
-	ExportURI *string `json:"export_uri"`
 
 	// Size: volume disk size.
 	Size scw.Size `json:"size"`
@@ -1434,6 +1435,12 @@ type PrivateNIC struct {
 
 	// Tags: private NIC tags.
 	Tags []string `json:"tags"`
+
+	// CreationDate: private NIC creation date.
+	CreationDate *time.Time `json:"creation_date"`
+
+	// Zone: the zone in which the Private NIC is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // SecurityGroupSummary: security group summary.
@@ -3558,6 +3565,15 @@ type PlanBlockMigrationRequest struct {
 	// SnapshotID: the snapshot for which the migration plan will be generated.
 	// Precisely one of VolumeID, SnapshotID must be set.
 	SnapshotID *string `json:"snapshot_id,omitempty"`
+}
+
+// ReleaseIPToIpamRequest: release ip to ipam request.
+type ReleaseIPToIpamRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// IPID: ID of the IP you want to release from the Instance but retain in IPAM.
+	IPID string `json:"-"`
 }
 
 // ServerActionRequest: server action request.
@@ -6901,6 +6917,40 @@ func (s *API) CheckBlockMigrationOrganizationQuotas(req *CheckBlockMigrationOrga
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/block-migration/check-organization-quotas",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return err
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ReleaseIPToIpam: **The IP remains available in IPAM**, which means that it is still reserved by the Organization, and can be reattached to another resource (Instance or other product).
+func (s *API) ReleaseIPToIpam(req *ReleaseIPToIpamRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "/release-to-ipam",
 	}
 
 	err = scwReq.SetBody(req)

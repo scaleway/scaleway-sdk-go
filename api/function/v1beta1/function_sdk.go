@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultFunctionRetryInterval = 15 * time.Second
+	defaultFunctionTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -1003,7 +1009,7 @@ type Domain struct {
 	// URL: URL of the function.
 	URL string `json:"url"`
 
-	// Status: state of the doamin.
+	// Status: state of the domain.
 	// Default value: unknown
 	Status DomainStatus `json:"status"`
 
@@ -1173,8 +1179,7 @@ type Namespace struct {
 	// UpdatedAt: last update date of the namespace.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Deprecated: VpcIntegrationActivated: when activated, functions in the namespace can be connected to a Private Network.
-	// Note that activating the VPC integration can only be done when creating a new namespace.
+	// Deprecated: VpcIntegrationActivated: the value of this field doesn't matter anymore, and will be removed in a near future.
 	VpcIntegrationActivated *bool `json:"vpc_integration_activated,omitempty"`
 }
 
@@ -1276,7 +1281,7 @@ type CreateDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// Hostname: hostame to create.
+	// Hostname: hostname to create.
 	Hostname string `json:"hostname"`
 
 	// FunctionID: UUID of the function to associate the domain with.
@@ -1339,8 +1344,6 @@ type CreateFunctionRequest struct {
 	Tags []string `json:"tags"`
 
 	// PrivateNetworkID: when connected to a Private Network, the function can access other Scaleway resources in this Private Network.
-	//
-	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
@@ -1366,8 +1369,8 @@ type CreateNamespaceRequest struct {
 	// Tags: tags of the Serverless Function Namespace.
 	Tags []string `json:"tags"`
 
-	// ActivateVpcIntegration: when activated, functions in the namespace can be connected to a Private Network.
-	ActivateVpcIntegration bool `json:"activate_vpc_integration"`
+	// Deprecated: ActivateVpcIntegration: setting this field to true doesn't matter anymore. It will be removed in a near future.
+	ActivateVpcIntegration *bool `json:"activate_vpc_integration,omitempty"`
 }
 
 // CreateTokenRequest: create token request.
@@ -1963,7 +1966,18 @@ type UpdateFunctionRequest struct {
 	// Description: description of the function.
 	Description *string `json:"description,omitempty"`
 
-	// SecretEnvironmentVariables: secret environment variables of the function.
+	// SecretEnvironmentVariables: during an update, secret environment variables that are not specified in this field will be kept unchanged.
+	//
+	// In order to delete a specific secret environment variable, you must reference its key, but not provide any value for it.
+	// For example, the following payload will delete the `TO_DELETE` secret environment variable:
+	//
+	// ```json
+	// {
+	//  "secret_environment_variables":[
+	//    {"key":"TO_DELETE"}
+	//  ]
+	// }
+	// ```.
 	SecretEnvironmentVariables []*Secret `json:"secret_environment_variables"`
 
 	// HTTPOption: possible values:
@@ -1980,8 +1994,6 @@ type UpdateFunctionRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	// PrivateNetworkID: when connected to a Private Network, the function can access other Scaleway resources in this Private Network.
-	//
-	// Note: this feature is currently in beta and requires a namespace with VPC integration activated, using the `activate_vpc_integration` flag.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
@@ -2120,6 +2132,55 @@ func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForNamespaceRequest is used by WaitForNamespace method.
+type WaitForNamespaceRequest struct {
+	Region        scw.Region
+	NamespaceID   string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForNamespace waits for the Namespace to reach a terminal state.
+func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[NamespaceStatus]struct{}{
+		NamespaceStatusDeleting: {},
+		NamespaceStatusCreating: {},
+		NamespaceStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetNamespace(&GetNamespaceRequest{
+				Region:      req.Region,
+				NamespaceID: req.NamespaceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Namespace failed")
+	}
+
+	return res.(*Namespace), nil
 }
 
 // CreateNamespace: Create a new namespace in a specified Organization or Project.
@@ -2303,6 +2364,55 @@ func (s *API) GetFunction(req *GetFunctionRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+// WaitForFunctionRequest is used by WaitForFunction method.
+type WaitForFunctionRequest struct {
+	Region        scw.Region
+	FunctionID    string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForFunction waits for the Function to reach a terminal state.
+func (s *API) WaitForFunction(req *WaitForFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[FunctionStatus]struct{}{
+		FunctionStatusDeleting: {},
+		FunctionStatusCreating: {},
+		FunctionStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetFunction(&GetFunctionRequest{
+				Region:     req.Region,
+				FunctionID: req.FunctionID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Function failed")
+	}
+
+	return res.(*Function), nil
+}
+
 // CreateFunction: Create a new function in the specified region for a specified Organization or Project.
 func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
@@ -2340,6 +2450,9 @@ func (s *API) CreateFunction(req *CreateFunctionRequest, opts ...scw.RequestOpti
 }
 
 // UpdateFunction: Update the function associated with the specified ID.
+//
+// When updating a function, the function is automatically redeployed to apply the changes.
+// This behavior can be changed by setting the `redeploy` field to `false` in the request.
 func (s *API) UpdateFunction(req *UpdateFunctionRequest, opts ...scw.RequestOption) (*Function, error) {
 	var err error
 
@@ -2605,6 +2718,55 @@ func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, er
 	return &resp, nil
 }
 
+// WaitForCronRequest is used by WaitForCron method.
+type WaitForCronRequest struct {
+	Region        scw.Region
+	CronID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCron waits for the Cron to reach a terminal state.
+func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*Cron, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[CronStatus]struct{}{
+		CronStatusDeleting: {},
+		CronStatusCreating: {},
+		CronStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetCron(&GetCronRequest{
+				Region: req.Region,
+				CronID: req.CronID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Cron failed")
+	}
+
+	return res.(*Cron), nil
+}
+
 // CreateCron: Create a new cronjob for a function with the specified ID.
 func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
@@ -2774,6 +2936,55 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	Region        scw.Region
+	DomainID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusDeleting: {},
+		DomainStatusCreating: {},
+		DomainStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetDomain(&GetDomainRequest{
+				Region:   req.Region,
+				DomainID: req.DomainID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // CreateDomain: Create a domain name binding for the function with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
@@ -2898,6 +3109,54 @@ func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForTokenRequest is used by WaitForToken method.
+type WaitForTokenRequest struct {
+	Region        scw.Region
+	TokenID       string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForToken waits for the Token to reach a terminal state.
+func (s *API) WaitForToken(req *WaitForTokenRequest, opts ...scw.RequestOption) (*Token, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[TokenStatus]struct{}{
+		TokenStatusDeleting: {},
+		TokenStatusCreating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetToken(&GetTokenRequest{
+				Region:  req.Region,
+				TokenID: req.TokenID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Token failed")
+	}
+
+	return res.(*Token), nil
 }
 
 // ListTokens: List all tokens.
@@ -3032,6 +3291,55 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForTriggerRequest is used by WaitForTrigger method.
+type WaitForTriggerRequest struct {
+	Region        scw.Region
+	TriggerID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForTrigger waits for the Trigger to reach a terminal state.
+func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	timeout := defaultFunctionTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFunctionRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[TriggerStatus]struct{}{
+		TriggerStatusDeleting: {},
+		TriggerStatusCreating: {},
+		TriggerStatusPending:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetTrigger(&GetTriggerRequest{
+				Region:    req.Region,
+				TriggerID: req.TriggerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Trigger failed")
+	}
+
+	return res.(*Trigger), nil
 }
 
 // ListTriggers: List all triggers belonging to a specified Organization or Project.

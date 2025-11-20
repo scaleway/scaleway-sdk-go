@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultIotRetryInterval = 15 * time.Second
+	defaultIotTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -685,6 +691,9 @@ type Device struct {
 
 	// UpdatedAt: date at which the device was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the device.
+	Region scw.Region `json:"region"`
 }
 
 // Network: network.
@@ -710,6 +719,9 @@ type Network struct {
 
 	// TopicPrefix: this prefix will be prepended to all topics for this Network.
 	TopicPrefix string `json:"topic_prefix"`
+
+	// Region: region of the network.
+	Region scw.Region `json:"region"`
 }
 
 // CreateRouteRequestDatabaseConfig: create route request database config.
@@ -801,7 +813,7 @@ type Hub struct {
 	// OrganizationID: organization owning the resource.
 	OrganizationID string `json:"organization_id"`
 
-	// EnableDeviceAutoProvisioning: when an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your Hub. The Hub uses the common name of the device certifcate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
+	// EnableDeviceAutoProvisioning: when an unknown device connects to your hub using a valid certificate chain, it will be automatically provisioned inside your Hub. The Hub uses the common name of the device certificate to find out if a device with the same name already exists. This setting can only be enabled on a hub with a custom certificate authority.
 	EnableDeviceAutoProvisioning bool `json:"enable_device_auto_provisioning"`
 
 	// HasCustomCa: flag is automatically set to `false` after Hub creation, as Hub certificates are managed by Scaleway. Once a custom certificate authority is set, the flag will be set to `true`.
@@ -835,6 +847,9 @@ type RouteSummary struct {
 
 	// UpdatedAt: date at which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the route.
+	Region scw.Region `json:"region"`
 }
 
 // ListTwinDocumentsResponseDocumentSummary: list twin documents response document summary.
@@ -1584,6 +1599,9 @@ type Route struct {
 
 	// UpdatedAt: date at which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the route.
+	Region scw.Region `json:"region"`
 }
 
 // SetDeviceCertificateRequest: set device certificate request.
@@ -1842,6 +1860,54 @@ func (s *API) GetHub(req *GetHubRequest, opts ...scw.RequestOption) (*Hub, error
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForHubRequest is used by WaitForHub method.
+type WaitForHubRequest struct {
+	Region        scw.Region
+	HubID         string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForHub waits for the Hub to reach a terminal state.
+func (s *API) WaitForHub(req *WaitForHubRequest, opts ...scw.RequestOption) (*Hub, error) {
+	timeout := defaultIotTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultIotRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[HubStatus]struct{}{
+		HubStatusEnabling:  {},
+		HubStatusDisabling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetHub(&GetHubRequest{
+				Region: req.Region,
+				HubID:  req.HubID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Hub failed")
+	}
+
+	return res.(*Hub), nil
 }
 
 // UpdateHub: Update the parameters of an existing IoT Hub, specified by its Hub ID.

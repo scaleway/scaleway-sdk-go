@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultMongodbRetryInterval = 15 * time.Second
+	defaultMongodbTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -1380,6 +1386,57 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForInstanceRequest is used by WaitForInstance method.
+type WaitForInstanceRequest struct {
+	Region        scw.Region
+	InstanceID    string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForInstance waits for the Instance to reach a terminal state.
+func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	timeout := defaultMongodbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultMongodbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[InstanceStatus]struct{}{
+		InstanceStatusProvisioning: {},
+		InstanceStatusConfiguring:  {},
+		InstanceStatusDeleting:     {},
+		InstanceStatusInitializing: {},
+		InstanceStatusSnapshotting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetInstance(&GetInstanceRequest{
+				Region:     req.Region,
+				InstanceID: req.InstanceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Instance failed")
+	}
+
+	return res.(*Instance), nil
 }
 
 // CreateInstance: Create a new MongoDB® Database Instance.

@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultTemRetryInterval = 15 * time.Second
+	defaultTemTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -857,12 +863,39 @@ func (enum *WebhookEventType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// DomainRecordsDKIM: domain records dkim.
+type DomainRecordsDKIM struct {
+	// Name: name of the DKIM TXT record.
+	Name string `json:"name"`
+
+	// Value: value of the DKIM TXT record.
+	Value string `json:"value"`
+}
+
 // DomainRecordsDMARC: domain records dmarc.
 type DomainRecordsDMARC struct {
 	// Name: name of the DMARC TXT record.
 	Name string `json:"name"`
 
 	// Value: value of the DMARC TXT record.
+	Value string `json:"value"`
+}
+
+// DomainRecordsMX: domain records mx.
+type DomainRecordsMX struct {
+	// Name: name of the MX record.
+	Name string `json:"name"`
+
+	// Value: value of the MX record.
+	Value string `json:"value"`
+}
+
+// DomainRecordsSPF: domain records spf.
+type DomainRecordsSPF struct {
+	// Name: name of the SPF TXT record.
+	Name string `json:"name"`
+
+	// Value: value of the SPF TXT record.
 	Value string `json:"value"`
 }
 
@@ -885,6 +918,15 @@ type EmailTry struct {
 type DomainRecords struct {
 	// Dmarc: dMARC TXT record specification.
 	Dmarc *DomainRecordsDMARC `json:"dmarc"`
+
+	// Dkim: dKIM TXT record specification.
+	Dkim *DomainRecordsDKIM `json:"dkim"`
+
+	// Spf: sPF TXT record specification.
+	Spf *DomainRecordsSPF `json:"spf"`
+
+	// Mx: mX record specification.
+	Mx *DomainRecordsMX `json:"mx"`
 }
 
 // DomainReputation: domain reputation.
@@ -1061,6 +1103,19 @@ type DomainLastStatusDmarcRecord struct {
 	Status DomainLastStatusRecordStatus `json:"status"`
 
 	// LastValidAt: time and date the DMARC record was last valid.
+	LastValidAt *time.Time `json:"last_valid_at"`
+
+	// Error: an error text displays in case the record is not valid.
+	Error *string `json:"error"`
+}
+
+// DomainLastStatusMXRecord: domain last status mx record.
+type DomainLastStatusMXRecord struct {
+	// Status: status of the MX record's configuration. This record is optional to validate a domain, but highly recommended.
+	// Default value: unknown_record_status
+	Status DomainLastStatusRecordStatus `json:"status"`
+
+	// LastValidAt: time and date the MX record was last valid.
 	LastValidAt *time.Time `json:"last_valid_at"`
 
 	// Error: an error text displays in case the record is not valid.
@@ -1487,6 +1542,9 @@ type DomainLastStatus struct {
 	// DmarcRecord: the DMARC record verification data.
 	DmarcRecord *DomainLastStatusDmarcRecord `json:"dmarc_record"`
 
+	// MxRecord: the MX record verification data.
+	MxRecord *DomainLastStatusMXRecord `json:"mx_record"`
+
 	// AutoconfigState: the verification state of domain auto-configuration.
 	AutoconfigState *DomainLastStatusAutoconfigState `json:"autoconfig_state"`
 }
@@ -1496,7 +1554,7 @@ type GetDomainLastStatusRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DomainID: ID of the domain to delete.
+	// DomainID: ID of the domain to get records status.
 	DomainID string `json:"-"`
 }
 
@@ -2113,7 +2171,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }
 
-// CreateEmail: You must specify the `region`, the sender and the recipient's information and the `project_id` to send an email from a checked domain. The subject of the email must contain at least 6 characters.
+// CreateEmail: You must specify the `region`, the sender and the recipient's information and the `project_id` to send an email from a checked domain.
 func (s *API) CreateEmail(req *CreateEmailRequest, opts ...scw.RequestOption) (*CreateEmailResponse, error) {
 	var err error
 
@@ -2179,6 +2237,54 @@ func (s *API) GetEmail(req *GetEmailRequest, opts ...scw.RequestOption) (*Email,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForEmailRequest is used by WaitForEmail method.
+type WaitForEmailRequest struct {
+	Region        scw.Region
+	EmailID       string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForEmail waits for the Email to reach a terminal state.
+func (s *API) WaitForEmail(req *WaitForEmailRequest, opts ...scw.RequestOption) (*Email, error) {
+	timeout := defaultTemTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultTemRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[EmailStatus]struct{}{
+		EmailStatusNew:     {},
+		EmailStatusSending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetEmail(&GetEmailRequest{
+				Region:  req.Region,
+				EmailID: req.EmailID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Email failed")
+	}
+
+	return res.(*Email), nil
 }
 
 // ListEmails: Retrieve the list of emails sent from a specific domain or for a specific Project or Organization. You must specify the `region`.
@@ -2370,6 +2476,54 @@ func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Doma
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	Region        scw.Region
+	DomainID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultTemTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultTemRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusPending:         {},
+		DomainStatusAutoconfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetDomain(&GetDomainRequest{
+				Region:   req.Region,
+				DomainID: req.DomainID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // ListDomains: Retrieve domains in a specific Project or in a specific Organization using the `region` parameter.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
@@ -2483,7 +2637,7 @@ func (s *API) CheckDomain(req *CheckDomainRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetDomainLastStatus: Display SPF and DKIM records status and potential errors, including the found records to make debugging easier.
+// GetDomainLastStatus: Display SPF, DKIM, DMARC and MX records status and potential errors, including the found records to make debugging easier.
 func (s *API) GetDomainLastStatus(req *GetDomainLastStatusRequest, opts ...scw.RequestOption) (*DomainLastStatus, error) {
 	var err error
 

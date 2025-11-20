@@ -20,9 +20,9 @@ jobs:
     steps:
       # Checkout should always be before setup-go to ensure caching is working
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: 1.23.0
       - name: Run Acceptance Tests
@@ -65,9 +65,9 @@ jobs:
     steps:
       # Checkout should always be before setup-go to ensure caching is working
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: 1.23.0
       - name: Run sweepers

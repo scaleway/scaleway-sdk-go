@@ -1,0 +1,837 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 154
+    host: api.scaleway.com
+    body: "{\"name\":\"srv-strange-einstein\",\"commercial_type\":\"DEV1-S\",\"image\":\"f974feac-abae-4365-b988-8ec7d1cec10d\",\"project\":\"105bdce1-64c0-48ab-899d-868455867ecf\"}"
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 2225
+    body: "{\"server\": {\"id\": \"e73ba751-d501-46ac-8fcc-5d1d4c2886c4\", \"name\": \"srv-strange-einstein\", \"arch\": \"x86_64\", \"commercial_type\": \"DEV1-S\", \"boot_type\": \"local\", \"organization\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"project\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"hostname\": \"srv-strange-einstein\", \"image\": {\"id\": \"f974feac-abae-4365-b988-8ec7d1cec10d\", \"name\": \"Ubuntu Bionic Beaver\", \"organization\": \"51b656e3-4865-41e8-adbc-0c45bdd780db\", \"project\": \"51b656e3-4865-41e8-adbc-0c45bdd780db\", \"root_volume\": {\"id\": \"dd5f5c10-23b1-4c9c-8445-eb6740957c84\", \"name\": \"snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13\", \"volume_type\": \"l_ssd\", \"size\": 10000000000}, \"extra_volumes\": {}, \"public\": true, \"arch\": \"x86_64\", \"creation_date\": \"2019-03-05T10:13:15.974944+00:00\", \"modification_date\": \"2019-03-05T13:32:29.274319+00:00\", \"default_bootscript\": null, \"from_server\": \"\", \"state\": \"available\", \"tags\": [], \"zone\": \"fr-par-1\"}, \"volumes\": {\"0\": {\"boot\": false, \"id\": \"92d7c654-0967-470b-872b-ad195637d5f8\", \"name\": \"snapshot-de728daa-0bf6-4c64-abf5-a9477e791c83-2019-03-05_10:13\", \"volume_type\": \"l_ssd\", \"export_uri\": null, \"organization\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"project\": \"105bdce1-64c0-48ab-899d-868455867ecf\", \"server\": {\"id\": \"e73ba751-d501-46ac-8fcc-5d1d4c2886c4\", \"name\": \"srv-strange-einstein\"}, \"size\": 20000000000, \"state\": \"available\", \"creation_date\": \"2025-09-05T15:46:11.256419+00:00\", \"modification_date\": \"2025-09-05T15:46:11.256419+00:00\", \"tags\": [], \"zone\": \"fr-par-1\"}}, \"tags\": [], \"state\": \"stopped\", \"protected\": false, \"state_detail\": \"\", \"public_ip\": null, \"public_ips\": [], \"mac_address\": \"de:00:00:c6:ec:c1\", \"routed_ip_enabled\": true, \"ipv6\": null, \"extra_networks\": [], \"dynamic_ip_required\": true, \"enable_ipv6\": false, \"private_ip\": null, \"creation_date\": \"2025-09-05T15:46:11.256419+00:00\", \"modification_date\": \"2025-09-05T15:46:11.256419+00:00\", \"bootscript\": null, \"security_group\": {\"id\": \"5881315f-2400-43a0-ac75-08adf6cb8c12\", \"name\": \"Default security group\"}, \"location\": null, \"maintenances\": [], \"allowed_actions\": [\"poweron\", \"backup\"], \"placement_group\": null, \"private_nics\": [], \"zone\": \"fr-par-1\", \"filesystems\": [], \"end_of_service\": false}}"
+    headers:
+      Content-Length:
+      - "2225"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Location:
+      - https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - bd97dae0-80a2-4e16-8b4f-ad809ff22fd9
+    status: 201 Created
+    code: 201
+    duration: 746.725154ms
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 17
+    body: "{\"user_data\": []}"
+    headers:
+      Content-Length:
+      - "17"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 23fb895c-d476-4667-8592-c57aa1b62f83
+    status: 200 OK
+    code: 200
+    duration: 109.834815ms
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 2
+    host: api.scaleway.com
+    body: "on"
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/cloud-init
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 7a8d7170-ea68-409c-8fdd-05fb6d9ec1b6
+    status: 204 No Content
+    code: 204
+    duration: 110.201113ms
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 5
+    host: api.scaleway.com
+    body: world
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/hello
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 21bb7e59-1a70-4623-a0dd-a93461d4d951
+    status: 204 No Content
+    code: 204
+    duration: 100.63838ms
+- id: 4
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 3
+    host: api.scaleway.com
+    body: way
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/scale
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - c4849ba6-83ce-4303-8c87-e9e78361e9e6
+    status: 204 No Content
+    code: 204
+    duration: 102.886714ms
+- id: 5
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 3
+    host: api.scaleway.com
+    body: tac
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/tic
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:11 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 9c683064-8d33-40e1-b45c-979dc722383b
+    status: 204 No Content
+    code: 204
+    duration: 125.375948ms
+- id: 6
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 54
+    body: "{\"user_data\": [\"cloud-init\", \"hello\", \"scale\", \"tic\"]}"
+    headers:
+      Content-Length:
+      - "54"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 0bc1fbf3-ba54-4736-b018-106d727bcd04
+    status: 200 OK
+    code: 200
+    duration: 91.254313ms
+- id: 7
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/cloud-init
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 2
+    body: "on"
+    headers:
+      Content-Length:
+      - "2"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 0c152094-b47d-4466-87b7-f9e54cea6369
+    status: 200 OK
+    code: 200
+    duration: 110.003662ms
+- id: 8
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/hello
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 5
+    body: world
+    headers:
+      Content-Length:
+      - "5"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 9e07dda6-9527-4587-9975-d8478cc726fd
+    status: 200 OK
+    code: 200
+    duration: 106.053643ms
+- id: 9
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/scale
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 3
+    body: way
+    headers:
+      Content-Length:
+      - "3"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - e4e5fc05-d891-49a6-8e5e-38e9035dc1e2
+    status: 200 OK
+    code: 200
+    duration: 93.458744ms
+- id: 10
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/tic
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 3
+    body: tac
+    headers:
+      Content-Length:
+      - "3"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 93b59078-e6cc-4dab-a052-3412d37f6643
+    status: 200 OK
+    code: 200
+    duration: 96.491661ms
+- id: 11
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 54
+    body: "{\"user_data\": [\"cloud-init\", \"hello\", \"scale\", \"tic\"]}"
+    headers:
+      Content-Length:
+      - "54"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - fb1ff628-7ebb-4ede-804a-89e5b2e9e5d5
+    status: 200 OK
+    code: 200
+    duration: 99.828068ms
+- id: 12
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/hello
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 4ecef05e-fb5d-4566-a6a9-7da38a297a1a
+    status: 204 No Content
+    code: 204
+    duration: 105.676684ms
+- id: 13
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/tic
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - fc238dcf-309e-40cf-96ac-8eb3bbc6bcc8
+    status: 204 No Content
+    code: 204
+    duration: 99.617232ms
+- id: 14
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 3
+    host: api.scaleway.com
+    body: way
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/scale
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:12 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 56bee31d-def5-41c3-ac4e-fa24199a5315
+    status: 204 No Content
+    code: 204
+    duration: 94.982807ms
+- id: 15
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 7
+    host: api.scaleway.com
+    body: wozniak
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/steve
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 764fe119-02d4-4bf5-b798-b6b20563793a
+    status: 204 No Content
+    code: 204
+    duration: 111.50382ms
+- id: 16
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 3
+    host: api.scaleway.com
+    body: "off"
+    headers:
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/cloud-init
+    method: PATCH
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 76ef4ed1-9ad6-46fe-b466-4e1a944f2b10
+    status: 204 No Content
+    code: 204
+    duration: 106.932854ms
+- id: 17
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 47
+    body: "{\"user_data\": [\"cloud-init\", \"scale\", \"steve\"]}"
+    headers:
+      Content-Length:
+      - "47"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - e0c8eb43-6ccd-4700-9afb-fdedcab18259
+    status: 200 OK
+    code: 200
+    duration: 106.944075ms
+- id: 18
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/cloud-init
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 3
+    body: "off"
+    headers:
+      Content-Length:
+      - "3"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - a86594c8-4b3a-4c02-940a-a93e2b9fc920
+    status: 200 OK
+    code: 200
+    duration: 102.284652ms
+- id: 19
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/scale
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 3
+    body: way
+    headers:
+      Content-Length:
+      - "3"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 30e4c82f-613e-456f-bd76-9d30daa97872
+    status: 200 OK
+    code: 200
+    duration: 93.054103ms
+- id: 20
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/steve
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 7
+    body: wozniak
+    headers:
+      Content-Length:
+      - "7"
+      Content-Type:
+      - text/plain
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - c0cdbf02-cc85-4469-8452-99a885988720
+    status: 200 OK
+    code: 200
+    duration: 91.471992ms
+- id: 21
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 47
+    body: "{\"user_data\": [\"cloud-init\", \"scale\", \"steve\"]}"
+    headers:
+      Content-Length:
+      - "47"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - b3f8b577-ded6-47a5-9071-c7c39056ec80
+    status: 200 OK
+    code: 200
+    duration: 111.572389ms
+- id: 22
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/cloud-init
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - d493b927-540f-4f80-b57e-724ac3804762
+    status: 204 No Content
+    code: 204
+    duration: 126.31437ms
+- id: 23
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/scale
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 003c3522-17fa-4977-af92-25bb2a187136
+    status: 204 No Content
+    code: 204
+    duration: 97.411869ms
+- id: 24
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data/steve
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:13 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 8132afe0-22d5-4366-b9ea-14df77ac29f0
+    status: 204 No Content
+    code: 204
+    duration: 99.969053ms
+- id: 25
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: api.scaleway.com
+    headers:
+      User-Agent:
+      - scaleway-sdk-go/v1.0.0-beta.7+dev (go1.24.1; linux; amd64)
+    url: https://api.scaleway.com/instance/v1/zones/fr-par-1/servers/e73ba751-d501-46ac-8fcc-5d1d4c2886c4/user_data
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 17
+    body: "{\"user_data\": []}"
+    headers:
+      Content-Length:
+      - "17"
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Sep 2025 15:46:14 GMT
+      Server:
+      - Scaleway API Gateway (fr-par-1;edge02)
+      X-Request-Id:
+      - 4a4dcaa8-a053-4129-86c8-23af89063aff
+    status: 200 OK
+    code: 200
+    duration: 131.277814ms

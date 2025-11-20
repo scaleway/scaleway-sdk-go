@@ -401,6 +401,9 @@ type ListLocalImagesRequest struct {
 	// Zone: filter local images available on this Availability Zone.
 	Zone *scw.Zone `json:"-"`
 
+	// Arch: filter local images available for this machine architecture.
+	Arch *string `json:"-"`
+
 	// ImageID: filter by image id.
 	// Precisely one of ImageID, VersionID, ImageLabel must be set.
 	ImageID *string `json:"image_id,omitempty"`
@@ -619,6 +622,7 @@ func (s *API) ListLocalImages(req *ListLocalImagesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "zone", req.Zone)
+	parameter.AddToQuery(query, "arch", req.Arch)
 	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "image_id", req.ImageID)
 	parameter.AddToQuery(query, "version_id", req.VersionID)

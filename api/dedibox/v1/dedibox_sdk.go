@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultDediboxRetryInterval = 15 * time.Second
+	defaultDediboxTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -3400,6 +3406,31 @@ type ListIPv6BlockSubnetsAvailableResponseSubnet struct {
 	Cidr uint32 `json:"cidr"`
 }
 
+// IPv6Block: i pv6 block.
+type IPv6Block struct {
+	// ID: ID of the IPv6.
+	ID uint64 `json:"id"`
+
+	// Address: address of the IPv6.
+	Address net.IP `json:"address"`
+
+	// Duid: dUID of the IPv6.
+	Duid string `json:"duid"`
+
+	// Nameservers: DNS linked to the IPv6.
+	Nameservers []string `json:"nameservers"`
+
+	// Cidr: classless InterDomain Routing notation of the IPv6.
+	Cidr uint32 `json:"cidr"`
+
+	// Subnets: all IPv6 subnets.
+	Subnets []*IPv6Block `json:"subnets"`
+
+	// DelegationStatus: the nameservers delegation status.
+	// Default value: unknown_status
+	DelegationStatus IPv6BlockDelegationStatus `json:"delegation_status"`
+}
+
 // InvoiceSummary: invoice summary.
 type InvoiceSummary struct {
 	ID uint64 `json:"id"`
@@ -3567,7 +3598,7 @@ type Log struct {
 	// Group: rPN V2 group.
 	Group *RpnV2Group `json:"group"`
 
-	// Member: rPN V2 member (if appliable).
+	// Member: rPN V2 member (if applicable).
 	Member *RpnV2Member `json:"member"`
 
 	// Action: which action was performed.
@@ -3797,10 +3828,10 @@ type BMCAccess struct {
 	// URL: URL to access to the server console.
 	URL string `json:"url"`
 
-	// Login: the login to use for the BMC (Baseboard Management Controller) access authentification.
+	// Login: the login to use for the BMC (Baseboard Management Controller) access authentication.
 	Login string `json:"login"`
 
-	// Password: the password to use for the BMC (Baseboard Management Controller) access authentification.
+	// Password: the password to use for the BMC (Baseboard Management Controller) access authentication.
 	Password string `json:"password"`
 
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed.
@@ -4207,31 +4238,6 @@ type GetServiceRequest struct {
 	ServiceID uint64 `json:"-"`
 }
 
-// IPv6Block: i pv6 block.
-type IPv6Block struct {
-	// ID: ID of the IPv6.
-	ID uint64 `json:"id"`
-
-	// Address: address of the IPv6.
-	Address net.IP `json:"address"`
-
-	// Duid: dUID of the IPv6.
-	Duid string `json:"duid"`
-
-	// Nameservers: DNS linked to the IPv6.
-	Nameservers []string `json:"nameservers"`
-
-	// Cidr: classless InterDomain Routing notation of the IPv6.
-	Cidr uint32 `json:"cidr"`
-
-	// Subnets: all IPv6 subnets.
-	Subnets []*IPv6Block `json:"subnets"`
-
-	// DelegationStatus: the nameservers delegation status.
-	// Default value: unknown_status
-	DelegationStatus IPv6BlockDelegationStatus `json:"delegation_status"`
-}
-
 // IPv6BlockAPICreateIPv6BlockRequest: i pv6 block api create i pv6 block request.
 type IPv6BlockAPICreateIPv6BlockRequest struct {
 	// ProjectID: ID of the project.
@@ -4272,6 +4278,11 @@ type IPv6BlockAPIGetIPv6BlockRequest struct {
 type IPv6BlockAPIListIPv6BlockSubnetsAvailableRequest struct {
 	// BlockID: ID of the IPv6 block.
 	BlockID uint64 `json:"-"`
+}
+
+// IPv6BlockAPIListIPv6BlocksRequest: i pv6 block api list i pv6 blocks request.
+type IPv6BlockAPIListIPv6BlocksRequest struct {
+	ProjectID *string `json:"-"`
 }
 
 // IPv6BlockAPIUpdateIPv6BlockRequest: i pv6 block api update i pv6 block request.
@@ -4453,6 +4464,32 @@ func (r *ListIPv6BlockSubnetsAvailableResponse) UnsafeAppend(res any) (uint32, e
 	r.SubnetAvailables = append(r.SubnetAvailables, results.SubnetAvailables...)
 	r.TotalCount += uint32(len(results.SubnetAvailables))
 	return uint32(len(results.SubnetAvailables)), nil
+}
+
+// ListIPv6BlocksResponse: list i pv6 blocks response.
+type ListIPv6BlocksResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	IPv6Blocks []*IPv6Block `json:"ipv6_blocks"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListIPv6BlocksResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListIPv6BlocksResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListIPv6BlocksResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.IPv6Blocks = append(r.IPv6Blocks, results.IPv6Blocks...)
+	r.TotalCount += uint32(len(results.IPv6Blocks))
+	return uint32(len(results.IPv6Blocks)), nil
 }
 
 // ListInvoicesResponse: list invoices response.
@@ -5284,7 +5321,7 @@ type Rescue struct {
 	// Password: password of the rescue.
 	Password string `json:"password"`
 
-	// Protocol: protocol of the resuce.
+	// Protocol: protocol of the rescue.
 	// Default value: vnc
 	Protocol RescueProtocol `json:"protocol"`
 }
@@ -5450,9 +5487,6 @@ type RpnV1ApiGetRpnGroupRequest struct {
 type RpnV1ApiLeaveRpnGroupRequest struct {
 	// GroupID: the RPN V1 group ID.
 	GroupID uint64 `json:"-"`
-
-	// ProjectID: a project ID.
-	ProjectID string `json:"project_id"`
 
 	// MemberIDs: a collection of rpn v1 group members IDs.
 	MemberIDs []uint64 `json:"member_ids"`
@@ -5987,6 +6021,54 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	Zone          scw.Zone
+	ServerID      uint64
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusDelivering: {},
+		ServerStatusInstalling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
 }
 
 // GetServerBackup:
@@ -6697,6 +6779,60 @@ func (s *API) GetServerInstall(req *GetServerInstallRequest, opts ...scw.Request
 	return &resp, nil
 }
 
+// WaitForServerInstallRequest is used by WaitForServerInstall method.
+type WaitForServerInstallRequest struct {
+	Zone          scw.Zone
+	ServerID      uint64
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServerInstall waits for the ServerInstall to reach a terminal state.
+func (s *API) WaitForServerInstall(req *WaitForServerInstallRequest, opts ...scw.RequestOption) (*ServerInstall, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerInstallStatus]struct{}{
+		ServerInstallStatusBooting:               {},
+		ServerInstallStatusSettingUpRaid:         {},
+		ServerInstallStatusPartitioning:          {},
+		ServerInstallStatusFormatting:            {},
+		ServerInstallStatusInstalling:            {},
+		ServerInstallStatusConfiguring:           {},
+		ServerInstallStatusConfiguringBootloader: {},
+		ServerInstallStatusRebooting:             {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetServerInstall(&GetServerInstallRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for ServerInstall failed")
+	}
+
+	return res.(*ServerInstall), nil
+}
+
 // CancelServerInstall: Cancels the current server installation associated with the given server ID.
 func (s *API) CancelServerInstall(req *CancelServerInstallRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -6825,6 +6961,54 @@ func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) 
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForBMCAccessRequest is used by WaitForBMCAccess method.
+type WaitForBMCAccessRequest struct {
+	Zone          scw.Zone
+	ServerID      uint64
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBMCAccess waits for the BMCAccess to reach a terminal state.
+func (s *API) WaitForBMCAccess(req *WaitForBMCAccessRequest, opts ...scw.RequestOption) (*BMCAccess, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BMCAccessStatus]struct{}{
+		BMCAccessStatusCreating: {},
+		BMCAccessStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetBMCAccess(&GetBMCAccessRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for BMCAccess failed")
+	}
+
+	return res.(*BMCAccess), nil
 }
 
 // StopBMCAccess: Stop BMC (Baseboard Management Controller) access associated with the given ID.
@@ -7761,7 +7945,29 @@ func (s *IPv6BlockAPI) CreateIPv6Block(req *IPv6BlockAPICreateIPv6BlockRequest, 
 	return &resp, nil
 }
 
-// GetIPv6Block: Get the IPv6 block associated with the given ID.
+// ListIPv6Blocks: List IPv6 blocks associated given project ID.
+func (s *IPv6BlockAPI) ListIPv6Blocks(req *IPv6BlockAPIListIPv6BlocksRequest, opts ...scw.RequestOption) (*ListIPv6BlocksResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/dedibox/v1/ipv6-blocks",
+		Query:  query,
+	}
+
+	var resp ListIPv6BlocksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetIPv6Block: Get the first IPv6 block associated with the given project ID.
 func (s *IPv6BlockAPI) GetIPv6Block(req *IPv6BlockAPIGetIPv6BlockRequest, opts ...scw.RequestOption) (*IPv6Block, error) {
 	var err error
 
@@ -8010,6 +8216,52 @@ func (s *RpnSanAPI) GetRpnSan(req *RpnSanAPIGetRpnSanRequest, opts ...scw.Reques
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForRpnSanRequest is used by WaitForRpnSan method.
+type WaitForRpnSanRequest struct {
+	RpnSanID      uint64
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForRpnSan waits for the RpnSan to reach a terminal state.
+func (s *RpnSanAPI) WaitForRpnSan(req *WaitForRpnSanRequest, opts ...scw.RequestOption) (*RpnSan, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[RpnSanStatus]struct{}{
+		RpnSanStatusCreating: {},
+		RpnSanStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetRpnSan(&RpnSanAPIGetRpnSanRequest{
+				RpnSanID: req.RpnSanID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for RpnSan failed")
+	}
+
+	return res.(*RpnSan), nil
 }
 
 // DeleteRpnSan:
@@ -8369,11 +8621,6 @@ func (s *RpnV1API) RpnGroupInvite(req *RpnV1ApiRpnGroupInviteRequest, opts ...sc
 func (s *RpnV1API) LeaveRpnGroup(req *RpnV1ApiLeaveRpnGroupRequest, opts ...scw.RequestOption) error {
 	var err error
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
 	if fmt.Sprint(req.GroupID) == "" {
 		return errors.New("field GroupID cannot be empty in request")
 	}
@@ -8680,6 +8927,53 @@ func (s *RpnV2API) GetRpnV2Group(req *RpnV2ApiGetRpnV2GroupRequest, opts ...scw.
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForRpnV2GroupRequest is used by WaitForRpnV2Group method.
+type WaitForRpnV2GroupRequest struct {
+	GroupID       uint64
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForRpnV2Group waits for the RpnV2Group to reach a terminal state.
+func (s *RpnV2API) WaitForRpnV2Group(req *WaitForRpnV2GroupRequest, opts ...scw.RequestOption) (*RpnV2Group, error) {
+	timeout := defaultDediboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDediboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[RpnV2GroupStatus]struct{}{
+		RpnV2GroupStatusCreating: {},
+		RpnV2GroupStatusUpdating: {},
+		RpnV2GroupStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetRpnV2Group(&RpnV2ApiGetRpnV2GroupRequest{
+				GroupID: req.GroupID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for RpnV2Group failed")
+	}
+
+	return res.(*RpnV2Group), nil
 }
 
 // CreateRpnV2Group:

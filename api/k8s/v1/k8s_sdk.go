@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultK8sRetryInterval = 15 * time.Second
+	defaultK8sTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -136,6 +142,8 @@ const (
 	CNIKilo = CNI("kilo")
 	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
 	CNINone = CNI("none")
+	// Cilium CNI will be configured in native routing mode (https://docs.cilium.io/en/stable/network/concepts/routing/#native-routing).
+	CNICiliumNative = CNI("cilium_native")
 )
 
 func (enum CNI) String() string {
@@ -155,6 +163,7 @@ func (enum CNI) Values() []CNI {
 		"flannel",
 		"kilo",
 		"none",
+		"cilium_native",
 	}
 }
 
@@ -863,7 +872,7 @@ type Pool struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
@@ -1030,7 +1039,7 @@ type CreateClusterRequestPoolConfig struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -1135,6 +1144,15 @@ type Version struct {
 
 	// AvailableKubeletArgs: supported kubelet arguments for this version.
 	AvailableKubeletArgs map[string]string `json:"available_kubelet_args"`
+
+	// DeprecatedAt: date from which this version will no longer be available for provisioning.
+	DeprecatedAt *time.Time `json:"deprecated_at"`
+
+	// EndOfLifeAt: date from which any remaining clusters on this version will begin to be forcibly upgraded to the next minor version.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date at which this version was made available by Kapsule product.
+	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // Cluster: cluster.
@@ -1496,7 +1514,7 @@ type CreatePoolRequest struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
@@ -2017,6 +2035,8 @@ type NodeMetadata struct {
 
 	ResolvconfPath string `json:"resolvconf_path"`
 
+	TemplateArgs map[string]string `json:"template_args"`
+
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
@@ -2320,6 +2340,55 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForClusterRequest is used by WaitForCluster method.
+type WaitForClusterRequest struct {
+	Region        scw.Region
+	ClusterID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCluster waits for the Cluster to reach a terminal state.
+func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ClusterStatus]struct{}{
+		ClusterStatusCreating: {},
+		ClusterStatusDeleting: {},
+		ClusterStatusUpdating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetCluster(&GetClusterRequest{
+				Region:    req.Region,
+				ClusterID: req.ClusterID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Cluster failed")
+	}
+
+	return res.(*Cluster), nil
 }
 
 // UpdateCluster: Update information on a specific Kubernetes cluster. You can update details such as its name, description, tags and configuration. To upgrade a cluster, you will need to use the dedicated endpoint.
@@ -2859,6 +2928,55 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 	return &resp, nil
 }
 
+// WaitForPoolRequest is used by WaitForPool method.
+type WaitForPoolRequest struct {
+	Region        scw.Region
+	PoolID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForPool waits for the Pool to reach a terminal state.
+func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*Pool, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[PoolStatus]struct{}{
+		PoolStatusDeleting:  {},
+		PoolStatusScaling:   {},
+		PoolStatusUpgrading: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetPool(&GetPoolRequest{
+				Region: req.Region,
+				PoolID: req.PoolID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Pool failed")
+	}
+
+	return res.(*Pool), nil
+}
+
 // UpgradePool: Upgrade the Kubernetes version of a specific pool. Note that it only works if the targeted version matches the cluster's version.
 // This will drain and replace the nodes in that pool.
 func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*Pool, error) {
@@ -3170,6 +3288,58 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForNodeRequest is used by WaitForNode method.
+type WaitForNodeRequest struct {
+	Region        scw.Region
+	NodeID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForNode waits for the Node to reach a terminal state.
+func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*Node, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[NodeStatus]struct{}{
+		NodeStatusCreating:    {},
+		NodeStatusDeleting:    {},
+		NodeStatusRebooting:   {},
+		NodeStatusUpgrading:   {},
+		NodeStatusStarting:    {},
+		NodeStatusRegistering: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetNode(&GetNodeRequest{
+				Region: req.Region,
+				NodeID: req.NodeID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Node failed")
+	}
+
+	return res.(*Node), nil
 }
 
 // Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.

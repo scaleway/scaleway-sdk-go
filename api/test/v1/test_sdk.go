@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultTestRetryInterval = 15 * time.Second
+	defaultTestTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -446,6 +452,51 @@ func (s *API) GetHuman(req *GetHumanRequest, opts ...scw.RequestOption) (*Human,
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForHumanRequest is used by WaitForHuman method.
+type WaitForHumanRequest struct {
+	HumanID       string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForHuman waits for the Human to reach a terminal state.
+func (s *API) WaitForHuman(req *WaitForHumanRequest, opts ...scw.RequestOption) (*Human, error) {
+	timeout := defaultTestTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultTestRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[HumanStatus]struct{}{
+		HumanStatusRunning: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetHuman(&GetHumanRequest{
+				HumanID: req.HumanID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Human failed")
+	}
+
+	return res.(*Human), nil
 }
 
 // CreateHuman: Create a new human.

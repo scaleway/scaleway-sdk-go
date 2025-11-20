@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultApplesiliconRetryInterval = 15 * time.Second
+	defaultApplesiliconTimeout       = 1 * time.Hour
 )
 
 // always import dependencies
@@ -234,6 +240,127 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RunnerConfigurationProvider string
+
+const (
+	RunnerConfigurationProviderUnknownProvider = RunnerConfigurationProvider("unknown_provider")
+	RunnerConfigurationProviderGithub          = RunnerConfigurationProvider("github")
+	RunnerConfigurationProviderGitlab          = RunnerConfigurationProvider("gitlab")
+)
+
+func (enum RunnerConfigurationProvider) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RunnerConfigurationProviderUnknownProvider)
+	}
+	return string(enum)
+}
+
+func (enum RunnerConfigurationProvider) Values() []RunnerConfigurationProvider {
+	return []RunnerConfigurationProvider{
+		"unknown_provider",
+		"github",
+		"gitlab",
+	}
+}
+
+func (enum RunnerConfigurationProvider) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RunnerConfigurationProvider) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RunnerConfigurationProvider(RunnerConfigurationProvider(tmp).String())
+	return nil
+}
+
+type RunnerConfigurationV2Provider string
+
+const (
+	RunnerConfigurationV2ProviderUnknownProvider = RunnerConfigurationV2Provider("unknown_provider")
+	RunnerConfigurationV2ProviderGithub          = RunnerConfigurationV2Provider("github")
+	RunnerConfigurationV2ProviderGitlab          = RunnerConfigurationV2Provider("gitlab")
+)
+
+func (enum RunnerConfigurationV2Provider) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RunnerConfigurationV2ProviderUnknownProvider)
+	}
+	return string(enum)
+}
+
+func (enum RunnerConfigurationV2Provider) Values() []RunnerConfigurationV2Provider {
+	return []RunnerConfigurationV2Provider{
+		"unknown_provider",
+		"github",
+		"gitlab",
+	}
+}
+
+func (enum RunnerConfigurationV2Provider) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RunnerConfigurationV2Provider) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RunnerConfigurationV2Provider(RunnerConfigurationV2Provider(tmp).String())
+	return nil
+}
+
+type RunnerStatus string
+
+const (
+	RunnerStatusUnknownStatus = RunnerStatus("unknown_status")
+	RunnerStatusWaiting       = RunnerStatus("waiting")
+	RunnerStatusEnabled       = RunnerStatus("enabled")
+	RunnerStatusDisabled      = RunnerStatus("disabled")
+	RunnerStatusError         = RunnerStatus("error")
+)
+
+func (enum RunnerStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RunnerStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum RunnerStatus) Values() []RunnerStatus {
+	return []RunnerStatus{
+		"unknown_status",
+		"waiting",
+		"enabled",
+		"disabled",
+		"error",
+	}
+}
+
+func (enum RunnerStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RunnerStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RunnerStatus(RunnerStatus(tmp).String())
+	return nil
+}
+
 type ServerPrivateNetworkServerStatus string
 
 const (
@@ -416,6 +543,29 @@ func (enum *ServerTypeStock) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// OSSupportedServerType: os supported server type.
+type OSSupportedServerType struct {
+	ServerType string `json:"server_type"`
+
+	FastDeliveryAvailable bool `json:"fast_delivery_available"`
+}
+
+// GithubRunnerConfiguration: github runner configuration.
+type GithubRunnerConfiguration struct {
+	URL string `json:"url"`
+
+	Token string `json:"token"`
+
+	Labels []string `json:"labels"`
+}
+
+// GitlabRunnerConfiguration: gitlab runner configuration.
+type GitlabRunnerConfiguration struct {
+	URL string `json:"url"`
+
+	Token string `json:"token"`
+}
+
 // Commitment: commitment.
 type Commitment struct {
 	// Type: default value: duration_24h
@@ -450,8 +600,46 @@ type OS struct {
 	// XcodeVersion: the current xcode version for this OS.
 	XcodeVersion string `json:"xcode_version"`
 
-	// CompatibleServerTypes: list of compatible server types.
-	CompatibleServerTypes []string `json:"compatible_server_types"`
+	// Deprecated: CompatibleServerTypes: list of compatible server types. Deprecated.
+	CompatibleServerTypes *[]string `json:"compatible_server_types,omitempty"`
+
+	// ReleaseNotesURL: url of the release notes for the OS image or software pre-installed.
+	ReleaseNotesURL string `json:"release_notes_url"`
+
+	// Description: a summary of the OS image content and configuration.
+	Description string `json:"description"`
+
+	// Tags: list of tags for the OS configuration.
+	Tags []string `json:"tags"`
+
+	// SupportedServerTypes: list of server types which supports the OS configuration. Also gives information about immediate stock availability.
+	SupportedServerTypes []*OSSupportedServerType `json:"supported_server_types"`
+}
+
+// RunnerConfiguration: runner configuration.
+type RunnerConfiguration struct {
+	Name string `json:"name"`
+
+	URL string `json:"url"`
+
+	Token string `json:"token"`
+
+	// Provider: default value: unknown_provider
+	Provider RunnerConfigurationProvider `json:"provider"`
+}
+
+// RunnerConfigurationV2: runner configuration v2.
+type RunnerConfigurationV2 struct {
+	Name string `json:"name"`
+
+	// Provider: default value: unknown_provider
+	Provider RunnerConfigurationV2Provider `json:"provider"`
+
+	// Precisely one of GithubConfiguration, GitlabConfiguration must be set.
+	GithubConfiguration *GithubRunnerConfiguration `json:"github_configuration,omitempty"`
+
+	// Precisely one of GithubConfiguration, GitlabConfiguration must be set.
+	GitlabConfiguration *GitlabRunnerConfiguration `json:"gitlab_configuration,omitempty"`
 }
 
 // ServerTypeCPU: server type cpu.
@@ -461,6 +649,10 @@ type ServerTypeCPU struct {
 	CoreCount uint32 `json:"core_count"`
 
 	Frequency uint64 `json:"frequency"`
+
+	Sockets uint32 `json:"sockets"`
+
+	ThreadsPerCore uint32 `json:"threads_per_core"`
 }
 
 // ServerTypeDisk: server type disk.
@@ -482,11 +674,18 @@ type ServerTypeMemory struct {
 	Type string `json:"type"`
 }
 
+// ServerTypeNPU: server type npu.
+type ServerTypeNPU struct {
+	Count uint64 `json:"count"`
+}
+
 // ServerTypeNetwork: server type network.
 type ServerTypeNetwork struct {
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
 
 	SupportedBandwidth []uint64 `json:"supported_bandwidth"`
+
+	DefaultPublicBandwidth uint64 `json:"default_public_bandwidth"`
 }
 
 // BatchCreateServersRequestBatchInnerCreateServerRequest: batch create servers request batch inner create server request.
@@ -560,6 +759,15 @@ type Server struct {
 
 	// PublicBandwidthBps: public bandwidth configured for this server. Expressed in bits per second.
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	// Deprecated: RunnerConfiguration: current runner configuration, empty if none is installed.
+	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration,omitempty"`
+
+	// Tags: a list of tags attached to the server.
+	Tags []string `json:"tags"`
+
+	// AppliedRunnerConfigurationIDs: runner configurations applied on the server, optional.
+	AppliedRunnerConfigurationIDs []string `json:"applied_runner_configuration_ids"`
 }
 
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
@@ -575,6 +783,23 @@ type ConnectivityDiagnosticServerHealth struct {
 	IsSSHPortUp bool `json:"is_ssh_port_up"`
 
 	IsVncPortUp bool `json:"is_vnc_port_up"`
+}
+
+// AppliedRunnerConfigurations: applied runner configurations.
+type AppliedRunnerConfigurations struct {
+	RunnerConfigurationIDs []string `json:"runner_configuration_ids"`
+}
+
+// Runner: runner.
+type Runner struct {
+	ID string `json:"id"`
+
+	Configuration *RunnerConfigurationV2 `json:"configuration"`
+
+	// Status: default value: unknown_status
+	Status RunnerStatus `json:"status"`
+
+	ErrorMessage string `json:"error_message"`
 }
 
 // ServerPrivateNetwork: server private network.
@@ -637,6 +862,9 @@ type ServerType struct {
 
 	// DefaultOs: the default OS for this server type.
 	DefaultOs *OS `json:"default_os"`
+
+	// Npu: nPU description.
+	Npu *ServerTypeNPU `json:"npu"`
 }
 
 // CommitmentTypeValue: commitment type value.
@@ -695,6 +923,18 @@ type ConnectivityDiagnostic struct {
 	ErrorMessage string `json:"error_message"`
 }
 
+// CreateRunnerRequest: create runner request.
+type CreateRunnerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ProjectID: creates a runner in the given project_id.
+	ProjectID string `json:"project_id"`
+
+	// RunnerConfiguration: configuration details for the runner.
+	RunnerConfiguration *RunnerConfigurationV2 `json:"runner_configuration"`
+}
+
 // CreateServerRequest: create server request.
 type CreateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -721,6 +961,21 @@ type CreateServerRequest struct {
 
 	// PublicBandwidthBps: public bandwidth to configure for this server. This defaults to the minimum bandwidth for this server type. For compatible server types, the bandwidth can be increased which incurs additional costs.
 	PublicBandwidthBps uint64 `json:"public_bandwidth_bps"`
+
+	// Deprecated: RunnerConfiguration: specify the configuration to install an optional CICD runner on the server during installation.
+	RunnerConfiguration *RunnerConfiguration `json:"runner_configuration,omitempty"`
+
+	// AppliedRunnerConfigurations: runner configurations to apply on the server, existing ones missing from the specified configuration will be removed from the server.
+	AppliedRunnerConfigurations *AppliedRunnerConfigurations `json:"applied_runner_configurations,omitempty"`
+}
+
+// DeleteRunnerRequest: delete runner request.
+type DeleteRunnerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// RunnerID: ID of the runner configuration to delete.
+	RunnerID string `json:"-"`
 }
 
 // DeleteServerRequest: delete server request.
@@ -747,6 +1002,15 @@ type GetOSRequest struct {
 
 	// OsID: UUID of the OS you want to get.
 	OsID string `json:"-"`
+}
+
+// GetRunnerRequest: get runner request.
+type GetRunnerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// RunnerID: ID of the runner configuration to get.
+	RunnerID string `json:"-"`
 }
 
 // GetServerRequest: get server request.
@@ -811,6 +1075,53 @@ func (r *ListOSResponse) UnsafeAppend(res any) (uint32, error) {
 	r.Os = append(r.Os, results.Os...)
 	r.TotalCount += uint32(len(results.Os))
 	return uint32(len(results.Os)), nil
+}
+
+// ListRunnersRequest: list runners request.
+type ListRunnersRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server for which to list applied runner configurations.
+	ServerID *string `json:"-"`
+
+	// ProjectID: only list servers of this project ID.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: only list servers of this Organization ID.
+	OrganizationID *string `json:"-"`
+
+	// Page: positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 100 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListRunnersResponse: list runners response.
+type ListRunnersResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	Runners []*Runner `json:"runners"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListRunnersResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListRunnersResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListRunnersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Runners = append(r.Runners, results.Runners...)
+	r.TotalCount += uint64(len(results.Runners))
+	return uint64(len(results.Runners)), nil
 }
 
 // ListServerPrivateNetworksResponse: list server private networks response.
@@ -1020,6 +1331,18 @@ type StartConnectivityDiagnosticResponse struct {
 	DiagnosticID string `json:"diagnostic_id"`
 }
 
+// UpdateRunnerRequest: update runner request.
+type UpdateRunnerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// RunnerID: ID of the runner configuration to update.
+	RunnerID string `json:"-"`
+
+	// RunnerConfiguration: configuration details for the runner.
+	RunnerConfiguration *RunnerConfigurationV2 `json:"runner_configuration"`
+}
+
 // UpdateServerRequest: update server request.
 type UpdateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1042,6 +1365,9 @@ type UpdateServerRequest struct {
 
 	// PublicBandwidthBps: public bandwidth to configure for this server. Setting an higher bandwidth incurs additional costs. Supported bandwidth levels depends on server type and can be queried using the `/server-types` endpoint.
 	PublicBandwidthBps *uint64 `json:"public_bandwidth_bps,omitempty"`
+
+	// AppliedRunnerConfigurations: runner configurations to apply on the server, existing ones missing from the specified configuration will be removed from the server.
+	AppliedRunnerConfigurations *AppliedRunnerConfigurations `json:"applied_runner_configurations,omitempty"`
 }
 
 // This API allows you to manage your Apple silicon machines.
@@ -1337,6 +1663,59 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	return &resp, nil
 }
 
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	Zone          scw.Zone
+	ServerID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultApplesiliconTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultApplesiliconRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusStarting:     {},
+		ServerStatusRebooting:    {},
+		ServerStatusUpdating:     {},
+		ServerStatusLocking:      {},
+		ServerStatusUnlocking:    {},
+		ServerStatusReinstalling: {},
+		ServerStatusBusy:         {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
+}
+
 // UpdateServer: Update the parameters of an existing Apple silicon server, specified by its server ID.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
@@ -1438,7 +1817,7 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// ReinstallServer: Reinstall an existing Apple silicon server (specified by its server ID) from a new image (OS). All the data on the disk is deleted and all configuration is reset to the defailt configuration values of the image (OS).
+// ReinstallServer: Reinstall an existing Apple silicon server (specified by its server ID) from a new image (OS). All the data on the disk is deleted and all configuration is reset to the default configuration values of the image (OS).
 func (s *API) ReinstallServer(req *ReinstallServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 
@@ -1537,6 +1916,226 @@ func (s *API) GetConnectivityDiagnostic(req *GetConnectivityDiagnosticRequest, o
 	return &resp, nil
 }
 
+// CreateRunner: Create a new runner configuration.
+func (s *API) CreateRunner(req *CreateRunnerRequest, opts ...scw.RequestOption) (*Runner, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runners",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Runner
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetRunner: Retrieve a runner configuration.
+func (s *API) GetRunner(req *GetRunnerRequest, opts ...scw.RequestOption) (*Runner, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RunnerID) == "" {
+		return nil, errors.New("field RunnerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runners/" + fmt.Sprint(req.RunnerID) + "",
+	}
+
+	var resp Runner
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForRunnerRequest is used by WaitForRunner method.
+type WaitForRunnerRequest struct {
+	Zone          scw.Zone
+	RunnerID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForRunner waits for the Runner to reach a terminal state.
+func (s *API) WaitForRunner(req *WaitForRunnerRequest, opts ...scw.RequestOption) (*Runner, error) {
+	timeout := defaultApplesiliconTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultApplesiliconRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[RunnerStatus]struct{}{
+		RunnerStatusWaiting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetRunner(&GetRunnerRequest{
+				Zone:     req.Zone,
+				RunnerID: req.RunnerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Runner failed")
+	}
+
+	return res.(*Runner), nil
+}
+
+// ListRunners: List runner configurations associated with a server.
+func (s *API) ListRunners(req *ListRunnersRequest, opts ...scw.RequestOption) (*ListRunnersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "server_id", req.ServerID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runners",
+		Query:  query,
+	}
+
+	var resp ListRunnersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateRunner: Create a new runner configuration.
+func (s *API) UpdateRunner(req *UpdateRunnerRequest, opts ...scw.RequestOption) (*Runner, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RunnerID) == "" {
+		return nil, errors.New("field RunnerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runners/" + fmt.Sprint(req.RunnerID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Runner
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteRunner: Create a new runner configuration.
+func (s *API) DeleteRunner(req *DeleteRunnerRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RunnerID) == "" {
+		return errors.New("field RunnerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runners/" + fmt.Sprint(req.RunnerID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Apple silicon - Private Networks API.
 type PrivateNetworkAPI struct {
 	client *scw.Client
@@ -1586,6 +2185,56 @@ func (s *PrivateNetworkAPI) GetServerPrivateNetwork(req *PrivateNetworkAPIGetSer
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForServerPrivateNetworkRequest is used by WaitForServerPrivateNetwork method.
+type WaitForServerPrivateNetworkRequest struct {
+	Zone             scw.Zone
+	ServerID         string
+	PrivateNetworkID string
+	Timeout          *time.Duration
+	RetryInterval    *time.Duration
+}
+
+// WaitForServerPrivateNetwork waits for the ServerPrivateNetwork to reach a terminal state.
+func (s *PrivateNetworkAPI) WaitForServerPrivateNetwork(req *WaitForServerPrivateNetworkRequest, opts ...scw.RequestOption) (*ServerPrivateNetwork, error) {
+	timeout := defaultApplesiliconTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultApplesiliconRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerPrivateNetworkServerStatus]struct{}{
+		ServerPrivateNetworkServerStatusAttaching: {},
+		ServerPrivateNetworkServerStatusDetaching: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetServerPrivateNetwork(&PrivateNetworkAPIGetServerPrivateNetworkRequest{
+				Zone:             req.Zone,
+				ServerID:         req.ServerID,
+				PrivateNetworkID: req.PrivateNetworkID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for ServerPrivateNetwork failed")
+	}
+
+	return res.(*ServerPrivateNetwork), nil
 }
 
 // AddServerPrivateNetwork: Add an Apple silicon server to a Private Network.

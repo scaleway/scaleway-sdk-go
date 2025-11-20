@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultDomainRetryInterval = 15 * time.Second
+	defaultDomainTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -706,6 +712,72 @@ func (enum *HostStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = HostStatus(HostStatus(tmp).String())
+	return nil
+}
+
+type InboundTransferStatus string
+
+const (
+	// Unknown status.
+	InboundTransferStatusUnknown = InboundTransferStatus("unknown")
+	// Domain transfer in progress.
+	InboundTransferStatusInProgress = InboundTransferStatus("in_progress")
+	// Domain successfully transferred.
+	InboundTransferStatusDone = InboundTransferStatus("done")
+	// Internal error.
+	InboundTransferStatusErrInternal = InboundTransferStatus("err_internal")
+	// Domain is in a pending status.
+	InboundTransferStatusErrDomainPending = InboundTransferStatus("err_domain_pending")
+	// Domain is already being transferred.
+	InboundTransferStatusErrAlreadyTransferring = InboundTransferStatus("err_already_transferring")
+	// Domain transfer is prohibited (transfer/update prohibited status or is currently locked).
+	InboundTransferStatusErrTransferProhibited = InboundTransferStatus("err_transfer_prohibited")
+	// Transfer is not supported for this TLD or the domain is premium.
+	InboundTransferStatusErrTransferImpossible = InboundTransferStatus("err_transfer_impossible")
+	// Invalid authcode.
+	InboundTransferStatusErrInvalidAuthcode = InboundTransferStatus("err_invalid_authcode")
+	// Domain name was created less than 60 days ago.
+	InboundTransferStatusErrDomainTooYoung = InboundTransferStatus("err_domain_too_young")
+	// Too many transfer requests for this domain name.
+	InboundTransferStatusErrTooManyRequests = InboundTransferStatus("err_too_many_requests")
+)
+
+func (enum InboundTransferStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(InboundTransferStatusUnknown)
+	}
+	return string(enum)
+}
+
+func (enum InboundTransferStatus) Values() []InboundTransferStatus {
+	return []InboundTransferStatus{
+		"unknown",
+		"in_progress",
+		"done",
+		"err_internal",
+		"err_domain_pending",
+		"err_already_transferring",
+		"err_transfer_prohibited",
+		"err_transfer_impossible",
+		"err_invalid_authcode",
+		"err_domain_too_young",
+		"err_too_many_requests",
+	}
+}
+
+func (enum InboundTransferStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *InboundTransferStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = InboundTransferStatus(InboundTransferStatus(tmp).String())
 	return nil
 }
 
@@ -2027,6 +2099,34 @@ type DomainSummary struct {
 	PendingTrade bool `json:"pending_trade"`
 }
 
+// InboundTransfer: inbound transfer.
+type InboundTransfer struct {
+	// ID: the unique identifier of the inbound transfer.
+	ID string `json:"id"`
+
+	// CreatedAt: the creation date of the inbound transfer.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// LastUpdatedAt: the last modification date of the inbound transfer.
+	LastUpdatedAt *time.Time `json:"last_updated_at"`
+
+	// ProjectID: the project ID associated with the inbound transfer.
+	ProjectID string `json:"project_id"`
+
+	// Domain: the domain associated with the inbound transfer.
+	Domain string `json:"domain"`
+
+	// Status: inbound transfer status.
+	// Default value: unknown
+	Status InboundTransferStatus `json:"status"`
+
+	// Message: human-friendly message to describe the current inbound transfer status.
+	Message string `json:"message"`
+
+	// TaskID: the unique identifier of the associated task.
+	TaskID string `json:"task_id"`
+}
+
 // RenewableDomain: renewable domain.
 type RenewableDomain struct {
 	Domain string `json:"domain"`
@@ -2650,6 +2750,32 @@ func (r *ListDomainsResponse) UnsafeAppend(res any) (uint32, error) {
 	return uint32(len(results.Domains)), nil
 }
 
+// ListInboundTransfersResponse: list inbound transfers response.
+type ListInboundTransfersResponse struct {
+	TotalCount uint32 `json:"total_count"`
+
+	InboundTransfers []*InboundTransfer `json:"inbound_transfers"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListInboundTransfersResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListInboundTransfersResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListInboundTransfersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.InboundTransfers = append(r.InboundTransfers, results.InboundTransfers...)
+	r.TotalCount += uint32(len(results.InboundTransfers))
+	return uint32(len(results.InboundTransfers)), nil
+}
+
 // ListRenewableDomainsResponse: list renewable domains response.
 type ListRenewableDomainsResponse struct {
 	TotalCount uint32 `json:"total_count"`
@@ -2972,6 +3098,19 @@ type RegistrarAPIListDomainsRequest struct {
 	Domain *string `json:"-"`
 }
 
+// RegistrarAPIListInboundTransfersRequest: registrar api list inbound transfers request.
+type RegistrarAPIListInboundTransfersRequest struct {
+	Page int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	ProjectID string `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	Domain string `json:"-"`
+}
+
 // RegistrarAPIListRenewableDomainsRequest: registrar api list renewable domains request.
 type RegistrarAPIListRenewableDomainsRequest struct {
 	Page *int32 `json:"-"`
@@ -3041,6 +3180,18 @@ type RegistrarAPIRenewDomainsRequest struct {
 	DurationInYears uint32 `json:"duration_in_years"`
 
 	ForceLateRenewal *bool `json:"force_late_renewal,omitempty"`
+}
+
+// RegistrarAPIRetryInboundTransferRequest: registrar api retry inbound transfer request.
+type RegistrarAPIRetryInboundTransferRequest struct {
+	// Domain: the domain being transferred.
+	Domain string `json:"domain"`
+
+	// ProjectID: the project ID to associated with the inbound transfer.
+	ProjectID string `json:"project_id"`
+
+	// AuthCode: an optional new auth code to replace the previous one for the retry.
+	AuthCode *string `json:"auth_code,omitempty"`
 }
 
 // RegistrarAPISearchAvailableDomainsRequest: registrar api search available domains request.
@@ -3184,6 +3335,9 @@ type RestoreDNSZoneVersionRequest struct {
 
 // RestoreDNSZoneVersionResponse: restore dns zone version response.
 type RestoreDNSZoneVersionResponse struct{}
+
+// RetryInboundTransferResponse: retry inbound transfer response.
+type RetryInboundTransferResponse struct{}
 
 // SearchAvailableDomainsResponse: search available domains response.
 type SearchAvailableDomainsResponse struct {
@@ -3786,7 +3940,7 @@ func (s *API) RestoreDNSZoneVersion(req *RestoreDNSZoneVersionRequest, opts ...s
 	return &resp, nil
 }
 
-// GetSSLCertificate: Get the DNS zone's TLS certificate. If you do not have a certificate, the ouptut returns `no certificate found`.
+// GetSSLCertificate: Get the DNS zone's TLS certificate. If you do not have a certificate, the output returns `no certificate found`.
 func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
 	var err error
 
@@ -3806,6 +3960,51 @@ func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.Reque
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForSSLCertificateRequest is used by WaitForSSLCertificate method.
+type WaitForSSLCertificateRequest struct {
+	DNSZone       string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSSLCertificate waits for the SSLCertificate to reach a terminal state.
+func (s *API) WaitForSSLCertificate(req *WaitForSSLCertificateRequest, opts ...scw.RequestOption) (*SSLCertificate, error) {
+	timeout := defaultDomainTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDomainRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SSLCertificateStatus]struct{}{
+		SSLCertificateStatusPending: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetSSLCertificate(&GetSSLCertificateRequest{
+				DNSZone: req.DNSZone,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for SSLCertificate failed")
+	}
+
+	return res.(*SSLCertificate), nil
 }
 
 // CreateSSLCertificate: Create a new TLS certificate or retrieve information about an existing TLS certificate.
@@ -3964,6 +4163,75 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	}
 
 	var resp ListTasksResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListInboundTransfers:
+func (s *RegistrarAPI) ListInboundTransfers(req *RegistrarAPIListInboundTransfersRequest, opts ...scw.RequestOption) (*ListInboundTransfersResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "domain", req.Domain)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/domain/v2beta1/inbound-transfers",
+		Query:  query,
+	}
+
+	var resp ListInboundTransfersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RetryInboundTransfer: Request a retry for the transfer of a domain from another registrar to Scaleway Domains and DNS.
+func (s *RegistrarAPI) RetryInboundTransfer(req *RegistrarAPIRetryInboundTransferRequest, opts ...scw.RequestOption) (*RetryInboundTransferResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/domain/v2beta1/retry-inbound-transfer",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp RetryInboundTransferResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -4327,6 +4595,57 @@ func (s *RegistrarAPI) GetDomain(req *RegistrarAPIGetDomainRequest, opts ...scw.
 	return &resp, nil
 }
 
+// WaitForDomainRequest is used by WaitForDomain method.
+type WaitForDomainRequest struct {
+	Domain        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDomain waits for the Domain to reach a terminal state.
+func (s *RegistrarAPI) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultDomainTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultDomainRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DomainStatus]struct{}{
+		DomainStatusCreating: {},
+		DomainStatusRenewing: {},
+		DomainStatusXfering:  {},
+		DomainStatusExpiring: {},
+		DomainStatusUpdating: {},
+		DomainStatusChecking: {},
+		DomainStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Domain failed")
+	}
+
+	return res.(*Domain), nil
+}
+
 // UpdateDomain: Update contacts for a specific domain or create a new contact.<br/>
 // If you add the same contact for multiple roles (owner, administrative, technical), only one ID will be created and used for all of the roles.
 func (s *RegistrarAPI) UpdateDomain(req *RegistrarAPIUpdateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
@@ -4463,7 +4782,7 @@ func (s *RegistrarAPI) DisableDomainAutoRenew(req *RegistrarAPIDisableDomainAuto
 	return &resp, nil
 }
 
-// GetDomainAuthCode: Retrieve the authorization code to tranfer an unlocked domain. The output returns an error if the domain is locked.
+// GetDomainAuthCode: Retrieve the authorization code to transfer an unlocked domain. The output returns an error if the domain is locked.
 // Some TLDs may have a different procedure to retrieve the authorization code. In that case, the information displays in the message field.
 func (s *RegistrarAPI) GetDomainAuthCode(req *RegistrarAPIGetDomainAuthCodeRequest, opts ...scw.RequestOption) (*GetDomainAuthCodeResponse, error) {
 	var err error
