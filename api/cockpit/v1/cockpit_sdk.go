@@ -738,6 +738,9 @@ type DataSource struct {
 
 	// Region: region of the data source.
 	Region scw.Region `json:"region"`
+
+	// CurrentMonthUsage: usage of the month in bytes.
+	CurrentMonthUsage *scw.Size `json:"current_month_usage"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
