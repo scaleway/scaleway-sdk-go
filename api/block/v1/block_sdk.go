@@ -816,6 +816,9 @@ type ListVolumesRequest struct {
 
 	// IncludeDeleted: display deleted volumes not erased yet.
 	IncludeDeleted bool `json:"-"`
+
+	// VolumeType: filter by volume type.
+	VolumeType *string `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -960,6 +963,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "product_resource_id", req.ProductResourceID)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
+	parameter.AddToQuery(query, "volume_type", req.VolumeType)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
