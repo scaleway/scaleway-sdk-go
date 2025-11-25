@@ -462,6 +462,7 @@ const (
 	ResourceTypeInstanceVolume           = ResourceType("instance_volume")
 	ResourceTypeInstanceSnapshot         = ResourceType("instance_snapshot")
 	ResourceTypeInstanceImage            = ResourceType("instance_image")
+	ResourceTypeInstanceTemplate         = ResourceType("instance_template")
 	ResourceTypeAppleSiliconServer       = ResourceType("apple_silicon_server")
 	ResourceTypeBaremetalServer          = ResourceType("baremetal_server")
 	ResourceTypeBaremetalSetting         = ResourceType("baremetal_setting")
@@ -533,6 +534,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_volume",
 		"instance_snapshot",
 		"instance_image",
+		"instance_template",
 		"apple_silicon_server",
 		"baremetal_server",
 		"baremetal_setting",
