@@ -1117,21 +1117,21 @@ type Platform struct {
 	// Name: name of the platform.
 	Name string `json:"name"`
 
-	// ProviderName: provider name of the platform.
+	// ProviderName: name of the technological provider of the platform in lowercase (quandela, pasqal...).
 	ProviderName string `json:"provider_name"`
 
-	// BackendName: name of the running backend over the platform (ascella, qsim, aer...).
+	// BackendName: name of the running emulation backend or QPU model of the platform in lowercase (mosaiq, qsim, aer...).
 	BackendName string `json:"backend_name"`
 
-	// Type: type of the platform.
+	// Type: type of the platform (emulator or qpu).
 	// Default value: unknown_type
 	Type PlatformType `json:"type"`
 
-	// Technology: technology used by the platform.
+	// Technology: quantum technology used by the platform (trapped-ion, photonic, superconducting qubits...).
 	// Default value: unknown_technology
 	Technology PlatformTechnology `json:"technology"`
 
-	// MaxQubitCount: estimated maximum number of qubits supported by the platform.
+	// MaxQubitCount: maximum number of qubits supported by the platform (estimated for emulator).
 	MaxQubitCount uint32 `json:"max_qubit_count"`
 
 	// MaxShotCount: maximum number of shots during a circuit execution.
@@ -1998,7 +1998,7 @@ type UpdateSessionRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
-// This API allows you to manage Scaleway Quantum as a Service.
+// This API allows you to allocate and program Quantum Processing Units (QPUs) to run quantum algorithms.
 type API struct {
 	client *scw.Client
 }
@@ -2010,7 +2010,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetJob: Retrieve information about the provided **job ID**, such as status, payload, and result.
+// GetJob: Retrieve information about the provided **job ID**, mainly used to get the current status.
 func (s *API) GetJob(req *GetJobRequest, opts ...scw.RequestOption) (*Job, error) {
 	var err error
 
@@ -2079,7 +2079,7 @@ func (s *API) WaitForJob(req *WaitForJobRequest, opts ...scw.RequestOption) (*Jo
 	return res.(*Job), nil
 }
 
-// ListJobs: Retrieve information about all jobs within a given project or session.
+// ListJobs: Retrieve information about all jobs within a given session.
 func (s *API) ListJobs(req *ListJobsRequest, opts ...scw.RequestOption) (*ListJobsResponse, error) {
 	var err error
 
@@ -2149,7 +2149,7 @@ func (s *API) ListJobResults(req *ListJobResultsRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// CreateJob: Create a job to be executed inside a session.
+// CreateJob: Create a job to be executed inside a QPU session.
 func (s *API) CreateJob(req *CreateJobRequest, opts ...scw.RequestOption) (*Job, error) {
 	var err error
 
@@ -2324,7 +2324,7 @@ func (s *API) ListPlatforms(req *ListPlatformsRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetSession: Retrieve information about the provided **session ID**, such as name, status, and number of executed jobs.
+// GetSession: Retrieve information about the provided **session ID**, such as name and status.
 func (s *API) GetSession(req *GetSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2392,7 +2392,7 @@ func (s *API) WaitForSession(req *WaitForSessionRequest, opts ...scw.RequestOpti
 	return res.(*Session), nil
 }
 
-// ListSessions: Retrieve information about all sessions.
+// ListSessions: Retrieve information about all QPU sessions.
 func (s *API) ListSessions(req *ListSessionsRequest, opts ...scw.RequestOption) (*ListSessionsResponse, error) {
 	var err error
 
@@ -2429,7 +2429,7 @@ func (s *API) ListSessions(req *ListSessionsRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// CreateSession: Create a dedicated session for the specified platform.
+// CreateSession: Create a new QPU session for the specified platform. Once ready, jobs can be sent to this session.
 func (s *API) CreateSession(req *CreateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2484,7 +2484,7 @@ func (s *API) UpdateSession(req *UpdateSessionRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs and booking.
+// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs and bookings.
 func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2511,7 +2511,7 @@ func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteSession: Delete a session by its unique ID and delete all its attached job and booking.
+// DeleteSession: Delete a session by its unique ID and delete all its attached jobs and bookings.
 func (s *API) DeleteSession(req *DeleteSessionRequest, opts ...scw.RequestOption) error {
 	var err error
 
