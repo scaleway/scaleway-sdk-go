@@ -6,8 +6,8 @@ toolchain go1.24.1
 
 require (
 	golang.org/x/text v0.31.0
-	gopkg.in/dnaeon/go-vcr.v4 v4.0.5
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require github.com/goccy/go-yaml v1.18.0 // indirect
+require go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
