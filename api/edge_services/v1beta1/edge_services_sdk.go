@@ -1137,6 +1137,14 @@ type ScalewayS3BackendConfig struct {
 	IsWebsite *bool `json:"is_website"`
 }
 
+// ScalewayServerlessContainerBackendConfig: scaleway serverless container backend config.
+type ScalewayServerlessContainerBackendConfig struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	ContainerID string `json:"container_id"`
+}
+
 // PipelineError: pipeline error.
 type PipelineError struct {
 	// Stage: default value: unknown_stage
@@ -1187,12 +1195,15 @@ type BackendStage struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 }
 
 // CacheStage: cache stage.
