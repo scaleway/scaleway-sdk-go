@@ -202,6 +202,45 @@ func (enum *PublicCatalogProductProductBadge) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode string
+
+const (
+	PublicCatalogProductPropertiesGenerativeAPIsConsumptionModeUnknownConsumptionMode = PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode("unknown_consumption_mode")
+	PublicCatalogProductPropertiesGenerativeAPIsConsumptionModeRealtime               = PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode("realtime")
+	PublicCatalogProductPropertiesGenerativeAPIsConsumptionModeBatch                  = PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode("batch")
+)
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesGenerativeAPIsConsumptionModeUnknownConsumptionMode)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode) Values() []PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode {
+	return []PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode{
+		"unknown_consumption_mode",
+		"realtime",
+		"batch",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode(PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesHardwareCPUArch string
 
 const (
@@ -569,6 +608,9 @@ type PublicCatalogProductPropertiesGenerativeAPIs struct {
 	Reasoning bool `json:"reasoning"`
 
 	SupportedAPIs []string `json:"supported_apis"`
+
+	// ConsumptionMode: default value: unknown_consumption_mode
+	ConsumptionMode PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode `json:"consumption_mode"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
