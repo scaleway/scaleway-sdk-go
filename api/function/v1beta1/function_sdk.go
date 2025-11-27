@@ -3048,7 +3048,7 @@ func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// CreateToken: Create a new revocable token.
+// Deprecated: CreateToken: Deprecated in favor of IAM authentication.
 func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
