@@ -57,6 +57,7 @@ const (
 	DeploymentStatusLocked        = DeploymentStatus("locked")
 	DeploymentStatusLocking       = DeploymentStatus("locking")
 	DeploymentStatusUnlocking     = DeploymentStatus("unlocking")
+	DeploymentStatusDeploying     = DeploymentStatus("deploying")
 )
 
 func (enum DeploymentStatus) String() string {
@@ -78,6 +79,7 @@ func (enum DeploymentStatus) Values() []DeploymentStatus {
 		"locked",
 		"locking",
 		"unlocking",
+		"deploying",
 	}
 }
 
@@ -1003,6 +1005,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 		DeploymentStatusDeleting:    {},
 		DeploymentStatusLocking:     {},
 		DeploymentStatusUnlocking:   {},
+		DeploymentStatusDeploying:   {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
