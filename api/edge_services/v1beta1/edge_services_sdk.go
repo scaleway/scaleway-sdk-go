@@ -1598,12 +1598,15 @@ type CreateBackendStageRequest struct {
 	PipelineID string `json:"-"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 }
 
 // CreateCacheStageRequest: create cache stage request.
@@ -2505,15 +2508,18 @@ type UpdateBackendStageRequest struct {
 	BackendStageID string `json:"-"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
 	// PipelineID: pipeline ID the Backend stage belongs to.
 	PipelineID string `json:"pipeline_id"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
