@@ -110,9 +110,13 @@ const (
 	ListPublicCatalogProductsRequestStatusPreview = ListPublicCatalogProductsRequestStatus("preview")
 	// The product is generally available.
 	ListPublicCatalogProductsRequestStatusGeneralAvailability = ListPublicCatalogProductsRequestStatus("general_availability")
-	// The product must not be used for new deployments.
+	// The product is available but no new features will be added. Only bug fixes and security updates provided.
+	ListPublicCatalogProductsRequestStatusEndOfNewFeatures = ListPublicCatalogProductsRequestStatus("end_of_new_features")
+	// The product is no longer available to new customers. Existing resources continue to run and be supported.
+	ListPublicCatalogProductsRequestStatusEndOfGrowth = ListPublicCatalogProductsRequestStatus("end_of_growth")
+	// The product must not be used for new deployments. Deprecated.
 	ListPublicCatalogProductsRequestStatusEndOfDeployment = ListPublicCatalogProductsRequestStatus("end_of_deployment")
-	// There is no longer any commercial support for this product.
+	// There is no longer any commercial support for this product. Deprecated.
 	ListPublicCatalogProductsRequestStatusEndOfSupport = ListPublicCatalogProductsRequestStatus("end_of_support")
 	// The product is not sold anymore but is still in use.
 	ListPublicCatalogProductsRequestStatusEndOfSale = ListPublicCatalogProductsRequestStatus("end_of_sale")
@@ -136,6 +140,8 @@ func (enum ListPublicCatalogProductsRequestStatus) Values() []ListPublicCatalogP
 		"public_beta",
 		"preview",
 		"general_availability",
+		"end_of_new_features",
+		"end_of_growth",
 		"end_of_deployment",
 		"end_of_support",
 		"end_of_sale",
@@ -300,6 +306,8 @@ const (
 	PublicCatalogProductStatusPreview = PublicCatalogProductStatus("preview")
 	// The product is generally available.
 	PublicCatalogProductStatusGeneralAvailability = PublicCatalogProductStatus("general_availability")
+	PublicCatalogProductStatusEndOfNewFeatures    = PublicCatalogProductStatus("end_of_new_features")
+	PublicCatalogProductStatusEndOfGrowth         = PublicCatalogProductStatus("end_of_growth")
 	// The product must not be used for new deployments.
 	PublicCatalogProductStatusEndOfDeployment = PublicCatalogProductStatus("end_of_deployment")
 	// There is no longer any commercial support for this product.
@@ -326,6 +334,8 @@ func (enum PublicCatalogProductStatus) Values() []PublicCatalogProductStatus {
 		"public_beta",
 		"preview",
 		"general_availability",
+		"end_of_new_features",
+		"end_of_growth",
 		"end_of_deployment",
 		"end_of_support",
 		"end_of_sale",
@@ -831,7 +841,7 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 	// Precisely one of Global, Region, Zone, Datacenter must be set.
 	Datacenter *string `json:"datacenter,omitempty"`
 
-	// Status: the lists of filtered product status, if empty only products with status public_beta, general_availability, preview, end_of_deployment, end_of_support, end_of_sale, end_of_life or retired will be returned.
+	// Status: the lists of filtered product status, if empty only products with status public_beta, general_availability, preview, end_of_new_features, end_of_growth, end_of_deployment, end_of_support, end_of_sale, end_of_life or retired will be returned.
 	Status []ListPublicCatalogProductsRequestStatus `json:"-"`
 }
 
