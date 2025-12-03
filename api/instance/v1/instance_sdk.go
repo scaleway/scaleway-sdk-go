@@ -85,8 +85,9 @@ type AttachServerVolumeRequestVolumeType string
 const (
 	AttachServerVolumeRequestVolumeTypeUnknownVolumeType = AttachServerVolumeRequestVolumeType("unknown_volume_type")
 	AttachServerVolumeRequestVolumeTypeLSSD              = AttachServerVolumeRequestVolumeType("l_ssd")
-	AttachServerVolumeRequestVolumeTypeBSSD              = AttachServerVolumeRequestVolumeType("b_ssd")
-	AttachServerVolumeRequestVolumeTypeSbsVolume         = AttachServerVolumeRequestVolumeType("sbs_volume")
+	// Deprecated.
+	AttachServerVolumeRequestVolumeTypeBSSD      = AttachServerVolumeRequestVolumeType("b_ssd")
+	AttachServerVolumeRequestVolumeTypeSbsVolume = AttachServerVolumeRequestVolumeType("sbs_volume")
 )
 
 func (enum AttachServerVolumeRequestVolumeType) String() string {
@@ -975,8 +976,10 @@ type SnapshotVolumeType string
 const (
 	SnapshotVolumeTypeUnknownVolumeType = SnapshotVolumeType("unknown_volume_type")
 	SnapshotVolumeTypeLSSD              = SnapshotVolumeType("l_ssd")
-	SnapshotVolumeTypeBSSD              = SnapshotVolumeType("b_ssd")
-	SnapshotVolumeTypeUnified           = SnapshotVolumeType("unified")
+	// Deprecated.
+	SnapshotVolumeTypeBSSD = SnapshotVolumeType("b_ssd")
+	// Deprecated.
+	SnapshotVolumeTypeUnified = SnapshotVolumeType("unified")
 )
 
 func (enum SnapshotVolumeType) String() string {
@@ -1106,7 +1109,8 @@ func (enum *VolumeServerState) UnmarshalJSON(data []byte) error {
 type VolumeServerVolumeType string
 
 const (
-	VolumeServerVolumeTypeLSSD      = VolumeServerVolumeType("l_ssd")
+	VolumeServerVolumeTypeLSSD = VolumeServerVolumeType("l_ssd")
+	// Deprecated.
 	VolumeServerVolumeTypeBSSD      = VolumeServerVolumeType("b_ssd")
 	VolumeServerVolumeTypeSbsVolume = VolumeServerVolumeType("sbs_volume")
 	VolumeServerVolumeTypeScratch   = VolumeServerVolumeType("scratch")
@@ -1196,8 +1200,10 @@ func (enum *VolumeState) UnmarshalJSON(data []byte) error {
 type VolumeVolumeType string
 
 const (
-	VolumeVolumeTypeLSSD        = VolumeVolumeType("l_ssd")
-	VolumeVolumeTypeBSSD        = VolumeVolumeType("b_ssd")
+	VolumeVolumeTypeLSSD = VolumeVolumeType("l_ssd")
+	// Deprecated.
+	VolumeVolumeTypeBSSD = VolumeVolumeType("b_ssd")
+	// Deprecated.
 	VolumeVolumeTypeUnified     = VolumeVolumeType("unified")
 	VolumeVolumeTypeScratch     = VolumeVolumeType("scratch")
 	VolumeVolumeTypeSbsVolume   = VolumeVolumeType("sbs_volume")
