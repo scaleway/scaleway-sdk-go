@@ -821,6 +821,8 @@ type GatewayType struct {
 
 	AllowedConnections uint64 `json:"allowed_connections"`
 
+	Zones []string `json:"zones"`
+
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
 }
