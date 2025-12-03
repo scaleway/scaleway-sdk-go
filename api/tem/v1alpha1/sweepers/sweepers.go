@@ -8,11 +8,19 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepDomain(scwClient *scw.Client, region scw.Region, skippedDomain string) error {
+func SweepDomain(scwClient *scw.Client, region scw.Region, skippedDomain string, projectScoped bool) error {
 	temAPI := temSDK.NewAPI(scwClient)
 	logger.Warningf("sweeper: revoking the tem domains in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
-	listDomains, err := temAPI.ListDomains(&temSDK.ListDomainsRequest{Region: region}, scw.WithAllPages())
+	listDomains, err := temAPI.ListDomains(&temSDK.ListDomainsRequest{Region: region, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing domains in (%s) in sweeper: %s", region, err)
 	}

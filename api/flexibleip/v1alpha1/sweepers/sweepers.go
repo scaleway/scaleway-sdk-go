@@ -8,10 +8,18 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepFlexibleIP(scwClient *scw.Client, zone scw.Zone) error {
+func SweepFlexibleIP(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	fipAPI := flexibleip.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
-	listIPs, err := fipAPI.ListFlexibleIPs(&flexibleip.ListFlexibleIPsRequest{Zone: zone}, scw.WithAllPages())
+	listIPs, err := fipAPI.ListFlexibleIPs(&flexibleip.ListFlexibleIPsRequest{Zone: zone, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		logger.Warningf("error listing ips in (%s) in sweeper: %s", zone, err)
 		return nil
@@ -30,9 +38,9 @@ func SweepFlexibleIP(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, zone := range (&flexibleip.API{}).Zones() {
-		err := SweepFlexibleIP(scwClient, zone)
+		err := SweepFlexibleIP(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
