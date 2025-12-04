@@ -4171,7 +4171,8 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	return &resp, nil
 }
 
-// ListInboundTransfers:
+// ListInboundTransfers: List all inbound transfer operations on the account.
+// You can filter the list of inbound transfers by domain name.
 func (s *RegistrarAPI) ListInboundTransfers(req *RegistrarAPIListInboundTransfersRequest, opts ...scw.RequestOption) (*ListInboundTransfersResponse, error) {
 	var err error
 
