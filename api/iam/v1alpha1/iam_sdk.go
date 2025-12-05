@@ -1914,6 +1914,11 @@ type GetOrganizationSamlRequest struct {
 	OrganizationID string `json:"-"`
 }
 
+// GetOrganizationScimRequest: get organization scim request.
+type GetOrganizationScimRequest struct {
+	OrganizationID string `json:"-"`
+}
+
 // GetOrganizationSecuritySettingsRequest: get organization security settings request.
 type GetOrganizationSecuritySettingsRequest struct {
 	// OrganizationID: ID of the Organization.
@@ -4940,7 +4945,34 @@ func (s *API) DeleteSamlCertificate(req *DeleteSamlCertificateRequest, opts ...s
 	return nil
 }
 
-// EnableOrganizationScim:
+// GetOrganizationScim: Get SCIM configuration of an Organization.
+func (s *API) GetOrganizationScim(req *GetOrganizationScimRequest, opts ...scw.RequestOption) (*Scim, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/organizations/" + fmt.Sprint(req.OrganizationID) + "/scim",
+	}
+
+	var resp Scim
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableOrganizationScim: Enable SCIM for an Organization.
 func (s *API) EnableOrganizationScim(req *EnableOrganizationScimRequest, opts ...scw.RequestOption) (*Scim, error) {
 	var err error
 
@@ -4972,7 +5004,7 @@ func (s *API) EnableOrganizationScim(req *EnableOrganizationScimRequest, opts ..
 	return &resp, nil
 }
 
-// DeleteScim:
+// DeleteScim: Disable SCIM for an Organization.
 func (s *API) DeleteScim(req *DeleteScimRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4992,7 +5024,7 @@ func (s *API) DeleteScim(req *DeleteScimRequest, opts ...scw.RequestOption) erro
 	return nil
 }
 
-// ListScimTokens:
+// ListScimTokens: List SCIM tokens.
 func (s *API) ListScimTokens(req *ListScimTokensRequest, opts ...scw.RequestOption) (*ListScimTokensResponse, error) {
 	var err error
 
@@ -5025,7 +5057,7 @@ func (s *API) ListScimTokens(req *ListScimTokensRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// CreateScimToken:
+// CreateScimToken: Create a SCIM token.
 func (s *API) CreateScimToken(req *CreateScimTokenRequest, opts ...scw.RequestOption) (*CreateScimTokenResponse, error) {
 	var err error
 
@@ -5047,7 +5079,7 @@ func (s *API) CreateScimToken(req *CreateScimTokenRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// DeleteScimToken:
+// DeleteScimToken: Delete a SCIM token.
 func (s *API) DeleteScimToken(req *DeleteScimTokenRequest, opts ...scw.RequestOption) error {
 	var err error
 
