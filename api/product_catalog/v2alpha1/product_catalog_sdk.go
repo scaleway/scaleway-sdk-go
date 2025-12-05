@@ -60,6 +60,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeManagedInference = ListPublicCatalogProductsRequestProductType("managed_inference")
 	// Include the Generative APIs information in the response.
 	ListPublicCatalogProductsRequestProductTypeGenerativeAPIs = ListPublicCatalogProductsRequestProductType("generative_apis")
+	// Include the Load Balancer information in the response.
+	ListPublicCatalogProductsRequestProductTypeLoadBalancer = ListPublicCatalogProductsRequestProductType("load_balancer")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -81,6 +83,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"object_storage",
 		"managed_inference",
 		"generative_apis",
+		"load_balancer",
 	}
 }
 
@@ -653,6 +656,9 @@ type PublicCatalogProductPropertiesInstance struct {
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
 
+// PublicCatalogProductPropertiesLoadBalancer: public catalog product properties load balancer.
+type PublicCatalogProductPropertiesLoadBalancer struct{}
+
 // PublicCatalogProductPropertiesManagedInference: public catalog product properties managed inference.
 type PublicCatalogProductPropertiesManagedInference struct {
 	// InstanceGpuName: the name of the associated instance GPU to this node type.
@@ -700,36 +706,40 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
+
+	// LoadBalancer: the properties of Load Balancer products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
