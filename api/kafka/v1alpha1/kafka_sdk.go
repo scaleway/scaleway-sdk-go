@@ -827,7 +827,7 @@ type UpdateUserRequest struct {
 	Password *string `json:"password,omitempty"`
 }
 
-// This API allows you to manage your Clusters for Apache Kafka®. This product is currently in Private Beta.
+// This API allows you to manage your Clusters for Apache Kafka®. This product is currently in Public Beta.
 type API struct {
 	client *scw.Client
 }
