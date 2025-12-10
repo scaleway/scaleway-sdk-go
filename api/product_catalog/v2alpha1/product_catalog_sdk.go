@@ -62,6 +62,10 @@ const (
 	ListPublicCatalogProductsRequestProductTypeGenerativeAPIs = ListPublicCatalogProductsRequestProductType("generative_apis")
 	// Include the Load Balancer information in the response.
 	ListPublicCatalogProductsRequestProductTypeLoadBalancer = ListPublicCatalogProductsRequestProductType("load_balancer")
+	// Include the Secret Manager information in the response.
+	ListPublicCatalogProductsRequestProductTypeSecretManager = ListPublicCatalogProductsRequestProductType("secret_manager")
+	// Include the Key Manager information in the response.
+	ListPublicCatalogProductsRequestProductTypeKeyManager = ListPublicCatalogProductsRequestProductType("key_manager")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -84,6 +88,8 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"managed_inference",
 		"generative_apis",
 		"load_balancer",
+		"secret_manager",
+		"key_manager",
 	}
 }
 
@@ -656,6 +662,9 @@ type PublicCatalogProductPropertiesInstance struct {
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
 
+// PublicCatalogProductPropertiesKeyManager: public catalog product properties key manager.
+type PublicCatalogProductPropertiesKeyManager struct{}
+
 // PublicCatalogProductPropertiesLoadBalancer: public catalog product properties load balancer.
 type PublicCatalogProductPropertiesLoadBalancer struct{}
 
@@ -667,6 +676,9 @@ type PublicCatalogProductPropertiesManagedInference struct {
 
 // PublicCatalogProductPropertiesObjectStorage: public catalog product properties object storage.
 type PublicCatalogProductPropertiesObjectStorage struct{}
+
+// PublicCatalogProductPropertiesSecretManager: public catalog product properties secret manager.
+type PublicCatalogProductPropertiesSecretManager struct{}
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
@@ -706,40 +718,46 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 
 	// LoadBalancer: the properties of Load Balancer products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
+
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
+	SecretManager *PublicCatalogProductPropertiesSecretManager `json:"secret_manager,omitempty"`
+
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
+	KeyManager *PublicCatalogProductPropertiesKeyManager `json:"key_manager,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
