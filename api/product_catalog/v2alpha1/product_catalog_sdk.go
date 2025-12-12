@@ -62,6 +62,10 @@ const (
 	ListPublicCatalogProductsRequestProductTypeGenerativeAPIs = ListPublicCatalogProductsRequestProductType("generative_apis")
 	// Include the Load Balancer information in the response.
 	ListPublicCatalogProductsRequestProductTypeLoadBalancer = ListPublicCatalogProductsRequestProductType("load_balancer")
+	// Include the Secret Manager information in the response.
+	ListPublicCatalogProductsRequestProductTypeSecretManager = ListPublicCatalogProductsRequestProductType("secret_manager")
+	// Include the Key Manager information in the response.
+	ListPublicCatalogProductsRequestProductTypeKeyManager = ListPublicCatalogProductsRequestProductType("key_manager")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -84,6 +88,8 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"managed_inference",
 		"generative_apis",
 		"load_balancer",
+		"secret_manager",
+		"key_manager",
 	}
 }
 
@@ -295,6 +301,135 @@ func (enum *PublicCatalogProductPropertiesHardwareCPUArch) UnmarshalJSON(data []
 	}
 
 	*enum = PublicCatalogProductPropertiesHardwareCPUArch(PublicCatalogProductPropertiesHardwareCPUArch(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass string
+
+const (
+	// Unknown storage class.
+	PublicCatalogProductPropertiesObjectStorageClassTypeStorageClassUnknownStorageClass = PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass("unknown_storage_class")
+	// Standard storage class.
+	PublicCatalogProductPropertiesObjectStorageClassTypeStorageClassStandard = PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass("standard")
+	// Glacier storage class.
+	PublicCatalogProductPropertiesObjectStorageClassTypeStorageClassGlacier = PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass("glacier")
+	// One Zone Infrequent Access storage class.
+	PublicCatalogProductPropertiesObjectStorageClassTypeStorageClassOnezoneIa = PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass("onezone_ia")
+)
+
+func (enum PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesObjectStorageClassTypeStorageClassUnknownStorageClass)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass) Values() []PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass {
+	return []PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass{
+		"unknown_storage_class",
+		"standard",
+		"glacier",
+		"onezone_ia",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass(PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType string
+
+const (
+	// Unknown traffic type.
+	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeUnknownTrafficType = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("unknown_traffic_type")
+	// Ingress traffic type.
+	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeIngress = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("ingress")
+	// Egress traffic type.
+	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeEgress = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("egress")
+	// Alliance traffic type.
+	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeAlliance = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("alliance")
+)
+
+func (enum PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeUnknownTrafficType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType) Values() []PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType {
+	return []PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType{
+		"unknown_traffic_type",
+		"ingress",
+		"egress",
+		"alliance",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType(PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType string
+
+const (
+	// Unknown restore type.
+	PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreTypeUnknownRestoreType = PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType("unknown_restore_type")
+	// Standard restore type.
+	PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreTypeStandard = PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType("standard")
+)
+
+func (enum PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreTypeUnknownRestoreType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType) Values() []PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType {
+	return []PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType{
+		"unknown_restore_type",
+		"standard",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType(PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType(tmp).String())
 	return nil
 }
 
@@ -580,6 +715,33 @@ type PublicCatalogProductPropertiesHardwareStorage struct {
 	Total scw.Size `json:"total"`
 }
 
+// PublicCatalogProductPropertiesObjectStorageClassType: public catalog product properties object storage class type.
+type PublicCatalogProductPropertiesObjectStorageClassType struct {
+	// StorageClass: the storage class.
+	// Default value: unknown_storage_class
+	StorageClass PublicCatalogProductPropertiesObjectStorageClassTypeStorageClass `json:"storage_class"`
+}
+
+// PublicCatalogProductPropertiesObjectStorageInternetTrafficType: public catalog product properties object storage internet traffic type.
+type PublicCatalogProductPropertiesObjectStorageInternetTrafficType struct {
+	// TrafficType: the type of internet traffic.
+	// Default value: unknown_traffic_type
+	TrafficType PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType `json:"traffic_type"`
+}
+
+// PublicCatalogProductPropertiesObjectStorageRegionTrafficType: public catalog product properties object storage region traffic type.
+type PublicCatalogProductPropertiesObjectStorageRegionTrafficType struct {
+	// RegionDestination: the destination region for the region traffic.
+	RegionDestination string `json:"region_destination"`
+}
+
+// PublicCatalogProductPropertiesObjectStorageRestoreType: public catalog product properties object storage restore type.
+type PublicCatalogProductPropertiesObjectStorageRestoreType struct {
+	// RestoreType: the type of restore.
+	// Default value: unknown_restore_type
+	RestoreType PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType `json:"restore_type"`
+}
+
 // PublicCatalogProductPropertiesAppleSilicon: public catalog product properties apple silicon.
 type PublicCatalogProductPropertiesAppleSilicon struct {
 	// Range: the range of the Apple Silicon server.
@@ -656,6 +818,9 @@ type PublicCatalogProductPropertiesInstance struct {
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
 
+// PublicCatalogProductPropertiesKeyManager: public catalog product properties key manager.
+type PublicCatalogProductPropertiesKeyManager struct{}
+
 // PublicCatalogProductPropertiesLoadBalancer: public catalog product properties load balancer.
 type PublicCatalogProductPropertiesLoadBalancer struct{}
 
@@ -666,7 +831,26 @@ type PublicCatalogProductPropertiesManagedInference struct {
 }
 
 // PublicCatalogProductPropertiesObjectStorage: public catalog product properties object storage.
-type PublicCatalogProductPropertiesObjectStorage struct{}
+type PublicCatalogProductPropertiesObjectStorage struct {
+	// Class: the properties related to Object Storage class.
+	// Precisely one of Class, Restore, InternetTraffic, RegionTraffic must be set.
+	Class *PublicCatalogProductPropertiesObjectStorageClassType `json:"class,omitempty"`
+
+	// Restore: the properties related to Object Storage restore operations.
+	// Precisely one of Class, Restore, InternetTraffic, RegionTraffic must be set.
+	Restore *PublicCatalogProductPropertiesObjectStorageRestoreType `json:"restore,omitempty"`
+
+	// InternetTraffic: the properties related to Object Storage internet traffic.
+	// Precisely one of Class, Restore, InternetTraffic, RegionTraffic must be set.
+	InternetTraffic *PublicCatalogProductPropertiesObjectStorageInternetTrafficType `json:"internet_traffic,omitempty"`
+
+	// RegionTraffic: the properties related to Object Storage region traffic.
+	// Precisely one of Class, Restore, InternetTraffic, RegionTraffic must be set.
+	RegionTraffic *PublicCatalogProductPropertiesObjectStorageRegionTrafficType `json:"region_traffic,omitempty"`
+}
+
+// PublicCatalogProductPropertiesSecretManager: public catalog product properties secret manager.
+type PublicCatalogProductPropertiesSecretManager struct{}
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
@@ -706,40 +890,46 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 
 	// LoadBalancer: the properties of Load Balancer products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
 	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
+
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
+	SecretManager *PublicCatalogProductPropertiesSecretManager `json:"secret_manager,omitempty"`
+
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, KeyManager must be set.
+	KeyManager *PublicCatalogProductPropertiesKeyManager `json:"key_manager,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
