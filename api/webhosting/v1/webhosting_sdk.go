@@ -2317,6 +2317,21 @@ type HostingAPIListHostingsRequest struct {
 	Subdomain *string `json:"-"`
 }
 
+// HostingAPIMigrateControlPanelRequest: hosting api migrate control panel request.
+type HostingAPIMigrateControlPanelRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to migrate to a new control panel.
+	HostingID string `json:"-"`
+
+	// ControlPanelName: control panel will migrate the hosting to a new server.
+	ControlPanelName string `json:"control_panel_name"`
+
+	// OfferID: migration.
+	OfferID string `json:"offer_id"`
+}
+
 // HostingAPIRemoveCustomDomainRequest: hosting api remove custom domain request.
 type HostingAPIRemoveCustomDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -4393,6 +4408,42 @@ func (s *HostingAPI) RemoveCustomDomain(req *HostingAPIRemoveCustomDomainRequest
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/remove-custom-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// MigrateControlPanel: Migrate a hosting to a new control panel.
+func (s *HostingAPI) MigrateControlPanel(req *HostingAPIMigrateControlPanelRequest, opts ...scw.RequestOption) (*HostingSummary, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/migrate-control-panel",
 	}
 
 	err = scwReq.SetBody(req)
