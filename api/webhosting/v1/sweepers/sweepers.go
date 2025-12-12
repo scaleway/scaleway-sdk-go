@@ -7,10 +7,18 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepWebHosting(scwClient *scw.Client, region scw.Region) error {
+func SweepWebHosting(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	webHostingAPI := webhostingSDK.NewHostingAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
-	listHostings, err := webHostingAPI.ListHostings(&webhostingSDK.HostingAPIListHostingsRequest{Region: region}, scw.WithAllPages())
+	listHostings, err := webHostingAPI.ListHostings(&webhostingSDK.HostingAPIListHostingsRequest{Region: region, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing hostings in (%s) in sweeper: %s", region, err)
 	}
@@ -28,9 +36,9 @@ func SweepWebHosting(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&webhostingSDK.HostingAPI{}).Regions() {
-		err := SweepWebHosting(scwClient, region)
+		err := SweepWebHosting(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
