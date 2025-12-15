@@ -852,6 +852,9 @@ type PublicCatalogProductPropertiesObjectStorage struct {
 // PublicCatalogProductPropertiesSecretManager: public catalog product properties secret manager.
 type PublicCatalogProductPropertiesSecretManager struct{}
 
+// PublicCatalogProductPropertiesSecretManager: public catalog product properties secret manager.
+type PublicCatalogProductPropertiesSecretManager struct{}
+
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
 	KgCo2Equivalent *float32 `json:"kg_co2_equivalent"`

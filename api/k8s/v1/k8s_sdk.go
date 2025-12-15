@@ -742,13 +742,6 @@ type MaintenanceWindow struct {
 	Day MaintenanceWindowDayOfTheWeek `json:"day"`
 }
 
-// PoolUpgradePolicy: pool upgrade policy.
-type PoolUpgradePolicy struct {
-	MaxUnavailable uint32 `json:"max_unavailable"`
-
-	MaxSurge uint32 `json:"max_surge"`
-}
-
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request pool config upgrade policy.
 type CreateClusterRequestPoolConfigUpgradePolicy struct {
 	// MaxUnavailable: the maximum number of nodes that can be not ready at the same time.
@@ -769,7 +762,7 @@ type ClusterAutoUpgrade struct {
 
 // ClusterAutoscalerConfig: cluster autoscaler config.
 type ClusterAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -779,26 +772,26 @@ type ClusterAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec uint32 `json:"max_graceful_termination_sec"`
 }
 
@@ -826,88 +819,11 @@ type ClusterOpenIDConnectConfig struct {
 	RequiredClaim []string `json:"required_claim"`
 }
 
-// Pool: pool.
-type Pool struct {
-	// ID: pool ID.
-	ID string `json:"id"`
+// PoolUpgradePolicy: pool upgrade policy.
+type PoolUpgradePolicy struct {
+	MaxUnavailable uint32 `json:"max_unavailable"`
 
-	// ClusterID: cluster ID of the pool.
-	ClusterID string `json:"cluster_id"`
-
-	// CreatedAt: date on which the pool was created.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date on which the pool was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// Name: pool name.
-	Name string `json:"name"`
-
-	// Status: pool status.
-	// Default value: unknown
-	Status PoolStatus `json:"status"`
-
-	// Version: pool version.
-	Version string `json:"version"`
-
-	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
-	NodeType string `json:"node_type"`
-
-	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
-	Autoscaling bool `json:"autoscaling"`
-
-	// Size: size (number of nodes) of the pool.
-	Size uint32 `json:"size"`
-
-	// MinSize: defines the minimum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
-	MinSize uint32 `json:"min_size"`
-
-	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
-	MaxSize uint32 `json:"max_size"`
-
-	// ContainerRuntime: customization of the container runtime is available for each pool.
-	// Default value: unknown_runtime
-	ContainerRuntime Runtime `json:"container_runtime"`
-
-	// Autohealing: defines whether the autohealing feature is enabled for the pool.
-	Autohealing bool `json:"autohealing"`
-
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
-	Tags []string `json:"tags"`
-
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
-	PlacementGroupID *string `json:"placement_group_id"`
-
-	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
-	KubeletArgs map[string]string `json:"kubelet_args"`
-
-	// UpgradePolicy: pool upgrade policy.
-	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
-
-	// Zone: zone in which the pool's nodes will be spawned.
-	Zone scw.Zone `json:"zone"`
-
-	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
-	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
-	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
-	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
-	// Default value: default_volume_type
-	RootVolumeType PoolVolumeType `json:"root_volume_type"`
-
-	// RootVolumeSize: system volume disk size.
-	RootVolumeSize *scw.Size `json:"root_volume_size"`
-
-	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
-	PublicIPDisabled bool `json:"public_ip_disabled"`
-
-	// Deprecated: NewImagesEnabled: defines whether the pool is migrated to new images.
-	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
-
-	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
-	SecurityGroupID string `json:"security_group_id"`
-
-	// Region: cluster region of the pool.
-	Region scw.Region `json:"region"`
+	MaxSurge uint32 `json:"max_surge"`
 }
 
 // ACLRuleRequest: acl rule request.
@@ -952,7 +868,7 @@ type CreateClusterRequestAutoUpgrade struct {
 
 // CreateClusterRequestAutoscalerConfig: create cluster request autoscaler config.
 type CreateClusterRequestAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -962,26 +878,26 @@ type CreateClusterRequestAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
 }
 
@@ -1204,7 +1120,7 @@ type Cluster struct {
 	// UpdatedAt: date on which the cluster was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// AutoscalerConfig: autoscaler config for the cluster.
+	// AutoscalerConfig: autoscaler configuration for the cluster, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md for details.
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 
 	// AutoUpgrade: auto upgrade Kubernetes version of the cluster.
@@ -1293,6 +1209,90 @@ type Node struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// Pool: pool.
+type Pool struct {
+	// ID: pool ID.
+	ID string `json:"id"`
+
+	// ClusterID: cluster ID of the pool.
+	ClusterID string `json:"cluster_id"`
+
+	// CreatedAt: date on which the pool was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date on which the pool was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Name: pool name.
+	Name string `json:"name"`
+
+	// Status: pool status.
+	// Default value: unknown
+	Status PoolStatus `json:"status"`
+
+	// Version: pool version.
+	Version string `json:"version"`
+
+	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
+	NodeType string `json:"node_type"`
+
+	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
+	Autoscaling bool `json:"autoscaling"`
+
+	// Size: size (number of nodes) of the pool.
+	Size uint32 `json:"size"`
+
+	// MinSize: defines the minimum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
+	MinSize uint32 `json:"min_size"`
+
+	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
+	MaxSize uint32 `json:"max_size"`
+
+	// ContainerRuntime: customization of the container runtime is available for each pool.
+	// Default value: unknown_runtime
+	ContainerRuntime Runtime `json:"container_runtime"`
+
+	// Autohealing: defines whether the autohealing feature is enabled for the pool.
+	Autohealing bool `json:"autohealing"`
+
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
+	Tags []string `json:"tags"`
+
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
+	PlacementGroupID *string `json:"placement_group_id"`
+
+	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
+	KubeletArgs map[string]string `json:"kubelet_args"`
+
+	// UpgradePolicy: pool upgrade policy.
+	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
+
+	// Zone: zone in which the pool's nodes will be spawned.
+	Zone scw.Zone `json:"zone"`
+
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
+	// Default value: default_volume_type
+	RootVolumeType PoolVolumeType `json:"root_volume_type"`
+
+	// RootVolumeSize: system volume disk size.
+	RootVolumeSize *scw.Size `json:"root_volume_size"`
+
+	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
+	PublicIPDisabled bool `json:"public_ip_disabled"`
+
+	// Deprecated: NewImagesEnabled: defines whether the pool is migrated to new images.
+	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
+	SecurityGroupID string `json:"security_group_id"`
+
+	// Region: cluster region of the pool.
+	Region scw.Region `json:"region"`
+}
+
 // NodeMetadataCoreV1Taint: node metadata core v1 taint.
 type NodeMetadataCoreV1Taint struct {
 	Key string `json:"key"`
@@ -1313,7 +1313,7 @@ type UpdateClusterRequestAutoUpgrade struct {
 
 // UpdateClusterRequestAutoscalerConfig: update cluster request autoscaler config.
 type UpdateClusterRequestAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -1323,26 +1323,26 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
 }
 
