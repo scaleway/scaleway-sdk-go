@@ -1729,6 +1729,13 @@ type ContactExtensionFR struct {
 	CodeAuthAfnicInfo *ContactExtensionFRCodeAuthAfnicInfo `json:"code_auth_afnic_info,omitempty"`
 }
 
+// ContactExtensionIT: contact extension it.
+type ContactExtensionIT struct {
+	EuropeanCitizenship string `json:"european_citizenship"`
+
+	TaxCode string `json:"tax_code"`
+}
+
 // ContactExtensionNL: contact extension nl.
 type ContactExtensionNL struct {
 	// LegalForm: default value: legal_form_unknown
@@ -1862,6 +1869,8 @@ type Contact struct {
 
 	// Status: default value: status_unknown
 	Status ContactStatus `json:"status"`
+
+	ExtensionIt *ContactExtensionIT `json:"extension_it"`
 }
 
 // ContactRolesRoles: contact roles roles.
@@ -1955,6 +1964,8 @@ type NewContact struct {
 	State *string `json:"state"`
 
 	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
+
+	ExtensionIt *ContactExtensionIT `json:"extension_it"`
 }
 
 // CheckContactsCompatibilityResponseContactCheckResult: check contacts compatibility response contact check result.
@@ -3292,6 +3303,8 @@ type RegistrarAPIUpdateContactRequest struct {
 	State *string `json:"state,omitempty"`
 
 	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
+
+	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
 }
 
 // RegistrarAPIUpdateDomainHostRequest: registrar api update domain host request.
