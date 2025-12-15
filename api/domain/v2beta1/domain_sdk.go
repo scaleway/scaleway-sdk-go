@@ -3339,10 +3339,26 @@ type RestoreDNSZoneVersionResponse struct{}
 // RetryInboundTransferResponse: retry inbound transfer response.
 type RetryInboundTransferResponse struct{}
 
+// SearchAvailableDomainsConsoleResponse: search available domains console response.
+type SearchAvailableDomainsConsoleResponse struct {
+	ExactMatchDomain *AvailableDomain `json:"exact_match_domain"`
+
+	AvailableDomains []*AvailableDomain `json:"available_domains"`
+}
+
 // SearchAvailableDomainsResponse: search available domains response.
 type SearchAvailableDomainsResponse struct {
 	// AvailableDomains: array of available domains.
 	AvailableDomains []*AvailableDomain `json:"available_domains"`
+}
+
+// UnauthenticatedRegistrarAPISearchAvailableDomainsConsoleRequest: unauthenticated registrar api search available domains console request.
+type UnauthenticatedRegistrarAPISearchAvailableDomainsConsoleRequest struct {
+	Domain string `json:"-"`
+
+	Tlds []string `json:"-"`
+
+	StrictSearch bool `json:"-"`
 }
 
 // UpdateDNSZoneNameserversRequest: update dns zone nameservers request.
@@ -5024,6 +5040,60 @@ func (s *RegistrarAPI) DeleteDomainHost(req *RegistrarAPIDeleteDomainHostRequest
 	}
 
 	var resp Host
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// Unauthenticated Domain search API.
+type UnauthenticatedRegistrarAPI struct {
+	client *scw.Client
+}
+
+// NewUnauthenticatedRegistrarAPI returns a UnauthenticatedRegistrarAPI object from a Scaleway client.
+func NewUnauthenticatedRegistrarAPI(client *scw.Client) *UnauthenticatedRegistrarAPI {
+	return &UnauthenticatedRegistrarAPI{
+		client: client,
+	}
+}
+
+// GetServiceInfo:
+func (s *UnauthenticatedRegistrarAPI) GetServiceInfo(opts ...scw.RequestOption) (*scw.ServiceInfo, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/domain/v2beta1/search",
+	}
+
+	var resp scw.ServiceInfo
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SearchAvailableDomainsConsole:
+func (s *UnauthenticatedRegistrarAPI) SearchAvailableDomainsConsole(req *UnauthenticatedRegistrarAPISearchAvailableDomainsConsoleRequest, opts ...scw.RequestOption) (*SearchAvailableDomainsConsoleResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "domain", req.Domain)
+	parameter.AddToQuery(query, "tlds", req.Tlds)
+	parameter.AddToQuery(query, "strict_search", req.StrictSearch)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/domain/v2beta1/search-domains-console",
+		Query:  query,
+	}
+
+	var resp SearchAvailableDomainsConsoleResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
