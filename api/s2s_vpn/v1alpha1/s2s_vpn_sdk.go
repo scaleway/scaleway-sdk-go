@@ -950,10 +950,10 @@ type CreateCustomerGatewayRequest struct {
 	Tags []string `json:"tags"`
 
 	// IPv4Public: public IPv4 address of the customer gateway.
-	IPv4Public *net.IP `json:"ipv4_public,omitempty"`
+	IPv4Public *scw.IPNet `json:"ipv4_public,omitempty"`
 
 	// IPv6Public: public IPv6 address of the customer gateway.
-	IPv6Public *net.IP `json:"ipv6_public,omitempty"`
+	IPv6Public *scw.IPNet `json:"ipv6_public,omitempty"`
 
 	// Asn: aS Number of the customer gateway.
 	Asn uint32 `json:"asn"`
@@ -1479,10 +1479,10 @@ type UpdateCustomerGatewayRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	// IPv4Public: public IPv4 address of the customer gateway.
-	IPv4Public *net.IP `json:"ipv4_public,omitempty"`
+	IPv4Public *scw.IPNet `json:"ipv4_public,omitempty"`
 
 	// IPv6Public: public IPv6 address of the customer gateway.
-	IPv6Public *net.IP `json:"ipv6_public,omitempty"`
+	IPv6Public *scw.IPNet `json:"ipv6_public,omitempty"`
 
 	// Asn: aS Number of the customer gateway.
 	Asn *uint32 `json:"asn,omitempty"`
