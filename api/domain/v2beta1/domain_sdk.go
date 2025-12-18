@@ -1731,13 +1731,9 @@ type ContactExtensionFR struct {
 
 // ContactExtensionIT: contact extension it.
 type ContactExtensionIT struct {
-	// Deprecated
-	EuropeanCitizenship *string `json:"european_citizenship,omitempty"`
+	EuropeanCitizenship string `json:"european_citizenship"`
 
-	// Deprecated
-	TaxCode *string `json:"tax_code,omitempty"`
-
-	Pin string `json:"pin"`
+	TaxCode string `json:"tax_code"`
 }
 
 // ContactExtensionNL: contact extension nl.
