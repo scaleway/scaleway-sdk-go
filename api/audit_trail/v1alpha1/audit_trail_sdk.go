@@ -479,6 +479,10 @@ const (
 	ResourceTypeLoadBalancerCertificate  = ResourceType("load_balancer_certificate")
 	ResourceTypeSfsFilesystem            = ResourceType("sfs_filesystem")
 	ResourceTypeVpcPrivateNetwork        = ResourceType("vpc_private_network")
+	ResourceTypeVpcVpc                   = ResourceType("vpc_vpc")
+	ResourceTypeVpcSubnet                = ResourceType("vpc_subnet")
+	ResourceTypeVpcRoute                 = ResourceType("vpc_route")
+	ResourceTypeVpcACL                   = ResourceType("vpc_acl")
 	ResourceTypeEdgeServicesPlan         = ResourceType("edge_services_plan")
 	ResourceTypeEdgeServicesPipeline     = ResourceType("edge_services_pipeline")
 	ResourceTypeEdgeServicesDNSStage     = ResourceType("edge_services_dns_stage")
@@ -552,6 +556,10 @@ func (enum ResourceType) Values() []ResourceType {
 		"load_balancer_certificate",
 		"sfs_filesystem",
 		"vpc_private_network",
+		"vpc_vpc",
+		"vpc_subnet",
+		"vpc_route",
+		"vpc_acl",
 		"edge_services_plan",
 		"edge_services_pipeline",
 		"edge_services_dns_stage",
