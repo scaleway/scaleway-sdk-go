@@ -55,6 +55,8 @@ const (
 	ProductCategoryInstances = ProductCategory("instances")
 	// The Object Storage product category.
 	ProductCategoryObjectStorage = ProductCategory("object_storage")
+	// The Load Balancer product category.
+	ProductCategoryLoadBalancer = ProductCategory("load_balancer")
 )
 
 func (enum ProductCategory) String() string {
@@ -74,6 +76,7 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"elastic_metal",
 		"instances",
 		"object_storage",
+		"load_balancer",
 	}
 }
 
@@ -145,6 +148,8 @@ const (
 	ServiceCategoryCompute = ServiceCategory("compute")
 	// The Storage service category.
 	ServiceCategoryStorage = ServiceCategory("storage")
+	// The Network service category.
+	ServiceCategoryNetwork = ServiceCategory("network")
 )
 
 func (enum ServiceCategory) String() string {
@@ -161,6 +166,7 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"baremetal",
 		"compute",
 		"storage",
+		"network",
 	}
 }
 
