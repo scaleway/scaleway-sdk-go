@@ -1743,6 +1743,9 @@ type Server struct {
 
 	// EndOfService: true if the Instance type has reached end of service.
 	EndOfService bool `json:"end_of_service"`
+
+	// DNS: public DNS of the server.
+	DNS *string `json:"dns"`
 }
 
 // IP: ip.
