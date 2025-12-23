@@ -45,12 +45,12 @@ func mainNoExit() int {
 
 	errs := []error(nil)
 
-	err = containerSweeper.SweepAllLocalities(client)
+	err = containerSweeper.SweepAllLocalities(client, false)
 	if err != nil {
 		errs = append(errs, fmt.Errorf("error sweeping container: %w", err))
 	}
 
-	err = instanceSweeper.SweepAllLocalities(client)
+	err = instanceSweeper.SweepAllLocalities(client, false)
 	if err != nil {
 		errs = append(errs, fmt.Errorf("error sweeping instance: %w", err))
 	}
