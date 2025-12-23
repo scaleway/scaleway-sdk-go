@@ -266,6 +266,9 @@ type ImpactDataResponse struct {
 type ImpactReportAvailability struct {
 	// MonthSummaryReports: the list of calendar months for which impact reports are available.
 	MonthSummaryReports []*time.Time `json:"month_summary_reports"`
+
+	// YearlySummaryReports: the list of calendar years for which impact reports are available.
+	YearlySummaryReports []*time.Time `json:"yearly_summary_reports"`
 }
 
 // UserAPIDownloadImpactReportRequest: user api download impact report request.
