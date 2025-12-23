@@ -775,6 +775,9 @@ type CustomerGateway struct {
 
 	// Asn: aS Number of the customer gateway.
 	Asn uint32 `json:"asn"`
+
+	// Region: region of the customer gateway.
+	Region scw.Region `json:"region"`
 }
 
 // RoutingPolicy: routing policy.
