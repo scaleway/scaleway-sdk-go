@@ -361,8 +361,6 @@ const (
 	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeIngress = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("ingress")
 	// Egress traffic type.
 	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeEgress = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("egress")
-	// Alliance traffic type.
-	PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficTypeAlliance = PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType("alliance")
 )
 
 func (enum PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTrafficType) String() string {
@@ -378,7 +376,6 @@ func (enum PublicCatalogProductPropertiesObjectStorageInternetTrafficTypeTraffic
 		"unknown_traffic_type",
 		"ingress",
 		"egress",
-		"alliance",
 	}
 }
 
