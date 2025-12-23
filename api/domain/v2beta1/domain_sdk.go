@@ -1731,12 +1731,18 @@ type ContactExtensionFR struct {
 
 // ContactExtensionIT: contact extension it.
 type ContactExtensionIT struct {
-	// Deprecated
+	// Deprecated: EuropeanCitizenship: this option is useless anymore.
 	EuropeanCitizenship *string `json:"european_citizenship,omitempty"`
 
-	// Deprecated
+	// Deprecated: TaxCode: tax_code is renamed to pin.
 	TaxCode *string `json:"tax_code,omitempty"`
 
+	// Pin: domain name registrant's Taxcode (mandatory / only optional when the trustee is used)
+	//
+	// If the requester:
+	// * is an Italian natural person it contains his/her Codice Fiscale (16 characters format).
+	// * For others than residents of IT it can contain a document number. (ID Card).
+	// * In all other cases it must be equal to VAT number (in the 16 characters format if nationality is IT) or the numeric Codice Fiscale.
 	Pin string `json:"pin"`
 }
 
