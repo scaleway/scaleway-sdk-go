@@ -776,6 +776,9 @@ type CustomerGateway struct {
 	// Asn: aS Number of the customer gateway.
 	Asn uint32 `json:"asn"`
 
+	// ConnectionIDs: list of connection ids of the customer gateway.
+	ConnectionIDs []string `json:"connection_ids"`
+
 	// Region: region of the customer gateway.
 	Region scw.Region `json:"region"`
 }
@@ -878,6 +881,9 @@ type VpnGateway struct {
 
 	// Asn: autonomous System Number (ASN) of the VPN gateway, used by Border Gateway Protocol (BGP) to exchange routing information with the customer gateway.
 	Asn uint32 `json:"asn"`
+
+	// ConnectionIDs: list of connection ids of the VPN gateway.
+	ConnectionIDs []string `json:"connection_ids"`
 
 	// Zone: zone where the VPN gateway resource is currently provisioned.
 	Zone scw.Zone `json:"zone"`
