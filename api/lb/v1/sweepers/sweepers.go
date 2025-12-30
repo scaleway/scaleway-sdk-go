@@ -8,12 +8,21 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepLB(scwClient *scw.Client, zone scw.Zone) error {
+func SweepLB(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	lbAPI := lb.NewZonedAPI(scwClient)
 
 	logger.Warningf("sweeper: destroying the lbs in (%s)", zone)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listLBs, err := lbAPI.ListLBs(&lb.ZonedAPIListLBsRequest{
-		Zone: zone,
+		Zone:      zone,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing lbs in (%s) in sweeper: %s", zone, err)
@@ -40,11 +49,19 @@ func SweepLB(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepIP(scwClient *scw.Client, zone scw.Zone) error {
+func SweepIP(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	lbAPI := lb.NewZonedAPI(scwClient)
-
 	logger.Warningf("sweeper: destroying the lb ips in zone (%s)", zone)
-	listIPs, err := lbAPI.ListIPs(&lb.ZonedAPIListIPsRequest{Zone: zone}, scw.WithAllPages())
+
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+	listIPs, err := lbAPI.ListIPs(&lb.ZonedAPIListIPsRequest{Zone: zone, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing lb ips in (%s) in sweeper: %s", zone, err)
 	}
@@ -64,13 +81,13 @@ func SweepIP(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, zone := range (&lb.ZonedAPI{}).Zones() {
-		err := SweepLB(scwClient, zone)
+		err := SweepLB(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepIP(scwClient, zone)
+		err = SweepIP(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}

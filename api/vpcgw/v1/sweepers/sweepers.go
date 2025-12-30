@@ -7,18 +7,32 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone) error {
+func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	api := vpcgwSDK.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listGatewayResponse, err := api.ListGateways(&vpcgwSDK.ListGatewaysRequest{ //nolint:staticcheck
-		Zone: zone,
+		Zone:      zone,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing public gateway in sweeper: %w", err)
 	}
 
 	for _, gateway := range listGatewayResponse.Gateways {
-		err := api.DeleteGateway(&vpcgwSDK.DeleteGatewayRequest{ //nolint:staticcheck
+		// Gateway Networks should be deleted before
+		err := SweepGatewayNetworks(scwClient, zone, scw.StringPtr(gateway.ID))
+		if err != nil {
+			return err
+		}
+		err = api.DeleteGateway(&vpcgwSDK.DeleteGatewayRequest{ //nolint:staticcheck
 			Zone:      zone,
 			GatewayID: gateway.ID,
 		})
@@ -29,11 +43,12 @@ func SweepVPCPublicGateway(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone) error {
+func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone, gatewayId *string) error {
 	api := vpcgwSDK.NewAPI(scwClient)
 
 	listPNResponse, err := api.ListGatewayNetworks(&vpcgwSDK.ListGatewayNetworksRequest{ //nolint:staticcheck
-		Zone: zone,
+		Zone:      zone,
+		GatewayID: gatewayId,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing gateway network in sweeper: %s", err)
@@ -53,11 +68,20 @@ func SweepGatewayNetworks(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone) error {
+func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	api := vpcgwSDK.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listIPResponse, err := api.ListIPs(&vpcgwSDK.ListIPsRequest{ //nolint:staticcheck
-		Zone: zone,
+		Zone:      zone,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing public gateway ip in sweeper: %s", err)
@@ -75,11 +99,20 @@ func SweepVPCPublicGatewayIP(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone) error {
+func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone, projectScoped bool) error {
 	api := vpcgwSDK.NewAPI(scwClient)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 
 	listDHCPsResponse, err := api.ListDHCPs(&vpcgwSDK.ListDHCPsRequest{ //nolint:staticcheck
-		Zone: zone,
+		Zone:      zone,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing public gateway dhcps in sweeper: %w", err)
@@ -98,21 +131,17 @@ func SweepVPCPublicGatewayDHCP(scwClient *scw.Client, zone scw.Zone) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, zone := range (&vpcgwSDK.API{}).Zones() {
-		err := SweepVPCPublicGateway(scwClient, zone)
+		err := SweepVPCPublicGateway(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepGatewayNetworks(scwClient, zone)
+		err = SweepVPCPublicGatewayIP(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepVPCPublicGatewayIP(scwClient, zone)
-		if err != nil {
-			return err
-		}
-		err = SweepVPCPublicGatewayDHCP(scwClient, zone)
+		err = SweepVPCPublicGatewayDHCP(scwClient, zone, projectScoped)
 		if err != nil {
 			return err
 		}
