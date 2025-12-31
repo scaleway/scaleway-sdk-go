@@ -899,6 +899,9 @@ type BatchCreateServersRequest struct {
 
 	// Requests: list of servers to create.
 	Requests []*BatchCreateServersRequestBatchInnerCreateServerRequest `json:"requests"`
+
+	// EnableKext: enable kernel extensions in this install of mac OS.
+	EnableKext bool `json:"enable_kext"`
 }
 
 // BatchCreateServersResponse: batch create servers response.
@@ -967,6 +970,9 @@ type CreateServerRequest struct {
 
 	// AppliedRunnerConfigurations: runner configurations to apply on the server, existing ones missing from the specified configuration will be removed from the server.
 	AppliedRunnerConfigurations *AppliedRunnerConfigurations `json:"applied_runner_configurations,omitempty"`
+
+	// EnableKext: enable kernel extensions in this install of mac OS.
+	EnableKext bool `json:"enable_kext"`
 }
 
 // DeleteRunnerRequest: delete runner request.
@@ -1311,6 +1317,9 @@ type ReinstallServerRequest struct {
 
 	// OsID: reinstall the server with the target OS, when no os_id provided the default OS for the server type is used.
 	OsID *string `json:"os_id,omitempty"`
+
+	// EnableKext: enable kernel extensions in this install of mac OS.
+	EnableKext bool `json:"enable_kext"`
 }
 
 // SetServerPrivateNetworksResponse: set server private networks response.
