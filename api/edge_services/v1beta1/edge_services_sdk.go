@@ -1145,6 +1145,14 @@ type ScalewayServerlessContainerBackendConfig struct {
 	ContainerID string `json:"container_id"`
 }
 
+// ScalewayServerlessFunctionBackendConfig: scaleway serverless function backend config.
+type ScalewayServerlessFunctionBackendConfig struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	FunctionID string `json:"function_id"`
+}
+
 // PipelineError: pipeline error.
 type PipelineError struct {
 	// Stage: default value: unknown_stage
@@ -1195,15 +1203,18 @@ type BackendStage struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
+	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 }
 
 // CacheStage: cache stage.
@@ -1598,15 +1609,18 @@ type CreateBackendStageRequest struct {
 	PipelineID string `json:"-"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
+	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 }
 
 // CreateCacheStageRequest: create cache stage request.
@@ -2508,18 +2522,21 @@ type UpdateBackendStageRequest struct {
 	BackendStageID string `json:"-"`
 
 	// ScalewayS3: scaleway Object Storage origin bucket (S3) linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayS3 *ScalewayS3BackendConfig `json:"scaleway_s3,omitempty"`
 
 	// ScalewayLB: scaleway Load Balancer origin linked to the backend stage.
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
 	// PipelineID: pipeline ID the Backend stage belongs to.
 	PipelineID string `json:"pipeline_id"`
 
-	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer must be set.
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
+
+	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
+	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
