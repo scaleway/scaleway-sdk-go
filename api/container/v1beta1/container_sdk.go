@@ -207,14 +207,25 @@ func (enum *ContainerSandbox) UnmarshalJSON(data []byte) error {
 type ContainerStatus string
 
 const (
-	ContainerStatusUnknown  = ContainerStatus("unknown")
-	ContainerStatusReady    = ContainerStatus("ready")
+	ContainerStatusUnknown = ContainerStatus("unknown")
+	// Ready status.
+	ContainerStatusReady = ContainerStatus("ready")
+	// Deleting status.
 	ContainerStatusDeleting = ContainerStatus("deleting")
-	ContainerStatusError    = ContainerStatus("error")
-	ContainerStatusLocked   = ContainerStatus("locked")
+	// Error status.
+	ContainerStatusError = ContainerStatus("error")
+	// Locked status. Resource cannot be modified.
+	ContainerStatusLocked = ContainerStatus("locked")
+	// Creating status. Resource is being created.
 	ContainerStatusCreating = ContainerStatus("creating")
-	ContainerStatusPending  = ContainerStatus("pending")
-	ContainerStatusCreated  = ContainerStatus("created")
+	// Pending status. Resource is being deployed after its creation or an update.
+	ContainerStatusPending = ContainerStatus("pending")
+	// Created status. Resource has been created, but is waiting to be deployed. Call DeployContainer to trigger a deployment.
+	ContainerStatusCreated = ContainerStatus("created")
+	// Locking status.
+	ContainerStatusLocking = ContainerStatus("locking")
+	// Upgrading status. Resource is being upgraded as part of a planned maintenance. No downtime is expected.
+	ContainerStatusUpgrading = ContainerStatus("upgrading")
 )
 
 func (enum ContainerStatus) String() string {
@@ -235,6 +246,8 @@ func (enum ContainerStatus) Values() []ContainerStatus {
 		"creating",
 		"pending",
 		"created",
+		"locking",
+		"upgrading",
 	}
 }
 
@@ -256,13 +269,16 @@ func (enum *ContainerStatus) UnmarshalJSON(data []byte) error {
 type CronStatus string
 
 const (
-	CronStatusUnknown  = CronStatus("unknown")
-	CronStatusReady    = CronStatus("ready")
-	CronStatusDeleting = CronStatus("deleting")
-	CronStatusError    = CronStatus("error")
-	CronStatusLocked   = CronStatus("locked")
-	CronStatusCreating = CronStatus("creating")
-	CronStatusPending  = CronStatus("pending")
+	CronStatusUnknown     = CronStatus("unknown")
+	CronStatusReady       = CronStatus("ready")
+	CronStatusDeleting    = CronStatus("deleting")
+	CronStatusError       = CronStatus("error")
+	CronStatusLocked      = CronStatus("locked")
+	CronStatusCreating    = CronStatus("creating")
+	CronStatusPending     = CronStatus("pending")
+	CronStatusLocking     = CronStatus("locking")
+	CronStatusUpgrading   = CronStatus("upgrading")
+	CronStatusRebalancing = CronStatus("rebalancing")
 )
 
 func (enum CronStatus) String() string {
@@ -282,6 +298,9 @@ func (enum CronStatus) Values() []CronStatus {
 		"locked",
 		"creating",
 		"pending",
+		"locking",
+		"upgrading",
+		"rebalancing",
 	}
 }
 
@@ -303,12 +322,23 @@ func (enum *CronStatus) UnmarshalJSON(data []byte) error {
 type DomainStatus string
 
 const (
-	DomainStatusUnknown  = DomainStatus("unknown")
-	DomainStatusReady    = DomainStatus("ready")
+	DomainStatusUnknown = DomainStatus("unknown")
+	// Ready status.
+	DomainStatusReady = DomainStatus("ready")
+	// Deleting status.
 	DomainStatusDeleting = DomainStatus("deleting")
-	DomainStatusError    = DomainStatus("error")
+	// Error status.
+	DomainStatusError = DomainStatus("error")
+	// Creating status. Resource is being created.
 	DomainStatusCreating = DomainStatus("creating")
-	DomainStatusPending  = DomainStatus("pending")
+	// Pending status. Resource is being deployed after its creation or an update.
+	DomainStatusPending = DomainStatus("pending")
+	// Locked status. Resource cannot be modified.
+	DomainStatusLocked = DomainStatus("locked")
+	// Locking status.
+	DomainStatusLocking = DomainStatus("locking")
+	// Upgrading status. Resource is being upgraded as part of a planned maintenance. No downtime is expected.
+	DomainStatusUpgrading = DomainStatus("upgrading")
 )
 
 func (enum DomainStatus) String() string {
@@ -327,6 +357,9 @@ func (enum DomainStatus) Values() []DomainStatus {
 		"error",
 		"creating",
 		"pending",
+		"locked",
+		"locking",
+		"upgrading",
 	}
 }
 
@@ -584,13 +617,23 @@ func (enum *ListTriggersRequestOrderBy) UnmarshalJSON(data []byte) error {
 type NamespaceStatus string
 
 const (
-	NamespaceStatusUnknown  = NamespaceStatus("unknown")
-	NamespaceStatusReady    = NamespaceStatus("ready")
+	NamespaceStatusUnknown = NamespaceStatus("unknown")
+	// Ready status.
+	NamespaceStatusReady = NamespaceStatus("ready")
+	// Deleting status.
 	NamespaceStatusDeleting = NamespaceStatus("deleting")
-	NamespaceStatusError    = NamespaceStatus("error")
-	NamespaceStatusLocked   = NamespaceStatus("locked")
+	// Error status.
+	NamespaceStatusError = NamespaceStatus("error")
+	// Locked status. Resource cannot be modified.
+	NamespaceStatusLocked = NamespaceStatus("locked")
+	// Creating status. Resource is being created.
 	NamespaceStatusCreating = NamespaceStatus("creating")
-	NamespaceStatusPending  = NamespaceStatus("pending")
+	// Pending status. Resource is being deployed after its creation or an update.
+	NamespaceStatusPending = NamespaceStatus("pending")
+	// Locking status.
+	NamespaceStatusLocking = NamespaceStatus("locking")
+	// Upgrading status. Resource is being upgraded as part of a planned maintenance. No downtime is expected.
+	NamespaceStatusUpgrading = NamespaceStatus("upgrading")
 )
 
 func (enum NamespaceStatus) String() string {
@@ -610,6 +653,8 @@ func (enum NamespaceStatus) Values() []NamespaceStatus {
 		"locked",
 		"creating",
 		"pending",
+		"locking",
+		"upgrading",
 	}
 }
 
@@ -728,10 +773,16 @@ const (
 	TriggerStatusDeleting = TriggerStatus("deleting")
 	// Error status.
 	TriggerStatusError = TriggerStatus("error")
-	// Creating status.
+	// Creating status. Resource is being created.
 	TriggerStatusCreating = TriggerStatus("creating")
-	// Pending status.
+	// Pending status. Resource is being deployed after its creation or an update.
 	TriggerStatusPending = TriggerStatus("pending")
+	// Locked status. Resource cannot be modified.
+	TriggerStatusLocked = TriggerStatus("locked")
+	// Locking status.
+	TriggerStatusLocking = TriggerStatus("locking")
+	// Upgrading status. Resource is being upgraded as part of a planned maintenance. No downtime is expected.
+	TriggerStatusUpgrading = TriggerStatus("upgrading")
 )
 
 func (enum TriggerStatus) String() string {
@@ -750,6 +801,9 @@ func (enum TriggerStatus) Values() []TriggerStatus {
 		"error",
 		"creating",
 		"pending",
+		"locked",
+		"locking",
+		"upgrading",
 	}
 }
 
@@ -2065,9 +2119,11 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[NamespaceStatus]struct{}{
-		NamespaceStatusDeleting: {},
-		NamespaceStatusCreating: {},
-		NamespaceStatusPending:  {},
+		NamespaceStatusDeleting:  {},
+		NamespaceStatusCreating:  {},
+		NamespaceStatusPending:   {},
+		NamespaceStatusLocking:   {},
+		NamespaceStatusUpgrading: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -2295,9 +2351,11 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[ContainerStatus]struct{}{
-		ContainerStatusDeleting: {},
-		ContainerStatusCreating: {},
-		ContainerStatusPending:  {},
+		ContainerStatusDeleting:  {},
+		ContainerStatusCreating:  {},
+		ContainerStatusPending:   {},
+		ContainerStatusLocking:   {},
+		ContainerStatusUpgrading: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -2552,9 +2610,12 @@ func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[CronStatus]struct{}{
-		CronStatusDeleting: {},
-		CronStatusCreating: {},
-		CronStatusPending:  {},
+		CronStatusDeleting:    {},
+		CronStatusCreating:    {},
+		CronStatusPending:     {},
+		CronStatusLocking:     {},
+		CronStatusUpgrading:   {},
+		CronStatusRebalancing: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -2770,9 +2831,11 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[DomainStatus]struct{}{
-		DomainStatusDeleting: {},
-		DomainStatusCreating: {},
-		DomainStatusPending:  {},
+		DomainStatusDeleting:  {},
+		DomainStatusCreating:  {},
+		DomainStatusPending:   {},
+		DomainStatusLocking:   {},
+		DomainStatusUpgrading: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -3127,9 +3190,11 @@ func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOpti
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[TriggerStatus]struct{}{
-		TriggerStatusDeleting: {},
-		TriggerStatusCreating: {},
-		TriggerStatusPending:  {},
+		TriggerStatusDeleting:  {},
+		TriggerStatusCreating:  {},
+		TriggerStatusPending:   {},
+		TriggerStatusLocking:   {},
+		TriggerStatusUpgrading: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
