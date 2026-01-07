@@ -290,8 +290,9 @@ func (enum *CertificateStatus) UnmarshalJSON(data []byte) error {
 type CertificateType string
 
 const (
-	CertificateTypeLetsencryt = CertificateType("letsencryt")
-	CertificateTypeCustom     = CertificateType("custom")
+	CertificateTypeLetsencryt  = CertificateType("letsencryt")
+	CertificateTypeCustom      = CertificateType("custom")
+	CertificateTypeLetsencrypt = CertificateType("letsencrypt")
 )
 
 func (enum CertificateType) String() string {
@@ -306,6 +307,7 @@ func (enum CertificateType) Values() []CertificateType {
 	return []CertificateType{
 		"letsencryt",
 		"custom",
+		"letsencrypt",
 	}
 }
 
