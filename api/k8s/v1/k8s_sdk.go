@@ -197,7 +197,7 @@ const (
 	ClusterStatusUpdating = ClusterStatus("updating")
 	// Cluster is locked because an abuse has been detected or reported.
 	ClusterStatusLocked = ClusterStatus("locked")
-	// Cluster has no associated pool.
+	// Cluster has no associated pool and has been shutdown.
 	ClusterStatusPoolRequired = ClusterStatus("pool_required")
 )
 
@@ -602,6 +602,7 @@ const (
 	PoolStatusDeleted  = PoolStatus("deleted")
 	// Pool is growing or shrinking.
 	PoolStatusScaling = PoolStatus("scaling")
+	// Pool has some issues, check nodes.
 	PoolStatusWarning = PoolStatus("warning")
 	// Pool is locked because an abuse has been detected or reported.
 	PoolStatusLocked = PoolStatus("locked")
@@ -649,11 +650,13 @@ type PoolVolumeType string
 
 const (
 	PoolVolumeTypeDefaultVolumeType = PoolVolumeType("default_volume_type")
-	// Local Block Storage: your system is stored locally on your node hypervisor. Lower latency, no persistence across node replacements.
+	// Local Block Storage: your system is stored locally on your node hypervisor.
 	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
-	// Remote Block Storage: your system is stored on a centralized and resilient cluster. Higher latency, persistence across node replacements.
-	PoolVolumeTypeBSSD   = PoolVolumeType("b_ssd")
-	PoolVolumeTypeSbs5k  = PoolVolumeType("sbs_5k")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster (deprecated: will use sbs_5k instead).
+	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster with up to 5k IOPS.
+	PoolVolumeTypeSbs5k = PoolVolumeType("sbs_5k")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster with up to 15k IOPS.
 	PoolVolumeTypeSbs15k = PoolVolumeType("sbs_15k")
 )
 
