@@ -68,6 +68,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeKeyManager = ListPublicCatalogProductsRequestProductType("key_manager")
 	// Include the Managed Redis Database information in the response.
 	ListPublicCatalogProductsRequestProductTypeManagedRedisDatabase = ListPublicCatalogProductsRequestProductType("managed_redis_database")
+	// Include the Kubernetes information in the response.
+	ListPublicCatalogProductsRequestProductTypeKubernetes = ListPublicCatalogProductsRequestProductType("kubernetes")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -93,6 +95,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"secret_manager",
 		"key_manager",
 		"managed_redis_database",
+		"kubernetes",
 	}
 }
 
@@ -715,6 +718,15 @@ type PublicCatalogProductPropertiesHardwareStorage struct {
 	Total scw.Size `json:"total"`
 }
 
+// PublicCatalogProductPropertiesKubernetesKapsuleControlPlaneType: public catalog product properties kubernetes kapsule control plane type.
+type PublicCatalogProductPropertiesKubernetesKapsuleControlPlaneType struct{}
+
+// PublicCatalogProductPropertiesKubernetesKosmosControlPlaneType: public catalog product properties kubernetes kosmos control plane type.
+type PublicCatalogProductPropertiesKubernetesKosmosControlPlaneType struct{}
+
+// PublicCatalogProductPropertiesKubernetesKosmosNodeType: public catalog product properties kubernetes kosmos node type.
+type PublicCatalogProductPropertiesKubernetesKosmosNodeType struct{}
+
 // PublicCatalogProductPropertiesObjectStorageClassType: public catalog product properties object storage class type.
 type PublicCatalogProductPropertiesObjectStorageClassType struct {
 	// StorageClass: the storage class.
@@ -821,6 +833,21 @@ type PublicCatalogProductPropertiesInstance struct {
 // PublicCatalogProductPropertiesKeyManager: public catalog product properties key manager.
 type PublicCatalogProductPropertiesKeyManager struct{}
 
+// PublicCatalogProductPropertiesKubernetes: public catalog product properties kubernetes.
+type PublicCatalogProductPropertiesKubernetes struct {
+	// KapsuleControlPlane: the properties related to Kapsule Control Plane products.
+	// Precisely one of KapsuleControlPlane, KosmosControlPlane, KosmosNode must be set.
+	KapsuleControlPlane *PublicCatalogProductPropertiesKubernetesKapsuleControlPlaneType `json:"kapsule_control_plane,omitempty"`
+
+	// KosmosControlPlane: the properties related to Kosmos Control Plane products.
+	// Precisely one of KapsuleControlPlane, KosmosControlPlane, KosmosNode must be set.
+	KosmosControlPlane *PublicCatalogProductPropertiesKubernetesKosmosControlPlaneType `json:"kosmos_control_plane,omitempty"`
+
+	// KosmosNode: the properties related to Kosmos nodes.
+	// Precisely one of KapsuleControlPlane, KosmosControlPlane, KosmosNode must be set.
+	KosmosNode *PublicCatalogProductPropertiesKubernetesKosmosNodeType `json:"kosmos_node,omitempty"`
+}
+
 // PublicCatalogProductPropertiesLoadBalancer: public catalog product properties load balancer.
 type PublicCatalogProductPropertiesLoadBalancer struct{}
 
@@ -893,50 +920,54 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 
 	// LoadBalancer: the properties of Load Balancer products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	SecretManager *PublicCatalogProductPropertiesSecretManager `json:"secret_manager,omitempty"`
 
 	// ManagedRedisDatabase: the properties of Managed Redis Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	ManagedRedisDatabase *PublicCatalogProductPropertiesManagedRedisDatabase `json:"managed_redis_database,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
 	KeyManager *PublicCatalogProductPropertiesKeyManager `json:"key_manager,omitempty"`
+
+	// Kubernetes: the properties of Kubernetes products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes must be set.
+	Kubernetes *PublicCatalogProductPropertiesKubernetes `json:"kubernetes,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
