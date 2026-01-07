@@ -1496,30 +1496,20 @@ type RegionalAPIListContactPointsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: ID of the Project containing the contact points to list.
+	ProjectID string `json:"-"`
+
 	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
 	// PageSize: total count of contact points to return per page.
 	PageSize *uint32 `json:"-"`
-
-	// ProjectID: ID of the Project containing the contact points to list.
-	ProjectID string `json:"-"`
 }
 
 // RegionalAPIListDataSourcesRequest: List data sources.
 type RegionalAPIListDataSourcesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
-
-	// Page: page number to return, from the paginated results.
-	Page *int32 `json:"-"`
-
-	// PageSize: number of data sources to return per page.
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: sort order for data sources in the response.
-	// Default value: created_at_asc
-	OrderBy ListDataSourcesRequestOrderBy `json:"-"`
 
 	// ProjectID: project ID to filter for, only data sources from this Project will be returned.
 	ProjectID string `json:"-"`
@@ -1530,6 +1520,16 @@ type RegionalAPIListDataSourcesRequest struct {
 
 	// Types: types to filter for (metrics, logs, traces), only data sources with matching types will be returned. If omitted, all types will be returned.
 	Types []DataSourceType `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of data sources to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for data sources in the response.
+	// Default value: created_at_asc
+	OrderBy ListDataSourcesRequestOrderBy `json:"-"`
 }
 
 // RegionalAPIListProductsRequest: List all Scaleway products that send metrics and/or logs to Cockpit.
@@ -1553,6 +1553,12 @@ type RegionalAPIListTokensRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ProjectID: ID of the Project the tokens belong to.
+	ProjectID string `json:"-"`
+
+	// TokenScopes: token scopes to filter for.
+	TokenScopes []TokenScope `json:"-"`
+
 	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
@@ -1562,12 +1568,6 @@ type RegionalAPIListTokensRequest struct {
 	// OrderBy: order in which to return results.
 	// Default value: created_at_asc
 	OrderBy ListTokensRequestOrderBy `json:"-"`
-
-	// ProjectID: ID of the Project the tokens belong to.
-	ProjectID string `json:"-"`
-
-	// TokenScopes: token scopes to filter for.
-	TokenScopes []TokenScope `json:"-"`
 }
 
 // RegionalAPITriggerTestAlertRequest: Request to trigger a test alert.
@@ -2122,23 +2122,23 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 		req.Region = defaultRegion
 	}
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "origin", req.Origin)
 	parameter.AddToQuery(query, "types", req.Types)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2280,22 +2280,22 @@ func (s *RegionalAPI) ListTokens(req *RegionalAPIListTokensRequest, opts ...scw.
 		req.Region = defaultRegion
 	}
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "token_scopes", req.TokenScopes)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
-	parameter.AddToQuery(query, "token_scopes", req.TokenScopes)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2377,6 +2377,8 @@ func (s *RegionalAPI) DeleteToken(req *RegionalAPIDeleteTokenRequest, opts ...sc
 }
 
 // ListProducts: List all Scaleway products that send metrics and/or logs to Cockpit.
+// Note that all of those products send at least metrics, but only a subset send logs to Cockpit.
+// For more information, see https://www.scaleway.com/en/docs/cockpit/reference-content/cockpit-product-integration/.
 func (s *RegionalAPI) ListProducts(req *RegionalAPIListProductsRequest, opts ...scw.RequestOption) (*ListProductsResponse, error) {
 	var err error
 
@@ -2609,20 +2611,20 @@ func (s *RegionalAPI) ListContactPoints(req *RegionalAPIListContactPointsRequest
 		req.Region = defaultRegion
 	}
 
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
 	if req.ProjectID == "" {
 		defaultProjectID, _ := s.client.GetDefaultProjectID()
 		req.ProjectID = defaultProjectID
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
