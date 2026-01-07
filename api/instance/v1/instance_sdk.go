@@ -2082,6 +2082,9 @@ type ServerType struct {
 	// ScratchStorageMaxSize: maximum available scratch storage.
 	ScratchStorageMaxSize *scw.Size `json:"scratch_storage_max_size"`
 
+	// ScratchStorageMaxVolumesCount: maximum supported number of scratch volumes.
+	ScratchStorageMaxVolumesCount uint32 `json:"scratch_storage_max_volumes_count"`
+
 	// BlockBandwidth: the maximum bandwidth allocated to block storage access (in bytes per second).
 	BlockBandwidth *uint64 `json:"block_bandwidth"`
 
