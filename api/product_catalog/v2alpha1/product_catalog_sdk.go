@@ -1020,6 +1020,12 @@ type PublicCatalogProduct struct {
 	// EndOfLifeAt: the end of life date of the product.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
 
+	// EndOfGrowthAt: the end of growth date of the product.
+	EndOfGrowthAt *time.Time `json:"end_of_growth_at"`
+
+	// EndOfSaleAt: the end of sale date of the product.
+	EndOfSaleAt *time.Time `json:"end_of_sale_at"`
+
 	// Badges: different badges that can be associated with the product.
 	Badges []PublicCatalogProductProductBadge `json:"badges"`
 }
