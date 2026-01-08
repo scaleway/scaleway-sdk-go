@@ -2865,7 +2865,7 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-// ListHeadStages:
+// ListHeadStages: List Head stage for your pipeline.
 func (s *API) ListHeadStages(req *ListHeadStagesRequest, opts ...scw.RequestOption) (*ListHeadStagesResponse, error) {
 	var err error
 
