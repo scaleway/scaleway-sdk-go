@@ -496,6 +496,12 @@ const (
 	ResourceTypeS2sCustomerGateway       = ResourceType("s2s_customer_gateway")
 	ResourceTypeS2sRoutingPolicy         = ResourceType("s2s_routing_policy")
 	ResourceTypeS2sConnection            = ResourceType("s2s_connection")
+	ResourceTypeVpcGwGateway             = ResourceType("vpc_gw_gateway")
+	ResourceTypeVpcGwGatewayNetwork      = ResourceType("vpc_gw_gateway_network")
+	ResourceTypeVpcGwDHCP                = ResourceType("vpc_gw_dhcp")
+	ResourceTypeVpcGwDHCPEntry           = ResourceType("vpc_gw_dhcp_entry")
+	ResourceTypeVpcGwPatRule             = ResourceType("vpc_gw_pat_rule")
+	ResourceTypeVpcGwIP                  = ResourceType("vpc_gw_ip")
 )
 
 func (enum ResourceType) String() string {
@@ -573,6 +579,12 @@ func (enum ResourceType) Values() []ResourceType {
 		"s2s_customer_gateway",
 		"s2s_routing_policy",
 		"s2s_connection",
+		"vpc_gw_gateway",
+		"vpc_gw_gateway_network",
+		"vpc_gw_dhcp",
+		"vpc_gw_dhcp_entry",
+		"vpc_gw_pat_rule",
+		"vpc_gw_ip",
 	}
 }
 
