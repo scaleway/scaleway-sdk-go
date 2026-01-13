@@ -2020,6 +2020,8 @@ type Dashboard struct {
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
 	PlacementGroupsCount uint32 `json:"placement_groups_count"`
+
+	VolumesScratchCount uint32 `json:"volumes_scratch_count"`
 }
 
 // PlacementGroupServer: placement group server.
