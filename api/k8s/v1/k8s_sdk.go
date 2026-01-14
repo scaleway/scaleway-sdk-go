@@ -2179,6 +2179,9 @@ type UpdatePoolRequest struct {
 
 	// UpgradePolicy: new upgrade policy for the pool.
 	UpgradePolicy *UpdatePoolRequestUpgradePolicy `json:"upgrade_policy,omitempty"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be moved.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
 }
 
 // UpgradeClusterRequest: upgrade cluster request.
