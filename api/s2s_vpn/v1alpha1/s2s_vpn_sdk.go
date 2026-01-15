@@ -1151,6 +1151,9 @@ type ListConnectionsRequest struct {
 	// ProjectID: project ID to filter for.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: organization ID to filter for.
+	OrganizationID *string `json:"-"`
+
 	// Name: connection name to filter for.
 	Name *string `json:"-"`
 
@@ -1222,6 +1225,9 @@ type ListCustomerGatewaysRequest struct {
 	// ProjectID: project ID to filter for.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: organization ID to filter for.
+	OrganizationID *string `json:"-"`
+
 	// Name: customer gateway name to filter for.
 	Name *string `json:"-"`
 
@@ -1274,6 +1280,9 @@ type ListRoutingPoliciesRequest struct {
 
 	// ProjectID: project ID to filter for.
 	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID to filter for.
+	OrganizationID *string `json:"-"`
 
 	// Name: routing policy name to filter for.
 	Name *string `json:"-"`
@@ -1368,6 +1377,9 @@ type ListVpnGatewaysRequest struct {
 
 	// ProjectID: project ID to filter for.
 	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID to filter for.
+	OrganizationID *string `json:"-"`
 
 	// Name: vPN gateway name to filter for.
 	Name *string `json:"-"`
@@ -1605,6 +1617,7 @@ func (s *API) ListVpnGateways(req *ListVpnGatewaysRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
@@ -1838,6 +1851,7 @@ func (s *API) ListConnections(req *ListConnectionsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
@@ -2198,6 +2212,7 @@ func (s *API) ListCustomerGateways(req *ListCustomerGatewaysRequest, opts ...scw
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 
@@ -2372,6 +2387,7 @@ func (s *API) ListRoutingPolicies(req *ListRoutingPoliciesRequest, opts ...scw.R
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "ipv6", req.IPv6)
