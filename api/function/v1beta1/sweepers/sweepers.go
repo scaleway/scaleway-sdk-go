@@ -8,12 +8,22 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepTriggers(scwClient *scw.Client, region scw.Region) error {
+func SweepTriggers(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	functionAPI := functionSDK.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the function triggers in (%s)", region)
+
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listTriggers, err := functionAPI.ListTriggers(
 		&functionSDK.ListTriggersRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing trigger in (%s) in sweeper: %s", region, err)
@@ -32,12 +42,21 @@ func SweepTriggers(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepNamespaces(scwClient *scw.Client, region scw.Region) error {
+func SweepNamespaces(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	functionAPI := functionSDK.NewAPI(scwClient)
 	logger.Debugf("sweeper: destroying the function namespaces in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listNamespaces, err := functionAPI.ListNamespaces(
 		&functionSDK.ListNamespacesRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing namespaces in (%s) in sweeper: %s", region, err)
@@ -58,12 +77,21 @@ func SweepNamespaces(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepFunctions(scwClient *scw.Client, region scw.Region) error {
+func SweepFunctions(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	functionAPI := functionSDK.NewAPI(scwClient)
-	logger.Warningf("sweeper: destroying the function in (%s)", region)
+	logger.Debugf("sweeper: destroying the function in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listFunctions, err := functionAPI.ListFunctions(
 		&functionSDK.ListFunctionsRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing functions in (%s) in sweeper: %s", region, err)
@@ -82,45 +110,80 @@ func SweepFunctions(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepCrons(scwClient *scw.Client, region scw.Region) error {
+func SweepCrons(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	functionAPI := functionSDK.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the function cron in (%s)", region)
-	listCron, err := functionAPI.ListCrons(
-		&functionSDK.ListCronsRequest{
-			Region: region,
-		}, scw.WithAllPages())
-	if err != nil {
-		return fmt.Errorf("error listing cron in (%s) in sweeper: %s", region, err)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
 	}
-
-	for _, cron := range listCron.Crons {
-		_, err := functionAPI.DeleteCron(&functionSDK.DeleteCronRequest{
-			CronID: cron.ID,
-			Region: region,
-		})
+	if projectScoped {
+		listFunctions, err := functionAPI.ListFunctions(
+			&functionSDK.ListFunctionsRequest{
+				Region:    region,
+				ProjectID: &defaultProjectID,
+			}, scw.WithAllPages())
 		if err != nil {
-			return fmt.Errorf("error deleting cron in sweeper: %s", err)
+			return fmt.Errorf("error listing functions in (%s) in sweeper: %s", region, err)
+		}
+		for _, function := range listFunctions.Functions {
+			listCron, err := functionAPI.ListCrons(
+				&functionSDK.ListCronsRequest{
+					Region:     region,
+					FunctionID: function.ID,
+				}, scw.WithAllPages())
+			if err != nil {
+				return fmt.Errorf("error listing cron in (%s) in sweeper: %s", region, err)
+			}
+
+			for _, cron := range listCron.Crons {
+				_, err := functionAPI.DeleteCron(&functionSDK.DeleteCronRequest{
+					CronID: cron.ID,
+					Region: region,
+				})
+				if err != nil {
+					return fmt.Errorf("error deleting cron in sweeper: %s", err)
+				}
+			}
+		}
+	} else {
+		listCron, err := functionAPI.ListCrons(
+			&functionSDK.ListCronsRequest{
+				Region: region,
+			}, scw.WithAllPages())
+		if err != nil {
+			return fmt.Errorf("error listing cron in (%s) in sweeper: %s", region, err)
+		}
+
+		for _, cron := range listCron.Crons {
+			_, err := functionAPI.DeleteCron(&functionSDK.DeleteCronRequest{
+				CronID: cron.ID,
+				Region: region,
+			})
+			if err != nil {
+				return fmt.Errorf("error deleting cron in sweeper: %s", err)
+			}
 		}
 	}
 
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&functionSDK.API{}).Regions() {
-		err := SweepTriggers(scwClient, region)
+		err := SweepTriggers(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepNamespaces(scwClient, region)
+		err = SweepNamespaces(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepFunctions(scwClient, region)
+		err = SweepFunctions(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepCrons(scwClient, region)
+		err = SweepCrons(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
