@@ -89,6 +89,9 @@ linters:
         linters:
           - unused
           - errcheck
+      - path: api/jobs/v1alpha2/jobs_sdk.go
+        linters:
+          - gocritic
 
 issues:
   max-issues-per-linter: 0
