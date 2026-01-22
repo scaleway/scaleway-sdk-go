@@ -534,6 +534,7 @@ type GetDeploymentCertificateRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// DeploymentID: UUID of the deployment.
 	DeploymentID string `json:"-"`
 }
 
@@ -772,6 +773,24 @@ func (r *ListVersionsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Versions = append(r.Versions, results.Versions...)
 	r.TotalCount += uint64(len(results.Versions))
 	return uint64(len(results.Versions)), nil
+}
+
+// StartDeploymentRequest: start deployment request.
+type StartDeploymentRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DeploymentID: UUID of the deployment.
+	DeploymentID string `json:"-"`
+}
+
+// StopDeploymentRequest: stop deployment request.
+type StopDeploymentRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DeploymentID: UUID of the deployment.
+	DeploymentID string `json:"-"`
 }
 
 // UpdateDeploymentRequest: update deployment request.
@@ -1136,7 +1155,7 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// GetDeploymentCertificate:
+// GetDeploymentCertificate: Retrieve the TLS certificate associated with a deployment.
 func (s *API) GetDeploymentCertificate(req *GetDeploymentCertificateRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
@@ -1159,6 +1178,78 @@ func (s *API) GetDeploymentCertificate(req *GetDeploymentCertificateRequest, opt
 	}
 
 	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// StartDeployment: Start a stopped deployment.
+func (s *API) StartDeployment(req *StartDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/datawarehouse/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/start",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Deployment
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// StopDeployment: Stop a running deployment.
+func (s *API) StopDeployment(req *StopDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/datawarehouse/v1beta1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/stop",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Deployment
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
