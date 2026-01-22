@@ -1156,9 +1156,6 @@ type Cluster struct {
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
 
-	// Deprecated: NewImagesEnabled: defines whether all pools are migrated to new images.
-	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
-
 	// PodCidr: subnet used for the Pod CIDR.
 	PodCidr scw.IPNet `json:"pod_cidr"`
 
@@ -1285,9 +1282,6 @@ type Pool struct {
 
 	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
 	PublicIPDisabled bool `json:"public_ip_disabled"`
-
-	// Deprecated: NewImagesEnabled: defines whether the pool is migrated to new images.
-	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID string `json:"security_group_id"`
@@ -2002,16 +1996,6 @@ type ListVersionsRequest struct {
 type ListVersionsResponse struct {
 	// Versions: available Kubernetes versions.
 	Versions []*Version `json:"versions"`
-}
-
-// MigratePoolsToNewImagesRequest: migrate pools to new images request.
-type MigratePoolsToNewImagesRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	ClusterID string `json:"-"`
-
-	PoolIDs []string `json:"pool_ids"`
 }
 
 // NodeMetadata: node metadata.
@@ -3085,40 +3069,6 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 		return nil, err
 	}
 	return &resp, nil
-}
-
-// MigratePoolsToNewImages: If no pool is specified, all pools of the cluster will be migrated to new images.
-func (s *API) MigratePoolsToNewImages(req *MigratePoolsToNewImagesRequest, opts ...scw.RequestOption) error {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.ClusterID) == "" {
-		return errors.New("field ClusterID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-pools-to-new-images",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return err
-	}
-
-	err = s.client.Do(scwReq, nil, opts...)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // GetNodeMetadata: Rerieve metadata to instantiate a Kapsule/Kosmos node. This method is not intended to be called by end users but rather programmatically by the node-installer.
