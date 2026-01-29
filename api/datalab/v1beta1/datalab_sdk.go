@@ -564,10 +564,10 @@ type Datalab struct {
 	// TotalStorage: the total storage selected by the user for Spark.
 	TotalStorage *Volume `json:"total_storage"`
 
-	// PrivateNetworkID: the private newtwork to which the data lab is connected. This is important for accessing the Spark Master URL.
+	// PrivateNetworkID: the private network to which the data lab is connected. This is important for accessing the Spark Master URL.
 	PrivateNetworkID string `json:"private_network_id"`
 
-	// NotebookMasterURL: the URL to the Spark Master endpoint from, and only from the perspective of the JupyterLab Notebook. This is NOT the URL to use for accessing the clutser from a private server.
+	// NotebookMasterURL: the URL to the Spark Master endpoint from, and only from the perspective of the JupyterLab Notebook. This is NOT the URL to use for accessing the cluster from a private server.
 	NotebookMasterURL *string `json:"notebook_master_url"`
 }
 
@@ -643,7 +643,7 @@ type CreateDatalabRequest struct {
 	// Main: the Spark main node configuration of the Data Lab, has one parameter `node_type` which specifies the compute node type of the main node. See ListNodeTypes for available options.
 	Main *CreateDatalabRequestSparkMain `json:"main,omitempty"`
 
-	// Worker: the Spark worker node configuration of the Data Lab, has two parameters `node_type` for selecting the type of the worker node, and `node_count` for specifying the ammount of nodes.
+	// Worker: the Spark worker node configuration of the Data Lab, has two parameters `node_type` for selecting the type of the worker node, and `node_count` for specifying the amount of nodes.
 	Worker *CreateDatalabRequestSparkWorker `json:"worker,omitempty"`
 
 	// HasNotebook: whether a JupyterLab notebook shall be created with the Data Lab or not.
@@ -655,7 +655,7 @@ type CreateDatalabRequest struct {
 	// TotalStorage: the total storage selected by the user for Spark workers. This means the workers will not use more then this amount for their workload.
 	TotalStorage *Volume `json:"total_storage,omitempty"`
 
-	// PrivateNetworkID: the private newtwork to which the Data Lab is connected. Important for accessing the Spark Master URL from a private cluster.
+	// PrivateNetworkID: the private network to which the Data Lab is connected. Important for accessing the Spark Master URL from a private cluster.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 

@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultCockpitRetryInterval = 15 * time.Second
+	defaultCockpitTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -220,6 +226,51 @@ func (enum *DataSourceType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ExporterStatus string
+
+const (
+	// The data export status is unknown.
+	ExporterStatusUnknownStatus = ExporterStatus("unknown_status")
+	// The data export is being created.
+	ExporterStatusCreating = ExporterStatus("creating")
+	// The data export is active and sending data to the chosen destination.
+	ExporterStatusReady = ExporterStatus("ready")
+	// The data export encountered an error and stopped sending data.
+	ExporterStatusError = ExporterStatus("error")
+)
+
+func (enum ExporterStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ExporterStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ExporterStatus) Values() []ExporterStatus {
+	return []ExporterStatus{
+		"unknown_status",
+		"creating",
+		"ready",
+		"error",
+	}
+}
+
+func (enum ExporterStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ExporterStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ExporterStatus(ExporterStatus(tmp).String())
+	return nil
+}
+
 type GrafanaUserRole string
 
 const (
@@ -304,6 +355,47 @@ func (enum *ListDataSourcesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListDataSourcesRequestOrderBy(ListDataSourcesRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListExportersRequestOrderBy string
+
+const (
+	ListExportersRequestOrderByCreatedAtAsc  = ListExportersRequestOrderBy("created_at_asc")
+	ListExportersRequestOrderByCreatedAtDesc = ListExportersRequestOrderBy("created_at_desc")
+	ListExportersRequestOrderByNameAsc       = ListExportersRequestOrderBy("name_asc")
+	ListExportersRequestOrderByNameDesc      = ListExportersRequestOrderBy("name_desc")
+)
+
+func (enum ListExportersRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListExportersRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListExportersRequestOrderBy) Values() []ListExportersRequestOrderBy {
+	return []ListExportersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListExportersRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListExportersRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListExportersRequestOrderBy(ListExportersRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -633,6 +725,20 @@ type ContactPointEmail struct {
 	To string `json:"to"`
 }
 
+// ExporterDatadogDestination: exporter datadog destination.
+type ExporterDatadogDestination struct {
+	APIKey *string `json:"api_key"`
+
+	Endpoint *string `json:"endpoint"`
+}
+
+// ExporterOTLPDestination: exporter otlp destination.
+type ExporterOTLPDestination struct {
+	Endpoint string `json:"endpoint"`
+
+	Headers map[string]string `json:"headers"`
+}
+
 // GetConfigResponseRetention: get config response retention.
 type GetConfigResponseRetention struct {
 	MinDays uint32 `json:"min_days"`
@@ -741,6 +847,42 @@ type DataSource struct {
 
 	// CurrentMonthUsage: usage of the month in bytes.
 	CurrentMonthUsage *scw.Size `json:"current_month_usage"`
+}
+
+// Exporter: Data exporter.
+type Exporter struct {
+	// ID: ID of the data export.
+	ID string `json:"id"`
+
+	// Name: name of the data export.
+	Name string `json:"name"`
+
+	// Description: description of the data export.
+	Description string `json:"description"`
+
+	// DatasourceID: ID of the data source linked to the data export.
+	DatasourceID string `json:"datasource_id"`
+
+	// DatadogDestination: datadog destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	DatadogDestination *ExporterDatadogDestination `json:"datadog_destination,omitempty"`
+
+	// OtlpDestination: oTLP destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	OtlpDestination *ExporterOTLPDestination `json:"otlp_destination,omitempty"`
+
+	// Status: status of the data export.
+	// Default value: unknown_status
+	Status ExporterStatus `json:"status"`
+
+	// ExportedProducts: list of Scaleway products name exported by the data export.
+	ExportedProducts []string `json:"exported_products"`
+
+	// CreatedAt: a timestamp of the creation date of the data export.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: a timestamp of the last update date of the data export.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -1137,6 +1279,34 @@ func (r *ListDataSourcesResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.DataSources)), nil
 }
 
+// ListExportersResponse: Response returned when listing data exports.
+type ListExportersResponse struct {
+	// TotalCount: total count of data exports matching the request.
+	TotalCount uint64 `json:"total_count"`
+
+	// Exporters: data exports matching the request within the pagination.
+	Exporters []*Exporter `json:"exporters"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListExportersResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListExportersResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListExportersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Exporters = append(r.Exporters, results.Exporters...)
+	r.TotalCount += uint64(len(results.Exporters))
+	return uint64(len(results.Exporters)), nil
+}
+
 // ListGrafanaProductDashboardsResponse: Output returned when listing dashboards.
 type ListGrafanaProductDashboardsResponse struct {
 	// TotalCount: total count of Grafana dashboards.
@@ -1310,6 +1480,33 @@ type RegionalAPICreateDataSourceRequest struct {
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
 }
 
+// RegionalAPICreateExporterRequest: Create a data export.
+type RegionalAPICreateExporterRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// DatasourceID: ID of the data source linked to the data export.
+	DatasourceID string `json:"datasource_id"`
+
+	// DatadogDestination: datadog destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	DatadogDestination *ExporterDatadogDestination `json:"datadog_destination,omitempty"`
+
+	// OtlpDestination: oTLP destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	OtlpDestination *ExporterOTLPDestination `json:"otlp_destination,omitempty"`
+
+	// ExportedProducts: to include all products in your data export, you can use an array containing "all"
+	// You can retrieve the complete list of product names using the `ListProducts` endpoint.
+	ExportedProducts []string `json:"exported_products"`
+
+	// Name: name of the data export.
+	Name string `json:"name"`
+
+	// Description: description of the data export.
+	Description *string `json:"description,omitempty"`
+}
+
 // RegionalAPICreateTokenRequest: Create a token.
 type RegionalAPICreateTokenRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1345,6 +1542,15 @@ type RegionalAPIDeleteDataSourceRequest struct {
 
 	// DataSourceID: ID of the data source to delete.
 	DataSourceID string `json:"-"`
+}
+
+// RegionalAPIDeleteExporterRequest: Delete a data export.
+type RegionalAPIDeleteExporterRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ExporterID: ID of the data export to update.
+	ExporterID string `json:"-"`
 }
 
 // RegionalAPIDeleteTokenRequest: Delete a token.
@@ -1440,6 +1646,15 @@ type RegionalAPIGetDataSourceRequest struct {
 	DataSourceID string `json:"-"`
 }
 
+// RegionalAPIGetExporterRequest: Retrieve a specific data export.
+type RegionalAPIGetExporterRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ExporterID: ID of the data export to retrieve.
+	ExporterID string `json:"-"`
+}
+
 // RegionalAPIGetRulesCountRequest: regional api get rules count request.
 type RegionalAPIGetRulesCountRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1532,6 +1747,28 @@ type RegionalAPIListDataSourcesRequest struct {
 	OrderBy ListDataSourcesRequestOrderBy `json:"-"`
 }
 
+// RegionalAPIListExportersRequest: List all data exports.
+type RegionalAPIListExportersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ProjectID: project ID to filter for. Only data exports from this Project will be returned.
+	ProjectID string `json:"-"`
+
+	// DatasourceID: data source ID to filter for. Only data exports linked to this data source will be returned.
+	DatasourceID *string `json:"-"`
+
+	// Page: page number to return from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of data exports to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order for data exports in the response.
+	// Default value: created_at_asc
+	OrderBy ListExportersRequestOrderBy `json:"-"`
+}
+
 // RegionalAPIListProductsRequest: List all Scaleway products that send metrics and/or logs to Cockpit.
 type RegionalAPIListProductsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1608,6 +1845,33 @@ type RegionalAPIUpdateDataSourceRequest struct {
 
 	// RetentionDays: duration for which the data will be retained in the data source.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
+}
+
+// RegionalAPIUpdateExporterRequest: Update an existing data export.
+type RegionalAPIUpdateExporterRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ExporterID: ID of the data export to update.
+	ExporterID string `json:"-"`
+
+	// DatadogDestination: updated Datadog destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	DatadogDestination *ExporterDatadogDestination `json:"datadog_destination,omitempty"`
+
+	// OtlpDestination: updated OTLP destination configuration for the data export.
+	// Precisely one of DatadogDestination, OtlpDestination must be set.
+	OtlpDestination *ExporterOTLPDestination `json:"otlp_destination,omitempty"`
+
+	// Name: updated name of the data export.
+	Name *string `json:"name,omitempty"`
+
+	// Description: updated description of the data export.
+	Description *string `json:"description,omitempty"`
+
+	// ExportedProducts: to include all products in your data export, you can use an array containing "all"
+	// You can retrieve the complete list of product names using the `ListProducts` endpoint.
+	ExportedProducts *[]string `json:"exported_products,omitempty"`
 }
 
 // UsageOverview: usage overview.
@@ -2007,6 +2271,231 @@ func (s *RegionalAPI) GetConfig(req *RegionalAPIGetConfigRequest, opts ...scw.Re
 	}
 
 	var resp GetConfigResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateExporter: Create an export to send your metrics/logs from a Scaleway data source to an external destination.
+// Current supported destination for data exports are Datadog and OTLP endpoints.
+// This feature is in Beta phase. During Beta phase, exporter can take up to 30 min to be effectively active.
+func (s *RegionalAPI) CreateExporter(req *RegionalAPICreateExporterRequest, opts ...scw.RequestOption) (*Exporter, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/exporters",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Exporter
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListExporters: List all data exports within a given Scaleway Project, specified by its ID.
+// Optionally, specify a Scaleway data source ID to retrieve only data exports associated with that data source.
+func (s *RegionalAPI) ListExporters(req *RegionalAPIListExportersRequest, opts ...scw.RequestOption) (*ListExportersResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "datasource_id", req.DatasourceID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/exporters",
+		Query:  query,
+	}
+
+	var resp ListExportersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetExporter: Retrieve information about a given data export, specified by its ID.
+func (s *RegionalAPI) GetExporter(req *RegionalAPIGetExporterRequest, opts ...scw.RequestOption) (*Exporter, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ExporterID) == "" {
+		return nil, errors.New("field ExporterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/exporters/" + fmt.Sprint(req.ExporterID) + "",
+	}
+
+	var resp Exporter
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForExporterRequest is used by WaitForExporter method.
+type WaitForExporterRequest struct {
+	Region        scw.Region
+	ExporterID    string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForExporter waits for the Exporter to reach a terminal state.
+func (s *RegionalAPI) WaitForExporter(req *WaitForExporterRequest, opts ...scw.RequestOption) (*Exporter, error) {
+	timeout := defaultCockpitTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultCockpitRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ExporterStatus]struct{}{
+		ExporterStatusCreating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetExporter(&RegionalAPIGetExporterRequest{
+				Region:     req.Region,
+				ExporterID: req.ExporterID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Exporter failed")
+	}
+
+	return res.(*Exporter), nil
+}
+
+// DeleteExporter: Delete a given data export, specified by its ID.
+// Note that this action will immediately and permanently delete this data exports.
+func (s *RegionalAPI) DeleteExporter(req *RegionalAPIDeleteExporterRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ExporterID) == "" {
+		return errors.New("field ExporterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/exporters/" + fmt.Sprint(req.ExporterID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateExporter: Update a data export attributes. Changes are effective immediately even during Beta phase.
+// Note that you can not change the data source linked to the export. If you need to do so, you will need to re-create the export.
+func (s *RegionalAPI) UpdateExporter(req *RegionalAPIUpdateExporterRequest, opts ...scw.RequestOption) (*Exporter, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ExporterID) == "" {
+		return nil, errors.New("field ExporterID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/cockpit/v1/regions/" + fmt.Sprint(req.Region) + "/exporters/" + fmt.Sprint(req.ExporterID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Exporter
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
