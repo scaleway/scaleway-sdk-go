@@ -2529,14 +2529,14 @@ type UpdateBackendStageRequest struct {
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
-	// PipelineID: pipeline ID the Backend stage belongs to.
-	PipelineID string `json:"pipeline_id"`
-
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
+
+	// PipelineID: pipeline ID the Backend stage belongs to.
+	PipelineID string `json:"pipeline_id"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
