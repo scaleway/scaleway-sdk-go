@@ -819,6 +819,9 @@ type ListVolumesRequest struct {
 
 	// VolumeType: filter by volume type.
 	VolumeType *string `json:"-"`
+
+	// VolumeIDs: filter by volume IDs.
+	VolumeIDs []string `json:"-"`
 }
 
 // ListVolumesResponse: list volumes response.
@@ -963,6 +966,7 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "include_deleted", req.IncludeDeleted)
 	parameter.AddToQuery(query, "volume_type", req.VolumeType)
+	parameter.AddToQuery(query, "volume_ids", req.VolumeIDs)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
