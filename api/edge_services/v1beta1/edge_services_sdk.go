@@ -1448,6 +1448,9 @@ type PlanDetails struct {
 
 	// WafRequests: number of WAF requests included in subscription plan.
 	WafRequests uint64 `json:"waf_requests"`
+
+	// BackendLimit: number of backends per pipeline included in subscription plan.
+	BackendLimit uint64 `json:"backend_limit"`
 }
 
 // PlanUsageDetails: plan usage details.
@@ -2529,14 +2532,14 @@ type UpdateBackendStageRequest struct {
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
-	// PipelineID: pipeline ID the Backend stage belongs to.
-	PipelineID string `json:"pipeline_id"`
-
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
+
+	// PipelineID: pipeline ID the Backend stage belongs to.
+	PipelineID string `json:"pipeline_id"`
 }
 
 // UpdateCacheStageRequest: update cache stage request.
