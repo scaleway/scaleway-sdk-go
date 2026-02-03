@@ -1448,6 +1448,9 @@ type PlanDetails struct {
 
 	// WafRequests: number of WAF requests included in subscription plan.
 	WafRequests uint64 `json:"waf_requests"`
+
+	// BackendLimit: number of backends per pipeline included in subscription plan.
+	BackendLimit uint64 `json:"backend_limit"`
 }
 
 // PlanUsageDetails: plan usage details.

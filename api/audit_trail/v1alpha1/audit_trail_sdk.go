@@ -503,6 +503,12 @@ const (
 	ResourceTypeVpcGwPatRule             = ResourceType("vpc_gw_pat_rule")
 	ResourceTypeVpcGwIP                  = ResourceType("vpc_gw_ip")
 	ResourceTypeAuditTrailExportJob      = ResourceType("audit_trail_export_job")
+	ResourceTypeRdbInstance              = ResourceType("rdb_instance")
+	ResourceTypeRdbInstanceBackup        = ResourceType("rdb_instance_backup")
+	ResourceTypeRdbInstanceEndpoint      = ResourceType("rdb_instance_endpoint")
+	ResourceTypeRdbInstanceLogs          = ResourceType("rdb_instance_logs")
+	ResourceTypeRdbInstanceReadReplica   = ResourceType("rdb_instance_read_replica")
+	ResourceTypeRdbInstanceSnapshot      = ResourceType("rdb_instance_snapshot")
 )
 
 func (enum ResourceType) String() string {
@@ -587,6 +593,12 @@ func (enum ResourceType) Values() []ResourceType {
 		"vpc_gw_pat_rule",
 		"vpc_gw_ip",
 		"audit_trail_export_job",
+		"rdb_instance",
+		"rdb_instance_backup",
+		"rdb_instance_endpoint",
+		"rdb_instance_logs",
+		"rdb_instance_read_replica",
+		"rdb_instance_snapshot",
 	}
 }
 
