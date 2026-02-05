@@ -521,7 +521,7 @@ type Datalab struct {
 	// ID: the unique identifier of the Data Lab.
 	ID string `json:"id"`
 
-	// ProjectID: the identifier of the project where the Data Lab has been created.
+	// ProjectID: the unique identifier of the project where the Data Lab has been created.
 	ProjectID string `json:"project_id"`
 
 	// Name: the name of the Data Lab.
@@ -533,13 +533,13 @@ type Datalab struct {
 	// Tags: the tags of the Data Lab.
 	Tags []string `json:"tags"`
 
-	// Main: the Spark Main node specification of Data lab. It holds the parameters `node_type` the compute node type of the main node, `spark_ui_url` where the Spark UI is available, `spark_master_url` with which one can connect to the cluster from within one's VPC, `root_volume` the size of the volume assigned to the main node.
+	// Main: the Spark Main node specification of Data lab. It holds the parameters `node_type`, `spark_ui_url` (available to reach Spark UI), `spark_master_url` (used to reach the cluster within a VPC), `root_volume` (size of the volume assigned to the cluster).
 	Main *DatalabSparkMain `json:"main"`
 
-	// Worker: the worker node specification of the Data Lab. It presents the parameters `node_type` the compute node type of each worker node, `node_count` the number of worker nodes currently in the cluster, `root_volume` the root volume size of each executor.
+	// Worker: the cluster worker nodes specification. It holds the parameters `node_type`, `node_count`, `root_volume` (size of the volume assigned to the cluster).
 	Worker *DatalabSparkWorker `json:"worker"`
 
-	// Status: the status of the Data Lab. For a working Data Lab this should be `ready`.
+	// Status: the status of the Data Lab. For a working Data Lab the status is marked as `ready`.
 	// Default value: unknown_status
 	Status DatalabStatus `json:"status"`
 
@@ -555,19 +555,19 @@ type Datalab struct {
 	// HasNotebook: whether a JupyterLab notebook is associated with the Data Lab or not.
 	HasNotebook bool `json:"has_notebook"`
 
-	// NotebookURL: the URL of said notebook if exists.
+	// NotebookURL: the URL of the notebook if available.
 	NotebookURL *string `json:"notebook_url"`
 
 	// SparkVersion: the version of Spark running inside the Data Lab.
 	SparkVersion string `json:"spark_version"`
 
-	// TotalStorage: the total storage selected by the user for Spark.
+	// TotalStorage: the total persistent volume storage selected to run Spark.
 	TotalStorage *Volume `json:"total_storage"`
 
-	// PrivateNetworkID: the private network to which the data lab is connected. This is important for accessing the Spark Master URL.
+	// PrivateNetworkID: the unique identifier of the private network to which the Data Lab is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 
-	// NotebookMasterURL: the URL to the Spark Master endpoint from, and only from the perspective of the JupyterLab Notebook. This is NOT the URL to use for accessing the cluster from a private server.
+	// NotebookMasterURL: the URL that is used to reach the cluster from the notebook when available. This URL cannot be used to reach the cluster from a server.
 	NotebookMasterURL *string `json:"notebook_master_url"`
 }
 
@@ -640,22 +640,22 @@ type CreateDatalabRequest struct {
 	// Tags: the tags of the Data Lab.
 	Tags []string `json:"tags"`
 
-	// Main: the Spark main node configuration of the Data Lab, has one parameter `node_type` which specifies the compute node type of the main node. See ListNodeTypes for available options.
+	// Main: the cluster main node specification. It holds the parameters `node_type` which specifies the node type of the main node. See ListNodeTypes for available options. See ListNodeTypes for available options.
 	Main *CreateDatalabRequestSparkMain `json:"main,omitempty"`
 
-	// Worker: the Spark worker node configuration of the Data Lab, has two parameters `node_type` for selecting the type of the worker node, and `node_count` for specifying the amount of nodes.
+	// Worker: the cluster worker node specification. It holds the parameters `node_type` which specifies the node type of the worker node and `node_count` for specifying the amount of nodes.
 	Worker *CreateDatalabRequestSparkWorker `json:"worker,omitempty"`
 
-	// HasNotebook: whether a JupyterLab notebook shall be created with the Data Lab or not.
+	// HasNotebook: select this option to include a notebook as part of the Data Lab.
 	HasNotebook bool `json:"has_notebook"`
 
 	// SparkVersion: the version of Spark running inside the Data Lab, available options can be viewed at ListClusterVersions.
 	SparkVersion string `json:"spark_version"`
 
-	// TotalStorage: the total storage selected by the user for Spark workers. This means the workers will not use more then this amount for their workload.
+	// TotalStorage: the maximum persistent volume storage that will be available during workload.
 	TotalStorage *Volume `json:"total_storage,omitempty"`
 
-	// PrivateNetworkID: the private network to which the Data Lab is connected. Important for accessing the Spark Master URL from a private cluster.
+	// PrivateNetworkID: the unique identifier of the private network the Data Lab will be attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
@@ -721,7 +721,7 @@ func (r *ListClusterVersionsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Clusters)), nil
 }
 
-// ListDatalabsRequest: A request to list Datalabs.
+// ListDatalabsRequest: A request to list Data Labs.
 type ListDatalabsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
@@ -754,7 +754,7 @@ type ListDatalabsResponse struct {
 	// Datalabs: the list of Data Labs. This is a list composed of messages of type `DataLab`.
 	Datalabs []*Datalab `json:"datalabs"`
 
-	// TotalCount: the total count of Datalabs.
+	// TotalCount: the total count of Data Labs.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -792,7 +792,7 @@ type ListNodeTypesRequest struct {
 	// Default value: name_asc
 	OrderBy ListNodeTypesRequestOrderBy `json:"-"`
 
-	// Targets: filter on the wanted targets, whether it's for main node or worker.
+	// Targets: filter based on the target of the nodes. Allows to filter the nodes based on their purpose which can be main or worker node.
 	Targets []NodeTypeTarget `json:"-"`
 
 	// ResourceType: filter based on node type ( `cpu`/`gpu`/`all` ).
@@ -1135,7 +1135,7 @@ func (s *API) DeleteDatalab(req *DeleteDatalabRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListNodeTypes: List the available compute node types upon which a Data Lab can be created.
+// ListNodeTypes: List the available compute node types for creating a Data Lab.
 func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
 	var err error
 
@@ -1175,7 +1175,7 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListNotebookVersions: List available notebook versions.
+// ListNotebookVersions: Lists available notebook versions.
 func (s *API) ListNotebookVersions(req *ListNotebookVersionsRequest, opts ...scw.RequestOption) (*ListNotebookVersionsResponse, error) {
 	var err error
 
