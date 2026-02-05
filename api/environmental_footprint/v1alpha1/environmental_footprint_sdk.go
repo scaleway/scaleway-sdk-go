@@ -57,8 +57,6 @@ const (
 	ProductCategoryObjectStorage = ProductCategory("object_storage")
 	// The Load Balancer product category.
 	ProductCategoryLoadBalancer = ProductCategory("load_balancer")
-	// The Kubernetes product category.
-	ProductCategoryKubernetes = ProductCategory("kubernetes")
 )
 
 func (enum ProductCategory) String() string {
@@ -79,7 +77,6 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"instances",
 		"object_storage",
 		"load_balancer",
-		"kubernetes",
 	}
 }
 
@@ -153,8 +150,6 @@ const (
 	ServiceCategoryStorage = ServiceCategory("storage")
 	// The Network service category.
 	ServiceCategoryNetwork = ServiceCategory("network")
-	// The Containers service category.
-	ServiceCategoryContainers = ServiceCategory("containers")
 )
 
 func (enum ServiceCategory) String() string {
@@ -172,7 +167,6 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"compute",
 		"storage",
 		"network",
-		"containers",
 	}
 }
 

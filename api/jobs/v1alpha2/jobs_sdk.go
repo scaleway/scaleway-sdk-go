@@ -54,7 +54,6 @@ const (
 	JobRunReasonExitedWithError      = JobRunReason("exited_with_error")
 	JobRunReasonSecretDisabled       = JobRunReason("secret_disabled")
 	JobRunReasonSecretNotFound       = JobRunReason("secret_not_found")
-	JobRunReasonQuotaExceeded        = JobRunReason("quota_exceeded")
 )
 
 func (enum JobRunReason) String() string {
@@ -79,7 +78,6 @@ func (enum JobRunReason) Values() []JobRunReason {
 		"exited_with_error",
 		"secret_disabled",
 		"secret_not_found",
-		"quota_exceeded",
 	}
 }
 
