@@ -676,7 +676,7 @@ func (r *ListDeploymentsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Deployments)), nil
 }
 
-// ListNodeTypesRequest: Retrieve a list of available node types for a SearchDB cluster.
+// ListNodeTypesRequest: Retrieve a list of available node types for a Cloud Essentials for OpenSearch cluster.
 type ListNodeTypesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
@@ -692,7 +692,7 @@ type ListNodeTypesRequest struct {
 	PageSize *uint32 `json:"-"`
 }
 
-// ListNodeTypesResponse: Returns a list of node types available for a SearchDB cluster.
+// ListNodeTypesResponse: Returns a list of node types available for a Cloud Essentials for OpenSearch cluster.
 type ListNodeTypesResponse struct {
 	// NodeTypes: node types compatible with the cluster.
 	NodeTypes []*NodeType `json:"node_types"`
@@ -857,7 +857,7 @@ type UpgradeDeploymentRequest struct {
 	VolumeSizeBytes *uint64 `json:"volume_size_bytes,omitempty"`
 }
 
-// The SearchDB API allows you to manage your Opensearch resources.
+// The Cloud Essentials for Opensearch API allows you to manage your Opensearch resources.
 type API struct {
 	client *scw.Client
 }
@@ -873,7 +873,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
 }
 
-// CreateDeployment: Create a new SearchDB deployment.
+// CreateDeployment: Create a new Cloud Essentials for OpenSearch deployment.
 func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
@@ -910,7 +910,7 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// UpdateDeployment: Update a SearchDB deployment.
+// UpdateDeployment: Update a Cloud Essentials for OpenSearch deployment.
 func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
@@ -946,7 +946,7 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// UpgradeDeployment: Upgrade a SearchDB deployment.
+// UpgradeDeployment: Upgrade a Cloud Essentials for OpenSearch deployment.
 func (s *API) UpgradeDeployment(req *UpgradeDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
@@ -982,7 +982,7 @@ func (s *API) UpgradeDeployment(req *UpgradeDeploymentRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// GetDeployment: Retrieve a specific SearchDB deployment.
+// GetDeployment: Retrieve a specific Cloud Essentials for OpenSearch deployment.
 func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
@@ -1065,7 +1065,7 @@ func (s *API) WaitForDeployment(req *WaitForDeploymentRequest, opts ...scw.Reque
 	return res.(*Deployment), nil
 }
 
-// DeleteDeployment: Delete a SearchDB deployment.
+// DeleteDeployment: Delete a Cloud Essentials for OpenSearch deployment.
 func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.RequestOption) (*Deployment, error) {
 	var err error
 
@@ -1096,7 +1096,7 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ListDeployments: Retrieve a list of SearchDB deployments.
+// ListDeployments: Retrieve a list of Cloud Essentials for OpenSearch deployments.
 func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOption) (*ListDeploymentsResponse, error) {
 	var err error
 
@@ -1139,7 +1139,7 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// ListVersions: List available SearchDB versions.
+// ListVersions: List available Cloud Essentials for OpenSearch versions.
 func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
 	var err error
 
