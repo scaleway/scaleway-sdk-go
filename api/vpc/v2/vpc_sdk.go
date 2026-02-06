@@ -242,6 +242,47 @@ func (enum *ListSubnetsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListVPCConnectorsRequestOrderBy string
+
+const (
+	ListVPCConnectorsRequestOrderByCreatedAtAsc  = ListVPCConnectorsRequestOrderBy("created_at_asc")
+	ListVPCConnectorsRequestOrderByCreatedAtDesc = ListVPCConnectorsRequestOrderBy("created_at_desc")
+	ListVPCConnectorsRequestOrderByNameAsc       = ListVPCConnectorsRequestOrderBy("name_asc")
+	ListVPCConnectorsRequestOrderByNameDesc      = ListVPCConnectorsRequestOrderBy("name_desc")
+)
+
+func (enum ListVPCConnectorsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListVPCConnectorsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListVPCConnectorsRequestOrderBy) Values() []ListVPCConnectorsRequestOrderBy {
+	return []ListVPCConnectorsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListVPCConnectorsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListVPCConnectorsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListVPCConnectorsRequestOrderBy(ListVPCConnectorsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListVPCsRequestOrderBy string
 
 const (
@@ -371,6 +412,45 @@ func (enum *RouteWithNexthopResourceType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type VPCConnectorStatus string
+
+const (
+	VPCConnectorStatusUnknownVpcConnectorStatus = VPCConnectorStatus("unknown_vpc_connector_status")
+	VPCConnectorStatusOrphan                    = VPCConnectorStatus("orphan")
+	VPCConnectorStatusPeered                    = VPCConnectorStatus("peered")
+)
+
+func (enum VPCConnectorStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(VPCConnectorStatusUnknownVpcConnectorStatus)
+	}
+	return string(enum)
+}
+
+func (enum VPCConnectorStatus) Values() []VPCConnectorStatus {
+	return []VPCConnectorStatus{
+		"unknown_vpc_connector_status",
+		"orphan",
+		"peered",
+	}
+}
+
+func (enum VPCConnectorStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *VPCConnectorStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = VPCConnectorStatus(VPCConnectorStatus(tmp).String())
+	return nil
+}
+
 // Subnet: subnet.
 type Subnet struct {
 	// ID: ID of the subnet.
@@ -457,6 +537,9 @@ type Route struct {
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id"`
 
+	// NexthopVpcConnectorID: ID of the nexthop VPC connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id"`
+
 	// CreatedAt: date the Route was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -472,6 +555,15 @@ type Route struct {
 
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`
+}
+
+// VPCConnectorPeerInfo: vpc connector peer info.
+type VPCConnectorPeerInfo struct {
+	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
+
+	VpcName string `json:"vpc_name"`
 }
 
 // ACLRule: acl rule.
@@ -520,6 +612,46 @@ type RouteWithNexthop struct {
 	// NexthopResourceType: resource type of the route's next hop.
 	// Default value: unknown_type
 	NexthopResourceType RouteWithNexthopResourceType `json:"nexthop_resource_type"`
+}
+
+// VPCConnector: vpc connector.
+type VPCConnector struct {
+	// ID: vPC connector ID.
+	ID string `json:"id"`
+
+	// Name: vPC connector name.
+	Name string `json:"name"`
+
+	// OrganizationID: scaleway Organization the VPC connector belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: scaleway Project the VPC connector belongs to.
+	ProjectID string `json:"project_id"`
+
+	// VpcID: vPC the VPC connector belongs to (origin VPC).
+	VpcID string `json:"vpc_id"`
+
+	// TargetVpcID: vPC with which the VPC connector is peered (target VPC).
+	TargetVpcID string `json:"target_vpc_id"`
+
+	// Status: status of the VPC connector.
+	// Default value: unknown_vpc_connector_status
+	Status VPCConnectorStatus `json:"status"`
+
+	// PeerInfo: peer info of target VPC. Available when status is Peered.
+	PeerInfo *VPCConnectorPeerInfo `json:"peer_info"`
+
+	// Region: region of the VPC connector.
+	Region scw.Region `json:"region"`
+
+	// Tags: tags for the VPC connector.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: date the VPC connector was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the VPC connector was last modified.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // VPC: vpc.
@@ -624,6 +756,27 @@ type CreateRouteRequest struct {
 
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+
+	// NexthopVpcConnectorID: ID of the nexthop VPC Connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id,omitempty"`
+}
+
+// CreateVPCConnectorRequest: create vpc connector request.
+type CreateVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Name: name for the VPC connector.
+	Name string `json:"name"`
+
+	// Tags: tags for the VPC connector.
+	Tags []string `json:"tags"`
+
+	// VpcID: vPC ID to filter for. Only connectors belonging to this VPC will be returned.
+	VpcID string `json:"vpc_id"`
+
+	// TargetVpcID: target VPC ID to filter for. Only connectors belonging to this target VPC will be returned.
+	TargetVpcID string `json:"target_vpc_id"`
 }
 
 // CreateVPCRequest: create vpc request.
@@ -677,6 +830,15 @@ type DeleteSubnetsRequest struct {
 // DeleteSubnetsResponse: delete subnets response.
 type DeleteSubnetsResponse struct {
 	Subnets []scw.IPNet `json:"subnets"`
+}
+
+// DeleteVPCConnectorRequest: delete vpc connector request.
+type DeleteVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcConnectorID: vPC connector ID.
+	VpcConnectorID string `json:"-"`
 }
 
 // DeleteVPCRequest: delete vpc request.
@@ -751,6 +913,15 @@ type GetRouteRequest struct {
 
 	// RouteID: route ID.
 	RouteID string `json:"-"`
+}
+
+// GetVPCConnectorRequest: get vpc connector request.
+type GetVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcConnectorID: vPC connector ID.
+	VpcConnectorID string `json:"-"`
 }
 
 // GetVPCRequest: get vpc request.
@@ -907,6 +1078,70 @@ func (r *ListSubnetsResponse) UnsafeAppend(res any) (uint32, error) {
 	return uint32(len(results.Subnets)), nil
 }
 
+// ListVPCConnectorsRequest: list vpc connectors request.
+type ListVPCConnectorsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: sort order of the returned VPC connectors.
+	// Default value: created_at_asc
+	OrderBy ListVPCConnectorsRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of VPC connectors to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// Name: name to filter for. Only connectors with names containing this string will be returned.
+	Name *string `json:"-"`
+
+	// Tags: tags to filter for. Only connectors with one or more matching tags will be returned.
+	Tags []string `json:"-"`
+
+	// OrganizationID: organization ID to filter for. Only connectors belonging to this Organization will be returned.
+	OrganizationID *string `json:"-"`
+
+	// ProjectID: project ID to filter for. Only connectors belonging to this Project will be returned.
+	ProjectID *string `json:"-"`
+
+	// VpcID: vPC ID to filter for. Only connectors belonging to this VPC will be returned.
+	VpcID *string `json:"-"`
+
+	// TargetVpcID: target VPC ID to filter for. Only connectors belonging to this target VPC will be returned.
+	TargetVpcID *string `json:"-"`
+
+	// Status: status of the VPC connector.
+	// Default value: unknown_vpc_connector_status
+	Status *VPCConnectorStatus `json:"-"`
+}
+
+// ListVPCConnectorsResponse: list vpc connectors response.
+type ListVPCConnectorsResponse struct {
+	VpcConnectors []*VPCConnector `json:"vpc_connectors"`
+
+	TotalCount uint32 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVPCConnectorsResponse) UnsafeGetTotalCount() uint32 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVPCConnectorsResponse) UnsafeAppend(res any) (uint32, error) {
+	results, ok := res.(*ListVPCConnectorsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.VpcConnectors = append(r.VpcConnectors, results.VpcConnectors...)
+	r.TotalCount += uint32(len(results.VpcConnectors))
+	return uint32(len(results.VpcConnectors)), nil
+}
+
 // ListVPCsRequest: list vp cs request.
 type ListVPCsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -995,6 +1230,9 @@ type RoutesWithNexthopAPIListRoutesWithNexthopRequest struct {
 	// Default value: unknown_type
 	NexthopResourceType RouteWithNexthopResourceType `json:"-"`
 
+	// NexthopVpcConnectorID: next hop VPC connector ID to filter for. Only routes with a matching next hop VPC connector ID will be returned.
+	NexthopVpcConnectorID *string `json:"-"`
+
 	// Contains: only routes whose destination is contained in this subnet will be returned.
 	Contains *scw.IPNet `json:"-"`
 
@@ -1072,6 +1310,24 @@ type UpdateRouteRequest struct {
 
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+
+	// NexthopVpcConnectorID: ID of the nexthop VPC connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id,omitempty"`
+}
+
+// UpdateVPCConnectorRequest: update vpc connector request.
+type UpdateVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcConnectorID: vPC connector ID.
+	VpcConnectorID string `json:"-"`
+
+	// Name: name for the VPC connector.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: tags for the VPC connector.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateVPCRequest: update vpc request.
@@ -1889,6 +2145,183 @@ func (s *API) SetACL(req *SetACLRequest, opts ...scw.RequestOption) (*SetACLResp
 	return &resp, nil
 }
 
+// ListVPCConnectors: List existing VPC connectors in the specified region.
+func (s *API) ListVPCConnectors(req *ListVPCConnectorsRequest, opts ...scw.RequestOption) (*ListVPCConnectorsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+	parameter.AddToQuery(query, "target_vpc_id", req.TargetVpcID)
+	parameter.AddToQuery(query, "status", req.Status)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors",
+		Query:  query,
+	}
+
+	var resp ListVPCConnectorsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateVPCConnector: Create a new VPC connector in the specified region.
+func (s *API) CreateVPCConnector(req *CreateVPCConnectorRequest, opts ...scw.RequestOption) (*VPCConnector, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("VPCConnector")
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPCConnector
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetVPCConnector: Retrieve details of an existing VPC connector, specified by its VPC connector ID.
+func (s *API) GetVPCConnector(req *GetVPCConnectorRequest, opts ...scw.RequestOption) (*VPCConnector, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcConnectorID) == "" {
+		return nil, errors.New("field VpcConnectorID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors/" + fmt.Sprint(req.VpcConnectorID) + "",
+	}
+
+	var resp VPCConnector
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateVPCConnector: Update parameters including name and tags of the specified VPC connector.
+func (s *API) UpdateVPCConnector(req *UpdateVPCConnectorRequest, opts ...scw.RequestOption) (*VPCConnector, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcConnectorID) == "" {
+		return nil, errors.New("field VpcConnectorID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors/" + fmt.Sprint(req.VpcConnectorID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPCConnector
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteVPCConnector: Delete a VPC connector specified by its VPC connector ID.
+func (s *API) DeleteVPCConnector(req *DeleteVPCConnectorRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcConnectorID) == "" {
+		return errors.New("field VpcConnectorID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors/" + fmt.Sprint(req.VpcConnectorID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type RoutesWithNexthopAPI struct {
 	client *scw.Client
 }
@@ -1922,6 +2355,7 @@ func (s *RoutesWithNexthopAPI) ListRoutesWithNexthop(req *RoutesWithNexthopAPILi
 	parameter.AddToQuery(query, "nexthop_resource_id", req.NexthopResourceID)
 	parameter.AddToQuery(query, "nexthop_private_network_id", req.NexthopPrivateNetworkID)
 	parameter.AddToQuery(query, "nexthop_resource_type", req.NexthopResourceType)
+	parameter.AddToQuery(query, "nexthop_vpc_connector_id", req.NexthopVpcConnectorID)
 	parameter.AddToQuery(query, "contains", req.Contains)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
