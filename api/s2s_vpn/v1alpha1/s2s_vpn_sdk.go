@@ -633,6 +633,18 @@ type ConnectionCipher struct {
 	DhGroup *ConnectionDhGroup `json:"dh_group"`
 }
 
+// CreateVpnGatewayRequestDualIPTunnel: create vpn gateway request dual ip tunnel.
+type CreateVpnGatewayRequestDualIPTunnel struct {
+	IpamIPv4ID *string `json:"ipam_ipv4_id"`
+
+	IpamIPv6ID *string `json:"ipam_ipv6_id"`
+}
+
+// CreateVpnGatewayRequestSingleIPTunnel: create vpn gateway request single ip tunnel.
+type CreateVpnGatewayRequestSingleIPTunnel struct {
+	IpamID *string `json:"ipam_id"`
+}
+
 // VpnGatewayPrivateConfig: vpn gateway private config.
 type VpnGatewayPrivateConfig struct{}
 
@@ -742,6 +754,18 @@ type CreateVpnGatewayRequestPublicConfig struct {
 	IpamIPv4ID *string `json:"ipam_ipv4_id"`
 
 	IpamIPv6ID *string `json:"ipam_ipv6_id"`
+}
+
+// CreateVpnGatewayRequestPublicTunnelConfig: create vpn gateway request public tunnel config.
+type CreateVpnGatewayRequestPublicTunnelConfig struct {
+	// Precisely one of SingleIPv4Tunnel, SingleIPv6Tunnel, DualIPv4v6Tunnel must be set.
+	SingleIPv4Tunnel *CreateVpnGatewayRequestSingleIPTunnel `json:"single_ipv4_tunnel,omitempty"`
+
+	// Precisely one of SingleIPv4Tunnel, SingleIPv6Tunnel, DualIPv4v6Tunnel must be set.
+	SingleIPv6Tunnel *CreateVpnGatewayRequestSingleIPTunnel `json:"single_ipv6_tunnel,omitempty"`
+
+	// Precisely one of SingleIPv4Tunnel, SingleIPv6Tunnel, DualIPv4v6Tunnel must be set.
+	DualIPv4v6Tunnel *CreateVpnGatewayRequestDualIPTunnel `json:"dual_ipv4v6_tunnel,omitempty"`
 }
 
 // CustomerGateway: customer gateway.
@@ -1009,12 +1033,15 @@ type CreateVpnGatewayRequest struct {
 	// GatewayType: vPN gateway type (commercial offer type).
 	GatewayType string `json:"gateway_type"`
 
-	// PublicConfig: public endpoint configuration of the VPN gateway.
-	// Precisely one of PublicConfig must be set.
+	// Deprecated: PublicConfig: public endpoint configuration of the VPN gateway.
+	// Precisely one of PublicConfig, PublicTunnelConfig must be set.
 	PublicConfig *CreateVpnGatewayRequestPublicConfig `json:"public_config,omitempty"`
 
 	// PrivateNetworkID: ID of the Private Network to attach to the VPN gateway.
 	PrivateNetworkID string `json:"private_network_id"`
+
+	// Precisely one of PublicConfig, PublicTunnelConfig must be set.
+	PublicTunnelConfig *CreateVpnGatewayRequestPublicTunnelConfig `json:"public_tunnel_config,omitempty"`
 
 	// IpamPrivateIPv4ID: ID of the IPAM private IPv4 address to attach to the VPN gateway.
 	IpamPrivateIPv4ID *string `json:"ipam_private_ipv4_id,omitempty"`
