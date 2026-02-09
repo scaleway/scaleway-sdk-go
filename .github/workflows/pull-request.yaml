@@ -14,11 +14,11 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 1
     - name: Install Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
       with:
         go-version: ${{ matrix.go-version }}
     - name: Run unit tests
@@ -34,11 +34,11 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 1
     - name: Install Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
       with:
         go-version: ${{ matrix.go-version }}
     - name: Test to build binary
@@ -53,11 +53,11 @@ jobs:
     steps:
     # Checkout should always be before setup-go to ensure caching is working
     - name: checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 1
     - name: Install Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
       with:
         go-version: ${{ matrix.go-version }}
     - name: Test to build binary
