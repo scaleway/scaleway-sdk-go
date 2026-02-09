@@ -537,6 +537,9 @@ type Route struct {
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id"`
 
+	// NexthopVpcConnectorID: ID of the nexthop VPC connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id"`
+
 	// CreatedAt: date the Route was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -753,6 +756,27 @@ type CreateRouteRequest struct {
 
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+
+	// NexthopVpcConnectorID: ID of the nexthop VPC Connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id,omitempty"`
+}
+
+// CreateVPCConnectorRequest: create vpc connector request.
+type CreateVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Name: name for the VPC connector.
+	Name string `json:"name"`
+
+	// Tags: tags for the VPC connector.
+	Tags []string `json:"tags"`
+
+	// VpcID: vPC ID to filter for. Only connectors belonging to this VPC will be returned.
+	VpcID string `json:"vpc_id"`
+
+	// TargetVpcID: target VPC ID to filter for. Only connectors belonging to this target VPC will be returned.
+	TargetVpcID string `json:"target_vpc_id"`
 }
 
 // CreateVPCConnectorRequest: create vpc connector request.
@@ -1224,6 +1248,9 @@ type RoutesWithNexthopAPIListRoutesWithNexthopRequest struct {
 	// Default value: unknown_type
 	NexthopResourceType RouteWithNexthopResourceType `json:"-"`
 
+	// NexthopVpcConnectorID: next hop VPC connector ID to filter for. Only routes with a matching next hop VPC connector ID will be returned.
+	NexthopVpcConnectorID *string `json:"-"`
+
 	// Contains: only routes whose destination is contained in this subnet will be returned.
 	Contains *scw.IPNet `json:"-"`
 
@@ -1301,6 +1328,24 @@ type UpdateRouteRequest struct {
 
 	// NexthopPrivateNetworkID: ID of the nexthop private network.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+
+	// NexthopVpcConnectorID: ID of the nexthop VPC connector.
+	NexthopVpcConnectorID *string `json:"nexthop_vpc_connector_id,omitempty"`
+}
+
+// UpdateVPCConnectorRequest: update vpc connector request.
+type UpdateVPCConnectorRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcConnectorID: vPC connector ID.
+	VpcConnectorID string `json:"-"`
+
+	// Name: name for the VPC connector.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: tags for the VPC connector.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateVPCConnectorRequest: update vpc connector request.
@@ -2343,6 +2388,7 @@ func (s *RoutesWithNexthopAPI) ListRoutesWithNexthop(req *RoutesWithNexthopAPILi
 	parameter.AddToQuery(query, "nexthop_resource_id", req.NexthopResourceID)
 	parameter.AddToQuery(query, "nexthop_private_network_id", req.NexthopPrivateNetworkID)
 	parameter.AddToQuery(query, "nexthop_resource_type", req.NexthopResourceType)
+	parameter.AddToQuery(query, "nexthop_vpc_connector_id", req.NexthopVpcConnectorID)
 	parameter.AddToQuery(query, "contains", req.Contains)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)

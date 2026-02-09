@@ -1878,7 +1878,10 @@ type UpdateContainerRequest struct {
 	// Timeout: processing time limit for the container.
 	Timeout *scw.Duration `json:"timeout,omitempty"`
 
-	// Redeploy: defines whether to redeploy failed containers.
+	// Deprecated: Redeploy: deprecated: future versions of this API will systematically redeploy containers when needed. As such,
+	// passing `redeploy: false` will be ignored. Relying on this field is discouraged.
+	//
+	// To force the redeployment of a container, even if no configuration has changed, use the `DeployContainer` method instead.
 	Redeploy *bool `json:"redeploy,omitempty"`
 
 	// Privacy: privacy settings of the container.
