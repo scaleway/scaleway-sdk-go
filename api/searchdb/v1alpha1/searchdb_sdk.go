@@ -608,6 +608,14 @@ type DeleteUserRequest struct {
 	Username string `json:"-"`
 }
 
+// GetDeploymentCertificateAuthorityRequest: get deployment certificate authority request.
+type GetDeploymentCertificateAuthorityRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	DeploymentID string `json:"-"`
+}
+
 // GetDeploymentRequest: Retrieve a deployment specified by the ID.
 type GetDeploymentRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1427,4 +1435,35 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 		return err
 	}
 	return nil
+}
+
+// GetDeploymentCertificateAuthority:
+func (s *API) GetDeploymentCertificateAuthority(req *GetDeploymentCertificateAuthorityRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/searchdb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificate-authority",
+	}
+
+	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
