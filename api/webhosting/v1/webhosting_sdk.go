@@ -2253,6 +2253,18 @@ type HostingAPICreateSessionRequest struct {
 	HostingID string `json:"-"`
 }
 
+// HostingAPIDeleteHostingDomainsRequest: hosting api delete hosting domains request.
+type HostingAPIDeleteHostingDomainsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID of the Web Hosting plan from which to delete domains.
+	HostingID string `json:"-"`
+
+	// Domains: list of domains to delete from the Web Hosting plan.
+	Domains []string `json:"domains"`
+}
+
 // HostingAPIDeleteHostingRequest: hosting api delete hosting request.
 type HostingAPIDeleteHostingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2351,6 +2363,27 @@ type HostingAPIResetHostingPasswordRequest struct {
 
 	// HostingID: UUID of the hosting.
 	HostingID string `json:"-"`
+}
+
+// HostingAPIResetHostingRequest: hosting api reset hosting request.
+type HostingAPIResetHostingRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID of the Web Hosting plan to reset.
+	HostingID string `json:"-"`
+}
+
+// HostingAPIUpdateHostingFreeDomainRequest: hosting api update hosting free domain request.
+type HostingAPIUpdateHostingFreeDomainRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID of the Web Hosting plan to update.
+	HostingID string `json:"-"`
+
+	// FreeDomain: new free domain to associate with the Web Hosting plan.
+	FreeDomain string `json:"free_domain"`
 }
 
 // HostingAPIUpdateHostingRequest: hosting api update hosting request.
@@ -4452,6 +4485,114 @@ func (s *HostingAPI) MigrateControlPanel(req *HostingAPIMigrateControlPanelReque
 	}
 
 	var resp HostingSummary
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ResetHosting: Reset a Web Hosting plan to its initial state, specified by its `hosting_id`. This permanently deletes all hosting data including files, databases and emails. The hosting will be re-provisioned.
+func (s *HostingAPI) ResetHosting(req *HostingAPIResetHostingRequest, opts ...scw.RequestOption) (*Hosting, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/reset",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Hosting
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteHostingDomains: Remove one or more domains from a Web Hosting plan, specified by its `hosting_id`. This permanently deletes the domains and all services tied to them, including mailboxes, FTP accounts and DNS zones.
+func (s *HostingAPI) DeleteHostingDomains(req *HostingAPIDeleteHostingDomainsRequest, opts ...scw.RequestOption) (*Hosting, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/delete-domains",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Hosting
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateHostingFreeDomain: Change the free domain associated with a Web Hosting plan, specified by its `hosting_id`.
+func (s *HostingAPI) UpdateHostingFreeDomain(req *HostingAPIUpdateHostingFreeDomainRequest, opts ...scw.RequestOption) (*Hosting, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/update-free-domain",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Hosting
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
