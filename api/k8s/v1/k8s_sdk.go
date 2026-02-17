@@ -320,6 +320,48 @@ func (enum *ClusterTypeResiliency) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CoreV1TaintEffect string
+
+const (
+	// Do not allow new pods to schedule onto the node unless they tolerate the taint.
+	CoreV1TaintEffectNoSchedule = CoreV1TaintEffect("NoSchedule")
+	// Like TaintEffectNoSchedule, but the scheduler tries not to schedule new pods onto the node, rather than prohibiting new pods from scheduling onto the node entirely.
+	CoreV1TaintEffectPreferNoSchedule = CoreV1TaintEffect("PreferNoSchedule")
+	// Evict any already-running pods that do not tolerate the taint (Currently enforced by NodeController).
+	CoreV1TaintEffectNoExecute = CoreV1TaintEffect("NoExecute")
+)
+
+func (enum CoreV1TaintEffect) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CoreV1TaintEffectNoSchedule)
+	}
+	return string(enum)
+}
+
+func (enum CoreV1TaintEffect) Values() []CoreV1TaintEffect {
+	return []CoreV1TaintEffect{
+		"NoSchedule",
+		"PreferNoSchedule",
+		"NoExecute",
+	}
+}
+
+func (enum CoreV1TaintEffect) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CoreV1TaintEffect) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CoreV1TaintEffect(CoreV1TaintEffect(tmp).String())
+	return nil
+}
+
 type ListClustersRequestOrderBy string
 
 const (
@@ -743,6 +785,19 @@ type MaintenanceWindow struct {
 	// Day: day of the week for the maintenance window.
 	// Default value: any
 	Day MaintenanceWindowDayOfTheWeek `json:"day"`
+}
+
+// CoreV1Taint: See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/.
+type CoreV1Taint struct {
+	// Key: the taint key to be applied to a node.
+	Key string `json:"key"`
+
+	// Value: the taint value corresponding to the taint key.
+	Value string `json:"value"`
+
+	// Effect: effect defines the effects of Taint.
+	// Default value: NoSchedule
+	Effect CoreV1TaintEffect `json:"effect"`
 }
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request pool config upgrade policy.
@@ -2096,6 +2151,40 @@ type SetClusterTypeRequest struct {
 	Type string `json:"type"`
 }
 
+// SetPoolLabelsRequest: set pool labels request.
+type SetPoolLabelsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	PoolID string `json:"-"`
+
+	Labels map[string]string `json:"labels"`
+}
+
+// SetPoolStartupTaintsRequest: set pool startup taints request.
+type SetPoolStartupTaintsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: ID of the pool to update.
+	PoolID string `json:"-"`
+
+	// StartupTaints: list of startup taints to set.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+}
+
+// SetPoolTaintsRequest: set pool taints request.
+type SetPoolTaintsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: ID of the pool to update.
+	PoolID string `json:"-"`
+
+	// Taints: list of taints to set.
+	Taints []*CoreV1Taint `json:"taints"`
+}
+
 // UpdateClusterRequest: update cluster request.
 type UpdateClusterRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -3060,6 +3149,114 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "",
+	}
+
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetPoolTaints: Apply a list of taints to all nodes of the pool which will be periodically reconciled by scaleway.
+func (s *API) SetPoolTaints(req *SetPoolTaintsRequest, opts ...scw.RequestOption) (*Pool, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-taints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetPoolStartupTaints: Apply a list of taints to new nodes of the pool which would not be reconciled by scaleway.
+func (s *API) SetPoolStartupTaints(req *SetPoolStartupTaintsRequest, opts ...scw.RequestOption) (*Pool, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-startup-taints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetPoolLabels: Apply a list of taints to all nodes of the pool (only apply to labels which was set through scaleway api).
+func (s *API) SetPoolLabels(req *SetPoolLabelsRequest, opts ...scw.RequestOption) (*Pool, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-labels",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Pool
