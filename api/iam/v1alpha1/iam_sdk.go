@@ -1616,11 +1616,11 @@ type User struct {
 	Type UserType `json:"type"`
 
 	// Deprecated: TwoFactorEnabled: deprecated, use "mfa" instead.
-	TwoFactorEnabled *bool `json:"two_factor_enabled,omitempty"`
+	TwoFactorEnabled bool `json:"two_factor_enabled,omitempty"`
 
 	// Deprecated: Status: status of user invitation.
 	// Default value: unknown_status
-	Status *UserStatus `json:"status,omitempty"`
+	Status UserStatus `json:"status,omitempty"`
 
 	// Mfa: defines whether MFA is enabled.
 	Mfa bool `json:"mfa"`

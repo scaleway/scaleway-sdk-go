@@ -601,7 +601,7 @@ type OS struct {
 	XcodeVersion string `json:"xcode_version"`
 
 	// Deprecated: CompatibleServerTypes: list of compatible server types. Deprecated.
-	CompatibleServerTypes *[]string `json:"compatible_server_types,omitempty"`
+	CompatibleServerTypes []string `json:"compatible_server_types,omitempty"`
 
 	// ReleaseNotesURL: url of the release notes for the OS image or software pre-installed.
 	ReleaseNotesURL string `json:"release_notes_url"`

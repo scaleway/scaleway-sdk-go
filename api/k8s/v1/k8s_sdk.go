@@ -1206,7 +1206,7 @@ type Cluster struct {
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
 	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
-	ACLAvailable *bool `json:"acl_available,omitempty"`
+	ACLAvailable bool `json:"acl_available,omitempty"`
 
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
@@ -1248,7 +1248,7 @@ type Node struct {
 	PublicIPV6 *net.IP `json:"public_ip_v6,omitempty"`
 
 	// Deprecated: Conditions: conditions of the node. These conditions contain the Node Problem Detector conditions, as well as some in house conditions.
-	Conditions *map[string]string `json:"conditions,omitempty"`
+	Conditions map[string]string `json:"conditions,omitempty"`
 
 	// Status: status of the node.
 	// Default value: unknown
