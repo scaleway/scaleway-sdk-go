@@ -418,6 +418,7 @@ const (
 	VPCConnectorStatusUnknownVpcConnectorStatus = VPCConnectorStatus("unknown_vpc_connector_status")
 	VPCConnectorStatusOrphan                    = VPCConnectorStatus("orphan")
 	VPCConnectorStatusPeered                    = VPCConnectorStatus("peered")
+	VPCConnectorStatusConflict                  = VPCConnectorStatus("conflict")
 )
 
 func (enum VPCConnectorStatus) String() string {
@@ -433,6 +434,7 @@ func (enum VPCConnectorStatus) Values() []VPCConnectorStatus {
 		"unknown_vpc_connector_status",
 		"orphan",
 		"peered",
+		"conflict",
 	}
 }
 
