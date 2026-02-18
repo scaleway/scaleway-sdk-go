@@ -110,6 +110,7 @@ const (
 	JobRunStateFailed       = JobRunState("failed")
 	JobRunStateInterrupting = JobRunState("interrupting")
 	JobRunStateInterrupted  = JobRunState("interrupted")
+	JobRunStateRetrying     = JobRunState("retrying")
 )
 
 func (enum JobRunState) String() string {
@@ -131,6 +132,7 @@ func (enum JobRunState) Values() []JobRunState {
 		"failed",
 		"interrupting",
 		"interrupted",
+		"retrying",
 	}
 }
 
@@ -242,6 +244,12 @@ type CronSchedule struct {
 	Timezone string `json:"timezone"`
 }
 
+// RetryPolicy: retry policy.
+type RetryPolicy struct {
+	// MaxRetries: maximum number of retries upon a job failure.
+	MaxRetries uint32 `json:"max_retries"`
+}
+
 // CreateJobDefinitionRequestCronScheduleConfig: create job definition request cron schedule config.
 type CreateJobDefinitionRequestCronScheduleConfig struct {
 	Schedule string `json:"schedule"`
@@ -306,7 +314,7 @@ type JobDefinition struct {
 	ImageURI string `json:"image_uri"`
 
 	// Deprecated
-	Command *string `json:"command,omitempty"`
+	Command string `json:"command,omitempty"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
@@ -319,6 +327,8 @@ type JobDefinition struct {
 	StartupCommand []string `json:"startup_command"`
 
 	Args []string `json:"args"`
+
+	RetryPolicy *RetryPolicy `json:"retry_policy"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
@@ -364,13 +374,15 @@ type JobRun struct {
 	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
 
 	// Deprecated
-	Command *string `json:"command,omitempty"`
+	Command string `json:"command,omitempty"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
 	StartupCommand []string `json:"startup_command"`
 
 	Args []string `json:"args"`
+
+	Attempts *uint32 `json:"attempts"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
@@ -404,7 +416,7 @@ type CreateJobDefinitionRequest struct {
 	ImageURI string `json:"image_uri"`
 
 	// Deprecated: Command: deprecated: please use startup_command instead.
-	Command *string `json:"command,omitempty"`
+	Command string `json:"command"`
 
 	// StartupCommand: the main executable or entrypoint script to run.
 	// If both command and startup_command are provided, only startup_command will be used.
@@ -428,6 +440,9 @@ type CreateJobDefinitionRequest struct {
 
 	// CronSchedule: configure a cron for the job.
 	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
+
+	// RetryPolicy: retry behaviour in case of job failure.
+	RetryPolicy *RetryPolicy `json:"retry_policy,omitempty"`
 }
 
 // CreateSecretsRequest: create secrets request.
@@ -734,7 +749,11 @@ type UpdateJobDefinitionRequest struct {
 	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout,omitempty"`
 
+	// CronSchedule: configure a cron for the job.
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
+
+	// RetryPolicy: retry behaviour in case of job failure.
+	RetryPolicy *RetryPolicy `json:"retry_policy,omitempty"`
 }
 
 // UpdateSecretRequest: update secret request.
