@@ -1563,21 +1563,21 @@ type HostingSummary struct {
 	Status HostingStatus `json:"status"`
 
 	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
-	Domain *string `json:"domain,omitempty"`
+	Domain string `json:"domain,omitempty"`
 
 	// Protected: whether the hosting is protected or not.
 	Protected bool `json:"protected"`
 
 	// Deprecated: DNSStatus: DNS status of the Web Hosting plan.
 	// Default value: unknown_status
-	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
+	DNSStatus DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// OfferName: name of the active offer for the Web Hosting plan.
 	OfferName string `json:"offer_name"`
 
 	// Deprecated: DomainStatus: main domain status of the Web Hosting plan.
 	// Default value: unknown_status
-	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
+	DomainStatus DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
@@ -1818,19 +1818,19 @@ type DNSAPISyncDomainDNSRecordsRequest struct {
 	Domain string `json:"-"`
 
 	// Deprecated: UpdateWebRecords: whether or not to synchronize the web records (deprecated, use auto_config_domain_dns).
-	UpdateWebRecords *bool `json:"update_web_records,omitempty"`
+	UpdateWebRecords bool `json:"update_web_records"`
 
 	// Deprecated: UpdateMailRecords: whether or not to synchronize the mail records (deprecated, use auto_config_domain_dns).
-	UpdateMailRecords *bool `json:"update_mail_records,omitempty"`
+	UpdateMailRecords bool `json:"update_mail_records"`
 
 	// Deprecated: UpdateAllRecords: whether or not to synchronize all types of records. This one has priority (deprecated, use auto_config_domain_dns).
-	UpdateAllRecords *bool `json:"update_all_records,omitempty"`
+	UpdateAllRecords bool `json:"update_all_records"`
 
 	// Deprecated: UpdateNameservers: whether or not to synchronize domain nameservers (deprecated, use auto_config_domain_dns).
-	UpdateNameservers *bool `json:"update_nameservers,omitempty"`
+	UpdateNameservers bool `json:"update_nameservers"`
 
 	// Deprecated: CustomRecords: custom records to synchronize.
-	CustomRecords *[]*SyncDomainDNSRecordsRequestRecord `json:"custom_records,omitempty"`
+	CustomRecords []*SyncDomainDNSRecordsRequestRecord `json:"custom_records"`
 
 	// AutoConfigDomainDNS: whether or not to synchronize each types of records.
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
@@ -1849,7 +1849,7 @@ type DNSRecords struct {
 	Status DNSRecordsStatus `json:"status"`
 
 	// Deprecated: DNSConfig: records dns auto configuration settings (deprecated, use auto_config_domain_dns).
-	DNSConfig *[]DomainDNSAction `json:"dns_config,omitempty"`
+	DNSConfig []DomainDNSAction `json:"dns_config,omitempty"`
 
 	// AutoConfigDomainDNS: whether or not to synchronize each types of records.
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
@@ -2041,7 +2041,7 @@ type Domain struct {
 	AvailableActions []DomainAction `json:"available_actions"`
 
 	// Deprecated: AvailableDNSActions: a list of DNS-related actions that can be auto configured for the domain (deprecated, use auto_config_domain_dns instead).
-	AvailableDNSActions *[]DomainDNSAction `json:"available_dns_actions,omitempty"`
+	AvailableDNSActions []DomainDNSAction `json:"available_dns_actions,omitempty"`
 
 	// AutoConfigDomainDNS: whether or not to synchronize each type of record.
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
@@ -2157,7 +2157,7 @@ type Hosting struct {
 	Status HostingStatus `json:"status"`
 
 	// Deprecated: Domain: main domain associated with the Web Hosting plan (deprecated, use domain_info).
-	Domain *string `json:"domain,omitempty"`
+	Domain string `json:"domain,omitempty"`
 
 	// Offer: details of the Web Hosting plan offer and options.
 	Offer *Offer `json:"offer"`
@@ -2170,7 +2170,7 @@ type Hosting struct {
 
 	// Deprecated: DNSStatus: DNS status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
-	DNSStatus *DNSRecordsStatus `json:"dns_status,omitempty"`
+	DNSStatus DNSRecordsStatus `json:"dns_status,omitempty"`
 
 	// IPv4: current IPv4 address of the hosting.
 	IPv4 net.IP `json:"ipv4"`
@@ -2183,7 +2183,7 @@ type Hosting struct {
 
 	// Deprecated: DomainStatus: main domain status of the Web Hosting plan (deprecated, use domain_info).
 	// Default value: unknown_status
-	DomainStatus *DomainStatus `json:"domain_status,omitempty"`
+	DomainStatus DomainStatus `json:"domain_status,omitempty"`
 
 	// Region: region where the Web Hosting plan is hosted.
 	Region scw.Region `json:"region"`
@@ -2838,7 +2838,7 @@ type Progress struct {
 // ResetHostingPasswordResponse: reset hosting password response.
 type ResetHostingPasswordResponse struct {
 	// Deprecated: OneTimePassword: new temporary password (deprecated, use password_b64 instead).
-	OneTimePassword *string `json:"one_time_password,omitempty"`
+	OneTimePassword string `json:"one_time_password,omitempty"`
 
 	// OneTimePasswordB64: new temporary password, encoded in base64.
 	OneTimePasswordB64 string `json:"one_time_password_b64"`
@@ -2924,6 +2924,18 @@ type WebsiteAPIListWebsitesRequest struct {
 	// OrderBy: sort order for Web Hosting websites in the response.
 	// Default value: domain_asc
 	OrderBy ListWebsitesRequestOrderBy `json:"-"`
+}
+
+// WebsiteAPIResetWebsiteRequest: website api reset website request.
+type WebsiteAPIResetWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the domain name with which the website is associated.
+	DomainName string `json:"-"`
 }
 
 // This API allows you to list and restore backups for your cPanel and WordPress Web Hosting service.
@@ -5148,4 +5160,45 @@ func (s *WebsiteAPI) DeleteWebsite(req *WebsiteAPIDeleteWebsiteRequest, opts ...
 		return err
 	}
 	return nil
+}
+
+// ResetWebsite: Permanently deletes data including files and configurations. The
+// website will display the default welcome page.
+func (s *WebsiteAPI) ResetWebsite(req *WebsiteAPIResetWebsiteRequest, opts ...scw.RequestOption) (*Website, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainName) == "" {
+		return nil, errors.New("field DomainName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites/" + fmt.Sprint(req.DomainName) + "/reset",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Website
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
