@@ -1040,6 +1040,15 @@ type CreateClusterRequestPoolConfig struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID *string `json:"security_group_id"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
@@ -1206,7 +1215,7 @@ type Cluster struct {
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
 	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
-	ACLAvailable *bool `json:"acl_available,omitempty"`
+	ACLAvailable bool `json:"acl_available,omitempty"`
 
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
@@ -1248,7 +1257,7 @@ type Node struct {
 	PublicIPV6 *net.IP `json:"public_ip_v6,omitempty"`
 
 	// Deprecated: Conditions: conditions of the node. These conditions contain the Node Problem Detector conditions, as well as some in house conditions.
-	Conditions *map[string]string `json:"conditions,omitempty"`
+	Conditions map[string]string `json:"conditions,omitempty"`
 
 	// Status: status of the node.
 	// Default value: unknown
@@ -1340,6 +1349,15 @@ type Pool struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID string `json:"security_group_id"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
@@ -1593,6 +1611,15 @@ type CreatePoolRequest struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID *string `json:"security_group_id,omitempty"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
