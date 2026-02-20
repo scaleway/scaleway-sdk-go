@@ -314,7 +314,7 @@ type JobDefinition struct {
 	ImageURI string `json:"image_uri"`
 
 	// Deprecated
-	Command string `json:"command,omitempty"`
+	Command *string `json:"command,omitempty"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
@@ -374,7 +374,7 @@ type JobRun struct {
 	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
 
 	// Deprecated
-	Command string `json:"command,omitempty"`
+	Command *string `json:"command,omitempty"`
 
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
@@ -416,7 +416,7 @@ type CreateJobDefinitionRequest struct {
 	ImageURI string `json:"image_uri"`
 
 	// Deprecated: Command: deprecated: please use startup_command instead.
-	Command string `json:"command"`
+	Command *string `json:"command,omitempty"`
 
 	// StartupCommand: the main executable or entrypoint script to run.
 	// If both command and startup_command are provided, only startup_command will be used.
