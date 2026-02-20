@@ -1289,7 +1289,7 @@ type Volume struct {
 	Name string `json:"name"`
 
 	// Deprecated: ExportURI: show the volume NBD export URI (deprecated, will always be empty).
-	ExportURI *string `json:"export_uri"`
+	ExportURI string `json:"export_uri"`
 
 	// Size: volume disk size.
 	Size scw.Size `json:"size"`
@@ -1664,10 +1664,10 @@ type Server struct {
 	DynamicIPRequired bool `json:"dynamic_ip_required"`
 
 	// Deprecated: RoutedIPEnabled: true to configure the instance so it uses the routed IP mode. Use of `routed_ip_enabled` as `False` is deprecated.
-	RoutedIPEnabled *bool `json:"routed_ip_enabled"`
+	RoutedIPEnabled bool `json:"routed_ip_enabled"`
 
 	// Deprecated: EnableIPv6: true if IPv6 is enabled (deprecated and always `False` when `routed_ip_enabled` is `True`).
-	EnableIPv6 *bool `json:"enable_ipv6"`
+	EnableIPv6 bool `json:"enable_ipv6"`
 
 	// Hostname: instance host name.
 	Hostname string `json:"hostname"`
@@ -1834,7 +1834,7 @@ type SecurityGroup struct {
 	Tags []string `json:"tags"`
 
 	// Deprecated: OrganizationDefault: true if it is your default security group for this Organization ID.
-	OrganizationDefault *bool `json:"organization_default"`
+	OrganizationDefault bool `json:"organization_default"`
 
 	// ProjectDefault: true if it is your default security group for this Project ID.
 	ProjectDefault bool `json:"project_default"`
@@ -2010,12 +2010,12 @@ type Dashboard struct {
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
 
 	// Deprecated
-	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
+	VolumesBSSDCount uint32 `json:"volumes_b_ssd_count"`
 
 	VolumesLSSDTotalSize scw.Size `json:"volumes_l_ssd_total_size"`
 
 	// Deprecated
-	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
+	VolumesBSSDTotalSize scw.Size `json:"volumes_b_ssd_total_size"`
 
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
@@ -2045,7 +2045,7 @@ type GetServerTypesAvailabilityResponseAvailability struct {
 // ServerType: server type.
 type ServerType struct {
 	// Deprecated: MonthlyPrice: estimated monthly price, for a 30 days month, in Euro.
-	MonthlyPrice *float32 `json:"monthly_price"`
+	MonthlyPrice float32 `json:"monthly_price"`
 
 	// HourlyPrice: hourly price in Euro.
 	HourlyPrice float32 `json:"hourly_price"`
@@ -2342,7 +2342,7 @@ type CreatePrivateNICRequest struct {
 	Tags []string `json:"tags,omitempty"`
 
 	// Deprecated: IPIDs: ip_ids defined from IPAM.
-	IPIDs *[]string `json:"ip_ids,omitempty"`
+	IPIDs []string `json:"ip_ids,omitempty"`
 
 	// IpamIPIDs: UUID of IPAM ips, to be attached to the instance in the requested private network.
 	IpamIPIDs []string `json:"ipam_ip_ids,omitempty"`
@@ -2464,7 +2464,7 @@ type CreateServerRequest struct {
 	Volumes map[string]*VolumeServerTemplate `json:"volumes,omitempty"`
 
 	// Deprecated: EnableIPv6: true if IPv6 is enabled on the server (deprecated and always `False` when `routed_ip_enabled` is `True`).
-	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
+	EnableIPv6 bool `json:"enable_ipv6,omitempty"`
 
 	// Deprecated: PublicIP: ID of the reserved IP to attach to the Instance.
 	PublicIP *string `json:"public_ip,omitempty"`
@@ -4075,7 +4075,7 @@ type setSecurityGroupRequest struct {
 	Project string `json:"project"`
 
 	// Deprecated: OrganizationDefault: please use project_default instead.
-	OrganizationDefault *bool `json:"organization_default,omitempty"`
+	OrganizationDefault bool `json:"organization_default"`
 
 	// ProjectDefault: true use this security group for future Instances created in this project.
 	ProjectDefault bool `json:"project_default"`
@@ -4164,7 +4164,7 @@ type setServerRequest struct {
 	RoutedIPEnabled *bool `json:"routed_ip_enabled,omitempty"`
 
 	// Deprecated: EnableIPv6: true if IPv6 is enabled (deprecated and always `False` when `routed_ip_enabled` is `True`).
-	EnableIPv6 *bool `json:"enable_ipv6,omitempty"`
+	EnableIPv6 bool `json:"enable_ipv6"`
 
 	// Hostname: instance host name.
 	Hostname string `json:"hostname"`
