@@ -498,7 +498,7 @@ type DeleteTagRequest struct {
 	TagID string `json:"-"`
 
 	// Deprecated: Force: if two tags share the same digest the deletion will fail unless this parameter is set to true (deprecated).
-	Force *bool `json:"force,omitempty"`
+	Force bool `json:"force"`
 }
 
 // GetImageRequest: get image request.

@@ -373,7 +373,7 @@ type Endpoint struct {
 	ID string `json:"id"`
 
 	// Deprecated: DNSRecord: DNS entry to access to the service. Now deprecated. Use the `url` field from `services` field instead.
-	DNSRecord *string `json:"dns_record,omitempty"`
+	DNSRecord string `json:"dns_record,omitempty"`
 
 	// Services: list of available services, their ports and URLs.
 	Services []*EndpointService `json:"services"`
