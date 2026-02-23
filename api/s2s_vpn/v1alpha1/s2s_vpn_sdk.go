@@ -725,11 +725,11 @@ type Connection struct {
 
 	// Deprecated: TunnelStatusIPv4: status of the IPv4 IPsec tunnel.
 	// Default value: unknown_tunnel_status
-	TunnelStatusIPv4 *TunnelStatus `json:"tunnel_status_ipv4,omitempty"`
+	TunnelStatusIPv4 TunnelStatus `json:"tunnel_status_ipv4,omitempty"`
 
 	// Deprecated: TunnelStatusIPv6: status of the IPv6 IPsec tunnel.
 	// Default value: unknown_tunnel_status
-	TunnelStatusIPv6 *TunnelStatus `json:"tunnel_status_ipv6,omitempty"`
+	TunnelStatusIPv6 TunnelStatus `json:"tunnel_status_ipv6,omitempty"`
 
 	// BgpStatusIPv4: status of the BGP IPv4 session.
 	// Default value: unknown_status
@@ -965,7 +965,7 @@ type CreateConnectionResponse struct {
 	Connection *Connection `json:"connection"`
 
 	// Deprecated: PreSharedKey: deprecated, use secret_id & secret_revision fields.
-	PreSharedKey *string `json:"pre_shared_key,omitempty"`
+	PreSharedKey string `json:"pre_shared_key,omitempty"`
 }
 
 // CreateCustomerGatewayRequest: create customer gateway request.
@@ -1467,7 +1467,7 @@ type RenewConnectionPskResponse struct {
 	Connection *Connection `json:"connection"`
 
 	// Deprecated: PreSharedKey: deprecated, use secret_id & secret_revision fields.
-	PreSharedKey *string `json:"pre_shared_key,omitempty"`
+	PreSharedKey string `json:"pre_shared_key,omitempty"`
 }
 
 // SetRoutingPolicyRequest: set routing policy request.

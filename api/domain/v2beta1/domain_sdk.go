@@ -1732,10 +1732,10 @@ type ContactExtensionFR struct {
 // ContactExtensionIT: contact extension it.
 type ContactExtensionIT struct {
 	// Deprecated: EuropeanCitizenship: this option is useless anymore.
-	EuropeanCitizenship *string `json:"european_citizenship,omitempty"`
+	EuropeanCitizenship string `json:"european_citizenship,omitempty"`
 
 	// Deprecated: TaxCode: tax_code is renamed to pin.
-	TaxCode *string `json:"tax_code,omitempty"`
+	TaxCode string `json:"tax_code,omitempty"`
 
 	// Pin: domain name registrant's Taxcode (mandatory / only optional when the trustee is used)
 	//
@@ -1862,7 +1862,7 @@ type Contact struct {
 	Resale bool `json:"resale"`
 
 	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
+	Questions []*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -1963,7 +1963,7 @@ type NewContact struct {
 	Resale bool `json:"resale"`
 
 	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
+	Questions []*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -2456,12 +2456,12 @@ type ImportRawDNSZoneRequest struct {
 	DNSZone string `json:"-"`
 
 	// Deprecated
-	Content *string `json:"content,omitempty"`
+	Content string `json:"content"`
 
 	ProjectID string `json:"project_id"`
 
 	// Deprecated: Format: default value: unknown_raw_format
-	Format *RawFormat `json:"format,omitempty"`
+	Format RawFormat `json:"format"`
 
 	// BindSource: import a bind file format.
 	// Precisely one of BindSource, AxfrSource must be set.
@@ -2673,7 +2673,7 @@ type ListDNSZonesRequest struct {
 	Domain string `json:"-"`
 
 	// Deprecated: DNSZone: DNS zone on which to filter the returned DNS zones.
-	DNSZone *string `json:"-"`
+	DNSZone string `json:"-"`
 
 	// DNSZones: DNS zones on which to filter the returned DNS zones.
 	DNSZones []string `json:"-"`
@@ -3302,7 +3302,7 @@ type RegistrarAPIUpdateContactRequest struct {
 	Resale *bool `json:"resale,omitempty"`
 
 	// Deprecated
-	Questions *[]*UpdateContactRequestQuestion `json:"questions,omitempty"`
+	Questions []*UpdateContactRequestQuestion `json:"questions"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
 

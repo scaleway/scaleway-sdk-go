@@ -1197,7 +1197,7 @@ type IP struct {
 	Tags []string `json:"tags"`
 
 	// Deprecated: Region: the region the IP address is in.
-	Region *scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the IP address is in.
 	Zone scw.Zone `json:"zone"`
@@ -1222,7 +1222,7 @@ type Instance struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// Deprecated: Region: the region the Instance is in.
-	Region *scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the Instance is in.
 	Zone scw.Zone `json:"zone"`
@@ -1385,7 +1385,7 @@ type LB struct {
 	RouteCount int32 `json:"route_count"`
 
 	// Deprecated: Region: the region the Load Balancer is in.
-	Region *scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the Load Balancer is in.
 	Zone scw.Zone `json:"zone"`
@@ -1440,7 +1440,7 @@ type Backend struct {
 	LB *LB `json:"lb"`
 
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field.
-	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2,omitempty"`
 
 	// TimeoutServer: maximum allowed time for a backend server to process a request.
 	TimeoutServer *time.Duration `json:"timeout_server"`
@@ -1681,7 +1681,7 @@ type PrivateNetworkIpamConfig struct{}
 // PrivateNetworkStaticConfig: private network static config.
 type PrivateNetworkStaticConfig struct {
 	// Deprecated: IPAddress: array of a local IP address for the Load Balancer on this Private Network.
-	IPAddress *[]string `json:"ip_address,omitempty"`
+	IPAddress []string `json:"ip_address,omitempty"`
 }
 
 // RouteMatch: route match.
@@ -1817,7 +1817,7 @@ type LBType struct {
 	Description string `json:"description"`
 
 	// Deprecated: Region: the region the Load Balancer stock is in.
-	Region *scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the Load Balancer stock is in.
 	Zone scw.Zone `json:"zone"`
@@ -1961,7 +1961,7 @@ type CreateBackendRequest struct {
 	ServerIP []string `json:"server_ip"`
 
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field.
-	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	// TimeoutServer: maximum allowed time for a backend server to process a request.
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
@@ -3088,7 +3088,7 @@ type UpdateBackendRequest struct {
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field.
-	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	// TimeoutServer: maximum allowed time for a backend server to process a request.
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
@@ -3502,7 +3502,7 @@ type ZonedAPICreateBackendRequest struct {
 	ServerIP []string `json:"server_ip"`
 
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field.
-	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	// TimeoutServer: maximum allowed time for a backend server to process a request.
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`
@@ -4299,7 +4299,7 @@ type ZonedAPIUpdateBackendRequest struct {
 	StickySessionsCookieName string `json:"sticky_sessions_cookie_name"`
 
 	// Deprecated: SendProxyV2: deprecated in favor of proxy_protocol field.
-	SendProxyV2 *bool `json:"send_proxy_v2,omitempty"`
+	SendProxyV2 bool `json:"send_proxy_v2"`
 
 	// TimeoutServer: maximum allowed time for a backend server to process a request.
 	TimeoutServer *time.Duration `json:"timeout_server,omitempty"`

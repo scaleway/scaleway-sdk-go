@@ -1341,7 +1341,7 @@ type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
 
 	// Deprecated
-	Port *uint32 `json:"port,omitempty"`
+	Port uint32 `json:"port,omitempty"`
 
 	// Protocol: default value: tcp
 	Protocol ACLRuleProtocol `json:"protocol"`
@@ -1580,7 +1580,7 @@ type NodeType struct {
 	VolumeConstraint *NodeTypeVolumeConstraintSizes `json:"volume_constraint,omitempty"`
 
 	// Deprecated: IsBssdCompatible: the Node Type is compliant with Block Storage.
-	IsBssdCompatible *bool `json:"is_bssd_compatible,omitempty"`
+	IsBssdCompatible bool `json:"is_bssd_compatible,omitempty"`
 
 	// Disabled: the Node Type is currently disabled.
 	Disabled bool `json:"disabled"`
