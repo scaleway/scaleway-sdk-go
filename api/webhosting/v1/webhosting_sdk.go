@@ -2926,6 +2926,18 @@ type WebsiteAPIListWebsitesRequest struct {
 	OrderBy ListWebsitesRequestOrderBy `json:"-"`
 }
 
+// WebsiteAPIResetWebsiteRequest: website api reset website request.
+type WebsiteAPIResetWebsiteRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// HostingID: hosting ID to which the website is attached to.
+	HostingID string `json:"-"`
+
+	// DomainName: the domain name with which the website is associated.
+	DomainName string `json:"-"`
+}
+
 // This API allows you to list and restore backups for your cPanel and WordPress Web Hosting service.
 type BackupAPI struct {
 	client *scw.Client
@@ -5148,4 +5160,45 @@ func (s *WebsiteAPI) DeleteWebsite(req *WebsiteAPIDeleteWebsiteRequest, opts ...
 		return err
 	}
 	return nil
+}
+
+// ResetWebsite: Permanently deletes data including files and configurations. The
+// website will display the default welcome page.
+func (s *WebsiteAPI) ResetWebsite(req *WebsiteAPIResetWebsiteRequest, opts ...scw.RequestOption) (*Website, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.HostingID) == "" {
+		return nil, errors.New("field HostingID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DomainName) == "" {
+		return nil, errors.New("field DomainName cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/webhosting/v1/regions/" + fmt.Sprint(req.Region) + "/hostings/" + fmt.Sprint(req.HostingID) + "/websites/" + fmt.Sprint(req.DomainName) + "/reset",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Website
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
