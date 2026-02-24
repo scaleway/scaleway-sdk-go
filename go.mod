@@ -10,4 +10,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
+require go.yaml.in/yaml/v4 v4.0.0-rc.4 // indirect
