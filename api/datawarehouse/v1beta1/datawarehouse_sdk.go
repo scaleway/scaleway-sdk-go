@@ -360,6 +360,9 @@ type Deployment struct {
 	// ReplicaCount: number of replicas for the deployment.
 	ReplicaCount uint32 `json:"replica_count"`
 
+	// ShardCount: number of shards for the deployment.
+	ShardCount uint32 `json:"shard_count"`
+
 	// CPUMin: minimum CPU count for the deployment.
 	CPUMin uint32 `json:"cpu_min"`
 
@@ -395,6 +398,9 @@ type Preset struct {
 
 	// ReplicaCount: number of replicas for the preset.
 	ReplicaCount uint32 `json:"replica_count"`
+
+	// ShardCount: number of shards for the preset.
+	ShardCount uint32 `json:"shard_count"`
 }
 
 // User: user.
@@ -446,6 +452,9 @@ type CreateDeploymentRequest struct {
 
 	// ReplicaCount: number of replicas for the deployment.
 	ReplicaCount uint32 `json:"replica_count"`
+
+	// ShardCount: number of shard for the deployment.
+	ShardCount *uint32 `json:"shard_count,omitempty"`
 
 	// Password: password for the initial user.
 	Password string `json:"password"`
