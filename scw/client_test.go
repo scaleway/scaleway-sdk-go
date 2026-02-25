@@ -255,3 +255,48 @@ func TestNewVariableFromType(t *testing.T) {
 
 	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
 }
+
+func TestExtractRequestLocality(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name             string
+		path             string
+		expectedLocality string
+	}{
+		{
+			name:             "extract zone from path",
+			path:             "/instance/v1/zones/fr-par-1/servers/11111111-1111-4111-8111-111111111111",
+			expectedLocality: string(ZoneFrPar1),
+		},
+		{
+			name:             "extract region from path",
+			path:             "/k8s/v1/regions/fr-par/clusters/11111111-1111-4111-8111-111111111111",
+			expectedLocality: string(RegionFrPar),
+		},
+		{
+			name:             "prefer zone over region",
+			path:             "/instance/v1/zones/fr-par-1/servers",
+			expectedLocality: string(ZoneFrPar1),
+		},
+		{
+			name:             "no locality in path",
+			path:             "/instance/v1/servers/11111111-1111-4111-8111-111111111111",
+			expectedLocality: "",
+		},
+		{
+			name:             "unknown locality in path",
+			path:             "/instance/v1/zones/xx-xxx-9/servers/11111111-1111-4111-8111-111111111111",
+			expectedLocality: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			locality := extractRequestLocality(tc.path)
+			testhelpers.Equals(t, tc.expectedLocality, locality)
+		})
+	}
+}

@@ -226,7 +226,9 @@ func (c *Client) do(req *ScalewayRequest, res any) (sdkErr error) {
 		}
 	}()
 
-	sdkErr = hasResponseError(httpResponse)
+	locality := extractRequestLocality(req.Path)
+
+	sdkErr = hasResponseError(httpResponse, locality)
 	if sdkErr != nil {
 		return sdkErr
 	}
@@ -263,6 +265,24 @@ func (c *Client) do(req *ScalewayRequest, res any) (sdkErr error) {
 	}
 
 	return nil
+}
+
+func extractRequestLocality(path string) string {
+	for _, zone := range AllZones {
+		zoneStr := zone.String()
+		if strings.Contains(path, zoneStr) {
+			return zoneStr
+		}
+	}
+
+	for _, region := range AllRegions {
+		regionStr := region.String()
+		if strings.Contains(path, regionStr) {
+			return regionStr
+		}
+	}
+
+	return ""
 }
 
 type lister interface {
