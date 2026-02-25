@@ -1681,7 +1681,7 @@ type PrivateNetworkIpamConfig struct{}
 // PrivateNetworkStaticConfig: private network static config.
 type PrivateNetworkStaticConfig struct {
 	// Deprecated: IPAddress: array of a local IP address for the Load Balancer on this Private Network.
-	IPAddress *[]string `json:"ip_address,omitempty"`
+	IPAddress []string `json:"ip_address,omitempty"`
 }
 
 // RouteMatch: route match.
@@ -1817,7 +1817,7 @@ type LBType struct {
 	Description string `json:"description"`
 
 	// Deprecated: Region: the region the Load Balancer stock is in.
-	Region *scw.Region `json:"region,omitempty"`
+	Region scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the Load Balancer stock is in.
 	Zone scw.Zone `json:"zone"`

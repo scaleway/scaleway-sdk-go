@@ -1341,7 +1341,7 @@ type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
 
 	// Deprecated
-	Port *uint32 `json:"port,omitempty"`
+	Port uint32 `json:"port,omitempty"`
 
 	// Protocol: default value: tcp
 	Protocol ACLRuleProtocol `json:"protocol"`

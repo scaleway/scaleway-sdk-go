@@ -1862,7 +1862,7 @@ type Contact struct {
 	Resale bool `json:"resale"`
 
 	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
+	Questions []*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -1963,7 +1963,7 @@ type NewContact struct {
 	Resale bool `json:"resale"`
 
 	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
+	Questions []*ContactQuestion `json:"questions,omitempty"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
@@ -3302,7 +3302,7 @@ type RegistrarAPIUpdateContactRequest struct {
 	Resale *bool `json:"resale,omitempty"`
 
 	// Deprecated
-	Questions *[]*UpdateContactRequestQuestion `json:"questions,omitempty"`
+	Questions []*UpdateContactRequestQuestion `json:"questions"`
 
 	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
 
