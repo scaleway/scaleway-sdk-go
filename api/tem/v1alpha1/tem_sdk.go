@@ -1035,7 +1035,7 @@ type Email struct {
 	MailFrom string `json:"mail_from"`
 
 	// Deprecated: RcptTo: deprecated. Email address of the recipient.
-	RcptTo *string `json:"rcpt_to,omitempty"`
+	RcptTo string `json:"rcpt_to,omitempty"`
 
 	// MailRcpt: email address of the recipient.
 	MailRcpt string `json:"mail_rcpt"`
@@ -1435,7 +1435,7 @@ type CreateDomainRequest struct {
 	DomainName string `json:"domain_name"`
 
 	// Deprecated: AcceptTos: deprecated. Accept Scaleway's Terms of Service.
-	AcceptTos *bool `json:"accept_tos,omitempty"`
+	AcceptTos bool `json:"accept_tos"`
 
 	// Autoconfig: activate auto-configuration of the domain's DNS zone.
 	Autoconfig bool `json:"autoconfig"`

@@ -1180,7 +1180,7 @@ type Namespace struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// Deprecated: VpcIntegrationActivated: the value of this field doesn't matter anymore, and will be removed in a near future.
-	VpcIntegrationActivated *bool `json:"vpc_integration_activated,omitempty"`
+	VpcIntegrationActivated bool `json:"vpc_integration_activated,omitempty"`
 }
 
 // Token: token.
@@ -1200,7 +1200,7 @@ type Token struct {
 	NamespaceID *string `json:"namespace_id,omitempty"`
 
 	// Deprecated: PublicKey: public key of the token.
-	PublicKey *string `json:"public_key,omitempty"`
+	PublicKey string `json:"public_key,omitempty"`
 
 	// Status: status of the token.
 	// Default value: unknown
@@ -1370,7 +1370,7 @@ type CreateNamespaceRequest struct {
 	Tags []string `json:"tags"`
 
 	// Deprecated: ActivateVpcIntegration: setting this field to true doesn't matter anymore. It will be removed in a near future.
-	ActivateVpcIntegration *bool `json:"activate_vpc_integration,omitempty"`
+	ActivateVpcIntegration bool `json:"activate_vpc_integration"`
 }
 
 // CreateTokenRequest: create token request.
