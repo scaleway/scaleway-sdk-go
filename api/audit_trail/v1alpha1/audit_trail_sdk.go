@@ -40,6 +40,49 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type AlertRuleStatus string
+
+const (
+	AlertRuleStatusUnknownStatus = AlertRuleStatus("unknown_status")
+	AlertRuleStatusEnabled       = AlertRuleStatus("enabled")
+	AlertRuleStatusDisabled      = AlertRuleStatus("disabled")
+	AlertRuleStatusEnabling      = AlertRuleStatus("enabling")
+	AlertRuleStatusDisabling     = AlertRuleStatus("disabling")
+)
+
+func (enum AlertRuleStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(AlertRuleStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum AlertRuleStatus) Values() []AlertRuleStatus {
+	return []AlertRuleStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+		"enabling",
+		"disabling",
+	}
+}
+
+func (enum AlertRuleStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *AlertRuleStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = AlertRuleStatus(AlertRuleStatus(tmp).String())
+	return nil
+}
+
 type AuthenticationEventFailureReason string
 
 const (
@@ -1188,6 +1231,22 @@ type ProductService struct {
 	Methods []string `json:"methods"`
 }
 
+// AlertRule: alert rule.
+type AlertRule struct {
+	// ID: ID of the alert rule.
+	ID string `json:"id"`
+
+	// Name: name of the alert rule.
+	Name string `json:"name"`
+
+	// Description: description of the alert rule.
+	Description string `json:"description"`
+
+	// Status: current status of the alert rule.
+	// Default value: unknown_status
+	Status AlertRuleStatus `json:"status"`
+}
+
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
 type ListCombinedEventsResponseCombinedEvent struct {
 	// Precisely one of API, Auth, System must be set.
@@ -1266,6 +1325,87 @@ type DeleteExportJobRequest struct {
 
 	// ExportJobID: ID of the export job.
 	ExportJobID string `json:"-"`
+}
+
+// DisableAlertRulesRequest: disable alert rules request.
+type DisableAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// AlertRuleIDs: list of IDs of the rules to disable.
+	AlertRuleIDs []string `json:"alert_rule_ids"`
+}
+
+// DisableAlertRulesResponse: disable alert rules response.
+type DisableAlertRulesResponse struct {
+	// AlertRules: list of the rules that were disabled.
+	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// EnableAlertRulesRequest: enable alert rules request.
+type EnableAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// AlertRuleIDs: list of IDs of the rules to enable.
+	AlertRuleIDs []string `json:"alert_rule_ids"`
+}
+
+// EnableAlertRulesResponse: enable alert rules response.
+type EnableAlertRulesResponse struct {
+	// AlertRules: list of the rules that were enabled.
+	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// ListAlertRulesRequest: list alert rules request.
+type ListAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"-"`
+
+	// Status: (Optional) Status of the alert rule.
+	// Default value: unknown_status
+	Status *AlertRuleStatus `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListAlertRulesResponse: list alert rules response.
+type ListAlertRulesResponse struct {
+	// AlertRules: single page of alert rules matching the requested criteria.
+	AlertRules []*AlertRule `json:"alert_rules"`
+
+	// TotalCount: total count of alert rules matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAlertRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAlertRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListAlertRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.AlertRules = append(r.AlertRules, results.AlertRules...)
+	r.TotalCount += uint64(len(results.AlertRules))
+	return uint64(len(results.AlertRules)), nil
 }
 
 // ListAuthenticationEventsRequest: list authentication events request.
@@ -1469,6 +1609,24 @@ func (r *ListProductsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Products = append(r.Products, results.Products...)
 	r.TotalCount += uint64(len(results.Products))
 	return uint64(len(results.Products)), nil
+}
+
+// SetEnabledAlertRulesRequest: set enabled alert rules request.
+type SetEnabledAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// EnabledAlertRuleIDs: list of IDs of the rules that must be enabled after the update.
+	EnabledAlertRuleIDs []string `json:"enabled_alert_rule_ids"`
+}
+
+// SetEnabledAlertRulesResponse: set enabled alert rules response.
+type SetEnabledAlertRulesResponse struct {
+	// AlertRules: list of the rules that were enabled.
+	AlertRules []*AlertRule `json:"alert_rules"`
 }
 
 // This API allows you to ensure accountability and security by recording events and changes performed within your Scaleway Organization.
@@ -1776,6 +1934,161 @@ func (s *API) ListExportJobs(req *ListExportJobsRequest, opts ...scw.RequestOpti
 	}
 
 	var resp ListExportJobsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAlertRules: List alert rules for a specified organization and their current status (enabled or disabled).
+func (s *API) ListAlertRules(req *ListAlertRulesRequest, opts ...scw.RequestOption) (*ListAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/alert-rules",
+		Query:  query,
+	}
+
+	var resp ListAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableAlertRules: Enable alert rules for a specified organization. Enabled rules will trigger alerts when matching events occur.
+func (s *API) EnableAlertRules(req *EnableAlertRulesRequest, opts ...scw.RequestOption) (*EnableAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/enable-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp EnableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DisableAlertRules: Disable alert rules for a specified organization. Disabled rules will no longer trigger alerts when matching events occur.
+func (s *API) DisableAlertRules(req *DisableAlertRulesRequest, opts ...scw.RequestOption) (*DisableAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/disable-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DisableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetEnabledAlertRules: Set the alert rules to enabled by replacing the set of enabled alert rules for a specified organization. The provided list defines the complete set of rules that should be enabled. Any previously enabled rule not included in the request will be disabled.
+func (s *API) SetEnabledAlertRules(req *SetEnabledAlertRulesRequest, opts ...scw.RequestOption) (*SetEnabledAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetEnabledAlertRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
