@@ -105,6 +105,7 @@ profiles:
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     insecure: false
+#     user_agent: 'MyApp/1.0 (Custom User Agent; OS=Linux; Version=2.0)'
 {{ end -}}
 `
 
@@ -124,6 +125,7 @@ type Profile struct {
 	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty"`
 	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty"`
 	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty"`
+	UserAgent             *string `yaml:"user_agent,omitempty" json:"user_agent,omitempty"`
 }
 
 func (p *Profile) String() string {
@@ -227,6 +229,10 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	confV2, err := unmarshalConfV2(file)
 	if err != nil {
 		return nil, errors.Wrap(err, "content of config file %s is invalid", path)
+	}
+
+	if confV2.UserAgent == nil || *confV2.UserAgent == "" {
+		confV2.UserAgent = &userAgent
 	}
 
 	return confV2, nil
