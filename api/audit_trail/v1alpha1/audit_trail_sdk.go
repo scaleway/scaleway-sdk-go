@@ -471,6 +471,43 @@ func (enum *ListExportJobsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListSystemEventsRequestOrderBy string
+
+const (
+	ListSystemEventsRequestOrderByRecordedAtDesc = ListSystemEventsRequestOrderBy("recorded_at_desc")
+	ListSystemEventsRequestOrderByRecordedAtAsc  = ListSystemEventsRequestOrderBy("recorded_at_asc")
+)
+
+func (enum ListSystemEventsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListSystemEventsRequestOrderByRecordedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListSystemEventsRequestOrderBy) Values() []ListSystemEventsRequestOrderBy {
+	return []ListSystemEventsRequestOrderBy{
+		"recorded_at_desc",
+		"recorded_at_asc",
+	}
+}
+
+func (enum ListSystemEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSystemEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSystemEventsRequestOrderBy(ListSystemEventsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ResourceType string
 
 const (
@@ -1182,26 +1219,36 @@ type Event struct {
 
 // SystemEvent: system event.
 type SystemEvent struct {
+	// ID: ID of the system event.
 	ID string `json:"id"`
 
+	// RecordedAt: timestamp of the system event.
 	RecordedAt *time.Time `json:"recorded_at"`
 
+	// Locality: locality of the system event.
 	Locality string `json:"locality"`
 
+	// OrganizationID: organization ID containing the system event.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: project of the resource attached to the system event.
 	ProjectID *string `json:"project_id"`
 
+	// ProductName: name of the Scaleway product in a hyphenated format.
+	ProductName string `json:"product_name"`
+
+	// Source: source of the system event.
 	Source string `json:"source"`
 
+	// SystemName: name of the jobs, notification, etc.
 	SystemName string `json:"system_name"`
 
+	// Resources: resources attached to the event.
 	Resources []*Resource `json:"resources"`
 
-	// Kind: default value: unknown_kind
+	// Kind: source of the event (unknown, cron or notification).
+	// Default value: unknown_kind
 	Kind SystemEventKind `json:"kind"`
-
-	ProductName string `json:"product_name"`
 }
 
 // ExportJobS3: export job s3.
@@ -1611,6 +1658,37 @@ func (r *ListProductsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Products)), nil
 }
 
+// ListSystemEventsRequest: list system events request.
+type ListSystemEventsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization containing the Audit Trail system events.
+	OrganizationID string `json:"-"`
+
+	// RecordedAfter: (Optional) The `recorded_after` parameter defines the earliest timestamp from which Audit Trail system events are retrieved. Returns `one hour ago` by default.
+	RecordedAfter *time.Time `json:"-"`
+
+	// RecordedBefore: (Optional) The `recorded_before` parameter defines the latest timestamp up to which Audit Trail system events are retrieved. Returns `now` by default.
+	RecordedBefore *time.Time `json:"-"`
+
+	// OrderBy: default value: recorded_at_desc
+	OrderBy ListSystemEventsRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	PageToken *string `json:"-"`
+}
+
+// ListSystemEventsResponse: list system events response.
+type ListSystemEventsResponse struct {
+	// Events: single page of system events matching the requested criteria.
+	Events []*SystemEvent `json:"events"`
+
+	// NextPageToken: page token to use in following calls to keep listing.
+	NextPageToken *string `json:"next_page_token"`
+}
+
 // SetEnabledAlertRulesRequest: set enabled alert rules request.
 type SetEnabledAlertRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1738,6 +1816,52 @@ func (s *API) ListAuthenticationEvents(req *ListAuthenticationEventsRequest, opt
 	}
 
 	var resp ListAuthenticationEventsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListSystemEvents: Retrieve the list of Audit Trail system events for a Scaleway Organization. You must specify the `organization_id`.
+func (s *API) ListSystemEvents(req *ListSystemEventsRequest, opts ...scw.RequestOption) (*ListSystemEventsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "recorded_after", req.RecordedAfter)
+	parameter.AddToQuery(query, "recorded_before", req.RecordedBefore)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/system-events",
+		Query:  query,
+	}
+
+	var resp ListSystemEventsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
