@@ -1340,9 +1340,6 @@ type ACLRuleRequest struct {
 type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
 
-	// Deprecated
-	Port *uint32 `json:"port,omitempty"`
-
 	// Protocol: default value: tcp
 	Protocol ACLRuleProtocol `json:"protocol"`
 
@@ -1353,6 +1350,9 @@ type ACLRule struct {
 	Action ACLRuleAction `json:"action"`
 
 	Description string `json:"description"`
+
+	// Deprecated
+	Port *uint32 `json:"port,omitempty"`
 }
 
 // EndpointSpec: endpoint spec.
