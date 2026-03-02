@@ -1861,9 +1861,6 @@ type Contact struct {
 
 	Resale bool `json:"resale"`
 
-	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
-
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
@@ -1881,6 +1878,9 @@ type Contact struct {
 	Status ContactStatus `json:"status"`
 
 	ExtensionIt *ContactExtensionIT `json:"extension_it"`
+
+	// Deprecated
+	Questions *[]*ContactQuestion `json:"questions,omitempty"`
 }
 
 // ContactRolesRoles: contact roles roles.
@@ -1962,9 +1962,6 @@ type NewContact struct {
 
 	Resale bool `json:"resale"`
 
-	// Deprecated
-	Questions *[]*ContactQuestion `json:"questions,omitempty"`
-
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
@@ -1976,6 +1973,9 @@ type NewContact struct {
 	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 
 	ExtensionIt *ContactExtensionIT `json:"extension_it"`
+
+	// Deprecated
+	Questions *[]*ContactQuestion `json:"questions,omitempty"`
 }
 
 // CheckContactsCompatibilityResponseContactCheckResult: check contacts compatibility response contact check result.
@@ -3301,20 +3301,20 @@ type RegistrarAPIUpdateContactRequest struct {
 
 	Resale *bool `json:"resale,omitempty"`
 
-	// Deprecated
-	Questions *[]*UpdateContactRequestQuestion `json:"questions,omitempty"`
-
 	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
 
 	ExtensionEu *ContactExtensionEU `json:"extension_eu,omitempty"`
+
+	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
+
+	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
 
 	WhoisOptIn *bool `json:"whois_opt_in,omitempty"`
 
 	State *string `json:"state,omitempty"`
 
-	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
-
-	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
+	// Deprecated
+	Questions *[]*UpdateContactRequestQuestion `json:"questions,omitempty"`
 }
 
 // RegistrarAPIUpdateDomainHostRequest: registrar api update domain host request.

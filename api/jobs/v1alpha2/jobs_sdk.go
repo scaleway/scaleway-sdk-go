@@ -295,39 +295,55 @@ type Secret struct {
 
 // JobDefinition: job definition.
 type JobDefinition struct {
+	// ID: UUID of the job definition.
 	ID string `json:"id"`
 
+	// Name: name of the job definition.
 	Name string `json:"name"`
 
+	// ProjectID: UUID of the Scaleway Project containing the job.
 	ProjectID string `json:"project_id"`
 
+	// CreatedAt: creation date of the job definition.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last update date of the job definition.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// CPULimit: CPU limit of the job (in mvCPU).
 	CPULimit uint32 `json:"cpu_limit"`
 
+	// MemoryLimit: memory limit of the job (in MiB).
 	MemoryLimit uint32 `json:"memory_limit"`
 
+	// LocalStorageCapacity: local storage capacity of the job (in MiB).
 	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
 
+	// ImageURI: image to use for the job.
 	ImageURI string `json:"image_uri"`
 
-	// Deprecated
+	// Deprecated: Command: deprecated, please use startup_command instead.
 	Command *string `json:"command,omitempty"`
 
+	// EnvironmentVariables: environment variables of the job.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// JobTimeout: timeout of the job in seconds.
 	JobTimeout *scw.Duration `json:"job_timeout"`
 
+	// Description: description of the job.
 	Description string `json:"description"`
 
+	// CronSchedule: configure a cron for the job.
 	CronSchedule *CronSchedule `json:"cron_schedule"`
 
+	// StartupCommand: job startup command.
 	StartupCommand []string `json:"startup_command"`
 
+	// Args: job arguments passed to the startup command at runtime.
 	Args []string `json:"args"`
 
+	// RetryPolicy: retry behaviour in case of job failure.
 	RetryPolicy *RetryPolicy `json:"retry_policy"`
 
 	// Region: region to target. If none is passed will use default region from the config.
@@ -343,45 +359,63 @@ type Resource struct {
 
 // JobRun: job run.
 type JobRun struct {
+	// ID: UUID of the job run.
 	ID string `json:"id"`
 
+	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"job_definition_id"`
 
+	// CreatedAt: creation date of the job run.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: last update date of the job run.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// StartedAt: start date of the job run.
 	StartedAt *time.Time `json:"started_at"`
 
+	// TerminatedAt: termination date of the job run.
 	TerminatedAt *time.Time `json:"terminated_at"`
 
+	// RunDuration: duration of the job run.
 	RunDuration *scw.Duration `json:"run_duration"`
 
-	// State: default value: unknown_state
+	// State: state of the job run.
+	// Default value: unknown_state
 	State JobRunState `json:"state"`
 
-	// Reason: default value: unknown_reason
+	// Reason: reason for failure if the job failed.
+	// Default value: unknown_reason
 	Reason *JobRunReason `json:"reason"`
 
+	// ExitCode: exit code of the job.
 	ExitCode *int32 `json:"exit_code"`
 
+	// ErrorMessage: error message if the job failed.
 	ErrorMessage *string `json:"error_message"`
 
+	// CPULimit: CPU limit of the job (in mvCPU).
 	CPULimit uint32 `json:"cpu_limit"`
 
+	// MemoryLimit: memory limit of the job (in MiB).
 	MemoryLimit uint32 `json:"memory_limit"`
 
+	// LocalStorageCapacity: local storage capacity of the job (in MiB).
 	LocalStorageCapacity uint32 `json:"local_storage_capacity"`
 
-	// Deprecated
+	// Deprecated: Command: deprecated, please use startup_command instead.
 	Command *string `json:"command,omitempty"`
 
+	// EnvironmentVariables: environment variables of the job run.
 	EnvironmentVariables map[string]string `json:"environment_variables"`
 
+	// StartupCommand: job startup command.
 	StartupCommand []string `json:"startup_command"`
 
+	// Args: job arguments passed to the startup command at runtime.
 	Args []string `json:"args"`
 
+	// Attempts: number of retry attempts.
 	Attempts *uint32 `json:"attempts"`
 
 	// Region: region to target. If none is passed will use default region from the config.

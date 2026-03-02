@@ -519,6 +519,7 @@ const (
 	PipelineErrorCodeTLSCaaMalfunction         = PipelineErrorCode("tls_caa_malfunction")
 	PipelineErrorCodePipelineInvalidWorkflow   = PipelineErrorCode("pipeline_invalid_workflow")
 	PipelineErrorCodePipelineMissingHeadStage  = PipelineErrorCode("pipeline_missing_head_stage")
+	PipelineErrorCodePipelineWebsocketLimit    = PipelineErrorCode("pipeline_websocket_limit")
 )
 
 func (enum PipelineErrorCode) String() string {
@@ -561,6 +562,7 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_caa_malfunction",
 		"pipeline_invalid_workflow",
 		"pipeline_missing_head_stage",
+		"pipeline_websocket_limit",
 	}
 }
 
