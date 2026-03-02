@@ -2009,19 +2009,19 @@ type Dashboard struct {
 
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
 
-	// Deprecated
-	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
-
 	VolumesLSSDTotalSize scw.Size `json:"volumes_l_ssd_total_size"`
-
-	// Deprecated
-	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
 
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
 	PlacementGroupsCount uint32 `json:"placement_groups_count"`
 
 	VolumesScratchCount uint32 `json:"volumes_scratch_count"`
+
+	// Deprecated
+	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
+
+	// Deprecated
+	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
 }
 
 // PlacementGroupServer: placement group server.
