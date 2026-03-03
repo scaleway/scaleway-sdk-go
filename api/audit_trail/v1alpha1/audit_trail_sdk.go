@@ -593,6 +593,7 @@ const (
 	ResourceTypeMongodbInstanceSnapshot  = ResourceType("mongodb_instance_snapshot")
 	ResourceTypeMongodbInstanceEndpoint  = ResourceType("mongodb_instance_endpoint")
 	ResourceTypeAppleSiliconRunner       = ResourceType("apple_silicon_runner")
+)
 
 func (enum ResourceType) String() string {
 	if enum == "" {
