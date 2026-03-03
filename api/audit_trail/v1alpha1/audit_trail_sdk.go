@@ -589,6 +589,9 @@ const (
 	ResourceTypeRdbInstanceLogs          = ResourceType("rdb_instance_logs")
 	ResourceTypeRdbInstanceReadReplica   = ResourceType("rdb_instance_read_replica")
 	ResourceTypeRdbInstanceSnapshot      = ResourceType("rdb_instance_snapshot")
+	ResourceTypeMongodbInstance          = ResourceType("mongodb_instance")
+	ResourceTypeMongodbInstanceSnapshot  = ResourceType("mongodb_instance_snapshot")
+	ResourceTypeMongodbInstanceEndpoint  = ResourceType("mongodb_instance_endpoint")
 )
 
 func (enum ResourceType) String() string {
@@ -679,6 +682,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"rdb_instance_logs",
 		"rdb_instance_read_replica",
 		"rdb_instance_snapshot",
+		"mongodb_instance",
+		"mongodb_instance_snapshot",
+		"mongodb_instance_endpoint",
 	}
 }
 
