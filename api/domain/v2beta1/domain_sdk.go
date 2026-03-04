@@ -1689,6 +1689,8 @@ type Record struct {
 	ViewConfig *RecordViewConfig `json:"view_config,omitempty"`
 
 	ID string `json:"id"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // RecordIdentifier: record identifier.
