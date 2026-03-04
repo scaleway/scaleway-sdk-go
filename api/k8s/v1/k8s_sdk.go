@@ -1654,7 +1654,7 @@ type DeleteNodeRequest struct {
 	// SkipDrain: skip draining node from its workload (Note: this parameter is currently inactive).
 	SkipDrain bool `json:"-"`
 
-	// Replace: add a new node after the deletion of this node.
+	// Deprecated: Replace: add a new node after the deletion of this node.
 	Replace bool `json:"-"`
 }
 
