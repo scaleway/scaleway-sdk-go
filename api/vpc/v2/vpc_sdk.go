@@ -336,6 +336,7 @@ const (
 	RouteWithNexthopResourceTypeInstancePrivateNic     = RouteWithNexthopResourceType("instance_private_nic")
 	RouteWithNexthopResourceTypeBaremetalPrivateNic    = RouteWithNexthopResourceType("baremetal_private_nic")
 	RouteWithNexthopResourceTypeAppleSiliconPrivateNic = RouteWithNexthopResourceType("apple_silicon_private_nic")
+	RouteWithNexthopResourceTypeVpnGateway             = RouteWithNexthopResourceType("vpn_gateway")
 )
 
 func (enum RouteWithNexthopResourceType) String() string {
@@ -353,6 +354,7 @@ func (enum RouteWithNexthopResourceType) Values() []RouteWithNexthopResourceType
 		"instance_private_nic",
 		"baremetal_private_nic",
 		"apple_silicon_private_nic",
+		"vpn_gateway",
 	}
 }
 
