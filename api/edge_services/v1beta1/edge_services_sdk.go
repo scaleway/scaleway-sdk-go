@@ -1408,8 +1408,11 @@ type SetRouteRulesRequestRouteRule struct {
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // RouteRule: route rule.
@@ -1419,7 +1422,7 @@ type RouteRule struct {
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 
 	// Position: position of the rule which determines the order of processing within the route stage.
@@ -1427,6 +1430,9 @@ type RouteRule struct {
 
 	// RouteStageID: route stage ID the route rule belongs to.
 	RouteStageID string `json:"route_stage_id"`
+
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // CheckPEMChainRequestSecretChain: check pem chain request secret chain.
