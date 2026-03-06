@@ -7772,7 +7772,7 @@ func (s *BillingAPI) DownloadInvoice(req *BillingAPIDownloadInvoiceRequest, opts
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/dedibox/v1/invoices/" + fmt.Sprint(req.InvoiceID) + "/download",
+		Path:   "/dedibox/v1/invoices/" + fmt.Sprint(req.InvoiceID) + "/download?dl=1",
 	}
 
 	var resp scw.File
