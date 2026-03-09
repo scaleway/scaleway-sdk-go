@@ -348,9 +348,6 @@ type ListFileSystemsRequest struct {
 
 	// Tags: filter by tags. Only filesystems with one or more matching tags will be returned.
 	Tags []string `json:"-"`
-
-	// FilesystemIDs: filter by filesystem IDs. Only filesystems with one or more matching IDs will be returned.
-	FilesystemIDs []string `json:"-"`
 }
 
 // ListFileSystemsResponse: Response containing a list of filesystems and total count.
@@ -517,7 +514,6 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
-	parameter.AddToQuery(query, "filesystem_ids", req.FilesystemIDs)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

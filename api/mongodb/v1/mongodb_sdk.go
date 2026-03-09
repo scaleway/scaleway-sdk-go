@@ -619,13 +619,6 @@ type Endpoint struct {
 	PublicNetwork *EndpointPublicNetworkDetails `json:"public_network,omitempty"`
 }
 
-// InstanceSetting: instance setting.
-type InstanceSetting struct {
-	Name string `json:"name"`
-
-	Value string `json:"value"`
-}
-
 // InstanceSnapshotSchedule: instance snapshot schedule.
 type InstanceSnapshotSchedule struct {
 	FrequencyHours int32 `json:"frequency_hours"`
@@ -750,9 +743,6 @@ type Instance struct {
 
 	// SnapshotSchedule: snapshot schedule configuration of the Database Instance.
 	SnapshotSchedule *InstanceSnapshotSchedule `json:"snapshot_schedule"`
-
-	// Settings: list of settings applied to the Database Instance.
-	Settings []*InstanceSetting `json:"settings"`
 }
 
 // Maintenance: maintenance.

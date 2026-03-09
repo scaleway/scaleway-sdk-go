@@ -160,45 +160,6 @@ func (enum *BackupStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type BillingMode string
-
-const (
-	BillingModeUnknownBillingMode = BillingMode("unknown_billing_mode")
-	BillingModeSample             = BillingMode("sample")
-	BillingModePurchaseOrder      = BillingMode("purchase_order")
-)
-
-func (enum BillingMode) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(BillingModeUnknownBillingMode)
-	}
-	return string(enum)
-}
-
-func (enum BillingMode) Values() []BillingMode {
-	return []BillingMode{
-		"unknown_billing_mode",
-		"sample",
-		"purchase_order",
-	}
-}
-
-func (enum BillingMode) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *BillingMode) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = BillingMode(BillingMode(tmp).String())
-	return nil
-}
-
 type CheckFreeDomainAvailabilityResponseUnavailableReason string
 
 const (
@@ -245,45 +206,6 @@ func (enum *CheckFreeDomainAvailabilityResponseUnavailableReason) UnmarshalJSON(
 	}
 
 	*enum = CheckFreeDomainAvailabilityResponseUnavailableReason(CheckFreeDomainAvailabilityResponseUnavailableReason(tmp).String())
-	return nil
-}
-
-type CommitmentType string
-
-const (
-	CommitmentTypeUnknownCommitmentType = CommitmentType("unknown_commitment_type")
-	CommitmentTypeFirstCommitment       = CommitmentType("first_commitment")
-	CommitmentTypeNextCommitment        = CommitmentType("next_commitment")
-)
-
-func (enum CommitmentType) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(CommitmentTypeUnknownCommitmentType)
-	}
-	return string(enum)
-}
-
-func (enum CommitmentType) Values() []CommitmentType {
-	return []CommitmentType{
-		"unknown_commitment_type",
-		"first_commitment",
-		"next_commitment",
-	}
-}
-
-func (enum CommitmentType) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *CommitmentType) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = CommitmentType(CommitmentType(tmp).String())
 	return nil
 }
 
@@ -1339,32 +1261,6 @@ type ControlPanel struct {
 	AvailableLanguages []std.LanguageCode `json:"available_languages"`
 }
 
-// OfferCommitment: offer commitment.
-type OfferCommitment struct {
-	// ID: offer commitment ID.
-	ID string `json:"id"`
-
-	// Type: offer commitment type.
-	// Default value: unknown_commitment_type
-	Type CommitmentType `json:"type"`
-
-	// BillingMode: offer commitment name.
-	// Default value: unknown_billing_mode
-	BillingMode BillingMode `json:"billing_mode"`
-
-	// BillingOperationPath: unique identifier used for billing.
-	BillingOperationPath string `json:"billing_operation_path"`
-
-	// Price: price of the offer commitment.
-	Price *scw.Money `json:"price"`
-
-	// DurationInMonth: duration of the offer commitment in months.
-	DurationInMonth int32 `json:"duration_in_month"`
-
-	// Next: next offer commitment.
-	Next *OfferCommitment `json:"next"`
-}
-
 // OfferOption: offer option.
 type OfferOption struct {
 	// ID: option ID.
@@ -1565,9 +1461,6 @@ type Offer struct {
 
 	// ControlPanels: lists available control panels for the specified offer.
 	ControlPanels []*ControlPanel `json:"control_panels"`
-
-	// Commitments: lists available offer commitments for the specified offer.
-	Commitments []*OfferCommitment `json:"commitments"`
 
 	// Region: region where the offer is hosted.
 	Region scw.Region `json:"region"`
