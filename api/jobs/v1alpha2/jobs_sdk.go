@@ -225,6 +225,43 @@ func (enum *ListJobRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListTriggersRequestOrderBy string
+
+const (
+	ListTriggersRequestOrderByCreatedAtAsc  = ListTriggersRequestOrderBy("created_at_asc")
+	ListTriggersRequestOrderByCreatedAtDesc = ListTriggersRequestOrderBy("created_at_desc")
+)
+
+func (enum ListTriggersRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListTriggersRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListTriggersRequestOrderBy) Values() []ListTriggersRequestOrderBy {
+	return []ListTriggersRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListTriggersRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListTriggersRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListTriggersRequestOrderBy(ListTriggersRequestOrderBy(tmp).String())
+	return nil
+}
+
 // SecretEnvVar: secret env var.
 type SecretEnvVar struct {
 	Name string `json:"name"`
@@ -248,6 +285,21 @@ type CronSchedule struct {
 type RetryPolicy struct {
 	// MaxRetries: maximum number of retries upon a job failure.
 	MaxRetries uint32 `json:"max_retries"`
+}
+
+// TriggerCronConfig: trigger cron config.
+type TriggerCronConfig struct {
+	// Schedule: cRON schedule in UNIX format.
+	Schedule string `json:"schedule"`
+
+	// Timezone: time zone for the CRON schedule.
+	Timezone string `json:"timezone"`
+
+	// StartupCommand: startup command that will be used by the triggered job.
+	StartupCommand []string `json:"startup_command"`
+
+	// Args: arguments passed to the startup command used by the triggered job.
+	Args []string `json:"args"`
 }
 
 // CreateJobDefinitionRequestCronScheduleConfig: create job definition request cron schedule config.
@@ -291,6 +343,21 @@ type Secret struct {
 	// EnvVar: environment variable used to expose the secret.
 	// Precisely one of File, EnvVar must be set.
 	EnvVar *SecretEnvVar `json:"env_var,omitempty"`
+}
+
+// CreateTriggerRequestCronConfig: create trigger request cron config.
+type CreateTriggerRequestCronConfig struct {
+	// Schedule: cRON schedule in UNIX format.
+	Schedule string `json:"schedule"`
+
+	// Timezone: time zone for the CRON schedule.
+	Timezone string `json:"timezone"`
+
+	// StartupCommand: startup command that will be used by the triggered job.
+	StartupCommand []string `json:"startup_command"`
+
+	// Args: arguments passed to the startup command used by the triggered job.
+	Args []string `json:"args"`
 }
 
 // JobDefinition: job definition.
@@ -422,11 +489,48 @@ type JobRun struct {
 	Region scw.Region `json:"region"`
 }
 
+// Trigger: trigger.
+type Trigger struct {
+	// ID: UUID of the trigger.
+	ID string `json:"id"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"job_definition_id"`
+
+	// Name: human readable name of the trigger.
+	Name string `json:"name"`
+
+	// CreatedAt: creation time of the trigger.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update time of the trigger.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// CronConfig: configuration of the CRON trigger.
+	// Precisely one of CronConfig must be set.
+	CronConfig *TriggerCronConfig `json:"cron_config,omitempty"`
+}
+
 // UpdateJobDefinitionRequestCronScheduleConfig: update job definition request cron schedule config.
 type UpdateJobDefinitionRequestCronScheduleConfig struct {
 	Schedule *string `json:"schedule"`
 
 	Timezone *string `json:"timezone"`
+}
+
+// UpdateTriggerRequestCronConfig: update trigger request cron config.
+type UpdateTriggerRequestCronConfig struct {
+	// Schedule: cRON schedule in UNIX format.
+	Schedule *string `json:"schedule"`
+
+	// Timezone: time zone for the CRON schedule.
+	Timezone *string `json:"timezone"`
+
+	// StartupCommand: startup command that will be used by the triggered job.
+	StartupCommand *[]string `json:"startup_command"`
+
+	// Args: arguments passed to the startup command used by the triggered job.
+	Args *[]string `json:"args"`
 }
 
 // CreateJobDefinitionRequest: create job definition request.
@@ -497,6 +601,22 @@ type CreateSecretsResponse struct {
 	Secrets []*Secret `json:"secrets"`
 }
 
+// CreateTriggerRequest: create trigger request.
+type CreateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"job_definition_id"`
+
+	// Name: name of the trigger.
+	Name string `json:"name"`
+
+	// CronConfig: configuration of the CRON trigger.
+	// Precisely one of CronConfig must be set.
+	CronConfig *CreateTriggerRequestCronConfig `json:"cron_config,omitempty"`
+}
+
 // DeleteJobDefinitionRequest: delete job definition request.
 type DeleteJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -513,6 +633,15 @@ type DeleteSecretRequest struct {
 
 	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"-"`
+}
+
+// DeleteTriggerRequest: delete trigger request.
+type DeleteTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: UUID of the trigger.
+	TriggerID string `json:"-"`
 }
 
 // GetJobDefinitionRequest: get job definition request.
@@ -546,6 +675,15 @@ type GetSecretRequest struct {
 
 	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"-"`
+}
+
+// GetTriggerRequest: get trigger request.
+type GetTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: UUID of the trigger.
+	TriggerID string `json:"-"`
 }
 
 // JobLimits: job limits.
@@ -696,6 +834,53 @@ func (r *ListSecretsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Secrets)), nil
 }
 
+// ListTriggersRequest: list triggers request.
+type ListTriggersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// JobDefinitionID: UUID of the job definition.
+	JobDefinitionID string `json:"-"`
+
+	// Page: page number from paginated list of triggers.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of triggers per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sorting order of triggers.
+	// Default value: created_at_asc
+	OrderBy ListTriggersRequestOrderBy `json:"-"`
+}
+
+// ListTriggersResponse: list triggers response.
+type ListTriggersResponse struct {
+	// Triggers: list of triggers.
+	Triggers []*Trigger `json:"triggers"`
+
+	// TotalCount: total count of triggers.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListTriggersResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListTriggersResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Triggers = append(r.Triggers, results.Triggers...)
+	r.TotalCount += uint64(len(results.Triggers))
+	return uint64(len(results.Triggers)), nil
+}
+
 // StartJobDefinitionRequest: start job definition request.
 type StartJobDefinitionRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -808,6 +993,22 @@ type UpdateSecretRequest struct {
 	// EnvVarName: environment variable name used to expose the secret inside the job (either `path` or `env_var_name` must be set).
 	// Precisely one of Path, EnvVarName must be set.
 	EnvVarName *string `json:"env_var_name,omitempty"`
+}
+
+// UpdateTriggerRequest: update trigger request.
+type UpdateTriggerRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// TriggerID: UUID of the trigger.
+	TriggerID string `json:"-"`
+
+	// Name: name of the trigger.
+	Name *string `json:"name,omitempty"`
+
+	// CronConfig: configuration of the CRON trigger.
+	// Precisely one of CronConfig must be set.
+	CronConfig *UpdateTriggerRequestCronConfig `json:"cron_config,omitempty"`
 }
 
 // This API allows you to manage your Serverless Jobs.
@@ -1300,6 +1501,173 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/secrets/" + fmt.Sprint(req.SecretID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CreateTrigger: Create a trigger.
+func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/triggers",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetTrigger: Get a trigger.
+func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return nil, errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListTriggers: List triggers of a job definition.
+func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "job_definition_id", req.JobDefinitionID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/triggers",
+		Query:  query,
+	}
+
+	var resp ListTriggersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateTrigger: Update a trigger.
+func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return nil, errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Trigger
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteTrigger: Delete a trigger.
+func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.TriggerID) == "" {
+		return errors.New("field TriggerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/serverless-jobs/v1alpha2/regions/" + fmt.Sprint(req.Region) + "/triggers/" + fmt.Sprint(req.TriggerID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
