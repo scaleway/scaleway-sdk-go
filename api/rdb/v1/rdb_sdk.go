@@ -731,6 +731,7 @@ const (
 	NodeTypeGenerationUnknownGeneration = NodeTypeGeneration("unknown_generation")
 	NodeTypeGenerationGenerationV1      = NodeTypeGeneration("generation_v1")
 	NodeTypeGenerationGenerationV2      = NodeTypeGeneration("generation_v2")
+	NodeTypeGenerationGenerationV3      = NodeTypeGeneration("generation_v3")
 )
 
 func (enum NodeTypeGeneration) String() string {
@@ -746,6 +747,7 @@ func (enum NodeTypeGeneration) Values() []NodeTypeGeneration {
 		"unknown_generation",
 		"generation_v1",
 		"generation_v2",
+		"generation_v3",
 	}
 }
 
@@ -1340,9 +1342,6 @@ type ACLRuleRequest struct {
 type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
 
-	// Deprecated
-	Port *uint32 `json:"port,omitempty"`
-
 	// Protocol: default value: tcp
 	Protocol ACLRuleProtocol `json:"protocol"`
 
@@ -1353,6 +1352,9 @@ type ACLRule struct {
 	Action ACLRuleAction `json:"action"`
 
 	Description string `json:"description"`
+
+	// Deprecated
+	Port *uint32 `json:"port,omitempty"`
 }
 
 // EndpointSpec: endpoint spec.

@@ -519,6 +519,7 @@ const (
 	PipelineErrorCodeTLSCaaMalfunction         = PipelineErrorCode("tls_caa_malfunction")
 	PipelineErrorCodePipelineInvalidWorkflow   = PipelineErrorCode("pipeline_invalid_workflow")
 	PipelineErrorCodePipelineMissingHeadStage  = PipelineErrorCode("pipeline_missing_head_stage")
+	PipelineErrorCodePipelineWebsocketLimit    = PipelineErrorCode("pipeline_websocket_limit")
 )
 
 func (enum PipelineErrorCode) String() string {
@@ -561,6 +562,7 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_caa_malfunction",
 		"pipeline_invalid_workflow",
 		"pipeline_missing_head_stage",
+		"pipeline_websocket_limit",
 	}
 }
 
@@ -1325,7 +1327,7 @@ type RouteStage struct {
 	PipelineID string `json:"pipeline_id"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
 	// CreatedAt: date the route stage was created.
@@ -1333,6 +1335,9 @@ type RouteStage struct {
 
 	// UpdatedAt: date the route stage was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // TLSStage: tls stage.
@@ -1406,8 +1411,11 @@ type SetRouteRulesRequestRouteRule struct {
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // RouteRule: route rule.
@@ -1417,7 +1425,7 @@ type RouteRule struct {
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 
 	// Position: position of the rule which determines the order of processing within the route stage.
@@ -1425,6 +1433,9 @@ type RouteRule struct {
 
 	// RouteStageID: route stage ID the route rule belongs to.
 	RouteStageID string `json:"route_stage_id"`
+
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // CheckPEMChainRequestSecretChain: check pem chain request secret chain.
@@ -1701,8 +1712,11 @@ type CreateRouteStageRequest struct {
 	PipelineID string `json:"-"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // CreateTLSStageRequest: create tls stage request.
@@ -2603,8 +2617,11 @@ type UpdateRouteStageRequest struct {
 	RouteStageID string `json:"-"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // UpdateTLSStageRequest: update tls stage request.
