@@ -2042,6 +2042,12 @@ type GetSSHKeyRequest struct {
 	SSHKeyID string `json:"-"`
 }
 
+// GetSamlCertificateRequest: get saml certificate request.
+type GetSamlCertificateRequest struct {
+	// CertificateID: ID of the certificate to get.
+	CertificateID string `json:"-"`
+}
+
 // GetUserConnectionsRequest: get user connections request.
 type GetUserConnectionsRequest struct {
 	// UserID: ID of the user to list connections for.
@@ -5090,6 +5096,28 @@ func (s *API) AddSamlCertificate(req *AddSamlCertificateRequest, opts ...scw.Req
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
+	}
+
+	var resp SamlCertificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetSamlCertificate: Get a SAML certificate.
+func (s *API) GetSamlCertificate(req *GetSamlCertificateRequest, opts ...scw.RequestOption) (*SamlCertificate, error) {
+	var err error
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return nil, errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/saml-certificates/" + fmt.Sprint(req.CertificateID) + "",
 	}
 
 	var resp SamlCertificate
