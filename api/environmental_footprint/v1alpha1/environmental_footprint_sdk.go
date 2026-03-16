@@ -59,6 +59,12 @@ const (
 	ProductCategoryLoadBalancer = ProductCategory("load_balancer")
 	// The Kubernetes product category.
 	ProductCategoryKubernetes = ProductCategory("kubernetes")
+	// The Managed Relational Databases product category.
+	ProductCategoryManagedRelationalDatabases = ProductCategory("managed_relational_databases")
+	// The Managed MongoDB product category.
+	ProductCategoryManagedMongodb = ProductCategory("managed_mongodb")
+	// The Managed Redis product category.
+	ProductCategoryManagedRedis = ProductCategory("managed_redis")
 )
 
 func (enum ProductCategory) String() string {
@@ -80,6 +86,9 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"object_storage",
 		"load_balancer",
 		"kubernetes",
+		"managed_relational_databases",
+		"managed_mongodb",
+		"managed_redis",
 	}
 }
 
@@ -155,6 +164,8 @@ const (
 	ServiceCategoryNetwork = ServiceCategory("network")
 	// The Containers service category.
 	ServiceCategoryContainers = ServiceCategory("containers")
+	// The Databases service category.
+	ServiceCategoryDatabases = ServiceCategory("databases")
 )
 
 func (enum ServiceCategory) String() string {
@@ -173,6 +184,7 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"storage",
 		"network",
 		"containers",
+		"databases",
 	}
 }
 
