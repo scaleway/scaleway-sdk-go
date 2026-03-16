@@ -3,7 +3,7 @@ module github.com/scaleway/scaleway-sdk-go
 go 1.25.0
 
 require (
-	golang.org/x/text v0.34.0
+	golang.org/x/text v0.35.0
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 	gopkg.in/yaml.v2 v2.4.0
 )
