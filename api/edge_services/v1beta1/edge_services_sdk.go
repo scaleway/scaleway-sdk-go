@@ -510,6 +510,8 @@ const (
 	PipelineErrorCodeTLSKeyTooMany             = PipelineErrorCode("tls_key_too_many")
 	PipelineErrorCodeTLSManagedDomainRateLimit = PipelineErrorCode("tls_managed_domain_rate_limit")
 	PipelineErrorCodeTLSManagedInternal        = PipelineErrorCode("tls_managed_internal")
+	PipelineErrorCodeTLSManagedUnsupported     = PipelineErrorCode("tls_managed_unsupported")
+	PipelineErrorCodeTLSNotWildcard            = PipelineErrorCode("tls_not_wildcard")
 	PipelineErrorCodeTLSPairMismatch           = PipelineErrorCode("tls_pair_mismatch")
 	PipelineErrorCodeTLSRootInconsistent       = PipelineErrorCode("tls_root_inconsistent")
 	PipelineErrorCodeTLSRootIncorrect          = PipelineErrorCode("tls_root_incorrect")
@@ -553,6 +555,8 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_key_too_many",
 		"tls_managed_domain_rate_limit",
 		"tls_managed_internal",
+		"tls_managed_unsupported",
+		"tls_not_wildcard",
 		"tls_pair_mismatch",
 		"tls_root_inconsistent",
 		"tls_root_incorrect",
@@ -1285,6 +1289,9 @@ type DNSStage struct {
 	// BackendStageID: backend stage ID the DNS stage is linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain bool `json:"wildcard_domain"`
 }
 
 // Pipeline: pipeline.
@@ -1465,6 +1472,9 @@ type PlanDetails struct {
 
 	// BackendLimit: number of backends per pipeline included in subscription plan.
 	BackendLimit uint64 `json:"backend_limit"`
+
+	// WildcardDomain: support of wildcard subdomains for the customized domain.
+	WildcardDomain bool `json:"wildcard_domain"`
 }
 
 // PlanUsageDetails: plan usage details.
@@ -1681,6 +1691,9 @@ type CreateDNSStageRequest struct {
 	// BackendStageID: backend stage ID the DNS stage will be linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
 }
 
 // CreatePipelineRequest: create pipeline request.
@@ -2600,6 +2613,9 @@ type UpdateDNSStageRequest struct {
 	// BackendStageID: backend stage ID the DNS stage will be linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
 }
 
 // UpdatePipelineRequest: update pipeline request.
