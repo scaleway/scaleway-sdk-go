@@ -1330,14 +1330,15 @@ type RouteStage struct {
 	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
 	// CreatedAt: date the route stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// UpdatedAt: date the route stage was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	// Precisely one of WafStageID, BackendStageID must be set.
-	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // TLSStage: tls stage.
@@ -1414,6 +1415,7 @@ type SetRouteRulesRequestRouteRule struct {
 	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 
+	// WafStageID: ID of the WAF stage that requests matching the rule should be forwarded to.
 	// Precisely one of BackendStageID, WafStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
@@ -1434,6 +1436,7 @@ type RouteRule struct {
 	// RouteStageID: route stage ID the route rule belongs to.
 	RouteStageID string `json:"route_stage_id"`
 
+	// WafStageID: ID of the WAF stage that requests matching the rule should be forwarded to.
 	// Precisely one of BackendStageID, WafStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
