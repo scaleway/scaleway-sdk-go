@@ -24,7 +24,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
-          go-version: 1.23.0
+          go-version: 1.25.x
       - name: Run Acceptance Tests
         run: go test -v ./api/${{ matrix.products }} -timeout=4h
         env:
@@ -69,7 +69,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
-          go-version: 1.23.0
+          go-version: 1.25.x
       - name: Run sweepers
         run: go run -v ./cmd/sdk-sweeper
         env:
