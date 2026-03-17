@@ -842,6 +842,43 @@ func (enum *PurgeRequestStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RuleHTTPMatchHostFilterHostFilterType string
+
+const (
+	RuleHTTPMatchHostFilterHostFilterTypeUnknownHostFilter = RuleHTTPMatchHostFilterHostFilterType("unknown_host_filter")
+	RuleHTTPMatchHostFilterHostFilterTypeRegex             = RuleHTTPMatchHostFilterHostFilterType("regex")
+)
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RuleHTTPMatchHostFilterHostFilterTypeUnknownHostFilter)
+	}
+	return string(enum)
+}
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) Values() []RuleHTTPMatchHostFilterHostFilterType {
+	return []RuleHTTPMatchHostFilterHostFilterType{
+		"unknown_host_filter",
+		"regex",
+	}
+}
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RuleHTTPMatchHostFilterHostFilterType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RuleHTTPMatchHostFilterHostFilterType(RuleHTTPMatchHostFilterHostFilterType(tmp).String())
+	return nil
+}
+
 type RuleHTTPMatchMethodFilter string
 
 const (
@@ -1115,6 +1152,14 @@ type ScalewayLB struct {
 	HasWebsocket *bool `json:"has_websocket"`
 }
 
+// RuleHTTPMatchHostFilter: rule http match host filter.
+type RuleHTTPMatchHostFilter struct {
+	// HostFilterType: default value: unknown_host_filter
+	HostFilterType RuleHTTPMatchHostFilterHostFilterType `json:"host_filter_type"`
+
+	Value string `json:"value"`
+}
+
 // RuleHTTPMatchPathFilter: rule http match path filter.
 type RuleHTTPMatchPathFilter struct {
 	// PathFilterType: type of filter to match for the HTTP URL path. For now, all path filters must be written in regex and use the `regex` type.
@@ -1192,6 +1237,9 @@ type RuleHTTPMatch struct {
 
 	// PathFilter: HTTP URL path to filter for. A request whose path matches the given filter will be considered to match the rule. All paths will match if none is provided.
 	PathFilter *RuleHTTPMatchPathFilter `json:"path_filter"`
+
+	// HostFilter: host to filter for. A request whose host matches the given filter will be considered to match the rule. All hosts will match if none is provided.
+	HostFilter *RuleHTTPMatchHostFilter `json:"host_filter"`
 }
 
 // BackendStage: backend stage.
