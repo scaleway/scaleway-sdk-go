@@ -3227,6 +3227,9 @@ type RegistrarAPISearchAvailableDomainsRequest struct {
 
 	// StrictSearch: search exact match.
 	StrictSearch bool `json:"-"`
+
+	// IncludeExactMatch: if an exact match is found, include it in response as a separate element.
+	IncludeExactMatch bool `json:"-"`
 }
 
 // RegistrarAPITradeDomainRequest: registrar api trade domain request.
@@ -3375,6 +3378,9 @@ type SearchAvailableDomainsConsoleResponse struct {
 type SearchAvailableDomainsResponse struct {
 	// AvailableDomains: array of available domains.
 	AvailableDomains []*AvailableDomain `json:"available_domains"`
+
+	// ExactMatchDomain: if an exact match was asked and found, the result is in this field.
+	ExactMatchDomain *AvailableDomain `json:"exact_match_domain"`
 }
 
 // UnauthenticatedRegistrarAPISearchAvailableDomainsConsoleRequest: unauthenticated registrar api search available domains console request.
@@ -4911,6 +4917,7 @@ func (s *RegistrarAPI) SearchAvailableDomains(req *RegistrarAPISearchAvailableDo
 	parameter.AddToQuery(query, "domains", req.Domains)
 	parameter.AddToQuery(query, "tlds", req.Tlds)
 	parameter.AddToQuery(query, "strict_search", req.StrictSearch)
+	parameter.AddToQuery(query, "include_exact_match", req.IncludeExactMatch)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
