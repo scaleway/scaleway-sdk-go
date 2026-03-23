@@ -1324,21 +1324,6 @@ type HostingDomainCustomDomain struct {
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
-// ControlPanel: control panel.
-type ControlPanel struct {
-	// Name: control panel name.
-	Name string `json:"name"`
-
-	// Available: define if the control panel type is available to order.
-	Available bool `json:"available"`
-
-	// LogoURL: URL of the control panel's logo.
-	LogoURL string `json:"logo_url"`
-
-	// AvailableLanguages: list of available languages for the control panel.
-	AvailableLanguages []std.LanguageCode `json:"available_languages"`
-}
-
 // OfferCommitment: offer commitment.
 type OfferCommitment struct {
 	// ID: offer commitment ID.
@@ -1363,6 +1348,21 @@ type OfferCommitment struct {
 
 	// Next: next offer commitment.
 	Next *OfferCommitment `json:"next"`
+}
+
+// ControlPanel: control panel.
+type ControlPanel struct {
+	// Name: control panel name.
+	Name string `json:"name"`
+
+	// Available: define if the control panel type is available to order.
+	Available bool `json:"available"`
+
+	// LogoURL: URL of the control panel's logo.
+	LogoURL string `json:"logo_url"`
+
+	// AvailableLanguages: list of available languages for the control panel.
+	AvailableLanguages []std.LanguageCode `json:"available_languages"`
 }
 
 // OfferOption: offer option.
@@ -1516,6 +1516,23 @@ type Nameserver struct {
 
 	// IsDefault: defines whether the nameserver is the default one.
 	IsDefault bool `json:"is_default"`
+}
+
+// HostingCommitment: hosting commitment.
+type HostingCommitment struct {
+	// OfferCommitment: offer commitment for the specified hosting.
+	OfferCommitment *OfferCommitment `json:"offer_commitment"`
+
+	// StartAt: date and time the commitment started.
+	StartAt *time.Time `json:"start_at"`
+
+	// EndAt: date and time the commitment ends.
+	EndAt *time.Time `json:"end_at"`
+
+	// DeleteHostingAtEnd: the hosting may be deleted, automatically renewed, or switched to
+	// its configured post-commitment offer, which may have a different
+	// price and billing period.
+	DeleteHostingAtEnd bool `json:"delete_hosting_at_end"`
 }
 
 // HostingUser: hosting user.
@@ -2297,6 +2314,9 @@ type Hosting struct {
 
 	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
 	DomainInfo *HostingDomain `json:"domain_info"`
+
+	// Commitment: commitment details to which the hosting is engaged.
+	Commitment *HostingCommitment `json:"commitment"`
 }
 
 // HostingAPIAddCustomDomainRequest: hosting api add custom domain request.
@@ -2349,6 +2369,9 @@ type HostingAPICreateHostingRequest struct {
 
 	// AutoConfigDomainDNS: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements (deprecated, use auto_update_* fields instead).
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
+
+	// OfferCommitmentID: offer commitment ID to which the hosting will be engaged.
+	OfferCommitmentID *string `json:"offer_commitment_id,omitempty"`
 }
 
 // HostingAPICreateSessionRequest: hosting api create session request.
