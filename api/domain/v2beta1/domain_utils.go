@@ -331,7 +331,7 @@ func (s *RegistrarAPI) WaitForValidatedExternalDomain(req *WaitForValidatedExter
 
 			// Check the current Zone status.
 			lastStatus = resp.Status
-			if resp.Status == "active" {
+			if resp.Status == DomainStatusActive {
 				return resp, true, nil
 			}
 			return resp, false, nil
