@@ -841,6 +841,21 @@ type PublicCatalogProductPropertiesKubernetesKosmosControlPlaneType struct{}
 // PublicCatalogProductPropertiesKubernetesKosmosNodeType: public catalog product properties kubernetes kosmos node type.
 type PublicCatalogProductPropertiesKubernetesKosmosNodeType struct{}
 
+// PublicCatalogProductPropertiesLoadBalancerIPV4Type: public catalog product properties load balancer ipv4 type.
+type PublicCatalogProductPropertiesLoadBalancerIPV4Type struct{}
+
+// PublicCatalogProductPropertiesLoadBalancerNodeType: public catalog product properties load balancer node type.
+type PublicCatalogProductPropertiesLoadBalancerNodeType struct {
+	// OfferID: the offer ID of the Load Balancer product.
+	OfferID string `json:"offer_id"`
+
+	// MultiCloudProvider: whether the Load Balancer product is available for multi-cloud providers.
+	MultiCloudProvider bool `json:"multi_cloud_provider"`
+
+	// Bandwidth: the bandwidth of the Load Balancer product in bits per second.
+	Bandwidth uint64 `json:"bandwidth"`
+}
+
 // PublicCatalogProductPropertiesManagedMongoDBManagementType: public catalog product properties managed mongo db management type.
 type PublicCatalogProductPropertiesManagedMongoDBManagementType struct{}
 
@@ -992,7 +1007,15 @@ type PublicCatalogProductPropertiesKubernetes struct {
 }
 
 // PublicCatalogProductPropertiesLoadBalancer: public catalog product properties load balancer.
-type PublicCatalogProductPropertiesLoadBalancer struct{}
+type PublicCatalogProductPropertiesLoadBalancer struct {
+	// Node: the properties related to Load Balancer nodes.
+	// Precisely one of Node, IPv4 must be set.
+	Node *PublicCatalogProductPropertiesLoadBalancerNodeType `json:"node,omitempty"`
+
+	// IPv4: the properties related to Load Balancer IPv4.
+	// Precisely one of Node, IPv4 must be set.
+	IPv4 *PublicCatalogProductPropertiesLoadBalancerIPV4Type `json:"ipv4,omitempty"`
+}
 
 // PublicCatalogProductPropertiesManagedInference: public catalog product properties managed inference.
 type PublicCatalogProductPropertiesManagedInference struct {
