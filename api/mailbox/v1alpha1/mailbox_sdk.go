@@ -458,10 +458,6 @@ type BatchCreateMailboxesRequestMailboxParameters struct {
 	LocalPart string `json:"local_part"`
 
 	Password string `json:"password"`
-
-	DisplayName *string `json:"display_name"`
-
-	RecoveryEmail *string `json:"recovery_email"`
 }
 
 // Mailbox: mailbox.
@@ -472,14 +468,8 @@ type Mailbox struct {
 	// DomainID: ID of the domain to which the mailbox belongs.
 	DomainID string `json:"domain_id"`
 
-	// DisplayName: name of the mailbox.
-	DisplayName string `json:"display_name"`
-
 	// Email: email address of the mailbox as local_part@domain.
 	Email string `json:"email"`
-
-	// RecoveryEmail: recovery email for the mailbox.
-	RecoveryEmail string `json:"recovery_email"`
 
 	// Status: status of the mailbox.
 	// Default value: unknown_status
@@ -789,12 +779,6 @@ type RestoreMailboxRequest struct {
 type UpdateMailboxRequest struct {
 	// MailboxID: ID of the mailbox to update.
 	MailboxID string `json:"-"`
-
-	// DisplayName: (Optional) New display name of the mailbox.
-	DisplayName *string `json:"display_name,omitempty"`
-
-	// RecoveryEmail: (Optional) New recovery email for the mailbox.
-	RecoveryEmail *string `json:"recovery_email,omitempty"`
 
 	// SubscriptionPeriod: (Optional) New subscription period for the mailbox.
 	// Default value: unknown_subscription_period
@@ -1147,7 +1131,7 @@ func (s *API) WaitForMailbox(req *WaitForMailboxRequest, opts ...scw.RequestOpti
 	return res.(*Mailbox), nil
 }
 
-// UpdateMailbox: Update a mailbox name, recovery email, subscription period or password with its ID.
+// UpdateMailbox: Update a mailbox subscription period or password with its ID.
 func (s *API) UpdateMailbox(req *UpdateMailboxRequest, opts ...scw.RequestOption) (*Mailbox, error) {
 	var err error
 
