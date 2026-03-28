@@ -14,14 +14,14 @@ import (
 func TestHasResponseErrorWithStatus200(t *testing.T) {
 	res := &http.Response{StatusCode: http.StatusOK}
 
-	newErr := hasResponseError(res)
+	newErr := hasResponseError(res, "")
 	testhelpers.AssertNoError(t, newErr)
 }
 
 func TestHasResponseErrorWithoutBody(t *testing.T) {
 	res := &http.Response{StatusCode: http.StatusBadRequest}
 
-	newErr := hasResponseError(res)
+	newErr := hasResponseError(res, "")
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 }
 
@@ -47,7 +47,7 @@ func TestNonStandardError(t *testing.T) {
 			}
 
 			// Test that hasResponseError converts the response to the expected SdkError.
-			newErr := hasResponseError(res)
+			newErr := hasResponseError(res, "")
 			testhelpers.Assert(t, newErr != nil, "Should have error")
 			testhelpers.Equals(t, c.expectedError, newErr)
 		}
@@ -201,7 +201,98 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	}
 
 	// Test hasResponseError()
-	newErr := hasResponseError(res)
+	newErr := hasResponseError(res, "")
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 	testhelpers.Equals(t, testErrorReponse, newErr)
+}
+
+func TestHasResponseErrorLocality(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name        string
+		resStatus   string
+		resCode     int
+		resBody     string
+		locality    string
+		expectedErr SdkError
+	}{
+		{
+			name:      "not_found with zone locality",
+			resStatus: "404 Not Found",
+			resCode:   http.StatusNotFound,
+			resBody:   `{"type":"not_found","resource":"server","resource_id":"11111111-1111-4111-8111-111111111111"}`,
+			locality:  "fr-par-1",
+			expectedErr: &ResourceNotFoundError{
+				Resource:   "server",
+				ResourceID: "11111111-1111-4111-8111-111111111111",
+				Locality:   "fr-par-1",
+				RawBody:    []byte(`{"type":"not_found","resource":"server","resource_id":"11111111-1111-4111-8111-111111111111"}`),
+			},
+		},
+		{
+			name:      "unknown_resource with region locality",
+			resStatus: "404 Not Found",
+			resCode:   http.StatusNotFound,
+			resBody:   `{"type":"unknown_resource","message":"Volume '11111111-1111-4111-8111-111111111111' not found"}`,
+			locality:  "fr-par",
+			expectedErr: &ResourceNotFoundError{
+				Resource:   "volume",
+				ResourceID: "11111111-1111-4111-8111-111111111111",
+				Locality:   "fr-par",
+				RawBody:    []byte(`{"type":"unknown_resource","message":"Volume '11111111-1111-4111-8111-111111111111' not found"}`),
+			},
+		},
+		{
+			name:      "response error keeps locality",
+			resStatus: "400 Bad Request",
+			resCode:   http.StatusBadRequest,
+			resBody:   `{"message":"server should be running","type":"invalid_request_error"}`,
+			locality:  "fr-par-2",
+			expectedErr: &ResponseError{
+				Status:     "400 Bad Request",
+				StatusCode: http.StatusBadRequest,
+				Message:    "server should be running",
+				Type:       "invalid_request_error",
+				Locality:   "fr-par-2",
+				RawBody:    []byte(`{"message":"server should be running","type":"invalid_request_error"}`),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			res := &http.Response{
+				Status:     tc.resStatus,
+				StatusCode: tc.resCode,
+				Header: map[string][]string{
+					"Content-Type": {"application/json"},
+				},
+				Body: io.NopCloser(strings.NewReader(tc.resBody)),
+			}
+
+			err := hasResponseError(res, tc.locality)
+			testhelpers.Assert(t, err != nil, "Should have error")
+			testhelpers.Equals(t, tc.expectedErr, err)
+		})
+	}
+
+	t.Run("empty locality does not alter error string", func(t *testing.T) {
+		t.Parallel()
+
+		res := &http.Response{
+			Status:     "404 Not Found",
+			StatusCode: http.StatusNotFound,
+			Header: map[string][]string{
+				"Content-Type": {"application/json"},
+			},
+			Body: io.NopCloser(strings.NewReader(`{"type":"not_found","resource":"server","resource_id":"11111111-1111-4111-8111-111111111111"}`)),
+		}
+
+		err := hasResponseError(res, "")
+		testhelpers.Assert(t, err != nil, "Should have error")
+		testhelpers.Assert(t, !strings.Contains(err.Error(), "(locality:"), "Error string should not include locality when empty")
+	})
 }
