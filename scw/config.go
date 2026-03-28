@@ -66,7 +66,7 @@ const configFileTemplate = `# Scaleway configuration file
 
 # A configuration is a named set of Scaleway properties.
 # Starting off with a Scaleway SDK or Scaleway CLI, you’ll work with a single configuration named default.
-# You can set properties of the default profile by running either scw init or scw config set. 
+# You can set properties of the default profile by running either scw init or scw config set.
 # This single default configuration is suitable for most use cases.
 {{ if .ActiveProfile }}active_profile: {{ .ActiveProfile }}{{ else }}# active_profile: myProfile{{ end }}
 
@@ -195,12 +195,11 @@ func LoadConfig() (*Config, error) {
 	// Special case if using default config path
 	// if config.yaml does not exist, we should try to read config.yml
 	if os.Getenv(ScwConfigPathEnv) == "" {
-		var configNotFoundError *ConfigFileNotFoundError
-		if err != nil && goerrors.As(err, &configNotFoundError) && strings.HasSuffix(configPath, ".yaml") {
+		if err != nil && goerrors.Is(err, ErrConfigFileNotFound) && strings.HasSuffix(configPath, ".yaml") {
 			configPath = strings.TrimSuffix(configPath, ".yaml") + ".yml"
 			cfgYml, errYml := LoadConfigFromPath(configPath)
 			// If .yml config is not found, return first error when reading .yaml
-			if errYml == nil || (errYml != nil && !goerrors.As(errYml, &configNotFoundError)) {
+			if errYml == nil || (errYml != nil && !goerrors.Is(errYml, ErrConfigFileNotFound)) {
 				return cfgYml, errYml
 			}
 		}
@@ -213,7 +212,7 @@ func LoadConfig() (*Config, error) {
 func LoadConfigFromPath(path string) (*Config, error) {
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		return nil, configFileNotFound(path)
+		return nil, ErrConfigFileNotFound
 	}
 	if err != nil {
 		return nil, err
