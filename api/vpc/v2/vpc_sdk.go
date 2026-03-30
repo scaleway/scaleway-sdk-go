@@ -205,6 +205,47 @@ func (enum *ListRoutesWithNexthopRequestOrderBy) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
+type ListSubnetOverlapsRequestOrderBy string
+
+const (
+	ListSubnetOverlapsRequestOrderBySubnetAsc        = ListSubnetOverlapsRequestOrderBy("subnet_asc")
+	ListSubnetOverlapsRequestOrderBySubnetDesc       = ListSubnetOverlapsRequestOrderBy("subnet_desc")
+	ListSubnetOverlapsRequestOrderByTargetSubnetAsc  = ListSubnetOverlapsRequestOrderBy("target_subnet_asc")
+	ListSubnetOverlapsRequestOrderByTargetSubnetDesc = ListSubnetOverlapsRequestOrderBy("target_subnet_desc")
+)
+
+func (enum ListSubnetOverlapsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListSubnetOverlapsRequestOrderBySubnetAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListSubnetOverlapsRequestOrderBy) Values() []ListSubnetOverlapsRequestOrderBy {
+	return []ListSubnetOverlapsRequestOrderBy{
+		"subnet_asc",
+		"subnet_desc",
+		"target_subnet_asc",
+		"target_subnet_desc",
+	}
+}
+
+func (enum ListSubnetOverlapsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSubnetOverlapsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSubnetOverlapsRequestOrderBy(ListSubnetOverlapsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListSubnetsRequestOrderBy string
 
 const (
@@ -618,6 +659,17 @@ type RouteWithNexthop struct {
 	NexthopResourceType RouteWithNexthopResourceType `json:"nexthop_resource_type"`
 }
 
+// ListSubnetOverlapsResponseSubnetOverlap: list subnet overlaps response subnet overlap.
+type ListSubnetOverlapsResponseSubnetOverlap struct {
+	SubnetID string `json:"subnet_id"`
+
+	Subnet scw.IPNet `json:"subnet"`
+
+	TargetSubnetID string `json:"target_subnet_id"`
+
+	TargetSubnet scw.IPNet `json:"target_subnet"`
+}
+
 // VPCConnector: vpc connector.
 type VPCConnector struct {
 	// ID: vPC connector ID.
@@ -1026,6 +1078,51 @@ func (r *ListRoutesWithNexthopResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Routes = append(r.Routes, results.Routes...)
 	r.TotalCount += uint64(len(results.Routes))
 	return uint64(len(results.Routes)), nil
+}
+
+// ListSubnetOverlapsRequest: list subnet overlaps request.
+type ListSubnetOverlapsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcConnectorID: vPCConnector ID.
+	VpcConnectorID string `json:"-"`
+
+	// OrderBy: sort order of the returned Subnet overlaps.
+	// Default value: subnet_asc
+	OrderBy ListSubnetOverlapsRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of Subnet overlaps to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListSubnetOverlapsResponse: list subnet overlaps response.
+type ListSubnetOverlapsResponse struct {
+	SubnetOverlaps []*ListSubnetOverlapsResponseSubnetOverlap `json:"subnet_overlaps"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSubnetOverlapsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSubnetOverlapsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListSubnetOverlapsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.SubnetOverlaps = append(r.SubnetOverlaps, results.SubnetOverlaps...)
+	r.TotalCount += uint64(len(results.SubnetOverlaps))
+	return uint64(len(results.SubnetOverlaps)), nil
 }
 
 // ListSubnetsRequest: list subnets request.
@@ -2324,6 +2421,48 @@ func (s *API) DeleteVPCConnector(req *DeleteVPCConnectorRequest, opts ...scw.Req
 		return err
 	}
 	return nil
+}
+
+// ListSubnetOverlaps: List subnet overlaps between the VPCConnector VPC and the target VPC or for a specific subnet if specified.
+func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.RequestOption) (*ListSubnetOverlapsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcConnectorID) == "" {
+		return nil, errors.New("field VpcConnectorID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/vpc-connectors/" + fmt.Sprint(req.VpcConnectorID) + "/subnet-overlaps",
+		Query:  query,
+	}
+
+	var resp ListSubnetOverlapsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type RoutesWithNexthopAPI struct {
