@@ -594,6 +594,7 @@ const (
 	ResourceTypeMongodbInstance                 = ResourceType("mongodb_instance")
 	ResourceTypeMongodbInstanceSnapshot         = ResourceType("mongodb_instance_snapshot")
 	ResourceTypeMongodbInstanceEndpoint         = ResourceType("mongodb_instance_endpoint")
+	ResourceTypeMongodbInstanceMaintenance      = ResourceType("mongodb_instance_maintenance")
 	ResourceTypeAppleSiliconRunner              = ResourceType("apple_silicon_runner")
 	ResourceTypeAuditTrailAlertRule             = ResourceType("audit_trail_alert_rule")
 )
@@ -691,6 +692,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"mongodb_instance",
 		"mongodb_instance_snapshot",
 		"mongodb_instance_endpoint",
+		"mongodb_instance_maintenance",
 		"apple_silicon_runner",
 		"audit_trail_alert_rule",
 	}
