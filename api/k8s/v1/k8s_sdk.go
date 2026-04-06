@@ -851,6 +851,12 @@ type ClusterAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel int32 `json:"log_level"`
 }
 
 // ClusterOpenIDConnectConfig: cluster open id connect config.
@@ -957,6 +963,12 @@ type CreateClusterRequestAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request open id connect config.
@@ -1414,6 +1426,12 @@ type UpdateClusterRequestAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request open id connect config.
