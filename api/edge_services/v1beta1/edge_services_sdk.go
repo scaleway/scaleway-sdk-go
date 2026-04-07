@@ -1462,7 +1462,7 @@ type WafStage struct {
 
 // SetRouteRulesRequestRouteRule: set route rules request route rule.
 type SetRouteRulesRequestRouteRule struct {
-	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` or `waf_stage_id` fields. Requests that do not match will be checked by the next rule's condition.
 	// Precisely one of RuleHTTPMatch must be set.
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
@@ -1477,7 +1477,7 @@ type SetRouteRulesRequestRouteRule struct {
 
 // RouteRule: route rule.
 type RouteRule struct {
-	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` or `waf_stage_id` fields. Requests that do not match will be checked by the next rule's condition.
 	// Precisely one of RuleHTTPMatch must be set.
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
@@ -1615,7 +1615,7 @@ type AddRouteRulesRequest struct {
 	// RouteStageID: ID of the route stage to update.
 	RouteStageID string `json:"-"`
 
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
 
 	// AfterPosition: add rules after the given position.
@@ -1629,7 +1629,7 @@ type AddRouteRulesRequest struct {
 
 // AddRouteRulesResponse: add route rules response.
 type AddRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 }
 
@@ -1779,6 +1779,7 @@ type CreateRouteStageRequest struct {
 	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
 	// Precisely one of WafStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
@@ -2342,7 +2343,7 @@ type ListRouteRulesRequest struct {
 
 // ListRouteRulesResponse: list route rules response.
 type ListRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 
 	// TotalCount: count of all route rules matching the requested criteria.
@@ -2587,13 +2588,13 @@ type SetRouteRulesRequest struct {
 	// RouteStageID: ID of the route stage to update.
 	RouteStageID string `json:"-"`
 
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
 }
 
 // SetRouteRulesResponse: set route rules response.
 type SetRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 }
 
@@ -2687,6 +2688,7 @@ type UpdateRouteStageRequest struct {
 	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
 	// Precisely one of WafStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
@@ -3768,7 +3770,7 @@ func (s *API) ListRouteStages(req *ListRouteStagesRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// CreateRouteStage: Create a new route stage. You must specify the `waf_stage_id` field to customize the route.
+// CreateRouteStage: Create a new route stage. You must specify the `waf_stage_id` or `backend_stage_id` fields to customize the route.
 func (s *API) CreateRouteStage(req *CreateRouteStageRequest, opts ...scw.RequestOption) (*RouteStage, error) {
 	var err error
 

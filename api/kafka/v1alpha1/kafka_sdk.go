@@ -835,9 +835,6 @@ type UpdateClusterRequest struct {
 
 	// Tags: tags of a Kafka Cluster.
 	Tags *[]string `json:"tags,omitempty"`
-
-	// Version: version of Kafka.
-	Version *string `json:"version,omitempty"`
 }
 
 // UpdateUserRequest: Update a user of a Kafka cluster.
