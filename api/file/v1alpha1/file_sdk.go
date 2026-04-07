@@ -196,6 +196,18 @@ type Attachment struct {
 	Zone *scw.Zone `json:"zone"`
 }
 
+// FileSystemType: file system type.
+type FileSystemType struct {
+	// Name: filesystem type name.
+	Name string `json:"name"`
+
+	// FilesystemPriceGbPerHour: price of the filesystem billed in GB/hour.
+	FilesystemPriceGbPerHour *scw.Money `json:"filesystem_price_gb_per_hour"`
+
+	// SnapshotPriceGbPerHour: price of the snapshot billed in GB/hour.
+	SnapshotPriceGbPerHour *scw.Money `json:"snapshot_price_gb_per_hour"`
+}
+
 // FileSystem: Represents a filesystem resource and its properties.
 type FileSystem struct {
 	// ID: UUID of the filesystem.
@@ -231,6 +243,9 @@ type FileSystem struct {
 
 	// UpdatedAt: last update date of the properties of the filesystem.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// FilesystemTypeID: UUID of the filesystem type.
+	FilesystemTypeID string `json:"filesystem_type_id"`
 }
 
 // CreateFileSystemRequest: Request to create a new filesystem.
@@ -246,6 +261,9 @@ type CreateFileSystemRequest struct {
 
 	// Size: must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
 	Size uint64 `json:"size"`
+
+	// Type: type of the filesystem.
+	Type *string `json:"type,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
 	Tags []string `json:"tags"`
@@ -322,6 +340,46 @@ func (r *ListAttachmentsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Attachments)), nil
 }
 
+// ListFileSystemTypesRequest: Request to list filesystem types with pagination options.
+type ListFileSystemTypesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number (starts at 1).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of entries per page (default: 50, max: 100).
+	PageSize *uint32 `json:"-"`
+}
+
+// ListFileSystemTypesResponse: list file system types response.
+type ListFileSystemTypesResponse struct {
+	// FilesystemTypes: returns paginated list of filesystem-types.
+	FilesystemTypes []*FileSystemType `json:"filesystem_types"`
+
+	// TotalCount: total number of file system types.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFileSystemTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFileSystemTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListFileSystemTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.FilesystemTypes = append(r.FilesystemTypes, results.FilesystemTypes...)
+	r.TotalCount += uint64(len(results.FilesystemTypes))
+	return uint64(len(results.FilesystemTypes)), nil
+}
+
 // ListFileSystemsRequest: Request to list filesystems with filtering and pagination options.
 type ListFileSystemsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -345,6 +403,9 @@ type ListFileSystemsRequest struct {
 
 	// Name: filter the returned filesystems by their names.
 	Name *string `json:"-"`
+
+	// FilesystemType: type of the filesystem.
+	FilesystemType *string `json:"-"`
 
 	// Tags: filter by tags. Only filesystems with one or more matching tags will be returned.
 	Tags []string `json:"-"`
@@ -414,6 +475,43 @@ func NewAPI(client *scw.Client) *API {
 
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
+}
+
+// ListFileSystemTypes: List filesystems types.
+func (s *API) ListFileSystemTypes(req *ListFileSystemTypesRequest, opts ...scw.RequestOption) (*ListFileSystemTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/filesystem-types",
+		Query:  query,
+	}
+
+	var resp ListFileSystemTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // GetFileSystem: Retrieve all properties and current status of a specific filesystem identified by its ID.
@@ -516,6 +614,7 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "filesystem_type", req.FilesystemType)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "filesystem_ids", req.FilesystemIDs)
 
