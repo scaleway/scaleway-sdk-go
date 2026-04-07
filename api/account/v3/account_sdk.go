@@ -59,6 +59,8 @@ const (
 	ContractTypeNetwork = ContractType("network")
 	// A contract specific to Core products.
 	ContractTypeCore = ContractType("core")
+	// A contract specific to VPS products.
+	ContractTypeVps = ContractType("vps")
 )
 
 func (enum ContractType) String() string {
@@ -79,6 +81,7 @@ func (enum ContractType) Values() []ContractType {
 		"baremetal",
 		"network",
 		"core",
+		"vps",
 	}
 }
 
