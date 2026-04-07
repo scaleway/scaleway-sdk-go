@@ -1813,6 +1813,12 @@ type LBType struct {
 	// Default value: unknown
 	StockStatus LBTypeStock `json:"stock_status"`
 
+	// Bandwidth: maximum bandwidth for a given Load Balancer type.
+	Bandwidth uint64 `json:"bandwidth"`
+
+	// Multicloud: ability to handle backend servers outside Scaleway for a given Load Balancer type.
+	Multicloud bool `json:"multicloud"`
+
 	// Description: load Balancer commercial offer type description.
 	Description string `json:"description"`
 
