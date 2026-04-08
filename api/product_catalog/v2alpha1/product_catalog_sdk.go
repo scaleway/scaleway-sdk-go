@@ -1294,6 +1294,9 @@ type PublicCatalogAPIListPublicCatalogProductsRequest struct {
 
 	// Status: the lists of filtered product status, if empty only products with status public_beta, general_availability, preview, end_of_new_features, end_of_growth, end_of_deployment, end_of_support, end_of_sale, end_of_life or retired will be returned.
 	Status []ListPublicCatalogProductsRequestStatus `json:"-"`
+
+	// APIIDs: filter products by API IDs. Each ID is matched against product-specific identifiers: `dedibox.offer_id` (converted to string), `elastic_metal.offer_id`, `apple_silicon.server_type`, `instance.offer_id`, and `load_balancer.node.offer_id`. Products that do not support API ID filtering are excluded from the results. If empty, no filtering is applied.
+	APIIDs []string `json:"-"`
 }
 
 type PublicCatalogAPI struct {
@@ -1331,6 +1334,7 @@ func (s *PublicCatalogAPI) ListPublicCatalogProducts(req *PublicCatalogAPIListPu
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "product_types", req.ProductTypes)
 	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "api_ids", req.APIIDs)
 	parameter.AddToQuery(query, "global", req.Global)
 	parameter.AddToQuery(query, "region", req.Region)
 	parameter.AddToQuery(query, "zone", req.Zone)
