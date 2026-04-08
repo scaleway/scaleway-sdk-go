@@ -674,6 +674,9 @@ type ListModelsRequest struct {
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
+
 	// Name: filter by model name.
 	Name *string `json:"-"`
 
@@ -1137,6 +1140,7 @@ func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 
