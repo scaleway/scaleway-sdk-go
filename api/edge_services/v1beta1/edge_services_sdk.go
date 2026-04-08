@@ -1086,6 +1086,45 @@ func (enum *SearchWafStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type StageStatus string
+
+const (
+	StageStatusUnknownStatus = StageStatus("unknown_status")
+	StageStatusInactive      = StageStatus("inactive")
+	StageStatusActive        = StageStatus("active")
+)
+
+func (enum StageStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(StageStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum StageStatus) Values() []StageStatus {
+	return []StageStatus{
+		"unknown_status",
+		"inactive",
+		"active",
+	}
+}
+
+func (enum StageStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *StageStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = StageStatus(StageStatus(tmp).String())
+	return nil
+}
+
 type WafStageMode string
 
 const (
@@ -1250,6 +1289,10 @@ type BackendStage struct {
 	// PipelineID: pipeline ID the backend stage belongs to.
 	PipelineID string `json:"pipeline_id"`
 
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
+
 	// CreatedAt: date the backend stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -1285,20 +1328,24 @@ type CacheStage struct {
 	// IncludeCookies: defines whether responses to requests with cookies must be stored in the cache.
 	IncludeCookies bool `json:"include_cookies"`
 
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
+
 	// CreatedAt: date the cache stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// UpdatedAt: date the cache stage was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// BackendStageID: backend stage ID the cache stage is linked to.
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
-	BackendStageID *string `json:"backend_stage_id,omitempty"`
-
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	// BackendStageID: backend stage ID the cache stage is linked to.
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
 	RouteStageID *string `json:"route_stage_id,omitempty"`
 }
 
@@ -1319,6 +1366,10 @@ type DNSStage struct {
 
 	// PipelineID: pipeline ID the DNS stage belongs to.
 	PipelineID string `json:"pipeline_id"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the DNS stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1389,6 +1440,10 @@ type RouteStage struct {
 	// Precisely one of WafStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
+
 	// CreatedAt: date the route stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -1412,6 +1467,10 @@ type TLSStage struct {
 
 	// CertificateExpiresAt: expiration date of the certificate.
 	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the TLS stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1448,6 +1507,10 @@ type WafStage struct {
 
 	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
 	ParanoiaLevel uint32 `json:"paranoia_level"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the WAF stage was created.
 	CreatedAt *time.Time `json:"created_at"`
