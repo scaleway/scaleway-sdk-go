@@ -372,7 +372,7 @@ type Deployment struct {
 	// MinSize: defines the minimum size of the pool.
 	MinSize uint32 `json:"min_size"`
 
-	// MaxSize: defines the maximum size of the pool.
+	// MaxSize: defines the maximum size of the pool. Currently, autoscaling is not yet supported, and this value must be equal to `min_size`.
 	MaxSize uint32 `json:"max_size"`
 
 	// ErrorMessage: displays information if your deployment is in error state.
@@ -510,7 +510,7 @@ type CreateDeploymentRequest struct {
 	// MinSize: defines the minimum size of the pool.
 	MinSize *uint32 `json:"min_size,omitempty"`
 
-	// MaxSize: defines the maximum size of the pool.
+	// MaxSize: defines the maximum size of the pool. Currently, autoscaling is not yet supported, and this value must be equal to `min_size`.
 	MaxSize *uint32 `json:"max_size,omitempty"`
 
 	// Endpoints: list of endpoints to create.
@@ -674,6 +674,9 @@ type ListModelsRequest struct {
 	// ProjectID: filter by Project ID.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: filter by Organization ID.
+	OrganizationID *string `json:"-"`
+
 	// Name: filter by model name.
 	Name *string `json:"-"`
 
@@ -769,7 +772,7 @@ type UpdateDeploymentRequest struct {
 	// MinSize: defines the new minimum size of the pool.
 	MinSize *uint32 `json:"min_size,omitempty"`
 
-	// MaxSize: defines the new maximum size of the pool.
+	// MaxSize: defines the maximum size of the pool. Currently, autoscaling is not yet supported, and this value must be equal to `min_size`.
 	MaxSize *uint32 `json:"max_size,omitempty"`
 
 	// ModelID: id of the model to set to the deployment.
@@ -1137,6 +1140,7 @@ func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*Li
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "tags", req.Tags)
 
