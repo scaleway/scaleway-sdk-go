@@ -24,6 +24,9 @@ const (
 // QueryMatcherIgnore contains the list of query value that should be ignored when matching requests with cassettes
 var QueryMatcherIgnore = []string{
 	"organization_id",
+	"project_id",
+	"start",
+	"end",
 }
 
 func customDockerMatcher(r *http.Request, i cassette.Request) bool {
