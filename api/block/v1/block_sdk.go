@@ -499,6 +499,9 @@ type Snapshot struct {
 	// Class: storage class of the snapshot.
 	// Default value: unknown_storage_class
 	Class StorageClass `json:"class"`
+
+	// Public: true if the snapshot can be used by anyone to create a volume from.
+	Public bool `json:"public"`
 }
 
 // VolumeType: volume type.
@@ -578,6 +581,9 @@ type CreateSnapshotRequest struct {
 
 	// Tags: list of tags assigned to the snapshot.
 	Tags []string `json:"tags"`
+
+	// Public: snapshots are private by default, public snapshots are mainly used to publish OS images.
+	Public bool `json:"public"`
 }
 
 // CreateVolumeRequest: create volume request.
@@ -865,6 +871,9 @@ type UpdateSnapshotRequest struct {
 
 	// Tags: list of tags assigned to the snapshot.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Public: snapshots are private by default, public snapshots are mainly used to publish OS images.
+	Public *bool `json:"public,omitempty"`
 }
 
 // UpdateVolumeRequest: update volume request.
