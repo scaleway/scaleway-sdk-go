@@ -2287,7 +2287,7 @@ type CloneDNSZoneRequest struct {
 
 // CreateDNSZoneRequest: create dns zone request.
 type CreateDNSZoneRequest struct {
-	// Domain: domain in which to crreate the DNS zone.
+	// Domain: domain in which to create the DNS zone.
 	Domain string `json:"domain"`
 
 	// Subdomain: subdomain of the DNS zone to create.
@@ -3433,7 +3433,7 @@ type UpdateDNSZoneRecordsResponse struct {
 
 // UpdateDNSZoneRequest: update dns zone request.
 type UpdateDNSZoneRequest struct {
-	// DNSZone: DNS zone to update.
+	// DNSZone: the full name of the DNS zone to modify. For a root zone (e.g., example.com), enter `example.com`. For a specific sub-zone (e.g., prod.example.com), enter `prod.example.com`.
 	DNSZone string `json:"-"`
 
 	// NewDNSZone: name of the new DNS zone to create.
