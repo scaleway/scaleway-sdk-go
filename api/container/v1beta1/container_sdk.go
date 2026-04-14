@@ -1006,7 +1006,7 @@ type Container struct {
 	// MaxConcurrency: number of maximum concurrent executions of the container.
 	MaxConcurrency uint32 `json:"max_concurrency"`
 
-	// DomainName: domain name attributed to the contaioner.
+	// DomainName: domain name attributed to the container.
 	DomainName string `json:"domain_name"`
 
 	// Protocol: protocol the container uses.
@@ -1134,7 +1134,7 @@ type Namespace struct {
 	// RegistryNamespaceID: UUID of the registry namespace.
 	RegistryNamespaceID string `json:"registry_namespace_id"`
 
-	// ErrorMessage: last error message of the namesace.
+	// ErrorMessage: last error message of the namespace.
 	ErrorMessage *string `json:"error_message"`
 
 	// RegistryEndpoint: registry endpoint of the namespace.
@@ -2386,6 +2386,9 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 }
 
 // CreateContainer: Create a new container in the specified region.
+//
+// When creating a container, the `created` status is no longer used. The deployment process is started
+// and the status is set to `pending` accordingly.
 func (s *API) CreateContainer(req *CreateContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
