@@ -75,6 +75,18 @@ func TestWaitSync(t *testing.T) {
 			expErr:   errors.New("timeout after 1s"),
 		},
 		{
+			name: "Should timeout with result",
+			config: &WaitSyncConfig{
+				Get: func() (v any, isTerminal bool, err error) {
+					time.Sleep(2 * time.Second)
+					return &value{}, true, nil
+				},
+				Timeout: time.Second,
+			},
+			expValue: nil,
+			expErr:   errors.New("timeout after 1s"),
+		},
+		{
 			name: "With interval",
 			config: &WaitSyncConfig{
 				Get:              getMock(2, 0),

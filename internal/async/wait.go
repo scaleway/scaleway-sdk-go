@@ -48,9 +48,9 @@ func WaitSync(config *WaitSyncConfig) (terminalValue any, err error) {
 		config.Timeout = defaultTimeout
 	}
 
-	resultValue := make(chan any)
-	resultErr := make(chan error)
-	timeout := make(chan bool)
+	resultValue := make(chan any, 1)
+	resultErr := make(chan error, 1)
+	timeoutDone := make(chan struct{})
 
 	go func() {
 		for {
@@ -68,7 +68,7 @@ func WaitSync(config *WaitSyncConfig) (terminalValue any, err error) {
 
 			// waiting for an interval before next get() call or a timeout
 			select {
-			case <-timeout:
+			case <-timeoutDone:
 				return
 			case <-config.IntervalStrategy():
 				// sleep
@@ -83,7 +83,10 @@ func WaitSync(config *WaitSyncConfig) (terminalValue any, err error) {
 	case err := <-resultErr:
 		return nil, err
 	case <-time.After(config.Timeout):
-		timeout <- true
+		// Notify that the timeout is reached to stop the goroutine.
+		close(timeoutDone)
+		// Return immediately without waiting for the goroutine to stop, because it will be stopped at the next interval.
+		// We accept that the goroutine may leak for a short time.
 		return nil, fmt.Errorf("timeout after %v", config.Timeout)
 	}
 }
