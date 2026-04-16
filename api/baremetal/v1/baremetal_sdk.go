@@ -1185,6 +1185,15 @@ type RaidController struct {
 	RaidLevel []string `json:"raid_level"`
 }
 
+// BatchCreateServersRequestServerConfig: batch create servers request server config.
+type BatchCreateServersRequestServerConfig struct {
+	Hostname string `json:"hostname"`
+
+	Description string `json:"description"`
+
+	Tags []string `json:"tags"`
+}
+
 // CreateServerRequest: create server request.
 type CreateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1545,6 +1554,23 @@ type BMCAccess struct {
 
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed.
 	ExpiresAt *time.Time `json:"expires_at"`
+}
+
+// BatchCreateServersRequest: batch create servers request.
+type BatchCreateServersRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// CommonConfiguration: configuration wanted for the servers to create.
+	CommonConfiguration *CreateServerRequest `json:"common_configuration,omitempty"`
+
+	// Servers: list of servers to create.
+	Servers []*BatchCreateServersRequestServerConfig `json:"servers"`
+}
+
+// BatchCreateServersResponse: batch create servers response.
+type BatchCreateServersResponse struct {
+	Servers []*Server `json:"servers"`
 }
 
 // DeleteOptionServerRequest: delete option server request.
@@ -2378,6 +2404,38 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// BatchCreateServers: Create multiple new Elastic Metal servers. Once the servers are created, proceed with the [installation of an OS](#post-3e949e).
+func (s *API) BatchCreateServers(req *BatchCreateServersRequest, opts ...scw.RequestOption) (*BatchCreateServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/batch-create-servers",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp BatchCreateServersResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
