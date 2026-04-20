@@ -565,9 +565,6 @@ type Domain struct {
 	// ImapURL: URL of the domain's IMAP service.
 	ImapURL string `json:"imap_url"`
 
-	// JmapURL: URL of the domain's JMAP service.
-	JmapURL string `json:"jmap_url"`
-
 	// Pop3URL: URL of the domain's POP3 service.
 	Pop3URL string `json:"pop3_url"`
 
@@ -646,9 +643,6 @@ type GetDomainRecordsResponse struct {
 
 	// Imap: record that allows accessing the mailbox with the IMAP protocol.
 	Imap *DomainRecord `json:"imap"`
-
-	// Jmap: record that allows accessing the mailbox with the JMAP protocol.
-	Jmap *DomainRecord `json:"jmap"`
 
 	// Mx: record that directs emails to a mail server.
 	Mx *DomainRecord `json:"mx"`
