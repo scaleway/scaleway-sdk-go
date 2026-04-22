@@ -37,6 +37,8 @@ const (
 	ZonePlWaw3 = Zone("pl-waw-3")
 	// ZoneItMil1 represents the it-mil-1 zone
 	ZoneItMil1 = Zone("it-mil-1")
+	// ZoneMultiAZ represents multi-az (multiple zones)
+	ZoneMultiAZ = Zone("multi-az")
 )
 
 // AllZones is an array that list all zones
@@ -138,6 +140,9 @@ func ParseZone(zone string) (Zone, error) {
 		// would be triggered by API market place
 		// logger.Warningf("ams1 is a deprecated name for zone, use nl-ams-1 instead")
 		return ZoneNlAms1, nil
+	case ZoneMultiAZ.String():
+		// would be triggered by API environmental footprint
+		return ZoneMultiAZ, nil
 	default:
 		if !validation.IsZone(zone) {
 			zones := []string(nil)
