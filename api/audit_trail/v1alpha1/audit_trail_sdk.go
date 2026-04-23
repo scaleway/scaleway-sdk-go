@@ -597,6 +597,10 @@ const (
 	ResourceTypeMongodbInstanceMaintenance      = ResourceType("mongodb_instance_maintenance")
 	ResourceTypeAppleSiliconRunner              = ResourceType("apple_silicon_runner")
 	ResourceTypeAuditTrailAlertRule             = ResourceType("audit_trail_alert_rule")
+	ResourceTypeDtwhDeployment                  = ResourceType("dtwh_deployment")
+	ResourceTypeDtwhDeploymentEndpoint          = ResourceType("dtwh_deployment_endpoint")
+	ResourceTypeDtwhDeploymentDatabase          = ResourceType("dtwh_deployment_database")
+	ResourceTypeDtwhDeploymentUser              = ResourceType("dtwh_deployment_user")
 )
 
 func (enum ResourceType) String() string {
@@ -695,6 +699,10 @@ func (enum ResourceType) Values() []ResourceType {
 		"mongodb_instance_maintenance",
 		"apple_silicon_runner",
 		"audit_trail_alert_rule",
+		"dtwh_deployment",
+		"dtwh_deployment_endpoint",
+		"dtwh_deployment_database",
+		"dtwh_deployment_user",
 	}
 }
 
