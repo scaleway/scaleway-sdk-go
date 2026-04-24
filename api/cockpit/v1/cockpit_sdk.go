@@ -237,6 +237,7 @@ const (
 	ExporterStatusReady = ExporterStatus("ready")
 	// The data export encountered an error and stopped sending data.
 	ExporterStatusError = ExporterStatus("error")
+	ExporterStatusIdle  = ExporterStatus("idle")
 )
 
 func (enum ExporterStatus) String() string {
@@ -253,6 +254,7 @@ func (enum ExporterStatus) Values() []ExporterStatus {
 		"creating",
 		"ready",
 		"error",
+		"idle",
 	}
 }
 
