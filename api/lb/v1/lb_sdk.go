@@ -1485,6 +1485,9 @@ type Backend struct {
 
 	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
 	TimeoutQueue *scw.Duration `json:"timeout_queue"`
+
+	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
+	Host *string `json:"host"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -2006,6 +2009,9 @@ type CreateBackendRequest struct {
 
 	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
 	TimeoutQueue *scw.Duration `json:"timeout_queue,omitempty"`
+
+	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
+	Host *string `json:"host,omitempty"`
 }
 
 func (m *CreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -3133,6 +3139,9 @@ type UpdateBackendRequest struct {
 
 	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
 	TimeoutQueue *scw.Duration `json:"timeout_queue,omitempty"`
+
+	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
+	Host *string `json:"host,omitempty"`
 }
 
 func (m *UpdateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -3547,6 +3556,9 @@ type ZonedAPICreateBackendRequest struct {
 
 	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
 	TimeoutQueue *scw.Duration `json:"timeout_queue,omitempty"`
+
+	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
+	Host *string `json:"host,omitempty"`
 }
 
 func (m *ZonedAPICreateBackendRequest) UnmarshalJSON(b []byte) error {
@@ -4344,6 +4356,9 @@ type ZonedAPIUpdateBackendRequest struct {
 
 	// TimeoutQueue: maximum time for a request to be left pending in queue when `max_connections` is reached.
 	TimeoutQueue *scw.Duration `json:"timeout_queue,omitempty"`
+
+	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
+	Host *string `json:"host,omitempty"`
 }
 
 func (m *ZonedAPIUpdateBackendRequest) UnmarshalJSON(b []byte) error {
