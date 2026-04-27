@@ -449,6 +449,47 @@ func (enum *ListTLSStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListVPCEndpointsRequestOrderBy string
+
+const (
+	ListVPCEndpointsRequestOrderByCreatedAtAsc  = ListVPCEndpointsRequestOrderBy("created_at_asc")
+	ListVPCEndpointsRequestOrderByCreatedAtDesc = ListVPCEndpointsRequestOrderBy("created_at_desc")
+	ListVPCEndpointsRequestOrderByNameAsc       = ListVPCEndpointsRequestOrderBy("name_asc")
+	ListVPCEndpointsRequestOrderByNameDesc      = ListVPCEndpointsRequestOrderBy("name_desc")
+)
+
+func (enum ListVPCEndpointsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListVPCEndpointsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListVPCEndpointsRequestOrderBy) Values() []ListVPCEndpointsRequestOrderBy {
+	return []ListVPCEndpointsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListVPCEndpointsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListVPCEndpointsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListVPCEndpointsRequestOrderBy(ListVPCEndpointsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListWafStagesRequestOrderBy string
 
 const (
@@ -1189,6 +1230,8 @@ type ScalewayLB struct {
 
 	// HasWebsocket: defines whether to forward websocket requests to the load balancer.
 	HasWebsocket *bool `json:"has_websocket"`
+
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // RuleHTTPMatchHostFilter: rule http match host filter.
@@ -1359,6 +1402,8 @@ type DNSStage struct {
 	// DefaultFqdn: default Fully Qualified Domain Name attached to the stage.
 	DefaultFqdn string `json:"default_fqdn"`
 
+	DefaultPrivateFqdn string `json:"default_private_fqdn"`
+
 	// Fqdns: list of additional (custom) Fully Qualified Domain Names attached to the stage.
 	Fqdns []string `json:"fqdns"`
 
@@ -1393,6 +1438,9 @@ type DNSStage struct {
 
 	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
 	WildcardDomain bool `json:"wildcard_domain"`
+
+	// FullPrivate: fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate bool `json:"full_private"`
 }
 
 // Pipeline: pipeline.
@@ -1424,6 +1472,8 @@ type Pipeline struct {
 
 	// UpdatedAt: date the pipeline was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // RouteStage: route stage.
@@ -1652,6 +1702,18 @@ type PurgeRequest struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// VPCEndpoint: vpc endpoint.
+type VPCEndpoint struct {
+	ID string `json:"id"`
+
+	ProjectID string `json:"project_id"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	PrivateNetworkID string `json:"private_network_id"`
+}
+
 // SetHeadStageRequestAddNewHeadStage: set head stage request add new head stage.
 type SetHeadStageRequestAddNewHeadStage struct {
 	NewStageID string `json:"new_stage_id"`
@@ -1809,6 +1871,9 @@ type CreateDNSStageRequest struct {
 
 	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
 	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
+
+	// FullPrivate: when true, Fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate *bool `json:"full_private,omitempty"`
 }
 
 // CreatePipelineRequest: create pipeline request.
@@ -1821,6 +1886,8 @@ type CreatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description string `json:"description"`
+
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // CreatePurgeRequestRequest: create purge request request.
@@ -1875,6 +1942,16 @@ type CreateTLSStageRequest struct {
 
 	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+}
+
+// CreateVPCEndpointRequest: create vpc endpoint request.
+type CreateVPCEndpointRequest struct {
+	ProjectID string `json:"project_id"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	PrivateNetworkID string `json:"private_network_id"`
 }
 
 // CreateWafStageRequest: create waf stage request.
@@ -1933,6 +2010,11 @@ type DeleteRouteStageRequest struct {
 type DeleteTLSStageRequest struct {
 	// TLSStageID: ID of the TLS stage to delete.
 	TLSStageID string `json:"-"`
+}
+
+// DeleteVPCEndpointRequest: delete vpc endpoint request.
+type DeleteVPCEndpointRequest struct {
+	VpcEndpointID string `json:"-"`
 }
 
 // DeleteWafStageRequest: delete waf stage request.
@@ -2033,6 +2115,11 @@ type GetRouteStageRequest struct {
 type GetTLSStageRequest struct {
 	// TLSStageID: ID of the requested TLS stage.
 	TLSStageID string `json:"-"`
+}
+
+// GetVPCEndpointRequest: get vpc endpoint request.
+type GetVPCEndpointRequest struct {
+	VpcEndpointID string `json:"-"`
 }
 
 // GetWafStageRequest: get waf stage request.
@@ -2530,6 +2617,46 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Stages)), nil
 }
 
+// ListVPCEndpointsRequest: list vpc endpoints request.
+type ListVPCEndpointsRequest struct {
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListVPCEndpointsRequestOrderBy `json:"-"`
+
+	ProjectID *string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+}
+
+// ListVPCEndpointsResponse: list vpc endpoints response.
+type ListVPCEndpointsResponse struct {
+	TotalCount uint64 `json:"total_count"`
+
+	VpcEndpoints []*VPCEndpoint `json:"vpc_endpoints"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVPCEndpointsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVPCEndpointsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListVPCEndpointsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.VpcEndpoints = append(r.VpcEndpoints, results.VpcEndpoints...)
+	r.TotalCount += uint64(len(results.VpcEndpoints))
+	return uint64(len(results.VpcEndpoints)), nil
+}
+
 // ListWafStagesRequest: list waf stages request.
 type ListWafStagesRequest struct {
 	// PipelineID: pipeline ID to filter for. Only WAF stages from this pipeline will be returned.
@@ -2734,6 +2861,9 @@ type UpdateDNSStageRequest struct {
 
 	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
 	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
+
+	// FullPrivate: when true, Fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate *bool `json:"full_private,omitempty"`
 }
 
 // UpdatePipelineRequest: update pipeline request.
@@ -2746,6 +2876,8 @@ type UpdatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description *string `json:"description,omitempty"`
+
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // UpdateRouteStageRequest: update route stage request.
@@ -3014,6 +3146,112 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetVPCEndpoint:
+func (s *API) GetVPCEndpoint(req *GetVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
+	var err error
+
+	if fmt.Sprint(req.VpcEndpointID) == "" {
+		return nil, errors.New("field VpcEndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/vpc-endpoints/" + fmt.Sprint(req.VpcEndpointID) + "",
+	}
+
+	var resp VPCEndpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListVPCEndpoints:
+func (s *API) ListVPCEndpoints(req *ListVPCEndpointsRequest, opts ...scw.RequestOption) (*ListVPCEndpointsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/vpc-endpoints",
+		Query:  query,
+	}
+
+	var resp ListVPCEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateVPCEndpoint:
+func (s *API) CreateVPCEndpoint(req *CreateVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/vpc-endpoints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPCEndpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteVPCEndpoint:
+func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.VpcEndpointID) == "" {
+		return errors.New("field VpcEndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1beta1/vpc-endpoints/" + fmt.Sprint(req.VpcEndpointID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
