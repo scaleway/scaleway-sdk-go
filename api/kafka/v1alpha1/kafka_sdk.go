@@ -56,6 +56,7 @@ const (
 	ClusterStatusError         = ClusterStatus("error")
 	ClusterStatusLocked        = ClusterStatus("locked")
 	ClusterStatusStopped       = ClusterStatus("stopped")
+	ClusterStatusUpgrading     = ClusterStatus("upgrading")
 )
 
 func (enum ClusterStatus) String() string {
@@ -76,6 +77,7 @@ func (enum ClusterStatus) Values() []ClusterStatus {
 		"error",
 		"locked",
 		"stopped",
+		"upgrading",
 	}
 }
 
@@ -1043,6 +1045,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 		ClusterStatusCreating:    {},
 		ClusterStatusConfiguring: {},
 		ClusterStatusDeleting:    {},
+		ClusterStatusUpgrading:   {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
