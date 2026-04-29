@@ -124,6 +124,7 @@ const (
 	ResourceTypeDtwhDeployment         = ResourceType("dtwh_deployment")
 	ResourceTypeSedbCluster            = ResourceType("sedb_cluster")
 	ResourceTypeMsgqCluster            = ResourceType("msgq_cluster")
+	ResourceTypeEdgeVpcEndpoint        = ResourceType("edge_vpc_endpoint")
 )
 
 func (enum ResourceType) String() string {
@@ -165,6 +166,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"dtwh_deployment",
 		"sedb_cluster",
 		"msgq_cluster",
+		"edge_vpc_endpoint",
 	}
 }
 
