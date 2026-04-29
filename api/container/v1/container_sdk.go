@@ -1607,6 +1607,9 @@ type ListTriggersRequest struct {
 	NamespaceID *string `json:"-"`
 
 	ContainerID *string `json:"-"`
+
+	// TriggerType: default value: unknown_source_type
+	TriggerType TriggerSourceType `json:"-"`
 }
 
 // ListTriggersResponse: list triggers response.
@@ -2678,7 +2681,7 @@ func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOpti
 
 // ListTriggers: By default, the triggers listed are ordered by creation date in ascending order. This can be modified via the `order_by` field.
 //
-// Additional parameters can be set in the query to filter, such as `organization_id`, `project_id`, `namespace_id`, or `container_id`.
+// Additional parameters can be set in the query to filter, such as `organization_id`, `project_id`, `namespace_id`, `container_id` or `trigger_type`.
 func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
 	var err error
 
@@ -2700,6 +2703,7 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "namespace_id", req.NamespaceID)
 	parameter.AddToQuery(query, "container_id", req.ContainerID)
+	parameter.AddToQuery(query, "trigger_type", req.TriggerType)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
