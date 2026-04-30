@@ -601,6 +601,8 @@ const (
 	ResourceTypeDtwhDeploymentEndpoint          = ResourceType("dtwh_deployment_endpoint")
 	ResourceTypeDtwhDeploymentDatabase          = ResourceType("dtwh_deployment_database")
 	ResourceTypeDtwhDeploymentUser              = ResourceType("dtwh_deployment_user")
+	ResourceTypeSsdbDatabase                    = ResourceType("ssdb_database")
+	ResourceTypeSsdbDatabaseBackup              = ResourceType("ssdb_database_backup")
 )
 
 func (enum ResourceType) String() string {
@@ -703,6 +705,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"dtwh_deployment_endpoint",
 		"dtwh_deployment_database",
 		"dtwh_deployment_user",
+		"ssdb_database",
+		"ssdb_database_backup",
 	}
 }
 
