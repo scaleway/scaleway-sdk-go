@@ -237,7 +237,7 @@ type ZoneImpact struct {
 	// TotalZoneImpact: the total estimated impact for this zone across all given service categories, and product categories during the given period.
 	TotalZoneImpact *Impact `json:"total_zone_impact"`
 
-	// Skus: list of estimated impact values per SKU.
+	// Skus: list of estimated impact values per SKU for this zone.
 	Skus []*SkuImpact `json:"skus"`
 }
 
@@ -251,6 +251,9 @@ type RegionImpact struct {
 
 	// Zones: list of estimated impact values per zone.
 	Zones []*ZoneImpact `json:"zones"`
+
+	// Skus: list of estimated impact values per SKU for this region.
+	Skus []*SkuImpact `json:"skus"`
 }
 
 // ProjectImpact: project impact.
