@@ -795,7 +795,7 @@ type UpdateEndpointRequest struct {
 	DisableAuth *bool `json:"disable_auth,omitempty"`
 }
 
-// This API allows you to handle your Managed Inference services.
+// This API allows you to handle your Generative APIs - Dedicated Deployment services.
 type API struct {
 	client *scw.Client
 }
