@@ -1416,6 +1416,7 @@ type GetContainerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// ContainerID: UUID of the container to get.
 	ContainerID string `json:"-"`
 }
 
@@ -1424,6 +1425,7 @@ type GetDomainRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// DomainID: UUID of the domain to get.
 	DomainID string `json:"-"`
 }
 
@@ -1432,6 +1434,7 @@ type GetNamespaceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// NamespaceID: UUID of the namespace to get.
 	NamespaceID string `json:"-"`
 }
 
@@ -1446,6 +1449,7 @@ type GetTriggerRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// TriggerID: ID of the trigger to get.
 	TriggerID string `json:"-"`
 }
 
