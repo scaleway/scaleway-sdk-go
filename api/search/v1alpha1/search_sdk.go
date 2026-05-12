@@ -111,10 +111,14 @@ const (
 	ResourceTypeIfrModel  = ResourceType("ifr_model")
 	ResourceTypeGapiBatch = ResourceType("gapi_batch")
 	// DataWarehouse for Clickhouse deployment.
-	ResourceTypeDtwhDeployment = ResourceType("dtwh_deployment")
-	ResourceTypeObsDatasource  = ResourceType("obs_datasource")
-	ResourceTypeObsToken       = ResourceType("obs_token")
-	ResourceTypeObsAlert       = ResourceType("obs_alert")
+	ResourceTypeDtwhDeployment      = ResourceType("dtwh_deployment")
+	ResourceTypeObsDatasource       = ResourceType("obs_datasource")
+	ResourceTypeObsToken            = ResourceType("obs_token")
+	ResourceTypeObsAlert            = ResourceType("obs_alert")
+	ResourceTypeSvpnVpnGateway      = ResourceType("svpn_vpn_gateway")
+	ResourceTypeSvpnCustomerGateway = ResourceType("svpn_customer_gateway")
+	ResourceTypeSvpnConnection      = ResourceType("svpn_connection")
+	ResourceTypeSvpnRoutingPolicy   = ResourceType("svpn_routing_policy")
 )
 
 func (enum ResourceType) String() string {
@@ -170,6 +174,10 @@ func (enum ResourceType) Values() []ResourceType {
 		"obs_datasource",
 		"obs_token",
 		"obs_alert",
+		"svpn_vpn_gateway",
+		"svpn_customer_gateway",
+		"svpn_connection",
+		"svpn_routing_policy",
 	}
 }
 
