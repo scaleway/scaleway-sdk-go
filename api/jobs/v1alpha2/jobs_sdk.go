@@ -518,6 +518,11 @@ type UpdateJobDefinitionRequestCronScheduleConfig struct {
 	Timezone *string `json:"timezone"`
 }
 
+// UpdateJobDefinitionRequestUpdateRetryPolicy: update job definition request update retry policy.
+type UpdateJobDefinitionRequestUpdateRetryPolicy struct {
+	MaxRetries *uint32 `json:"max_retries"`
+}
+
 // UpdateTriggerRequestCronConfig: update trigger request cron config.
 type UpdateTriggerRequestCronConfig struct {
 	// Schedule: cRON schedule in UNIX format.
@@ -972,7 +977,7 @@ type UpdateJobDefinitionRequest struct {
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 
 	// RetryPolicy: retry behaviour in case of job failure.
-	RetryPolicy *RetryPolicy `json:"retry_policy,omitempty"`
+	RetryPolicy *UpdateJobDefinitionRequestUpdateRetryPolicy `json:"retry_policy,omitempty"`
 }
 
 // UpdateSecretRequest: update secret request.
