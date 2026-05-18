@@ -643,9 +643,6 @@ type ListDeploymentsRequest struct {
 
 	// Name: deployment name to filter for, only deployments with this string within their name will be returned.
 	Name *string `json:"-"`
-
-	// Version: engine version to filter for, only deployments with this version will be returned.
-	Version *string `json:"-"`
 }
 
 // ListDeploymentsResponse: list deployments response.
@@ -1118,7 +1115,6 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "version", req.Version)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
