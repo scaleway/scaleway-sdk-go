@@ -2781,7 +2781,7 @@ type IP struct {
 
 // Offer: offer.
 type Offer struct {
-	// ID: ID of the offer.
+	// ID: ID of the offer (aka product.id).
 	ID uint64 `json:"id"`
 
 	// Name: name of the offer.
@@ -2797,6 +2797,9 @@ type Offer struct {
 
 	// Pricing: price of the offer.
 	Pricing *scw.Money `json:"pricing"`
+
+	// OfferID: original Dedibox ID of the offer.
+	OfferID *uint64 `json:"offer_id"`
 
 	// ServerInfo: server info if it is a server offer.
 	// Precisely one of ServerInfo, ServiceLevelInfo, RpnInfo, SanInfo, AntidosInfo, BackupInfo, UsbStorageInfo, StorageInfo, LicenseInfo, FailoverIPInfo, FailoverBlockInfo, BandwidthInfo must be set.
