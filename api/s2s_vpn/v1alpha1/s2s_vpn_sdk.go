@@ -664,6 +664,13 @@ type CreateConnectionRequestBgpConfig struct {
 	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
 }
 
+// CreateConnectionRequestSecret: create connection request secret.
+type CreateConnectionRequestSecret struct {
+	ID string `json:"id"`
+
+	Revision *uint32 `json:"revision"`
+}
+
 // Connection: connection.
 type Connection struct {
 	// ID: unique identifier of the connection.
@@ -945,6 +952,9 @@ type CreateConnectionRequest struct {
 
 	// EnableRoutePropagation: defines whether route propagation is enabled or not.
 	EnableRoutePropagation bool `json:"enable_route_propagation"`
+
+	// Secret: specifies the pre-shared key used for the IPsec tunnel.
+	Secret *CreateConnectionRequestSecret `json:"secret,omitempty"`
 
 	// VpnGatewayID: ID of the VPN gateway to attach to the connection.
 	VpnGatewayID string `json:"vpn_gateway_id"`
