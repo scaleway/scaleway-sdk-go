@@ -38,6 +38,15 @@ func customDockerMatcher(r *http.Request, i cassette.Request) bool {
 	return r.URL.String() == escapedRecordedURL
 }
 
+func unescapeDockerURL(i *cassette.Interaction) error {
+	i.Request.URL = regexp.MustCompile(`http://`+escapedUnixDockerEngine+`(.+)?`).
+		ReplaceAllString(
+			i.Request.URL,
+			"http://"+unixDockerEngine+"${1}")
+
+	return nil
+}
+
 func customS3BodyMatcher(r *http.Request, i cassette.Request) bool {
 	reqBody, err := r.GetBody()
 	if err != nil {

@@ -83,6 +83,9 @@ func NewHTTPRecorder(t *testing.T, pkgFolder string, update bool, realTransport 
 	recorderOptions := []recorder.Option{
 		// Ignore requests durations when replaying cassettes
 		recorder.WithSkipRequestLatency(true),
+		// Starting with v3, go-vcr now calls net/url.Parse to build the interaction which results in an error for escaped
+		// Docker URLs on Test_Deploy (container), so we need to unescape these paths on this step.
+		recorder.WithHook(unescapeDockerURL, recorder.AfterCaptureHook),
 		// Remove information that is either sensitive or that would disrupt matching from the request
 		recorder.WithHook(cassetteRequestFilter, recorder.BeforeSaveHook),
 		// Remove secrets and unnecessary information from the response
