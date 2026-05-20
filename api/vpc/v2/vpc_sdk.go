@@ -119,6 +119,51 @@ func (enum *Action) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListIngressRulesRequestOrderBy string
+
+const (
+	ListIngressRulesRequestOrderByCreatedAtAsc  = ListIngressRulesRequestOrderBy("created_at_asc")
+	ListIngressRulesRequestOrderByCreatedAtDesc = ListIngressRulesRequestOrderBy("created_at_desc")
+	ListIngressRulesRequestOrderBySourceAsc     = ListIngressRulesRequestOrderBy("source_asc")
+	ListIngressRulesRequestOrderBySourceDesc    = ListIngressRulesRequestOrderBy("source_desc")
+	ListIngressRulesRequestOrderByPrefixLenAsc  = ListIngressRulesRequestOrderBy("prefix_len_asc")
+	ListIngressRulesRequestOrderByPrefixLenDesc = ListIngressRulesRequestOrderBy("prefix_len_desc")
+)
+
+func (enum ListIngressRulesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListIngressRulesRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListIngressRulesRequestOrderBy) Values() []ListIngressRulesRequestOrderBy {
+	return []ListIngressRulesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"source_asc",
+		"source_desc",
+		"prefix_len_asc",
+		"prefix_len_desc",
+	}
+}
+
+func (enum ListIngressRulesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListIngressRulesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListIngressRulesRequestOrderBy(ListIngressRulesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPrivateNetworksRequestOrderBy string
 
 const (
@@ -643,6 +688,29 @@ type ACLRule struct {
 	Description *string `json:"description"`
 }
 
+// IngressRule: ingress rule.
+type IngressRule struct {
+	ID string `json:"id"`
+
+	VpcID string `json:"vpc_id"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	IsIPv6 bool `json:"is_ipv6"`
+
+	Source scw.IPNet `json:"source"`
+
+	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
+
+	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
+
+	Description *string `json:"description"`
+
+	Tags []string `json:"tags"`
+}
+
 // RouteWithNexthop: route with nexthop.
 type RouteWithNexthop struct {
 	// Route: route.
@@ -766,6 +834,24 @@ type AddSubnetsResponse struct {
 	Subnets []scw.IPNet `json:"subnets"`
 }
 
+// CreateIngressRuleRequest: create ingress rule request.
+type CreateIngressRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	VpcID string `json:"vpc_id"`
+
+	Source scw.IPNet `json:"source"`
+
+	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
+
+	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
+
+	Description *string `json:"description,omitempty"`
+
+	Tags []string `json:"tags"`
+}
+
 // CreatePrivateNetworkRequest: create private network request.
 type CreatePrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -851,6 +937,14 @@ type CreateVPCRequest struct {
 
 	// EnableRouting: enable routing between Private Networks in the VPC.
 	EnableRouting bool `json:"enable_routing"`
+}
+
+// DeleteIngressRuleRequest: delete ingress rule request.
+type DeleteIngressRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	RuleID string `json:"-"`
 }
 
 // DeletePrivateNetworkRequest: delete private network request.
@@ -953,6 +1047,14 @@ type GetACLResponse struct {
 	DefaultPolicy Action `json:"default_policy"`
 }
 
+// GetIngressRuleRequest: get ingress rule request.
+type GetIngressRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	RuleID string `json:"-"`
+}
+
 // GetPrivateNetworkRequest: get private network request.
 type GetPrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -987,6 +1089,55 @@ type GetVPCRequest struct {
 
 	// VpcID: vPC ID.
 	VpcID string `json:"-"`
+}
+
+// ListIngressRulesRequest: list ingress rules request.
+type ListIngressRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListIngressRulesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	VpcID *string `json:"-"`
+
+	NexthopResourceIP *net.IP `json:"-"`
+
+	NexthopPrivateNetworkID *string `json:"-"`
+
+	IsIPv6 *bool `json:"-"`
+
+	Tags []string `json:"-"`
+}
+
+// ListIngressRulesResponse: list ingress rules response.
+type ListIngressRulesResponse struct {
+	Rules []*IngressRule `json:"rules"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListIngressRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListIngressRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListIngressRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Rules = append(r.Rules, results.Rules...)
+	r.TotalCount += uint64(len(results.Rules))
+	return uint64(len(results.Rules)), nil
 }
 
 // ListPrivateNetworksRequest: list private networks request.
@@ -1369,6 +1520,24 @@ type SetACLResponse struct {
 
 	// DefaultPolicy: default value: unknown_action
 	DefaultPolicy Action `json:"default_policy"`
+}
+
+// UpdateIngressRuleRequest: update ingress rule request.
+type UpdateIngressRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	RuleID string `json:"-"`
+
+	Source *scw.IPNet `json:"source,omitempty"`
+
+	NexthopResourceIP *net.IP `json:"nexthop_resource_ip,omitempty"`
+
+	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
+
+	Description *string `json:"description,omitempty"`
+
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdatePrivateNetworkRequest: update private network request.
@@ -2463,6 +2632,177 @@ func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.Req
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// ListIngressRules:
+func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.RequestOption) (*ListIngressRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "vpc_id", req.VpcID)
+	parameter.AddToQuery(query, "nexthop_resource_ip", req.NexthopResourceIP)
+	parameter.AddToQuery(query, "nexthop_private_network_id", req.NexthopPrivateNetworkID)
+	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
+	parameter.AddToQuery(query, "tags", req.Tags)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules",
+		Query:  query,
+	}
+
+	var resp ListIngressRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateIngressRule:
+func (s *API) CreateIngressRule(req *CreateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IngressRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetIngressRule:
+func (s *API) GetIngressRule(req *GetIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RuleID) == "" {
+		return nil, errors.New("field RuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules/" + fmt.Sprint(req.RuleID) + "",
+	}
+
+	var resp IngressRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateIngressRule:
+func (s *API) UpdateIngressRule(req *UpdateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RuleID) == "" {
+		return nil, errors.New("field RuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules/" + fmt.Sprint(req.RuleID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IngressRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteIngressRule:
+func (s *API) DeleteIngressRule(req *DeleteIngressRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.RuleID) == "" {
+		return errors.New("field RuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules/" + fmt.Sprint(req.RuleID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type RoutesWithNexthopAPI struct {
