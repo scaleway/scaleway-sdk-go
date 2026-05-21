@@ -608,8 +608,8 @@ type DeleteUserRequest struct {
 	Username string `json:"-"`
 }
 
-// GetDeploymentCertificateAuthorityRequest: get deployment certificate authority request.
-type GetDeploymentCertificateAuthorityRequest struct {
+// DownloadDeploymentCertificateAuthorityRequest: download deployment certificate authority request.
+type DownloadDeploymentCertificateAuthorityRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
@@ -1433,8 +1433,8 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 	return nil
 }
 
-// GetDeploymentCertificateAuthority:
-func (s *API) GetDeploymentCertificateAuthority(req *GetDeploymentCertificateAuthorityRequest, opts ...scw.RequestOption) (*scw.File, error) {
+// DownloadDeploymentCertificateAuthority:
+func (s *API) DownloadDeploymentCertificateAuthority(req *DownloadDeploymentCertificateAuthorityRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
 	if req.Region == "" {
