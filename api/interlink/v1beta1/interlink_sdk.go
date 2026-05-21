@@ -140,6 +140,8 @@ type LinkKind string
 const (
 	LinkKindHosted     = LinkKind("hosted")
 	LinkKindSelfHosted = LinkKind("self_hosted")
+	LinkKindL2Hosted   = LinkKind("l2_hosted")
+	LinkKindL3Hosted   = LinkKind("l3_hosted")
 )
 
 func (enum LinkKind) String() string {
@@ -154,6 +156,8 @@ func (enum LinkKind) Values() []LinkKind {
 	return []LinkKind{
 		"hosted",
 		"self_hosted",
+		"l2_hosted",
+		"l3_hosted",
 	}
 }
 
@@ -471,6 +475,9 @@ type PartnerHost struct {
 
 	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
 	DisapprovedReason *string `json:"disapproved_reason"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
 }
 
 // SelfHost: self host.
@@ -624,6 +631,9 @@ type Partner struct {
 
 	// UpdatedAt: last modification date of the partner.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
 }
 
 // Pop: pop.
@@ -1059,6 +1069,9 @@ type ListPartnersRequest struct {
 
 	// PopIDs: filter for partners present (offering a connection) in one of these PoPs.
 	PopIDs []string `json:"-"`
+
+	// L3Connectivity: filter for partners supporting L3 connectivity.
+	L3Connectivity *bool `json:"-"`
 }
 
 // ListPartnersResponse: list partners response.
@@ -1113,11 +1126,14 @@ type ListPopsRequest struct {
 	// PartnerID: filter for PoPs hosting an available shared connection from this partner.
 	PartnerID *string `json:"-"`
 
-	// LinkBandwidthMbps: filter for PoPs with a shared connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
+	// LinkBandwidthMbps: filter for PoPs with a connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
 	LinkBandwidthMbps *uint64 `json:"-"`
 
 	// DedicatedAvailable: filter for PoPs with a dedicated connection available for self-hosted links.
 	DedicatedAvailable *bool `json:"-"`
+
+	// L3ConnectivityPartners: filter for PoPs with a shared connection available from a partner supporting L3 connectivity.
+	L3ConnectivityPartners *bool `json:"-"`
 }
 
 // ListPopsResponse: list pops response.
@@ -1414,6 +1430,7 @@ func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "pop_ids", req.PopIDs)
+	parameter.AddToQuery(query, "l3_connectivity", req.L3Connectivity)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1488,6 +1505,7 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	parameter.AddToQuery(query, "partner_id", req.PartnerID)
 	parameter.AddToQuery(query, "link_bandwidth_mbps", req.LinkBandwidthMbps)
 	parameter.AddToQuery(query, "dedicated_available", req.DedicatedAvailable)
+	parameter.AddToQuery(query, "l3_connectivity_partners", req.L3ConnectivityPartners)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
