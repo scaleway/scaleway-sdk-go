@@ -30,12 +30,21 @@ var QueryMatcherIgnore = []string{
 }
 
 func customDockerMatcher(r *http.Request, i cassette.Request) bool {
+	// URL is stored unescaped for human readability, but will be escaped in request
 	escapedRecordedURL := regexp.MustCompile(`http://`+unixDockerEngine+`(.+)?`).
 		ReplaceAllString(
 			i.URL,
 			"http://"+escapedUnixDockerEngine+"${1}")
 
-	return r.URL.String() == escapedRecordedURL
+	// Buildpacks
+	// URL is stored normalized on the cassette, so we need to normalize the request to compare them
+	normalizedRequestURL := r.URL.String()
+	normalizedRequestURL = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
+		ReplaceAllString(normalizedRequestURL, "pack.local/builder/11111111111111111111")
+	normalizedRequestURL = regexp.MustCompile(`pack\.local%2Fbuilder%2F[0-9a-f]{20}`).
+		ReplaceAllString(normalizedRequestURL, "pack.local%2Fbuilder%2F11111111111111111111")
+
+	return normalizedRequestURL == escapedRecordedURL
 }
 
 func unescapeDockerURL(i *cassette.Interaction) error {
