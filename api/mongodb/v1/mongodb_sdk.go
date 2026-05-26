@@ -571,6 +571,16 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// EngineUpgrade: engine upgrade.
+type EngineUpgrade struct {
+	NewVersionID string `json:"new_version_id"`
+}
+
+// ServiceUpdate: service update.
+type ServiceUpdate struct {
+	ServiceName string `json:"service_name"`
+}
+
 // EndpointPrivateNetworkDetails: Private Network details.
 type EndpointPrivateNetworkDetails struct {
 	// PrivateNetworkID: UUID of the Private Network.
@@ -580,14 +590,13 @@ type EndpointPrivateNetworkDetails struct {
 // EndpointPublicNetworkDetails: Public Access details.
 type EndpointPublicNetworkDetails struct{}
 
-// EngineUpgrade: engine upgrade.
-type EngineUpgrade struct {
-	NewVersionID string `json:"new_version_id"`
-}
+// Workflow: workflow.
+type Workflow struct {
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
 
-// ServiceUpdate: service update.
-type ServiceUpdate struct {
-	ServiceName string `json:"service_name"`
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
 }
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
@@ -639,6 +648,44 @@ type InstanceSnapshotSchedule struct {
 	LastRun *time.Time `json:"last_run"`
 }
 
+// Maintenance: maintenance.
+type Maintenance struct {
+	// ID: ID of the maintenance.
+	ID string `json:"id"`
+
+	// InstanceID: ID of the instance on which the maintenance is applied.
+	InstanceID string `json:"instance_id"`
+
+	// CreatedAt: creation date of the maintenance.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// StartsAt: start date of the maintenance.
+	StartsAt *time.Time `json:"starts_at"`
+
+	// StopsAt: stop date of the maintenance.
+	StopsAt *time.Time `json:"stops_at"`
+
+	// Status: current status of the maintenance.
+	// Default value: unknown_status
+	Status MaintenanceStatus `json:"status"`
+
+	// ForcedAt: forced application date of the maintenance.
+	ForcedAt *time.Time `json:"forced_at"`
+
+	// AppliedAt: application date of the maintenance.
+	AppliedAt *time.Time `json:"applied_at"`
+
+	// AppliedBy: usertype who launched the maintenance.
+	// Default value: unknown_applied_by
+	AppliedBy MaintenanceAppliedBy `json:"applied_by"`
+
+	// Workflow: workflow to be applied during maintenance.
+	Workflow *Workflow `json:"workflow"`
+
+	// Reason: reason of the maintenance.
+	Reason string `json:"reason"`
+}
+
 // Volume: volume.
 type Volume struct {
 	// Type: type of volume where data is stored.
@@ -647,15 +694,6 @@ type Volume struct {
 
 	// SizeBytes: volume size.
 	SizeBytes scw.Size `json:"size_bytes"`
-}
-
-// Workflow: workflow.
-type Workflow struct {
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
-	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
-
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
-	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
 }
 
 // NodeTypeVolumeType: node type volume type.
@@ -753,44 +791,9 @@ type Instance struct {
 
 	// Settings: list of settings applied to the Database Instance.
 	Settings []*InstanceSetting `json:"settings"`
-}
 
-// Maintenance: maintenance.
-type Maintenance struct {
-	// ID: ID of the maintenance.
-	ID string `json:"id"`
-
-	// InstanceID: ID of the instance on which the maintenance is applied.
-	InstanceID string `json:"instance_id"`
-
-	// CreatedAt: creation date of the maintenance.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// StartsAt: start date of the maintenance.
-	StartsAt *time.Time `json:"starts_at"`
-
-	// StopsAt: stop date of the maintenance.
-	StopsAt *time.Time `json:"stops_at"`
-
-	// Status: current status of the maintenance.
-	// Default value: unknown_status
-	Status MaintenanceStatus `json:"status"`
-
-	// ForcedAt: forced application date of the maintenance.
-	ForcedAt *time.Time `json:"forced_at"`
-
-	// AppliedAt: application date of the maintenance.
-	AppliedAt *time.Time `json:"applied_at"`
-
-	// AppliedBy: usertype who launched the maintenance.
-	// Default value: unknown_applied_by
-	AppliedBy MaintenanceAppliedBy `json:"applied_by"`
-
-	// Workflow: workflow to be applied during maintenance.
-	Workflow *Workflow `json:"workflow"`
-
-	// Reason: reason of the maintenance.
-	Reason string `json:"reason"`
+	// Maintenances: list of pending maintenances applicable to the Database Instance.
+	Maintenances []*Maintenance `json:"maintenances"`
 }
 
 // NodeType: node type.
@@ -1109,6 +1112,9 @@ type ListInstancesRequest struct {
 
 	// ProjectID: project ID to list the instances of.
 	ProjectID *string `json:"-"`
+
+	// HasMaintenance: retrieve pending maintenances for the database instances if given.
+	HasMaintenance *bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1590,6 +1596,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "has_maintenance", req.HasMaintenance)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
