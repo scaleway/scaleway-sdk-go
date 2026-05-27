@@ -655,17 +655,8 @@ type VpnGatewayPublicConfig struct {
 	IpamIPv6ID *string `json:"ipam_ipv6_id"`
 }
 
-// CreateConnectionRequestBgpConfig: create connection request bgp config.
-type CreateConnectionRequestBgpConfig struct {
-	RoutingPolicyID string `json:"routing_policy_id"`
-
-	PrivateIP *scw.IPNet `json:"private_ip"`
-
-	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
-}
-
-// CreateConnectionRequestSecret: create connection request secret.
-type CreateConnectionRequestSecret struct {
+// ChangeConnectionPskRequestSecret: change connection psk request secret.
+type ChangeConnectionPskRequestSecret struct {
 	ID string `json:"id"`
 
 	Revision *uint32 `json:"revision"`
@@ -754,6 +745,22 @@ type Connection struct {
 
 	// Region: region of the connection.
 	Region scw.Region `json:"region"`
+}
+
+// CreateConnectionRequestBgpConfig: create connection request bgp config.
+type CreateConnectionRequestBgpConfig struct {
+	RoutingPolicyID string `json:"routing_policy_id"`
+
+	PrivateIP *scw.IPNet `json:"private_ip"`
+
+	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
+}
+
+// CreateConnectionRequestSecret: create connection request secret.
+type CreateConnectionRequestSecret struct {
+	ID string `json:"id"`
+
+	Revision *uint32 `json:"revision"`
 }
 
 // CreateVpnGatewayRequestPublicConfig: create vpn gateway request public config.
@@ -921,6 +928,24 @@ type VpnGateway struct {
 
 	// Region: region of the VPN gateway.
 	Region scw.Region `json:"region"`
+}
+
+// ChangeConnectionPskRequest: change connection psk request.
+type ChangeConnectionPskRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ConnectionID: ID of the connection to renew the PSK.
+	ConnectionID string `json:"-"`
+
+	// Secret: new PSK Secret of the connection.
+	Secret *ChangeConnectionPskRequestSecret `json:"secret"`
+}
+
+// ChangeConnectionPskResponse: change connection psk response.
+type ChangeConnectionPskResponse struct {
+	// Connection: this connection.
+	Connection *Connection `json:"connection"`
 }
 
 // CreateConnectionRequest: create connection request.
@@ -1469,6 +1494,9 @@ type RenewConnectionPskRequest struct {
 
 	// ConnectionID: ID of the connection to renew the PSK.
 	ConnectionID string `json:"-"`
+
+	// GenerateRevision: generate a new revision or update to the latest existing one.
+	GenerateRevision *bool `json:"generate_revision,omitempty"`
 }
 
 // RenewConnectionPskResponse: renew connection psk response.
@@ -2078,6 +2106,42 @@ func (s *API) RenewConnectionPsk(req *RenewConnectionPskRequest, opts ...scw.Req
 	}
 
 	var resp RenewConnectionPskResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ChangeConnectionPsk: Change pre-shared key for a given connection.
+func (s *API) ChangeConnectionPsk(req *ChangeConnectionPskRequest, opts ...scw.RequestOption) (*ChangeConnectionPskResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ConnectionID) == "" {
+		return nil, errors.New("field ConnectionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/s2s-vpn/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/connections/" + fmt.Sprint(req.ConnectionID) + "/change-psk",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ChangeConnectionPskResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
