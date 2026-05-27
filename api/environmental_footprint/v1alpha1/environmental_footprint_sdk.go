@@ -65,6 +65,8 @@ const (
 	ProductCategoryManagedMongodb = ProductCategory("managed_mongodb")
 	// The Managed Redis product category.
 	ProductCategoryManagedRedis = ProductCategory("managed_redis")
+	// The Managed Inference product category.
+	ProductCategoryManagedInference = ProductCategory("managed_inference")
 )
 
 func (enum ProductCategory) String() string {
@@ -89,6 +91,7 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"managed_relational_databases",
 		"managed_mongodb",
 		"managed_redis",
+		"managed_inference",
 	}
 }
 
@@ -166,6 +169,8 @@ const (
 	ServiceCategoryContainers = ServiceCategory("containers")
 	// The Databases service category.
 	ServiceCategoryDatabases = ServiceCategory("databases")
+	// The AI service category.
+	ServiceCategoryAi = ServiceCategory("ai")
 )
 
 func (enum ServiceCategory) String() string {
@@ -185,6 +190,7 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"network",
 		"containers",
 		"databases",
+		"ai",
 	}
 }
 
