@@ -308,6 +308,45 @@ func (enum *InvoiceType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListChargesRequestOrderBy string
+
+const (
+	// Order by start date (ascending chronological order).
+	ListChargesRequestOrderByStartDateAsc = ListChargesRequestOrderBy("start_date_asc")
+	// Order by start date (descending chronological order).
+	ListChargesRequestOrderByStartDateDesc = ListChargesRequestOrderBy("start_date_desc")
+)
+
+func (enum ListChargesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListChargesRequestOrderByStartDateAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListChargesRequestOrderBy) Values() []ListChargesRequestOrderBy {
+	return []ListChargesRequestOrderBy{
+		"start_date_asc",
+		"start_date_desc",
+	}
+}
+
+func (enum ListChargesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListChargesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListChargesRequestOrderBy(ListChargesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListConsumptionsRequestOrderBy string
 
 const (
@@ -529,6 +568,39 @@ type DiscountFilter struct {
 	Exclude bool `json:"exclude"`
 }
 
+// Charge: charge.
+type Charge struct {
+	// OrganizationID: ID of the charged organization.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: ID of the charged project.
+	ProjectID string `json:"project_id"`
+
+	// Sku: ID of the SKU the charge is priced with.
+	Sku string `json:"sku"`
+
+	// InvoiceID: ID of the invoice including the charge.
+	InvoiceID string `json:"invoice_id"`
+
+	// ResourceID: ID of the resource that incurs the charge.
+	ResourceID string `json:"resource_id"`
+
+	// ResourceName: optional display name assigned to the resource that incurs the charge.
+	ResourceName *string `json:"resource_name"`
+
+	// Price: price of the charge.
+	Price *scw.Money `json:"price"`
+
+	// StartDate: start date of the charge.
+	StartDate *time.Time `json:"start_date"`
+
+	// EndDate: end date of the charge, included.
+	EndDate *time.Time `json:"end_date"`
+
+	// UpdatedAt: date the charge was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // ListConsumptionsResponseConsumption: list consumptions response consumption.
 type ListConsumptionsResponseConsumption struct {
 	// Value: monetary value of the consumption.
@@ -706,10 +778,59 @@ type ExportInvoicesRequest struct {
 	FileType ExportInvoicesRequestFileType `json:"-"`
 }
 
+// FinOpsAPIListChargesRequest: fin ops api list charges request.
+type FinOpsAPIListChargesRequest struct {
+	// OrderBy: sort order of charges in the response.
+	// Default value: start_date_asc
+	OrderBy ListChargesRequestOrderBy `json:"-"`
+
+	// PageToken: token returned by previous call to list next paginated charges, omitted for first page.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of charges to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// StartDateAfter: minimum start date of charges to filter for, defaults to the start of the billing period.
+	StartDateAfter *time.Time `json:"-"`
+
+	// EndDateBefore: maximum end date of charges to filter for, defaults to the end of the billing period.
+	EndDateBefore *time.Time `json:"-"`
+
+	// InvoiceIDs: invoice IDs to filter for, only charges from these invoices will be returned.
+	InvoiceIDs []string `json:"-"`
+
+	// OrganizationID: organization ID to filter for, only charges for this organization will be returned.
+	OrganizationID string `json:"-"`
+
+	// ProjectIDs: project IDs to filter for, only charges for these projects will be returned.
+	ProjectIDs []string `json:"-"`
+
+	// ResourceIDs: resource IDs to filter for, only charges for these resources will be returned.
+	ResourceIDs []string `json:"-"`
+
+	// ResourceNames: resource display names to filter for, only charges for these resources will be returned.
+	ResourceNames []string `json:"-"`
+
+	// Skus: sKU IDs to filter for, only charges for these SKUs will be returned.
+	Skus []string `json:"-"`
+
+	// ClampToTimeRange: clamp charges to the requested time range.
+	ClampToTimeRange *bool `json:"-"`
+}
+
 // GetInvoiceRequest: get invoice request.
 type GetInvoiceRequest struct {
 	// InvoiceID: invoice ID.
 	InvoiceID string `json:"-"`
+}
+
+// ListChargesResponse: list charges response.
+type ListChargesResponse struct {
+	// Charges: paginated matching charges.
+	Charges []*Charge `json:"charges"`
+
+	// NextPageToken: page token to use with following call to keep listing charges if there are more.
+	NextPageToken *string `json:"next_page_token"`
 }
 
 // ListConsumptionsRequest: list consumptions request.
@@ -1189,6 +1310,60 @@ func (s *API) RedeemCoupon(req *RedeemCouponRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Discount
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type FinOpsAPI struct {
+	client *scw.Client
+}
+
+// NewFinOpsAPI returns a FinOpsAPI object from a Scaleway client.
+func NewFinOpsAPI(client *scw.Client) *FinOpsAPI {
+	return &FinOpsAPI{
+		client: client,
+	}
+}
+
+// ListCharges: List charges for organizations or projects. You must specify at least `organization_ids` or `project_ids`.
+func (s *FinOpsAPI) ListCharges(req *FinOpsAPIListChargesRequest, opts ...scw.RequestOption) (*ListChargesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "start_date_after", req.StartDateAfter)
+	parameter.AddToQuery(query, "end_date_before", req.EndDateBefore)
+	parameter.AddToQuery(query, "invoice_ids", req.InvoiceIDs)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_ids", req.ProjectIDs)
+	parameter.AddToQuery(query, "resource_ids", req.ResourceIDs)
+	parameter.AddToQuery(query, "resource_names", req.ResourceNames)
+	parameter.AddToQuery(query, "skus", req.Skus)
+	parameter.AddToQuery(query, "clamp_to_time_range", req.ClampToTimeRange)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/charges",
+		Query:  query,
+	}
+
+	var resp ListChargesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
