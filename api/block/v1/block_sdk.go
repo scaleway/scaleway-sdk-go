@@ -563,6 +563,9 @@ type Volume struct {
 
 	// LastDetachedAt: last time the volume was detached.
 	LastDetachedAt *time.Time `json:"last_detached_at"`
+
+	// KmsKeyID: kMS Key used for securing the volume's encryption.
+	KmsKeyID *string `json:"kms_key_id"`
 }
 
 // CreateSnapshotRequest: create snapshot request.
@@ -611,6 +614,9 @@ type CreateVolumeRequest struct {
 
 	// Tags: list of tags assigned to the volume.
 	Tags []string `json:"tags"`
+
+	// KmsKeyID: UUID of the KMS key used to protect the volume's encryption.
+	KmsKeyID *string `json:"kms_key_id,omitempty"`
 }
 
 // DeleteSnapshotRequest: delete snapshot request.
