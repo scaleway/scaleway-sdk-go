@@ -859,6 +859,15 @@ type PublicCatalogProductPropertiesLoadBalancerNodeType struct {
 	Bandwidth uint64 `json:"bandwidth"`
 }
 
+// PublicCatalogProductPropertiesManagedInferenceManagedInferenceCustomModelStorage: public catalog product properties managed inference managed inference custom model storage.
+type PublicCatalogProductPropertiesManagedInferenceManagedInferenceCustomModelStorage struct{}
+
+// PublicCatalogProductPropertiesManagedInferenceManagedInferenceDeployment: public catalog product properties managed inference managed inference deployment.
+type PublicCatalogProductPropertiesManagedInferenceManagedInferenceDeployment struct {
+	// InstanceGpuName: the name of the associated instance GPU to this deployment.
+	InstanceGpuName string `json:"instance_gpu_name"`
+}
+
 // PublicCatalogProductPropertiesManagedMongoDBManagementType: public catalog product properties managed mongo db management type.
 type PublicCatalogProductPropertiesManagedMongoDBManagementType struct{}
 
@@ -1022,8 +1031,16 @@ type PublicCatalogProductPropertiesLoadBalancer struct {
 
 // PublicCatalogProductPropertiesManagedInference: public catalog product properties managed inference.
 type PublicCatalogProductPropertiesManagedInference struct {
-	// InstanceGpuName: the name of the associated instance GPU to this node type.
-	InstanceGpuName string `json:"instance_gpu_name"`
+	// Deprecated: InstanceGpuName: the name of the associated instance GPU to this node type. Deprecated, use `deployment.instance_gpu_name` instead.
+	InstanceGpuName string `json:"instance_gpu_name,omitempty"`
+
+	// Deployment: the properties related to Managed Inference Deployment.
+	// Precisely one of Deployment, CustomModelStorage must be set.
+	Deployment *PublicCatalogProductPropertiesManagedInferenceManagedInferenceDeployment `json:"deployment,omitempty"`
+
+	// CustomModelStorage: the properties related to Managed Inference Custom Model Storage.
+	// Precisely one of Deployment, CustomModelStorage must be set.
+	CustomModelStorage *PublicCatalogProductPropertiesManagedInferenceManagedInferenceCustomModelStorage `json:"custom_model_storage,omitempty"`
 }
 
 // PublicCatalogProductPropertiesManagedMongoDB: public catalog product properties managed mongo db.
