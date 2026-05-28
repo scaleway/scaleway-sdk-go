@@ -60,7 +60,9 @@ const (
 	// A contract specific to Core products.
 	ContractTypeCore = ContractType("core")
 	// A contract specific to VPS products.
-	ContractTypeVps = ContractType("vps")
+	ContractTypeVps                = ContractType("vps")
+	ContractTypeStorage            = ContractType("storage")
+	ContractTypeTransactionalEmail = ContractType("transactional_email")
 )
 
 func (enum ContractType) String() string {
@@ -82,6 +84,8 @@ func (enum ContractType) Values() []ContractType {
 		"network",
 		"core",
 		"vps",
+		"storage",
+		"transactional_email",
 	}
 }
 
