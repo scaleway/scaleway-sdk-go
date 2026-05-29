@@ -768,6 +768,9 @@ type Server struct {
 
 	// AppliedRunnerConfigurationIDs: runner configurations applied on the server, optional.
 	AppliedRunnerConfigurationIDs []string `json:"applied_runner_configuration_ids"`
+
+	// KextEnabled: status of kernel extensions for the server.
+	KextEnabled bool `json:"kext_enabled"`
 }
 
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
