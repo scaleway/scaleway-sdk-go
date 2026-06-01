@@ -884,6 +884,9 @@ type Version struct {
 
 	// EndOfLifeAt: date of End of Life.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // ApplyMaintenanceRequest: apply maintenance request.
