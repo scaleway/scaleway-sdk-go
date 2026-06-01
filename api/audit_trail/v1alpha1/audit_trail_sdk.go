@@ -604,6 +604,9 @@ const (
 	ResourceTypeDtwhDeploymentUser              = ResourceType("dtwh_deployment_user")
 	ResourceTypeSsdbDatabase                    = ResourceType("ssdb_database")
 	ResourceTypeSsdbDatabaseBackup              = ResourceType("ssdb_database_backup")
+	ResourceTypeObservabilityDatasource         = ResourceType("observability_datasource")
+	ResourceTypeObservabilityToken              = ResourceType("observability_token")
+	ResourceTypeObservabilityExporter           = ResourceType("observability_exporter")
 )
 
 func (enum ResourceType) String() string {
@@ -709,6 +712,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"dtwh_deployment_user",
 		"ssdb_database",
 		"ssdb_database_backup",
+		"observability_datasource",
+		"observability_token",
+		"observability_exporter",
 	}
 }
 
