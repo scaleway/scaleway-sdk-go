@@ -1704,14 +1704,23 @@ type PurgeRequest struct {
 
 // VPCEndpoint: vpc endpoint.
 type VPCEndpoint struct {
+	// ID: the VPC Endpoint ID.
 	ID string `json:"id"`
 
+	// ProjectID: project ID of the VPC Endpoint.
 	ProjectID string `json:"project_id"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: zone of the VPC Endpoint.
 	Region scw.Region `json:"region"`
 
+	// PrivateNetworkID: private Network ID of the VPC Endpoint.
 	PrivateNetworkID string `json:"private_network_id"`
+
+	// CreatedAt: date the VPC Endpoint was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the VPC Endpoint was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // SetHeadStageRequestAddNewHeadStage: set head stage request add new head stage.
@@ -1886,8 +1895,6 @@ type CreatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description string `json:"description"`
-
-	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // CreatePurgeRequestRequest: create purge request request.
@@ -1946,11 +1953,13 @@ type CreateTLSStageRequest struct {
 
 // CreateVPCEndpointRequest: create vpc endpoint request.
 type CreateVPCEndpointRequest struct {
+	// ProjectID: project ID of the VPC Endpoint.
 	ProjectID string `json:"project_id"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: zone of the VPC Endpoint.
 	Region scw.Region `json:"region"`
 
+	// PrivateNetworkID: private Network ID of the VPC Endpoint.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
@@ -2014,6 +2023,7 @@ type DeleteTLSStageRequest struct {
 
 // DeleteVPCEndpointRequest: delete vpc endpoint request.
 type DeleteVPCEndpointRequest struct {
+	// VpcEndpointID: the VPC Endpoint ID.
 	VpcEndpointID string `json:"-"`
 }
 
@@ -2119,6 +2129,7 @@ type GetTLSStageRequest struct {
 
 // GetVPCEndpointRequest: get vpc endpoint request.
 type GetVPCEndpointRequest struct {
+	// VpcEndpointID: the VPC Endpoint ID.
 	VpcEndpointID string `json:"-"`
 }
 
@@ -2451,7 +2462,7 @@ type ListPurgeRequestsRequest struct {
 	// PageSize: number of purge requests to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrganizationID: organization ID to filter for. Only purge requests from this Project will be returned.
+	// OrganizationID: organization ID to filter for. Only purge requests from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
 	// ProjectID: project ID to filter for. Only purge requests from this Project will be returned.
@@ -2619,23 +2630,30 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res any) (uint64, error) {
 
 // ListVPCEndpointsRequest: list vpc endpoints request.
 type ListVPCEndpointsRequest struct {
-	Page *int32 `json:"-"`
-
-	PageSize *uint32 `json:"-"`
-
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of VPC Endpoints in the response.
+	// Default value: created_at_asc
 	OrderBy ListVPCEndpointsRequestOrderBy `json:"-"`
 
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of VPC Endpoints to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: project ID to filter for. Only VPC Endpoints from this project will be returned.
 	ProjectID *string `json:"-"`
 
+	// OrganizationID: organization ID to filter for. Only VPC Endpoints from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 }
 
 // ListVPCEndpointsResponse: list vpc endpoints response.
 type ListVPCEndpointsResponse struct {
-	TotalCount uint64 `json:"total_count"`
-
+	// VpcEndpoints: paginated list of VPC Endpoints.
 	VpcEndpoints []*VPCEndpoint `json:"vpc_endpoints"`
+
+	// TotalCount: count of all VPC Endpoints matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
 }
 
 // UnsafeGetTotalCount should not be used
@@ -2777,6 +2795,46 @@ type SetHeadStageRequest struct {
 	SwapHeadStage *SetHeadStageRequestSwapHeadStage `json:"swap_head_stage,omitempty"`
 }
 
+// SetPipelineVPCEndpointsRequest: set pipeline vpc endpoints request.
+type SetPipelineVPCEndpointsRequest struct {
+	// PipelineID: pipeline ID for which VPC Endpoints must be set.
+	PipelineID string `json:"-"`
+
+	// VpcEndpointIDs: list of VPC Endpoints to attach.
+	VpcEndpointIDs []string `json:"-"`
+}
+
+// SetPipelineVPCEndpointsResponse: set pipeline vpc endpoints response.
+type SetPipelineVPCEndpointsResponse struct {
+	// PipelineID: pipeline ID.
+	PipelineID string `json:"pipeline_id"`
+
+	// VpcEndpoints: list of VPC Endpoints for the given Pipeline ID.
+	VpcEndpoints []*VPCEndpoint `json:"vpc_endpoints"`
+
+	// TotalCount: count of all VPC Endpoints for the given Pipeline ID.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *SetPipelineVPCEndpointsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *SetPipelineVPCEndpointsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*SetPipelineVPCEndpointsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.VpcEndpoints = append(r.VpcEndpoints, results.VpcEndpoints...)
+	r.TotalCount += uint64(len(results.VpcEndpoints))
+	return uint64(len(results.VpcEndpoints)), nil
+}
+
 // SetRouteRulesRequest: set route rules request.
 type SetRouteRulesRequest struct {
 	// RouteStageID: ID of the route stage to update.
@@ -2876,8 +2934,6 @@ type UpdatePipelineRequest struct {
 
 	// Description: description of the pipeline.
 	Description *string `json:"description,omitempty"`
-
-	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // UpdateRouteStageRequest: update route stage request.
@@ -3155,7 +3211,7 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 	return nil
 }
 
-// GetVPCEndpoint:
+// GetVPCEndpoint: Retrieve information about an existing VPC Endpoint, specified by its `vpc_endpoint_id`.
 func (s *API) GetVPCEndpoint(req *GetVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
 	var err error
 
@@ -3177,7 +3233,7 @@ func (s *API) GetVPCEndpoint(req *GetVPCEndpointRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// ListVPCEndpoints:
+// ListVPCEndpoints: List all VPC Endpoints, for a Scaleway Organization or Scaleway Project. By default, the VPC Endpoints returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListVPCEndpoints(req *ListVPCEndpointsRequest, opts ...scw.RequestOption) (*ListVPCEndpointsResponse, error) {
 	var err error
 
@@ -3187,9 +3243,9 @@ func (s *API) ListVPCEndpoints(req *ListVPCEndpointsRequest, opts ...scw.Request
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
-	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
@@ -3208,7 +3264,7 @@ func (s *API) ListVPCEndpoints(req *ListVPCEndpointsRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// CreateVPCEndpoint:
+// CreateVPCEndpoint: Create a new VPC Endpoint. You must specify a `private_network_id` to define to which Private Network the VPC endpoint will be attached to.
 func (s *API) CreateVPCEndpoint(req *CreateVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
 	var err error
 
@@ -3241,7 +3297,7 @@ func (s *API) CreateVPCEndpoint(req *CreateVPCEndpointRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// DeleteVPCEndpoint:
+// DeleteVPCEndpoint: Delete an existing VPC Endpoint, specified by its `vpc_endpoint_id`.
 func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -3259,6 +3315,32 @@ func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.Reque
 		return err
 	}
 	return nil
+}
+
+// SetPipelineVPCEndpoints: Attach VPC Endpoint to the given Pipeline. You must specify a `pipeline_id` and `vpc_endpoint_ids` which contains the list of VPC Endpoints.
+func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts ...scw.RequestOption) (*SetPipelineVPCEndpointsResponse, error) {
+	var err error
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "vpc_endpoint_ids", req.VpcEndpointIDs)
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/vpc-endpoints",
+		Query:  query,
+	}
+
+	var resp SetPipelineVPCEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListHeadStages: List Head stage for your pipeline.
@@ -4481,7 +4563,7 @@ func (s *API) CheckLBOrigin(req *CheckLBOriginRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListPlans:
+// ListPlans: List all available Edge Services subscription plans.
 func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -4499,7 +4581,7 @@ func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	return &resp, nil
 }
 
-// SelectPlan:
+// SelectPlan: Subscribe to the Edge Services subscription plan of your choice, for the given Scaleway Project.
 func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -4527,7 +4609,7 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Pl
 	return &resp, nil
 }
 
-// GetCurrentPlan:
+// GetCurrentPlan: Get the current Edge Services subscription plan for your Scaleway Project.
 func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -4554,7 +4636,7 @@ func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteCurrentPlan:
+// DeleteCurrentPlan: Unsubscribe from the current Edge Services subscription plan for your Scaleway Project.
 func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.RequestOption) error {
 	var err error
 
