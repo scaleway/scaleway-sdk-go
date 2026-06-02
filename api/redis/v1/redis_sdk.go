@@ -398,6 +398,9 @@ type ClusterVersion struct {
 	// LogoURL: redis™ logo url.
 	LogoURL string `json:"logo_url"`
 
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
+
 	// Zone: zone of the Redis™ Database Instance.
 	Zone scw.Zone `json:"zone"`
 }
