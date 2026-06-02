@@ -1450,6 +1450,9 @@ type PrivateNIC struct {
 
 	// Zone: the zone in which the Private NIC is located.
 	Zone scw.Zone `json:"zone"`
+
+	// IpamIPIDs: the list of IPAM IPs associated with this private NIC.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
 }
 
 // SecurityGroupSummary: security group summary.
