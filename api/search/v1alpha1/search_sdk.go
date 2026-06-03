@@ -48,8 +48,11 @@ const (
 	// Instance volume.
 	ResourceTypeInstanceVolume = ResourceType("instance_volume")
 	// Instance image.
-	ResourceTypeInstanceImage         = ResourceType("instance_image")
-	ResourceTypeInstanceSecurityGroup = ResourceType("instance_security_group")
+	ResourceTypeInstanceImage          = ResourceType("instance_image")
+	ResourceTypeInstanceSecurityGroup  = ResourceType("instance_security_group")
+	ResourceTypeInstancePrivateNic     = ResourceType("instance_private_nic")
+	ResourceTypeInstanceSnapshot       = ResourceType("instance_snapshot")
+	ResourceTypeInstancePlacementGroup = ResourceType("instance_placement_group")
 	// K8S cluster.
 	ResourceTypeK8sCluster = ResourceType("k8s_cluster")
 	// K8S pool.
@@ -136,6 +139,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_volume",
 		"instance_image",
 		"instance_security_group",
+		"instance_private_nic",
+		"instance_snapshot",
+		"instance_placement_group",
 		"k8s_cluster",
 		"k8s_pool",
 		"k8s_node",
