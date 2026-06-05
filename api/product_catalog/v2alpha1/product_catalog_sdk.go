@@ -192,11 +192,18 @@ func (enum *ListPublicCatalogProductsRequestStatus) UnmarshalJSON(data []byte) e
 type PublicCatalogProductProductBadge string
 
 const (
+	// Unknown badge.
 	PublicCatalogProductProductBadgeUnknownProductBadge = PublicCatalogProductProductBadge("unknown_product_badge")
-	PublicCatalogProductProductBadgeNewProduct          = PublicCatalogProductProductBadge("new_product")
-	PublicCatalogProductProductBadgeBestSeller          = PublicCatalogProductProductBadge("best_seller")
-	PublicCatalogProductProductBadgeBestValue           = PublicCatalogProductProductBadge("best_value")
-	PublicCatalogProductProductBadgePopular             = PublicCatalogProductProductBadge("popular")
+	// The product is new (can be used to make a new product more visible in the Console).
+	PublicCatalogProductProductBadgeNewProduct = PublicCatalogProductProductBadge("new_product")
+	// The product is one of our best sellers.
+	PublicCatalogProductProductBadgeBestSeller = PublicCatalogProductProductBadge("best_seller")
+	// The product is one of our best value.
+	PublicCatalogProductProductBadgeBestValue = PublicCatalogProductProductBadge("best_value")
+	// The product is popular.
+	PublicCatalogProductProductBadgePopular = PublicCatalogProductProductBadge("popular")
+	// The product doesn't have access to KVM.
+	PublicCatalogProductProductBadgeNoKvm = PublicCatalogProductProductBadge("no_kvm")
 )
 
 func (enum PublicCatalogProductProductBadge) String() string {
@@ -214,6 +221,7 @@ func (enum PublicCatalogProductProductBadge) Values() []PublicCatalogProductProd
 		"best_seller",
 		"best_value",
 		"popular",
+		"no_kvm",
 	}
 }
 
