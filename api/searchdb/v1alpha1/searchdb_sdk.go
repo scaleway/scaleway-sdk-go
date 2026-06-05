@@ -439,8 +439,11 @@ type Deployment struct {
 	// Tags: tags of the Deployment.
 	Tags []string `json:"tags"`
 
-	// NodeAmount: number of nodes allocated per deployment.
-	NodeAmount uint32 `json:"node_amount"`
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Number of nodes allocated per deployment.
+	NodeAmount uint32 `json:"node_amount,omitempty"`
+
+	// NodeCount: number of nodes allocated per deployment.
+	NodeCount uint32 `json:"node_count"`
 
 	// NodeType: node type used in deployment.
 	NodeType string `json:"node_type"`
@@ -529,8 +532,11 @@ type CreateDeploymentRequest struct {
 	// Tags: tags.
 	Tags []string `json:"tags"`
 
-	// NodeAmount: number of nodes.
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Number of nodes.
 	NodeAmount uint32 `json:"node_amount"`
+
+	// NodeCount: number of nodes.
+	NodeCount uint32 `json:"node_count"`
 
 	// NodeType: node type.
 	NodeType string `json:"node_type"`
@@ -853,12 +859,16 @@ type UpgradeDeploymentRequest struct {
 	// DeploymentID: UUID of the Deployment to upgrade.
 	DeploymentID string `json:"-"`
 
-	// NodeAmount: amount of node upgrade target.
-	// Precisely one of NodeAmount, VolumeSizeBytes must be set.
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Amount of node upgrade target.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
 	NodeAmount *uint32 `json:"node_amount,omitempty"`
 
+	// NodeCount: the target number of nodes for the upgrade.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
+	NodeCount *uint32 `json:"node_count,omitempty"`
+
 	// VolumeSizeBytes: volume size upgrade target.
-	// Precisely one of NodeAmount, VolumeSizeBytes must be set.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
 	VolumeSizeBytes *uint64 `json:"volume_size_bytes,omitempty"`
 }
 
