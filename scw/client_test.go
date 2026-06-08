@@ -14,6 +14,7 @@ import (
 
 const (
 	testAPIURL                = "https://api.example.com"
+	testS3URL                 = "https://s3.example.com"
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -92,6 +93,7 @@ func TestNewClientWithOptions(t *testing.T) {
 
 		options := []ClientOption{
 			WithAPIURL(testAPIURL),
+			WithS3URL(testS3URL),
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
 			WithDefaultOrganizationID(testDefaultOrganizationID),
@@ -143,6 +145,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testAccessKey),
 			s(testSecretKey),
 			s(testAPIURL),
+			s(testS3URL),
 			b(testInsecure),
 			s(testDefaultOrganizationID),
 			s(testDefaultProjectID),
