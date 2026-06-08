@@ -52,10 +52,10 @@ func WithAPIURL(apiURL string) ClientOption {
 	}
 }
 
-// WithS3URL client option overrides the S3 URL of the Scaleway Object Bucket API to the given URL.
-func WithS3URL(s3URL string) ClientOption {
+// WithS3Endpoint client option overrides the S3 URL of the Scaleway Object Bucket API to the given URL.
+func WithS3Endpoint(s3Endpoint string) ClientOption {
 	return func(s *settings) {
-		s.s3URL = s3URL
+		s.s3Endpoint = s3Endpoint
 	}
 }
 
@@ -179,7 +179,7 @@ func WithDefaultPageSize(pageSize uint32) ClientOption {
 // settings hold the values of all client options
 type settings struct {
 	apiURL                string
-	s3URL                 string
+	s3Endpoint            string
 	token                 auth.Auth
 	userAgent             string
 	httpClient            httpClient
