@@ -607,6 +607,10 @@ const (
 	ResourceTypeObservabilityDatasource         = ResourceType("observability_datasource")
 	ResourceTypeObservabilityToken              = ResourceType("observability_token")
 	ResourceTypeObservabilityExporter           = ResourceType("observability_exporter")
+	ResourceTypeIliPartner                      = ResourceType("ili_partner")
+	ResourceTypeIliConnection                   = ResourceType("ili_connection")
+	ResourceTypeIliLink                         = ResourceType("ili_link")
+	ResourceTypeIliRoutingPolicy                = ResourceType("ili_routing_policy")
 )
 
 func (enum ResourceType) String() string {
@@ -715,6 +719,10 @@ func (enum ResourceType) Values() []ResourceType {
 		"observability_datasource",
 		"observability_token",
 		"observability_exporter",
+		"ili_partner",
+		"ili_connection",
+		"ili_link",
+		"ili_routing_policy",
 	}
 }
 
