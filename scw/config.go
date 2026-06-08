@@ -118,7 +118,7 @@ type Profile struct {
 	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
 	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
 	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
-	S3URL                 *string `yaml:"s3_url,omitempty" json:"api_url,omitempty"`
+	S3Endpoint            *string `yaml:"s3_url,omitempty" json:"api_url,omitempty"`
 	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
 	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
 	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
