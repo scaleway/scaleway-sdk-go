@@ -1,0 +1,20 @@
+name: Check Pull Request
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+  merge_group:
+
+jobs:
+  check-title:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check title
+        run: |
+          title=$(cat <<- "EOF"
+          ${{ github.event.pull_request.title }}
+          EOF
+          )
+          if [ "$title" == "feat: update generated APIs" ]; then
+            echo "Invalid title."
+            exit 1
+          fi
