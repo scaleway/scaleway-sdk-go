@@ -100,6 +100,10 @@ func WithProfile(p *Profile) ClientOption {
 			s.apiURL = *p.APIURL
 		}
 
+		if p.S3Endpoint != nil {
+			s.s3Endpoint = *p.S3Endpoint
+		}
+
 		if p.Insecure != nil {
 			s.insecure = *p.Insecure
 		}
