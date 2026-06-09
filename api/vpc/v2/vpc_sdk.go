@@ -563,6 +563,9 @@ type Subnet struct {
 
 	// VpcID: vPC the subnet belongs to.
 	VpcID string `json:"vpc_id"`
+
+	// Region: region in which the Subnet can be used.
+	Region scw.Region `json:"region"`
 }
 
 // PrivateNetwork: private network.
@@ -709,6 +712,13 @@ type IngressRule struct {
 	Description *string `json:"description"`
 
 	Tags []string `json:"tags"`
+
+	OrganizationID string `json:"organization_id"`
+
+	ProjectID string `json:"project_id"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
 }
 
 // RouteWithNexthop: route with nexthop.
@@ -1112,6 +1122,10 @@ type ListIngressRulesRequest struct {
 	IsIPv6 *bool `json:"-"`
 
 	Tags []string `json:"-"`
+
+	OrganizationID *string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
 // ListIngressRulesResponse: list ingress rules response.
@@ -2657,6 +2671,8 @@ func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.Request
 	parameter.AddToQuery(query, "nexthop_private_network_id", req.NexthopPrivateNetworkID)
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
