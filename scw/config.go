@@ -92,6 +92,7 @@ profiles:
     {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
     {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
     {{ if $v.APIURL }}api_url: {{ $v.APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+    {{ if $v.S3Endpoint}}s3_endpoint: {{ $v.S3Endpoint}}{{ else }}# s3_endpoint: https://s3.fr-par.scw.cloud{{ end }}
     {{ if $v.Insecure }}insecure: {{ $v.Insecure }}{{ else }}# insecure: false{{ end }}
 {{ end }}
 {{- else }}
@@ -118,7 +119,7 @@ type Profile struct {
 	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
 	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
 	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
-	S3Endpoint            *string `yaml:"s3_url,omitempty" json:"api_url,omitempty"`
+	S3Endpoint            *string `yaml:"s3_endpoint,omitempty" json:"s3_endpoint,omitempty"`
 	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
 	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
 	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
@@ -321,6 +322,7 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		AccessKey:             original.AccessKey,
 		SecretKey:             original.SecretKey,
 		APIURL:                original.APIURL,
+		S3Endpoint:            original.S3Endpoint,
 		Insecure:              original.Insecure,
 		DefaultOrganizationID: original.DefaultOrganizationID,
 		DefaultProjectID:      original.DefaultProjectID,
@@ -338,6 +340,9 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		}
 		if other.APIURL != nil {
 			np.APIURL = other.APIURL
+		}
+		if other.S3Endpoint != nil {
+			np.S3Endpoint = other.S3Endpoint
 		}
 		if other.Insecure != nil {
 			np.Insecure = other.Insecure
