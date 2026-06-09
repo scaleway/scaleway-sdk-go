@@ -105,6 +105,7 @@ profiles:
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
 #     insecure: false
 {{ end -}}
 `
