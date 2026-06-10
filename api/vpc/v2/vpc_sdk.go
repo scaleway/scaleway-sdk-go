@@ -564,7 +564,7 @@ type Subnet struct {
 	// VpcID: vPC the subnet belongs to.
 	VpcID string `json:"vpc_id"`
 
-	// Region: region of the subnet.
+	// Region: region in which the Subnet can be used.
 	Region scw.Region `json:"region"`
 }
 
