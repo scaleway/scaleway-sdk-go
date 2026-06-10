@@ -194,6 +194,9 @@ type Attachment struct {
 
 	// Zone: the zone where the resource is located.
 	Zone *scw.Zone `json:"zone"`
+
+	// Region: the region where the attachment is located.
+	Region scw.Region `json:"region"`
 }
 
 // FileSystemType: file system type.
