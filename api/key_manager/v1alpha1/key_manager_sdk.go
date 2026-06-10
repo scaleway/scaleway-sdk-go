@@ -141,6 +141,12 @@ const (
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_3072_sha256")
 	// RSA-PKCS1 (Public Key Cryptography Standards) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_4096_sha256")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 2.
+	KeyAlgorithmAsymmetricSigningMlDsa44 = KeyAlgorithmAsymmetricSigning("ml_dsa_44")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
+	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
+	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -162,6 +168,9 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"rsa_pkcs1_2048_sha256",
 		"rsa_pkcs1_3072_sha256",
 		"rsa_pkcs1_4096_sha256",
+		"ml_dsa_44",
+		"ml_dsa_65",
+		"ml_dsa_87",
 	}
 }
 
@@ -256,6 +265,47 @@ func (enum *KeyOrigin) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = KeyOrigin(KeyOrigin(tmp).String())
+	return nil
+}
+
+type KeyProtectionLevel string
+
+const (
+	KeyProtectionLevelUnknownProtectionLevel = KeyProtectionLevel("unknown_protection_level")
+	// Cryptographic operations are performed in software.
+	KeyProtectionLevelSoftware = KeyProtectionLevel("software")
+	// Cryptographic operations are performed within a dedicated Hardware Security Module (HSM).
+	KeyProtectionLevelHsm = KeyProtectionLevel("hsm")
+)
+
+func (enum KeyProtectionLevel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyProtectionLevelUnknownProtectionLevel)
+	}
+	return string(enum)
+}
+
+func (enum KeyProtectionLevel) Values() []KeyProtectionLevel {
+	return []KeyProtectionLevel{
+		"unknown_protection_level",
+		"software",
+		"hsm",
+	}
+}
+
+func (enum KeyProtectionLevel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyProtectionLevel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyProtectionLevel(KeyProtectionLevel(tmp).String())
 	return nil
 }
 
@@ -520,6 +570,10 @@ type Key struct {
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 
+	// ProtectionLevel: refer to the `Key.ProtectionLevel` enum for a description of values.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
+
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
 }
@@ -553,6 +607,10 @@ type CreateKeyRequest struct {
 	// Origin: refer to the `Key.Origin` enum for a description of values.
 	// Default value: unknown_origin
 	Origin KeyOrigin `json:"origin"`
+
+	// ProtectionLevel: refer to the `Key.Protection` enum for a description of values.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
 }
 
 // DataKey: data key.
@@ -756,6 +814,10 @@ type ListKeysRequest struct {
 
 	// ScheduledForDeletion: filter keys based on their deletion status. By default, only keys not scheduled for deletion are returned in the output.
 	ScheduledForDeletion bool `json:"-"`
+
+	// ProtectionLevel: select from software or hsm.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"-"`
 }
 
 // ListKeysResponse: list keys response.
@@ -1276,6 +1338,7 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "usage", req.Usage)
 	parameter.AddToQuery(query, "scheduled_for_deletion", req.ScheduledForDeletion)
+	parameter.AddToQuery(query, "protection_level", req.ProtectionLevel)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
