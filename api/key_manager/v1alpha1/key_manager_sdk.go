@@ -141,6 +141,12 @@ const (
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_3072_sha256")
 	// RSA-PKCS1 (Public Key Cryptography Standards) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_4096_sha256")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 2.
+	KeyAlgorithmAsymmetricSigningMlDsa44 = KeyAlgorithmAsymmetricSigning("ml_dsa_44")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
+	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
+	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -162,6 +168,9 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"rsa_pkcs1_2048_sha256",
 		"rsa_pkcs1_3072_sha256",
 		"rsa_pkcs1_4096_sha256",
+		"ml_dsa_44",
+		"ml_dsa_65",
+		"ml_dsa_87",
 	}
 }
 
