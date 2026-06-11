@@ -285,6 +285,92 @@ func (enum *PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode) Unmarsh
 	return nil
 }
 
+type PublicCatalogProductPropertiesGenerativeAPIsTask string
+
+const (
+	PublicCatalogProductPropertiesGenerativeAPIsTaskUnknownTask        = PublicCatalogProductPropertiesGenerativeAPIsTask("unknown_task")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskChat               = PublicCatalogProductPropertiesGenerativeAPIsTask("chat")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskEmbeddings         = PublicCatalogProductPropertiesGenerativeAPIsTask("embeddings")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskVision             = PublicCatalogProductPropertiesGenerativeAPIsTask("vision")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskAudioTranscription = PublicCatalogProductPropertiesGenerativeAPIsTask("audio_transcription")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskCode               = PublicCatalogProductPropertiesGenerativeAPIsTask("code")
+)
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesGenerativeAPIsTaskUnknownTask)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) Values() []PublicCatalogProductPropertiesGenerativeAPIsTask {
+	return []PublicCatalogProductPropertiesGenerativeAPIsTask{
+		"unknown_task",
+		"chat",
+		"embeddings",
+		"vision",
+		"audio_transcription",
+		"code",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesGenerativeAPIsTask) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesGenerativeAPIsTask(PublicCatalogProductPropertiesGenerativeAPIsTask(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductPropertiesGenerativeAPIsTokenType string
+
+const (
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeUnknownTokenType = PublicCatalogProductPropertiesGenerativeAPIsTokenType("unknown_token_type")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputToken       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_token")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeOutputToken      = PublicCatalogProductPropertiesGenerativeAPIsTokenType("output_token")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputDuration    = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_duration")
+)
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesGenerativeAPIsTokenTypeUnknownTokenType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) Values() []PublicCatalogProductPropertiesGenerativeAPIsTokenType {
+	return []PublicCatalogProductPropertiesGenerativeAPIsTokenType{
+		"unknown_token_type",
+		"input_token",
+		"output_token",
+		"input_duration",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesGenerativeAPIsTokenType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesGenerativeAPIsTokenType(PublicCatalogProductPropertiesGenerativeAPIsTokenType(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesHardwareCPUArch string
 
 const (
@@ -982,6 +1068,15 @@ type PublicCatalogProductPropertiesGenerativeAPIs struct {
 
 	// ConsumptionMode: default value: unknown_consumption_mode
 	ConsumptionMode PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode `json:"consumption_mode"`
+
+	ProviderName string `json:"provider_name"`
+
+	Tasks []PublicCatalogProductPropertiesGenerativeAPIsTask `json:"tasks"`
+
+	// TokenType: default value: unknown_token_type
+	TokenType PublicCatalogProductPropertiesGenerativeAPIsTokenType `json:"token_type"`
+
+	SupportedReasoningValues []string `json:"supported_reasoning_values"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
