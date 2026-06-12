@@ -16,6 +16,7 @@ const (
 	ScwSecretKeyEnv             = "SCW_SECRET_KEY" // #nosec G101
 	ScwActiveProfileEnv         = "SCW_PROFILE"
 	ScwAPIURLEnv                = "SCW_API_URL"
+	ScwS3EndpointEnv            = "SCW_S3_ENDPOINT"
 	ScwInsecureEnv              = "SCW_INSECURE"
 	ScwDefaultOrganizationIDEnv = "SCW_DEFAULT_ORGANIZATION_ID"
 	ScwDefaultProjectIDEnv      = "SCW_DEFAULT_PROJECT_ID"
@@ -72,6 +73,11 @@ func LoadEnvProfile() *Profile {
 	apiURL, _, envExist := getEnv(ScwAPIURLEnv)
 	if envExist {
 		p.APIURL = &apiURL
+	}
+
+	s3Endpoint, _, envExist := getEnv(ScwS3EndpointEnv)
+	if envExist {
+		p.S3Endpoint = &s3Endpoint
 	}
 
 	insecureValue, envKey, envExist := getEnv(ScwInsecureEnv, cliTLSVerifyEnv)
