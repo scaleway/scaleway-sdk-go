@@ -866,6 +866,7 @@ type UpdateMailboxRequest struct {
 
 // ValidateDomainRecordsRequest: validate domain records request.
 type ValidateDomainRecordsRequest struct {
+	// DomainID: ID of the domain with which to validate the records.
 	DomainID string `json:"-"`
 }
 
@@ -1055,7 +1056,7 @@ func (s *API) GetDomainRecords(req *GetDomainRecordsRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// ValidateDomainRecords:
+// ValidateDomainRecords: Validate domain records by its ID.
 func (s *API) ValidateDomainRecords(req *ValidateDomainRecordsRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -1080,7 +1081,7 @@ func (s *API) ValidateDomainRecords(req *ValidateDomainRecordsRequest, opts ...s
 	return nil
 }
 
-// BatchCreateMailboxes:
+// BatchCreateMailboxes: Create one or more mailboxes.
 func (s *API) BatchCreateMailboxes(req *BatchCreateMailboxesRequest, opts ...scw.RequestOption) (*BatchCreateMailboxesResponse, error) {
 	var err error
 
