@@ -517,6 +517,9 @@ type VolumeType struct {
 
 	// Specs: volume specifications of the volume type.
 	Specs *VolumeSpecifications `json:"specs"`
+
+	// Zone: zone of the volume type.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Volume: volume.
