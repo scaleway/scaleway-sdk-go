@@ -45,51 +45,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type AliasStatus string
-
-const (
-	// If unspecified, the status is unknown by default.
-	AliasStatusUnknownStatus = AliasStatus("unknown_status")
-	// The alias is being provisioned.
-	AliasStatusProvisioning = AliasStatus("provisioning")
-	// The alias is being deleted.
-	AliasStatusDeleting = AliasStatus("deleting")
-	// The alias is ready to use.
-	AliasStatusReady = AliasStatus("ready")
-)
-
-func (enum AliasStatus) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(AliasStatusUnknownStatus)
-	}
-	return string(enum)
-}
-
-func (enum AliasStatus) Values() []AliasStatus {
-	return []AliasStatus{
-		"unknown_status",
-		"provisioning",
-		"deleting",
-		"ready",
-	}
-}
-
-func (enum AliasStatus) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *AliasStatus) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = AliasStatus(AliasStatus(tmp).String())
-	return nil
-}
-
 type DomainRecordDNSType string
 
 const (
@@ -617,31 +572,6 @@ type Domain struct {
 	SMTPURL string `json:"smtp_url"`
 }
 
-// Alias: alias.
-type Alias struct {
-	// ID: unique identifier of the alias.
-	ID string `json:"id"`
-
-	// Email: email address of the alias as local_part@domain.
-	Email string `json:"email"`
-
-	// MailboxID: ID of the mailbox to which the alias belongs.
-	MailboxID string `json:"mailbox_id"`
-
-	// Description: description of the alias.
-	Description string `json:"description"`
-
-	// Status: current status of the alias.
-	// Default value: unknown_status
-	Status AliasStatus `json:"status"`
-
-	// CreatedAt: date and time of alias creation.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date and time when the alias was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-}
-
 // BatchCreateMailboxesRequest: batch create mailboxes request.
 type BatchCreateMailboxesRequest struct {
 	// Mailboxes: parameters for the mailboxes to create.
@@ -659,18 +589,6 @@ type BatchCreateMailboxesRequest struct {
 type BatchCreateMailboxesResponse struct {
 	// Mailboxes: mailboxes created.
 	Mailboxes []*Mailbox `json:"mailboxes"`
-}
-
-// CreateAliasRequest: create alias request.
-type CreateAliasRequest struct {
-	// MailboxID: ID of the mailbox to associate with the alias.
-	MailboxID string `json:"-"`
-
-	// LocalPart: local part of the email address (e.g. local_part@domain.com).
-	LocalPart string `json:"local_part"`
-
-	// Description: (Optional) Description of the alias.
-	Description *string `json:"description,omitempty"`
 }
 
 // CreateDomainRequest: create domain request.
@@ -1276,33 +1194,6 @@ func (s *API) RestoreMailbox(req *RestoreMailboxRequest, opts ...scw.RequestOpti
 	}
 
 	var resp Mailbox
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// CreateAlias: Create an alias for a mailbox.
-func (s *API) CreateAlias(req *CreateAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
-	var err error
-
-	if fmt.Sprint(req.MailboxID) == "" {
-		return nil, errors.New("field MailboxID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/mailbox/v1alpha1/mailboxes/" + fmt.Sprint(req.MailboxID) + "/aliases",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Alias
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
