@@ -2971,7 +2971,7 @@ type ServiceLevel struct {
 
 // RpnSan: rpn san.
 type RpnSan struct {
-	// ID: rPN SAN  ID.
+	// ID: rPN SAN ID.
 	ID uint64 `json:"id"`
 
 	// DatacenterName: datacenter location.
@@ -3507,7 +3507,7 @@ type RpnGroupMember struct {
 
 // RpnSanSummary: rpn san summary.
 type RpnSanSummary struct {
-	// ID: rPN SAN  ID.
+	// ID: rPN SAN ID.
 	ID uint64 `json:"id"`
 
 	// DatacenterName: datacenter location.

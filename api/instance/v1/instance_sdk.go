@@ -4662,7 +4662,7 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 // * `poweroff`: Fully stop the Instance and release the hypervisor slot.
 // * `stop_in_place`: Stop the Instance, but keep the slot on the hypervisor.
 // * `reboot`: Stop the instance and restart it.
-// * `backup`:  Create an image with all the volumes of an Instance.
+// * `backup`: Create an image with all the volumes of an Instance.
 // * `terminate`: Delete the Instance along with its attached local volumes.
 // * `enable_routed_ip`: Migrate the Instance to the new network stack.
 //
