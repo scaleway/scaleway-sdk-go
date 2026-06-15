@@ -612,6 +612,7 @@ const (
 	ResourceTypeIliConnection                   = ResourceType("ili_connection")
 	ResourceTypeIliLink                         = ResourceType("ili_link")
 	ResourceTypeIliRoutingPolicy                = ResourceType("ili_routing_policy")
+	ResourceTypeAutoscalingGroup                = ResourceType("autoscaling_group")
 )
 
 func (enum ResourceType) String() string {
@@ -725,6 +726,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"ili_connection",
 		"ili_link",
 		"ili_routing_policy",
+		"autoscaling_group",
 	}
 }
 
