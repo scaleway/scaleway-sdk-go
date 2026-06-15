@@ -700,6 +700,45 @@ func (enum *DomainZoneOwner) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type HostingProvider string
+
+const (
+	HostingProviderUnknownProvider = HostingProvider("unknown_provider")
+	HostingProviderElements        = HostingProvider("elements")
+	HostingProviderDedibox         = HostingProvider("dedibox")
+)
+
+func (enum HostingProvider) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(HostingProviderUnknownProvider)
+	}
+	return string(enum)
+}
+
+func (enum HostingProvider) Values() []HostingProvider {
+	return []HostingProvider{
+		"unknown_provider",
+		"elements",
+		"dedibox",
+	}
+}
+
+func (enum HostingProvider) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *HostingProvider) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = HostingProvider(HostingProvider(tmp).String())
+	return nil
+}
+
 type HostingStatus string
 
 const (
@@ -2317,6 +2356,10 @@ type Hosting struct {
 
 	// Commitment: commitment details to which the hosting is engaged.
 	Commitment *HostingCommitment `json:"commitment"`
+
+	// Provider: provider where the Web Hosting plan is managed (elements, dedibox).
+	// Default value: unknown_provider
+	Provider *HostingProvider `json:"provider"`
 }
 
 // HostingAPIAddCustomDomainRequest: hosting api add custom domain request.

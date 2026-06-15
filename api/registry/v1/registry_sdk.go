@@ -360,7 +360,7 @@ type Image struct {
 	// StatusMessage: details of the image status.
 	StatusMessage *string `json:"status_message"`
 
-	// Visibility: set to `public` to allow the image to be pulled without authentication. Else, set to  `private`. Set to `inherit` to keep the same visibility configuration as the namespace.
+	// Visibility: set to `public` to allow the image to be pulled without authentication. Else, set to `private`. Set to `inherit` to keep the same visibility configuration as the namespace.
 	// Default value: visibility_unknown
 	Visibility ImageVisibility `json:"visibility"`
 
@@ -695,7 +695,7 @@ type UpdateImageRequest struct {
 	// ImageID: ID of the image to update.
 	ImageID string `json:"-"`
 
-	// Visibility: set to `public` to allow the image to be pulled without authentication. Else, set to  `private`. Set to `inherit` to keep the same visibility configuration as the namespace.
+	// Visibility: set to `public` to allow the image to be pulled without authentication. Else, set to `private`. Set to `inherit` to keep the same visibility configuration as the namespace.
 	// Default value: visibility_unknown
 	Visibility ImageVisibility `json:"visibility"`
 }

@@ -1369,7 +1369,7 @@ type Log struct {
 	// Default value: unknown_resource_type
 	ResourceType LogResourceType `json:"resource_type"`
 
-	// ResourceID: ID of the resource linked  to the log.
+	// ResourceID: ID of the resource linked to the log.
 	ResourceID string `json:"resource_id"`
 }
 

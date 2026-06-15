@@ -3741,7 +3741,7 @@ func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// GetReadReplica: Retrieve information about a Database Instance Read Replica. Full details about the Read Replica, like `endpoints`, `status`  and `region` are returned in the response.
+// GetReadReplica: Retrieve information about a Database Instance Read Replica. Full details about the Read Replica, like `endpoints`, `status` and `region` are returned in the response.
 func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -4553,7 +4553,7 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// DeleteUser: Delete a given user on a Database Instance. You must specify, in the endpoint,  the `region`, `instance_id` and `name` parameters of the user you want to delete.
+// DeleteUser: Delete a given user on a Database Instance. You must specify, in the endpoint, the `region`, `instance_id` and `name` parameters of the user you want to delete.
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4979,7 +4979,7 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint,  the `region` and `snapshot_id` parameters of the snapshot you want to delete.
+// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint, the `region` and `snapshot_id` parameters of the snapshot you want to delete.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 
