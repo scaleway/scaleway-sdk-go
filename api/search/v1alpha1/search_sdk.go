@@ -282,6 +282,7 @@ const (
 	ResourceTypeSvpnCustomerGateway = ResourceType("svpn_customer_gateway")
 	ResourceTypeSvpnConnection      = ResourceType("svpn_connection")
 	ResourceTypeSvpnRoutingPolicy   = ResourceType("svpn_routing_policy")
+	ResourceTypeKafkCluster         = ResourceType("kafk_cluster")
 )
 
 func (enum ResourceType) String() string {
@@ -343,6 +344,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"svpn_customer_gateway",
 		"svpn_connection",
 		"svpn_routing_policy",
+		"kafk_cluster",
 	}
 }
 
