@@ -67,6 +67,8 @@ const (
 	ProductCategoryManagedRedis = ProductCategory("managed_redis")
 	// The Managed Inference product category.
 	ProductCategoryManagedInference = ProductCategory("managed_inference")
+	// The Generative API's product category.
+	ProductCategoryGenerativeAPIs = ProductCategory("generative_apis")
 )
 
 func (enum ProductCategory) String() string {
@@ -92,6 +94,7 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"managed_mongodb",
 		"managed_redis",
 		"managed_inference",
+		"generative_apis",
 	}
 }
 
