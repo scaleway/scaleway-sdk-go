@@ -825,6 +825,9 @@ type VPC struct {
 
 	// CustomRoutesPropagationEnabled: defines whether the VPC advertises custom routes between its Private Networks.
 	CustomRoutesPropagationEnabled bool `json:"custom_routes_propagation_enabled"`
+
+	// TransitivityEnabled: defines whether the VPC allows packets from peered VPCs to transit through.
+	TransitivityEnabled bool `json:"transitivity_enabled"`
 }
 
 // AddSubnetsRequest: add subnets request.
@@ -947,6 +950,9 @@ type CreateVPCRequest struct {
 
 	// EnableRouting: enable routing between Private Networks in the VPC.
 	EnableRouting bool `json:"enable_routing"`
+
+	// EnableTransitivity: enable packets from peered VPCs to transit through this VPC.
+	EnableTransitivity bool `json:"enable_transitivity"`
 }
 
 // DeleteIngressRuleRequest: delete ingress rule request.
