@@ -514,9 +514,16 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			os.Stdout = w
 
 			config, err := LoadConfig()
+			if err != nil {
+				t.Fatalf("error loading config: %s", err)
+			}
 
 			// Giving back stdout
-			w.Close()
+			err = w.Close()
+			if err != nil {
+				t.Fatalf("error closing file: %s", err)
+			}
+
 			os.Stdout = originalStdout
 
 			if test.expectedError == "" {
