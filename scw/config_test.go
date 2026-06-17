@@ -502,6 +502,18 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			},
 			perms:         0o300,
 			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yml: permission denied",
+
+		{
+			name:                          "Read config.yml with correct permissions",
+			env:                           map[string]string{"HOME": "{HOME}"},
+			files:                         map[string]string{".config/scw/config.yml": v2SimpleValidConfigFile},
+			perms:                         0o600,
+			expectedOutput:                "",
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
 	}
 
