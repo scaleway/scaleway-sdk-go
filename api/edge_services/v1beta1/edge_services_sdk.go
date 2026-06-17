@@ -2803,7 +2803,7 @@ type SetPipelineVPCEndpointsRequest struct {
 	PipelineID string `json:"-"`
 
 	// VpcEndpointIDs: list of VPC Endpoints to attach.
-	VpcEndpointIDs []string `json:"-"`
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // SetPipelineVPCEndpointsResponse: set pipeline vpc endpoints response.
@@ -3323,9 +3323,6 @@ func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.Reque
 func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts ...scw.RequestOption) (*SetPipelineVPCEndpointsResponse, error) {
 	var err error
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "vpc_endpoint_ids", req.VpcEndpointIDs)
-
 	if fmt.Sprint(req.PipelineID) == "" {
 		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
@@ -3333,7 +3330,11 @@ func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PUT",
 		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/vpc-endpoints",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp SetPipelineVPCEndpointsResponse
