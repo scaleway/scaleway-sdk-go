@@ -613,6 +613,8 @@ const (
 	ResourceTypeIliLink                         = ResourceType("ili_link")
 	ResourceTypeIliRoutingPolicy                = ResourceType("ili_routing_policy")
 	ResourceTypeAutoscalingGroup                = ResourceType("autoscaling_group")
+	ResourceTypeGapiDedicatedDeployment         = ResourceType("gapi_dedicated_deployment")
+	ResourceTypeGapiDedicatedModel              = ResourceType("gapi_dedicated_model")
 )
 
 func (enum ResourceType) String() string {
@@ -727,6 +729,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"ili_link",
 		"ili_routing_policy",
 		"autoscaling_group",
+		"gapi_dedicated_deployment",
+		"gapi_dedicated_model",
 	}
 }
 
