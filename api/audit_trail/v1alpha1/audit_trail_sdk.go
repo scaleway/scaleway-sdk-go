@@ -1538,6 +1538,21 @@ type EnableAlertRulesResponse struct {
 	AlertRules []*AlertRule `json:"alert_rules"`
 }
 
+// EventsOverview: events overview.
+type EventsOverview struct {
+	LastEvents []*Event `json:"last_events"`
+}
+
+// GetLastEventsOverviewRequest: get last events overview request.
+type GetLastEventsOverviewRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	ProjectID *string `json:"-"`
+}
+
 // ListAlertRulesRequest: list alert rules request.
 type ListAlertRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2074,6 +2089,43 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp ListProductsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetLastEventsOverview:
+func (s *API) GetLastEventsOverview(req *GetLastEventsOverviewRequest, opts ...scw.RequestOption) (*EventsOverview, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/last-events-overview",
+		Query:  query,
+	}
+
+	var resp EventsOverview
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
