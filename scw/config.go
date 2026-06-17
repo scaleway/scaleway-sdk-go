@@ -4,7 +4,6 @@ import (
 	"bytes"
 	goerrors "errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -221,7 +220,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 		return nil, err
 	}
 
-	if permsAreTooPermissive(fileInfo.Mode().Perm()) {
+	if fileInfo.Mode().Perm() > defaultConfigPermission {
 		fmt.Printf("WARNING: Scaleway configuration file permissions are too permissive. That is insecure.\n"+
 			"You can fix it with the command 'chmod 0600 %s'\n", path)
 	}
@@ -237,20 +236,6 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	}
 
 	return confV2, nil
-}
-
-func permsAreTooPermissive(perms fs.FileMode) bool {
-	if perms > defaultConfigPermission {
-		return true
-	}
-
-	strPerms := perms.String()
-	if strPerms[4:7] != "---" ||
-		strPerms[7:9] != "---" {
-		return true
-	}
-
-	return false
 }
 
 // GetProfile returns the profile corresponding to the given profile name.
