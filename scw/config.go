@@ -220,7 +220,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 		return nil, err
 	}
 
-	if fileInfo.Mode().Perm() > defaultConfigPermission {
+	if fileInfo.Mode().Perm() != defaultConfigPermission {
 		fmt.Printf("WARNING: Scaleway configuration file permissions are too "+
 			"permissive. That is insecure.\nYou can fix it with the command "+
 			"'chmod 0600 %s'\n", path)
