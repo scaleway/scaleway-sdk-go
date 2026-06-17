@@ -1061,6 +1061,9 @@ type CreateClusterRequestPoolConfig struct {
 
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
@@ -1371,6 +1374,9 @@ type Pool struct {
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID string `json:"private_network_id"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
 }
@@ -1638,6 +1644,9 @@ type CreatePoolRequest struct {
 
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
