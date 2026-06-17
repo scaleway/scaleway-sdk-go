@@ -233,7 +233,7 @@ func TestSaveConfig(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, test.files, defaultConfigPermission, dir)
+			setEnv(t, test.env, test.files, dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
@@ -280,6 +280,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			name:          "No config without home dir",
 			expectedError: "scaleway-sdk-go: cannot read config file: read .: is a directory",
 		},
+
 		{
 			name:          "No config",
 			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/.config/scw/config.yaml: no such file or directory",
@@ -287,6 +288,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				"HOME": "{HOME}",
 			},
 		},
+
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
@@ -296,6 +298,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				"valid1/test.conf": emptyFile,
 			},
 		},
+
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
@@ -310,6 +313,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Simple config with valid V2", // default config path
 			env: map[string]string{
@@ -324,6 +328,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Complete config",
 			env: map[string]string{
@@ -341,6 +346,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
+
 		{
 			name: "Complete config with active profile",
 			env: map[string]string{
@@ -359,6 +365,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Mixed config with active profile",
 			env: map[string]string{
@@ -377,6 +384,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
@@ -411,6 +419,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Read config.yml too permissive",
 			env: map[string]string{
@@ -428,6 +437,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
 You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
+
 		{
 			name: "Read config.yml too permissive",
 			env: map[string]string{
@@ -445,6 +455,7 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
 You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
+
 		{
 			name: "Read config.yml too permissive",
 			env: map[string]string{
@@ -462,6 +473,7 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
 You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
+
 		{
 			name: "Read config.yml too permissive",
 			env: map[string]string{
@@ -479,6 +491,7 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
 You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 		},
+
 		{
 			name: "Read config.yml too restrictive",
 			env: map[string]string{
@@ -501,7 +514,7 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, test.files, test.perms, dir)
+			setEnvWithPerms(t, test.env, test.files, test.perms, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
 			test.expectedOutput = strings.ReplaceAll(test.expectedOutput, "{HOME}", dir)
 
@@ -513,15 +526,13 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 
+			// err is not checked here but later
 			config, err := LoadConfig()
-			if err != nil {
-				t.Fatalf("error loading config: %s", err)
-			}
 
 			// Giving back stdout
-			err = w.Close()
-			if err != nil {
-				t.Fatalf("error closing file: %s", err)
+			err2 := w.Close()
+			if err2 != nil {
+				t.Fatal(err2)
 			}
 
 			os.Stdout = originalStdout
@@ -635,9 +646,26 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 	}
 }
 
-func setEnv(t *testing.T, env, files map[string]string, perms os.FileMode, homeDir string) {
+func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	t.Helper()
 	os.Clearenv()
+
+	for key, value := range env {
+		value = strings.ReplaceAll(value, "{HOME}", homeDir)
+		testhelpers.AssertNoError(t, os.Setenv(key, value))
+	}
+
+	for path, content := range files {
+		targetPath := filepath.Join(homeDir, path)
+		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
+		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+	}
+}
+
+func setEnvWithPerms(t *testing.T, env, files map[string]string, perms os.FileMode, homeDir string) {
+	t.Helper()
+	os.Clearenv()
+
 	for key, value := range env {
 		value = strings.ReplaceAll(value, "{HOME}", homeDir)
 		testhelpers.AssertNoError(t, os.Setenv(key, value))
