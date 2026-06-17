@@ -667,6 +667,7 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 }
 
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
+	t.Helper()
 	setEnvWithPerms(t, env, files, defaultConfigPermission, homeDir)
 }
 
