@@ -667,19 +667,7 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 }
 
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
-	t.Helper()
-	os.Clearenv()
-
-	for key, value := range env {
-		value = strings.ReplaceAll(value, "{HOME}", homeDir)
-		testhelpers.AssertNoError(t, os.Setenv(key, value))
-	}
-
-	for path, content := range files {
-		targetPath := filepath.Join(homeDir, path)
-		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
-		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
-	}
+	setEnvWithPerms(t, env, files, defaultConfigPermission, homeDir)
 }
 
 func setEnvWithPerms(t *testing.T, env, files map[string]string, perms os.FileMode, homeDir string) {
