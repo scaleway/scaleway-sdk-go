@@ -277,13 +277,15 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 	}{
 		// no env variables
 		{
-			name:          "No config without home dir",
-			expectedError: "scaleway-sdk-go: cannot read config file: read .: is a directory",
+			name: "No config without home dir",
+			expectedError: "scaleway-sdk-go: cannot read config file: read .: " +
+				"is a directory",
 		},
 
 		{
-			name:          "No config",
-			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/.config/scw/config.yaml: no such file or directory",
+			name: "No config",
+			expectedError: "scaleway-sdk-go: cannot read config file " +
+				"{HOME}/.config/scw/config.yaml: no such file or directory",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
@@ -434,8 +436,9 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
 		},
 
 		{
@@ -452,8 +455,9 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
 		},
 
 		{
@@ -470,8 +474,9 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
 		},
 
 		{
@@ -488,8 +493,9 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: `WARNING: Scaleway configuration file permissions are too permissive. That is insecure.` + `
-You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
 		},
 
 		{
@@ -500,8 +506,10 @@ You can fix it with the command 'chmod 0600 {HOME}/.config/scw/config.yml'`,
 			files: map[string]string{
 				".config/scw/config.yml": v2SimpleValidConfigFile,
 			},
-			perms:         0o300,
-			expectedError: "scaleway-sdk-go: cannot read config file: open {HOME}/.config/scw/config.yml: permission denied",
+			perms: 0o300,
+			expectedError: "scaleway-sdk-go: cannot read config file: " +
+				"open {HOME}/.config/scw/config.yml: permission denied",
+		},
 
 		{
 			name:                          "Read config.yml with correct permissions",
