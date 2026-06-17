@@ -375,6 +375,9 @@ type Deployment struct {
 	// RAMPerCPU: RAM per CPU count for the deployment (in GB).
 	RAMPerCPU uint32 `json:"ram_per_cpu"`
 
+	// MoveFactor: for the `tiered` storage policy, controls when data is moved from the hot volume (Block Storage) to the cold volume (Object Storage). Data is moved once free space on the hot volume drops below this fraction of its capacity. Value between 0 and 1 (default 0.1, i.e. data is moved when the hot volume is 90% full).
+	MoveFactor float64 `json:"move_factor"`
+
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 }
@@ -470,6 +473,9 @@ type CreateDeploymentRequest struct {
 
 	// RAMPerCPU: RAM per CPU count for the deployment (in GB).
 	RAMPerCPU uint32 `json:"ram_per_cpu"`
+
+	// MoveFactor: for the `tiered` storage policy, controls when data is moved from the hot volume (Block Storage) to the cold volume (Object Storage). Data is moved once free space on the hot volume drops below this fraction of its capacity. Value between 0 and 1 (default 0.1, i.e. data is moved when the hot volume is 90% full).
+	MoveFactor *float64 `json:"move_factor,omitempty"`
 }
 
 // CreateEndpointRequest: create endpoint request.
@@ -830,6 +836,9 @@ type UpdateDeploymentRequest struct {
 
 	// ReplicaCount: number of replicas for the deployment.
 	ReplicaCount *uint32 `json:"replica_count,omitempty"`
+
+	// MoveFactor: for the `tiered` storage policy, controls when data is moved from the hot volume (Block Storage) to the cold volume (Object Storage). Data is moved once free space on the hot volume drops below this fraction of its capacity. Value between 0 and 1 (default 0.1, i.e. data is moved when the hot volume is 90% full).
+	MoveFactor *float64 `json:"move_factor,omitempty"`
 }
 
 // UpdateUserRequest: update user request.
