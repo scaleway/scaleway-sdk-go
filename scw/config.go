@@ -87,6 +87,7 @@ profiles:
   {{ $k }}:
     {{ if $v.AccessKey }}access_key: {{ $v.AccessKey }}{{ else }}# access_key: SCW11111111111111111{{ end }}
     {{ if $v.SecretKey }}secret_key: {{ $v.SecretKey }}{{ else }}# secret_key: 11111111-1111-1111-1111-111111111111{{ end }}
+    {{ if $v.UserAgent}}user_agent: {{ $v.UserAgent }}{{ else }}# user_agent: '{{ userAgent }}'{{ end }}
     {{ if $v.DefaultOrganizationID }}default_organization_id: {{ $v.DefaultOrganizationID }}{{ else }}# default_organization_id: 11111111-1111-1111-1111-111111111111{{ end }}
     {{ if $v.DefaultProjectID }}default_project_id: {{ $v.DefaultProjectID }}{{ else }}# default_project_id: 11111111-1111-1111-1111-111111111111{{ end }}
     {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
@@ -105,7 +106,7 @@ profiles:
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     insecure: false
-#     user_agent: 'MyApp/1.0 (Custom User Agent; OS=Linux; Version=2.0)'
+#     user_agent: '{{ userAgent }}'
 {{ end -}}
 `
 
@@ -332,6 +333,7 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		DefaultRegion:         original.DefaultRegion,
 		DefaultZone:           original.DefaultZone,
 		SendTelemetry:         original.SendTelemetry,
+		UserAgent:             original.UserAgent,
 	}
 
 	for _, other := range others {
@@ -361,6 +363,9 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		}
 		if other.SendTelemetry != nil {
 			np.SendTelemetry = other.SendTelemetry
+		}
+		if other.UserAgent != nil {
+			np.UserAgent = other.UserAgent
 		}
 	}
 

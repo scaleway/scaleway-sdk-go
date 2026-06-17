@@ -148,6 +148,14 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 	return "", false
 }
 
+func (c *Client) GetUserAgent() (userAgent string, exists bool) {
+	if c.userAgent != "" {
+		return c.userAgent, true
+	}
+
+	return "", false
+}
+
 // GetDefaultPageSize returns the default page size of the client.
 // This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
