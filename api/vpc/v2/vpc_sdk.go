@@ -830,23 +830,6 @@ type VPC struct {
 	TransitivityEnabled bool `json:"transitivity_enabled"`
 }
 
-// AddSubnetsRequest: add subnets request.
-type AddSubnetsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
-
-	// Subnets: private Network subnets CIDR.
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
-// AddSubnetsResponse: add subnets response.
-type AddSubnetsResponse struct {
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
 // CreateIngressRuleRequest: create ingress rule request.
 type CreateIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -979,23 +962,6 @@ type DeleteRouteRequest struct {
 
 	// RouteID: route ID.
 	RouteID string `json:"-"`
-}
-
-// DeleteSubnetsRequest: delete subnets request.
-type DeleteSubnetsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
-
-	// Subnets: private Network subnets CIDR.
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
-// DeleteSubnetsResponse: delete subnets response.
-type DeleteSubnetsResponse struct {
-	Subnets []scw.IPNet `json:"subnets"`
 }
 
 // DeleteVPCConnectorRequest: delete vpc connector request.
@@ -2156,78 +2122,6 @@ func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp ListSubnetsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// AddSubnets: Add new subnets to an existing Private Network.
-func (s *API) AddSubnets(req *AddSubnetsRequest, opts ...scw.RequestOption) (*AddSubnetsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/subnets",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AddSubnetsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// DeleteSubnets: Delete the specified subnets from a Private Network.
-func (s *API) DeleteSubnets(req *DeleteSubnetsRequest, opts ...scw.RequestOption) (*DeleteSubnetsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "DELETE",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/subnets",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp DeleteSubnetsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
