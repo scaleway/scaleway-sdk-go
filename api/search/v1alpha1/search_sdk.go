@@ -289,6 +289,7 @@ const (
 	ResourceTypeIamGroup            = ResourceType("iam_group")
 	ResourceTypeIamPolicy           = ResourceType("iam_policy")
 	ResourceTypeSedbCluster         = ResourceType("sedb_cluster")
+	ResourceTypeAutoscalingGroup    = ResourceType("autoscaling_group")
 )
 
 func (enum ResourceType) String() string {
@@ -357,6 +358,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_group",
 		"iam_policy",
 		"sedb_cluster",
+		"autoscaling_group",
 	}
 }
 
