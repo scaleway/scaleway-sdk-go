@@ -23,6 +23,7 @@ var (
 	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696f"
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
+	v2ValidUserAgent              = userAgent
 
 	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -49,8 +50,10 @@ var (
 			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
 			DefaultProjectID:      &v2ValidDefaultProjectID,
 			DefaultRegion:         &v2ValidDefaultRegion,
+			UserAgent:             &v2ValidUserAgent,
 		},
 	}
+
 	v2PartialValidConfigFile = `
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
@@ -59,7 +62,8 @@ insecure: ` + v2ValidInsecure + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
-default_zone: ` + v2ValidDefaultZone
+default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent
 
 	v2CompleteValidConfigFile = v2PartialValidConfigFile + `
 profiles:
@@ -73,6 +77,7 @@ profiles:
     default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2CompleteValidConfigWithActiveProfileFile = `
@@ -85,6 +90,7 @@ default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent + `
 active_profile: ` + v2ValidProfile + `
 profiles:
   ` + v2ValidProfile + `:
@@ -96,6 +102,7 @@ profiles:
     default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2MixedValidConfigWithActiveProfileFile = `
@@ -108,11 +115,13 @@ default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent + `
 active_profile: ` + v2ValidProfile + `
 profiles:
   ` + v2ValidProfile + `:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2SimpleValidConfigFile = `
@@ -121,6 +130,7 @@ secret_key: ` + v2ValidSecretKey + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
+user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2SimpleInvalidConfigFile            = `insecure: "bool""`
@@ -153,12 +163,14 @@ func TestSaveConfig(t *testing.T) {
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 					DefaultProjectID:      s(v2ValidDefaultProjectID),
 					DefaultRegion:         s(v2ValidDefaultRegion),
+					UserAgent:             s(userAgent),
 				},
 			},
 			expectedFiles: map[string]string{
 				"valid1/test.conf": v2SimpleValidConfigFile,
 			},
 		},
+
 		{
 			name: "Default config path",
 			env: map[string]string{
@@ -177,6 +189,7 @@ func TestSaveConfig(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
 		},
+
 		{
 			name: "Add zone only",
 			env: map[string]string{
@@ -194,6 +207,7 @@ func TestSaveConfig(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile + "default_zone: " + v2ValidDefaultZone + "\n",
 			},
 		},
+
 		{
 			name: "Add new profile",
 			env: map[string]string{
@@ -221,6 +235,7 @@ func TestSaveConfig(t *testing.T) {
 			},
 		},
 	}
+
 	// create home dir
 	dir := initEnv(t)
 
@@ -627,6 +642,9 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -659,6 +677,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     insecure: false
+#     user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 
@@ -706,6 +725,9 @@ access_key: SCW1234567890ABCDEFG
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -738,6 +760,7 @@ access_key: SCW1234567890ABCDEFG
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     insecure: false
+#     user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 
@@ -798,6 +821,9 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -830,6 +856,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # insecure: false
+    # user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 
   profile2:
     access_key: SCW234567890ABCDEFGH
@@ -840,6 +867,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # insecure: false
+    # user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 }
