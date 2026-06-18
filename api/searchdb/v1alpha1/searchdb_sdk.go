@@ -533,10 +533,10 @@ type CreateDeploymentRequest struct {
 	Tags []string `json:"tags"`
 
 	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Number of nodes.
-	NodeAmount uint32 `json:"node_amount"`
+	NodeAmount *uint32 `json:"node_amount,omitempty"`
 
 	// NodeCount: number of nodes.
-	NodeCount uint32 `json:"node_count"`
+	NodeCount *uint32 `json:"node_count,omitempty"`
 
 	// NodeType: node type.
 	NodeType string `json:"node_type"`
