@@ -165,6 +165,11 @@ func (zone *Zone) UnmarshalJSON(input []byte) error {
 		return err
 	}
 
+	// New fields may carry empty value
+	if stringValue == "" {
+		return nil
+	}
+
 	// parse string as Zone
 	*zone, err = ParseZone(stringValue)
 	if err != nil {
@@ -209,6 +214,11 @@ func (region *Region) UnmarshalJSON(input []byte) error {
 	err := json.Unmarshal(input, &stringValue)
 	if err != nil {
 		return err
+	}
+
+	// New fields may carry empty value
+	if stringValue == "" {
+		return nil
 	}
 
 	// parse string as Region
