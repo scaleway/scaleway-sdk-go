@@ -1375,7 +1375,7 @@ type Pool struct {
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 
 	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
-	PrivateNetworkID string `json:"private_network_id"`
+	PrivateNetworkID *string `json:"private_network_id"`
 
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
