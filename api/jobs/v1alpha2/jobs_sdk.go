@@ -482,7 +482,7 @@ type JobRun struct {
 	// Args: job arguments passed to the startup command at runtime.
 	Args []string `json:"args"`
 
-	// Attempts: number of retry attempts.
+	// Attempts: number of run attempts.
 	Attempts *uint32 `json:"attempts"`
 
 	// Region: region to target. If none is passed will use default region from the config.
@@ -584,7 +584,7 @@ type CreateJobDefinitionRequest struct {
 	// CronSchedule: configure a cron for the job.
 	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 
-	// RetryPolicy: retry behaviour in case of job failure.
+	// RetryPolicy: retry policy upon a job failure.
 	RetryPolicy *RetryPolicy `json:"retry_policy,omitempty"`
 }
 
@@ -976,7 +976,7 @@ type UpdateJobDefinitionRequest struct {
 	// CronSchedule: configure a cron for the job.
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 
-	// RetryPolicy: retry behaviour in case of job failure.
+	// RetryPolicy: retry policy upon a job failure.
 	RetryPolicy *UpdateJobDefinitionRequestUpdateRetryPolicy `json:"retry_policy,omitempty"`
 }
 
