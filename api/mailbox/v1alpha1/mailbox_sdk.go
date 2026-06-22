@@ -287,6 +287,57 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListAliasesRequestOrderBy string
+
+const (
+	// Order by creation date (descending chronological order).
+	ListAliasesRequestOrderByCreatedAtDesc = ListAliasesRequestOrderBy("created_at_desc")
+	// Order by creation date (ascending chronological order).
+	ListAliasesRequestOrderByCreatedAtAsc = ListAliasesRequestOrderBy("created_at_asc")
+	// Order by last update date (descending chronological order).
+	ListAliasesRequestOrderByUpdatedAtDesc = ListAliasesRequestOrderBy("updated_at_desc")
+	// Order by last update date (ascending chronological order).
+	ListAliasesRequestOrderByUpdatedAtAsc = ListAliasesRequestOrderBy("updated_at_asc")
+	// Order by name (descending alphabetical order).
+	ListAliasesRequestOrderByNameDesc = ListAliasesRequestOrderBy("name_desc")
+	// Order by name (ascending alphabetical order).
+	ListAliasesRequestOrderByNameAsc = ListAliasesRequestOrderBy("name_asc")
+)
+
+func (enum ListAliasesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListAliasesRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListAliasesRequestOrderBy) Values() []ListAliasesRequestOrderBy {
+	return []ListAliasesRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+		"name_desc",
+		"name_asc",
+	}
+}
+
+func (enum ListAliasesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAliasesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAliasesRequestOrderBy(ListAliasesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListDomainsRequestOrderBy string
 
 const (
@@ -580,6 +631,31 @@ type DomainRecord struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// Alias: alias.
+type Alias struct {
+	// ID: unique identifier of the alias.
+	ID string `json:"id"`
+
+	// Email: email address of the alias as local_part@domain.
+	Email string `json:"email"`
+
+	// MailboxID: ID of the mailbox to which the alias belongs.
+	MailboxID string `json:"mailbox_id"`
+
+	// Description: description of the alias.
+	Description string `json:"description"`
+
+	// Status: current status of the alias.
+	// Default value: unknown_status
+	Status AliasStatus `json:"status"`
+
+	// CreatedAt: date and time of alias creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time when the alias was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // Domain: domain.
 type Domain struct {
 	// ID: unique identifier of the domain.
@@ -617,31 +693,6 @@ type Domain struct {
 	SMTPURL string `json:"smtp_url"`
 }
 
-// Alias: alias.
-type Alias struct {
-	// ID: unique identifier of the alias.
-	ID string `json:"id"`
-
-	// Email: email address of the alias as local_part@domain.
-	Email string `json:"email"`
-
-	// MailboxID: ID of the mailbox to which the alias belongs.
-	MailboxID string `json:"mailbox_id"`
-
-	// Description: description of the alias.
-	Description string `json:"description"`
-
-	// Status: current status of the alias.
-	// Default value: unknown_status
-	Status AliasStatus `json:"status"`
-
-	// CreatedAt: date and time of alias creation.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date and time when the alias was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-}
-
 // BatchCreateMailboxesRequest: batch create mailboxes request.
 type BatchCreateMailboxesRequest struct {
 	// Mailboxes: parameters for the mailboxes to create.
@@ -663,11 +714,11 @@ type BatchCreateMailboxesResponse struct {
 
 // CreateAliasRequest: create alias request.
 type CreateAliasRequest struct {
-	// MailboxID: ID of the mailbox to associate with the alias.
-	MailboxID string `json:"-"`
-
 	// LocalPart: local part of the email address (e.g. local_part@domain.com).
 	LocalPart string `json:"local_part"`
+
+	// MailboxID: ID of the mailbox to associate with the alias.
+	MailboxID string `json:"mailbox_id"`
 
 	// Description: (Optional) Description of the alias.
 	Description *string `json:"description,omitempty"`
@@ -682,6 +733,12 @@ type CreateDomainRequest struct {
 	Name string `json:"name"`
 }
 
+// DeleteAliasRequest: delete alias request.
+type DeleteAliasRequest struct {
+	// AliasID: ID of the alias to delete.
+	AliasID string `json:"-"`
+}
+
 // DeleteDomainRequest: delete domain request.
 type DeleteDomainRequest struct {
 	// DomainID: ID of the domain to delete.
@@ -692,6 +749,12 @@ type DeleteDomainRequest struct {
 type DeleteMailboxRequest struct {
 	// MailboxID: ID of the mailbox to delete.
 	MailboxID string `json:"-"`
+}
+
+// GetAliasRequest: get alias request.
+type GetAliasRequest struct {
+	// AliasID: ID of the alias to get.
+	AliasID string `json:"-"`
 }
 
 // GetDomainRecordsRequest: get domain records request.
@@ -749,6 +812,57 @@ type GetDomainRequest struct {
 type GetMailboxRequest struct {
 	// MailboxID: ID of the mailbox to get.
 	MailboxID string `json:"-"`
+}
+
+// ListAliasesRequest: list aliases request.
+type ListAliasesRequest struct {
+	// OrderBy: order aliases by specific criteria.
+	// Default value: created_at_desc
+	OrderBy ListAliasesRequestOrderBy `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// MailboxID: ID of the mailbox for which to list aliases.
+	MailboxID *string `json:"-"`
+
+	// Status: (Optional) Filter aliases by their status.
+	// Default value: unknown_status
+	Status AliasStatus `json:"-"`
+
+	// ProjectID: project ID to filter on.
+	ProjectID string `json:"-"`
+}
+
+// ListAliasesResponse: list aliases response.
+type ListAliasesResponse struct {
+	// TotalCount: number of aliases that match the request (without pagination).
+	TotalCount uint64 `json:"total_count"`
+
+	// Aliases: single page of aliases matching the requested criteria.
+	Aliases []*Alias `json:"aliases"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListAliasesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListAliasesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListAliasesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Aliases = append(r.Aliases, results.Aliases...)
+	r.TotalCount += uint64(len(results.Aliases))
+	return uint64(len(results.Aliases)), nil
 }
 
 // ListDomainsRequest: list domains request.
@@ -815,6 +929,9 @@ type ListMailboxesRequest struct {
 
 	// Search: (Optional) Search term to filter mailboxes on name and local_part.
 	Search *string `json:"-"`
+
+	// ProjectID: (Optional) Project ID to filter mailboxes on.
+	ProjectID *string `json:"-"`
 }
 
 // ListMailboxesResponse: list mailboxes response.
@@ -1120,6 +1237,7 @@ func (s *API) ListMailboxes(req *ListMailboxesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "domain_id", req.DomainID)
 	parameter.AddToQuery(query, "statuses", req.Statuses)
 	parameter.AddToQuery(query, "search", req.Search)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
@@ -1288,18 +1406,141 @@ func (s *API) RestoreMailbox(req *RestoreMailboxRequest, opts ...scw.RequestOpti
 func (s *API) CreateAlias(req *CreateAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
 	var err error
 
-	if fmt.Sprint(req.MailboxID) == "" {
-		return nil, errors.New("field MailboxID cannot be empty in request")
-	}
-
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/mailbox/v1alpha1/mailboxes/" + fmt.Sprint(req.MailboxID) + "/aliases",
+		Path:   "/mailbox/v1alpha1/aliases",
 	}
 
 	err = scwReq.SetBody(req)
 	if err != nil {
 		return nil, err
+	}
+
+	var resp Alias
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListAliases: List aliases for a mailbox.
+func (s *API) ListAliases(req *ListAliasesRequest, opts ...scw.RequestOption) (*ListAliasesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "mailbox_id", req.MailboxID)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mailbox/v1alpha1/aliases",
+		Query:  query,
+	}
+
+	var resp ListAliasesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetAlias: Get an alias by its ID.
+func (s *API) GetAlias(req *GetAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
+	var err error
+
+	if fmt.Sprint(req.AliasID) == "" {
+		return nil, errors.New("field AliasID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mailbox/v1alpha1/aliases/" + fmt.Sprint(req.AliasID) + "",
+	}
+
+	var resp Alias
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForAliasRequest is used by WaitForAlias method.
+type WaitForAliasRequest struct {
+	AliasID       string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForAlias waits for the Alias to reach a terminal state.
+func (s *API) WaitForAlias(req *WaitForAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
+	timeout := defaultMailboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultMailboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[AliasStatus]struct{}{
+		AliasStatusProvisioning: {},
+		AliasStatusDeleting:     {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetAlias(&GetAliasRequest{
+				AliasID: req.AliasID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Alias failed")
+	}
+
+	return res.(*Alias), nil
+}
+
+// DeleteAlias: Delete an alias by its ID.
+func (s *API) DeleteAlias(req *DeleteAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
+	var err error
+
+	if fmt.Sprint(req.AliasID) == "" {
+		return nil, errors.New("field AliasID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/mailbox/v1alpha1/aliases/" + fmt.Sprint(req.AliasID) + "",
 	}
 
 	var resp Alias
