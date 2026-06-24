@@ -425,6 +425,48 @@ func (enum *PublicCatalogProductPropertiesHardwareCPUArch) UnmarshalJSON(data []
 	return nil
 }
 
+type PublicCatalogProductPropertiesHardwareRAMECCType string
+
+const (
+	// Unknown ECC type.
+	PublicCatalogProductPropertiesHardwareRAMECCTypeUnknownEccType = PublicCatalogProductPropertiesHardwareRAMECCType("unknown_ecc_type")
+	// Standard ECC.
+	PublicCatalogProductPropertiesHardwareRAMECCTypeStandard = PublicCatalogProductPropertiesHardwareRAMECCType("standard")
+	// On Die ECC (ODECC).
+	PublicCatalogProductPropertiesHardwareRAMECCTypeOnDie = PublicCatalogProductPropertiesHardwareRAMECCType("on_die")
+)
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesHardwareRAMECCTypeUnknownEccType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) Values() []PublicCatalogProductPropertiesHardwareRAMECCType {
+	return []PublicCatalogProductPropertiesHardwareRAMECCType{
+		"unknown_ecc_type",
+		"standard",
+		"on_die",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesHardwareRAMECCType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesHardwareRAMECCType(PublicCatalogProductPropertiesHardwareRAMECCType(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesManagedMongoDBStorageTypeStorageClass string
 
 const (
@@ -930,6 +972,10 @@ type PublicCatalogProductPropertiesHardwareRAM struct {
 
 	// Type: the type of the RAM.
 	Type string `json:"type"`
+
+	// EccType: eCC type.
+	// Default value: unknown_ecc_type
+	EccType *PublicCatalogProductPropertiesHardwareRAMECCType `json:"ecc_type"`
 }
 
 // PublicCatalogProductPropertiesHardwareStorage: public catalog product properties hardware storage.
