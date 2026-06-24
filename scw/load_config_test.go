@@ -22,7 +22,8 @@ func TestLoad(t *testing.T) {
 		expectedError string
 		expectedFiles map[string]string
 	}{
-		// valid config
+		// Valid configs
+
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
@@ -33,6 +34,7 @@ func TestLoad(t *testing.T) {
 			},
 			expected: &Config{},
 		},
+
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
@@ -43,6 +45,7 @@ func TestLoad(t *testing.T) {
 			},
 			expected: v2SimpleValidConfig,
 		},
+
 		{
 			name: "Default config with valid V2", // default config path
 			env: map[string]string{
@@ -56,6 +59,7 @@ func TestLoad(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
 		},
+
 		{
 			name: "XDG config with valid V2",
 			env: map[string]string{
@@ -68,7 +72,8 @@ func TestLoad(t *testing.T) {
 			expected: v2SimpleValidConfig,
 		},
 
-		// errors
+		// Errors
+
 		{
 			name: "Err: custom-path config does not exist",
 			env: map[string]string{
@@ -76,6 +81,7 @@ func TestLoad(t *testing.T) {
 			},
 			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/fake/test.conf: no such file or directory",
 		},
+
 		{
 			name: "Err: custom-path config with invalid V2",
 			env: map[string]string{
@@ -86,6 +92,7 @@ func TestLoad(t *testing.T) {
 			},
 			expectedError: "scaleway-sdk-go: content of config file {HOME}/invalid1/test.conf is invalid: yaml: found unexpected end of stream",
 		},
+
 		{
 			name: "Err: default config with invalid V2",
 			env: map[string]string{
@@ -96,6 +103,7 @@ func TestLoad(t *testing.T) {
 			},
 			expectedError: "scaleway-sdk-go: content of config file {HOME}/.config/scw/config.yaml is invalid: yaml: found unexpected end of stream",
 		},
+
 		{
 			name: "Err: default config with invalid profile",
 			env: map[string]string{
