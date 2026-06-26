@@ -253,6 +253,13 @@ const (
 	FunctionRuntimePython313      = FunctionRuntime("python313")
 	FunctionRuntimeRust185        = FunctionRuntime("rust185")
 	FunctionRuntimePhp84          = FunctionRuntime("php84")
+	FunctionRuntimeNode24         = FunctionRuntime("node24")
+	FunctionRuntimeNode26         = FunctionRuntime("node26")
+	FunctionRuntimeGo125          = FunctionRuntime("go125")
+	FunctionRuntimeGo126          = FunctionRuntime("go126")
+	FunctionRuntimePhp85          = FunctionRuntime("php85")
+	FunctionRuntimePython314      = FunctionRuntime("python314")
+	FunctionRuntimeRust196        = FunctionRuntime("rust196")
 )
 
 func (enum FunctionRuntime) String() string {
@@ -300,6 +307,13 @@ func (enum FunctionRuntime) Values() []FunctionRuntime {
 		"python313",
 		"rust185",
 		"php84",
+		"node24",
+		"node26",
+		"go125",
+		"go126",
+		"php85",
+		"python314",
+		"rust196",
 	}
 }
 
