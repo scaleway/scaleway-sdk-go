@@ -1,13 +1,9 @@
 package scw
 
 import (
-	"context"
-	"fmt"
 	"os"
 	"strconv"
 
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
@@ -122,26 +118,18 @@ func LoadEnvProfile() *Profile {
 	return p
 }
 
-// GetS3EndpointFromAWSConf retrieves the set value of AWS_ENDPOINT_URL_S3 (or
-// AWS_ENDPOINT_URL). We retrieve them for configuration compatibility with AWS
-// services.
-// See https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-envvars.html#envvars-list-AWS_ENDPOINT_URL.
-func GetS3EndpointFromAWSConf(ctx context.Context) (string, error) {
-	// This only loads AWS_ENDPOINT_URL
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return "", fmt.Errorf("could not load default config: %w", err)
+// GetS3EndpointFromAWSConf retrieves the set value of AWS_ENDPOINT_URL_S3
+// or, if not set, AWS_ENDPOINT_URL.
+// This function can be called from any client side code which intends to
+// be AWS compatible, thus check the environment variables.
+// In case AWS changes the key of these variable, this function should be the
+// single point to update.
+func GetS3EndpointFromAWSConf() string {
+	if ep := os.Getenv("AWS_ENDPOINT_URL_S3"); ep != "" {
+		return ep
 	}
 
-	// This will load AWS_ENDPOINT_URL_S3
-	tmpClient := s3.NewFromConfig(cfg)
-
-	tmpOpts := tmpClient.Options()
-	if tmpOpts.BaseEndpoint != nil && *tmpOpts.BaseEndpoint != "" {
-		return *tmpOpts.BaseEndpoint, nil
-	}
-
-	return "", nil
+	return os.Getenv("AWS_ENDPOINT_URL")
 }
 
 func getEnv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
