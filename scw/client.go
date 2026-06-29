@@ -28,6 +28,7 @@ type Client struct {
 	httpClient            httpClient
 	auth                  auth.Auth
 	apiURL                string
+	s3Endpoint            string
 	userAgent             string
 	defaultOrganizationID *string
 	defaultProjectID      *string
@@ -82,6 +83,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		auth:                  s.token,
 		httpClient:            s.httpClient,
 		apiURL:                s.apiURL,
+		s3Endpoint:            s.s3Endpoint,
 		userAgent:             s.userAgent,
 		defaultOrganizationID: s.defaultOrganizationID,
 		defaultProjectID:      s.defaultProjectID,
@@ -145,6 +147,16 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 		return token.AccessKey, isAccessKey
 	}
 
+	return "", false
+}
+
+// GetS3Endpoint returns the S3 endpoint of the client.
+// This value can be set in the client option
+// WithS3Endpoint(). Be aware this value can be empty.
+func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
+	if c.s3Endpoint != "" {
+		return c.s3Endpoint, true
+	}
 	return "", false
 }
 
