@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.32.25
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.104.0
 	golang.org/x/text v0.38.0
-	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.7
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -29,3 +29,4 @@ require (
 	github.com/aws/smithy-go v1.27.1 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.4 // indirect
 )
+require go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
