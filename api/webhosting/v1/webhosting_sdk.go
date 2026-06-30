@@ -1372,7 +1372,7 @@ type OfferCommitment struct {
 	// Default value: unknown_commitment_type
 	Type CommitmentType `json:"type"`
 
-	// IsDefault: true when its is the default commitment for that offer.
+	// IsDefault: true if the commitment is the default one for that offer.
 	IsDefault bool `json:"is_default"`
 
 	// BillingMode: offer commitment name.
