@@ -799,31 +799,43 @@ type ACLRule struct {
 
 // IngressRule: ingress rule.
 type IngressRule struct {
+	// ID: ID of the ingress rule.
 	ID string `json:"id"`
 
+	// VpcID: ID of the VPC this rule belongs to.
 	VpcID string `json:"vpc_id"`
 
+	// CreatedAt: date the ingress rule was created.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date the ingress rule was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// IsIPv6: whether this rule applies to IPv4 or IPv6 traffic.
 	IsIPv6 bool `json:"is_ipv6"`
 
+	// Source: source network to apply this rule on.
 	Source scw.IPNet `json:"source"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to.
 	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
 
+	// Description: description of this ingress rule.
 	Description *string `json:"description"`
 
+	// Tags: tags of this ingress rule.
 	Tags []string `json:"tags"`
 
+	// OrganizationID: scaleway Organization the ingress rule belongs to.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: scaleway Project the ingress rule belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region of the ingress rule.
 	Region scw.Region `json:"region"`
 
 	// This field is automatically generated, do not edit it
@@ -1046,16 +1058,22 @@ type CreateIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// VpcID: ID of the VPC this rule will belong to.
 	VpcID string `json:"vpc_id"`
 
+	// Source: source network to match ingress traffic on. Can be IPv6 or IPv4.
 	Source scw.IPNet `json:"source"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network.
 	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
 
+	// Description: description for this ingress rule.
 	Description *string `json:"description,omitempty"`
 
+	// Tags: tags for this ingress rule.
 	Tags []string `json:"tags"`
 }
 
@@ -1154,6 +1172,7 @@ type DeleteIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to delete.
 	RuleID string `json:"-"`
 }
 
@@ -1245,6 +1264,7 @@ type GetIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to return.
 	RuleID string `json:"-"`
 }
 
@@ -1289,25 +1309,35 @@ type ListIngressRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of the returned ingress rules.
+	// Default value: created_at_asc
 	OrderBy ListIngressRulesRequestOrderBy `json:"-"`
 
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
+	// PageSize: maximum number of ingress rules to return per page.
 	PageSize *uint32 `json:"-"`
 
+	// VpcID: ID of the VPC to filter for.
 	VpcID *string `json:"-"`
 
+	// NexthopResourceIP: next hop IP to filter for.
 	NexthopResourceIP *net.IP `json:"-"`
 
+	// NexthopPrivateNetworkID: next hop Private Network ID to filter for. Only ingress rules with this Private Network as next hop will be returned.
 	NexthopPrivateNetworkID *string `json:"-"`
 
+	// IsIPv6: whether to return only IPv4 or IPv6 ingress rules.
 	IsIPv6 *bool `json:"-"`
 
+	// Tags: tags to filter for. Only ingress rules with one or more matching tags will be returned.
 	Tags []string `json:"-"`
 
+	// OrganizationID: organization ID to filter for. Only ingress rules belonging to this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: project ID to filter for. Only ingress rules belonging to this Project will be returned.
 	ProjectID *string `json:"-"`
 }
 
@@ -1433,7 +1463,7 @@ type ListSubnetOverlapsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// VpcConnectorID: vPCConnector ID.
+	// VpcConnectorID: vPC Peering connector ID.
 	VpcConnectorID string `json:"-"`
 
 	// OrderBy: sort order of the returned Subnet overlaps.
@@ -1724,16 +1754,22 @@ type UpdateIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to update.
 	RuleID string `json:"-"`
 
+	// Source: source network to match ingress traffic on. Can be IPv4 or IPv6.
 	Source *scw.IPNet `json:"source,omitempty"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network.
 	NexthopResourceIP *net.IP `json:"nexthop_resource_ip,omitempty"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
 
+	// Description: description to set for this ingress rule.
 	Description *string `json:"description,omitempty"`
 
+	// Tags: tags to set for this ingress rule.
 	Tags *[]string `json:"tags,omitempty"`
 }
 
@@ -1868,6 +1904,11 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Vpcs {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2059,6 +2100,11 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.PrivateNetworks {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2365,6 +2411,11 @@ func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Subnets {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2618,6 +2669,11 @@ func (s *API) ListVPCConnectors(req *ListVPCConnectorsRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.VpcConnectors {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2762,7 +2818,7 @@ func (s *API) DeleteVPCConnector(req *DeleteVPCConnectorRequest, opts ...scw.Req
 	return nil
 }
 
-// ListSubnetOverlaps: List subnet overlaps between the VPCConnector VPC and the target VPC or for a specific subnet if specified.
+// ListSubnetOverlaps: List subnet overlaps between the VPCs on both sides of a connector, or for a specific subnet if specified.
 func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.RequestOption) (*ListSubnetOverlapsResponse, error) {
 	var err error
 
@@ -2804,7 +2860,7 @@ func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// ListIngressRules:
+// ListIngressRules: List existing ingress rules in the specified region.
 func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.RequestOption) (*ListIngressRulesResponse, error) {
 	var err error
 
@@ -2846,10 +2902,15 @@ func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Rules {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
-// CreateIngressRule:
+// CreateIngressRule: Create an ingress rule in the specified region.
 func (s *API) CreateIngressRule(req *CreateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2884,7 +2945,7 @@ func (s *API) CreateIngressRule(req *CreateIngressRuleRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// GetIngressRule:
+// GetIngressRule: Retrieve details of an existing ingress rule, specified by its ingress rule ID.
 func (s *API) GetIngressRule(req *GetIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2918,7 +2979,7 @@ func (s *API) GetIngressRule(req *GetIngressRuleRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// UpdateIngressRule:
+// UpdateIngressRule: Update an ingress rule specified by its ingress rule ID.
 func (s *API) UpdateIngressRule(req *UpdateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2957,7 +3018,7 @@ func (s *API) UpdateIngressRule(req *UpdateIngressRuleRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// DeleteIngressRule:
+// DeleteIngressRule: Delete an ingress rule specified by its ingress rule ID.
 func (s *API) DeleteIngressRule(req *DeleteIngressRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 

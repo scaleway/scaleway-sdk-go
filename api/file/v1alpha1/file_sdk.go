@@ -711,6 +711,11 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Filesystems {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -757,6 +762,11 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Attachments {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }

@@ -1344,6 +1344,11 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Secrets {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1692,6 +1697,11 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Versions {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }

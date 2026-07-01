@@ -1062,6 +1062,11 @@ func (s *API) ListVolumeTypes(req *ListVolumeTypesRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.VolumeTypes {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1107,6 +1112,11 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Volumes {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -1299,6 +1309,11 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Snapshots {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
