@@ -1905,6 +1905,11 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Vpcs {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2095,6 +2100,11 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.PrivateNetworks {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2401,6 +2411,11 @@ func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Subnets {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2654,6 +2669,11 @@ func (s *API) ListVPCConnectors(req *ListVPCConnectorsRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.VpcConnectors {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2881,6 +2901,11 @@ func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Rules {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }

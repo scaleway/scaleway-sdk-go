@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -265,47 +266,6 @@ func (enum *KeyOrigin) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = KeyOrigin(KeyOrigin(tmp).String())
-	return nil
-}
-
-type KeyProtectionLevel string
-
-const (
-	KeyProtectionLevelUnknownProtectionLevel = KeyProtectionLevel("unknown_protection_level")
-	// Cryptographic operations are performed in software.
-	KeyProtectionLevelSoftware = KeyProtectionLevel("software")
-	// Cryptographic operations are performed within a dedicated Hardware Security Module (HSM).
-	KeyProtectionLevelHsm = KeyProtectionLevel("hsm")
-)
-
-func (enum KeyProtectionLevel) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(KeyProtectionLevelUnknownProtectionLevel)
-	}
-	return string(enum)
-}
-
-func (enum KeyProtectionLevel) Values() []KeyProtectionLevel {
-	return []KeyProtectionLevel{
-		"unknown_protection_level",
-		"software",
-		"hsm",
-	}
-}
-
-func (enum KeyProtectionLevel) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *KeyProtectionLevel) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = KeyProtectionLevel(KeyProtectionLevel(tmp).String())
 	return nil
 }
 
@@ -570,12 +530,43 @@ type Key struct {
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 
-	// ProtectionLevel: refer to the `Key.ProtectionLevel` enum for a description of values.
-	// Default value: unknown_protection_level
-	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
-
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Key) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Key
+		Platform string
+	}{
+		Key:      *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://key-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/keys/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateKeyRequest: create key request.
@@ -607,10 +598,6 @@ type CreateKeyRequest struct {
 	// Origin: refer to the `Key.Origin` enum for a description of values.
 	// Default value: unknown_origin
 	Origin KeyOrigin `json:"origin"`
-
-	// ProtectionLevel: refer to the `Key.Protection` enum for a description of values.
-	// Default value: unknown_protection_level
-	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
 }
 
 // DataKey: data key.
@@ -814,10 +801,6 @@ type ListKeysRequest struct {
 
 	// ScheduledForDeletion: filter keys based on their deletion status. By default, only keys not scheduled for deletion are returned in the output.
 	ScheduledForDeletion bool `json:"-"`
-
-	// ProtectionLevel: select from software or hsm.
-	// Default value: unknown_protection_level
-	ProtectionLevel KeyProtectionLevel `json:"-"`
 }
 
 // ListKeysResponse: list keys response.
@@ -1004,6 +987,9 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1035,6 +1021,9 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1102,6 +1091,9 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1167,6 +1159,9 @@ func (s *API) RotateKey(req *RotateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1203,6 +1198,9 @@ func (s *API) ProtectKey(req *ProtectKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1239,6 +1237,9 @@ func (s *API) UnprotectKey(req *UnprotectKeyRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1275,6 +1276,9 @@ func (s *API) EnableKey(req *EnableKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1311,6 +1315,9 @@ func (s *API) DisableKey(req *DisableKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1338,7 +1345,6 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "usage", req.Usage)
 	parameter.AddToQuery(query, "scheduled_for_deletion", req.ScheduledForDeletion)
-	parameter.AddToQuery(query, "protection_level", req.ProtectionLevel)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1355,6 +1361,11 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Keys {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -1574,6 +1585,9 @@ func (s *API) ImportKeyMaterial(req *ImportKeyMaterialRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1644,6 +1658,9 @@ func (s *API) RestoreKey(req *RestoreKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 

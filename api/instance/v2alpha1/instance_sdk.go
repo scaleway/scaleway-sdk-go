@@ -1060,6 +1060,11 @@ type ServerIP struct {
 	Default bool `json:"default"`
 }
 
+// CreateTemplateRequestPrivateNetworkTemplate: create template request private network template.
+type CreateTemplateRequestPrivateNetworkTemplate struct {
+	PrivateNetworkID string `json:"private_network_id"`
+}
+
 // CreateTemplateRequestVolumeTemplate: create template request volume template.
 type CreateTemplateRequestVolumeTemplate struct {
 	// VolumeType: default value: unknown_volume_type
@@ -1305,8 +1310,6 @@ type TemplateSummary struct {
 
 	PublicIPV6Count uint32 `json:"public_ip_v6_count"`
 
-	PrivateNetworkIDs []string `json:"private_network_ids"`
-
 	CreatedAt *time.Time `json:"created_at"`
 
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -1373,6 +1376,11 @@ type ServerVolume struct {
 // UpdateServerRequestPublicNetworkInterface: update server request public network interface.
 type UpdateServerRequestPublicNetworkInterface struct {
 	SecurityGroupID *string `json:"security_group_id"`
+}
+
+// UpdateTemplateRequestUpdatePrivateNetworks: update template request update private networks.
+type UpdateTemplateRequestUpdatePrivateNetworks struct {
+	PrivateNetworks []*CreateTemplateRequestPrivateNetworkTemplate `json:"private_networks"`
 }
 
 // UpdateTemplateRequestUpdateVolumes: update template request update volumes.
@@ -1566,7 +1574,7 @@ type CreateTemplateRequest struct {
 
 	Volumes []*CreateTemplateRequestVolumeTemplate `json:"volumes"`
 
-	PrivateNetworkIDs []string `json:"private_network_ids"`
+	PrivateNetworks []*CreateTemplateRequestPrivateNetworkTemplate `json:"private_networks"`
 
 	PublicIPV4Count uint32 `json:"public_ip_v4_count"`
 
@@ -2387,7 +2395,7 @@ type Template struct {
 
 	Volumes []*CreateTemplateRequestVolumeTemplate `json:"volumes"`
 
-	PrivateNetworkIDs []string `json:"private_network_ids"`
+	PrivateNetworks []*CreateTemplateRequestPrivateNetworkTemplate `json:"private_networks"`
 
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -2528,7 +2536,7 @@ type UpdateTemplateRequest struct {
 
 	UpdateVolumes *UpdateTemplateRequestUpdateVolumes `json:"update_volumes,omitempty"`
 
-	PrivateNetworkIDs *[]string `json:"private_network_ids,omitempty"`
+	UpdatePrivateNetworks *UpdateTemplateRequestUpdatePrivateNetworks `json:"update_private_networks,omitempty"`
 
 	PublicIPV4Count *uint32 `json:"public_ip_v4_count,omitempty"`
 
