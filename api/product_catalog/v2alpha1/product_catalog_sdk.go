@@ -933,6 +933,9 @@ type PublicCatalogProductPropertiesHardwareCPU struct {
 
 	// Threads: the total number of threads.
 	Threads uint32 `json:"threads"`
+
+	// Shared: indicates whether the CPU is shared or not.
+	Shared bool `json:"shared"`
 }
 
 // PublicCatalogProductPropertiesHardwareGPU: public catalog product properties hardware gpu.
