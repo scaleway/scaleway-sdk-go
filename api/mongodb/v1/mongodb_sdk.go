@@ -686,6 +686,18 @@ type Maintenance struct {
 	Reason string `json:"reason"`
 }
 
+// Version: version.
+type Version struct {
+	// Version: mongoDB® major engine version.
+	Version string `json:"version"`
+
+	// EndOfLifeAt: date of End of Life.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
+}
+
 // Volume: volume.
 type Volume struct {
 	// Type: type of volume where data is stored.
@@ -794,6 +806,9 @@ type Instance struct {
 
 	// Maintenances: list of pending maintenances applicable to the Database Instance.
 	Maintenances []*Maintenance `json:"maintenances"`
+
+	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
+	UpgradableVersions []*Version `json:"upgradable_versions"`
 }
 
 // NodeType: node type.
@@ -875,18 +890,6 @@ type User struct {
 
 	// Roles: list of roles assigned to the user, along with the corresponding database where each role is granted.
 	Roles []*UserRole `json:"roles"`
-}
-
-// Version: version.
-type Version struct {
-	// Version: mongoDB® major engine version.
-	Version string `json:"version"`
-
-	// EndOfLifeAt: date of End of Life.
-	EndOfLifeAt *time.Time `json:"end_of_life_at"`
-
-	// ReleasedAt: date of Release.
-	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // ApplyMaintenanceRequest: apply maintenance request.
@@ -1480,11 +1483,12 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// VolumeSizeBytes: increase your Block Storage volume size.
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
+	// Precisely one of VolumeSizeBytes, Version must be set.
 	VolumeSizeBytes *scw.Size `json:"volume_size_bytes,omitempty"`
 
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
-	VersionID *string `json:"version_id,omitempty"`
+	// Version: mongoDB version to upgrade to (e.g., `8.0`, `7.0`, `8.2`).
+	// Precisely one of VolumeSizeBytes, Version must be set.
+	Version *string `json:"version,omitempty"`
 }
 
 // This API allows you to manage your Managed Databases for MongoDB®.
