@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -919,6 +920,44 @@ type ACLRule struct {
 
 	// Description: description of the ACL.
 	Description string `json:"description"`
+
+	// Region: region of the ACL rule.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ACLRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ACLRule
+		Platform string
+	}{
+		ACLRule:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/acl-rules/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
@@ -1115,6 +1154,44 @@ type ClusterType struct {
 
 	// MaxEtcdSize: maximum amount of data that can be stored in etcd for the offer.
 	MaxEtcdSize scw.Size `json:"max_etcd_size"`
+
+	// Region: the region of the cluster type.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ClusterType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ClusterType
+		Platform string
+	}{
+		ClusterType: *m,
+		Platform:    platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/cluster-types/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.
@@ -1151,6 +1228,41 @@ type Version struct {
 
 	// ReleasedAt: date at which this version was made available by Kapsule product.
 	ReleasedAt *time.Time `json:"released_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Version
+		Platform string
+	}{
+		Version:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/versions/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Cluster: cluster.
@@ -1243,6 +1355,41 @@ type Cluster struct {
 
 	// ServiceDNSIP: IP used for the DNS Service.
 	ServiceDNSIP net.IP `json:"service_dns_ip"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Cluster) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Cluster
+		Platform string
+	}{
+		Cluster:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/clusters/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Node: node.
@@ -1286,6 +1433,41 @@ type Node struct {
 
 	// UpdatedAt: date on which the node was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Node) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Node
+		Platform string
+	}{
+		Node:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/nodes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pool: pool.
@@ -1379,6 +1561,41 @@ type Pool struct {
 
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Pool) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Pool
+		Platform string
+	}{
+		Pool:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pools/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // NodeMetadataCoreV1Taint: node metadata core v1 taint.
@@ -2399,6 +2616,11 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Clusters {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2445,6 +2667,9 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2476,6 +2701,9 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2561,6 +2789,9 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2596,6 +2827,9 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2632,6 +2866,9 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2668,6 +2905,9 @@ func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2729,6 +2969,11 @@ func (s *API) ListClusterAvailableTypes(req *ListClusterAvailableTypesRequest, o
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.ClusterTypes {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2840,6 +3085,11 @@ func (s *API) ListClusterACLRules(req *ListClusterACLRulesRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Rules {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2986,6 +3236,11 @@ func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Pools {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -3031,6 +3286,9 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3062,6 +3320,9 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3148,6 +3409,9 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3184,6 +3448,9 @@ func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3215,6 +3482,9 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3251,6 +3521,9 @@ func (s *API) SetPoolTaints(req *SetPoolTaintsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3287,6 +3560,9 @@ func (s *API) SetPoolStartupTaints(req *SetPoolStartupTaintsRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3323,6 +3599,9 @@ func (s *API) SetPoolLabels(req *SetPoolLabelsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3467,6 +3746,11 @@ func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Nodes {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -3498,6 +3782,9 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3586,6 +3873,9 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3622,6 +3912,9 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3658,6 +3951,9 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3716,6 +4012,9 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3752,6 +4051,11 @@ func (s *API) ListClusterTypes(req *ListClusterTypesRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.ClusterTypes {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
