@@ -686,18 +686,6 @@ type Maintenance struct {
 	Reason string `json:"reason"`
 }
 
-// Version: version.
-type Version struct {
-	// Version: mongoDB® major engine version.
-	Version string `json:"version"`
-
-	// EndOfLifeAt: date of End of Life.
-	EndOfLifeAt *time.Time `json:"end_of_life_at"`
-
-	// ReleasedAt: date of Release.
-	ReleasedAt *time.Time `json:"released_at"`
-}
-
 // Volume: volume.
 type Volume struct {
 	// Type: type of volume where data is stored.
@@ -808,7 +796,7 @@ type Instance struct {
 	Maintenances []*Maintenance `json:"maintenances"`
 
 	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
-	UpgradableVersions []*Version `json:"upgradable_versions"`
+	UpgradableVersions []string `json:"upgradable_versions"`
 }
 
 // NodeType: node type.
@@ -890,6 +878,18 @@ type User struct {
 
 	// Roles: list of roles assigned to the user, along with the corresponding database where each role is granted.
 	Roles []*UserRole `json:"roles"`
+}
+
+// Version: version.
+type Version struct {
+	// Version: mongoDB® major engine version.
+	Version string `json:"version"`
+
+	// EndOfLifeAt: date of End of Life.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // ApplyMaintenanceRequest: apply maintenance request.
