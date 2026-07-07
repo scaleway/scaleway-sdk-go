@@ -968,6 +968,15 @@ type RestoreMailboxRequest struct {
 	MailboxID string `json:"-"`
 }
 
+// UpdateAliasRequest: update alias request.
+type UpdateAliasRequest struct {
+	// AliasID: ID of the alias to update.
+	AliasID string `json:"-"`
+
+	// Description: (Optional) Description of the alias.
+	Description *string `json:"description,omitempty"`
+}
+
 // UpdateMailboxRequest: update mailbox request.
 type UpdateMailboxRequest struct {
 	// MailboxID: ID of the mailbox to update.
@@ -1528,6 +1537,33 @@ func (s *API) WaitForAlias(req *WaitForAliasRequest, opts ...scw.RequestOption) 
 	}
 
 	return res.(*Alias), nil
+}
+
+// UpdateAlias: Update an alias by its ID.
+func (s *API) UpdateAlias(req *UpdateAliasRequest, opts ...scw.RequestOption) (*Alias, error) {
+	var err error
+
+	if fmt.Sprint(req.AliasID) == "" {
+		return nil, errors.New("field AliasID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/mailbox/v1alpha1/aliases/" + fmt.Sprint(req.AliasID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Alias
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // DeleteAlias: Delete an alias by its ID.
