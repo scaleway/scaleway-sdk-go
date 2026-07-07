@@ -803,10 +803,10 @@ type CoreV1Taint struct {
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request pool config upgrade policy.
 type CreateClusterRequestPoolConfigUpgradePolicy struct {
-	// MaxUnavailable: the maximum number of nodes that can be not ready at the same time.
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
-	// MaxSurge: the maximum number of nodes to be created during the upgrade.
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -886,8 +886,10 @@ type ClusterOpenIDConnectConfig struct {
 
 // PoolUpgradePolicy: pool upgrade policy.
 type PoolUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable uint32 `json:"max_unavailable"`
 
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge uint32 `json:"max_surge"`
 }
 
@@ -1070,7 +1072,7 @@ type CreateClusterRequestPoolConfig struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1107,18 +1109,11 @@ type CreateClusterRequestPoolConfig struct {
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
 type CreatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
-}
-
-// ExternalNodeCoreV1Taint: external node core v1 taint.
-type ExternalNodeCoreV1Taint struct {
-	Key string `json:"key"`
-
-	Value string `json:"value"`
-
-	Effect string `json:"effect"`
 }
 
 // ClusterType: cluster type.
@@ -1525,7 +1520,7 @@ type Pool struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1683,8 +1678,10 @@ type UpdateClusterRequestOpenIDConnectConfig struct {
 
 // UpdatePoolRequestUpgradePolicy: update pool request upgrade policy.
 type UpdatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: new maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: new maximum number of nodes to be created during the upgrade.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -1781,14 +1778,6 @@ type CreateClusterRequest struct {
 	ServiceDNSIP *net.IP `json:"service_dns_ip,omitempty"`
 }
 
-// CreateExternalNodeRequest: create external node request.
-type CreateExternalNodeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	PoolID string `json:"-"`
-}
-
 // CreatePoolRequest: create pool request.
 type CreatePoolRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1831,7 +1820,7 @@ type CreatePoolRequest struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy,omitempty"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1909,37 +1898,6 @@ type DeletePoolRequest struct {
 
 	// PoolID: ID of the pool to delete.
 	PoolID string `json:"-"`
-}
-
-// ExternalNode: external node.
-type ExternalNode struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	ClusterURL string `json:"cluster_url"`
-
-	PoolVersion string `json:"pool_version"`
-
-	ClusterCa string `json:"cluster_ca"`
-
-	KubeToken string `json:"kube_token"`
-
-	KubeletConfig string `json:"kubelet_config"`
-
-	ExternalIP string `json:"external_ip"`
-
-	ContainerdVersion string `json:"containerd_version"`
-
-	RuncVersion string `json:"runc_version"`
-
-	CniPluginsVersion string `json:"cni_plugins_version"`
-
-	NodeLabels map[string]string `json:"node_labels"`
-
-	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
-
-	IamToken string `json:"iam_token"`
 }
 
 // ExternalNodeAuth: external node auth.
@@ -3660,42 +3618,6 @@ func (s *API) AuthExternalNode(req *AuthExternalNodeRequest, opts ...scw.Request
 	}
 
 	var resp ExternalNodeAuth
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// CreateExternalNode: Retrieve metadata for a Kosmos node. This method is not intended to be called by end users but rather programmatically by the kapsule-node-agent.
-func (s *API) CreateExternalNode(req *CreateExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNode, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PoolID) == "" {
-		return nil, errors.New("field PoolID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/external-nodes",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ExternalNode
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
