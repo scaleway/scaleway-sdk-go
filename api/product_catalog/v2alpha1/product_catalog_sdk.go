@@ -343,6 +343,7 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputToken       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeOutputToken      = PublicCatalogProductPropertiesGenerativeAPIsTokenType("output_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputDuration    = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_duration")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputCachedToken = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_cached_token")
 )
 
 func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) String() string {
@@ -359,6 +360,7 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) Values() []Pub
 		"input_token",
 		"output_token",
 		"input_duration",
+		"input_cached_token",
 	}
 }
 
