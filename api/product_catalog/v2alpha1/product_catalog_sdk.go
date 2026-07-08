@@ -1081,6 +1081,51 @@ type PublicCatalogProductPropertiesObjectStorageRestoreType struct {
 	RestoreType PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType `json:"restore_type"`
 }
 
+// PublicCatalogProductPropertiesServerlessContainersCPUType: public catalog product properties serverless containers cpu type.
+type PublicCatalogProductPropertiesServerlessContainersCPUType struct {
+	// MvcpuCounts: the list of available number of milli-vCPUs.
+	MvcpuCounts []uint64 `json:"mvcpu_counts"`
+}
+
+// PublicCatalogProductPropertiesServerlessContainersMemoryType: public catalog product properties serverless containers memory type.
+type PublicCatalogProductPropertiesServerlessContainersMemoryType struct {
+	// Sizes: the list of available memory size in bytes.
+	Sizes []scw.Size `json:"sizes"`
+}
+
+// PublicCatalogProductPropertiesServerlessFunctionsConsumptionType: public catalog product properties serverless functions consumption type.
+type PublicCatalogProductPropertiesServerlessFunctionsConsumptionType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsFreeTierType: public catalog product properties serverless functions free tier type.
+type PublicCatalogProductPropertiesServerlessFunctionsFreeTierType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsProvisionType: public catalog product properties serverless functions provision type.
+type PublicCatalogProductPropertiesServerlessFunctionsProvisionType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsRequestType: public catalog product properties serverless functions request type.
+type PublicCatalogProductPropertiesServerlessFunctionsRequestType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource: public catalog product properties serverless functions runtime resource.
+type PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource struct {
+	// MemorySize: the memory size in bytes.
+	MemorySize scw.Size `json:"memory_size"`
+
+	// MvcpuCount: the number of milli-vCPUs.
+	MvcpuCount uint64 `json:"mvcpu_count"`
+}
+
+// PublicCatalogProductPropertiesServerlessJobsCPUType: public catalog product properties serverless jobs cpu type.
+type PublicCatalogProductPropertiesServerlessJobsCPUType struct {
+	// MvcpuCounts: the list of available number of milli-vCPUs.
+	MvcpuCounts []uint64 `json:"mvcpu_counts"`
+}
+
+// PublicCatalogProductPropertiesServerlessJobsMemoryType: public catalog product properties serverless jobs memory type.
+type PublicCatalogProductPropertiesServerlessJobsMemoryType struct {
+	// Sizes: the list of available memory size in bytes.
+	Sizes []scw.Size `json:"sizes"`
+}
+
 // PublicCatalogProductPropertiesApacheKafka: public catalog product properties apache kafka.
 type PublicCatalogProductPropertiesApacheKafka struct{}
 
@@ -1275,13 +1320,48 @@ type PublicCatalogProductPropertiesOpenSearch struct{}
 type PublicCatalogProductPropertiesSecretManager struct{}
 
 // PublicCatalogProductPropertiesServerlessContainers: public catalog product properties serverless containers.
-type PublicCatalogProductPropertiesServerlessContainers struct{}
+type PublicCatalogProductPropertiesServerlessContainers struct {
+	// Memory: the properties related to Serverless containers memory products.
+	// Precisely one of Memory, CPU must be set.
+	Memory *PublicCatalogProductPropertiesServerlessContainersMemoryType `json:"memory,omitempty"`
+
+	// CPU: the properties related to Serverless containers CPU products.
+	// Precisely one of Memory, CPU must be set.
+	CPU *PublicCatalogProductPropertiesServerlessContainersCPUType `json:"cpu,omitempty"`
+}
 
 // PublicCatalogProductPropertiesServerlessFunctions: public catalog product properties serverless functions.
-type PublicCatalogProductPropertiesServerlessFunctions struct{}
+type PublicCatalogProductPropertiesServerlessFunctions struct {
+	// Resources: the serverless functions runtime resources sorted by memory size and then by milli-vCPU count.
+	Resources []*PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource `json:"resources"`
+
+	// Consumption: the properties related to Serverless functions consumption products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Consumption *PublicCatalogProductPropertiesServerlessFunctionsConsumptionType `json:"consumption,omitempty"`
+
+	// Request: the properties related to Serverless functions request products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Request *PublicCatalogProductPropertiesServerlessFunctionsRequestType `json:"request,omitempty"`
+
+	// Provision: the properties related to Serverless functions provision products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Provision *PublicCatalogProductPropertiesServerlessFunctionsProvisionType `json:"provision,omitempty"`
+
+	// FreeTier: the properties related to Serverless functions free tier products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	FreeTier *PublicCatalogProductPropertiesServerlessFunctionsFreeTierType `json:"free_tier,omitempty"`
+}
 
 // PublicCatalogProductPropertiesServerlessJobs: public catalog product properties serverless jobs.
-type PublicCatalogProductPropertiesServerlessJobs struct{}
+type PublicCatalogProductPropertiesServerlessJobs struct {
+	// Memory: the properties related to Serverless containers memory products.
+	// Precisely one of Memory, CPU must be set.
+	Memory *PublicCatalogProductPropertiesServerlessJobsMemoryType `json:"memory,omitempty"`
+
+	// CPU: the properties related to Serverless containers CPU products.
+	// Precisely one of Memory, CPU must be set.
+	CPU *PublicCatalogProductPropertiesServerlessJobsCPUType `json:"cpu,omitempty"`
+}
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
