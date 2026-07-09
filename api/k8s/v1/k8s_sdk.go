@@ -1554,6 +1554,9 @@ type Pool struct {
 	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
 	PrivateNetworkID *string `json:"private_network_id"`
 
+	// ErrorMessage: details of the error, if any occurred when managing the pool.
+	ErrorMessage *string `json:"error_message"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
 
