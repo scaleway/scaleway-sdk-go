@@ -575,8 +575,14 @@ type Charge struct {
 	// OrganizationID: ID of the charged organization.
 	OrganizationID string `json:"organization_id"`
 
+	// OrganizationName: name of the charged organization.
+	OrganizationName string `json:"organization_name"`
+
 	// ProjectID: ID of the charged project.
 	ProjectID string `json:"project_id"`
+
+	// ProjectName: name of the charged project.
+	ProjectName string `json:"project_name"`
 
 	// Sku: ID of the SKU the charge is priced with.
 	Sku string `json:"sku"`
