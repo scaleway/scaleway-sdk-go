@@ -275,6 +275,7 @@ const (
 	InvoiceTypeUnknownType = InvoiceType("unknown_type")
 	InvoiceTypePeriodic    = InvoiceType("periodic")
 	InvoiceTypePurchase    = InvoiceType("purchase")
+	InvoiceTypeCreditNote  = InvoiceType("credit_note")
 )
 
 func (enum InvoiceType) String() string {
@@ -290,6 +291,7 @@ func (enum InvoiceType) Values() []InvoiceType {
 		"unknown_type",
 		"periodic",
 		"purchase",
+		"credit_note",
 	}
 }
 
@@ -759,7 +761,7 @@ type ExportInvoicesRequest struct {
 	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
 	BillingPeriodStartBefore *time.Time `json:"-"`
 
-	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
+	// InvoiceType: invoice type. It can either be `periodic`, `purchase` or `credit_note`.
 	// Default value: unknown_type
 	InvoiceType InvoiceType `json:"-"`
 
@@ -949,7 +951,7 @@ type ListInvoicesRequest struct {
 	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
 	BillingPeriodStartBefore *time.Time `json:"-"`
 
-	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
+	// InvoiceType: invoice type. It can either be `periodic`, `purchase` or `credit_note`.
 	// Default value: unknown_type
 	InvoiceType InvoiceType `json:"-"`
 
