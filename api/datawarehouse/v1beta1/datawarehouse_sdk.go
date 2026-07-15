@@ -264,9 +264,19 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// EndpointPrivateNetworkDetails: endpoint private network details.
-type EndpointPrivateNetworkDetails struct {
-	PrivateNetworkID string `json:"private_network_id"`
+// NodePrivateNetworkDetails: node private network details.
+type NodePrivateNetworkDetails struct {
+	// NodeName: name  of the node.
+	NodeName string `json:"node_name"`
+
+	// Shard: the ClickHouse shard to which the node belongs to.
+	Shard uint32 `json:"shard"`
+
+	// Replica: the ClickHouse replica to which the node belongs to.
+	Replica uint32 `json:"replica"`
+
+	// IPAddress: private static IP address of that node.
+	IPAddress string `json:"ip_address"`
 }
 
 // EndpointPublicDetails: endpoint public details.
@@ -280,10 +290,13 @@ type EndpointService struct {
 	Port uint32 `json:"port"`
 }
 
-// EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
-type EndpointSpecPrivateNetworkDetails struct {
+// PrivateNetworkDetails: private network details.
+type PrivateNetworkDetails struct {
 	// PrivateNetworkID: UUID of the Private Network.
 	PrivateNetworkID string `json:"private_network_id"`
+
+	// Nodes: list of nodes belonging to this private network and their details.
+	Nodes []*NodePrivateNetworkDetails `json:"nodes"`
 }
 
 // EndpointSpecPublicDetails: endpoint spec public details.
@@ -302,7 +315,7 @@ type Endpoint struct {
 
 	// PrivateNetwork: private Network endpoint details.
 	// Precisely one of PrivateNetwork, Public must be set.
-	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
+	PrivateNetwork *PrivateNetworkDetails `json:"private_network,omitempty"`
 
 	// Public: public endpoint details.
 	// Precisely one of PrivateNetwork, Public must be set.
@@ -315,7 +328,7 @@ type EndpointSpec struct {
 	Public *EndpointSpecPublicDetails `json:"public,omitempty"`
 
 	// Precisely one of Public, PrivateNetwork must be set.
-	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
+	PrivateNetwork *PrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
 // Database: database.
