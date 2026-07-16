@@ -333,7 +333,7 @@ type CreateFileSystemRequest struct {
 	// ProjectID: UUID of the project the filesystem belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Size: must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size uint64 `json:"size"`
 
 	// Type: type of the filesystem.
@@ -527,8 +527,8 @@ type UpdateFileSystemRequest struct {
 	// Name: when defined, is the new name of the filesystem.
 	Name *string `json:"name,omitempty"`
 
-	// Size: size in bytes, with a granularity of 100 GB (10^11 bytes).
-	// Must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: size in bytes, with a granularity in GB (10^9 bytes).
+	// Must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size *uint64 `json:"size,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
