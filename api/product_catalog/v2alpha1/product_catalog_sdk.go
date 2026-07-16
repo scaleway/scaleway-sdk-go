@@ -1182,6 +1182,8 @@ type PublicCatalogProductPropertiesGenerativeAPIs struct {
 	TokenType PublicCatalogProductPropertiesGenerativeAPIsTokenType `json:"token_type"`
 
 	SupportedReasoningValues []string `json:"supported_reasoning_values"`
+
+	DefaultReasoningValue *string `json:"default_reasoning_value"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
