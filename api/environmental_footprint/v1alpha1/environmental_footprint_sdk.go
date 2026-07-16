@@ -69,6 +69,12 @@ const (
 	ProductCategoryManagedInference = ProductCategory("managed_inference")
 	// The Generative API's product category.
 	ProductCategoryGenerativeAPIs = ProductCategory("generative_apis")
+	// The Serverless Functions product category.
+	ProductCategoryServerlessFunctions = ProductCategory("serverless_functions")
+	// The Serverless Containers product category.
+	ProductCategoryServerlessContainers = ProductCategory("serverless_containers")
+	// The Serverless Jobs product category.
+	ProductCategoryServerlessJobs = ProductCategory("serverless_jobs")
 )
 
 func (enum ProductCategory) String() string {
@@ -95,6 +101,9 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"managed_redis",
 		"managed_inference",
 		"generative_apis",
+		"serverless_functions",
+		"serverless_containers",
+		"serverless_jobs",
 	}
 }
 
@@ -174,6 +183,8 @@ const (
 	ServiceCategoryDatabases = ServiceCategory("databases")
 	// The AI service category.
 	ServiceCategoryAi = ServiceCategory("ai")
+	// The Serverless service category.
+	ServiceCategoryServerless = ServiceCategory("serverless")
 )
 
 func (enum ServiceCategory) String() string {
@@ -194,6 +205,7 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"containers",
 		"databases",
 		"ai",
+		"serverless",
 	}
 }
 
