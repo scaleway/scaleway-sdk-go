@@ -42,6 +42,8 @@ type ResponseError struct {
 	RawBody json.RawMessage `json:"-"`
 }
 
+var ErrConfigFileNotFound = errors.New("cannot read config file: no such file or directory")
+
 func (e *ResponseError) UnmarshalJSON(b []byte) error {
 	type tmpResponseError ResponseError
 	tmp := tmpResponseError(*e)
@@ -470,22 +472,6 @@ func (e InvalidClientOptionError) IsScwSdkError() {}
 
 func (e InvalidClientOptionError) Error() string {
 	return "scaleway-sdk-go: " + e.errorType
-}
-
-// ConfigFileNotFound indicates that the config file could not be found
-type ConfigFileNotFoundError struct {
-	path string
-}
-
-func configFileNotFound(path string) *ConfigFileNotFoundError {
-	return &ConfigFileNotFoundError{path: path}
-}
-
-// ConfigFileNotFoundError implements the SdkError interface
-func (e ConfigFileNotFoundError) IsScwSdkError() {}
-
-func (e ConfigFileNotFoundError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: cannot read config file %s: no such file or directory", e.path)
 }
 
 // ResourceExpiredError implements the SdkError interface
