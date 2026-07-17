@@ -33,6 +33,9 @@ type ResponseError struct {
 	// Fields contains detail about validation error. This field is only used by instance API
 	Fields map[string][]string `json:"fields,omitempty"`
 
+	// Locality is a string code that defines the locality of the error. This field is only used by instance API
+	Locality string `json:"locality,omitempty"`
+
 	// StatusCode is the HTTP status code received
 	StatusCode int `json:"-"`
 
@@ -72,6 +75,10 @@ func (e *ResponseError) Error() string {
 		s = fmt.Sprintf("%s: %v", s, e.Fields)
 	}
 
+	if e.Locality != "" {
+		s = fmt.Sprintf("%s (locality: %s)", s, e.Locality)
+	}
+
 	return s
 }
 
@@ -80,7 +87,7 @@ func (e *ResponseError) GetRawBody() json.RawMessage {
 }
 
 // hasResponseError returns an SdkError when the HTTP status is not OK.
-func hasResponseError(res *http.Response) error {
+func hasResponseError(res *http.Response, locality string) error {
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return nil
 	}
@@ -88,6 +95,7 @@ func hasResponseError(res *http.Response) error {
 	newErr := &ResponseError{
 		StatusCode: res.StatusCode,
 		Status:     res.Status,
+		Locality:   locality,
 	}
 
 	if res.Body == nil {
@@ -100,7 +108,6 @@ func hasResponseError(res *http.Response) error {
 	}
 	newErr.RawBody = body
 
-	// The error content is not encoded in JSON, only returns HTTP data.
 	contentType := res.Header.Get("Content-Type")
 	if !strings.HasPrefix(contentType, "application/json") {
 		newErr.Message = res.Status
@@ -112,14 +119,20 @@ func hasResponseError(res *http.Response) error {
 		return errors.Wrap(err, "could not parse error response body")
 	}
 
-	err = unmarshalStandardError(newErr.Type, body)
-	if err != nil {
-		return err
+	stdErr := unmarshalStandardError(newErr.Type, body)
+	if stdErr != nil {
+		if rnfe, ok := stdErr.(*ResourceNotFoundError); ok {
+			rnfe.Locality = locality
+		}
+		return stdErr
 	}
 
-	err = unmarshalNonStandardError(newErr.Type, body)
-	if err != nil {
-		return err
+	nonStdErr := unmarshalNonStandardError(newErr.Type, body)
+	if nonStdErr != nil {
+		if rnfe, ok := nonStdErr.(*ResourceNotFoundError); ok {
+			rnfe.Locality = locality
+		}
+		return nonStdErr
 	}
 
 	return newErr
@@ -404,17 +417,21 @@ func (e *TransientStateError) GetRawBody() json.RawMessage {
 }
 
 type ResourceNotFoundError struct {
-	Resource   string `json:"resource"`
-	ResourceID string `json:"resource_id"`
-
-	RawBody json.RawMessage `json:"-"`
+	Resource   string          `json:"resource"`
+	ResourceID string          `json:"resource_id"`
+	Locality   string          `json:"-"`
+	RawBody    json.RawMessage `json:"-"`
 }
 
 // IsScwSdkError implements the SdkError interface
 func (e *ResourceNotFoundError) IsScwSdkError() {}
 
 func (e *ResourceNotFoundError) Error() string {
-	return fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is not found", e.Resource, e.ResourceID)
+	msg := fmt.Sprintf("scaleway-sdk-go: resource %s with ID %s is not found", e.Resource, e.ResourceID)
+	if e.Locality != "" {
+		msg = fmt.Sprintf("%s (locality: %s)", msg, e.Locality)
+	}
+	return msg
 }
 
 func (e *ResourceNotFoundError) GetRawBody() json.RawMessage {
