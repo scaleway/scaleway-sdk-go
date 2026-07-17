@@ -21,6 +21,7 @@ const (
 	ScwDefaultProjectIDEnv      = "SCW_DEFAULT_PROJECT_ID"
 	ScwDefaultRegionEnv         = "SCW_DEFAULT_REGION"
 	ScwDefaultZoneEnv           = "SCW_DEFAULT_ZONE"
+	ScwUserAgentEnv             = "SCW_USER_AGENT"
 	ScwEnableBeta               = "SCW_ENABLE_BETA"
 	DebugEnv                    = logger.DebugEnv
 
@@ -107,6 +108,11 @@ func LoadEnvProfile() *Profile {
 	zone, _, envExist := getEnv(ScwDefaultZoneEnv)
 	if envExist {
 		p.DefaultZone = &zone
+	}
+
+	userAgent, _, envExist := getEnv(ScwUserAgentEnv)
+	if envExist {
+		p.UserAgent = &userAgent
 	}
 
 	return p

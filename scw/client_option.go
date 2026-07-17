@@ -116,6 +116,10 @@ func WithProfile(p *Profile) ClientOption {
 			defaultZone := Zone(*p.DefaultZone)
 			s.defaultZone = &defaultZone
 		}
+
+		if p.UserAgent != nil {
+			s.userAgent = *p.UserAgent
+		}
 	}
 }
 

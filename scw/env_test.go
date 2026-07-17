@@ -21,8 +21,9 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
+		expectedUserAgent             *string
 	}{
-		// up-to-date env variables
+		// Up-to-date env variables
 		{
 			name: "No config with env variables",
 			env: map[string]string{
@@ -34,6 +35,7 @@ func TestLoadEnvProfile(t *testing.T) {
 				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
 				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
 				ScwDefaultZoneEnv:           v2ValidDefaultZone,
+				ScwUserAgentEnv:             v2ValidUserAgent,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
@@ -43,7 +45,9 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
+			expectedUserAgent:             s(v2ValidUserAgent),
 		},
+
 		{
 			name: "No config with terraform legacy env variables",
 			env: map[string]string{
@@ -58,6 +62,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "No config with CLI legacy env variables",
 			env: map[string]string{
@@ -98,6 +103,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 			testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 			testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
+			testhelpers.Equals(t, test.expectedUserAgent, p.UserAgent)
 		})
 	}
 }
