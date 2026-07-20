@@ -282,6 +282,11 @@ func (s *settings) validate() error {
 		return NewInvalidClientOptionError("invalid API url '%s' it should not have a trailing slash", s.apiURL)
 	}
 
+	// S3 endpoint.
+	if !validation.IsURL(s.s3Endpoint) {
+		return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
+	}
+
 	// TODO: check for max s.defaultPageSize
 
 	return nil
