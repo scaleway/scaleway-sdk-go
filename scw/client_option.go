@@ -283,7 +283,7 @@ func (s *settings) validate() error {
 	}
 
 	// S3 endpoint.
-	if s.s3Endpoint != "" && !validation.IsURL(s.s3Endpoint) {
+	if !validation.IsURL(s.s3Endpoint) {
 		return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
 	}
 

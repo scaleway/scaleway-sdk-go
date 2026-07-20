@@ -41,6 +41,7 @@ func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
+		WithS3Endpoint("https://s3.fr-par.scw.cloud"),
 		withDefaultUserAgent(userAgent),
 	}
 }
