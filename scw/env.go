@@ -25,6 +25,10 @@ const (
 	ScwEnableBeta               = "SCW_ENABLE_BETA"
 	DebugEnv                    = logger.DebugEnv
 
+	// AWS
+	AwsEndpointURL   = "AWS_ENDPOINT_URL"
+	AwsEndpointURLS3 = "AWS_ENDPOINT_URL_S3"
+
 	// All deprecated (cli&terraform)
 	terraformAccessKeyEnv    = "SCALEWAY_ACCESS_KEY" // used both as access key and secret key
 	terraformSecretKeyEnv    = "SCALEWAY_TOKEN"
@@ -125,11 +129,11 @@ func LoadEnvProfile() *Profile {
 // In case AWS changes the key of these variable, this function should be the
 // single point to update.
 func GetS3EndpointFromAWSConf() string {
-	if ep := os.Getenv("AWS_ENDPOINT_URL_S3"); ep != "" {
+	if ep := os.Getenv(AwsEndpointURLS3); ep != "" {
 		return ep
 	}
 
-	return os.Getenv("AWS_ENDPOINT_URL")
+	return os.Getenv(AwsEndpointURL)
 }
 
 func getEnv(upToDateKey string, deprecatedKeys ...string) (string, string, bool) {
