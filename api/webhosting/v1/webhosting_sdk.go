@@ -2588,6 +2588,9 @@ type HostingAPIUpdateHostingRequest struct {
 
 	// Protected: whether the hosting is protected or not.
 	Protected *bool `json:"protected,omitempty"`
+
+	// DeleteHostingAfterCommitment: whether the hosting is deleted at the end of the commitment period.
+	DeleteHostingAfterCommitment *bool `json:"delete_hosting_after_commitment,omitempty"`
 }
 
 // ListBackupItemsResponse: list backup items response.
