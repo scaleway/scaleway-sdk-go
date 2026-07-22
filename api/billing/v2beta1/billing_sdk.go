@@ -275,7 +275,6 @@ const (
 	InvoiceTypeUnknownType = InvoiceType("unknown_type")
 	InvoiceTypePeriodic    = InvoiceType("periodic")
 	InvoiceTypePurchase    = InvoiceType("purchase")
-	InvoiceTypeCreditNote  = InvoiceType("credit_note")
 )
 
 func (enum InvoiceType) String() string {
@@ -291,7 +290,6 @@ func (enum InvoiceType) Values() []InvoiceType {
 		"unknown_type",
 		"periodic",
 		"purchase",
-		"credit_note",
 	}
 }
 
@@ -575,14 +573,8 @@ type Charge struct {
 	// OrganizationID: ID of the charged organization.
 	OrganizationID string `json:"organization_id"`
 
-	// OrganizationName: name of the charged organization.
-	OrganizationName string `json:"organization_name"`
-
 	// ProjectID: ID of the charged project.
 	ProjectID string `json:"project_id"`
-
-	// ProjectName: name of the charged project.
-	ProjectName string `json:"project_name"`
 
 	// Sku: ID of the SKU the charge is priced with.
 	Sku string `json:"sku"`
@@ -637,12 +629,6 @@ type ListConsumptionsResponseConsumption struct {
 
 	// ConsumerID: organization ID of the consumer for this consumption.
 	ConsumerID string `json:"consumer_id"`
-
-	// ProjectName: project name of the consumpiton.
-	ProjectName string `json:"project_name"`
-
-	// OrganizationName: organization name of the consumer for this consumption.
-	OrganizationName string `json:"organization_name"`
 }
 
 // Discount: discount.
@@ -773,7 +759,7 @@ type ExportInvoicesRequest struct {
 	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
 	BillingPeriodStartBefore *time.Time `json:"-"`
 
-	// InvoiceType: invoice type. It can either be `periodic`, `purchase` or `credit_note`.
+	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
 	// Default value: unknown_type
 	InvoiceType InvoiceType `json:"-"`
 
@@ -963,7 +949,7 @@ type ListInvoicesRequest struct {
 	// BillingPeriodStartBefore: return only invoice with start date less than billing_period_start.
 	BillingPeriodStartBefore *time.Time `json:"-"`
 
-	// InvoiceType: invoice type. It can either be `periodic`, `purchase` or `credit_note`.
+	// InvoiceType: invoice type. It can either be `periodic` or `purchase`.
 	// Default value: unknown_type
 	InvoiceType InvoiceType `json:"-"`
 
