@@ -629,6 +629,12 @@ type ListConsumptionsResponseConsumption struct {
 
 	// ConsumerID: organization ID of the consumer for this consumption.
 	ConsumerID string `json:"consumer_id"`
+
+	// ProjectName: project name of the consumpiton.
+	ProjectName string `json:"project_name"`
+
+	// OrganizationName: organization name of the consumer for this consumption.
+	OrganizationName string `json:"organization_name"`
 }
 
 // Discount: discount.
