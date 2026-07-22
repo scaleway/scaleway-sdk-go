@@ -205,3 +205,41 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 	testhelpers.Equals(t, testErrorReponse, newErr)
 }
+
+func TestNonTypedError(t *testing.T) {
+	type testCase struct {
+		resStatus     string
+		resStatusCode int
+		resBody       string
+		contentType   string
+		expectedError SdkError
+	}
+
+	run := func(c *testCase) func(t *testing.T) {
+		return func(t *testing.T) {
+			res := &http.Response{
+				Status:     c.resStatus,
+				StatusCode: c.resStatusCode,
+				Body:       ioutil.NopCloser(strings.NewReader(c.resBody)),
+				Header: http.Header{
+					"Content-Type": []string{c.contentType},
+				},
+			}
+
+			// Test that hasResponseError converts the response to the expected SdkError.
+			newErr := hasResponseError(res)
+			testhelpers.Assert(t, newErr != nil, "Should have error")
+			testhelpers.Equals(t, c.expectedError, newErr)
+		}
+	}
+
+	t.Run("unknown service", run(&testCase{
+		resStatus:     "501 Not Implemented",
+		resStatusCode: http.StatusNotImplemented,
+		contentType:   "application/json",
+		resBody:       `{"message": "unknown service"}`,
+		expectedError: &UnknownServiceError{
+			RawBody: []byte(`{"message": "unknown service"}`),
+		},
+	}))
+}
