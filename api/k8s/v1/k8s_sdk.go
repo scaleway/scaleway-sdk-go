@@ -1888,7 +1888,10 @@ type DeleteNodeRequest struct {
 	NodeID string `json:"-"`
 
 	// SkipDrain: skip draining node from its workload (Note: this parameter is currently inactive).
-	SkipDrain bool `json:"skip_drain"`
+	SkipDrain bool `json:"-"`
+
+	// Deprecated: Replace: add a new node after the deletion of this node.
+	Replace bool `json:"-"`
 }
 
 // DeletePoolRequest: delete pool request.
@@ -3762,7 +3765,7 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 	return res.(*Node), nil
 }
 
-// ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3840,7 +3843,7 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	return &resp, nil
 }
 
-// DeleteNode: Delete a specific Node. Pool size is reduced by 1. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// DeleteNode: Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3851,6 +3854,7 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "skip_drain", req.SkipDrain)
+	parameter.AddToQuery(query, "replace", req.Replace)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
