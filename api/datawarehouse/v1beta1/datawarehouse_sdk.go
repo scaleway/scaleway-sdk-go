@@ -300,6 +300,12 @@ type PrivateNetworkDetails struct {
 	Nodes []*NodePrivateNetworkDetails `json:"nodes"`
 }
 
+// EndpointSpecPrivateNetworkSummary: endpoint spec private network summary.
+type EndpointSpecPrivateNetworkSummary struct {
+	// PrivateNetworkID: UUID of the Private Network.
+	PrivateNetworkID string `json:"private_network_id"`
+}
+
 // EndpointSpecPublicDetails: endpoint spec public details.
 type EndpointSpecPublicDetails struct{}
 
@@ -367,7 +373,7 @@ type EndpointSpec struct {
 	Public *EndpointSpecPublicDetails `json:"public,omitempty"`
 
 	// Precisely one of Public, PrivateNetwork must be set.
-	PrivateNetwork *PrivateNetworkDetails `json:"private_network,omitempty"`
+	PrivateNetwork *EndpointSpecPrivateNetworkSummary `json:"private_network,omitempty"`
 }
 
 // Database: database.
