@@ -9,11 +9,11 @@ This document will cover how to contribute to the project and report issues.
 
 - [Reporting Security Issues](#reporting-security-issues)
 - [Reporting Issues](#reporting-issues)
-- [Suggesting feature](#suggesting-feature)
+- [Suggesting a Feature](#suggesting-a-feature)
 - [Contributing Code](#contributing-code)
 - [Community Guidelines](#community-guidelines)
 
-## Reporting security issues
+## Reporting Security Issues
 
 At Scaleway we take security seriously.
 If you have any issue regarding security, please notify us by sending an email to [security@scaleway.com](mailto:security@scaleway.com).
@@ -23,7 +23,7 @@ Please _DO NOT_ create a GitHub issue.
 We will follow up with you promptly with more information and a plan for remediation.
 We currently do not offer a paid security bounty program, but we would love to send some Scaleway swag your way along with our deepest gratitude for your assistance in making Scaleway a more secure Cloud ecosystem.
 
-## Reporting issues
+## Reporting Issues
 
 A great way to contribute to the project is to send a detailed report when you encounter a bug.
 We always appreciate a well-written, thorough bug report, and will thank you for it!
@@ -37,7 +37,7 @@ When reporting an issue, include the following:
 - GOOS
 - GOARCH
 
-## Suggesting a feature
+## Suggesting a Feature
 
 When requesting a feature, some of the questions we want to answer are:
 
@@ -45,7 +45,7 @@ When requesting a feature, some of the questions we want to answer are:
 - How urgent is the need (nice to have feature or need to have)?
 - Does this align with the goals of `scaleway-sdk-go`?
 
-## Contributing code
+## Contributing Code
 
 Before contributing to the code, make sure you have read about the [continuous code deployment](docs/CONTINUOUS_CODE_DEPLOYMENT.md) process we are using on this repo.
 
