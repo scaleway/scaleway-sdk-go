@@ -280,6 +280,92 @@ func (enum *AuthenticationEventResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CustomAlertRuleSeverity string
+
+const (
+	CustomAlertRuleSeverityUnknownSeverity = CustomAlertRuleSeverity("unknown_severity")
+	CustomAlertRuleSeverityInfo            = CustomAlertRuleSeverity("info")
+	CustomAlertRuleSeverityError           = CustomAlertRuleSeverity("error")
+	CustomAlertRuleSeverityWarning         = CustomAlertRuleSeverity("warning")
+	CustomAlertRuleSeverityCritical        = CustomAlertRuleSeverity("critical")
+)
+
+func (enum CustomAlertRuleSeverity) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleSeverityUnknownSeverity)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleSeverity) Values() []CustomAlertRuleSeverity {
+	return []CustomAlertRuleSeverity{
+		"unknown_severity",
+		"info",
+		"error",
+		"warning",
+		"critical",
+	}
+}
+
+func (enum CustomAlertRuleSeverity) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleSeverity) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleSeverity(CustomAlertRuleSeverity(tmp).String())
+	return nil
+}
+
+type CustomAlertRuleStatus string
+
+const (
+	CustomAlertRuleStatusUnknownStatus = CustomAlertRuleStatus("unknown_status")
+	CustomAlertRuleStatusEnabled       = CustomAlertRuleStatus("enabled")
+	CustomAlertRuleStatusDisabled      = CustomAlertRuleStatus("disabled")
+	CustomAlertRuleStatusEnabling      = CustomAlertRuleStatus("enabling")
+	CustomAlertRuleStatusDisabling     = CustomAlertRuleStatus("disabling")
+)
+
+func (enum CustomAlertRuleStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleStatus) Values() []CustomAlertRuleStatus {
+	return []CustomAlertRuleStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+		"enabling",
+		"disabling",
+	}
+}
+
+func (enum CustomAlertRuleStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleStatus(CustomAlertRuleStatus(tmp).String())
+	return nil
+}
+
 type ExportJobStatusCode string
 
 const (
@@ -1422,6 +1508,41 @@ type AlertRule struct {
 	Status AlertRuleStatus `json:"status"`
 }
 
+// CustomAlertRule: custom alert rule.
+type CustomAlertRule struct {
+	// ID: ID of the alert rule.
+	ID string `json:"id"`
+
+	// Name: name of the alert rule.
+	Name string `json:"name"`
+
+	// Description: (Optional) Description of the alert rule.
+	Description *string `json:"description"`
+
+	// Status: current status of the alert rule.
+	// Default value: unknown_status
+	Status CustomAlertRuleStatus `json:"status"`
+
+	// Query: the Common Expression Language (CEL) string defining the logic for the alert rule.
+	Query string `json:"query"`
+
+	// EvaluationWindow: the duration of time over which to evaluate the rule (how far back to look for matching events).
+	EvaluationWindow *scw.Duration `json:"evaluation_window"`
+
+	// Occurrences: the minimum number of matched occurrences required within the evaluation window to trigger the alert.
+	Occurrences uint32 `json:"occurrences"`
+
+	// Severity: the severity level assigned to the custom alert rule.
+	// Default value: unknown_severity
+	Severity CustomAlertRuleSeverity `json:"severity"`
+
+	// CreatedAt: custom alert rule creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: custom alert rule last modification date.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
 type ListCombinedEventsResponseCombinedEvent struct {
 	// Precisely one of API, Auth, System must be set.
@@ -1474,6 +1595,34 @@ type Product struct {
 	Services []*ProductService `json:"services"`
 }
 
+// CreateCustomAlertRuleRequest: create custom alert rule request.
+type CreateCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the custom alert rule.
+	Name string `json:"name"`
+
+	// Description: (Optional) Description of the custom alert rule.
+	Description *string `json:"description,omitempty"`
+
+	// Query: the Common Expression Language (CEL) string defining the logic for the alert rule.
+	Query string `json:"query"`
+
+	// EvaluationWindow: the duration of time over which to evaluate the rule (how far back to look for matching events).
+	EvaluationWindow *scw.Duration `json:"evaluation_window,omitempty"`
+
+	// Occurrences: the minimum number of matched occurrences required within the evaluation window to trigger the alert.
+	Occurrences uint32 `json:"occurrences"`
+
+	// Severity: (Optional) The severity level assigned to the custom alert rule. By default, the severity will be set to info.
+	// Default value: unknown_severity
+	Severity CustomAlertRuleSeverity `json:"severity"`
+}
+
 // CreateExportJobRequest: create export job request.
 type CreateExportJobRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1491,6 +1640,15 @@ type CreateExportJobRequest struct {
 
 	// Tags: tags of the export.
 	Tags []string `json:"tags"`
+}
+
+// DeleteCustomAlertRuleRequest: delete custom alert rule request.
+type DeleteCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CustomAlertRuleID: ID of the custom alert rule to delete.
+	CustomAlertRuleID string `json:"-"`
 }
 
 // DeleteExportJobRequest: delete export job request.
@@ -1516,8 +1674,26 @@ type DisableAlertRulesRequest struct {
 
 // DisableAlertRulesResponse: disable alert rules response.
 type DisableAlertRulesResponse struct {
-	// AlertRules: list of the rules that were disabled.
+	// AlertRules: list of the preconfigured rules that were disabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// DisableCustomAlertRulesRequest: disable custom alert rules request.
+type DisableCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// CustomAlertRuleIDs: list of IDs of the custom rules to disable.
+	CustomAlertRuleIDs []string `json:"custom_alert_rule_ids"`
+}
+
+// DisableCustomAlertRulesResponse: disable custom alert rules response.
+type DisableCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were disabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
 }
 
 // EnableAlertRulesRequest: enable alert rules request.
@@ -1534,8 +1710,26 @@ type EnableAlertRulesRequest struct {
 
 // EnableAlertRulesResponse: enable alert rules response.
 type EnableAlertRulesResponse struct {
-	// AlertRules: list of the rules that were enabled.
+	// AlertRules: list of the preconfigured rules that were enabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// EnableCustomAlertRulesRequest: enable custom alert rules request.
+type EnableCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// CustomAlertRuleIDs: list of IDs of the custom rules to enable.
+	CustomAlertRuleIDs []string `json:"custom_alert_rule_ids"`
+}
+
+// EnableCustomAlertRulesResponse: enable custom alert rules response.
+type EnableCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were enabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
 }
 
 // EventsOverview: events overview.
@@ -1572,7 +1766,7 @@ type ListAlertRulesRequest struct {
 
 // ListAlertRulesResponse: list alert rules response.
 type ListAlertRulesResponse struct {
-	// AlertRules: single page of alert rules matching the requested criteria.
+	// AlertRules: single page of preconfigured alert rules matching the requested criteria.
 	AlertRules []*AlertRule `json:"alert_rules"`
 
 	// TotalCount: total count of alert rules matching the requested criteria.
@@ -1653,6 +1847,51 @@ type ListCombinedEventsResponse struct {
 	Events []*ListCombinedEventsResponseCombinedEvent `json:"events"`
 
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// ListCustomAlertRulesRequest: list custom alert rules request.
+type ListCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"-"`
+
+	// Status: (Optional) Status of the custom alert rule.
+	// Default value: unknown_status
+	Status *CustomAlertRuleStatus `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListCustomAlertRulesResponse: list custom alert rules response.
+type ListCustomAlertRulesResponse struct {
+	// CustomAlertRules: single page of custom alert rules matching the requested criteria.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
+
+	// TotalCount: total count of custom alert rules matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListCustomAlertRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListCustomAlertRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListCustomAlertRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.CustomAlertRules = append(r.CustomAlertRules, results.CustomAlertRules...)
+	r.TotalCount += uint64(len(results.CustomAlertRules))
+	return uint64(len(results.CustomAlertRules)), nil
 }
 
 // ListEventsRequest: list events request.
@@ -1846,8 +2085,41 @@ type SetEnabledAlertRulesRequest struct {
 
 // SetEnabledAlertRulesResponse: set enabled alert rules response.
 type SetEnabledAlertRulesResponse struct {
-	// AlertRules: list of the rules that were enabled.
+	// AlertRules: list of the preconfigured rules that were enabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// SetEnabledCustomAlertRulesRequest: set enabled custom alert rules request.
+type SetEnabledCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// EnabledCustomAlertRuleIDs: list of IDs of the custom rules that must be enabled after the update.
+	EnabledCustomAlertRuleIDs []string `json:"enabled_custom_alert_rule_ids"`
+}
+
+// SetEnabledCustomAlertRulesResponse: set enabled custom alert rules response.
+type SetEnabledCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were enabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
+}
+
+// UpdateCustomAlertRuleRequest: update custom alert rule request.
+type UpdateCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CustomAlertRuleID: ID of the custom alert rule to update.
+	CustomAlertRuleID string `json:"-"`
+
+	// Name: (Optional) New name for the custom alert rule.
+	Name *string `json:"name,omitempty"`
+
+	// Description: (Optional) New description for the custom alert rule.
+	Description *string `json:"description,omitempty"`
 }
 
 // This API allows you to ensure accountability and security by recording events and changes performed within your Scaleway Organization.
@@ -2290,6 +2562,50 @@ func (s *API) ListAlertRules(req *ListAlertRulesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+// ListCustomAlertRules: List custom alert rules for a specified organization and their current status (enabled or disabled).
+func (s *API) ListCustomAlertRules(req *ListCustomAlertRulesRequest, opts ...scw.RequestOption) (*ListCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+		Query:  query,
+	}
+
+	var resp ListCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // EnableAlertRules: Enable alert rules for a specified organization. Enabled rules will trigger alerts when matching events occur.
 func (s *API) EnableAlertRules(req *EnableAlertRulesRequest, opts ...scw.RequestOption) (*EnableAlertRulesResponse, error) {
 	var err error
@@ -2319,6 +2635,43 @@ func (s *API) EnableAlertRules(req *EnableAlertRulesRequest, opts ...scw.Request
 	}
 
 	var resp EnableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableCustomAlertRules: Enable custom alert rules for a specified organization. Enabled custom rules will trigger alerts when matching events occur.
+func (s *API) EnableCustomAlertRules(req *EnableCustomAlertRulesRequest, opts ...scw.RequestOption) (*EnableCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/enable-custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp EnableCustomAlertRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2364,6 +2717,43 @@ func (s *API) DisableAlertRules(req *DisableAlertRulesRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
+// DisableCustomAlertRules: Disable custom alert rules for a specified organization. Disabled rules will no longer trigger alerts when matching events occur.
+func (s *API) DisableCustomAlertRules(req *DisableCustomAlertRulesRequest, opts ...scw.RequestOption) (*DisableCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/disable-custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DisableCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // SetEnabledAlertRules: Set the alert rules to enabled by replacing the set of enabled alert rules for a specified organization. The provided list defines the complete set of rules that should be enabled. Any previously enabled rule not included in the request will be disabled.
 func (s *API) SetEnabledAlertRules(req *SetEnabledAlertRulesRequest, opts ...scw.RequestOption) (*SetEnabledAlertRulesResponse, error) {
 	var err error
@@ -2399,4 +2789,143 @@ func (s *API) SetEnabledAlertRules(req *SetEnabledAlertRulesRequest, opts ...scw
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// SetEnabledCustomAlertRules: Set the custom alert rules to enabled by replacing the set of enabled custom alert rules for a specified organization. The provided list defines the complete set of custom rules that should be enabled. Any previously enabled custom rule not included in the request will be disabled.
+func (s *API) SetEnabledCustomAlertRules(req *SetEnabledCustomAlertRulesRequest, opts ...scw.RequestOption) (*SetEnabledCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetEnabledCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateCustomAlertRule: Create a custom alert rule in a given region specified by the `region` parameter.
+func (s *API) CreateCustomAlertRule(req *CreateCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CustomAlertRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateCustomAlertRule: Modify a custom alert rule's metadata including name and description, specified by the `alert_rule_id` and `region` parameters.
+func (s *API) UpdateCustomAlertRule(req *UpdateCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CustomAlertRuleID) == "" {
+		return nil, errors.New("field CustomAlertRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules/" + fmt.Sprint(req.CustomAlertRuleID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CustomAlertRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteCustomAlertRule: Permanently delete a custom alert rule specified by the `region` and `alert_rule_id` parameters. This action is irreversible.
+func (s *API) DeleteCustomAlertRule(req *DeleteCustomAlertRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CustomAlertRuleID) == "" {
+		return errors.New("field CustomAlertRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules/" + fmt.Sprint(req.CustomAlertRuleID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
