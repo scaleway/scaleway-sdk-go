@@ -380,6 +380,7 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 type SearchResourcesRequestOrderBy string
 
 const (
+	SearchResourcesRequestOrderByRelevance = SearchResourcesRequestOrderBy("relevance")
 	// Sort by creation date in ascending order.
 	SearchResourcesRequestOrderByCreatedAtAsc = SearchResourcesRequestOrderBy("created_at_asc")
 	// Sort by creation date in descending order.
@@ -401,13 +402,14 @@ const (
 func (enum SearchResourcesRequestOrderBy) String() string {
 	if enum == "" {
 		// return default value if empty
-		return string(SearchResourcesRequestOrderByCreatedAtAsc)
+		return string(SearchResourcesRequestOrderByRelevance)
 	}
 	return string(enum)
 }
 
 func (enum SearchResourcesRequestOrderBy) Values() []SearchResourcesRequestOrderBy {
 	return []SearchResourcesRequestOrderBy{
+		"relevance",
 		"created_at_asc",
 		"created_at_desc",
 		"modified_at_asc",
@@ -565,7 +567,7 @@ type SearchResourcesRequest struct {
 	PageSize *uint32 `json:"-"`
 
 	// OrderBy: sort order in the response.
-	// Default value: created_at_asc
+	// Default value: relevance
 	OrderBy SearchResourcesRequestOrderBy `json:"-"`
 }
 
