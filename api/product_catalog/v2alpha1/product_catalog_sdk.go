@@ -919,6 +919,18 @@ type PublicCatalogProductPropertiesHardwareCPUVirtual struct {
 	Count uint32 `json:"count"`
 }
 
+// PublicCatalogProductPropertiesBlockStorageSnapshotType: public catalog product properties block storage snapshot type.
+type PublicCatalogProductPropertiesBlockStorageSnapshotType struct{}
+
+// PublicCatalogProductPropertiesBlockStorageVolumeType: public catalog product properties block storage volume type.
+type PublicCatalogProductPropertiesBlockStorageVolumeType struct {
+	// MinSize: the minimum size of storage volume for this product in bytes.
+	MinSize scw.Size `json:"min_size"`
+
+	// MaxSize: the maximum size of storage volume for this product in bytes.
+	MaxSize scw.Size `json:"max_size"`
+}
+
 // PublicCatalogProductPropertiesHardwareCPU: public catalog product properties hardware cpu.
 type PublicCatalogProductPropertiesHardwareCPU struct {
 	// Description: a human readable description of the CPU.
@@ -1151,6 +1163,14 @@ type PublicCatalogProductPropertiesBlockStorage struct {
 
 	// Deprecated: MaxVolumeSize: the maximum size of storage volume for this product in bytes. Deprecated.
 	MaxVolumeSize *scw.Size `json:"max_volume_size,omitempty"`
+
+	// Snapshot: the properties related to Block Storage snapshot.
+	// Precisely one of Snapshot, Volume must be set.
+	Snapshot *PublicCatalogProductPropertiesBlockStorageSnapshotType `json:"snapshot,omitempty"`
+
+	// Volume: the properties related to Block Storage volume.
+	// Precisely one of Snapshot, Volume must be set.
+	Volume *PublicCatalogProductPropertiesBlockStorageVolumeType `json:"volume,omitempty"`
 }
 
 // PublicCatalogProductPropertiesDedibox: public catalog product properties dedibox.
