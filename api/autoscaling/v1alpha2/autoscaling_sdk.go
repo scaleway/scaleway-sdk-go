@@ -854,7 +854,6 @@ type UpdateGroupRequest struct {
 	LoadBalancerConfigurationSpec *LoadBalancerConfigurationSpec `json:"load_balancer_configuration_spec,omitempty"`
 }
 
-// Instances Autoscaling Groups management API.
 type API struct {
 	client *scw.Client
 }
@@ -916,7 +915,8 @@ func (s *API) ListGroups(req *ListGroupsRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// GetGroup: Get details of a specified autoscaling group including its configuration, current size, and status.
+// GetGroup: Get details of a specified autoscaling group including its
+// configuration, current size, and status.
 func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -998,7 +998,9 @@ func (s *API) WaitForGroup(req *WaitForGroupRequest, opts ...scw.RequestOption) 
 	return res.(*Group), nil
 }
 
-// CreateGroup: Create a new autoscaling group with the specified configuration including template, scaling policy, and optional load balancer settings.
+// CreateGroup: Create a new autoscaling group with the specified configuration
+// including template, scaling policy, and optional load balancer
+// settings.
 func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1035,7 +1037,8 @@ func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// UpdateGroup: Update the configuration of a specified autoscaling group including name, tags, template, scaling policy, and load balancer settings.
+// UpdateGroup: Update the configuration of a specified autoscaling group including
+// name, tags, template, scaling policy, and load balancer settings.
 func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1071,7 +1074,8 @@ func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// DeleteGroup: Delete a specified autoscaling group and all its associated resources.
+// DeleteGroup: Delete a specified autoscaling group and all its associated
+// resources.
 func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) (*Group, error) {
 	var err error
 
@@ -1102,7 +1106,8 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// ListLogs: List logs for a specified autoscaling group to view scaling events and activities.
+// ListLogs: List logs for a specified autoscaling group to view scaling events
+// and activities.
 func (s *API) ListLogs(req *ListLogsRequest, opts ...scw.RequestOption) (*ListLogsResponse, error) {
 	var err error
 
