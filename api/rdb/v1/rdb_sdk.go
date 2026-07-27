@@ -1183,6 +1183,9 @@ type EngineVersion struct {
 
 	// AvailableInitSettings: engine settings available to be set at database initialization.
 	AvailableInitSettings []*EngineSetting `json:"available_init_settings"`
+
+	// ReleaseDate: version release date.
+	ReleaseDate *time.Time `json:"release_date"`
 }
 
 // BackupSchedule: backup schedule.

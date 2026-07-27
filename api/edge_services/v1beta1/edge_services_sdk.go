@@ -2803,7 +2803,7 @@ type SetPipelineVPCEndpointsRequest struct {
 	PipelineID string `json:"-"`
 
 	// VpcEndpointIDs: list of VPC Endpoints to attach.
-	VpcEndpointIDs []string `json:"-"`
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // SetPipelineVPCEndpointsResponse: set pipeline vpc endpoints response.
@@ -3323,9 +3323,6 @@ func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.Reque
 func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts ...scw.RequestOption) (*SetPipelineVPCEndpointsResponse, error) {
 	var err error
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "vpc_endpoint_ids", req.VpcEndpointIDs)
-
 	if fmt.Sprint(req.PipelineID) == "" {
 		return nil, errors.New("field PipelineID cannot be empty in request")
 	}
@@ -3333,7 +3330,11 @@ func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PUT",
 		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/vpc-endpoints",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp SetPipelineVPCEndpointsResponse
@@ -3830,7 +3831,7 @@ func (s *API) ListBackendStages(req *ListBackendStagesRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// CreateBackendStage: Create a new backend stage. You must specify either a `scaleway_s3` (for a Scaleway Object Storage bucket) or `scaleway_lb` (for a Scaleway Load Balancer) field to configure the origin.
+// CreateBackendStage: Create a new backend stage. You must specify a type of backend (`scaleway_s3`, `scaleway_lb`, etc.) to configure the origin.
 func (s *API) CreateBackendStage(req *CreateBackendStageRequest, opts ...scw.RequestOption) (*BackendStage, error) {
 	var err error
 
@@ -3857,7 +3858,7 @@ func (s *API) CreateBackendStage(req *CreateBackendStageRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// GetBackendStage: Retrieve information about an existing backend stage, specified by its `backend_stage_id`. Its full details, including `scaleway_s3` or `scaleway_lb`, are returned in the response object.
+// GetBackendStage: Retrieve information about an existing backend stage, specified by its `backend_stage_id`. Its full details are returned in the response object.
 func (s *API) GetBackendStage(req *GetBackendStageRequest, opts ...scw.RequestOption) (*BackendStage, error) {
 	var err error
 

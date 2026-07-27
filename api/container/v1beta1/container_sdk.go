@@ -2014,7 +2014,11 @@ type UpdateTriggerRequest struct {
 	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
 
-// This API allows you to manage your Serverless Containers.
+// **[DEPRECATED]** This API is deprecated. Please use the [Serverless Containers API v1](https://www.scaleway.com/en/developers/api/serverless-containers/),
+// which provides the same capabilities and more, with improved performance and support for the latest features.
+//
+// Follow the [migration guide](https://www.scaleway.com/en/developers/api/serverless-containers/migration-guide/) to migrate your custom API integrations to the new v1 API.
+// Note that no redeployment or action is necessary to continue managing your existing containers; both APIs have access to the same resources.
 type API struct {
 	client *scw.Client
 }
@@ -2030,7 +2034,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// ListNamespaces: List all namespaces in a specified region.
+// Deprecated: ListNamespaces: List all namespaces in a specified region.
 func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOption) (*ListNamespacesResponse, error) {
 	var err error
 
@@ -2071,7 +2075,7 @@ func (s *API) ListNamespaces(req *ListNamespacesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// GetNamespace: Get the namespace associated with the specified ID.
+// Deprecated: GetNamespace: Get the namespace associated with the specified ID.
 func (s *API) GetNamespace(req *GetNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -2153,7 +2157,7 @@ func (s *API) WaitForNamespace(req *WaitForNamespaceRequest, opts ...scw.Request
 	return res.(*Namespace), nil
 }
 
-// CreateNamespace: Create a new namespace in a specified region.
+// Deprecated: CreateNamespace: Create a new namespace in a specified region.
 func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -2194,7 +2198,7 @@ func (s *API) CreateNamespace(req *CreateNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// UpdateNamespace: Update the space associated with the specified ID.
+// Deprecated: UpdateNamespace: Update the space associated with the specified ID.
 func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -2230,7 +2234,7 @@ func (s *API) UpdateNamespace(req *UpdateNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// DeleteNamespace: Delete the namespace associated with the specified ID.
+// Deprecated: DeleteNamespace: Delete the namespace associated with the specified ID.
 func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOption) (*Namespace, error) {
 	var err error
 
@@ -2261,7 +2265,7 @@ func (s *API) DeleteNamespace(req *DeleteNamespaceRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// ListContainers: List all containers for a specified region.
+// Deprecated: ListContainers: List all containers for a specified region.
 func (s *API) ListContainers(req *ListContainersRequest, opts ...scw.RequestOption) (*ListContainersResponse, error) {
 	var err error
 
@@ -2303,7 +2307,7 @@ func (s *API) ListContainers(req *ListContainersRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// GetContainer: Get the container associated with the specified ID.
+// Deprecated: GetContainer: Get the container associated with the specified ID.
 func (s *API) GetContainer(req *GetContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -2385,7 +2389,7 @@ func (s *API) WaitForContainer(req *WaitForContainerRequest, opts ...scw.Request
 	return res.(*Container), nil
 }
 
-// CreateContainer: Create a new container in the specified region.
+// Deprecated: CreateContainer: Create a new container in the specified region.
 //
 // When creating a container, the `created` status is no longer used. The deployment process is started
 // and the status is set to `pending` accordingly.
@@ -2420,7 +2424,7 @@ func (s *API) CreateContainer(req *CreateContainerRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// UpdateContainer: Update the container associated with the specified ID.
+// Deprecated: UpdateContainer: Update the container associated with the specified ID.
 //
 // When updating a container, the container is automatically redeployed to apply the changes.
 //
@@ -2460,7 +2464,7 @@ func (s *API) UpdateContainer(req *UpdateContainerRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// DeleteContainer: Delete the container associated with the specified ID.
+// Deprecated: DeleteContainer: Delete the container associated with the specified ID.
 func (s *API) DeleteContainer(req *DeleteContainerRequest, opts ...scw.RequestOption) (*Container, error) {
 	var err error
 
@@ -2491,7 +2495,7 @@ func (s *API) DeleteContainer(req *DeleteContainerRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// DeployContainer: Deploy a container associated with the specified ID.
+// Deprecated: DeployContainer: Deploy a container associated with the specified ID.
 //
 // Since updating a container now always deploys it (and passes its status to `pending`), this call becomes superfluous.
 //
@@ -2531,7 +2535,7 @@ func (s *API) DeployContainer(req *DeployContainerRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// ListCrons: List all your crons.
+// Deprecated: ListCrons: List all your crons.
 func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*ListCronsResponse, error) {
 	var err error
 
@@ -2570,7 +2574,7 @@ func (s *API) ListCrons(req *ListCronsRequest, opts ...scw.RequestOption) (*List
 	return &resp, nil
 }
 
-// GetCron: Get the cron associated with the specified ID.
+// Deprecated: GetCron: Get the cron associated with the specified ID.
 func (s *API) GetCron(req *GetCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2653,7 +2657,7 @@ func (s *API) WaitForCron(req *WaitForCronRequest, opts ...scw.RequestOption) (*
 	return res.(*Cron), nil
 }
 
-// CreateCron: Create a new cron.
+// Deprecated: CreateCron: Create a new cron.
 func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2685,7 +2689,7 @@ func (s *API) CreateCron(req *CreateCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-// UpdateCron: Update the cron associated with the specified ID.
+// Deprecated: UpdateCron: Update the cron associated with the specified ID.
 func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2721,7 +2725,7 @@ func (s *API) UpdateCron(req *UpdateCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-// DeleteCron: Delete the cron associated with the specified ID.
+// Deprecated: DeleteCron: Delete the cron associated with the specified ID.
 func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cron, error) {
 	var err error
 
@@ -2752,7 +2756,7 @@ func (s *API) DeleteCron(req *DeleteCronRequest, opts ...scw.RequestOption) (*Cr
 	return &resp, nil
 }
 
-// ListDomains: List all custom domains in a specified region.
+// Deprecated: ListDomains: List all custom domains in a specified region.
 func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
 
@@ -2791,7 +2795,7 @@ func (s *API) ListDomains(req *ListDomainsRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetDomain: Get a custom domain for the container with the specified ID.
+// Deprecated: GetDomain: Get a custom domain for the container with the specified ID.
 func (s *API) GetDomain(req *GetDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2873,7 +2877,7 @@ func (s *API) WaitForDomain(req *WaitForDomainRequest, opts ...scw.RequestOption
 	return res.(*Domain), nil
 }
 
-// CreateDomain: Create a custom domain for the container with the specified ID.
+// Deprecated: CreateDomain: Create a custom domain for the container with the specified ID.
 func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2905,7 +2909,7 @@ func (s *API) CreateDomain(req *CreateDomainRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// DeleteDomain: Delete the custom domain with the specific ID.
+// Deprecated: DeleteDomain: Delete the custom domain with the specific ID.
 func (s *API) DeleteDomain(req *DeleteDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
 	var err error
 
@@ -2968,7 +2972,7 @@ func (s *API) CreateToken(req *CreateTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// GetToken: Get a token with a specified ID.
+// Deprecated: GetToken: Get a token with a specified ID.
 func (s *API) GetToken(req *GetTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -3047,7 +3051,7 @@ func (s *API) WaitForToken(req *WaitForTokenRequest, opts ...scw.RequestOption) 
 	return res.(*Token), nil
 }
 
-// ListTokens: List all tokens belonging to a specified Organization or Project.
+// Deprecated: ListTokens: List all tokens belonging to a specified Organization or Project.
 func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*ListTokensResponse, error) {
 	var err error
 
@@ -3087,7 +3091,7 @@ func (s *API) ListTokens(req *ListTokensRequest, opts ...scw.RequestOption) (*Li
 	return &resp, nil
 }
 
-// DeleteToken: Delete a token with a specified ID.
+// Deprecated: DeleteToken: Delete a token with a specified ID.
 func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*Token, error) {
 	var err error
 
@@ -3118,7 +3122,7 @@ func (s *API) DeleteToken(req *DeleteTokenRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// CreateTrigger: Create a new trigger for a specified container.
+// Deprecated: CreateTrigger: Create a new trigger for a specified container.
 func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -3150,7 +3154,7 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetTrigger: Get a trigger with a specified ID.
+// Deprecated: GetTrigger: Get a trigger with a specified ID.
 func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -3232,7 +3236,7 @@ func (s *API) WaitForTrigger(req *WaitForTriggerRequest, opts ...scw.RequestOpti
 	return res.(*Trigger), nil
 }
 
-// ListTriggers: List all triggers belonging to a specified Organization or Project.
+// Deprecated: ListTriggers: List all triggers belonging to a specified Organization or Project.
 func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) (*ListTriggersResponse, error) {
 	var err error
 
@@ -3278,7 +3282,7 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UpdateTrigger: Update a trigger with a specified ID.
+// Deprecated: UpdateTrigger: Update a trigger with a specified ID.
 func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 
@@ -3314,7 +3318,7 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteTrigger: Delete a trigger with a specified ID.
+// Deprecated: DeleteTrigger: Delete a trigger with a specified ID.
 func (s *API) DeleteTrigger(req *DeleteTriggerRequest, opts ...scw.RequestOption) (*Trigger, error) {
 	var err error
 

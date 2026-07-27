@@ -289,6 +289,7 @@ const (
 	ResourceTypeIamGroup            = ResourceType("iam_group")
 	ResourceTypeIamPolicy           = ResourceType("iam_policy")
 	ResourceTypeSedbCluster         = ResourceType("sedb_cluster")
+	ResourceTypeAutoscalingGroup    = ResourceType("autoscaling_group")
 )
 
 func (enum ResourceType) String() string {
@@ -357,6 +358,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_group",
 		"iam_policy",
 		"sedb_cluster",
+		"autoscaling_group",
 	}
 }
 
@@ -372,6 +374,65 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ResourceType(ResourceType(tmp).String())
+	return nil
+}
+
+type SearchResourcesRequestOrderBy string
+
+const (
+	SearchResourcesRequestOrderByRelevance = SearchResourcesRequestOrderBy("relevance")
+	// Sort by creation date in ascending order.
+	SearchResourcesRequestOrderByCreatedAtAsc = SearchResourcesRequestOrderBy("created_at_asc")
+	// Sort by creation date in descending order.
+	SearchResourcesRequestOrderByCreatedAtDesc = SearchResourcesRequestOrderBy("created_at_desc")
+	// Sort by modification date in ascending order.
+	SearchResourcesRequestOrderByModifiedAtAsc = SearchResourcesRequestOrderBy("modified_at_asc")
+	// Sort by modification date in descending order.
+	SearchResourcesRequestOrderByModifiedAtDesc = SearchResourcesRequestOrderBy("modified_at_desc")
+	// Sort by resource name in alphabetical order.
+	SearchResourcesRequestOrderByNameAsc = SearchResourcesRequestOrderBy("name_asc")
+	// Sort by resource name in reverse alphabetical order.
+	SearchResourcesRequestOrderByNameDesc = SearchResourcesRequestOrderBy("name_desc")
+	// Sort by resource type in alphabetical order.
+	SearchResourcesRequestOrderByTypeAsc = SearchResourcesRequestOrderBy("type_asc")
+	// Sort by resource type in reverse alphabetical order.
+	SearchResourcesRequestOrderByTypeDesc = SearchResourcesRequestOrderBy("type_desc")
+)
+
+func (enum SearchResourcesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SearchResourcesRequestOrderByRelevance)
+	}
+	return string(enum)
+}
+
+func (enum SearchResourcesRequestOrderBy) Values() []SearchResourcesRequestOrderBy {
+	return []SearchResourcesRequestOrderBy{
+		"relevance",
+		"created_at_asc",
+		"created_at_desc",
+		"modified_at_asc",
+		"modified_at_desc",
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+	}
+}
+
+func (enum SearchResourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SearchResourcesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SearchResourcesRequestOrderBy(SearchResourcesRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -498,12 +559,25 @@ type SearchResourcesRequest struct {
 
 	// ModifiedBefore: filter resources modified before this timestamp.
 	ModifiedBefore *time.Time `json:"-"`
+
+	// PageToken: leave empty or omit to fetch the first page.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of resources to retrieve per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order in the response.
+	// Default value: relevance
+	OrderBy SearchResourcesRequestOrderBy `json:"-"`
 }
 
 // SearchResourcesResponse: search resources response.
 type SearchResourcesResponse struct {
 	// Resources: top resources found.
 	Resources []*Resource `json:"resources"`
+
+	// NextPageToken: if this string is empty, it means there are no more pages available.
+	NextPageToken string `json:"next_page_token"`
 }
 
 type API struct {
@@ -526,6 +600,11 @@ func (s *API) SearchResources(req *SearchResourcesRequest, opts ...scw.RequestOp
 		req.OrganizationID = defaultOrganizationID
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "query", req.Query)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
@@ -536,6 +615,9 @@ func (s *API) SearchResources(req *SearchResourcesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "created_before", req.CreatedBefore)
 	parameter.AddToQuery(query, "modified_after", req.ModifiedAfter)
 	parameter.AddToQuery(query, "modified_before", req.ModifiedBefore)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",

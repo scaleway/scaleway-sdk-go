@@ -742,14 +742,16 @@ func (enum *HostingProvider) UnmarshalJSON(data []byte) error {
 type HostingStatus string
 
 const (
-	HostingStatusUnknownStatus = HostingStatus("unknown_status")
-	HostingStatusDelivering    = HostingStatus("delivering")
-	HostingStatusReady         = HostingStatus("ready")
-	HostingStatusDeleting      = HostingStatus("deleting")
-	HostingStatusError         = HostingStatus("error")
-	HostingStatusLocked        = HostingStatus("locked")
-	HostingStatusMigrating     = HostingStatus("migrating")
-	HostingStatusUpdating      = HostingStatus("updating")
+	HostingStatusUnknownStatus  = HostingStatus("unknown_status")
+	HostingStatusDelivering     = HostingStatus("delivering")
+	HostingStatusReady          = HostingStatus("ready")
+	HostingStatusDeleting       = HostingStatus("deleting")
+	HostingStatusError          = HostingStatus("error")
+	HostingStatusLocked         = HostingStatus("locked")
+	HostingStatusMigrating      = HostingStatus("migrating")
+	HostingStatusUpdating       = HostingStatus("updating")
+	HostingStatusPaymentPending = HostingStatus("payment_pending")
+	HostingStatusPaymentFailed  = HostingStatus("payment_failed")
 )
 
 func (enum HostingStatus) String() string {
@@ -770,6 +772,8 @@ func (enum HostingStatus) Values() []HostingStatus {
 		"locked",
 		"migrating",
 		"updating",
+		"payment_pending",
+		"payment_failed",
 	}
 }
 
@@ -1371,6 +1375,9 @@ type OfferCommitment struct {
 	// Type: offer commitment type.
 	// Default value: unknown_commitment_type
 	Type CommitmentType `json:"type"`
+
+	// IsDefault: true if the commitment is the default one for that offer.
+	IsDefault bool `json:"is_default"`
 
 	// BillingMode: offer commitment name.
 	// Default value: unknown_billing_mode
@@ -2581,6 +2588,9 @@ type HostingAPIUpdateHostingRequest struct {
 
 	// Protected: whether the hosting is protected or not.
 	Protected *bool `json:"protected,omitempty"`
+
+	// DeleteHostingAfterCommitment: whether the hosting is deleted at the end of the commitment period.
+	DeleteHostingAfterCommitment *bool `json:"delete_hosting_after_commitment,omitempty"`
 }
 
 // ListBackupItemsResponse: list backup items response.
@@ -4370,10 +4380,11 @@ func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.Requ
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[HostingStatus]struct{}{
-		HostingStatusDelivering: {},
-		HostingStatusDeleting:   {},
-		HostingStatusMigrating:  {},
-		HostingStatusUpdating:   {},
+		HostingStatusDelivering:     {},
+		HostingStatusDeleting:       {},
+		HostingStatusMigrating:      {},
+		HostingStatusUpdating:       {},
+		HostingStatusPaymentPending: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{

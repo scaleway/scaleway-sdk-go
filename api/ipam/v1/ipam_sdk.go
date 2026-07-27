@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -125,6 +126,7 @@ const (
 	ResourceTypeSedbCluster            = ResourceType("sedb_cluster")
 	ResourceTypeMsgqCluster            = ResourceType("msgq_cluster")
 	ResourceTypeEdgeVpcEndpoint        = ResourceType("edge_vpc_endpoint")
+	ResourceTypeDvizCluster            = ResourceType("dviz_cluster")
 )
 
 func (enum ResourceType) String() string {
@@ -167,6 +169,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"sedb_cluster",
 		"msgq_cluster",
 		"edge_vpc_endpoint",
+		"dviz_cluster",
 	}
 }
 
@@ -274,6 +277,51 @@ type IP struct {
 
 	// Zone: zone of the IP, if zonal.
 	Zone *scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *IP) getSRNTemplates() []string {
+	return []string{
+		"srn://ipam.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/ips/{{ notempty .ID }}",
+		"srn://ipam.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ips/{{ notempty .ID }}",
+	}
+}
+
+func (m *IP) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		IP
+		Platform string
+	}{
+		IP:       *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	for _, templ := range m.getSRNTemplates() {
+		t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+		if err != nil {
+			continue
+		}
+		var out bytes.Buffer
+		if err := t.Execute(&out, data); err != nil {
+			continue
+		}
+		m.Srn = out.String()
+		// first pattern wins
+		break
+	}
 }
 
 // AttachIPRequest: attach ip request.
@@ -527,6 +575,9 @@ func (s *API) BookIP(req *BookIPRequest, opts ...scw.RequestOption) (*IP, error)
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -622,6 +673,9 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -658,6 +712,9 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -713,6 +770,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.IPs {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -749,6 +811,9 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -785,6 +850,9 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -821,5 +889,8 @@ func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error)
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }

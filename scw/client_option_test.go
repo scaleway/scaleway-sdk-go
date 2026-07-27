@@ -27,6 +27,7 @@ func TestClientOptions(t *testing.T) {
 			clientOption: func(s *settings) {
 				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
 				s.apiURL = v2ValidAPIURL
+				s.s3Endpoint = v2ValidS3Endpoint
 				s.defaultOrganizationID = &defaultOrganizationID
 				s.defaultProjectID = &defaultProjectID
 				s.defaultRegion = &defaultRegion
