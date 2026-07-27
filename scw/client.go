@@ -155,6 +155,8 @@ func (c *Client) GetUserAgent() (userAgent string, exists bool) {
 	if c.userAgent != "" {
 		return c.userAgent, true
 	}
+	return "", false
+}
 
 // GetS3Endpoint returns the S3 endpoint of the client.
 // This value can be set in the client option
