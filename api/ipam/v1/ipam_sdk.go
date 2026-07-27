@@ -282,6 +282,13 @@ type IP struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+func (m *IP) getSRNTemplates() []string {
+	return []string{
+		"srn://ipam.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/ips/{{ notempty .ID }}",
+		"srn://ipam.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ips/{{ notempty .ID }}",
+	}
+}
+
 func (m *IP) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -302,16 +309,19 @@ func (m *IP) setSRN(platform string) {
 		}
 		return s, nil
 	}
-	templ := "srn://ipam.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ips/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
-		return
-	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
+	for _, templ := range m.getSRNTemplates() {
+		t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+		if err != nil {
+			continue
+		}
+		var out bytes.Buffer
+		if err := t.Execute(&out, data); err != nil {
+			continue
+		}
 		m.Srn = out.String()
+		// first pattern wins
+		break
 	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AttachIPRequest: attach ip request.
