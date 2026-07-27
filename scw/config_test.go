@@ -17,6 +17,7 @@ var (
 	v2ValidAccessKey2             = "SCW234567890ABCDEFGH"
 	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
+	v2ValidS3Endpoint2            = "s3.fr-par.scw.cloud"
 	v2ValidInsecure2              = "true"
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
@@ -27,6 +28,7 @@ var (
 	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
+	v2ValidS3Endpoint            = "s3.nl-ams.scw.cloud"
 	v2ValidInsecure              = "false"
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
@@ -55,6 +57,7 @@ var (
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
 insecure: ` + v2ValidInsecure + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
@@ -67,6 +70,7 @@ profiles:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
+    s3_endpoint: ` + v2ValidS3Endpoint2 + `
     insecure: ` + v2ValidInsecure2 + `
     send_telemetry: ` + v2ValidSendTelemetry2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
@@ -79,6 +83,7 @@ profiles:
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry2 + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
@@ -91,6 +96,7 @@ profiles:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
+    s3_endpoint: ` + v2ValidS3Endpoint2 + `
     insecure: ` + v2ValidInsecure2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_project_id: ` + v2ValidDefaultProjectID2 + `
@@ -102,6 +108,7 @@ profiles:
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
@@ -658,6 +665,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
 #     insecure: false
 `,
 	}))
@@ -737,6 +745,7 @@ access_key: SCW1234567890ABCDEFG
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
 #     insecure: false
 `,
 	}))
@@ -829,6 +838,7 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
     # insecure: false
 
   profile2:
@@ -839,6 +849,7 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
     # insecure: false
 `,
 	}))
@@ -859,6 +870,7 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-pargs
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
     # insecure: false
 
   profile2:
