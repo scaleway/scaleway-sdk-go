@@ -1183,8 +1183,8 @@ type PlacementGroup struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-// PrivateNetworkInterface: private network interface.
-type PrivateNetworkInterface struct {
+// PrivateNetworkInterfaceSummary: private network interface summary.
+type PrivateNetworkInterfaceSummary struct {
 	ID string `json:"id"`
 
 	PrivateNetworkID string `json:"private_network_id"`
@@ -1873,7 +1873,7 @@ type ListPrivateNetworkInterfacesRequest struct {
 
 // ListPrivateNetworkInterfacesResponse: list private network interfaces response.
 type ListPrivateNetworkInterfacesResponse struct {
-	PrivateNetworkInterfaces []*PrivateNetworkInterface `json:"private_network_interfaces"`
+	PrivateNetworkInterfaces []*PrivateNetworkInterfaceSummary `json:"private_network_interfaces"`
 
 	NextPageToken *string `json:"next_page_token"`
 
@@ -2186,6 +2186,32 @@ type PauseServerRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	ServerID string `json:"-"`
+}
+
+// PrivateNetworkInterface: private network interface.
+type PrivateNetworkInterface struct {
+	ID string `json:"id"`
+
+	PrivateNetworkID string `json:"private_network_id"`
+
+	ProjectID string `json:"project_id"`
+
+	ServerID string `json:"server_id"`
+
+	SecurityGroupID string `json:"security_group_id"`
+
+	MacAddress string `json:"mac_address"`
+
+	// Status: default value: unknown_status
+	Status PrivateNetworkInterfaceStatus `json:"status"`
+
+	IPIDs []string `json:"ip_ids"`
+
+	Tags []string `json:"tags"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // RebootServerRequest: reboot server request.
