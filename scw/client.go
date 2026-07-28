@@ -41,7 +41,6 @@ func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
-		WithS3Endpoint("https://s3.fr-par.scw.cloud"),
 		withDefaultUserAgent(userAgent),
 	}
 }
@@ -55,6 +54,10 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// apply options
 	s.apply(append(defaultOptions(), opts...))
+
+	// default s3 endpoint, cannot be set directly using defaultOptions()
+	// because it relies on s.defaultRegion
+	s.s3Endpoint = "https://s3." + s.defaultRegion.String() + ".scw.cloud"
 
 	// validate settings
 	err := s.validate()
@@ -153,12 +156,9 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 
 // GetS3Endpoint returns the S3 endpoint of the client.
 // This value can be set in the client option
-// WithS3Endpoint(). Be aware this value can be empty.
-func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
-	if c.s3Endpoint != "" {
-		return c.s3Endpoint, true
-	}
-	return "", false
+// WithS3Endpoint().
+func (c *Client) GetS3Endpoint() string {
+	return c.s3Endpoint
 }
 
 // GetDefaultPageSize returns the default page size of the client.

@@ -58,7 +58,11 @@ const configFileTemplate = `# Scaleway configuration file
 
 # APIURL overrides the API URL of the Scaleway API to the given URL.
 # Change that if you want to direct requests to a different endpoint.
-{{ if .APIURL }}apiurl: {{ .APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+{{ if .APIURL }}api_url: {{ .APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+
+# S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
+# Change that if you want to direct requests to a different S3-compatible endpoint.
+{{ if .S3Endpoint }}s3_endpoint: {{ .S3Endpoint }}{{ else }}# s3_endpoint: https://s3.fr-par.scw.cloud{{ end }}
 
 # Insecure enables insecure transport on the client.
 # Default to false
