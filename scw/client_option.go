@@ -288,7 +288,7 @@ func (s *settings) validate() error {
 			return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
 		}
 		if s.s3Endpoint[len(s.s3Endpoint)-1:] == "/" {
-			return NewInvalidClientOptionError("invalid s3 endpoint '%s' it should not have a trailing slash", s.s3Endpoint)
+			return NewInvalidClientOptionError("invalid S3 endpoint '%s': trailing slash is not allowed", s.s3Endpoint)
 		}
 	}
 
