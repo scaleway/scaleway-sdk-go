@@ -154,7 +154,7 @@ func TestNewClientS3Endpoint(t *testing.T) {
 			WithS3Endpoint("https://my-s3-endpoint.com/"),
 		}
 
-		expectedErr := "invalid s3 endpoint 'https://my-s3-endpoint.com/' it should not have a trailing slash"
+		expectedErr := "invalid S3 endpoint 'https://my-s3-endpoint.com/': trailing slash is not allowed"
 
 		_, err := NewClient(options...)
 		if err == nil {
