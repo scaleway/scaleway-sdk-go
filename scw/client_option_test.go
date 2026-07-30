@@ -1,6 +1,7 @@
 package scw
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -10,10 +11,14 @@ import (
 )
 
 var (
-	defaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultProjectID      = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
-	defaultRegion         = RegionNlAms
-	defaultZone           = ZoneNlAms1
+	defaultOrganizationID        = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	defaultProjectID             = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
+	defaultRegion                = RegionNlAms
+	defaultZone                  = ZoneNlAms1
+	UserAgentTooLong             = strings.Repeat("A", 550)
+	UserAgentInvalidUTF8         = "Hello, \xff\xfe World!"
+	UserAgentInvalidCharacters01 = "Hello, \r\nWorld!"
+	UserAgentInvalidCharacters02 = "Hello, \tWorld!"
 )
 
 func TestClientOptions(t *testing.T) {
@@ -34,6 +39,7 @@ func TestClientOptions(t *testing.T) {
 				s.defaultZone = &defaultZone
 			},
 		},
+
 		{
 			name: "Should throw an empty access key error",
 			clientOption: func(s *settings) {
@@ -41,6 +47,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: access key cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad access key error",
 			clientOption: func(s *settings) {
@@ -48,6 +55,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid access key format 'invalid', expected SCWXXXXXXXXXXXXXXXXX format",
 		},
+
 		{
 			name: "Should throw an empty secret key error",
 			clientOption: func(s *settings) {
@@ -55,6 +63,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: secret key cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad secret key error",
 			clientOption: func(s *settings) {
@@ -62,6 +71,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid secret key format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
+
 		{
 			name: "Should throw an url error",
 			clientOption: func(s *settings) {
@@ -70,6 +80,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid API url ':test'",
 		},
+
 		{
 			name: "Should throw an empty url error",
 			clientOption: func(s *settings) {
@@ -78,6 +89,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid API url ''",
 		},
+
 		{
 			name: "Should throw an empty organization ID error",
 			clientOption: func(s *settings) {
@@ -86,6 +98,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: default organization ID cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad organization ID error",
 			clientOption: func(s *settings) {
@@ -94,6 +107,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid organization ID format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
+
 		{
 			name: "Should throw an empty project ID error",
 			clientOption: func(s *settings) {
@@ -102,6 +116,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: default project ID cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad project ID error",
 			clientOption: func(s *settings) {
@@ -110,6 +125,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid project ID format 'invalid', expected a UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 		},
+
 		{
 			name: "Should throw a region error",
 			clientOption: func(s *settings) {
@@ -119,6 +135,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: default region cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad region error",
 			clientOption: func(s *settings) {
@@ -128,6 +145,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: invalid default region format 'invalid', available regions are: fr-par, nl-ams, pl-waw, it-mil",
 		},
+
 		{
 			name: "Should throw a zone error",
 			clientOption: func(s *settings) {
@@ -137,6 +155,7 @@ func TestClientOptions(t *testing.T) {
 			},
 			errStr: "scaleway-sdk-go: default zone cannot be empty",
 		},
+
 		{
 			name: "Should throw a bad zone error",
 			clientOption: func(s *settings) {
@@ -145,6 +164,64 @@ func TestClientOptions(t *testing.T) {
 				s.defaultZone = &v
 			},
 			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1",
+		},
+
+		{
+			name: "Should throw an empty user agent error",
+			clientOption: func(s *settings) {
+				s.userAgent = ""
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: "scaleway-sdk-go: cannot use an empty user agent",
+		},
+
+		{
+			name: "Should throw a too long user agent error",
+			clientOption: func(s *settings) {
+				s.userAgent = UserAgentTooLong
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: fmt.Sprintf(
+				"scaleway-sdk-go: invalid user agent '%s': length should not be over %d",
+				SanitizeForLogging(UserAgentTooLong),
+				UserAgentMaxLength,
+			),
+		},
+
+		{
+			name: "Should throw an invalid UTF-8 string error",
+			clientOption: func(s *settings) {
+				s.userAgent = UserAgentInvalidUTF8
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: fmt.Sprintf(
+				"scaleway-sdk-go: invalid user agent '%s': is not a valid UTF-8 string",
+				SanitizeForLogging(UserAgentInvalidUTF8),
+			),
+		},
+
+		{
+			name: "Should throw an prohibited characters error",
+			clientOption: func(s *settings) {
+				s.userAgent = UserAgentInvalidCharacters01
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: fmt.Sprintf(
+				"scaleway-sdk-go: invalid user agent '%s': contains prohibited characters",
+				SanitizeForLogging(UserAgentInvalidCharacters01),
+			),
+		},
+
+		{
+			name: "Should throw an prohibited characters error",
+			clientOption: func(s *settings) {
+				s.userAgent = UserAgentInvalidCharacters02
+				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
+			},
+			errStr: fmt.Sprintf(
+				"scaleway-sdk-go: invalid user agent '%s': contains prohibited characters",
+				SanitizeForLogging(UserAgentInvalidCharacters02),
+			),
 		},
 	}
 

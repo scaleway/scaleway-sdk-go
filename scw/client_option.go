@@ -284,7 +284,7 @@ func (s *settings) validate() error {
 		safeUA := SanitizeForLogging(s.userAgent)
 
 		if len(s.userAgent) == 0 {
-			return NewInvalidClientOptionError("invalid user agent '%s'", safeUA)
+			return NewInvalidClientOptionError("cannot use an empty user agent")
 		}
 
 		if len(s.userAgent) > UserAgentMaxLength {

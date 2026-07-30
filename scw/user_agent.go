@@ -9,6 +9,7 @@ import (
 
 const (
 	UserAgentMaxLength = 512
+	TruncatedSuffix    = "...[truncated]"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 func SanitizeForLogging(ua string) string {
 	// Truncate to max length if necessary
 	if len(ua) > UserAgentMaxLength {
-		ua = ua[:UserAgentMaxLength] + "...[truncated]"
+		ua = ua[:UserAgentMaxLength] + TruncatedSuffix
 	}
 
 	// Neutralize potential log injection characters
