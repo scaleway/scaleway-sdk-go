@@ -216,19 +216,23 @@ type Reverse struct {
 // Source: source.
 type Source struct {
 	// Zonal: this source is global.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	Zonal *string `json:"zonal,omitempty"`
 
 	// PrivateNetworkID: this source is specific.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// SubnetID: this source is specific.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	SubnetID *string `json:"subnet_id,omitempty"`
 
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	VpcID *string `json:"vpc_id,omitempty"`
+
+	// Regional: this source is global.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
+	Regional *bool `json:"regional,omitempty"`
 }
 
 // CustomResource: custom resource.
@@ -400,15 +404,19 @@ type ListIPsRequest struct {
 	ProjectID *string `json:"-"`
 
 	// Zonal: zone to filter for. Only IPs that are zonal, and in this zone, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	Zonal *string `json:"zonal,omitempty"`
 
+	// Regional: filter on regional IPs only.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	Regional *bool `json:"regional,omitempty"`
+
 	// PrivateNetworkID: only IPs that are private, and in this Private Network, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// SubnetID: only IPs inside this exact subnet will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	SubnetID *string `json:"subnet_id,omitempty"`
 
 	// VpcID: only IPs owned by resources in this VPC will be returned.
@@ -448,7 +456,7 @@ type ListIPsRequest struct {
 	// IPIDs: IP IDs to filter for. Only IPs with these UUIDs will be returned.
 	IPIDs []string `json:"-"`
 
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	SourceVpcID *string `json:"source_vpc_id,omitempty"`
 }
 
@@ -750,6 +758,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "ip_ids", req.IPIDs)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
+	parameter.AddToQuery(query, "regional", req.Regional)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
 	parameter.AddToQuery(query, "source_vpc_id", req.SourceVpcID)
