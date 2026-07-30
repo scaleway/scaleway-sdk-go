@@ -37,6 +37,7 @@ func TestClientOptions(t *testing.T) {
 				s.defaultProjectID = &defaultProjectID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
+				s.userAgent = defaultUserAgent
 			},
 		},
 
