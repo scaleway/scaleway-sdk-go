@@ -24,7 +24,7 @@ var (
 	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696f"
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
-	v2ValidUserAgent              = userAgent
+	v2ValidUserAgent              = defaultUserAgent
 
 	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -170,7 +170,7 @@ func TestSaveConfig(t *testing.T) {
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 					DefaultProjectID:      s(v2ValidDefaultProjectID),
 					DefaultRegion:         s(v2ValidDefaultRegion),
-					UserAgent:             s(userAgent),
+					UserAgent:             s(defaultUserAgent),
 				},
 			},
 			expectedFiles: map[string]string{

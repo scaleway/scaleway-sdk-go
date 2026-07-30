@@ -3,6 +3,7 @@ package scw
 import (
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -275,6 +276,37 @@ func (s *settings) validate() error {
 				zones = append(zones, string(z))
 			}
 			return NewInvalidClientOptionError("invalid default zone format '%s', available zones are: %s", *s.defaultZone, strings.Join(zones, ", "))
+		}
+	}
+
+	// Default user agent.
+	if s.userAgent != defaultUserAgent {
+		safeUA := SanitizeForLogging(s.userAgent)
+
+		if len(s.userAgent) == 0 {
+			return NewInvalidClientOptionError("invalid user agent '%s'", safeUA)
+		}
+
+		if len(s.userAgent) > UserAgentMaxLength {
+			return NewInvalidClientOptionError(
+				"invalid user agent '%s': length should not be over %d",
+				safeUA, UserAgentMaxLength,
+			)
+		}
+
+		if !utf8.ValidString(s.userAgent) {
+			return NewInvalidClientOptionError(
+				"invalid user agent '%s': is not a valid UTF-8 string",
+				safeUA,
+			)
+		}
+
+		// Reject control characters (including CRLF \r\n, tabs, and null bytes)
+		if !printableASCIIRegex.MatchString(s.userAgent) {
+			return NewInvalidClientOptionError(
+				"invalid user agent '%s': contains prohibited characters",
+				safeUA,
+			)
 		}
 	}
 

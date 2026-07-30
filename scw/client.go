@@ -42,7 +42,7 @@ func defaultOptions() []ClientOption {
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
 		WithS3Endpoint("https://s3.fr-par.scw.cloud"),
-		withDefaultUserAgent(userAgent),
+		withDefaultUserAgent(defaultUserAgent),
 	}
 }
 
@@ -151,6 +151,8 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 	return "", false
 }
 
+// GetUserAgent returns the user agent of the client. This value should never
+// be empty if the client was created with NewClient().
 func (c *Client) GetUserAgent() (userAgent string, exists bool) {
 	if c.userAgent != "" {
 		return c.userAgent, true
