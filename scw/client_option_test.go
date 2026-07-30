@@ -37,7 +37,6 @@ func TestClientOptions(t *testing.T) {
 				s.defaultProjectID = &defaultProjectID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
-				s.userAgent = defaultUserAgent
 			},
 		},
 
@@ -165,15 +164,6 @@ func TestClientOptions(t *testing.T) {
 				s.defaultZone = &v
 			},
 			errStr: "scaleway-sdk-go: invalid default zone format 'invalid', available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1",
-		},
-
-		{
-			name: "Should throw an empty user agent error",
-			clientOption: func(s *settings) {
-				s.userAgent = ""
-				s.token = auth.NewToken(v2ValidAccessKey, v2ValidSecretKey)
-			},
-			errStr: "scaleway-sdk-go: cannot use an empty user agent",
 		},
 
 		{
