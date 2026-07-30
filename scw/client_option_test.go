@@ -19,6 +19,7 @@ var (
 	UserAgentInvalidUTF8         = "Hello, \xff\xfe World!"
 	UserAgentInvalidCharacters01 = "Hello, \r\nWorld!"
 	UserAgentInvalidCharacters02 = "Hello, \tWorld!"
+	UserAgentValid               = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
 
 func TestClientOptions(t *testing.T) {
@@ -37,6 +38,7 @@ func TestClientOptions(t *testing.T) {
 				s.defaultProjectID = &defaultProjectID
 				s.defaultRegion = &defaultRegion
 				s.defaultZone = &defaultZone
+				s.userAgent = UserAgentValid
 			},
 		},
 
