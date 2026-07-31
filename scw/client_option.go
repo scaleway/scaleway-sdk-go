@@ -315,8 +315,13 @@ func (s *settings) validate() error {
 	}
 
 	// S3 endpoint.
-	if !validation.IsURL(s.s3Endpoint) {
-		return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
+	if s.s3Endpoint != "" {
+		if !validation.IsURL(s.s3Endpoint) {
+			return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
+		}
+		if s.s3Endpoint[len(s.s3Endpoint)-1:] == "/" {
+			return NewInvalidClientOptionError("invalid S3 endpoint '%s': trailing slash is not allowed", s.s3Endpoint)
+		}
 	}
 
 	// TODO: check for max s.defaultPageSize

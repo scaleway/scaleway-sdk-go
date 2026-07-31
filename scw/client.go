@@ -41,8 +41,8 @@ func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
-		WithS3Endpoint("https://s3.fr-par.scw.cloud"),
 		withDefaultUserAgent(defaultUserAgent),
+
 	}
 }
 
@@ -55,6 +55,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// apply options
 	s.apply(append(defaultOptions(), opts...))
+
+	// default s3 endpoint, cannot be set directly using defaultOptions()
+	// because it relies on s.defaultRegion
+	if s.defaultRegion != nil && s.s3Endpoint == "" {
+		s.s3Endpoint = "https://s3." + s.defaultRegion.String() + ".scw.cloud"
+	}
 
 	// validate settings
 	err := s.validate()
@@ -167,6 +173,7 @@ func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
 	if c.s3Endpoint != "" {
 		return c.s3Endpoint, true
 	}
+
 	return "", false
 }
 
