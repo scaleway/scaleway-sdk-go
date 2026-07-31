@@ -649,12 +649,12 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
-# UserAgent overrides the default user agent of your application.
-# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
-
 # S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 
 # Insecure enables insecure transport on the client.
 # Default to false
@@ -737,12 +737,12 @@ access_key: SCW1234567890ABCDEFG
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
-# UserAgent overrides the default user agent of your application.
-# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
-
 # S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 
 # Insecure enables insecure transport on the client.
 # Default to false
@@ -838,12 +838,12 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
-# UserAgent overrides the default user agent of your application.
-# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
-
 # S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 
 # Insecure enables insecure transport on the client.
 # Default to false
