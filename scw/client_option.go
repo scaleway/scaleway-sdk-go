@@ -77,8 +77,8 @@ func WithUserAgent(ua string) ClientOption {
 	}
 }
 
-// withDefaultUserAgent client option overrides the default user agent of the SDK.
-func withDefaultUserAgent(ua string) ClientOption {
+// WithDefaultUserAgent client option overrides the default user agent of the SDK.
+func WithDefaultUserAgent(ua string) ClientOption {
 	return func(s *settings) {
 		s.userAgent = ua
 	}
