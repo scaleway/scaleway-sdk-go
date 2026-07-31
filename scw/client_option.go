@@ -211,11 +211,49 @@ func (s *settings) apply(opts []ClientOption) {
 }
 
 func (s *settings) validate() error {
-	// Auth.
+	if err := s.validateAuth(); err != nil {
+		return err
+	}
+
+	if err := s.validateOrgID(); err != nil {
+		return err
+	}
+
+	if err := s.validateProjectID(); err != nil {
+		return err
+	}
+
+	if err := s.validateRegion(); err != nil {
+		return err
+	}
+
+	if err := s.validateZone(); err != nil {
+		return err
+	}
+
+	if err := s.validateUserAgent(); err != nil {
+		return err
+	}
+
+	if err := s.validateAPIURL(); err != nil {
+		return err
+	}
+
+	if err := s.validateS3Endpoint(); err != nil {
+		return err
+	}
+
+	// TODO: check for max s.defaultPageSize
+
+	return nil
+}
+
+func (s *settings) validateAuth() error {
 	if s.token == nil {
 		// It should not happen, WithoutAuth option is used by default.
 		panic(errors.New("no credential option provided"))
 	}
+
 	if token, isToken := s.token.(*auth.Token); isToken {
 		if token.AccessKey == "" {
 			return NewInvalidClientOptionError("access key cannot be empty")
@@ -231,7 +269,10 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// Default Organization ID.
+	return nil
+}
+
+func (s *settings) validateOrgID() error {
 	if s.defaultOrganizationID != nil {
 		if *s.defaultOrganizationID == "" {
 			return NewInvalidClientOptionError("default organization ID cannot be empty")
@@ -241,7 +282,10 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// Default Project ID.
+	return nil
+}
+
+func (s *settings) validateProjectID() error {
 	if s.defaultProjectID != nil {
 		if *s.defaultProjectID == "" {
 			return NewInvalidClientOptionError("default project ID cannot be empty")
@@ -251,7 +295,10 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// Default Region.
+	return nil
+}
+
+func (s *settings) validateRegion() error {
 	if s.defaultRegion != nil {
 		if *s.defaultRegion == "" {
 			return NewInvalidClientOptionError("default region cannot be empty")
@@ -265,7 +312,10 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// Default Zone.
+	return nil
+}
+
+func (s *settings) validateZone() error {
 	if s.defaultZone != nil {
 		if *s.defaultZone == "" {
 			return NewInvalidClientOptionError("default zone cannot be empty")
@@ -279,7 +329,10 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// Default user agent.
+	return nil
+}
+
+func (s *settings) validateUserAgent() error {
 	if s.userAgent != "" && s.userAgent != defaultUserAgent {
 		safeUA := SanitizeForLogging(s.userAgent)
 
@@ -306,15 +359,22 @@ func (s *settings) validate() error {
 		}
 	}
 
-	// API URL.
+	return nil
+}
+
+func (s *settings) validateAPIURL() error {
 	if !validation.IsURL(s.apiURL) {
 		return NewInvalidClientOptionError("invalid API url '%s'", s.apiURL)
 	}
+
 	if s.apiURL[len(s.apiURL)-1:] == "/" {
 		return NewInvalidClientOptionError("invalid API url '%s' it should not have a trailing slash", s.apiURL)
 	}
 
-	// S3 endpoint.
+	return nil
+}
+
+func (s *settings) validateS3Endpoint() error {
 	if s.s3Endpoint != "" {
 		if !validation.IsURL(s.s3Endpoint) {
 			return NewInvalidClientOptionError("invalid S3 endpoint '%s'", s.s3Endpoint)
@@ -323,8 +383,6 @@ func (s *settings) validate() error {
 			return NewInvalidClientOptionError("invalid S3 endpoint '%s': trailing slash is not allowed", s.s3Endpoint)
 		}
 	}
-
-	// TODO: check for max s.defaultPageSize
 
 	return nil
 }

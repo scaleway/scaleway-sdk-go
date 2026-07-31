@@ -42,7 +42,6 @@ func defaultOptions() []ClientOption {
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
 		withDefaultUserAgent(defaultUserAgent),
-
 	}
 }
 
