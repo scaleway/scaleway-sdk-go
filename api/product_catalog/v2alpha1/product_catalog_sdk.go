@@ -350,6 +350,7 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeOutputToken      = PublicCatalogProductPropertiesGenerativeAPIsTokenType("output_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputDuration    = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_duration")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputCachedToken = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_cached_token")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputAudio       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_audio")
 )
 
 func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) String() string {
@@ -367,6 +368,7 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) Values() []Pub
 		"output_token",
 		"input_duration",
 		"input_cached_token",
+		"input_audio",
 	}
 }
 
