@@ -59,6 +59,14 @@ func WithS3Endpoint(s3Endpoint string) ClientOption {
 	}
 }
 
+// WithS3UsePathStyle client option overrides the UsePathStyle option when
+// accessing the S3 API.
+func WithS3UsePathStyle(s3UsePathStyle bool) ClientOption {
+	return func(s *settings) {
+		s.s3UsePathStyle = s3UsePathStyle
+	}
+}
+
 // WithInsecure client option enables insecure transport on the client.
 func WithInsecure() ClientOption {
 	return func(s *settings) {
@@ -102,6 +110,10 @@ func WithProfile(p *Profile) ClientOption {
 
 		if p.S3Endpoint != nil {
 			s.s3Endpoint = *p.S3Endpoint
+		}
+
+		if p.S3UsePathStyle != nil {
+			s.s3UsePathStyle = *p.S3UsePathStyle
 		}
 
 		if p.Insecure != nil {
@@ -184,6 +196,7 @@ func WithDefaultPageSize(pageSize uint32) ClientOption {
 type settings struct {
 	apiURL                string
 	s3Endpoint            string
+	s3UsePathStyle        bool
 	token                 auth.Auth
 	userAgent             string
 	httpClient            httpClient
