@@ -367,6 +367,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -385,6 +387,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
@@ -404,6 +408,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -653,6 +659,10 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -685,6 +695,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
 `,
 	}))
@@ -737,6 +748,10 @@ access_key: SCW1234567890ABCDEFG
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -769,6 +784,7 @@ access_key: SCW1234567890ABCDEFG
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
 `,
 	}))
@@ -834,6 +850,10 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -866,6 +886,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
 
   profile2:
@@ -877,6 +898,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
 `,
 	}))
