@@ -258,6 +258,45 @@ func (enum *PublicCatalogProductProductBadge) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType string
+
+const (
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeUnknownType = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("unknown_type")
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeSbs5k       = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("sbs_5k")
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeSbs15k      = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("sbs_15k")
+)
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeUnknownType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) Values() []PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType {
+	return []PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType{
+		"unknown_type",
+		"sbs_5k",
+		"sbs_15k",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType(PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode string
 
 const (
@@ -921,6 +960,37 @@ type PublicCatalogProductPropertiesHardwareCPUVirtual struct {
 	Count uint32 `json:"count"`
 }
 
+// PublicCatalogProductPropertiesApacheKafkaNodeType: public catalog product properties apache kafka node type.
+type PublicCatalogProductPropertiesApacheKafkaNodeType struct {
+	// Versions: the list of available versions for the Kafka node.
+	Versions []string `json:"versions"`
+
+	// VcpuCount: number of virtual CPUs.
+	VcpuCount uint32 `json:"vcpu_count"`
+
+	// IsMultiAz: whether or not this Kafka product is multi AZ.
+	IsMultiAz bool `json:"is_multi_az"`
+
+	// MemorySize: memory size in bytes.
+	MemorySize scw.Size `json:"memory_size"`
+}
+
+// PublicCatalogProductPropertiesApacheKafkaStorageType: public catalog product properties apache kafka storage type.
+type PublicCatalogProductPropertiesApacheKafkaStorageType struct {
+	// Type: the type of volume.
+	// Default value: unknown_type
+	Type PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType `json:"type"`
+
+	// MinSize: the minimum size of the volume in bytes.
+	MinSize scw.Size `json:"min_size"`
+
+	// MaxSize: the maximum size of the volume in bytes.
+	MaxSize scw.Size `json:"max_size"`
+
+	// IsMultiAz: whether or not this Kafka product is multi AZ.
+	IsMultiAz bool `json:"is_multi_az"`
+}
+
 // PublicCatalogProductPropertiesBlockStorageSnapshotType: public catalog product properties block storage snapshot type.
 type PublicCatalogProductPropertiesBlockStorageSnapshotType struct{}
 
@@ -1147,7 +1217,15 @@ type PublicCatalogProductPropertiesServerlessJobsMemoryType struct {
 }
 
 // PublicCatalogProductPropertiesApacheKafka: public catalog product properties apache kafka.
-type PublicCatalogProductPropertiesApacheKafka struct{}
+type PublicCatalogProductPropertiesApacheKafka struct {
+	// Node: the properties related to Kafka node products.
+	// Precisely one of Node, Storage must be set.
+	Node *PublicCatalogProductPropertiesApacheKafkaNodeType `json:"node,omitempty"`
+
+	// Storage: the properties related to Kafka storage products.
+	// Precisely one of Node, Storage must be set.
+	Storage *PublicCatalogProductPropertiesApacheKafkaStorageType `json:"storage,omitempty"`
+}
 
 // PublicCatalogProductPropertiesAppleSilicon: public catalog product properties apple silicon.
 type PublicCatalogProductPropertiesAppleSilicon struct {
