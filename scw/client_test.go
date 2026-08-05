@@ -336,3 +336,25 @@ func TestNewVariableFromType(t *testing.T) {
 
 	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
 }
+
+func TestClientGetAPIMetadata(t *testing.T) {
+	t.Run("APIMetadata", func(t *testing.T) {
+		client, err := NewClient()
+		testhelpers.AssertNoError(t, err)
+
+		metadata, err := client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+
+		// let's make sure the client cannot call home anymore
+		// (in fact, if it tries to use httpClient, it will panic)
+		client.httpClient = nil
+		metadata, err = client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+	})
+}

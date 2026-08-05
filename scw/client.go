@@ -28,6 +28,7 @@ type Client struct {
 	httpClient            httpClient
 	auth                  auth.Auth
 	apiURL                string
+	apiMetadata           ApiMetadata
 	s3Endpoint            string
 	userAgent             string
 	defaultOrganizationID *string
@@ -35,6 +36,12 @@ type Client struct {
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+}
+
+type ApiMetadata struct {
+	Platform  string
+	Partition string
+	Domain    string
 }
 
 func defaultOptions() []ClientOption {
@@ -97,6 +104,27 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		defaultZone:           s.defaultZone,
 		defaultPageSize:       s.defaultPageSize,
 	}, nil
+}
+
+// GetAPIMetadata returns the API metadata exposed by the API
+// Gateway. This metadata holds information on the platform,
+// the partition and the domain on which the Scaleway cloud is
+// running.
+func (c *Client) GetAPIMetadata() (ApiMetadata, error) {
+	if c.apiMetadata != (ApiMetadata{}) {
+		return c.apiMetadata, nil
+	}
+
+	scwReq := &ScalewayRequest{
+		Method: "GET",
+		Path:   "/metadata",
+	}
+
+	err := c.Do(scwReq, &c.apiMetadata)
+	if err != nil {
+		return ApiMetadata{}, errors.Wrap(err, "could request api metadata")
+	}
+	return c.apiMetadata, nil
 }
 
 // GetDefaultOrganizationID returns the default organization ID
