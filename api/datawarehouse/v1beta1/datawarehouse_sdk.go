@@ -1164,10 +1164,11 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Deployments {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Deployments {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1200,9 +1201,10 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1294,9 +1296,10 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1333,9 +1336,10 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1367,9 +1371,10 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1437,9 +1442,10 @@ func (s *API) StartDeployment(req *StartDeploymentRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1476,9 +1482,10 @@ func (s *API) StopDeployment(req *StopDeploymentRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1522,10 +1529,11 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Users {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Users {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1563,9 +1571,10 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1606,9 +1615,10 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1708,9 +1718,10 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1754,10 +1765,11 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Databases {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Databases {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1795,9 +1807,10 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 

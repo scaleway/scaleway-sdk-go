@@ -585,9 +585,10 @@ func (s *API) BookIP(req *BookIPRequest, opts ...scw.RequestOption) (*IP, error)
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -683,9 +684,10 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -722,9 +724,10 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -781,10 +784,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.IPs {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -822,9 +826,10 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -861,9 +866,10 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -900,8 +906,9 @@ func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error)
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
