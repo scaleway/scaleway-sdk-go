@@ -18,6 +18,7 @@ var (
 	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
 	v2ValidS3Endpoint2            = "s3.fr-par.scw.cloud"
+	v2ValidS3UsePathStyle2        = "true"
 	v2ValidInsecure2              = "true"
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
@@ -29,6 +30,7 @@ var (
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
 	v2ValidS3Endpoint            = "s3.nl-ams.scw.cloud"
+	v2ValidS3UsePathStyle        = "false"
 	v2ValidInsecure              = "false"
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
@@ -58,6 +60,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
@@ -71,6 +74,7 @@ profiles:
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
     s3_endpoint: ` + v2ValidS3Endpoint2 + `
+    s3_use_path_style: ` + v2ValidS3UsePathStyle2 + `
     insecure: ` + v2ValidInsecure2 + `
     send_telemetry: ` + v2ValidSendTelemetry2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
@@ -84,6 +88,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry2 + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
@@ -97,6 +102,7 @@ profiles:
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
     s3_endpoint: ` + v2ValidS3Endpoint2 + `
+    s3_use_path_style: ` + v2ValidS3UsePathStyle2 + `
     insecure: ` + v2ValidInsecure2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_project_id: ` + v2ValidDefaultProjectID2 + `
@@ -109,6 +115,7 @@ access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
 s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
@@ -216,6 +223,8 @@ func TestSaveConfig(t *testing.T) {
 					AccessKey:             s(v2ValidAccessKey2),
 					SecretKey:             s(v2ValidSecretKey2),
 					APIURL:                s(v2ValidAPIURL2),
+					S3Endpoint:            s(v2ValidS3Endpoint2),
+					S3UsePathStyle:        b(true),
 					Insecure:              b(true),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 					DefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -270,6 +279,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedAccessKey             *string
 		expectedSecretKey             *string
 		expectedAPIURL                *string
+		expectedS3Endpoint            *string
+		expectedS3UsePathStyle        *bool
 		expectedInsecure              *bool
 		expectedSendTelemetry         *bool
 		expectedDefaultOrganizationID *string
@@ -337,6 +348,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
@@ -354,6 +367,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -372,6 +387,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
@@ -391,6 +408,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -440,6 +459,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 				testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 				testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
+				testhelpers.Equals(t, test.expectedS3Endpoint, p.S3Endpoint)
+				testhelpers.Equals(t, test.expectedS3UsePathStyle, p.S3UsePathStyle)
 				testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 				testhelpers.Equals(t, test.expectedDefaultProjectID, p.DefaultProjectID)
 				testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
@@ -638,6 +659,10 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -670,6 +695,7 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
 `,
 	}))
@@ -722,6 +748,10 @@ access_key: SCW1234567890ABCDEFG
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -754,6 +784,7 @@ access_key: SCW1234567890ABCDEFG
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
 #     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
 `,
 	}))
@@ -819,6 +850,10 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Change that if you want to direct requests to a different S3-compatible endpoint.
 # s3_endpoint: https://s3.fr-par.scw.cloud
 
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -851,6 +886,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
 
   profile2:
@@ -862,6 +898,7 @@ profiles:
     # default_region: fr-par
     # api_url: https://api.scaleway.com
     # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
 `,
 	}))

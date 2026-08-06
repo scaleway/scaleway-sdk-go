@@ -30,6 +30,7 @@ type Client struct {
 	apiURL                string
 	apiMetadata           ApiMetadata
 	s3Endpoint            string
+	s3UsePathStyle        bool
 	userAgent             string
 	defaultOrganizationID *string
 	defaultProjectID      *string
@@ -97,6 +98,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		httpClient:            s.httpClient,
 		apiURL:                s.apiURL,
 		s3Endpoint:            s.s3Endpoint,
+		s3UsePathStyle:        s.s3UsePathStyle,
 		userAgent:             s.userAgent,
 		defaultOrganizationID: s.defaultOrganizationID,
 		defaultProjectID:      s.defaultProjectID,
@@ -193,6 +195,12 @@ func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
 	}
 
 	return "", false
+}
+
+// GetS3UsePathStyle returns the S3UsePathStyle option value.
+// This value can be set in the client option WithS3UsePathStyle().
+func (c *Client) GetS3UsePathStyle() (s3UsePathStyle bool) {
+	return c.s3UsePathStyle
 }
 
 // GetDefaultPageSize returns the default page size of the client.

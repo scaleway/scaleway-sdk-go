@@ -15,6 +15,7 @@ import (
 const (
 	testAPIURL                = "https://api.example.com"
 	testS3Endpoint            = "https://s3.example.com"
+	testS3UsePathStyle        = true
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -172,6 +173,7 @@ func TestNewClientWithOptions(t *testing.T) {
 		options := []ClientOption{
 			WithAPIURL(testAPIURL),
 			WithS3Endpoint(testS3Endpoint),
+			WithS3UsePathStyle(testS3UsePathStyle),
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
 			WithDefaultOrganizationID(testDefaultOrganizationID),
@@ -188,6 +190,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 
 		testhelpers.Equals(t, someHTTPClient, client.httpClient)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
@@ -224,6 +233,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testSecretKey),
 			s(testAPIURL),
 			s(testS3Endpoint),
+			b(testS3UsePathStyle),
 			b(testInsecure),
 			s(testDefaultOrganizationID),
 			s(testDefaultProjectID),
@@ -245,6 +255,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, ok, "clientTransport must be not nil")
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)

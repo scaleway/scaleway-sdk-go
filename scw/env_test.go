@@ -17,6 +17,7 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedSecretKey             *string
 		expectedAPIURL                *string
 		expectedS3Endpoint            *string
+		expectedS3UsePathStyle        *bool
 		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
 		expectedDefaultProjectID      *string
@@ -31,6 +32,7 @@ func TestLoadEnvProfile(t *testing.T) {
 				ScwSecretKeyEnv:             v2ValidSecretKey,
 				ScwAPIURLEnv:                v2ValidAPIURL,
 				ScwS3EndpointEnv:            v2ValidS3Endpoint,
+				ScwS3UsePathStyleEnv:        v2ValidS3UsePathStyle,
 				ScwInsecureEnv:              "false",
 				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
 				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
@@ -41,6 +43,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedAPIURL:                s(v2ValidAPIURL),
 			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
@@ -98,6 +101,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 			testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
 			testhelpers.Equals(t, test.expectedS3Endpoint, p.S3Endpoint)
+			testhelpers.Equals(t, test.expectedS3UsePathStyle, p.S3UsePathStyle)
 			testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 			testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 			testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
