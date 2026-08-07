@@ -440,7 +440,7 @@ type Resource struct {
 	// CreatedAt: creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: last udpate date.
+	// UpdatedAt: last update date.
 	UpdatedAt *time.Time `json:"updated_at"`
 
 	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
