@@ -49,7 +49,7 @@ func defaultOptions() []ClientOption {
 	return []ClientOption{
 		WithoutAuth(),
 		WithAPIURL("https://api.scaleway.com"),
-		withDefaultUserAgent(userAgent),
+		WithDefaultUserAgent(defaultUserAgent),
 	}
 }
 
@@ -183,6 +183,15 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 		return token.AccessKey, isAccessKey
 	}
 
+	return "", false
+}
+
+// GetUserAgent returns the user agent of the client. This value should never
+// be empty if the client was created with NewClient().
+func (c *Client) GetUserAgent() (userAgent string, exists bool) {
+	if c.userAgent != "" {
+		return c.userAgent, true
+	}
 	return "", false
 }
 
