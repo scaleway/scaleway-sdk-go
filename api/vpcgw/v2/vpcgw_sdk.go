@@ -1329,10 +1329,11 @@ func (s *API) ListGateways(req *ListGatewaysRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Gateways {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Gateways {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1365,9 +1366,10 @@ func (s *API) GetGateway(req *GetGatewayRequest, opts ...scw.RequestOption) (*Ga
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1459,9 +1461,10 @@ func (s *API) CreateGateway(req *CreateGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1498,9 +1501,10 @@ func (s *API) UpdateGateway(req *UpdateGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1536,9 +1540,10 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1575,9 +1580,10 @@ func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1620,10 +1626,11 @@ func (s *API) ListGatewayNetworks(req *ListGatewayNetworksRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.GatewayNetworks {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.GatewayNetworks {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1656,9 +1663,10 @@ func (s *API) GetGatewayNetwork(req *GetGatewayNetworkRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1740,9 +1748,10 @@ func (s *API) CreateGatewayNetwork(req *CreateGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1779,9 +1788,10 @@ func (s *API) UpdateGatewayNetwork(req *UpdateGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1813,9 +1823,10 @@ func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1857,10 +1868,11 @@ func (s *API) ListPatRules(req *ListPatRulesRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.PatRules {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PatRules {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1893,9 +1905,10 @@ func (s *API) GetPatRule(req *GetPatRuleRequest, opts ...scw.RequestOption) (*Pa
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1928,9 +1941,10 @@ func (s *API) CreatePatRule(req *CreatePatRuleRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1967,9 +1981,10 @@ func (s *API) UpdatePatRule(req *UpdatePatRuleRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2101,10 +2116,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.IPs {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -2137,9 +2153,10 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2177,9 +2194,10 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2216,9 +2234,10 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2284,9 +2303,10 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
