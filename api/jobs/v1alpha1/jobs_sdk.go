@@ -823,7 +823,7 @@ func (s *API) UpdateJobDefinition(req *UpdateJobDefinitionRequest, opts ...scw.R
 	return &resp, nil
 }
 
-// DeleteJobDefinition: Delete an exsisting job definition by its unique identifier.
+// DeleteJobDefinition: Delete an existing job definition by its unique identifier.
 func (s *API) DeleteJobDefinition(req *DeleteJobDefinitionRequest, opts ...scw.RequestOption) error {
 	var err error
 

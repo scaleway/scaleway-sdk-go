@@ -93,10 +93,7 @@ func (k *Kubeconfig) GetToken() (string, error) {
 
 // GetClusterKubeConfig downloads the kubeconfig for the given cluster
 func (s *API) GetClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw.RequestOption) (*Kubeconfig, error) {
-	kubeconfigFile, err := s.getClusterKubeConfig(&GetClusterKubeConfigRequest{
-		Region:    req.Region,
-		ClusterID: req.ClusterID,
-	}, opts...)
+	kubeconfigFile, err := s.getClusterKubeConfig(req, opts...)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting cluster kubeconfig")
 	}

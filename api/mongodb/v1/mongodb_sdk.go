@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultMongodbRetryInterval = 15 * time.Second
+	defaultMongodbTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -90,6 +96,43 @@ func (enum *InstanceStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDatabasesRequestOrderBy string
+
+const (
+	ListDatabasesRequestOrderByNameAsc  = ListDatabasesRequestOrderBy("name_asc")
+	ListDatabasesRequestOrderByNameDesc = ListDatabasesRequestOrderBy("name_desc")
+)
+
+func (enum ListDatabasesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListDatabasesRequestOrderByNameAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListDatabasesRequestOrderBy) Values() []ListDatabasesRequestOrderBy {
+	return []ListDatabasesRequestOrderBy{
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListDatabasesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDatabasesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDatabasesRequestOrderBy(ListDatabasesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListInstancesRequestOrderBy string
 
 const (
@@ -132,6 +175,57 @@ func (enum *ListInstancesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListInstancesRequestOrderBy(ListInstancesRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListMaintenancesRequestOrderBy string
+
+const (
+	// Created at ascending.
+	ListMaintenancesRequestOrderByCreatedAtAsc = ListMaintenancesRequestOrderBy("created_at_asc")
+	// Created at descending.
+	ListMaintenancesRequestOrderByCreatedAtDesc = ListMaintenancesRequestOrderBy("created_at_desc")
+	// Starts at ascending.
+	ListMaintenancesRequestOrderByStartsAtAsc = ListMaintenancesRequestOrderBy("starts_at_asc")
+	// Starts at descending.
+	ListMaintenancesRequestOrderByStartsAtDesc = ListMaintenancesRequestOrderBy("starts_at_desc")
+	// Stops at ascending.
+	ListMaintenancesRequestOrderByStopsAtAsc = ListMaintenancesRequestOrderBy("stops_at_asc")
+	// Stops at descending.
+	ListMaintenancesRequestOrderByStopsAtDesc = ListMaintenancesRequestOrderBy("stops_at_desc")
+)
+
+func (enum ListMaintenancesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListMaintenancesRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListMaintenancesRequestOrderBy) Values() []ListMaintenancesRequestOrderBy {
+	return []ListMaintenancesRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"starts_at_asc",
+		"starts_at_desc",
+		"stops_at_asc",
+		"stops_at_desc",
+	}
+}
+
+func (enum ListMaintenancesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListMaintenancesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListMaintenancesRequestOrderBy(ListMaintenancesRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -214,6 +308,96 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListUsersRequestOrderBy(ListUsersRequestOrderBy(tmp).String())
+	return nil
+}
+
+type MaintenanceAppliedBy string
+
+const (
+	// Unknown who applied the maintenance.
+	MaintenanceAppliedByUnknownAppliedBy = MaintenanceAppliedBy("unknown_applied_by")
+	// User applied the maintenance.
+	MaintenanceAppliedByUser = MaintenanceAppliedBy("user")
+	// Admin user type.
+	MaintenanceAppliedByAdmin = MaintenanceAppliedBy("admin")
+)
+
+func (enum MaintenanceAppliedBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(MaintenanceAppliedByUnknownAppliedBy)
+	}
+	return string(enum)
+}
+
+func (enum MaintenanceAppliedBy) Values() []MaintenanceAppliedBy {
+	return []MaintenanceAppliedBy{
+		"unknown_applied_by",
+		"user",
+		"admin",
+	}
+}
+
+func (enum MaintenanceAppliedBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *MaintenanceAppliedBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = MaintenanceAppliedBy(MaintenanceAppliedBy(tmp).String())
+	return nil
+}
+
+type MaintenanceStatus string
+
+const (
+	// Unknown status.
+	MaintenanceStatusUnknownStatus = MaintenanceStatus("unknown_status")
+	// Planned maintenance.
+	MaintenanceStatusPlanned = MaintenanceStatus("planned")
+	// Done status.
+	MaintenanceStatusDone = MaintenanceStatus("done")
+	// Cancelled status.
+	MaintenanceStatusCancelled = MaintenanceStatus("cancelled")
+	// Ongoing status.
+	MaintenanceStatusOngoing = MaintenanceStatus("ongoing")
+)
+
+func (enum MaintenanceStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(MaintenanceStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum MaintenanceStatus) Values() []MaintenanceStatus {
+	return []MaintenanceStatus{
+		"unknown_status",
+		"planned",
+		"done",
+		"cancelled",
+		"ongoing",
+	}
+}
+
+func (enum MaintenanceStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *MaintenanceStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = MaintenanceStatus(MaintenanceStatus(tmp).String())
 	return nil
 }
 
@@ -387,6 +571,16 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// EngineUpgrade: engine upgrade.
+type EngineUpgrade struct {
+	NewVersionID string `json:"new_version_id"`
+}
+
+// ServiceUpdate: service update.
+type ServiceUpdate struct {
+	ServiceName string `json:"service_name"`
+}
+
 // EndpointPrivateNetworkDetails: Private Network details.
 type EndpointPrivateNetworkDetails struct {
 	// PrivateNetworkID: UUID of the Private Network.
@@ -395,6 +589,15 @@ type EndpointPrivateNetworkDetails struct {
 
 // EndpointPublicNetworkDetails: Public Access details.
 type EndpointPublicNetworkDetails struct{}
+
+// Workflow: workflow.
+type Workflow struct {
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
+
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
+}
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
 type EndpointSpecPrivateNetworkDetails struct {
@@ -425,6 +628,13 @@ type Endpoint struct {
 	PublicNetwork *EndpointPublicNetworkDetails `json:"public_network,omitempty"`
 }
 
+// InstanceSetting: instance setting.
+type InstanceSetting struct {
+	Name string `json:"name"`
+
+	Value string `json:"value"`
+}
+
 // InstanceSnapshotSchedule: instance snapshot schedule.
 type InstanceSnapshotSchedule struct {
 	FrequencyHours int32 `json:"frequency_hours"`
@@ -436,6 +646,44 @@ type InstanceSnapshotSchedule struct {
 	NextUpdate *time.Time `json:"next_update"`
 
 	LastRun *time.Time `json:"last_run"`
+}
+
+// Maintenance: maintenance.
+type Maintenance struct {
+	// ID: ID of the maintenance.
+	ID string `json:"id"`
+
+	// InstanceID: ID of the instance on which the maintenance is applied.
+	InstanceID string `json:"instance_id"`
+
+	// CreatedAt: creation date of the maintenance.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// StartsAt: start date of the maintenance.
+	StartsAt *time.Time `json:"starts_at"`
+
+	// StopsAt: stop date of the maintenance.
+	StopsAt *time.Time `json:"stops_at"`
+
+	// Status: current status of the maintenance.
+	// Default value: unknown_status
+	Status MaintenanceStatus `json:"status"`
+
+	// ForcedAt: forced application date of the maintenance.
+	ForcedAt *time.Time `json:"forced_at"`
+
+	// AppliedAt: application date of the maintenance.
+	AppliedAt *time.Time `json:"applied_at"`
+
+	// AppliedBy: usertype who launched the maintenance.
+	// Default value: unknown_applied_by
+	AppliedBy MaintenanceAppliedBy `json:"applied_by"`
+
+	// Workflow: workflow to be applied during maintenance.
+	Workflow *Workflow `json:"workflow"`
+
+	// Reason: reason of the maintenance.
+	Reason string `json:"reason"`
 }
 
 // Volume: volume.
@@ -491,6 +739,11 @@ type EndpointSpec struct {
 	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
+// Database: database.
+type Database struct {
+	Name string `json:"name"`
+}
+
 // Instance: instance.
 type Instance struct {
 	// ID: UUID of the Database Instance.
@@ -535,6 +788,15 @@ type Instance struct {
 
 	// SnapshotSchedule: snapshot schedule configuration of the Database Instance.
 	SnapshotSchedule *InstanceSnapshotSchedule `json:"snapshot_schedule"`
+
+	// Settings: list of settings applied to the Database Instance.
+	Settings []*InstanceSetting `json:"settings"`
+
+	// Maintenances: list of pending maintenances applicable to the Database Instance.
+	Maintenances []*Maintenance `json:"maintenances"`
+
+	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
+	UpgradableVersions []string `json:"upgradable_versions"`
 }
 
 // NodeType: node type.
@@ -625,6 +887,17 @@ type Version struct {
 
 	// EndOfLifeAt: date of End of Life.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
+}
+
+// ApplyMaintenanceRequest: apply maintenance request.
+type ApplyMaintenanceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	MaintenanceID string `json:"-"`
 }
 
 // CreateEndpointRequest: create endpoint request.
@@ -762,6 +1035,15 @@ type GetInstanceRequest struct {
 	InstanceID string `json:"-"`
 }
 
+// GetMaintenanceRequest: get maintenance request.
+type GetMaintenanceRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// MaintenanceID: ID of the maintenance.
+	MaintenanceID string `json:"-"`
+}
+
 // GetSnapshotRequest: get snapshot request.
 type GetSnapshotRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -769,6 +1051,51 @@ type GetSnapshotRequest struct {
 
 	// SnapshotID: UUID of the snapshot.
 	SnapshotID string `json:"-"`
+}
+
+// ListDatabasesRequest: list databases request.
+type ListDatabasesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: UUID of the Database Instance.
+	InstanceID string `json:"-"`
+
+	// OrderBy: criteria to use when requesting user listing.
+	// Default value: name_asc
+	OrderBy ListDatabasesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDatabasesResponse: list databases response.
+type ListDatabasesResponse struct {
+	// Databases: list of the databases.
+	Databases []*Database `json:"databases"`
+
+	// TotalCount: total count of databases present on a Database Instance.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDatabasesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDatabasesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Databases = append(r.Databases, results.Databases...)
+	r.TotalCount += uint64(len(results.Databases))
+	return uint64(len(results.Databases)), nil
 }
 
 // ListInstancesRequest: list instances request.
@@ -791,6 +1118,9 @@ type ListInstancesRequest struct {
 
 	// ProjectID: project ID to list the instances of.
 	ProjectID *string `json:"-"`
+
+	// HasMaintenance: retrieve pending maintenances for the database instances if given.
+	HasMaintenance *bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -823,6 +1153,51 @@ func (r *ListInstancesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Instances = append(r.Instances, results.Instances...)
 	r.TotalCount += uint64(len(results.Instances))
 	return uint64(len(results.Instances)), nil
+}
+
+// ListMaintenancesRequest: list maintenances request.
+type ListMaintenancesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// InstanceID: ID of the instance.
+	InstanceID string `json:"-"`
+
+	// OrderBy: criteria to use when requesting user listing.
+	// Default value: created_at_asc
+	OrderBy ListMaintenancesRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListMaintenancesResponse: list maintenances response.
+type ListMaintenancesResponse struct {
+	// Maintenances: list of maintenances of a MongoDB© instance.
+	Maintenances []*Maintenance `json:"maintenances"`
+
+	// TotalCount: total count of maintenances of a MongoDB© instance.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListMaintenancesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListMaintenancesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListMaintenancesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Maintenances = append(r.Maintenances, results.Maintenances...)
+	r.TotalCount += uint64(len(results.Maintenances))
+	return uint64(len(results.Maintenances)), nil
 }
 
 // ListNodeTypesRequest: list node types request.
@@ -1108,8 +1483,12 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// VolumeSizeBytes: increase your Block Storage volume size.
-	// Precisely one of VolumeSizeBytes must be set.
+	// Precisely one of VolumeSizeBytes, Version must be set.
 	VolumeSizeBytes *scw.Size `json:"volume_size_bytes,omitempty"`
+
+	// Version: mongoDB version to upgrade to (e.g., `8.0`, `7.0`, `8.2`).
+	// Precisely one of VolumeSizeBytes, Version must be set.
+	Version *string `json:"version,omitempty"`
 }
 
 // This API allows you to manage your Managed Databases for MongoDB®.
@@ -1224,6 +1603,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "has_maintenance", req.HasMaintenance)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 
@@ -1275,6 +1655,57 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForInstanceRequest is used by WaitForInstance method.
+type WaitForInstanceRequest struct {
+	Region        scw.Region
+	InstanceID    string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForInstance waits for the Instance to reach a terminal state.
+func (s *API) WaitForInstance(req *WaitForInstanceRequest, opts ...scw.RequestOption) (*Instance, error) {
+	timeout := defaultMongodbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultMongodbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[InstanceStatus]struct{}{
+		InstanceStatusProvisioning: {},
+		InstanceStatusConfiguring:  {},
+		InstanceStatusDeleting:     {},
+		InstanceStatusInitializing: {},
+		InstanceStatusSnapshotting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetInstance(&GetInstanceRequest{
+				Region:     req.Region,
+				InstanceID: req.InstanceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Instance failed")
+	}
+
+	return res.(*Instance), nil
 }
 
 // CreateInstance: Create a new MongoDB® Database Instance.
@@ -1848,6 +2279,48 @@ func (s *API) SetUserRole(req *SetUserRoleRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
+// ListDatabases: List all databases of a given Database Instance.
+func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption) (*ListDatabasesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.InstanceID) == "" {
+		return nil, errors.New("field InstanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mongodb/v1/regions/" + fmt.Sprint(req.Region) + "/instances/" + fmt.Sprint(req.InstanceID) + "/databases",
+		Query:  query,
+	}
+
+	var resp ListDatabasesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // DeleteEndpoint: Delete the endpoint of a Database Instance. You must specify the `endpoint_id` parameter of the endpoint you want to delete. Note that you might need to update any environment configurations that point to the deleted endpoint.
 func (s *API) DeleteEndpoint(req *DeleteEndpointRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -1901,6 +2374,159 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	}
 
 	var resp Endpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListMaintenances: List all the maintenances of a MongoDB® Database Instance.
+func (s *API) ListMaintenances(req *ListMaintenancesRequest, opts ...scw.RequestOption) (*ListMaintenancesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "instance_id", req.InstanceID)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mongodb/v1/regions/" + fmt.Sprint(req.Region) + "/maintenances",
+		Query:  query,
+	}
+
+	var resp ListMaintenancesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetMaintenance: Get a maintenance of a MongoDB® Database Instance.
+func (s *API) GetMaintenance(req *GetMaintenanceRequest, opts ...scw.RequestOption) (*Maintenance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.MaintenanceID) == "" {
+		return nil, errors.New("field MaintenanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mongodb/v1/regions/" + fmt.Sprint(req.Region) + "/maintenances/" + fmt.Sprint(req.MaintenanceID) + "",
+	}
+
+	var resp Maintenance
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForMaintenanceRequest is used by WaitForMaintenance method.
+type WaitForMaintenanceRequest struct {
+	Region        scw.Region
+	MaintenanceID string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForMaintenance waits for the Maintenance to reach a terminal state.
+func (s *API) WaitForMaintenance(req *WaitForMaintenanceRequest, opts ...scw.RequestOption) (*Maintenance, error) {
+	timeout := defaultMongodbTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultMongodbRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[MaintenanceStatus]struct{}{
+		MaintenanceStatusOngoing: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetMaintenance(&GetMaintenanceRequest{
+				Region:        req.Region,
+				MaintenanceID: req.MaintenanceID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Maintenance failed")
+	}
+
+	return res.(*Maintenance), nil
+}
+
+// ApplyMaintenance: Apply a maintenance of a MongoDB® Database Instance.
+func (s *API) ApplyMaintenance(req *ApplyMaintenanceRequest, opts ...scw.RequestOption) (*Maintenance, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.MaintenanceID) == "" {
+		return nil, errors.New("field MaintenanceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/mongodb/v1/regions/" + fmt.Sprint(req.Region) + "/maintenances/" + fmt.Sprint(req.MaintenanceID) + "/apply",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Maintenance
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

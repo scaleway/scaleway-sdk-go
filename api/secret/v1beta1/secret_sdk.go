@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -175,6 +176,7 @@ type Product string
 const (
 	ProductUnknownProduct = Product("unknown_product")
 	ProductEdgeServices   = Product("edge_services")
+	ProductS2sVpn         = Product("s2s_vpn")
 )
 
 func (enum Product) String() string {
@@ -189,6 +191,7 @@ func (enum Product) Values() []Product {
 	return []Product{
 		"unknown_product",
 		"edge_services",
+		"s2s_vpn",
 	}
 }
 
@@ -438,6 +441,44 @@ type SecretVersion struct {
 
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
+
+	// Region: region of the version.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *SecretVersion) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		SecretVersion
+		Platform string
+	}{
+		SecretVersion: *m,
+		Platform:      platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://secret-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/secrets/{{ notempty .SecretID }}/versions/{{ notempty .Revision }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Secret: secret.
@@ -498,6 +539,41 @@ type Secret struct {
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Secret) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Secret
+		Platform string
+	}{
+		Secret:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://secret-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/secrets/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AccessSecretVersionByPathRequest: access secret version by path request.
@@ -1117,6 +1193,9 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1148,6 +1227,9 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1184,6 +1266,9 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1216,7 +1301,10 @@ func (s *API) DeleteSecret(req *DeleteSecretRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-// ListSecrets: Retrieve the list of secrets created within an Organization and/or Project. You must specify either the `organization_id` or the `project_id` and the `region`.
+// ListSecrets: Retrieve the list of secrets created within an Organization and/or Project.
+// If the user has permissions for all current and future projects: Either organization_id or project_id is required.
+// If the user has permissions for all current projects or only specific projects: The `project_id` is required.
+// The `region` parameter in path is needed in both case.
 func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*ListSecretsResponse, error) {
 	var err error
 
@@ -1258,6 +1346,11 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Secrets {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -1337,6 +1430,9 @@ func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1373,6 +1469,9 @@ func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1443,6 +1542,9 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1478,6 +1580,9 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1518,6 +1623,9 @@ func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1592,6 +1700,11 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Versions {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -1710,6 +1823,9 @@ func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1750,6 +1866,9 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1876,6 +1995,9 @@ func (s *API) RestoreSecretVersion(req *RestoreSecretVersionRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1912,5 +2034,8 @@ func (s *API) RestoreSecret(req *RestoreSecretRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }

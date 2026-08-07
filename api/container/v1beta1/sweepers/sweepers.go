@@ -8,19 +8,30 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepTrigger(scwClient *scw.Client, region scw.Region) error {
+func SweepTrigger(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	containerAPI := container.NewAPI(scwClient)
-
 	logger.Warningf("sweeper: destroying the container triggers in (%s)", region)
+
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+	//nolint:staticcheck // ListTriggers is deprecated but still required for sweeper functionality
 	listTriggers, err := containerAPI.ListTriggers(
 		&container.ListTriggersRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing trigger in (%s) in sweeper: %s", region, err)
 	}
 
 	for _, trigger := range listTriggers.Triggers {
+		//nolint:staticcheck // DeleteTrigger is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteTrigger(&container.DeleteTriggerRequest{
 			TriggerID: trigger.ID,
 			Region:    region,
@@ -33,18 +44,31 @@ func SweepTrigger(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepContainer(scwClient *scw.Client, region scw.Region) error {
+func SweepContainer(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	containerAPI := container.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the container in (%s)", region)
+
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+
+	//nolint:staticcheck // ListContainers is deprecated but still required for sweeper functionality
 	listNamespaces, err := containerAPI.ListContainers(
 		&container.ListContainersRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing containers in (%s) in sweeper: %s", region, err)
 	}
 
 	for _, cont := range listNamespaces.Containers {
+		//nolint:staticcheck // DeleteContainer is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteContainer(&container.DeleteContainerRequest{
 			ContainerID: cont.ID,
 			Region:      region,
@@ -57,18 +81,31 @@ func SweepContainer(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepNamespace(scwClient *scw.Client, region scw.Region) error {
+func SweepNamespace(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	containerAPI := container.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the container namespaces in (%s)", region)
+
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+
+	//nolint:staticcheck // ListNamespaces is deprecated but still required for sweeper functionality
 	listNamespaces, err := containerAPI.ListNamespaces(
 		&container.ListNamespacesRequest{
-			Region: region,
+			Region:    region,
+			ProjectID: projectID,
 		}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing namespaces in (%s) in sweeper: %s", region, err)
 	}
 
 	for _, ns := range listNamespaces.Namespaces {
+		//nolint:staticcheck // DeleteNamespace is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteNamespace(&container.DeleteNamespaceRequest{
 			NamespaceID: ns.ID,
 			Region:      region,
@@ -81,17 +118,17 @@ func SweepNamespace(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&container.API{}).Regions() {
-		err := SweepTrigger(scwClient, region)
+		err := SweepTrigger(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepContainer(scwClient, region)
+		err = SweepContainer(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}
-		err = SweepNamespace(scwClient, region)
+		err = SweepNamespace(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}

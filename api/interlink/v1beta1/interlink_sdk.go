@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultInterlinkRetryInterval = 15 * time.Second
+	defaultInterlinkTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -45,6 +51,7 @@ const (
 	BgpStatusUnknownBgpStatus = BgpStatus("unknown_bgp_status")
 	BgpStatusUp               = BgpStatus("up")
 	BgpStatusDown             = BgpStatus("down")
+	BgpStatusDisabled         = BgpStatus("disabled")
 )
 
 func (enum BgpStatus) String() string {
@@ -60,6 +67,7 @@ func (enum BgpStatus) Values() []BgpStatus {
 		"unknown_bgp_status",
 		"up",
 		"down",
+		"disabled",
 	}
 }
 
@@ -132,6 +140,8 @@ type LinkKind string
 const (
 	LinkKindHosted     = LinkKind("hosted")
 	LinkKindSelfHosted = LinkKind("self_hosted")
+	LinkKindL2Hosted   = LinkKind("l2_hosted")
+	LinkKindL3Hosted   = LinkKind("l3_hosted")
 )
 
 func (enum LinkKind) String() string {
@@ -146,6 +156,8 @@ func (enum LinkKind) Values() []LinkKind {
 	return []LinkKind{
 		"hosted",
 		"self_hosted",
+		"l2_hosted",
+		"l3_hosted",
 	}
 }
 
@@ -180,6 +192,7 @@ const (
 	LinkStatusDeprovisioning      = LinkStatus("deprovisioning")
 	LinkStatusDeleted             = LinkStatus("deleted")
 	LinkStatusLocked              = LinkStatus("locked")
+	LinkStatusReady               = LinkStatus("ready")
 )
 
 func (enum LinkStatus) String() string {
@@ -205,6 +218,7 @@ func (enum LinkStatus) Values() []LinkStatus {
 		"deprovisioning",
 		"deleted",
 		"locked",
+		"ready",
 	}
 }
 
@@ -444,6 +458,13 @@ type BgpConfig struct {
 	IPv6 scw.IPNet `json:"ipv6"`
 }
 
+// Range: range.
+type Range struct {
+	Start uint32 `json:"start"`
+
+	End uint32 `json:"end"`
+}
+
 // PartnerHost: partner host.
 type PartnerHost struct {
 	// PartnerID: ID of the partner facilitating the link.
@@ -454,6 +475,9 @@ type PartnerHost struct {
 
 	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
 	DisapprovedReason *string `json:"disapproved_reason"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
 }
 
 // SelfHost: self host.
@@ -500,6 +524,9 @@ type DedicatedConnection struct {
 
 	// DemarcationInfo: demarcation details required by the data center to set up the supporting Cross Connect. This generally includes the physical space in the facility, the cabinet or rack the connection should land in, the patch panel to go in, the port designation, and the media type.
 	DemarcationInfo *string `json:"demarcation_info"`
+
+	// VlanRange: range in which to pick vlan for self-hosted links on this dedicated connection. Both start & end are included. Any range defined here must be itself included in the greater allowed range of vlans from 1500 to 3899 (this range is hardware dependent and can change over time, but actual range will be enforced).
+	VlanRange *Range `json:"vlan_range"`
 
 	// Region: region of the dedicated connection.
 	Region scw.Region `json:"region"`
@@ -604,6 +631,9 @@ type Partner struct {
 
 	// UpdatedAt: last modification date of the partner.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
 }
 
 // Pop: pop.
@@ -628,6 +658,9 @@ type Pop struct {
 
 	// AvailableLinkBandwidthsMbps: available bandwidth in Mbits/s for future hosted links from available connections in this PoP.
 	AvailableLinkBandwidthsMbps []uint64 `json:"available_link_bandwidths_mbps"`
+
+	// DisplayName: pretty name of the PoP. Includes name, hosting provider and location information (ex: Paris - TeleHouse TH2).
+	DisplayName string `json:"display_name"`
 
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
@@ -726,6 +759,12 @@ type CreateLinkRequest struct {
 
 	// Vlan: for self-hosted links only, it is possible to choose the VLAN ID. If the VLAN is not available (ie already taken or out of range), an error is returned.
 	Vlan *uint32 `json:"vlan,omitempty"`
+
+	// RoutingPolicyV4ID: if set, attaches this routing policy containing IPv4 prefixes to the Link. Hence, a BGP IPv4 session will be created.
+	RoutingPolicyV4ID *string `json:"routing_policy_v4_id,omitempty"`
+
+	// RoutingPolicyV6ID: if set, attaches this routing policy containing IPv6 prefixes to the Link. Hence, a BGP IPv6 session will be created.
+	RoutingPolicyV6ID *string `json:"routing_policy_v6_id,omitempty"`
 }
 
 // CreateRoutingPolicyRequest: create routing policy request.
@@ -1030,6 +1069,9 @@ type ListPartnersRequest struct {
 
 	// PopIDs: filter for partners present (offering a connection) in one of these PoPs.
 	PopIDs []string `json:"-"`
+
+	// L3Connectivity: filter for partners supporting L3 connectivity.
+	L3Connectivity *bool `json:"-"`
 }
 
 // ListPartnersResponse: list partners response.
@@ -1084,11 +1126,14 @@ type ListPopsRequest struct {
 	// PartnerID: filter for PoPs hosting an available shared connection from this partner.
 	PartnerID *string `json:"-"`
 
-	// LinkBandwidthMbps: filter for PoPs with a shared connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
+	// LinkBandwidthMbps: filter for PoPs with a connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
 	LinkBandwidthMbps *uint64 `json:"-"`
 
 	// DedicatedAvailable: filter for PoPs with a dedicated connection available for self-hosted links.
 	DedicatedAvailable *bool `json:"-"`
+
+	// L3ConnectivityPartners: filter for PoPs with a shared connection available from a partner supporting L3 connectivity.
+	L3ConnectivityPartners *bool `json:"-"`
 }
 
 // ListPopsResponse: list pops response.
@@ -1176,6 +1221,18 @@ func (r *ListRoutingPoliciesResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.RoutingPolicies)), nil
 }
 
+// SetRoutingPolicyRequest: set routing policy request.
+type SetRoutingPolicyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// LinkID: ID of the link to set a routing policy from.
+	LinkID string `json:"-"`
+
+	// RoutingPolicyID: ID of the routing policy to be set.
+	RoutingPolicyID string `json:"routing_policy_id"`
+}
+
 // UpdateLinkRequest: update link request.
 type UpdateLinkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1228,7 +1285,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionItMil, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListDedicatedConnections: For self-hosted users, list their dedicated physical connections in a given region. By default, the connections returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
@@ -1307,6 +1364,53 @@ func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ..
 	return &resp, nil
 }
 
+// WaitForDedicatedConnectionRequest is used by WaitForDedicatedConnection method.
+type WaitForDedicatedConnectionRequest struct {
+	Region        scw.Region
+	ConnectionID  string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForDedicatedConnection waits for the DedicatedConnection to reach a terminal state.
+func (s *API) WaitForDedicatedConnection(req *WaitForDedicatedConnectionRequest, opts ...scw.RequestOption) (*DedicatedConnection, error) {
+	timeout := defaultInterlinkTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInterlinkRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[DedicatedConnectionStatus]struct{}{
+		DedicatedConnectionStatusConfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetDedicatedConnection(&GetDedicatedConnectionRequest{
+				Region:       req.Region,
+				ConnectionID: req.ConnectionID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for DedicatedConnection failed")
+	}
+
+	return res.(*DedicatedConnection), nil
+}
+
 // ListPartners: List all available partners. By default, the partners returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
 func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) (*ListPartnersResponse, error) {
 	var err error
@@ -1326,6 +1430,7 @@ func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "pop_ids", req.PopIDs)
+	parameter.AddToQuery(query, "l3_connectivity", req.L3Connectivity)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1400,6 +1505,7 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	parameter.AddToQuery(query, "partner_id", req.PartnerID)
 	parameter.AddToQuery(query, "link_bandwidth_mbps", req.LinkBandwidthMbps)
 	parameter.AddToQuery(query, "dedicated_available", req.DedicatedAvailable)
+	parameter.AddToQuery(query, "l3_connectivity_partners", req.L3ConnectivityPartners)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1533,6 +1639,53 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForLinkRequest is used by WaitForLink method.
+type WaitForLinkRequest struct {
+	Region        scw.Region
+	LinkID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForLink waits for the Link to reach a terminal state.
+func (s *API) WaitForLink(req *WaitForLinkRequest, opts ...scw.RequestOption) (*Link, error) {
+	timeout := defaultInterlinkTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultInterlinkRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[LinkStatus]struct{}{
+		LinkStatusConfiguring: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetLink(&GetLinkRequest{
+				Region: req.Region,
+				LinkID: req.LinkID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Link failed")
+	}
+
+	return res.(*Link), nil
 }
 
 // CreateLink: Create a link (InterLink session / logical InterLink resource) in a given PoP, specifying its various configuration details. Links can either be hosted (facilitated by partners' shared physical connections) or self-hosted (for users who have purchased a dedicated physical connection).
@@ -1767,6 +1920,42 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/links/" + fmt.Sprint(req.LinkID) + "/detach-routing-policy",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Link
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetRoutingPolicy: Replace a routing policy from an existing link. This is useful when route propagation is enabled because it changes the routing policy "in place", without blocking all routes like a attach / detach would do.
+func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.RequestOption) (*Link, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LinkID) == "" {
+		return nil, errors.New("field LinkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/interlink/v1beta1/regions/" + fmt.Sprint(req.Region) + "/links/" + fmt.Sprint(req.LinkID) + "/set-routing-policy",
 	}
 
 	err = scwReq.SetBody(req)

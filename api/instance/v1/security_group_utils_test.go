@@ -1,8 +1,10 @@
 package instance
 
 import (
+	"fmt"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
@@ -10,7 +12,7 @@ import (
 )
 
 func TestAPI_UpdateSecurityGroup(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("security-group-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -53,14 +55,18 @@ func TestAPI_UpdateSecurityGroup(t *testing.T) {
 	testhelpers.Equals(t, false, *updateResponse.SecurityGroup.OrganizationDefault)
 	testhelpers.Equals(t, []string{"foo", "bar"}, updateResponse.SecurityGroup.Tags)
 
+	err = waitForSecurityGroup(client, createResponse.SecurityGroup.Zone, createResponse.SecurityGroup.ID, 10)
+	testhelpers.AssertNoError(t, err)
+
 	err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
 		SecurityGroupID: createResponse.SecurityGroup.ID,
+		Zone:            createResponse.SecurityGroup.Zone,
 	})
 	testhelpers.AssertNoError(t, err)
 }
 
 func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
-	client, r, err := httprecorder.CreateRecordedScwClient("security-group-rule-test")
+	client, r, err := httprecorder.CreateRecordedScwClient(t)
 	testhelpers.AssertNoError(t, err)
 	defer func() {
 		testhelpers.AssertNoError(t, r.Stop()) // Make sure recorder is stopped once done with it
@@ -93,8 +99,15 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.AssertNoError(t, err)
 
 		return createSecurityGroupResponse.SecurityGroup, createRuleResponse.Rule, func() {
+			zone := createSecurityGroupResponse.SecurityGroup.Zone
+			sgID := createSecurityGroupResponse.SecurityGroup.ID
+
+			err = waitForSecurityGroup(client, zone, sgID, 10)
+			testhelpers.AssertNoError(t, err)
+
 			err = instanceAPI.DeleteSecurityGroup(&DeleteSecurityGroupRequest{
-				SecurityGroupID: createSecurityGroupResponse.SecurityGroup.ID,
+				SecurityGroupID: sgID,
+				Zone:            zone,
 			})
 			testhelpers.AssertNoError(t, err)
 		}
@@ -188,4 +201,32 @@ func TestAPI_UpdateSecurityGroupRule(t *testing.T) {
 		testhelpers.Equals(t, SecurityGroupRuleProtocolTCP, updateResponse.Rule.Protocol)
 		testhelpers.Equals(t, SecurityGroupRuleDirectionInbound, updateResponse.Rule.Direction)
 	})
+}
+
+func waitForSecurityGroup(client *scw.Client, zone scw.Zone, sgID string, maxRetries int) error {
+	instanceAPI := NewAPI(client)
+
+	sg, err := instanceAPI.GetSecurityGroup(&GetSecurityGroupRequest{
+		SecurityGroupID: sgID,
+		Zone:            zone,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch sg.SecurityGroup.State {
+	case SecurityGroupStateAvailable:
+		return nil
+	case SecurityGroupStateSyncingError:
+		return nil
+	case SecurityGroupStateSyncing:
+		if maxRetries == 0 {
+			return fmt.Errorf("max retries exceeded")
+		}
+		time.Sleep(100 * time.Millisecond)
+
+		return waitForSecurityGroup(client, zone, sgID, maxRetries-1)
+	default:
+		return fmt.Errorf("unknown state: %s", sg.SecurityGroup.State)
+	}
 }

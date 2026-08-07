@@ -58,7 +58,15 @@ const configFileTemplate = `# Scaleway configuration file
 
 # APIURL overrides the API URL of the Scaleway API to the given URL.
 # Change that if you want to direct requests to a different endpoint.
-{{ if .APIURL }}apiurl: {{ .APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+{{ if .APIURL }}api_url: {{ .APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+
+# S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
+# Change that if you want to direct requests to a different S3-compatible endpoint.
+{{ if .S3Endpoint }}s3_endpoint: {{ .S3Endpoint }}{{ else }}# s3_endpoint: https://s3.fr-par.scw.cloud{{ end }}
+
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+{{ if .S3UsePathStyle }}s3_use_path_style: {{ .S3UsePathStyle }}{{ else }}# s3_use_path_style: false{{ end }}
 
 # Insecure enables insecure transport on the client.
 # Default to false
@@ -92,6 +100,8 @@ profiles:
     {{ if $v.DefaultZone }}default_zone: {{ $v.DefaultZone }}{{ else }}# default_zone: fr-par-1{{ end }}
     {{ if $v.DefaultRegion }}default_region: {{ $v.DefaultRegion }}{{ else }}# default_region: fr-par{{ end }}
     {{ if $v.APIURL }}api_url: {{ $v.APIURL }}{{ else }}# api_url: https://api.scaleway.com{{ end }}
+    {{ if $v.S3Endpoint}}s3_endpoint: {{ $v.S3Endpoint}}{{ else }}# s3_endpoint: https://s3.fr-par.scw.cloud{{ end }}
+    {{ if $v.S3UsePathStyle}}s3_use_path_style: {{ $v.S3UsePathStyle}}{{ else }}# s3_use_path_style: false{{ end }}
     {{ if $v.Insecure }}insecure: {{ $v.Insecure }}{{ else }}# insecure: false{{ end }}
 {{ end }}
 {{- else }}
@@ -104,6 +114,8 @@ profiles:
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
 {{ end -}}
 `
@@ -118,6 +130,8 @@ type Profile struct {
 	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
 	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
 	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
+	S3Endpoint            *string `yaml:"s3_endpoint,omitempty" json:"s3_endpoint,omitempty"`
+	S3UsePathStyle        *bool   `yaml:"s3_use_path_style,omitempty" json:"s3_use_path_style,omitempty"`
 	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
 	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
 	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
@@ -319,6 +333,8 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		AccessKey:             original.AccessKey,
 		SecretKey:             original.SecretKey,
 		APIURL:                original.APIURL,
+		S3Endpoint:            original.S3Endpoint,
+		S3UsePathStyle:        original.S3UsePathStyle,
 		Insecure:              original.Insecure,
 		DefaultOrganizationID: original.DefaultOrganizationID,
 		DefaultProjectID:      original.DefaultProjectID,
@@ -336,6 +352,12 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		}
 		if other.APIURL != nil {
 			np.APIURL = other.APIURL
+		}
+		if other.S3Endpoint != nil {
+			np.S3Endpoint = other.S3Endpoint
+		}
+		if other.S3UsePathStyle != nil {
+			np.S3UsePathStyle = other.S3UsePathStyle
 		}
 		if other.Insecure != nil {
 			np.Insecure = other.Insecure

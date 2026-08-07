@@ -8,11 +8,53 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepInstance(scwClient *scw.Client, region scw.Region) error {
+func SweepBackups(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
+	rdbAPI := rdb.NewAPI(scwClient)
+	logger.Warningf("sweeper: destroying rdb backups in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+
+	listBackups, err := rdbAPI.ListDatabaseBackups(&rdb.ListDatabaseBackupsRequest{
+		Region:    region,
+		ProjectID: projectID,
+	}, scw.WithAllPages())
+	if err != nil {
+		return fmt.Errorf("error listing rdb backups in (%s) in sweeper: %s", region, err)
+	}
+
+	for _, backup := range listBackups.DatabaseBackups {
+		_, err := rdbAPI.DeleteDatabaseBackup(&rdb.DeleteDatabaseBackupRequest{
+			Region:           region,
+			DatabaseBackupID: backup.ID,
+		})
+		if err != nil {
+			logger.Warningf("error deleting rdb backup %s in sweeper: %s", backup.ID, err)
+		}
+	}
+
+	return nil
+}
+
+func SweepInstance(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	rdbAPI := rdb.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the rdb instance in (%s)", region)
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
 	listInstances, err := rdbAPI.ListInstances(&rdb.ListInstancesRequest{
-		Region: region,
+		Region:    region,
+		ProjectID: projectID,
 	}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing rdb instances in (%s) in sweeper: %s", region, err)
@@ -31,9 +73,13 @@ func SweepInstance(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&rdb.API{}).Regions() {
-		err := SweepInstance(scwClient, region)
+		err := SweepBackups(scwClient, region, projectScoped)
+		if err != nil {
+			return err
+		}
+		err = SweepInstance(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}

@@ -17,7 +17,7 @@ import (
 	_ "github.com/scaleway/scaleway-sdk-go/api/flexibleip/v1alpha1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/iam/v1alpha1"
-	_ "github.com/scaleway/scaleway-sdk-go/api/inference/v1beta1"
+	_ "github.com/scaleway/scaleway-sdk-go/api/inference/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/instance/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/iot/v1"
 	_ "github.com/scaleway/scaleway-sdk-go/api/ipam/v1"

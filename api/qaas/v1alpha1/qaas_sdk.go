@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultQaasRetryInterval = 15 * time.Second
+	defaultQaasTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -340,6 +346,43 @@ func (enum *ListJobsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListJobsRequestOrderBy(ListJobsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListModelsRequestOrderBy string
+
+const (
+	ListModelsRequestOrderByCreatedAtDesc = ListModelsRequestOrderBy("created_at_desc")
+	ListModelsRequestOrderByCreatedAtAsc  = ListModelsRequestOrderBy("created_at_asc")
+)
+
+func (enum ListModelsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListModelsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListModelsRequestOrderBy) Values() []ListModelsRequestOrderBy {
+	return []ListModelsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+	}
+}
+
+func (enum ListModelsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListModelsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListModelsRequestOrderBy(ListModelsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -886,6 +929,15 @@ type PlatformBookingRequirement struct {
 
 	// MaxPlanificationDuration: allowed planification time from now where the platform can be booked in the future.
 	MaxPlanificationDuration *scw.Duration `json:"max_planification_duration"`
+
+	// MinPlanificationDuration: minimum planification time before a platform can be booked.
+	MinPlanificationDuration *scw.Duration `json:"min_planification_duration"`
+
+	// MaxBookingPerWeek: maximum amount of booking allowed for one organization per week.
+	MaxBookingPerWeek uint32 `json:"max_booking_per_week"`
+
+	// MaxBookingPerDay: maximum amount of booking allowed for one organization per day.
+	MaxBookingPerDay uint32 `json:"max_booking_per_day"`
 }
 
 // PlatformHardware: platform hardware.
@@ -927,6 +979,8 @@ type CreateSessionRequestBookingDemand struct {
 	FinishedAt *time.Time `json:"finished_at"`
 
 	Description *string `json:"description"`
+
+	TimeZone *string `json:"time_zone"`
 }
 
 // Application: application.
@@ -974,6 +1028,9 @@ type Booking struct {
 
 	// ProgressMessage: any progress message of the booking.
 	ProgressMessage string `json:"progress_message"`
+
+	// TimeZone: time zone for the booking schedule, in tz database format (e.g. 'Europe/Paris').
+	TimeZone *string `json:"time_zone"`
 }
 
 // JobResult: job result.
@@ -1026,6 +1083,27 @@ type Job struct {
 
 	// ResultDistribution: result of the job, if the job is finished.
 	ResultDistribution *string `json:"result_distribution"`
+
+	// ModelID: computation model ID executed by the job.
+	ModelID *string `json:"model_id"`
+
+	// Parameters: execution parameters for this job.
+	Parameters *string `json:"parameters"`
+}
+
+// Model: model.
+type Model struct {
+	// ID: unique ID of the model.
+	ID string `json:"id"`
+
+	// CreatedAt: time at which the model was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// URL: storage URL of the model.
+	URL *string `json:"url"`
+
+	// ProjectID: project ID in which the model has been created.
+	ProjectID string `json:"project_id"`
 }
 
 // Platform: platform.
@@ -1039,21 +1117,21 @@ type Platform struct {
 	// Name: name of the platform.
 	Name string `json:"name"`
 
-	// ProviderName: provider name of the platform.
+	// ProviderName: name of the technological provider of the platform in lowercase (quandela, pasqal...).
 	ProviderName string `json:"provider_name"`
 
-	// BackendName: name of the running backend over the platform (ascella, qsim, aer...).
+	// BackendName: name of the running emulation backend or QPU model of the platform in lowercase (mosaiq, qsim, aer...).
 	BackendName string `json:"backend_name"`
 
-	// Type: type of the platform.
+	// Type: type of the platform (emulator or qpu).
 	// Default value: unknown_type
 	Type PlatformType `json:"type"`
 
-	// Technology: technology used by the platform.
+	// Technology: quantum technology used by the platform (trapped-ion, photonic, superconducting qubits...).
 	// Default value: unknown_technology
 	Technology PlatformTechnology `json:"technology"`
 
-	// MaxQubitCount: estimated maximum number of qubits supported by the platform.
+	// MaxQubitCount: maximum number of qubits supported by the platform (estimated for emulator).
 	MaxQubitCount uint32 `json:"max_qubit_count"`
 
 	// MaxShotCount: maximum number of shots during a circuit execution.
@@ -1215,6 +1293,12 @@ type Session struct {
 
 	// BookingID: an optional booking unique ID of an attached booking.
 	BookingID *string `json:"booking_id"`
+
+	// ModelID: default computation model ID to be executed by job assigned to this session.
+	ModelID *string `json:"model_id"`
+
+	// Parameters: platform configuration parameters applied to this session.
+	Parameters *string `json:"parameters"`
 }
 
 // CancelJobRequest: cancel job request.
@@ -1245,6 +1329,21 @@ type CreateJobRequest struct {
 
 	// MaxDuration: maximum duration of the job.
 	MaxDuration *scw.Duration `json:"max_duration,omitempty"`
+
+	// ModelID: computation model ID to be executed by the job.
+	ModelID *string `json:"model_id,omitempty"`
+
+	// Parameters: execution parameters for this job.
+	Parameters *string `json:"parameters,omitempty"`
+}
+
+// CreateModelRequest: create model request.
+type CreateModelRequest struct {
+	// ProjectID: project ID to attach this model.
+	ProjectID string `json:"project_id"`
+
+	// Payload: the serialized model data.
+	Payload *string `json:"payload,omitempty"`
 }
 
 // CreateProcessRequest: create process request.
@@ -1293,6 +1392,12 @@ type CreateSessionRequest struct {
 
 	// BookingDemand: a booking demand to schedule the session, only applicable if the platform is bookable.
 	BookingDemand *CreateSessionRequestBookingDemand `json:"booking_demand,omitempty"`
+
+	// ModelID: default computation model ID to be executed by job assigned to this session.
+	ModelID *string `json:"model_id,omitempty"`
+
+	// Parameters: optional platform configuration parameters applied to this session.
+	Parameters *string `json:"parameters,omitempty"`
 }
 
 // DeleteJobRequest: delete job request.
@@ -1335,6 +1440,12 @@ type GetJobCircuitRequest struct {
 type GetJobRequest struct {
 	// JobID: unique ID of the job you want to get.
 	JobID string `json:"-"`
+}
+
+// GetModelRequest: get model request.
+type GetModelRequest struct {
+	// ModelID: unique ID of the model.
+	ModelID string `json:"-"`
 }
 
 // GetPlatformRequest: get platform request.
@@ -1544,6 +1655,50 @@ func (r *ListJobsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Jobs = append(r.Jobs, results.Jobs...)
 	r.TotalCount += uint64(len(results.Jobs))
 	return uint64(len(results.Jobs)), nil
+}
+
+// ListModelsRequest: list models request.
+type ListModelsRequest struct {
+	// ProjectID: list models belonging to this project ID.
+	ProjectID string `json:"-"`
+
+	// Page: page number.
+	Page *int32 `json:"-"`
+
+	// PageSize: maximum number of results to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order of the returned results.
+	// Default value: created_at_desc
+	OrderBy ListModelsRequestOrderBy `json:"-"`
+}
+
+// ListModelsResponse: list models response.
+type ListModelsResponse struct {
+	// TotalCount: total number of models.
+	TotalCount uint64 `json:"total_count"`
+
+	// Models: list of models.
+	Models []*Model `json:"models"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListModelsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListModelsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListModelsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Models = append(r.Models, results.Models...)
+	r.TotalCount += uint64(len(results.Models))
+	return uint64(len(results.Models)), nil
 }
 
 // ListPlatformsRequest: list platforms request.
@@ -1843,7 +1998,7 @@ type UpdateSessionRequest struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
-// This API allows you to manage Scaleway Quantum as a Service.
+// This API allows you to allocate and program Quantum Processing Units (QPUs) to run quantum algorithms.
 type API struct {
 	client *scw.Client
 }
@@ -1855,7 +2010,7 @@ func NewAPI(client *scw.Client) *API {
 	}
 }
 
-// GetJob: Retrieve information about the provided **job ID**, such as status, payload, and result.
+// GetJob: Retrieve information about the provided **job ID**, mainly used to get the current status.
 func (s *API) GetJob(req *GetJobRequest, opts ...scw.RequestOption) (*Job, error) {
 	var err error
 
@@ -1877,7 +2032,54 @@ func (s *API) GetJob(req *GetJobRequest, opts ...scw.RequestOption) (*Job, error
 	return &resp, nil
 }
 
-// ListJobs: Retrieve information about all jobs within a given project or session.
+// WaitForJobRequest is used by WaitForJob method.
+type WaitForJobRequest struct {
+	JobID         string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForJob waits for the Job to reach a terminal state.
+func (s *API) WaitForJob(req *WaitForJobRequest, opts ...scw.RequestOption) (*Job, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[JobStatus]struct{}{
+		JobStatusWaiting:    {},
+		JobStatusRunning:    {},
+		JobStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetJob(&GetJobRequest{
+				JobID: req.JobID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Job failed")
+	}
+
+	return res.(*Job), nil
+}
+
+// ListJobs: Retrieve information about all jobs within a given session.
 func (s *API) ListJobs(req *ListJobsRequest, opts ...scw.RequestOption) (*ListJobsResponse, error) {
 	var err error
 
@@ -1947,7 +2149,7 @@ func (s *API) ListJobResults(req *ListJobResultsRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// CreateJob: Create a job to be executed inside a session.
+// CreateJob: Create a job to be executed inside a QPU session.
 func (s *API) CreateJob(req *CreateJobRequest, opts ...scw.RequestOption) (*Job, error) {
 	var err error
 
@@ -2122,7 +2324,7 @@ func (s *API) ListPlatforms(req *ListPlatformsRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetSession: Retrieve information about the provided **session ID**, such as name, status, and number of executed jobs.
+// GetSession: Retrieve information about the provided **session ID**, such as name and status.
 func (s *API) GetSession(req *GetSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2144,7 +2346,53 @@ func (s *API) GetSession(req *GetSessionRequest, opts ...scw.RequestOption) (*Se
 	return &resp, nil
 }
 
-// ListSessions: Retrieve information about all sessions.
+// WaitForSessionRequest is used by WaitForSession method.
+type WaitForSessionRequest struct {
+	SessionID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSession waits for the Session to reach a terminal state.
+func (s *API) WaitForSession(req *WaitForSessionRequest, opts ...scw.RequestOption) (*Session, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SessionStatus]struct{}{
+		SessionStatusStarting: {},
+		SessionStatusStopping: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetSession(&GetSessionRequest{
+				SessionID: req.SessionID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Session failed")
+	}
+
+	return res.(*Session), nil
+}
+
+// ListSessions: Retrieve information about all QPU sessions.
 func (s *API) ListSessions(req *ListSessionsRequest, opts ...scw.RequestOption) (*ListSessionsResponse, error) {
 	var err error
 
@@ -2181,7 +2429,7 @@ func (s *API) ListSessions(req *ListSessionsRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// CreateSession: Create a dedicated session for the specified platform.
+// CreateSession: Create a new QPU session for the specified platform. Once ready, jobs can be sent to this session.
 func (s *API) CreateSession(req *CreateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2236,7 +2484,7 @@ func (s *API) UpdateSession(req *UpdateSessionRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs and booking.
+// TerminateSession: Terminate a session by its unique ID and cancel all its attached jobs and bookings.
 func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.RequestOption) (*Session, error) {
 	var err error
 
@@ -2263,7 +2511,7 @@ func (s *API) TerminateSession(req *TerminateSessionRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DeleteSession: Delete a session by its unique ID and delete all its attached job and booking.
+// DeleteSession: Delete a session by its unique ID and delete all its attached jobs and bookings.
 func (s *API) DeleteSession(req *DeleteSessionRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2364,6 +2612,53 @@ func (s *API) GetProcess(req *GetProcessRequest, opts ...scw.RequestOption) (*Pr
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// WaitForProcessRequest is used by WaitForProcess method.
+type WaitForProcessRequest struct {
+	ProcessID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForProcess waits for the Process to reach a terminal state.
+func (s *API) WaitForProcess(req *WaitForProcessRequest, opts ...scw.RequestOption) (*Process, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ProcessStatus]struct{}{
+		ProcessStatusStarting:   {},
+		ProcessStatusRunning:    {},
+		ProcessStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetProcess(&GetProcessRequest{
+				ProcessID: req.ProcessID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Process failed")
+	}
+
+	return res.(*Process), nil
 }
 
 // ListProcesses: Retrieve information about all processes.
@@ -2510,7 +2805,7 @@ func (s *API) ListProcessResults(req *ListProcessResultsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// GetApplication: Retrieve information about the provided **applcation ID**, such as name, type and compatible platforms.
+// GetApplication: Retrieve information about the provided **application ID**, such as name, type and compatible platforms.
 func (s *API) GetApplication(req *GetApplicationRequest, opts ...scw.RequestOption) (*Application, error) {
 	var err error
 
@@ -2585,6 +2880,53 @@ func (s *API) GetBooking(req *GetBookingRequest, opts ...scw.RequestOption) (*Bo
 	return &resp, nil
 }
 
+// WaitForBookingRequest is used by WaitForBooking method.
+type WaitForBookingRequest struct {
+	BookingID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForBooking waits for the Booking to reach a terminal state.
+func (s *API) WaitForBooking(req *WaitForBookingRequest, opts ...scw.RequestOption) (*Booking, error) {
+	timeout := defaultQaasTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultQaasRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[BookingStatus]struct{}{
+		BookingStatusWaiting:    {},
+		BookingStatusValidating: {},
+		BookingStatusCancelling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetBooking(&GetBookingRequest{
+				BookingID: req.BookingID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Booking failed")
+	}
+
+	return res.(*Booking), nil
+}
+
 // ListBookings: Retrieve information about all bookings of the provided **project ID** or ** platform ID**.
 func (s *API) ListBookings(req *ListBookingsRequest, opts ...scw.RequestOption) (*ListBookingsResponse, error) {
 	var err error
@@ -2635,6 +2977,91 @@ func (s *API) UpdateBooking(req *UpdateBookingRequest, opts ...scw.RequestOption
 	}
 
 	var resp Booking
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateModel: Create and register a new model that can be executed through next jobs. A model can also be assigned to a Session.
+func (s *API) CreateModel(req *CreateModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/qaas/v1alpha1/models",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Model
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetModel: Retrieve information about of the provided **model ID**.
+func (s *API) GetModel(req *GetModelRequest, opts ...scw.RequestOption) (*Model, error) {
+	var err error
+
+	if fmt.Sprint(req.ModelID) == "" {
+		return nil, errors.New("field ModelID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/models/" + fmt.Sprint(req.ModelID) + "",
+	}
+
+	var resp Model
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListModels: Retrieve information about all models of the provided **project ID**.
+func (s *API) ListModels(req *ListModelsRequest, opts ...scw.RequestOption) (*ListModelsResponse, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/qaas/v1alpha1/models",
+		Query:  query,
+	}
+
+	var resp ListModelsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

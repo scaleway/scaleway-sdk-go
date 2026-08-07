@@ -12,13 +12,20 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultVpcgwRetryInterval = 15 * time.Second
+	defaultVpcgwTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -387,6 +394,41 @@ type GatewayNetwork struct {
 
 	// Zone: zone of the GatewayNetwork connection.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *GatewayNetwork) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		GatewayNetwork
+		Platform string
+	}{
+		GatewayNetwork: *m,
+		Platform:       platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://public-gateway.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/gateway-networks/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // IP: ip.
@@ -420,6 +462,41 @@ type IP struct {
 
 	// Zone: zone of the IP address.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *IP) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		IP
+		Platform string
+	}{
+		IP:       *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://public-gateway.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/ips/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // GatewayType: gateway type.
@@ -496,6 +573,41 @@ type Gateway struct {
 
 	// Zone: zone of the gateway.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Gateway) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Gateway
+		Platform string
+	}{
+		Gateway:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://public-gateway.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/gateways/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PatRule: pat rule.
@@ -527,6 +639,41 @@ type PatRule struct {
 
 	// Zone: zone of the PAT rule.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PatRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PatRule
+		Platform string
+	}{
+		PatRule:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://public-gateway.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/pat-rules/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SetPatRulesRequestRule: set pat rules request rule.
@@ -1136,7 +1283,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneItMil1, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
 
 // ListGateways: List Public Gateways in a given Scaleway Organization or Project. By default, results are displayed in ascending order of creation date.
@@ -1182,6 +1329,11 @@ func (s *API) ListGateways(req *ListGatewaysRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Gateways {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1213,7 +1365,60 @@ func (s *API) GetGateway(req *GetGatewayRequest, opts ...scw.RequestOption) (*Ga
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
+}
+
+// WaitForGatewayRequest is used by WaitForGateway method.
+type WaitForGatewayRequest struct {
+	Zone          scw.Zone
+	GatewayID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForGateway waits for the Gateway to reach a terminal state.
+func (s *API) WaitForGateway(req *WaitForGatewayRequest, opts ...scw.RequestOption) (*Gateway, error) {
+	timeout := defaultVpcgwTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultVpcgwRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[GatewayStatus]struct{}{
+		GatewayStatusAllocating:  {},
+		GatewayStatusConfiguring: {},
+		GatewayStatusStopping:    {},
+		GatewayStatusDeleting:    {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetGateway(&GetGatewayRequest{
+				Zone:      req.Zone,
+				GatewayID: req.GatewayID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Gateway failed")
+	}
+
+	return res.(*Gateway), nil
 }
 
 // CreateGateway: Create a new Public Gateway in the specified Scaleway Project, defining its **name**, **type** and other configuration details such as whether to enable SSH bastion.
@@ -1254,6 +1459,9 @@ func (s *API) CreateGateway(req *CreateGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1290,6 +1498,9 @@ func (s *API) UpdateGateway(req *UpdateGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1325,6 +1536,9 @@ func (s *API) DeleteGateway(req *DeleteGatewayRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1361,6 +1575,9 @@ func (s *API) UpgradeGateway(req *UpgradeGatewayRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1403,6 +1620,11 @@ func (s *API) ListGatewayNetworks(req *ListGatewayNetworksRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.GatewayNetworks {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1434,7 +1656,59 @@ func (s *API) GetGatewayNetwork(req *GetGatewayNetworkRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
+}
+
+// WaitForGatewayNetworkRequest is used by WaitForGatewayNetwork method.
+type WaitForGatewayNetworkRequest struct {
+	Zone             scw.Zone
+	GatewayNetworkID string
+	Timeout          *time.Duration
+	RetryInterval    *time.Duration
+}
+
+// WaitForGatewayNetwork waits for the GatewayNetwork to reach a terminal state.
+func (s *API) WaitForGatewayNetwork(req *WaitForGatewayNetworkRequest, opts ...scw.RequestOption) (*GatewayNetwork, error) {
+	timeout := defaultVpcgwTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultVpcgwRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[GatewayNetworkStatus]struct{}{
+		GatewayNetworkStatusAttaching:   {},
+		GatewayNetworkStatusConfiguring: {},
+		GatewayNetworkStatusDetaching:   {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetGatewayNetwork(&GetGatewayNetworkRequest{
+				Zone:             req.Zone,
+				GatewayNetworkID: req.GatewayNetworkID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for GatewayNetwork failed")
+	}
+
+	return res.(*GatewayNetwork), nil
 }
 
 // CreateGatewayNetwork: Attach a specific Public Gateway to a specific Private Network (create a GatewayNetwork). You can configure parameters for the connection including whether to enable masquerade (dynamic NAT), and more.
@@ -1466,6 +1740,9 @@ func (s *API) CreateGatewayNetwork(req *CreateGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1502,6 +1779,9 @@ func (s *API) UpdateGatewayNetwork(req *UpdateGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1533,6 +1813,9 @@ func (s *API) DeleteGatewayNetwork(req *DeleteGatewayNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1574,6 +1857,11 @@ func (s *API) ListPatRules(req *ListPatRulesRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.PatRules {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1605,6 +1893,9 @@ func (s *API) GetPatRule(req *GetPatRuleRequest, opts ...scw.RequestOption) (*Pa
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1637,6 +1928,9 @@ func (s *API) CreatePatRule(req *CreatePatRuleRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1673,6 +1967,9 @@ func (s *API) UpdatePatRule(req *UpdatePatRuleRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1804,6 +2101,11 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.IPs {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -1835,6 +2137,9 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1872,6 +2177,9 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1908,6 +2216,9 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1973,6 +2284,9 @@ func (s *API) RefreshSSHKeys(req *RefreshSSHKeysRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 

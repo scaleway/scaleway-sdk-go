@@ -8,10 +8,18 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
-func SweepHub(scwClient *scw.Client, region scw.Region) error {
+func SweepHub(scwClient *scw.Client, region scw.Region, projectScoped bool) error {
 	iotAPI := iot.NewAPI(scwClient)
 	logger.Warningf("sweeper: destroying the iot hub in (%s)", region)
-	listHubs, err := iotAPI.ListHubs(&iot.ListHubsRequest{Region: region}, scw.WithAllPages())
+	defaultProjectID, exists := scwClient.GetDefaultProjectID()
+	var projectID *string = nil
+	if projectScoped && (!exists || (defaultProjectID == "")) {
+		return fmt.Errorf("failed to get the default project id for a project scoped sweep")
+	}
+	if projectScoped {
+		projectID = &defaultProjectID
+	}
+	listHubs, err := iotAPI.ListHubs(&iot.ListHubsRequest{Region: region, ProjectID: projectID}, scw.WithAllPages())
 	if err != nil {
 		return fmt.Errorf("error listing hubs in (%s) in sweeper: %s", region, err)
 	}
@@ -31,9 +39,9 @@ func SweepHub(scwClient *scw.Client, region scw.Region) error {
 	return nil
 }
 
-func SweepAllLocalities(scwClient *scw.Client) error {
+func SweepAllLocalities(scwClient *scw.Client, projectScoped bool) error {
 	for _, region := range (&iot.API{}).Regions() {
-		err := SweepHub(scwClient, region)
+		err := SweepHub(scwClient, region, projectScoped)
 		if err != nil {
 			return err
 		}

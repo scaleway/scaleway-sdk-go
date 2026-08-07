@@ -15,10 +15,16 @@ import (
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultBaremetalRetryInterval = 15 * time.Second
+	defaultBaremetalTimeout       = 2 * time.Hour
 )
 
 // always import dependencies
@@ -266,6 +272,47 @@ func (enum *ListSettingsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListSettingsRequestOrderBy(ListSettingsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type MemoryEccType string
+
+const (
+	MemoryEccTypeUnknownEccType = MemoryEccType("unknown_ecc_type")
+	MemoryEccTypeNone           = MemoryEccType("none")
+	MemoryEccTypeStandard       = MemoryEccType("standard")
+	MemoryEccTypeOnDie          = MemoryEccType("on_die")
+)
+
+func (enum MemoryEccType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(MemoryEccTypeUnknownEccType)
+	}
+	return string(enum)
+}
+
+func (enum MemoryEccType) Values() []MemoryEccType {
+	return []MemoryEccType{
+		"unknown_ecc_type",
+		"none",
+		"standard",
+		"on_die",
+	}
+}
+
+func (enum MemoryEccType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *MemoryEccType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = MemoryEccType(MemoryEccType(tmp).String())
 	return nil
 }
 
@@ -896,6 +943,17 @@ type SchemaZFS struct {
 	Pools []*SchemaPool `json:"pools"`
 }
 
+// Schema: schema.
+type Schema struct {
+	Disks []*SchemaDisk `json:"disks"`
+
+	Raids []*SchemaRAID `json:"raids"`
+
+	Filesystems []*SchemaFilesystem `json:"filesystems"`
+
+	Zfs *SchemaZFS `json:"zfs"`
+}
+
 // CertificationOption: certification option.
 type CertificationOption struct{}
 
@@ -917,140 +975,31 @@ type PublicBandwidthOption struct {
 // RemoteAccessOption: remote access option.
 type RemoteAccessOption struct{}
 
-// Schema: schema.
-type Schema struct {
-	Disks []*SchemaDisk `json:"disks"`
+// CreateServerRequestInstall: create server request install.
+type CreateServerRequestInstall struct {
+	// OsID: ID of the OS to installation on the server.
+	OsID string `json:"os_id"`
 
-	Raids []*SchemaRAID `json:"raids"`
+	// Hostname: hostname of the server.
+	Hostname string `json:"hostname"`
 
-	Filesystems []*SchemaFilesystem `json:"filesystems"`
+	// SSHKeyIDs: SSH key IDs authorized on the server.
+	SSHKeyIDs []string `json:"ssh_key_ids"`
 
-	Zfs *SchemaZFS `json:"zfs"`
-}
+	// User: user for the installation.
+	User *string `json:"user"`
 
-// OSOSField: osos field.
-type OSOSField struct {
-	Editable bool `json:"editable"`
+	// Password: password for the installation.
+	Password *string `json:"password"`
 
-	Required bool `json:"required"`
+	// ServiceUser: regular user that runs the service to be installed on the server.
+	ServiceUser *string `json:"service_user"`
 
-	DefaultValue *string `json:"default_value"`
-}
+	// ServicePassword: password used for the service to install.
+	ServicePassword *string `json:"service_password"`
 
-// CPU: cpu.
-type CPU struct {
-	// Name: name of the CPU.
-	Name string `json:"name"`
-
-	// CoreCount: number of CPU cores.
-	CoreCount uint32 `json:"core_count"`
-
-	// ThreadCount: number CPU threads.
-	ThreadCount uint32 `json:"thread_count"`
-
-	// Frequency: frequency of the CPU in MHz.
-	Frequency uint32 `json:"frequency"`
-
-	// Benchmark: benchmark of the CPU.
-	Benchmark string `json:"benchmark"`
-}
-
-// Disk: disk.
-type Disk struct {
-	// Capacity: capacity of the disk in bytes.
-	Capacity scw.Size `json:"capacity"`
-
-	// Type: type of the disk.
-	Type string `json:"type"`
-}
-
-// GPU: gpu.
-type GPU struct {
-	// Name: name of the GPU.
-	Name string `json:"name"`
-
-	// Vram: capacity of the vram in bytes.
-	Vram uint64 `json:"vram"`
-}
-
-// Memory: memory.
-type Memory struct {
-	// Capacity: capacity of the memory in bytes.
-	Capacity scw.Size `json:"capacity"`
-
-	// Type: type of the memory.
-	Type string `json:"type"`
-
-	// Frequency: frequency of the memory in MHz.
-	Frequency uint32 `json:"frequency"`
-
-	// IsEcc: true if the memory is an error-correcting code memory.
-	IsEcc bool `json:"is_ecc"`
-}
-
-// OfferOptionOffer: offer option offer.
-type OfferOptionOffer struct {
-	// ID: ID of the option.
-	ID string `json:"id"`
-
-	// Name: name of the option.
-	Name string `json:"name"`
-
-	// Enabled: if true the option is enabled and included by default in the offer
-	// If false the option is available for the offer but not included by default.
-	Enabled bool `json:"enabled"`
-
-	// SubscriptionPeriod: period of subscription for the offer.
-	// Default value: unknown_subscription_period
-	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
-
-	// Price: price of the option.
-	Price *scw.Money `json:"price"`
-
-	// Manageable: boolean to know if option could be managed.
-	Manageable bool `json:"manageable"`
-
-	// Deprecated: OsID: deprecated, use LicenseOptionVars.os_id instead.
-	OsID *string `json:"os_id,omitempty"`
-
-	// License: license option, contains the ID of the OS linked to the option.
-	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
-	License *LicenseOption `json:"license,omitempty"`
-
-	// PublicBandwidth: public_bandwidth option, contains the bandwidth_in_bps.
-	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
-	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
-
-	// PrivateNetwork: private_network option, contains the bandwidth_in_bps.
-	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
-	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
-
-	// RemoteAccess: remote_access option.
-	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
-	RemoteAccess *RemoteAccessOption `json:"remote_access,omitempty"`
-
-	// Certification: certification option.
-	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
-	Certification *CertificationOption `json:"certification,omitempty"`
-}
-
-// PersistentMemory: persistent memory.
-type PersistentMemory struct {
-	// Capacity: capacity of the memory in bytes.
-	Capacity scw.Size `json:"capacity"`
-
-	// Type: type of the memory.
-	Type string `json:"type"`
-
-	// Frequency: frequency of the memory in MHz.
-	Frequency uint32 `json:"frequency"`
-}
-
-// RaidController: raid controller.
-type RaidController struct {
-	Model string `json:"model"`
-
-	RaidLevel []string `json:"raid_level"`
+	// PartitioningSchema: partitioning schema.
+	PartitioningSchema *Schema `json:"partitioning_schema"`
 }
 
 // IP: ip.
@@ -1152,31 +1101,249 @@ type ServerRescueServer struct {
 	Password string `json:"password"`
 }
 
-// CreateServerRequestInstall: create server request install.
-type CreateServerRequestInstall struct {
-	// OsID: ID of the OS to installation on the server.
-	OsID string `json:"os_id"`
+// OSOSField: osos field.
+type OSOSField struct {
+	Editable bool `json:"editable"`
 
-	// Hostname: hostname of the server.
+	Required bool `json:"required"`
+
+	DefaultValue *string `json:"default_value"`
+}
+
+// CPU: cpu.
+type CPU struct {
+	// Name: name of the CPU.
+	Name string `json:"name"`
+
+	// CoreCount: number of CPU cores.
+	CoreCount uint32 `json:"core_count"`
+
+	// ThreadCount: number CPU threads.
+	ThreadCount uint32 `json:"thread_count"`
+
+	// Frequency: frequency of the CPU in MHz.
+	Frequency uint32 `json:"frequency"`
+
+	// Benchmark: benchmark of the CPU.
+	Benchmark string `json:"benchmark"`
+}
+
+// Disk: disk.
+type Disk struct {
+	// Capacity: capacity of the disk in bytes.
+	Capacity scw.Size `json:"capacity"`
+
+	// Type: type of the disk.
+	Type string `json:"type"`
+}
+
+// GPU: gpu.
+type GPU struct {
+	// Name: name of the GPU.
+	Name string `json:"name"`
+
+	// Vram: capacity of the vram in bytes.
+	Vram uint64 `json:"vram"`
+}
+
+// Memory: memory.
+type Memory struct {
+	// Capacity: capacity of the memory in bytes.
+	Capacity scw.Size `json:"capacity"`
+
+	// Type: type of the memory.
+	Type string `json:"type"`
+
+	// Frequency: frequency of the memory in MHz.
+	Frequency uint32 `json:"frequency"`
+
+	// IsEcc: true if the memory is an error-correcting code memory.
+	IsEcc bool `json:"is_ecc"`
+
+	// EccType: type of ECC memory.
+	// Default value: unknown_ecc_type
+	EccType MemoryEccType `json:"ecc_type"`
+}
+
+// OfferOptionOffer: offer option offer.
+type OfferOptionOffer struct {
+	// ID: ID of the option.
+	ID string `json:"id"`
+
+	// Name: name of the option.
+	Name string `json:"name"`
+
+	// Enabled: if true the option is enabled and included by default in the offer
+	// If false the option is available for the offer but not included by default.
+	Enabled bool `json:"enabled"`
+
+	// SubscriptionPeriod: period of subscription for the offer.
+	// Default value: unknown_subscription_period
+	SubscriptionPeriod OfferSubscriptionPeriod `json:"subscription_period"`
+
+	// Price: price of the option.
+	Price *scw.Money `json:"price"`
+
+	// Manageable: boolean to know if option could be managed.
+	Manageable bool `json:"manageable"`
+
+	// Deprecated: OsID: deprecated, use LicenseOptionVars.os_id instead.
+	OsID *string `json:"os_id,omitempty"`
+
+	// License: license option, contains the ID of the OS linked to the option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	License *LicenseOption `json:"license,omitempty"`
+
+	// PublicBandwidth: public_bandwidth option, contains the bandwidth_in_bps.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PublicBandwidth *PublicBandwidthOption `json:"public_bandwidth,omitempty"`
+
+	// PrivateNetwork: private_network option, contains the bandwidth_in_bps.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	PrivateNetwork *PrivateNetworkOption `json:"private_network,omitempty"`
+
+	// RemoteAccess: remote_access option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	RemoteAccess *RemoteAccessOption `json:"remote_access,omitempty"`
+
+	// Certification: certification option.
+	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
+	Certification *CertificationOption `json:"certification,omitempty"`
+}
+
+// PersistentMemory: persistent memory.
+type PersistentMemory struct {
+	// Capacity: capacity of the memory in bytes.
+	Capacity scw.Size `json:"capacity"`
+
+	// Type: type of the memory.
+	Type string `json:"type"`
+
+	// Frequency: frequency of the memory in MHz.
+	Frequency uint32 `json:"frequency"`
+}
+
+// RaidController: raid controller.
+type RaidController struct {
+	Model string `json:"model"`
+
+	RaidLevel []string `json:"raid_level"`
+}
+
+// BatchCreateServersRequestServerConfig: batch create servers request server config.
+type BatchCreateServersRequestServerConfig struct {
 	Hostname string `json:"hostname"`
 
-	// SSHKeyIDs: SSH key IDs authorized on the server.
-	SSHKeyIDs []string `json:"ssh_key_ids"`
+	Description string `json:"description"`
 
-	// User: user for the installation.
-	User *string `json:"user"`
+	Tags []string `json:"tags"`
+}
 
-	// Password: password for the installation.
-	Password *string `json:"password"`
+// CreateServerRequest: create server request.
+type CreateServerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
 
-	// ServiceUser: regular user that runs the service to be installed on the server.
-	ServiceUser *string `json:"service_user"`
+	// OfferID: offer ID of the new server.
+	OfferID string `json:"offer_id"`
 
-	// ServicePassword: password used for the service to install.
-	ServicePassword *string `json:"service_password"`
+	// Deprecated: OrganizationID: organization ID with which the server will be created.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
 
-	// PartitioningSchema: partitioning schema.
-	PartitioningSchema *Schema `json:"partitioning_schema"`
+	// ProjectID: project ID with which the server will be created.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+
+	// Name: name of the server (≠hostname).
+	Name string `json:"name"`
+
+	// Description: description associated with the server, max 255 characters.
+	Description string `json:"description"`
+
+	// Tags: tags to associate to the server.
+	Tags []string `json:"tags"`
+
+	// Install: object describing the configuration details of the OS installation on the server.
+	Install *CreateServerRequestInstall `json:"install,omitempty"`
+
+	// OptionIDs: iDs of options to enable on server.
+	OptionIDs []string `json:"option_ids"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected bool `json:"protected"`
+
+	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *[]byte `json:"user_data,omitempty"`
+}
+
+// Server: server.
+type Server struct {
+	// ID: ID of the server.
+	ID string `json:"id"`
+
+	// OrganizationID: organization ID the server is attached to.
+	OrganizationID string `json:"organization_id"`
+
+	// ProjectID: project ID the server is attached to.
+	ProjectID string `json:"project_id"`
+
+	// Name: name of the server.
+	Name string `json:"name"`
+
+	// Description: description of the server.
+	Description string `json:"description"`
+
+	// UpdatedAt: last modification date of the server.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// CreatedAt: creation date of the server.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Status: status of the server.
+	// Default value: unknown
+	Status ServerStatus `json:"status"`
+
+	// OfferID: offer ID of the server.
+	OfferID string `json:"offer_id"`
+
+	// OfferName: offer name of the server.
+	OfferName string `json:"offer_name"`
+
+	// Tags: array of custom tags attached to the server.
+	Tags []string `json:"tags"`
+
+	// IPs: array of IPs attached to the server.
+	IPs []*IP `json:"ips"`
+
+	// Domain: domain of the server.
+	Domain string `json:"domain"`
+
+	// BootType: boot type of the server.
+	// Default value: unknown_boot_type
+	BootType ServerBootType `json:"boot_type"`
+
+	// Zone: zone in which is the server located.
+	Zone scw.Zone `json:"zone"`
+
+	// Install: configuration of the installation.
+	Install *ServerInstall `json:"install"`
+
+	// PingStatus: status of server ping.
+	// Default value: ping_status_unknown
+	PingStatus ServerPingStatus `json:"ping_status"`
+
+	// Options: options enabled on the server.
+	Options []*ServerOption `json:"options"`
+
+	// RescueServer: configuration of rescue boot.
+	RescueServer *ServerRescueServer `json:"rescue_server"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected bool `json:"protected"`
+
+	// UserData: optional configuration data passed to cloud-init.
+	UserData *[]byte `json:"user_data"`
 }
 
 // OS: os.
@@ -1219,6 +1386,15 @@ type OS struct {
 
 	// CustomPartitioningSupported: defines if custom partitioning is supported by this OS.
 	CustomPartitioningSupported bool `json:"custom_partitioning_supported"`
+
+	// CloudInitSupported: defines if cloud-init is supported by this OS.
+	CloudInitSupported bool `json:"cloud_init_supported"`
+
+	// CloudInitVersion: defines the cloud-init API version used by this OS.
+	CloudInitVersion *string `json:"cloud_init_version"`
+
+	// Zone: zone in which is the OS is available.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Offer: offer.
@@ -1299,6 +1475,9 @@ type Offer struct {
 
 	// MonthlyOfferID: exist only for hourly offers, to migrate to the monthly offer.
 	MonthlyOfferID *string `json:"monthly_offer_id"`
+
+	// Zone: zone in which is the offer is available.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Option: option.
@@ -1376,69 +1555,6 @@ type ServerPrivateNetwork struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-// Server: server.
-type Server struct {
-	// ID: ID of the server.
-	ID string `json:"id"`
-
-	// OrganizationID: organization ID the server is attached to.
-	OrganizationID string `json:"organization_id"`
-
-	// ProjectID: project ID the server is attached to.
-	ProjectID string `json:"project_id"`
-
-	// Name: name of the server.
-	Name string `json:"name"`
-
-	// Description: description of the server.
-	Description string `json:"description"`
-
-	// UpdatedAt: last modification date of the server.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// CreatedAt: creation date of the server.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// Status: status of the server.
-	// Default value: unknown
-	Status ServerStatus `json:"status"`
-
-	// OfferID: offer ID of the server.
-	OfferID string `json:"offer_id"`
-
-	// OfferName: offer name of the server.
-	OfferName string `json:"offer_name"`
-
-	// Tags: array of custom tags attached to the server.
-	Tags []string `json:"tags"`
-
-	// IPs: array of IPs attached to the server.
-	IPs []*IP `json:"ips"`
-
-	// Domain: domain of the server.
-	Domain string `json:"domain"`
-
-	// BootType: boot type of the server.
-	// Default value: unknown_boot_type
-	BootType ServerBootType `json:"boot_type"`
-
-	// Zone: zone in which is the server located.
-	Zone scw.Zone `json:"zone"`
-
-	// Install: configuration of the installation.
-	Install *ServerInstall `json:"install"`
-
-	// PingStatus: status of server ping.
-	// Default value: ping_status_unknown
-	PingStatus ServerPingStatus `json:"ping_status"`
-
-	// Options: options enabled on the server.
-	Options []*ServerOption `json:"options"`
-
-	// RescueServer: configuration of rescue boot.
-	RescueServer *ServerRescueServer `json:"rescue_server"`
-}
-
 // Setting: setting.
 type Setting struct {
 	// ID: ID of the setting.
@@ -1475,46 +1591,31 @@ type BMCAccess struct {
 	// URL: URL to access to the server console.
 	URL string `json:"url"`
 
-	// Login: the login to use for the BMC (Baseboard Management Controller) access authentification.
+	// Login: the login to use for the BMC (Baseboard Management Controller) access authentication.
 	Login string `json:"login"`
 
-	// Password: the password to use for the BMC (Baseboard Management Controller) access authentification.
+	// Password: the password to use for the BMC (Baseboard Management Controller) access authentication.
 	Password string `json:"password"`
 
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed.
 	ExpiresAt *time.Time `json:"expires_at"`
 }
 
-// CreateServerRequest: create server request.
-type CreateServerRequest struct {
+// BatchCreateServersRequest: batch create servers request.
+type BatchCreateServersRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
-	// OfferID: offer ID of the new server.
-	OfferID string `json:"offer_id"`
+	// CommonConfiguration: configuration wanted for the servers to create.
+	CommonConfiguration *CreateServerRequest `json:"common_configuration,omitempty"`
 
-	// Deprecated: OrganizationID: organization ID with which the server will be created.
-	// Precisely one of ProjectID, OrganizationID must be set.
-	OrganizationID *string `json:"organization_id,omitempty"`
+	// Servers: list of servers to create.
+	Servers []*BatchCreateServersRequestServerConfig `json:"servers"`
+}
 
-	// ProjectID: project ID with which the server will be created.
-	// Precisely one of ProjectID, OrganizationID must be set.
-	ProjectID *string `json:"project_id,omitempty"`
-
-	// Name: name of the server (≠hostname).
-	Name string `json:"name"`
-
-	// Description: description associated with the server, max 255 characters.
-	Description string `json:"description"`
-
-	// Tags: tags to associate to the server.
-	Tags []string `json:"tags"`
-
-	// Install: object describing the configuration details of the OS installation on the server.
-	Install *CreateServerRequestInstall `json:"install,omitempty"`
-
-	// OptionIDs: iDs of options to enable on server.
-	OptionIDs []string `json:"option_ids"`
+// BatchCreateServersResponse: batch create servers response.
+type BatchCreateServersResponse struct {
+	Servers []*Server `json:"servers"`
 }
 
 // DeleteOptionServerRequest: delete option server request.
@@ -1641,6 +1742,9 @@ type InstallServerRequest struct {
 
 	// PartitioningSchema: partitioning schema.
 	PartitioningSchema *Schema `json:"partitioning_schema,omitempty"`
+
+	// Deprecated: UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *scw.File `json:"user_data,omitempty"`
 }
 
 // ListOSRequest: list os request.
@@ -2045,6 +2149,9 @@ type RebootServerRequest struct {
 	// BootType: the type of boot.
 	// Default value: unknown_boot_type
 	BootType ServerBootType `json:"boot_type"`
+
+	// SSHKeyIDs: additional SSH public key IDs to configure on rescue image.
+	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
 // SetServerPrivateNetworksResponse: set server private networks response.
@@ -2075,6 +2182,9 @@ type StartServerRequest struct {
 	// BootType: the type of boot.
 	// Default value: unknown_boot_type
 	BootType ServerBootType `json:"boot_type"`
+
+	// SSHKeyIDs: additional SSH public key IDs to configure on rescue image.
+	SSHKeyIDs []string `json:"ssh_key_ids"`
 }
 
 // StopBMCAccessRequest: stop bmc access request.
@@ -2126,6 +2236,12 @@ type UpdateServerRequest struct {
 
 	// Tags: tags associated with the server, not updated if null.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Protected: if enabled, the server can not be deleted.
+	Protected *bool `json:"protected,omitempty"`
+
+	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
+	UserData *[]byte `json:"user_data,omitempty"`
 }
 
 // UpdateSettingRequest: update setting request.
@@ -2246,6 +2362,59 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	return &resp, nil
 }
 
+// WaitForServerRequest is used by WaitForServer method.
+type WaitForServerRequest struct {
+	Zone          scw.Zone
+	ServerID      string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForServer waits for the Server to reach a terminal state.
+func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	timeout := defaultBaremetalTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultBaremetalRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ServerStatus]struct{}{
+		ServerStatusDelivering: {},
+		ServerStatusStopping:   {},
+		ServerStatusStarting:   {},
+		ServerStatusDeleting:   {},
+		ServerStatusOrdered:    {},
+		ServerStatusResetting:  {},
+		ServerStatusMigrating:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetServer(&GetServerRequest{
+				Zone:     req.Zone,
+				ServerID: req.ServerID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Server failed")
+	}
+
+	return res.(*Server), nil
+}
+
 // CreateServer: Create a new Elastic Metal server. Once the server is created, proceed with the [installation of an OS](#post-3e949e).
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
@@ -2288,7 +2457,39 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UpdateServer: Update the server associated with the ID. You can update parameters such as the server's name, tags and description. Any parameters left null in the request body are not updated.
+// BatchCreateServers: Create multiple new Elastic Metal servers. Once the servers are created, proceed with the [installation of an OS](#post-3e949e).
+func (s *API) BatchCreateServers(req *BatchCreateServersRequest, opts ...scw.RequestOption) (*BatchCreateServersResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/batch-create-servers",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp BatchCreateServersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateServer: Update the server associated with the ID. You can update parameters such as the server's name, tags, description and protection flag. Any parameters left null in the request body are not updated.
 func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	var err error
 

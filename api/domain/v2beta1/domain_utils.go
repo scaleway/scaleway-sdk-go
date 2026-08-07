@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -190,7 +189,7 @@ func (s *RegistrarAPI) WaitForOrderDomain(
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("waiting for domain %s failed, last known status: %s", req.Domain, lastStatus))
+		return nil, errors.Wrap(err, "waiting for domain %s failed, last known status: %s", req.Domain, lastStatus)
 	}
 
 	return domain.(*Domain), nil
@@ -243,7 +242,7 @@ func (s *RegistrarAPI) WaitForAutoRenewStatus(req *WaitForAutoRenewStatusRequest
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("waiting for auto_renew to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus))
+		return nil, errors.Wrap(err, "waiting for auto_renew to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus)
 	}
 	return domainResult.(*Domain), nil
 }
@@ -297,7 +296,51 @@ func (s *RegistrarAPI) WaitForDNSSECStatus(req *WaitForDNSSECStatusRequest, opts
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("waiting for dnssec to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus))
+		return nil, errors.Wrap(err, "waiting for dnssec to reach a terminal state for domain %s failed, last known status: %s", req.Domain, lastStatus)
+	}
+	return domainResult.(*Domain), nil
+}
+
+type WaitForValidatedExternalDomainRequest struct {
+	Domain        string         // The domain to wait for.
+	Timeout       *time.Duration // Optional timeout.
+	RetryInterval *time.Duration // Optional retry interval.
+}
+
+func (s *RegistrarAPI) WaitForValidatedExternalDomain(req *WaitForValidatedExternalDomainRequest, opts ...scw.RequestOption) (*Domain, error) {
+	timeout := defaultTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+	retryInterval := defaultRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+
+	var lastStatus DomainStatus
+
+	domainResult, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			// Retrieve the domain.
+			resp, err := s.GetDomain(&RegistrarAPIGetDomainRequest{
+				Domain: req.Domain,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			// Check the current Zone status.
+			lastStatus = resp.Status
+			if resp.Status == DomainStatusActive {
+				return resp, true, nil
+			}
+			return resp, false, nil
+		},
+		Timeout:          timeout,
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for validation for external domain %s failed, last known status: %s", req.Domain, lastStatus)
 	}
 	return domainResult.(*Domain), nil
 }

@@ -879,6 +879,9 @@ type InstanceGroup struct {
 
 	// UpdatedAt: date on which the Instance group was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone for this resource.
+	Zone scw.Zone `json:"zone"`
 }
 
 // InstancePolicy: instance policy.
@@ -909,6 +912,9 @@ type InstancePolicy struct {
 
 	// InstanceGroupID: instance group ID related to this policy.
 	InstanceGroupID string `json:"instance_group_id"`
+
+	// Zone: zone for this resource.
+	Zone scw.Zone `json:"zone"`
 }
 
 // InstanceTemplate: instance template.
@@ -961,6 +967,9 @@ type InstanceTemplate struct {
 
 	// UpdatedAt: date on which the Instance template was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone for this resource.
+	Zone scw.Zone `json:"zone"`
 }
 
 // UpdateInstanceGroupRequestCapacity: update instance group request capacity.

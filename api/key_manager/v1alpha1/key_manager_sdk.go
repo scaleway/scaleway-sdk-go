@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -141,6 +142,12 @@ const (
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_3072_sha256")
 	// RSA-PKCS1 (Public Key Cryptography Standards) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_4096_sha256")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 2.
+	KeyAlgorithmAsymmetricSigningMlDsa44 = KeyAlgorithmAsymmetricSigning("ml_dsa_44")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
+	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
+	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -162,6 +169,9 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"rsa_pkcs1_2048_sha256",
 		"rsa_pkcs1_3072_sha256",
 		"rsa_pkcs1_4096_sha256",
+		"ml_dsa_44",
+		"ml_dsa_65",
+		"ml_dsa_87",
 	}
 }
 
@@ -268,7 +278,8 @@ const (
 	// The key cannot be used for cryptographic operations.
 	KeyStateDisabled = KeyState("disabled")
 	// Key material must be imported before the key can be used for cryptographic operations.
-	KeyStatePendingKeyMaterial = KeyState("pending_key_material")
+	KeyStatePendingKeyMaterial   = KeyState("pending_key_material")
+	KeyStateScheduledForDeletion = KeyState("scheduled_for_deletion")
 )
 
 func (enum KeyState) String() string {
@@ -285,6 +296,7 @@ func (enum KeyState) Values() []KeyState {
 		"enabled",
 		"disabled",
 		"pending_key_material",
+		"scheduled_for_deletion",
 	}
 }
 
@@ -300,6 +312,47 @@ func (enum *KeyState) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = KeyState(KeyState(tmp).String())
+	return nil
+}
+
+type ListAlgorithmsRequestUsage string
+
+const (
+	ListAlgorithmsRequestUsageUnknownUsage         = ListAlgorithmsRequestUsage("unknown_usage")
+	ListAlgorithmsRequestUsageSymmetricEncryption  = ListAlgorithmsRequestUsage("symmetric_encryption")
+	ListAlgorithmsRequestUsageAsymmetricEncryption = ListAlgorithmsRequestUsage("asymmetric_encryption")
+	ListAlgorithmsRequestUsageAsymmetricSigning    = ListAlgorithmsRequestUsage("asymmetric_signing")
+)
+
+func (enum ListAlgorithmsRequestUsage) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListAlgorithmsRequestUsageUnknownUsage)
+	}
+	return string(enum)
+}
+
+func (enum ListAlgorithmsRequestUsage) Values() []ListAlgorithmsRequestUsage {
+	return []ListAlgorithmsRequestUsage{
+		"unknown_usage",
+		"symmetric_encryption",
+		"asymmetric_encryption",
+		"asymmetric_signing",
+	}
+}
+
+func (enum ListAlgorithmsRequestUsage) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListAlgorithmsRequestUsage) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListAlgorithmsRequestUsage(ListAlgorithmsRequestUsage(tmp).String())
 	return nil
 }
 
@@ -405,13 +458,24 @@ type KeyUsage struct {
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
 
-	// AsymmetricEncryption: default value: unknown_asymmetric_encryption
+	// AsymmetricEncryption: see the `Key.Algorithm.AsymmetricEncryption` enum for a description of values.
+	// Default value: unknown_asymmetric_encryption
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	AsymmetricEncryption *KeyAlgorithmAsymmetricEncryption `json:"asymmetric_encryption,omitempty"`
 
-	// AsymmetricSigning: default value: unknown_asymmetric_signing
+	// AsymmetricSigning: see the `Key.Algorithm.AsymmetricSigning` enum for a description of values.
+	// Default value: unknown_asymmetric_signing
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
+}
+
+// ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
+type ListAlgorithmsResponseAlgorithm struct {
+	Usage string `json:"usage"`
+
+	Name string `json:"name"`
+
+	Recommended bool `json:"recommended"`
 }
 
 // Key: key.
@@ -425,7 +489,7 @@ type Key struct {
 	// Name: name of the key.
 	Name string `json:"name"`
 
-	// Usage: keys with a usage set to `symmetric_encryption` can encrypt and decrypt data using the `AES-256-GCM` key algorithm. Key Manager currently only supports `AES-256-GCM`.
+	// Usage: see the `Key.Usage` enum for a description of possible values.
 	Usage *KeyUsage `json:"usage"`
 
 	// State: see the `Key.State` enum for a description of possible values.
@@ -468,6 +532,41 @@ type Key struct {
 
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Key) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Key
+		Platform string
+	}{
+		Key:      *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://key-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/keys/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateKeyRequest: create key request.
@@ -481,7 +580,7 @@ type CreateKeyRequest struct {
 	// Name: (Optional) Name of the key.
 	Name *string `json:"name,omitempty"`
 
-	// Usage: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
+	// Usage: see the `Key.Usage` enum for a description of possible values.
 	Usage *KeyUsage `json:"usage,omitempty"`
 
 	// Description: (Optional) Description of the key.
@@ -650,11 +749,26 @@ type ImportKeyMaterialRequest struct {
 	// KeyID: the key's origin must be `external`.
 	KeyID string `json:"-"`
 
-	// KeyMaterial: the key material The key material is a random sequence of bytes used to derive a cryptographic key.
+	// KeyMaterial: the key material is a random sequence of bytes used to derive a cryptographic key.
 	KeyMaterial []byte `json:"key_material"`
 
 	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
 	Salt *[]byte `json:"salt,omitempty"`
+}
+
+// ListAlgorithmsRequest: list algorithms request.
+type ListAlgorithmsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Usages: filter by key usage.
+	Usages []ListAlgorithmsRequestUsage `json:"usages"`
+}
+
+// ListAlgorithmsResponse: list algorithms response.
+type ListAlgorithmsResponse struct {
+	// Algorithms: returns a list of algorithms matching the requested criteria.
+	Algorithms []*ListAlgorithmsResponseAlgorithm `json:"algorithms"`
 }
 
 // ListKeysRequest: list keys request.
@@ -819,7 +933,7 @@ type VerifyResponse struct {
 	// KeyID: ID of the key used for verification.
 	KeyID string `json:"key_id"`
 
-	// Valid: returns `true` if the signature is valid for the digest and key, `false` otherwise.
+	// Valid: returns `true` if the signature is valid for the digest and key, and `false` otherwise.
 	Valid bool `json:"valid"`
 }
 
@@ -839,7 +953,7 @@ func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
-// CreateKey: Create a key in a given region specified by the `region` parameter. Keys only support symmetric encryption. You can use keys to encrypt or decrypt arbitrary payloads, or to generate data encryption keys. **Data encryption keys are not stored in Key Manager**.
+// CreateKey: Create a key in a given region specified by the `region` parameter. You can use keys to encrypt or decrypt arbitrary payloads, to sign and verify messages or to generate data encryption keys. **Data encryption keys are not stored in Key Manager**.
 func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key, error) {
 	var err error
 
@@ -873,6 +987,9 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -904,6 +1021,9 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -971,6 +1091,9 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1036,6 +1159,9 @@ func (s *API) RotateKey(req *RotateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1072,6 +1198,9 @@ func (s *API) ProtectKey(req *ProtectKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1108,6 +1237,9 @@ func (s *API) UnprotectKey(req *UnprotectKeyRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1144,6 +1276,9 @@ func (s *API) EnableKey(req *EnableKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1180,10 +1315,16 @@ func (s *API) DisableKey(req *DisableKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
-// ListKeys: Retrieve a list of keys across all Projects in an Organization or within a specific Project. You must specify the `region`, and either the `organization_id` or the `project_id`.
+// ListKeys: Retrieve a list of keys across all Projects in an Organization or within a specific Project.
+// If the user has permissions for all current and future projects: Either organization_id or project_id is required.
+// If the user has permissions for all current projects or only specific projects: The project_id is required.
+// The `region` parameter in path is needed in both case.
 func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKeysResponse, error) {
 	var err error
 
@@ -1223,6 +1364,11 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Keys {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -1265,7 +1411,7 @@ func (s *API) GenerateDataKey(req *GenerateDataKeyRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// Encrypt: Encrypt a payload using an existing key, specified by the `key_id` parameter. Only keys with a usage set to `symmetric_encryption` are supported by this method. The maximum payload size that can be encrypted is 64 KB of plaintext.
+// Encrypt: Encrypt a payload using an existing key, specified by the `key_id` parameter. The maximum payload size that can be encrypted is 64 KB of plaintext.
 func (s *API) Encrypt(req *EncryptRequest, opts ...scw.RequestOption) (*EncryptResponse, error) {
 	var err error
 
@@ -1442,6 +1588,9 @@ func (s *API) ImportKeyMaterial(req *ImportKeyMaterialRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -1507,6 +1656,40 @@ func (s *API) RestoreKey(req *RestoreKeyRequest, opts ...scw.RequestOption) (*Ke
 	}
 
 	var resp Key
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
+	return &resp, nil
+}
+
+// ListAlgorithms: Lists all cryptographic algorithms supported by the Key Manager service.
+func (s *API) ListAlgorithms(req *ListAlgorithmsRequest, opts ...scw.RequestOption) (*ListAlgorithmsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "usages", req.Usages)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/algorithms",
+		Query:  query,
+	}
+
+	var resp ListAlgorithmsResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

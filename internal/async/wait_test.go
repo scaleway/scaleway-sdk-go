@@ -3,12 +3,11 @@ package async
 import (
 	"errors"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 )
-
-const flakiness = 500 * time.Millisecond
 
 type value struct {
 	doneIterations int
@@ -106,24 +105,36 @@ func TestWaitSync(t *testing.T) {
 			expValue: nil,
 			expErr:   errors.New("timeout after 2s"),
 		},
+		{
+			name: "WithError",
+			config: &WaitSyncConfig{
+				Get: func() (any, bool, error) {
+					return nil, false, errors.New("error")
+				},
+			},
+			expValue: nil,
+			expErr:   errors.New("error"),
+		},
 	}
 	for _, c := range testsCases {
 		c := c // do not remove me
 		t.Run(c.name, func(t *testing.T) {
 			t.Parallel()
 
-			terminalValue, err := WaitSync(c.config)
+			synctest.Test(t, func(t *testing.T) {
+				terminalValue, err := WaitSync(c.config)
 
-			testhelpers.Equals(t, c.expErr, err)
+				testhelpers.Equals(t, c.expErr, err)
 
-			if c.expValue != nil {
-				exp := c.expValue.(*value)
-				acc := terminalValue.(*value)
-				testhelpers.Equals(t, exp.doneIterations, acc.doneIterations)
+				if c.expValue != nil {
+					exp := c.expValue.(*value)
+					acc := terminalValue.(*value)
+					testhelpers.Equals(t, exp.doneIterations, acc.doneIterations)
 
-				ok := exp.totalDuration > acc.totalDuration-flakiness && exp.totalDuration < acc.totalDuration+flakiness
-				testhelpers.Assert(t, ok, "totalDuration don't match the target: (acc: %v, exp: %v)", acc.totalDuration, exp.totalDuration)
-			}
+					ok := exp.totalDuration == acc.totalDuration
+					testhelpers.Assert(t, ok, "totalDuration doesn't match the target: (acc: %v, exp: %v)", acc.totalDuration, exp.totalDuration)
+				}
+			})
 		})
 	}
 }

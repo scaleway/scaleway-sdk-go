@@ -55,6 +55,14 @@ const (
 	ContractTypeContainer = ContractType("container")
 	// A contract specific to Baremetal products.
 	ContractTypeBaremetal = ContractType("baremetal")
+	// A contract specific to Network products.
+	ContractTypeNetwork = ContractType("network")
+	// A contract specific to Core products.
+	ContractTypeCore = ContractType("core")
+	// A contract specific to VPS products.
+	ContractTypeVps                = ContractType("vps")
+	ContractTypeStorage            = ContractType("storage")
+	ContractTypeTransactionalEmail = ContractType("transactional_email")
 )
 
 func (enum ContractType) String() string {
@@ -73,6 +81,11 @@ func (enum ContractType) Values() []ContractType {
 		"instance",
 		"container",
 		"baremetal",
+		"network",
+		"core",
+		"vps",
+		"storage",
+		"transactional_email",
 	}
 }
 

@@ -12,13 +12,20 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultK8sRetryInterval = 15 * time.Second
+	defaultK8sTimeout       = 15 * time.Minute
 )
 
 // always import dependencies
@@ -136,6 +143,8 @@ const (
 	CNIKilo = CNI("kilo")
 	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
 	CNINone = CNI("none")
+	// Cilium CNI will be configured in native routing mode (https://docs.cilium.io/en/stable/network/concepts/routing/#native-routing).
+	CNICiliumNative = CNI("cilium_native")
 )
 
 func (enum CNI) String() string {
@@ -155,6 +164,7 @@ func (enum CNI) Values() []CNI {
 		"flannel",
 		"kilo",
 		"none",
+		"cilium_native",
 	}
 }
 
@@ -188,7 +198,7 @@ const (
 	ClusterStatusUpdating = ClusterStatus("updating")
 	// Cluster is locked because an abuse has been detected or reported.
 	ClusterStatusLocked = ClusterStatus("locked")
-	// Cluster has no associated pool.
+	// Cluster has no associated pool and has been shutdown.
 	ClusterStatusPoolRequired = ClusterStatus("pool_required")
 )
 
@@ -308,6 +318,48 @@ func (enum *ClusterTypeResiliency) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ClusterTypeResiliency(ClusterTypeResiliency(tmp).String())
+	return nil
+}
+
+type CoreV1TaintEffect string
+
+const (
+	// Do not allow new pods to schedule onto the node unless they tolerate the taint.
+	CoreV1TaintEffectNoSchedule = CoreV1TaintEffect("NoSchedule")
+	// Like TaintEffectNoSchedule, but the scheduler tries not to schedule new pods onto the node, rather than prohibiting new pods from scheduling onto the node entirely.
+	CoreV1TaintEffectPreferNoSchedule = CoreV1TaintEffect("PreferNoSchedule")
+	// Evict any already-running pods that do not tolerate the taint (Currently enforced by NodeController).
+	CoreV1TaintEffectNoExecute = CoreV1TaintEffect("NoExecute")
+)
+
+func (enum CoreV1TaintEffect) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CoreV1TaintEffectNoSchedule)
+	}
+	return string(enum)
+}
+
+func (enum CoreV1TaintEffect) Values() []CoreV1TaintEffect {
+	return []CoreV1TaintEffect{
+		"NoSchedule",
+		"PreferNoSchedule",
+		"NoExecute",
+	}
+}
+
+func (enum CoreV1TaintEffect) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CoreV1TaintEffect) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CoreV1TaintEffect(CoreV1TaintEffect(tmp).String())
 	return nil
 }
 
@@ -593,6 +645,7 @@ const (
 	PoolStatusDeleted  = PoolStatus("deleted")
 	// Pool is growing or shrinking.
 	PoolStatusScaling = PoolStatus("scaling")
+	// Pool has some issues, check nodes.
 	PoolStatusWarning = PoolStatus("warning")
 	// Pool is locked because an abuse has been detected or reported.
 	PoolStatusLocked = PoolStatus("locked")
@@ -640,11 +693,13 @@ type PoolVolumeType string
 
 const (
 	PoolVolumeTypeDefaultVolumeType = PoolVolumeType("default_volume_type")
-	// Local Block Storage: your system is stored locally on your node hypervisor. Lower latency, no persistence across node replacements.
+	// Local Block Storage: your system is stored locally on your node hypervisor.
 	PoolVolumeTypeLSSD = PoolVolumeType("l_ssd")
-	// Remote Block Storage: your system is stored on a centralized and resilient cluster. Higher latency, persistence across node replacements.
-	PoolVolumeTypeBSSD   = PoolVolumeType("b_ssd")
-	PoolVolumeTypeSbs5k  = PoolVolumeType("sbs_5k")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster (deprecated: will use sbs_5k instead).
+	PoolVolumeTypeBSSD = PoolVolumeType("b_ssd")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster with up to 5k IOPS.
+	PoolVolumeTypeSbs5k = PoolVolumeType("sbs_5k")
+	// Remote Block Storage: your system is stored on a centralized and resilient cluster with up to 15k IOPS.
 	PoolVolumeTypeSbs15k = PoolVolumeType("sbs_15k")
 )
 
@@ -733,19 +788,25 @@ type MaintenanceWindow struct {
 	Day MaintenanceWindowDayOfTheWeek `json:"day"`
 }
 
-// PoolUpgradePolicy: pool upgrade policy.
-type PoolUpgradePolicy struct {
-	MaxUnavailable uint32 `json:"max_unavailable"`
+// CoreV1Taint: See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/.
+type CoreV1Taint struct {
+	// Key: the taint key to be applied to a node.
+	Key string `json:"key"`
 
-	MaxSurge uint32 `json:"max_surge"`
+	// Value: the taint value corresponding to the taint key.
+	Value string `json:"value"`
+
+	// Effect: effect defines the effects of Taint.
+	// Default value: NoSchedule
+	Effect CoreV1TaintEffect `json:"effect"`
 }
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request pool config upgrade policy.
 type CreateClusterRequestPoolConfigUpgradePolicy struct {
-	// MaxUnavailable: the maximum number of nodes that can be not ready at the same time.
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
-	// MaxSurge: the maximum number of nodes to be created during the upgrade.
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -760,7 +821,7 @@ type ClusterAutoUpgrade struct {
 
 // ClusterAutoscalerConfig: cluster autoscaler config.
 type ClusterAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -770,27 +831,33 @@ type ClusterAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel int32 `json:"log_level"`
 }
 
 // ClusterOpenIDConnectConfig: cluster open id connect config.
@@ -817,88 +884,13 @@ type ClusterOpenIDConnectConfig struct {
 	RequiredClaim []string `json:"required_claim"`
 }
 
-// Pool: pool.
-type Pool struct {
-	// ID: pool ID.
-	ID string `json:"id"`
+// PoolUpgradePolicy: pool upgrade policy.
+type PoolUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
+	MaxUnavailable uint32 `json:"max_unavailable"`
 
-	// ClusterID: cluster ID of the pool.
-	ClusterID string `json:"cluster_id"`
-
-	// CreatedAt: date on which the pool was created.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// UpdatedAt: date on which the pool was last updated.
-	UpdatedAt *time.Time `json:"updated_at"`
-
-	// Name: pool name.
-	Name string `json:"name"`
-
-	// Status: pool status.
-	// Default value: unknown
-	Status PoolStatus `json:"status"`
-
-	// Version: pool version.
-	Version string `json:"version"`
-
-	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
-	NodeType string `json:"node_type"`
-
-	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
-	Autoscaling bool `json:"autoscaling"`
-
-	// Size: size (number of nodes) of the pool.
-	Size uint32 `json:"size"`
-
-	// MinSize: defines the minimum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
-	MinSize uint32 `json:"min_size"`
-
-	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
-	MaxSize uint32 `json:"max_size"`
-
-	// ContainerRuntime: customization of the container runtime is available for each pool.
-	// Default value: unknown_runtime
-	ContainerRuntime Runtime `json:"container_runtime"`
-
-	// Autohealing: defines whether the autohealing feature is enabled for the pool.
-	Autohealing bool `json:"autohealing"`
-
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
-	Tags []string `json:"tags"`
-
-	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
-	PlacementGroupID *string `json:"placement_group_id"`
-
-	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
-	KubeletArgs map[string]string `json:"kubelet_args"`
-
-	// UpgradePolicy: pool upgrade policy.
-	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
-
-	// Zone: zone in which the pool's nodes will be spawned.
-	Zone scw.Zone `json:"zone"`
-
-	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
-	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
-	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
-	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
-	// Default value: default_volume_type
-	RootVolumeType PoolVolumeType `json:"root_volume_type"`
-
-	// RootVolumeSize: system volume disk size.
-	RootVolumeSize *scw.Size `json:"root_volume_size"`
-
-	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
-	PublicIPDisabled bool `json:"public_ip_disabled"`
-
-	// Deprecated: NewImagesEnabled: defines whether the pool is migrated to new images.
-	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
-
-	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
-	SecurityGroupID string `json:"security_group_id"`
-
-	// Region: cluster region of the pool.
-	Region scw.Region `json:"region"`
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
+	MaxSurge uint32 `json:"max_surge"`
 }
 
 // ACLRuleRequest: acl rule request.
@@ -930,6 +922,44 @@ type ACLRule struct {
 
 	// Description: description of the ACL.
 	Description string `json:"description"`
+
+	// Region: region of the ACL rule.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ACLRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ACLRule
+		Platform string
+	}{
+		ACLRule:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/acl-rules/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
@@ -943,7 +973,7 @@ type CreateClusterRequestAutoUpgrade struct {
 
 // CreateClusterRequestAutoscalerConfig: create cluster request autoscaler config.
 type CreateClusterRequestAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -953,27 +983,33 @@ type CreateClusterRequestAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request open id connect config.
@@ -1030,22 +1066,22 @@ type CreateClusterRequestPoolConfig struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
 	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
-	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
-	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
-	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
+	// * `sbs_5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs_15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Not available for new pools, use `sbs_5k` or `sbs_15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -1057,22 +1093,27 @@ type CreateClusterRequestPoolConfig struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID *string `json:"security_group_id"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
 type CreatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
-}
-
-// ExternalNodeCoreV1Taint: external node core v1 taint.
-type ExternalNodeCoreV1Taint struct {
-	Key string `json:"key"`
-
-	Value string `json:"value"`
-
-	Effect string `json:"effect"`
 }
 
 // ClusterType: cluster type.
@@ -1108,6 +1149,44 @@ type ClusterType struct {
 
 	// MaxEtcdSize: maximum amount of data that can be stored in etcd for the offer.
 	MaxEtcdSize scw.Size `json:"max_etcd_size"`
+
+	// Region: the region of the cluster type.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ClusterType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ClusterType
+		Platform string
+	}{
+		ClusterType: *m,
+		Platform:    platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/cluster-types/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.
@@ -1135,6 +1214,50 @@ type Version struct {
 
 	// AvailableKubeletArgs: supported kubelet arguments for this version.
 	AvailableKubeletArgs map[string]string `json:"available_kubelet_args"`
+
+	// DeprecatedAt: date from which this version will no longer be available for provisioning.
+	DeprecatedAt *time.Time `json:"deprecated_at"`
+
+	// EndOfLifeAt: date from which any remaining clusters on this version will begin to be forcibly upgraded to the next minor version.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date at which this version was made available by Kapsule product.
+	ReleasedAt *time.Time `json:"released_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Version
+		Platform string
+	}{
+		Version:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/versions/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Cluster: cluster.
@@ -1186,7 +1309,7 @@ type Cluster struct {
 	// UpdatedAt: date on which the cluster was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// AutoscalerConfig: autoscaler config for the cluster.
+	// AutoscalerConfig: autoscaler configuration for the cluster, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md for details.
 	AutoscalerConfig *ClusterAutoscalerConfig `json:"autoscaler_config"`
 
 	// AutoUpgrade: auto upgrade Kubernetes version of the cluster.
@@ -1219,8 +1342,49 @@ type Cluster struct {
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
 
-	// Deprecated: NewImagesEnabled: defines whether all pools are migrated to new images.
-	NewImagesEnabled *bool `json:"new_images_enabled,omitempty"`
+	// PodCidr: subnet used for the Pod CIDR.
+	PodCidr scw.IPNet `json:"pod_cidr"`
+
+	// ServiceCidr: subnet used for the Service CIDR.
+	ServiceCidr scw.IPNet `json:"service_cidr"`
+
+	// ServiceDNSIP: IP used for the DNS Service.
+	ServiceDNSIP net.IP `json:"service_dns_ip"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Cluster) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Cluster
+		Platform string
+	}{
+		Cluster:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/clusters/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Node: node.
@@ -1250,7 +1414,7 @@ type Node struct {
 	PublicIPV6 *net.IP `json:"public_ip_v6,omitempty"`
 
 	// Deprecated: Conditions: conditions of the node. These conditions contain the Node Problem Detector conditions, as well as some in house conditions.
-	Conditions *map[string]string `json:"conditions,omitempty"`
+	Conditions map[string]string `json:"conditions,omitempty"`
 
 	// Status: status of the node.
 	// Default value: unknown
@@ -1264,6 +1428,172 @@ type Node struct {
 
 	// UpdatedAt: date on which the node was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Node) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Node
+		Platform string
+	}{
+		Node:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/nodes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
+// Pool: pool.
+type Pool struct {
+	// ID: pool ID.
+	ID string `json:"id"`
+
+	// ClusterID: cluster ID of the pool.
+	ClusterID string `json:"cluster_id"`
+
+	// CreatedAt: date on which the pool was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date on which the pool was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Name: pool name.
+	Name string `json:"name"`
+
+	// Status: pool status.
+	// Default value: unknown
+	Status PoolStatus `json:"status"`
+
+	// Version: pool version.
+	Version string `json:"version"`
+
+	// NodeType: node type is the type of Scaleway Instance wanted for the pool. Nodes with insufficient memory are not eligible (DEV1-S, PLAY2-PICO, STARDUST). 'external' is a special node type used to provision instances from other cloud providers in a Kosmos Cluster.
+	NodeType string `json:"node_type"`
+
+	// Autoscaling: defines whether the autoscaling feature is enabled for the pool.
+	Autoscaling bool `json:"autoscaling"`
+
+	// Size: size (number of nodes) of the pool.
+	Size uint32 `json:"size"`
+
+	// MinSize: defines the minimum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
+	MinSize uint32 `json:"min_size"`
+
+	// MaxSize: defines the maximum size of the pool. Note that this field is only used when autoscaling is enabled on the pool.
+	MaxSize uint32 `json:"max_size"`
+
+	// ContainerRuntime: customization of the container runtime is available for each pool.
+	// Default value: unknown_runtime
+	ContainerRuntime Runtime `json:"container_runtime"`
+
+	// Autohealing: defines whether the autohealing feature is enabled for the pool.
+	Autohealing bool `json:"autohealing"`
+
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
+	Tags []string `json:"tags"`
+
+	// PlacementGroupID: placement group ID in which all the nodes of the pool will be created, placement groups are limited to 20 instances.
+	PlacementGroupID *string `json:"placement_group_id"`
+
+	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
+	KubeletArgs map[string]string `json:"kubelet_args"`
+
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
+	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
+
+	// Zone: zone in which the pool's nodes will be spawned.
+	Zone scw.Zone `json:"zone"`
+
+	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
+	// * `sbs_5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs_15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Not available for new pools, use `sbs_5k` or `sbs_15k` instead.
+	// Default value: default_volume_type
+	RootVolumeType PoolVolumeType `json:"root_volume_type"`
+
+	// RootVolumeSize: system volume disk size.
+	RootVolumeSize *scw.Size `json:"root_volume_size"`
+
+	// PublicIPDisabled: defines if the public IP should be removed from Nodes. To use this feature, your Cluster must have an attached Private Network set up with a Public Gateway.
+	PublicIPDisabled bool `json:"public_ip_disabled"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
+	SecurityGroupID string `json:"security_group_id"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id"`
+
+	// ErrorMessage: details of the error, if any occurred when managing the pool.
+	ErrorMessage *string `json:"error_message"`
+
+	// Region: cluster region of the pool.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Pool) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Pool
+		Platform string
+	}{
+		Pool:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pools/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // NodeMetadataCoreV1Taint: node metadata core v1 taint.
@@ -1286,7 +1616,7 @@ type UpdateClusterRequestAutoUpgrade struct {
 
 // UpdateClusterRequestAutoscalerConfig: update cluster request autoscaler config.
 type UpdateClusterRequestAutoscalerConfig struct {
-	// ScaleDownDisabled: disable the cluster autoscaler.
+	// ScaleDownDisabled: forbid cluster autoscaler to scale down the cluster, defaults to false.
 	ScaleDownDisabled *bool `json:"scale_down_disabled"`
 
 	// ScaleDownDelayAfterAdd: how long after scale up the scale down evaluation resumes.
@@ -1296,27 +1626,33 @@ type UpdateClusterRequestAutoscalerConfig struct {
 	// Default value: unknown_estimator
 	Estimator AutoscalerEstimator `json:"estimator"`
 
-	// Expander: type of node group expander to be used in scale up.
+	// Expander: kubernetes autoscaler strategy to fit pods into nodes, see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders for details.
 	// Default value: unknown_expander
 	Expander AutoscalerExpander `json:"expander"`
 
-	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down.
+	// IgnoreDaemonsetsUtilization: ignore DaemonSet pods when calculating resource utilization for scaling down, defaults to false.
 	IgnoreDaemonsetsUtilization *bool `json:"ignore_daemonsets_utilization"`
 
-	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them.
+	// BalanceSimilarNodeGroups: detect similar node groups and balance the number of nodes between them, defaults to false.
 	BalanceSimilarNodeGroups *bool `json:"balance_similar_node_groups"`
 
 	// ExpendablePodsPriorityCutoff: pods with priority below cutoff will be expendable. They can be killed without any consideration during scale down and they won't cause scale up. Pods with null priority (PodPriority disabled) are non expendable.
 	ExpendablePodsPriorityCutoff *int32 `json:"expendable_pods_priority_cutoff"`
 
-	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible to be scaled down.
+	// ScaleDownUnneededTime: how long a node should be unneeded before it is eligible for scale down, defaults to 10 minutes.
 	ScaleDownUnneededTime *string `json:"scale_down_unneeded_time"`
 
-	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by capacity, below which a node can be considered for scale down.
+	// ScaleDownUtilizationThreshold: node utilization level, defined as a sum of requested resources divided by allocatable capacity, below which a node can be considered for scale down.
 	ScaleDownUtilizationThreshold *float32 `json:"scale_down_utilization_threshold"`
 
-	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node.
+	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request open id connect config.
@@ -1345,8 +1681,10 @@ type UpdateClusterRequestOpenIDConnectConfig struct {
 
 // UpdatePoolRequestUpgradePolicy: update pool request upgrade policy.
 type UpdatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: new maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: new maximum number of nodes to be created during the upgrade.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -1432,14 +1770,15 @@ type CreateClusterRequest struct {
 
 	// PrivateNetworkID: private network ID for internal cluster communication (cannot be changed later).
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
-}
 
-// CreateExternalNodeRequest: create external node request.
-type CreateExternalNodeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
+	// PodCidr: subnet used for the Pod CIDR (cannot be changed later).
+	PodCidr *scw.IPNet `json:"pod_cidr,omitempty"`
 
-	PoolID string `json:"-"`
+	// ServiceCidr: subnet used for the Service CIDR (cannot be changed later).
+	ServiceCidr *scw.IPNet `json:"service_cidr,omitempty"`
+
+	// ServiceDNSIP: IP used for the DNS Service (cannot be changes later). If unset, default to Service CIDR's network + 10.
+	ServiceDNSIP *net.IP `json:"service_dns_ip,omitempty"`
 }
 
 // CreatePoolRequest: create pool request.
@@ -1478,22 +1817,22 @@ type CreatePoolRequest struct {
 	// Autohealing: defines whether the autohealing feature is enabled for the pool.
 	Autohealing bool `json:"autohealing"`
 
-	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/containers/kubernetes/api-cli/managing-tags).
+	// Tags: tags associated with the pool, see [managing tags](https://www.scaleway.com/en/docs/kubernetes/api-cli/managing-tags).
 	Tags []string `json:"tags"`
 
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy,omitempty"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
 	Zone scw.Zone `json:"zone"`
 
 	// RootVolumeType: * `l_ssd` is a local block storage which means your system is stored locally on your node's hypervisor. This type is not available for all node types
-	// * `sbs-5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
-	// * `sbs-15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
-	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Consider using `sbs-5k` or `sbs-15k` instead.
+	// * `sbs_5k` is a remote block storage which means your system is stored on a centralized and resilient cluster with 5k IOPS limits
+	// * `sbs_15k` is a faster remote block storage which means your system is stored on a centralized and resilient cluster with 15k IOPS limits
+	// * `b_ssd` is the legacy remote block storage which means your system is stored on a centralized and resilient cluster. Not available for new pools, use `sbs_5k` or `sbs_15k` instead.
 	// Default value: default_volume_type
 	RootVolumeType PoolVolumeType `json:"root_volume_type"`
 
@@ -1505,6 +1844,18 @@ type CreatePoolRequest struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be created. If unset, the pool will use default Kapsule security group in current zone.
 	SecurityGroupID *string `json:"security_group_id,omitempty"`
+
+	// Labels: kubernetes labels applied and reconciled on the nodes.
+	Labels map[string]string `json:"labels"`
+
+	// Taints: kubernetes taints applied and reconciled on the nodes.
+	Taints []*CoreV1Taint `json:"taints"`
+
+	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
@@ -1537,10 +1888,7 @@ type DeleteNodeRequest struct {
 	NodeID string `json:"-"`
 
 	// SkipDrain: skip draining node from its workload (Note: this parameter is currently inactive).
-	SkipDrain bool `json:"-"`
-
-	// Replace: add a new node after the deletion of this node.
-	Replace bool `json:"-"`
+	SkipDrain bool `json:"skip_drain"`
 }
 
 // DeletePoolRequest: delete pool request.
@@ -1550,37 +1898,6 @@ type DeletePoolRequest struct {
 
 	// PoolID: ID of the pool to delete.
 	PoolID string `json:"-"`
-}
-
-// ExternalNode: external node.
-type ExternalNode struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	ClusterURL string `json:"cluster_url"`
-
-	PoolVersion string `json:"pool_version"`
-
-	ClusterCa string `json:"cluster_ca"`
-
-	KubeToken string `json:"kube_token"`
-
-	KubeletConfig string `json:"kubelet_config"`
-
-	ExternalIP string `json:"external_ip"`
-
-	ContainerdVersion string `json:"containerd_version"`
-
-	RuncVersion string `json:"runc_version"`
-
-	CniPluginsVersion string `json:"cni_plugins_version"`
-
-	NodeLabels map[string]string `json:"node_labels"`
-
-	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
-
-	IamToken string `json:"iam_token"`
 }
 
 // ExternalNodeAuth: external node auth.
@@ -1812,6 +2129,9 @@ type ListClustersRequest struct {
 
 	// PrivateNetworkID: private Network ID to filter on, only clusters within this Private Network will be returned.
 	PrivateNetworkID *string `json:"-"`
+
+	// Version: version to filter on, only cluster matching this prefix version will be returned.
+	Version *string `json:"-"`
 }
 
 // ListClustersResponse: list clusters response.
@@ -1965,16 +2285,6 @@ type ListVersionsResponse struct {
 	Versions []*Version `json:"versions"`
 }
 
-// MigratePoolsToNewImagesRequest: migrate pools to new images request.
-type MigratePoolsToNewImagesRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	ClusterID string `json:"-"`
-
-	PoolIDs []string `json:"pool_ids"`
-}
-
 // NodeMetadata: node metadata.
 type NodeMetadata struct {
 	ID string `json:"id"`
@@ -1995,11 +2305,25 @@ type NodeMetadata struct {
 
 	NodeTaints []*NodeMetadataCoreV1Taint `json:"node_taints"`
 
+	ProviderID string `json:"provider_id"`
+
+	ResolvconfPath string `json:"resolvconf_path"`
+
+	TemplateArgs map[string]string `json:"template_args"`
+
 	HasGpu bool `json:"has_gpu"`
 
 	ExternalIP string `json:"external_ip"`
 
 	RepoURI string `json:"repo_uri"`
+
+	InstallerTags []string `json:"installer_tags"`
+
+	UpdaterBinURL string `json:"updater_bin_url"`
+
+	UpdaterBinVersion string `json:"updater_bin_version"`
+
+	UpdaterBinPath string `json:"updater_bin_path"`
 }
 
 // RebootNodeRequest: reboot node request.
@@ -2057,6 +2381,40 @@ type SetClusterTypeRequest struct {
 
 	// Type: type of the cluster. Note that some migrations are not possible (please refer to product documentation).
 	Type string `json:"type"`
+}
+
+// SetPoolLabelsRequest: set pool labels request.
+type SetPoolLabelsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	PoolID string `json:"-"`
+
+	Labels map[string]string `json:"labels"`
+}
+
+// SetPoolStartupTaintsRequest: set pool startup taints request.
+type SetPoolStartupTaintsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: ID of the pool to update.
+	PoolID string `json:"-"`
+
+	// StartupTaints: list of startup taints to set.
+	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+}
+
+// SetPoolTaintsRequest: set pool taints request.
+type SetPoolTaintsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: ID of the pool to update.
+	PoolID string `json:"-"`
+
+	// Taints: list of taints to set.
+	Taints []*CoreV1Taint `json:"taints"`
 }
 
 // UpdateClusterRequest: update cluster request.
@@ -2126,6 +2484,9 @@ type UpdatePoolRequest struct {
 
 	// UpgradePolicy: new upgrade policy for the pool.
 	UpgradePolicy *UpdatePoolRequestUpgradePolicy `json:"upgrade_policy,omitempty"`
+
+	// SecurityGroupID: security group ID in which all the nodes of the pool will be moved.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
 }
 
 // UpgradeClusterRequest: upgrade cluster request.
@@ -2168,7 +2529,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
 }
 
 // ListClusters: List all existing Kubernetes clusters in a specific region.
@@ -2195,6 +2556,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "version", req.Version)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2211,6 +2573,11 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Clusters {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2258,6 +2625,9 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2289,7 +2659,59 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
+}
+
+// WaitForClusterRequest is used by WaitForCluster method.
+type WaitForClusterRequest struct {
+	Region        scw.Region
+	ClusterID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForCluster waits for the Cluster to reach a terminal state.
+func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOption) (*Cluster, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ClusterStatus]struct{}{
+		ClusterStatusCreating: {},
+		ClusterStatusDeleting: {},
+		ClusterStatusUpdating: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetCluster(&GetClusterRequest{
+				Region:    req.Region,
+				ClusterID: req.ClusterID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Cluster failed")
+	}
+
+	return res.(*Cluster), nil
 }
 
 // UpdateCluster: Update information on a specific Kubernetes cluster. You can update details such as its name, description, tags and configuration. To upgrade a cluster, you will need to use the dedicated endpoint.
@@ -2325,6 +2747,9 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2360,6 +2785,9 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2396,6 +2824,9 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2432,6 +2863,9 @@ func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2493,6 +2927,11 @@ func (s *API) ListClusterAvailableTypes(req *ListClusterAvailableTypesRequest, o
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.ClusterTypes {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2604,6 +3043,11 @@ func (s *API) ListClusterACLRules(req *ListClusterACLRulesRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Rules {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }
@@ -2750,6 +3194,11 @@ func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Pools {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -2795,6 +3244,9 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2826,7 +3278,59 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
+}
+
+// WaitForPoolRequest is used by WaitForPool method.
+type WaitForPoolRequest struct {
+	Region        scw.Region
+	PoolID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForPool waits for the Pool to reach a terminal state.
+func (s *API) WaitForPool(req *WaitForPoolRequest, opts ...scw.RequestOption) (*Pool, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[PoolStatus]struct{}{
+		PoolStatusDeleting:  {},
+		PoolStatusScaling:   {},
+		PoolStatusUpgrading: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetPool(&GetPoolRequest{
+				Region: req.Region,
+				PoolID: req.PoolID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Pool failed")
+	}
+
+	return res.(*Pool), nil
 }
 
 // UpgradePool: Upgrade the Kubernetes version of a specific pool. Note that it only works if the targeted version matches the cluster's version.
@@ -2863,6 +3367,9 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2899,6 +3406,9 @@ func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -2930,11 +3440,14 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
-// MigratePoolsToNewImages: If no pool is specified, all pools of the cluster will be migrated to new images.
-func (s *API) MigratePoolsToNewImages(req *MigratePoolsToNewImagesRequest, opts ...scw.RequestOption) error {
+// SetPoolTaints: Apply a list of taints to all nodes of the pool which will be periodically reconciled by scaleway.
+func (s *API) SetPoolTaints(req *SetPoolTaintsRequest, opts ...scw.RequestOption) (*Pool, error) {
 	var err error
 
 	if req.Region == "" {
@@ -2943,28 +3456,111 @@ func (s *API) MigratePoolsToNewImages(req *MigratePoolsToNewImagesRequest, opts 
 	}
 
 	if fmt.Sprint(req.Region) == "" {
-		return errors.New("field Region cannot be empty in request")
+		return nil, errors.New("field Region cannot be empty in request")
 	}
 
-	if fmt.Sprint(req.ClusterID) == "" {
-		return errors.New("field ClusterID cannot be empty in request")
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
 	}
 
 	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/clusters/" + fmt.Sprint(req.ClusterID) + "/migrate-pools-to-new-images",
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-taints",
 	}
 
 	err = scwReq.SetBody(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = s.client.Do(scwReq, nil, opts...)
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
+	return &resp, nil
+}
+
+// SetPoolStartupTaints: Apply a list of taints to new nodes of the pool which would not be reconciled by scaleway.
+func (s *API) SetPoolStartupTaints(req *SetPoolStartupTaintsRequest, opts ...scw.RequestOption) (*Pool, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-startup-taints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
+	return &resp, nil
+}
+
+// SetPoolLabels: Apply a list of taints to all nodes of the pool (only apply to labels which was set through scaleway api).
+func (s *API) SetPoolLabels(req *SetPoolLabelsRequest, opts ...scw.RequestOption) (*Pool, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/set-labels",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
+	return &resp, nil
 }
 
 // GetNodeMetadata: Rerieve metadata to instantiate a Kapsule/Kosmos node. This method is not intended to be called by end users but rather programmatically by the node-installer.
@@ -3030,42 +3626,6 @@ func (s *API) AuthExternalNode(req *AuthExternalNodeRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// CreateExternalNode: Retrieve metadata for a Kosmos node. This method is not intended to be called by end users but rather programmatically by the kapsule-node-agent.
-func (s *API) CreateExternalNode(req *CreateExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNode, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PoolID) == "" {
-		return nil, errors.New("field PoolID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/external-nodes",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ExternalNode
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // ListNodes: List all the existing nodes for a specific Kubernetes cluster.
 func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*ListNodesResponse, error) {
 	var err error
@@ -3108,6 +3668,11 @@ func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.Nodes {
+		el.setSRN(platform)
+	}
 	return &resp, nil
 }
 
@@ -3139,10 +3704,65 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
-// Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// WaitForNodeRequest is used by WaitForNode method.
+type WaitForNodeRequest struct {
+	Region        scw.Region
+	NodeID        string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForNode waits for the Node to reach a terminal state.
+func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*Node, error) {
+	timeout := defaultK8sTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultK8sRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[NodeStatus]struct{}{
+		NodeStatusCreating:    {},
+		NodeStatusDeleting:    {},
+		NodeStatusRebooting:   {},
+		NodeStatusUpgrading:   {},
+		NodeStatusStarting:    {},
+		NodeStatusRegistering: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetNode(&GetNodeRequest{
+				Region: req.Region,
+				NodeID: req.NodeID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Node failed")
+	}
+
+	return res.(*Node), nil
+}
+
+// ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3175,6 +3795,9 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3211,10 +3834,13 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
-// DeleteNode: Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// DeleteNode: Delete a specific Node. Pool size is reduced by 1. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3225,7 +3851,6 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "skip_drain", req.SkipDrain)
-	parameter.AddToQuery(query, "replace", req.Replace)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3247,6 +3872,9 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3305,6 +3933,9 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 	if err != nil {
 		return nil, err
 	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	resp.setSRN(platform)
 	return &resp, nil
 }
 
@@ -3341,6 +3972,11 @@ func (s *API) ListClusterTypes(req *ListClusterTypesRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	// platform := s.client.GetPlatform()
+	platform := "scw.eu"
+	for _, el := range resp.ClusterTypes {
+		el.setSRN(platform)
 	}
 	return &resp, nil
 }

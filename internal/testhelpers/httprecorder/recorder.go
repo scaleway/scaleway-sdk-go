@@ -1,15 +1,13 @@
 package httprecorder
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-	"strings"
+	"testing"
 
-	"github.com/dnaeon/go-vcr/cassette"
-	"github.com/dnaeon/go-vcr/recorder"
-	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+	"github.com/scaleway/scaleway-sdk-go/vcr"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
 
 // IsUpdatingCassette returns true if we are updating cassettes.
@@ -27,52 +25,40 @@ func IsUpdatingCassette() bool {
 // To update the cassette files, add  `SDK_UPDATE_CASSETTES=true` to the environment variables.
 // When updating cassettes, make sure your Scaleway credentials are set in your config or in the
 // variables `SCW_ACCESS_KEY` and `SCW_SECRET_KEY`.
-func CreateRecordedScwClient(cassetteName string) (*scw.Client, *recorder.Recorder, error) {
+func CreateRecordedScwClient(t *testing.T) (*scw.Client, *recorder.Recorder, error) {
+	t.Helper()
+
 	UpdateCassette := IsUpdatingCassette()
 
-	var activeProfile *scw.Profile
-
-	recorderMode := recorder.ModeReplaying
-	if UpdateCassette {
-		recorderMode = recorder.ModeRecording
-		config, err := scw.LoadConfig()
-		if err != nil {
-			return nil, nil, err
-		}
-		activeProfile, err = config.GetActiveProfile()
-		if err != nil {
-			return nil, nil, err
-		}
+	pkgFolder, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("cannot detect working directory for testing")
 	}
 
-	// Setup recorder and scw client
-	r, err := recorder.NewAsMode("testdata/"+cassetteName, recorderMode, nil)
+	// Setup recorder
+	r, err := vcr.NewHTTPRecorder(t, pkgFolder, UpdateCassette, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	// Add a filter which removes Authorization headers from all requests:
-	r.AddFilter(func(i *cassette.Interaction) error {
-		delete(i.Request.Headers, "x-auth-token")
-		delete(i.Request.Headers, "X-Auth-Token")
-
-		if UpdateCassette {
-			secretKey := *activeProfile.SecretKey
-			if i != nil && strings.Contains(fmt.Sprintf("%v", *i), secretKey) {
-				panic(errors.New("found secret key in cassette"))
-			}
-		}
-
-		return nil
-	})
-
 	// Create new http.Client where transport is the recorder
 	httpClient := &http.Client{Transport: r}
 
+	var activeProfile *scw.Profile
 	var client *scw.Client
 
 	if UpdateCassette {
-		// When updating the recoreded test requests, we need the access key and secret key.
+		// When updating the recorded test requests, we need the access key and secret key.
+		config, err := scw.LoadConfig()
+		if err != nil {
+			activeProfile = &scw.Profile{}
+		} else {
+			activeProfile, err = config.GetActiveProfile()
+			if err != nil {
+				return nil, nil, err
+			}
+		}
+
 		client, err = scw.NewClient(
 			scw.WithHTTPClient(httpClient),
 			scw.WithProfile(activeProfile),

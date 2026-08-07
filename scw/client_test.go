@@ -14,6 +14,8 @@ import (
 
 const (
 	testAPIURL                = "https://api.example.com"
+	testS3Endpoint            = "https://s3.example.com"
+	testS3UsePathStyle        = true
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -86,12 +88,92 @@ func TestNewClientWithDefaults(t *testing.T) {
 	testhelpers.Equals(t, auth.NewNoAuth(), client.auth)
 }
 
+func TestNewClientS3Endpoint(t *testing.T) {
+	t.Run("Empty S3 endpoint", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+		}
+
+		client, err := NewClient(options...)
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Equals(t, "", client.s3Endpoint)
+	})
+
+	t.Run("Default S3 endpoint for fr-par", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+			WithDefaultRegion("fr-par"),
+		}
+
+		client, err := NewClient(options...)
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Equals(t, "https://s3.fr-par.scw.cloud", client.s3Endpoint)
+	})
+
+	t.Run("Default S3 endpoint for nl-ams", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+			WithDefaultRegion("nl-ams"),
+		}
+
+		client, err := NewClient(options...)
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Equals(t, "https://s3.nl-ams.scw.cloud", client.s3Endpoint)
+	})
+
+	t.Run("Custom S3 endpoint, with default region", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+			WithDefaultRegion("fr-par"),
+			WithS3Endpoint("https://my-s3-endpoint.com"),
+		}
+
+		client, err := NewClient(options...)
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Equals(t, "https://my-s3-endpoint.com", client.s3Endpoint)
+	})
+
+	t.Run("Custom S3 endpoint, without default region", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+			WithS3Endpoint("https://my-s3-endpoint.com"),
+		}
+
+		client, err := NewClient(options...)
+		testhelpers.AssertNoError(t, err)
+
+		testhelpers.Equals(t, "https://my-s3-endpoint.com", client.s3Endpoint)
+	})
+
+	t.Run("Custom S3 endpoint, validation error (trailing slash)", func(t *testing.T) {
+		options := []ClientOption{
+			WithInsecure(),
+			WithS3Endpoint("https://my-s3-endpoint.com/"),
+		}
+
+		expectedErr := "invalid S3 endpoint 'https://my-s3-endpoint.com/': trailing slash is not allowed"
+
+		_, err := NewClient(options...)
+		if err == nil {
+			t.Fatal("expected error, got none")
+		} else if !strings.Contains(err.Error(), expectedErr) {
+			t.Fatalf("expected error to contain '%s', got '%s'", expectedErr, err.Error())
+		}
+	})
+}
+
 func TestNewClientWithOptions(t *testing.T) {
 	t.Run("Basic", func(t *testing.T) {
 		someHTTPClient := &http.Client{}
 
 		options := []ClientOption{
 			WithAPIURL(testAPIURL),
+			WithS3Endpoint(testS3Endpoint),
+			WithS3UsePathStyle(testS3UsePathStyle),
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
 			WithDefaultOrganizationID(testDefaultOrganizationID),
@@ -108,6 +190,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 
 		testhelpers.Equals(t, someHTTPClient, client.httpClient)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
@@ -143,6 +232,8 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testAccessKey),
 			s(testSecretKey),
 			s(testAPIURL),
+			s(testS3Endpoint),
+			b(testS3UsePathStyle),
 			b(testInsecure),
 			s(testDefaultOrganizationID),
 			s(testDefaultProjectID),
@@ -164,6 +255,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, ok, "clientTransport must be not nil")
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
@@ -200,8 +298,22 @@ func (fakeHTTPClient) Do(*http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func (fakeHTTPClient) RoundTrip(*http.Request) (*http.Response, error) {
+type fakeTransport struct{}
+
+func (fakeTransport) RoundTrip(*http.Request) (*http.Response, error) {
 	return nil, nil
+}
+
+type fakeAltTransport struct {
+	insecure bool
+}
+
+func (f *fakeAltTransport) RoundTrip(*http.Request) (*http.Response, error) {
+	return nil, nil
+}
+
+func (f *fakeAltTransport) SetInsecureTransport() {
+	f.insecure = true
 }
 
 // TestSetInsecureMode test if setInsecureMode panic when given custom HTTP client
@@ -211,8 +323,14 @@ func TestSetInsecureMode(t *testing.T) {
 
 	// custom Transport client
 	clientWithFakeTransport := newHTTPClient()
-	clientWithFakeTransport.Transport = fakeHTTPClient{}
+	clientWithFakeTransport.Transport = fakeTransport{}
 	setInsecureMode(clientWithFakeTransport)
+
+	// custom Alt transport client
+	customTransport := &fakeAltTransport{}
+	clientWithFakeTransport.Transport = customTransport
+	setInsecureMode(clientWithFakeTransport)
+	testhelpers.Equals(t, true, customTransport.insecure)
 
 	// custom HTTP client
 	setInsecureMode(fakeHTTPClient{})
@@ -222,7 +340,7 @@ func TestSetInsecureMode(t *testing.T) {
 	getLogMessage := func(s string) string {
 		return strings.Join(strings.Split(s, " ")[3:], " ")
 	}
-	testhelpers.Equals(t, "client: cannot use insecure mode with Transport client of type scw.fakeHTTPClient", getLogMessage(lines[0]))
+	testhelpers.Equals(t, "client: cannot use insecure mode with Transport client of type scw.fakeTransport", getLogMessage(lines[0]))
 	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
@@ -234,4 +352,26 @@ func TestNewVariableFromType(t *testing.T) {
 	}
 
 	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
+}
+
+func TestClientGetAPIMetadata(t *testing.T) {
+	t.Run("APIMetadata", func(t *testing.T) {
+		client, err := NewClient()
+		testhelpers.AssertNoError(t, err)
+
+		metadata, err := client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+
+		// let's make sure the client cannot call home anymore
+		// (in fact, if it tries to use httpClient, it will panic)
+		client.httpClient = nil
+		metadata, err = client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+	})
 }

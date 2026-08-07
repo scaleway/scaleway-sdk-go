@@ -1,6 +1,7 @@
 package scw
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -27,12 +28,21 @@ type Client struct {
 	httpClient            httpClient
 	auth                  auth.Auth
 	apiURL                string
+	apiMetadata           ApiMetadata
+	s3Endpoint            string
+	s3UsePathStyle        bool
 	userAgent             string
 	defaultOrganizationID *string
 	defaultProjectID      *string
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+}
+
+type ApiMetadata struct {
+	Platform  string
+	Partition string
+	Domain    string
 }
 
 func defaultOptions() []ClientOption {
@@ -52,6 +62,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// apply options
 	s.apply(append(defaultOptions(), opts...))
+
+	// default s3 endpoint, cannot be set directly using defaultOptions()
+	// because it relies on s.defaultRegion
+	if s.defaultRegion != nil && s.s3Endpoint == "" {
+		s.s3Endpoint = "https://s3." + s.defaultRegion.String() + ".scw.cloud"
+	}
 
 	// validate settings
 	err := s.validate()
@@ -81,6 +97,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		auth:                  s.token,
 		httpClient:            s.httpClient,
 		apiURL:                s.apiURL,
+		s3Endpoint:            s.s3Endpoint,
+		s3UsePathStyle:        s.s3UsePathStyle,
 		userAgent:             s.userAgent,
 		defaultOrganizationID: s.defaultOrganizationID,
 		defaultProjectID:      s.defaultProjectID,
@@ -88,6 +106,27 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		defaultZone:           s.defaultZone,
 		defaultPageSize:       s.defaultPageSize,
 	}, nil
+}
+
+// GetAPIMetadata returns the API metadata exposed by the API
+// Gateway. This metadata holds information on the platform,
+// the partition and the domain on which the Scaleway cloud is
+// running.
+func (c *Client) GetAPIMetadata() (ApiMetadata, error) {
+	if c.apiMetadata != (ApiMetadata{}) {
+		return c.apiMetadata, nil
+	}
+
+	scwReq := &ScalewayRequest{
+		Method: "GET",
+		Path:   "/metadata",
+	}
+
+	err := c.Do(scwReq, &c.apiMetadata)
+	if err != nil {
+		return ApiMetadata{}, errors.Wrap(err, "could request api metadata")
+	}
+	return c.apiMetadata, nil
 }
 
 // GetDefaultOrganizationID returns the default organization ID
@@ -147,6 +186,23 @@ func (c *Client) GetAccessKey() (accessKey string, exists bool) {
 	return "", false
 }
 
+// GetS3Endpoint returns the S3 endpoint of the client.
+// This value can be set in the client option
+// WithS3Endpoint(). Be aware this value can be empty.
+func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
+	if c.s3Endpoint != "" {
+		return c.s3Endpoint, true
+	}
+
+	return "", false
+}
+
+// GetS3UsePathStyle returns the S3UsePathStyle option value.
+// This value can be set in the client option WithS3UsePathStyle().
+func (c *Client) GetS3UsePathStyle() (s3UsePathStyle bool) {
+	return c.s3UsePathStyle
+}
+
 // GetDefaultPageSize returns the default page size of the client.
 // This value can be set in the client option
 // WithDefaultPageSize(). Be aware this value can be empty.
@@ -201,16 +257,16 @@ func (c *Client) do(req *ScalewayRequest, res any) (sdkErr error) {
 	logger.Debugf("creating %s request on %s\n", req.Method, url.String())
 
 	// build request
-	httpRequest, err := http.NewRequest(req.Method, url.String(), req.Body)
+	ctx := req.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	httpRequest, err := http.NewRequestWithContext(ctx, req.Method, url.String(), req.Body)
 	if err != nil {
 		return errors.Wrap(err, "could not create request")
 	}
 
 	httpRequest.Header = req.getAllHeaders(req.auth, c.userAgent, false)
-
-	if req.ctx != nil {
-		httpRequest = httpRequest.WithContext(req.ctx)
-	}
 
 	// execute request
 	httpResponse, err := c.httpClient.Do(httpRequest)
@@ -394,7 +450,7 @@ L: // We gather potential errors and return them all together
 	for {
 		select {
 		case newErr := <-errChan:
-			err = errors.Wrap(err, newErr.Error())
+			err = errors.Wrap(err, "%s", newErr.Error())
 		default:
 			break L
 		}
@@ -555,6 +611,15 @@ func setInsecureMode(c httpClient) {
 		logger.Warningf("client: cannot use insecure mode with HTTP client of type %T", c)
 		return
 	}
+
+	altTransport, ok := standardHTTPClient.Transport.(interface {
+		SetInsecureTransport()
+	})
+	if ok {
+		altTransport.SetInsecureTransport()
+		return
+	}
+
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
 		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)

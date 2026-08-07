@@ -1,0 +1,185 @@
+codecov:
+  branch: master
+
+component_management:
+  individual_components:
+    - component_id: account
+      name: account
+      paths:
+        - ./api/account/**
+    - component_id: applesilicon
+      name: applesilicon
+      paths:
+        - ./api/applesilicon/**
+    - component_id: audit_trail
+      name: audit_trail
+      paths:
+        - ./api/audit_trail/**
+    - component_id: autoscaling
+      name: autoscaling
+      paths:
+        - ./api/autoscaling/**
+    - component_id: baremetal
+      name: baremetal
+      paths:
+        - ./api/baremetal/**
+    - component_id: billing
+      name: billing
+      paths:
+        - ./api/billing/**
+    - component_id: block
+      name: block
+      paths:
+        - ./api/block/**
+    - component_id: cockpit
+      name: cockpit
+      paths:
+        - ./api/cockpit/**
+    - component_id: container
+      name: container
+      paths:
+        - ./api/container/**
+    - component_id: datawarehouse
+      name: datawarehouse
+      paths:
+        - ./api/datawarehouse/**
+    - component_id: dedibox
+      name: dedibox
+      paths:
+        - ./api/dedibox/**
+    - component_id: documentdb
+      name: documentdb
+      paths:
+        - ./api/documentdb/**
+    - component_id: domain
+      name: domain
+      paths:
+        - ./api/domain/**
+    - component_id: edge_services
+      name: edge_services
+      paths:
+        - ./api/edge_services/**
+    - component_id: environmental_footprint
+      name: environmental_footprint
+      paths:
+        - ./api/environmental_footprint/**
+    - component_id: file
+      name: file
+      paths:
+        - ./api/file/**
+    - component_id: flexibleip
+      name: flexibleip
+      paths:
+        - ./api/flexibleip/**
+    - component_id: function
+      name: function
+      paths:
+        - ./api/function/**
+    - component_id: iam
+      name: iam
+      paths:
+        - ./api/iam/**
+    - component_id: inference
+      name: inference
+      paths:
+        - ./api/inference/**
+    - component_id: instance
+      name: instance
+      paths:
+        - ./api/instance/**
+    - component_id: interlink
+      name: interlink
+      paths:
+        - ./api/interlink/**
+    - component_id: iot
+      name: iot
+      paths:
+        - ./api/iot/**
+    - component_id: ipam
+      name: ipam
+      paths:
+        - ./api/ipam/**
+    - component_id: jobs
+      name: jobs
+      paths:
+        - ./api/jobs/**
+    - component_id: k8s
+      name: k8s
+      paths:
+        - ./api/k8s/**
+    - component_id: key_manager
+      name: key_manager
+      paths:
+        - ./api/key_manager/**
+    - component_id: lb
+      name: lb
+      paths:
+        - ./api/lb/**
+    - component_id: marketplace
+      name: marketplace
+      paths:
+        - ./api/marketplace/**
+    - component_id: mnq
+      name: mnq
+      paths:
+        - ./api/mnq/**
+    - component_id: mongodb
+      name: mongodb
+      paths:
+        - ./api/mongodb/**
+    - component_id: product_catalog
+      name: product_catalog
+      paths:
+        - ./api/product_catalog/**
+    - component_id: qaas
+      name: qaas
+      paths:
+        - ./api/qaas/**
+    - component_id: rdb
+      name: rdb
+      paths:
+        - ./api/rdb/**
+    - component_id: redis
+      name: redis
+      paths:
+        - ./api/redis/**
+    - component_id: registry
+      name: registry
+      paths:
+        - ./api/registry/**
+    - component_id: s2s_vpn
+      name: s2s_vpn
+      paths:
+        - ./api/s2s_vpn/**
+    - component_id: secret
+      name: secret
+      paths:
+        - ./api/secret/**
+    - component_id: serverless_sqldb
+      name: serverless_sqldb
+      paths:
+        - ./api/serverless_sqldb/**
+    - component_id: std
+      name: std
+      paths:
+        - ./api/std/**
+    - component_id: tem
+      name: tem
+      paths:
+        - ./api/tem/**
+    - component_id: test
+      name: test
+      paths:
+        - ./api/test/**
+    - component_id: vpc
+      name: vpc
+      paths:
+        - ./api/vpc/**
+    - component_id: vpcgw
+      name: vpcgw
+      paths:
+        - ./api/vpcgw/**
+    - component_id: webhosting
+      name: webhosting
+      paths:
+        - ./api/webhosting/**
