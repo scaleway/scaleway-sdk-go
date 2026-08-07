@@ -6218,7 +6218,7 @@ func (s *API) SubscribeServerOption(req *SubscribeServerOptionRequest, opts ...s
 	return &resp, nil
 }
 
-// CreateServer: Create a new baremetal server. The order return you a service ID to follow the provisionning status you could call GetService.
+// CreateServer: Create a new baremetal server. The order return you a service ID to follow the provisioning status you could call GetService.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Service, error) {
 	var err error
 
