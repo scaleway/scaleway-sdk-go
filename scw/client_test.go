@@ -15,6 +15,7 @@ import (
 const (
 	testAPIURL                = "https://api.example.com"
 	testS3Endpoint            = "https://s3.example.com"
+	testS3UsePathStyle        = true
 	defaultAPIURL             = "https://api.scaleway.com"
 	testAccessKey             = "SCW1234567890ABCDEFG"
 	testSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
@@ -172,6 +173,7 @@ func TestNewClientWithOptions(t *testing.T) {
 		options := []ClientOption{
 			WithAPIURL(testAPIURL),
 			WithS3Endpoint(testS3Endpoint),
+			WithS3UsePathStyle(testS3UsePathStyle),
 			WithAuth(testAccessKey, testSecretKey),
 			WithHTTPClient(someHTTPClient),
 			WithDefaultOrganizationID(testDefaultOrganizationID),
@@ -188,6 +190,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 
 		testhelpers.Equals(t, someHTTPClient, client.httpClient)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
@@ -224,6 +233,7 @@ func TestNewClientWithOptions(t *testing.T) {
 			s(testSecretKey),
 			s(testAPIURL),
 			s(testS3Endpoint),
+			b(testS3UsePathStyle),
 			b(testInsecure),
 			s(testDefaultOrganizationID),
 			s(testDefaultProjectID),
@@ -246,6 +256,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Assert(t, ok, "clientTransport must be not nil")
 		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
 		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		s3Endpoint, exist := client.GetS3Endpoint()
+		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
+		testhelpers.Assert(t, exist, "s3Endpoint must exist")
+
+		s3UsePathStyle := client.GetS3UsePathStyle()
+		testhelpers.Equals(t, testS3UsePathStyle, s3UsePathStyle)
 
 		defaultOrganizationID, exist := client.GetDefaultOrganizationID()
 		testhelpers.Equals(t, testDefaultOrganizationID, defaultOrganizationID)
@@ -336,4 +353,26 @@ func TestNewVariableFromType(t *testing.T) {
 	}
 
 	testhelpers.Equals(t, &fakeType{}, newVariableFromType(&fakeType{3}))
+}
+
+func TestClientGetAPIMetadata(t *testing.T) {
+	t.Run("APIMetadata", func(t *testing.T) {
+		client, err := NewClient()
+		testhelpers.AssertNoError(t, err)
+
+		metadata, err := client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+
+		// let's make sure the client cannot call home anymore
+		// (in fact, if it tries to use httpClient, it will panic)
+		client.httpClient = nil
+		metadata, err = client.GetAPIMetadata()
+		testhelpers.AssertNoError(t, err)
+		testhelpers.Equals(t, "scw.eu", metadata.Domain)
+		testhelpers.Equals(t, "scw", metadata.Partition)
+		testhelpers.Equals(t, "external", metadata.Platform)
+	})
 }

@@ -616,9 +616,10 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -711,10 +712,11 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Filesystems {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Filesystems {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -763,10 +765,11 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	for _, el := range resp.Attachments {
-		el.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Attachments {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -805,9 +808,10 @@ func (s *API) CreateFileSystem(req *CreateFileSystemRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -873,8 +877,9 @@ func (s *API) UpdateFileSystem(req *UpdateFileSystemRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	// platform := s.client.GetPlatform()
-	platform := "scw.eu"
-	resp.setSRN(platform)
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }

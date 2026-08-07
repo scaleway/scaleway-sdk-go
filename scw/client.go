@@ -28,13 +28,21 @@ type Client struct {
 	httpClient            httpClient
 	auth                  auth.Auth
 	apiURL                string
+	apiMetadata           ApiMetadata
 	s3Endpoint            string
+	s3UsePathStyle        bool
 	userAgent             string
 	defaultOrganizationID *string
 	defaultProjectID      *string
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+}
+
+type ApiMetadata struct {
+	Platform  string
+	Partition string
+	Domain    string
 }
 
 func defaultOptions() []ClientOption {
@@ -90,6 +98,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		httpClient:            s.httpClient,
 		apiURL:                s.apiURL,
 		s3Endpoint:            s.s3Endpoint,
+		s3UsePathStyle:        s.s3UsePathStyle,
 		userAgent:             s.userAgent,
 		defaultOrganizationID: s.defaultOrganizationID,
 		defaultProjectID:      s.defaultProjectID,
@@ -97,6 +106,27 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		defaultZone:           s.defaultZone,
 		defaultPageSize:       s.defaultPageSize,
 	}, nil
+}
+
+// GetAPIMetadata returns the API metadata exposed by the API
+// Gateway. This metadata holds information on the platform,
+// the partition and the domain on which the Scaleway cloud is
+// running.
+func (c *Client) GetAPIMetadata() (ApiMetadata, error) {
+	if c.apiMetadata != (ApiMetadata{}) {
+		return c.apiMetadata, nil
+	}
+
+	scwReq := &ScalewayRequest{
+		Method: "GET",
+		Path:   "/metadata",
+	}
+
+	err := c.Do(scwReq, &c.apiMetadata)
+	if err != nil {
+		return ApiMetadata{}, errors.Wrap(err, "could request api metadata")
+	}
+	return c.apiMetadata, nil
 }
 
 // GetDefaultOrganizationID returns the default organization ID
@@ -174,6 +204,12 @@ func (c *Client) GetS3Endpoint() (s3Endpoint string, exists bool) {
 	}
 
 	return "", false
+}
+
+// GetS3UsePathStyle returns the S3UsePathStyle option value.
+// This value can be set in the client option WithS3UsePathStyle().
+func (c *Client) GetS3UsePathStyle() (s3UsePathStyle bool) {
+	return c.s3UsePathStyle
 }
 
 // GetDefaultPageSize returns the default page size of the client.

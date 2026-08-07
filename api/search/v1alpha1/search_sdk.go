@@ -38,87 +38,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type Locality string
-
-const (
-	LocalityUnknownLocality = Locality("unknown_locality")
-	LocalityGlobal          = Locality("global")
-	LocalityFrRz            = Locality("fr_rz")
-	LocalityFrSrr           = Locality("fr_srr")
-	LocalityFrSrr1          = Locality("fr_srr_1")
-	LocalityFrPar           = Locality("fr_par")
-	LocalityFrPar1          = Locality("fr_par_1")
-	LocalityFrPar2          = Locality("fr_par_2")
-	LocalityFrPar3          = Locality("fr_par_3")
-	LocalityFrPar4          = Locality("fr_par_4")
-	LocalityNlAms           = Locality("nl_ams")
-	LocalityNlAms1          = Locality("nl_ams_1")
-	LocalityNlAms2          = Locality("nl_ams_2")
-	LocalityNlAms3          = Locality("nl_ams_3")
-	LocalityPlWaw           = Locality("pl_waw")
-	LocalityPlWaw1          = Locality("pl_waw_1")
-	LocalityPlWaw2          = Locality("pl_waw_2")
-	LocalityPlWaw3          = Locality("pl_waw_3")
-	LocalityFrInt           = Locality("fr_int")
-	LocalityFrInt1          = Locality("fr_int_1")
-	LocalityFrLab           = Locality("fr_lab")
-	LocalityFrLab1          = Locality("fr_lab_1")
-	LocalityItMil           = Locality("it_mil")
-	LocalityItMil1          = Locality("it_mil_1")
-)
-
-func (enum Locality) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(LocalityUnknownLocality)
-	}
-	return string(enum)
-}
-
-func (enum Locality) Values() []Locality {
-	return []Locality{
-		"unknown_locality",
-		"global",
-		"fr_rz",
-		"fr_srr",
-		"fr_srr_1",
-		"fr_par",
-		"fr_par_1",
-		"fr_par_2",
-		"fr_par_3",
-		"fr_par_4",
-		"nl_ams",
-		"nl_ams_1",
-		"nl_ams_2",
-		"nl_ams_3",
-		"pl_waw",
-		"pl_waw_1",
-		"pl_waw_2",
-		"pl_waw_3",
-		"fr_int",
-		"fr_int_1",
-		"fr_lab",
-		"fr_lab_1",
-		"it_mil",
-		"it_mil_1",
-	}
-}
-
-func (enum Locality) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *Locality) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = Locality(Locality(tmp).String())
-	return nil
-}
-
 type ObsDatasourceInfoDataType string
 
 const (
@@ -518,6 +437,12 @@ type Resource struct {
 	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	ServerlessContainersContainerInfo *ServerlessContainersContainerInfo `json:"serverless_containers_container_info,omitempty"`
 
+	// CreatedAt: creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
 	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	BaremetalServerInfo *BrmServerInfo `json:"baremetal_server_info,omitempty"`
 
@@ -546,7 +471,7 @@ type SearchResourcesRequest struct {
 	Types []ResourceType `json:"-"`
 
 	// Localities: list of scopes (zones, regions, or global) to filter the resources by.
-	Localities []Locality `json:"-"`
+	Localities []string `json:"-"`
 
 	// CreatedAfter: filter resources created after this timestamp.
 	CreatedAfter *time.Time `json:"-"`
