@@ -3,6 +3,7 @@ package scw
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -23,6 +24,12 @@ const (
 	ZoneFrPar2 = Zone("fr-par-2")
 	// ZoneFrPar3 represents the fr-par-3 zone
 	ZoneFrPar3 = Zone("fr-par-3")
+	// ZoneFrSnc1 represents the fr-snc-1 zone
+	ZoneFrSnc1 = Zone("fr-snc-1")
+	// ZoneFrSnc2 represents the fr-snc-2 zone
+	ZoneFrSnc2 = Zone("fr-snc-2")
+	// ZoneFrSnc3 represents the fr-snc-3 zone
+	ZoneFrSnc3 = Zone("fr-snc-3")
 	// ZoneNlAms1 represents the nl-ams-1 zone
 	ZoneNlAms1 = Zone("nl-ams-1")
 	// ZoneNlAms2 represents the nl-ams-2 zone
@@ -44,6 +51,9 @@ var AllZones = []Zone{
 	ZoneFrPar1,
 	ZoneFrPar2,
 	ZoneFrPar3,
+	ZoneFrSnc1,
+	ZoneFrSnc2,
+	ZoneFrSnc3,
 	ZoneNlAms1,
 	ZoneNlAms2,
 	ZoneNlAms3,
@@ -85,6 +95,8 @@ type Region string
 const (
 	// RegionFrPar represents the fr-par region
 	RegionFrPar = Region("fr-par")
+	// RegionFrSnc represents the fr-snc region
+	RegionFrSnc = Region("fr-snc")
 	// RegionNlAms represents the nl-ams region
 	RegionNlAms = Region("nl-ams")
 	// RegionPlWaw represents the pl-waw region
@@ -96,6 +108,7 @@ const (
 // AllRegions is an array that list all regions
 var AllRegions = []Region{
 	RegionFrPar,
+	RegionFrSnc,
 	RegionNlAms,
 	RegionPlWaw,
 	RegionItMil,
@@ -103,12 +116,7 @@ var AllRegions = []Region{
 
 // Exists checks whether a region exists
 func (region Region) Exists() bool {
-	for _, r := range AllRegions {
-		if r == region {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(AllRegions, region)
 }
 
 // GetZones is a function that returns the zones for the specified region
@@ -116,6 +124,8 @@ func (region Region) GetZones() []Zone {
 	switch region {
 	case RegionFrPar:
 		return []Zone{ZoneFrPar1, ZoneFrPar2, ZoneFrPar3}
+	case RegionFrSnc:
+		return []Zone{ZoneFrSnc1, ZoneFrSnc2, ZoneFrSnc3}
 	case RegionNlAms:
 		return []Zone{ZoneNlAms1, ZoneNlAms2, ZoneNlAms3}
 	case RegionPlWaw:
