@@ -65,12 +65,7 @@ var AllZones = []Zone{
 
 // Exists checks whether a zone exists
 func (zone Zone) Exists() bool {
-	for _, z := range AllZones {
-		if z == zone {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(AllZones, zone)
 }
 
 // String returns a Zone as a string
