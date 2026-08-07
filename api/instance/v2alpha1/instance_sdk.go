@@ -3133,6 +3133,18 @@ type ResourceCounts struct {
 
 	// PrivateNetworkInterfaces: number of private network interfaces.
 	PrivateNetworkInterfaces uint32 `json:"private_network_interfaces"`
+
+	// Templates: number of templates.
+	Templates uint32 `json:"templates"`
+
+	// FlexibleIPs: number of flexible IPs.
+	FlexibleIPs uint32 `json:"flexible_ips"`
+
+	// UnusedFlexibleIPs: number of flexible IPs not attached to any server.
+	UnusedFlexibleIPs uint32 `json:"unused_flexible_ips"`
+
+	// Images: number of images.
+	Images uint32 `json:"images"`
 }
 
 // Server: server.
