@@ -37,6 +37,7 @@ func cassetteRequestFilter(i *cassette.Interaction) error {
 	delete(i.Request.Headers, "x-auth-token")
 	delete(i.Request.Headers, "X-Auth-Token")
 	delete(i.Request.Headers, "Authorization")
+	delete(i.Request.Headers, "X-Registry-Auth")
 
 	// URL substitutions
 	i.Request.URL = regexp.MustCompile(`(.+)organization_id=[0-9a-f-]{36}(.+)`).
