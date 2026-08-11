@@ -1585,7 +1585,7 @@ type ACLMatch struct {
 	// IPSubnet: list of IPs or CIDR v4/v6 addresses to filter for from the client side.
 	IPSubnet []*string `json:"ip_subnet"`
 
-	// IPsEdgeServices: defines whether Edge Services IPs should be matched.
+	// IPsEdgeServices: defines whether Edge Services IPs should be matched. If set to `true`, restricts all connections except for Edge Services.
 	IPsEdgeServices bool `json:"ips_edge_services"`
 
 	// HTTPFilter: type of HTTP filter to match. Extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). Defines where to filter for the http_filter_value. Only supported for HTTP backends.
