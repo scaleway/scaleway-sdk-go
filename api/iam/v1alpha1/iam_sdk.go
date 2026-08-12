@@ -1446,6 +1446,12 @@ type Group struct {
 	// Managed: defines whether or not the group is managed.
 	Managed bool `json:"managed"`
 
+	// AllUsers: indicates if the group is the special "All Users" group that contains all users of the organization.
+	AllUsers bool `json:"all_users"`
+
+	// AllApplications: indicates if the group is the special "All Applications" group that contains all non-managed applications of the organization.
+	AllApplications bool `json:"all_applications"`
+
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
 }
