@@ -1255,6 +1255,8 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
+	Action *string `json:"action"`
+
 	// Deprecated
 	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
