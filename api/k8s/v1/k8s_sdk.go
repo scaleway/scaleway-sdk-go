@@ -1856,6 +1856,9 @@ type CreatePoolRequest struct {
 
 	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// UserData: user data applied and reconciled with the pool.
+	UserData map[string][]byte `json:"user_data"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
@@ -1950,6 +1953,18 @@ type GetPoolRequest struct {
 
 	// PoolID: ID of the requested pool.
 	PoolID string `json:"-"`
+}
+
+// GetUserDataRequest: get user data request.
+type GetUserDataRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: pool the user data will be attached to.
+	PoolID string `json:"-"`
+
+	// Key: user data key to retrieved.
+	Key string `json:"-"`
 }
 
 // GetVersionRequest: get version request.
@@ -3577,6 +3592,42 @@ func (s *API) SetPoolLabels(req *SetPoolLabelsRequest, opts ...scw.RequestOption
 	apiMetadata, err := s.client.GetAPIMetadata()
 	if err == nil {
 		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// GetUserData: Retrieve specific user data content for a given pool.
+// Tip: add `?dl=1` at the end of the URL to directly retrieve the base64 decoded content of your user data.
+func (s *API) GetUserData(req *GetUserDataRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Key) == "" {
+		return nil, errors.New("field Key cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/user-data/" + fmt.Sprint(req.Key) + "",
+	}
+
+	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return &resp, nil
 }
