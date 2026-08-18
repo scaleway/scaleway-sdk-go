@@ -83,6 +83,45 @@ func (enum *BudgetAlertNotificationType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListElectronicAddressesRequestOrderBy string
+
+const (
+	// Order by start date (ascending chronological order).
+	ListElectronicAddressesRequestOrderByStartsAtAsc = ListElectronicAddressesRequestOrderBy("starts_at_asc")
+	// Order by start date (descending chronological order).
+	ListElectronicAddressesRequestOrderByStartsAtDesc = ListElectronicAddressesRequestOrderBy("starts_at_desc")
+)
+
+func (enum ListElectronicAddressesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListElectronicAddressesRequestOrderByStartsAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListElectronicAddressesRequestOrderBy) Values() []ListElectronicAddressesRequestOrderBy {
+	return []ListElectronicAddressesRequestOrderBy{
+		"starts_at_asc",
+		"starts_at_desc",
+	}
+}
+
+func (enum ListElectronicAddressesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListElectronicAddressesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListElectronicAddressesRequestOrderBy(ListElectronicAddressesRequestOrderBy(tmp).String())
+	return nil
+}
+
 // BudgetAlertNotification: budget alert notification.
 type BudgetAlertNotification struct {
 	// ID: alert notification's ID.
@@ -144,6 +183,30 @@ type Budget struct {
 	Alerts []*BudgetAlert `json:"alerts"`
 }
 
+// ElectronicAddress: electronic address.
+type ElectronicAddress struct {
+	// ID: the id of the electronic address.
+	ID string `json:"id"`
+
+	// StartsAt: the start date of the electronic address.
+	StartsAt *time.Time `json:"starts_at"`
+
+	// StopsAt: the stop date of the electronic address.
+	StopsAt *time.Time `json:"stops_at"`
+
+	// CreatedAt: the creation date of the electronic address.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: the last modification date of the electronic address.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// OrganizationID: the organization ID of the electronic address.
+	OrganizationID string `json:"organization_id"`
+
+	// Value: current value of electronic address.
+	Value string `json:"value"`
+}
+
 // CreateBudgetAlertNotificationRequest: create budget alert notification request.
 type CreateBudgetAlertNotificationRequest struct {
 	// BudgetAlertID: the ID of the budget alert to create notification for.
@@ -201,6 +264,67 @@ type DeleteBudgetRequest struct {
 	BudgetID string `json:"-"`
 }
 
+// ElectronicBillingAPICreateElectronicAddressRequest: electronic billing api create electronic address request.
+type ElectronicBillingAPICreateElectronicAddressRequest struct {
+	// OrganizationID: the Organization ID to set electronic address.
+	OrganizationID string `json:"organization_id"`
+
+	// Value: electronic address to set.
+	Value string `json:"value"`
+
+	// StartsAt: when electronic address should be active.
+	StartsAt *time.Time `json:"starts_at,omitempty"`
+
+	// StopsAt: when electronic address should stop being active.
+	StopsAt *time.Time `json:"stops_at,omitempty"`
+}
+
+// ElectronicBillingAPIDeleteElectronicAddressRequest: electronic billing api delete electronic address request.
+type ElectronicBillingAPIDeleteElectronicAddressRequest struct {
+	// ElectronicAddressID: the ID of the electronic address to delete.
+	ElectronicAddressID string `json:"-"`
+}
+
+// ElectronicBillingAPIGetElectronicAddressRequest: electronic billing api get electronic address request.
+type ElectronicBillingAPIGetElectronicAddressRequest struct {
+	// ElectronicAddressID: the ID of the electronic address we want to retrieve.
+	ElectronicAddressID string `json:"-"`
+}
+
+// ElectronicBillingAPIListElectronicAddressesRequest: electronic billing api list electronic addresses request.
+type ElectronicBillingAPIListElectronicAddressesRequest struct {
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of Electronic Address to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order of Electronic address in the response.
+	// Default value: starts_at_asc
+	OrderBy ListElectronicAddressesRequestOrderBy `json:"-"`
+
+	// OrganizationID: the Organization ID to set electronic address.
+	OrganizationID string `json:"-"`
+
+	// StartsAfter: filter services where electronic address start_date is greater or equal to starts_after.
+	StartsAfter *time.Time `json:"-"`
+
+	// StopsBefore: filter services where electronic address stop_date is before stops_before.
+	StopsBefore *time.Time `json:"-"`
+}
+
+// ElectronicBillingAPIUpdateElectronicAddressRequest: electronic billing api update electronic address request.
+type ElectronicBillingAPIUpdateElectronicAddressRequest struct {
+	// ElectronicAddressID: the ID of the electronic address we want to update.
+	ElectronicAddressID string `json:"-"`
+
+	// Value: electronic address to set.
+	Value *string `json:"value,omitempty"`
+
+	// StopsAt: when electronic address should stop being active.
+	StopsAt *time.Time `json:"stops_at,omitempty"`
+}
+
 // GetBudgetRequest: get budget request.
 type GetBudgetRequest struct {
 	// BudgetID: the ID of the budget.
@@ -245,6 +369,34 @@ func (r *ListBudgetsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Budgets = append(r.Budgets, results.Budgets...)
 	r.TotalCount += uint64(len(results.Budgets))
 	return uint64(len(results.Budgets)), nil
+}
+
+// ListElectronicAddressesResponse: list electronic addresses response.
+type ListElectronicAddressesResponse struct {
+	// ElectronicAddresses: list of electronic addresses.
+	ElectronicAddresses []*ElectronicAddress `json:"electronic_addresses"`
+
+	// TotalCount: total Number of returned electronic addresses.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListElectronicAddressesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListElectronicAddressesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListElectronicAddressesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ElectronicAddresses = append(r.ElectronicAddresses, results.ElectronicAddresses...)
+	r.TotalCount += uint64(len(results.ElectronicAddresses))
+	return uint64(len(results.ElectronicAddresses)), nil
 }
 
 // UpdateBudgetAlertNotificationRequest: update budget alert notification request.
@@ -555,6 +707,152 @@ func (s *API) DeleteBudgetAlertNotification(req *DeleteBudgetAlertNotificationRe
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/billing/v2/budget-alert-notifications/" + fmt.Sprint(req.BudgetAlertNotificationID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// This API allows you to query electronic billing related objects.
+type ElectronicBillingAPI struct {
+	client *scw.Client
+}
+
+// NewElectronicBillingAPI returns a ElectronicBillingAPI object from a Scaleway client.
+func NewElectronicBillingAPI(client *scw.Client) *ElectronicBillingAPI {
+	return &ElectronicBillingAPI{
+		client: client,
+	}
+}
+
+// ListElectronicAddresses: List electronic addresses.
+func (s *ElectronicBillingAPI) ListElectronicAddresses(req *ElectronicBillingAPIListElectronicAddressesRequest, opts ...scw.RequestOption) (*ListElectronicAddressesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "starts_after", req.StartsAfter)
+	parameter.AddToQuery(query, "stops_before", req.StopsBefore)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2/electronic-address",
+		Query:  query,
+	}
+
+	var resp ListElectronicAddressesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetElectronicAddress: Fetch an electronic address.
+func (s *ElectronicBillingAPI) GetElectronicAddress(req *ElectronicBillingAPIGetElectronicAddressRequest, opts ...scw.RequestOption) (*ElectronicAddress, error) {
+	var err error
+
+	if fmt.Sprint(req.ElectronicAddressID) == "" {
+		return nil, errors.New("field ElectronicAddressID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2/electronic-address/" + fmt.Sprint(req.ElectronicAddressID) + "",
+	}
+
+	var resp ElectronicAddress
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateElectronicAddress: Create a new electronic address.
+func (s *ElectronicBillingAPI) CreateElectronicAddress(req *ElectronicBillingAPICreateElectronicAddressRequest, opts ...scw.RequestOption) (*ElectronicAddress, error) {
+	var err error
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/billing/v2/electronic-address",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ElectronicAddress
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateElectronicAddress: Update an electronic address.
+func (s *ElectronicBillingAPI) UpdateElectronicAddress(req *ElectronicBillingAPIUpdateElectronicAddressRequest, opts ...scw.RequestOption) (*ElectronicAddress, error) {
+	var err error
+
+	if fmt.Sprint(req.ElectronicAddressID) == "" {
+		return nil, errors.New("field ElectronicAddressID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/billing/v2/electronic-address/" + fmt.Sprint(req.ElectronicAddressID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ElectronicAddress
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteElectronicAddress: Delete an electronic address.
+func (s *ElectronicBillingAPI) DeleteElectronicAddress(req *ElectronicBillingAPIDeleteElectronicAddressRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.ElectronicAddressID) == "" {
+		return errors.New("field ElectronicAddressID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/billing/v2/electronic-address/" + fmt.Sprint(req.ElectronicAddressID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)

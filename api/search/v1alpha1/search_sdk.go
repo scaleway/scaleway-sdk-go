@@ -133,6 +133,7 @@ const (
 	ResourceTypeInstancePrivateNic     = ResourceType("instance_private_nic")
 	ResourceTypeInstanceSnapshot       = ResourceType("instance_snapshot")
 	ResourceTypeInstancePlacementGroup = ResourceType("instance_placement_group")
+	ResourceTypeInstanceTemplate       = ResourceType("instance_template")
 	// K8S cluster.
 	ResourceTypeK8sCluster = ResourceType("k8s_cluster")
 	// K8S pool.
@@ -229,6 +230,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_private_nic",
 		"instance_snapshot",
 		"instance_placement_group",
+		"instance_template",
 		"k8s_cluster",
 		"k8s_pool",
 		"k8s_node",
