@@ -42,19 +42,20 @@ var (
 type JobRunReason string
 
 const (
-	JobRunReasonUnknownReason        = JobRunReason("unknown_reason")
-	JobRunReasonInvalidRequest       = JobRunReason("invalid_request")
-	JobRunReasonTimeout              = JobRunReason("timeout")
-	JobRunReasonCancellation         = JobRunReason("cancellation")
-	JobRunReasonTechnicalError       = JobRunReason("technical_error")
-	JobRunReasonImageNotFound        = JobRunReason("image_not_found")
-	JobRunReasonInvalidImage         = JobRunReason("invalid_image")
-	JobRunReasonMemoryUsageExceeded  = JobRunReason("memory_usage_exceeded")
-	JobRunReasonStorageUsageExceeded = JobRunReason("storage_usage_exceeded")
-	JobRunReasonExitedWithError      = JobRunReason("exited_with_error")
-	JobRunReasonSecretDisabled       = JobRunReason("secret_disabled")
-	JobRunReasonSecretNotFound       = JobRunReason("secret_not_found")
-	JobRunReasonQuotaExceeded        = JobRunReason("quota_exceeded")
+	JobRunReasonUnknownReason         = JobRunReason("unknown_reason")
+	JobRunReasonInvalidRequest        = JobRunReason("invalid_request")
+	JobRunReasonTimeout               = JobRunReason("timeout")
+	JobRunReasonCancellation          = JobRunReason("cancellation")
+	JobRunReasonTechnicalError        = JobRunReason("technical_error")
+	JobRunReasonImageNotFound         = JobRunReason("image_not_found")
+	JobRunReasonInvalidImage          = JobRunReason("invalid_image")
+	JobRunReasonMemoryUsageExceeded   = JobRunReason("memory_usage_exceeded")
+	JobRunReasonStorageUsageExceeded  = JobRunReason("storage_usage_exceeded")
+	JobRunReasonExitedWithError       = JobRunReason("exited_with_error")
+	JobRunReasonSecretDisabled        = JobRunReason("secret_disabled")
+	JobRunReasonSecretNotFound        = JobRunReason("secret_not_found")
+	JobRunReasonQuotaExceeded         = JobRunReason("quota_exceeded")
+	JobRunReasonApplicationNotStarted = JobRunReason("application_not_started")
 )
 
 func (enum JobRunReason) String() string {
@@ -80,6 +81,7 @@ func (enum JobRunReason) Values() []JobRunReason {
 		"secret_disabled",
 		"secret_not_found",
 		"quota_exceeded",
+		"application_not_started",
 	}
 }
 
