@@ -1854,7 +1854,8 @@ type SecurityGroup struct {
 	// Stateful: defines whether the security group is stateful.
 	Stateful bool `json:"stateful"`
 
-	// State: security group state.
+	// State: are applied) when the security group is updated (e.g., rules added, modified, or deleted)
+	// or when it is attached to or detached from a server's public network interface.
 	// Default value: available
 	State SecurityGroupState `json:"state"`
 
