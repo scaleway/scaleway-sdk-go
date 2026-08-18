@@ -516,7 +516,7 @@ const (
 	PrivateNetworkInterfaceStatusAttaching = PrivateNetworkInterfaceStatus("attaching")
 	// Interface is being detached.
 	PrivateNetworkInterfaceStatusDetaching = PrivateNetworkInterfaceStatus("detaching")
-	// Interface is being synchronized.
+	// Attached, detached, or when the associated security-group rules are being updated on the interface.
 	PrivateNetworkInterfaceStatusSyncing = PrivateNetworkInterfaceStatus("syncing")
 )
 
@@ -872,7 +872,7 @@ const (
 	ServerPrivateNetworkInterfaceStatusAttaching = ServerPrivateNetworkInterfaceStatus("attaching")
 	// Interface is being detached.
 	ServerPrivateNetworkInterfaceStatusDetaching = ServerPrivateNetworkInterfaceStatus("detaching")
-	// Interface is syncing.
+	// The associated security-group rules are being updated on the interface.
 	ServerPrivateNetworkInterfaceStatusSyncing = ServerPrivateNetworkInterfaceStatus("syncing")
 )
 
@@ -916,7 +916,7 @@ const (
 	ServerPublicNetworkInterfaceStatusUnknownStatus = ServerPublicNetworkInterfaceStatus("unknown_status")
 	// Interface is available.
 	ServerPublicNetworkInterfaceStatusAvailable = ServerPublicNetworkInterfaceStatus("available")
-	// Interface is syncing.
+	// If the security-group rules are being updated on the interface.
 	ServerPublicNetworkInterfaceStatusSyncing = ServerPublicNetworkInterfaceStatus("syncing")
 )
 
