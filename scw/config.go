@@ -68,6 +68,9 @@ const configFileTemplate = `# Scaleway configuration file
 # Default to false
 {{ if .S3UsePathStyle }}s3_use_path_style: {{ .S3UsePathStyle }}{{ else }}# s3_use_path_style: false{{ end }}
 
+# UserAgent overrides the default user agent of your application.
+{{ if .UserAgent }}user_agent: {{ .UserAgent }}{{ else }}# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH){{ end }}
+
 # Insecure enables insecure transport on the client.
 # Default to false
 {{ if .Insecure }}insecure: {{ .Insecure }}{{ else }}# insecure: false{{ end }}
@@ -103,6 +106,7 @@ profiles:
     {{ if $v.S3Endpoint}}s3_endpoint: {{ $v.S3Endpoint}}{{ else }}# s3_endpoint: https://s3.fr-par.scw.cloud{{ end }}
     {{ if $v.S3UsePathStyle}}s3_use_path_style: {{ $v.S3UsePathStyle}}{{ else }}# s3_use_path_style: false{{ end }}
     {{ if $v.Insecure }}insecure: {{ $v.Insecure }}{{ else }}# insecure: false{{ end }}
+    {{ if $v.UserAgent }}user_agent: {{ $v.UserAgent }}{{ else }}# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH){{ end }}
 {{ end }}
 {{- else }}
 # profiles:
@@ -117,6 +121,7 @@ profiles:
 #     s3_endpoint: https://s3.fr-par.scw.cloud
 #     s3_use_path_style: false
 #     insecure: false
+#     user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 {{ end -}}
 `
 
@@ -138,6 +143,7 @@ type Profile struct {
 	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty"`
 	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty"`
 	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty"`
+	UserAgent             *string `yaml:"user_agent,omitempty" json:"user_agent,omitempty"`
 }
 
 func (p *Profile) String() string {
@@ -342,6 +348,7 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		DefaultRegion:         original.DefaultRegion,
 		DefaultZone:           original.DefaultZone,
 		SendTelemetry:         original.SendTelemetry,
+		UserAgent:             original.UserAgent,
 	}
 
 	for _, other := range others {
@@ -377,6 +384,9 @@ func MergeProfiles(original *Profile, others ...*Profile) *Profile {
 		}
 		if other.SendTelemetry != nil {
 			np.SendTelemetry = other.SendTelemetry
+		}
+		if other.UserAgent != nil {
+			np.UserAgent = other.UserAgent
 		}
 	}
 
