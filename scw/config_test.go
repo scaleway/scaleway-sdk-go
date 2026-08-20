@@ -1,6 +1,9 @@
 package scw
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -283,12 +286,13 @@ func TestSaveConfig(t *testing.T) {
 	}
 }
 
-// TestLoadConfig tests config getters return correct values
+// TestLoadProfileAndActiveProfile tests config getters return correct values
 func TestLoadProfileAndActiveProfile(t *testing.T) {
 	tests := []struct {
 		name  string
 		env   map[string]string
 		files map[string]string
+		perms os.FileMode
 
 		expectedError                 string
 		expectedAccessKey             *string
@@ -302,19 +306,24 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
+		expectedOutput                string
 	}{
 		// no env variables
 		{
-			name:          "No config without home dir",
-			expectedError: "scaleway-sdk-go: cannot read config file: read .: is a directory",
+			name: "No config without home dir",
+			expectedError: "scaleway-sdk-go: cannot read config file: read .: " +
+				"is a directory",
 		},
+
 		{
-			name:          "No config",
-			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/.config/scw/config.yaml: no such file or directory",
+			name: "No config",
+			expectedError: "scaleway-sdk-go: cannot read config file " +
+				"{HOME}/.config/scw/config.yaml: no such file or directory",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
 		},
+
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
@@ -324,6 +333,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				"valid1/test.conf": emptyFile,
 			},
 		},
+
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
@@ -338,6 +348,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Simple config with valid V2", // default config path
 			env: map[string]string{
@@ -352,6 +363,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Complete config",
 			env: map[string]string{
@@ -371,6 +383,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
+
 		{
 			name: "Complete config with active profile",
 			env: map[string]string{
@@ -391,6 +404,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Mixed config with active profile",
 			env: map[string]string{
@@ -411,6 +425,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
@@ -447,6 +462,108 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o700,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o650,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o477,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o605,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too restrictive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms: 0o300,
+			expectedError: "scaleway-sdk-go: cannot read config file: " +
+				"open {HOME}/.config/scw/config.yml: permission denied",
+		},
+
+		{
+			name:                          "Read config.yml with correct permissions",
+			env:                           map[string]string{"HOME": "{HOME}"},
+			files:                         map[string]string{".config/scw/config.yml": v2SimpleValidConfigFile},
+			perms:                         0o600,
+			expectedOutput:                "",
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+		},
 	}
 
 	// create home dir
@@ -458,13 +575,29 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, test.files, dir)
+			setEnvWithPerms(t, test.env, test.files, test.perms, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
+			test.expectedOutput = strings.ReplaceAll(test.expectedOutput, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
+			// Temporarily capturing stdout
+			originalStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			// err is not checked here but later
 			config, err := LoadConfig()
+
+			// Giving back stdout
+			err2 := w.Close()
+			if err2 != nil {
+				t.Fatal(err2)
+			}
+
+			os.Stdout = originalStdout
+
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)
 				p, err := config.GetActiveProfile()
@@ -485,6 +618,16 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
+
+			// In both cases, read captured stdout
+			var buf bytes.Buffer
+			_, err = io.Copy(&buf, r)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Assert(
+				t,
+				strings.Contains(buf.String(), test.expectedOutput),
+				fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
+			)
 		})
 	}
 }
@@ -568,16 +711,26 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	t.Helper()
+	setEnvWithPerms(t, env, files, defaultConfigPermission, homeDir)
+}
+
+func setEnvWithPerms(t *testing.T, env, files map[string]string, perms os.FileMode, homeDir string) {
+	t.Helper()
 	os.Clearenv()
+
 	for key, value := range env {
 		value = strings.ReplaceAll(value, "{HOME}", homeDir)
 		testhelpers.AssertNoError(t, os.Setenv(key, value))
 	}
 
+	if perms == 0 {
+		perms = defaultConfigPermission
+	}
+
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
 		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
-		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), perms))
 	}
 }
 
