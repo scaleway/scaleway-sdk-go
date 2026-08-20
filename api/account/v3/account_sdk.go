@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultAccountRetryInterval = 15 * time.Second
+	defaultAccountTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -197,6 +203,48 @@ func (enum *ListProjectsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListProjectsRequestOrderBy(ListProjectsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ProjectStatus string
+
+const (
+	// Unknown status.
+	ProjectStatusUnknownStatus = ProjectStatus("unknown_status")
+	// The Project is active.
+	ProjectStatusActive = ProjectStatus("active")
+	// The Project is being deleted along with its resources (transient).
+	ProjectStatusDeleting = ProjectStatus("deleting")
+)
+
+func (enum ProjectStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ProjectStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ProjectStatus) Values() []ProjectStatus {
+	return []ProjectStatus{
+		"unknown_status",
+		"active",
+		"deleting",
+	}
+}
+
+func (enum ProjectStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ProjectStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ProjectStatus(ProjectStatus(tmp).String())
 	return nil
 }
 
@@ -740,6 +788,10 @@ type Project struct {
 
 	// Qualification: qualification of the Project.
 	Qualification *Qualification `json:"qualification"`
+
+	// Status: status of the Project.
+	// Default value: unknown_status
+	Status ProjectStatus `json:"status"`
 }
 
 // CheckContractSignatureResponse: check contract signature response.
@@ -884,6 +936,15 @@ type ProjectAPICreateProjectRequest struct {
 type ProjectAPIDeleteProjectRequest struct {
 	// ProjectID: project ID of the Project.
 	ProjectID string `json:"-"`
+}
+
+// ProjectAPIDeleteProjectWithResourcesRequest: project api delete project with resources request.
+type ProjectAPIDeleteProjectWithResourcesRequest struct {
+	// ProjectID: project ID of the Project.
+	ProjectID string `json:"-"`
+
+	// ProjectName: name of the Project to delete. This is used as a safeguard confirmation.
+	ProjectName string `json:"-"`
 }
 
 // ProjectAPIGetProjectRequest: project api get project request.
@@ -1208,6 +1269,51 @@ func (s *ProjectAPI) GetProject(req *ProjectAPIGetProjectRequest, opts ...scw.Re
 	return &resp, nil
 }
 
+// WaitForProjectRequest is used by WaitForProject method.
+type WaitForProjectRequest struct {
+	ProjectID     string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForProject waits for the Project to reach a terminal state.
+func (s *ProjectAPI) WaitForProject(req *WaitForProjectRequest, opts ...scw.RequestOption) (*Project, error) {
+	timeout := defaultAccountTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultAccountRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ProjectStatus]struct{}{
+		ProjectStatusDeleting: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetProject(&ProjectAPIGetProjectRequest{
+				ProjectID: req.ProjectID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Project failed")
+	}
+
+	return res.(*Project), nil
+}
+
 // DeleteProject: Delete an existing Project, specified by its Project ID. The Project needs to be empty (meaning there are no resources left in it) to be deleted effectively. Note that deleting a Project is permanent, and cannot be undone.
 func (s *ProjectAPI) DeleteProject(req *ProjectAPIDeleteProjectRequest, opts ...scw.RequestOption) error {
 	var err error
@@ -1231,6 +1337,37 @@ func (s *ProjectAPI) DeleteProject(req *ProjectAPIDeleteProjectRequest, opts ...
 		return err
 	}
 	return nil
+}
+
+// DeleteProjectWithResources: Delete an existing Project, specified by its Project ID and Name, along with all the resources it contains. Note that deleting a Project is permanent, and cannot be undone.
+func (s *ProjectAPI) DeleteProjectWithResources(req *ProjectAPIDeleteProjectWithResourcesRequest, opts ...scw.RequestOption) (*Project, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "project_name", req.ProjectName)
+
+	if fmt.Sprint(req.ProjectID) == "" {
+		return nil, errors.New("field ProjectID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/account/v3/projects/" + fmt.Sprint(req.ProjectID) + "/delete-with-resources",
+		Query:  query,
+	}
+
+	var resp Project
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // UpdateProject: Update the parameters of an existing Project, specified by its Project ID. These parameters include the name and description.
