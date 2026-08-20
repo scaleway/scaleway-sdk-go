@@ -794,6 +794,9 @@ type Instance struct {
 
 	// Maintenances: list of pending maintenances applicable to the Database Instance.
 	Maintenances []*Maintenance `json:"maintenances"`
+
+	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
+	UpgradableVersions []string `json:"upgradable_versions"`
 }
 
 // NodeType: node type.
@@ -1480,11 +1483,12 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// VolumeSizeBytes: increase your Block Storage volume size.
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
+	// Precisely one of VolumeSizeBytes, Version must be set.
 	VolumeSizeBytes *scw.Size `json:"volume_size_bytes,omitempty"`
 
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
-	VersionID *string `json:"version_id,omitempty"`
+	// Version: mongoDB version to upgrade to (e.g., `8.0`, `7.0`, `8.2`).
+	// Precisely one of VolumeSizeBytes, Version must be set.
+	Version *string `json:"version,omitempty"`
 }
 
 // This API allows you to manage your Managed Databases for MongoDB®.

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -264,9 +265,19 @@ func (enum *ListUsersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// EndpointPrivateNetworkDetails: endpoint private network details.
-type EndpointPrivateNetworkDetails struct {
-	PrivateNetworkID string `json:"private_network_id"`
+// NodePrivateNetworkDetails: node private network details.
+type NodePrivateNetworkDetails struct {
+	// NodeName: name  of the node.
+	NodeName string `json:"node_name"`
+
+	// Shard: the ClickHouse shard to which the node belongs to.
+	Shard uint32 `json:"shard"`
+
+	// Replica: the ClickHouse replica to which the node belongs to.
+	Replica uint32 `json:"replica"`
+
+	// IPAddress: private static IP address of that node.
+	IPAddress string `json:"ip_address"`
 }
 
 // EndpointPublicDetails: endpoint public details.
@@ -280,8 +291,17 @@ type EndpointService struct {
 	Port uint32 `json:"port"`
 }
 
-// EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
-type EndpointSpecPrivateNetworkDetails struct {
+// PrivateNetworkDetails: private network details.
+type PrivateNetworkDetails struct {
+	// PrivateNetworkID: UUID of the Private Network.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// Nodes: list of nodes belonging to this private network and their details.
+	Nodes []*NodePrivateNetworkDetails `json:"nodes"`
+}
+
+// EndpointSpecPrivateNetworkSummary: endpoint spec private network summary.
+type EndpointSpecPrivateNetworkSummary struct {
 	// PrivateNetworkID: UUID of the Private Network.
 	PrivateNetworkID string `json:"private_network_id"`
 }
@@ -302,11 +322,49 @@ type Endpoint struct {
 
 	// PrivateNetwork: private Network endpoint details.
 	// Precisely one of PrivateNetwork, Public must be set.
-	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
+	PrivateNetwork *PrivateNetworkDetails `json:"private_network,omitempty"`
 
 	// Public: public endpoint details.
 	// Precisely one of PrivateNetwork, Public must be set.
 	Public *EndpointPublicDetails `json:"public,omitempty"`
+
+	// Region: region of the deployment.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Endpoint) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Endpoint
+		Platform string
+	}{
+		Endpoint: *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/endpoints/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // EndpointSpec: endpoint spec.
@@ -315,7 +373,7 @@ type EndpointSpec struct {
 	Public *EndpointSpecPublicDetails `json:"public,omitempty"`
 
 	// Precisely one of Public, PrivateNetwork must be set.
-	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
+	PrivateNetwork *EndpointSpecPrivateNetworkSummary `json:"private_network,omitempty"`
 }
 
 // Database: database.
@@ -325,6 +383,47 @@ type Database struct {
 
 	// Size: size of the database.
 	Size scw.Size `json:"size"`
+
+	// DeploymentID: identifier of the deployment.
+	DeploymentID string `json:"deployment_id"`
+
+	// Region: region of the deployment.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Database) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Database
+		Platform string
+	}{
+		Database: *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .DeploymentID }}/databases/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Deployment: deployment.
@@ -380,6 +479,41 @@ type Deployment struct {
 
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Deployment) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Deployment
+		Platform string
+	}{
+		Deployment: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Preset: preset.
@@ -413,6 +547,47 @@ type User struct {
 
 	// IsAdmin: indicates if the user is an administrator.
 	IsAdmin bool `json:"is_admin"`
+
+	// DeploymentID: identifier of the deployment.
+	DeploymentID string `json:"deployment_id"`
+
+	// Region: region of the deployment.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *User) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		User
+		Platform string
+	}{
+		User:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .DeploymentID }}/users/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.
@@ -989,6 +1164,12 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Deployments {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1019,6 +1200,10 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1111,6 +1296,10 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1147,6 +1336,10 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1177,6 +1370,10 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1245,6 +1442,10 @@ func (s *API) StartDeployment(req *StartDeploymentRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1280,6 +1481,10 @@ func (s *API) StopDeployment(req *StopDeploymentRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1324,6 +1529,12 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Users {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1359,6 +1570,10 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1399,6 +1614,10 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1499,6 +1718,10 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1542,6 +1765,12 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Databases {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1577,6 +1806,10 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

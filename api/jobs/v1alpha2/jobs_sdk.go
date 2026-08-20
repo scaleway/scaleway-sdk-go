@@ -42,19 +42,20 @@ var (
 type JobRunReason string
 
 const (
-	JobRunReasonUnknownReason        = JobRunReason("unknown_reason")
-	JobRunReasonInvalidRequest       = JobRunReason("invalid_request")
-	JobRunReasonTimeout              = JobRunReason("timeout")
-	JobRunReasonCancellation         = JobRunReason("cancellation")
-	JobRunReasonTechnicalError       = JobRunReason("technical_error")
-	JobRunReasonImageNotFound        = JobRunReason("image_not_found")
-	JobRunReasonInvalidImage         = JobRunReason("invalid_image")
-	JobRunReasonMemoryUsageExceeded  = JobRunReason("memory_usage_exceeded")
-	JobRunReasonStorageUsageExceeded = JobRunReason("storage_usage_exceeded")
-	JobRunReasonExitedWithError      = JobRunReason("exited_with_error")
-	JobRunReasonSecretDisabled       = JobRunReason("secret_disabled")
-	JobRunReasonSecretNotFound       = JobRunReason("secret_not_found")
-	JobRunReasonQuotaExceeded        = JobRunReason("quota_exceeded")
+	JobRunReasonUnknownReason         = JobRunReason("unknown_reason")
+	JobRunReasonInvalidRequest        = JobRunReason("invalid_request")
+	JobRunReasonTimeout               = JobRunReason("timeout")
+	JobRunReasonCancellation          = JobRunReason("cancellation")
+	JobRunReasonTechnicalError        = JobRunReason("technical_error")
+	JobRunReasonImageNotFound         = JobRunReason("image_not_found")
+	JobRunReasonInvalidImage          = JobRunReason("invalid_image")
+	JobRunReasonMemoryUsageExceeded   = JobRunReason("memory_usage_exceeded")
+	JobRunReasonStorageUsageExceeded  = JobRunReason("storage_usage_exceeded")
+	JobRunReasonExitedWithError       = JobRunReason("exited_with_error")
+	JobRunReasonSecretDisabled        = JobRunReason("secret_disabled")
+	JobRunReasonSecretNotFound        = JobRunReason("secret_not_found")
+	JobRunReasonQuotaExceeded         = JobRunReason("quota_exceeded")
+	JobRunReasonApplicationNotStarted = JobRunReason("application_not_started")
 )
 
 func (enum JobRunReason) String() string {
@@ -80,6 +81,7 @@ func (enum JobRunReason) Values() []JobRunReason {
 		"secret_disabled",
 		"secret_not_found",
 		"quota_exceeded",
+		"application_not_started",
 	}
 }
 
@@ -482,7 +484,7 @@ type JobRun struct {
 	// Args: job arguments passed to the startup command at runtime.
 	Args []string `json:"args"`
 
-	// Attempts: number of retry attempts.
+	// Attempts: number of run attempts.
 	Attempts *uint32 `json:"attempts"`
 
 	// Region: region to target. If none is passed will use default region from the config.
@@ -584,7 +586,7 @@ type CreateJobDefinitionRequest struct {
 	// CronSchedule: configure a cron for the job.
 	CronSchedule *CreateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 
-	// RetryPolicy: retry behaviour in case of job failure.
+	// RetryPolicy: retry policy upon a job failure.
 	RetryPolicy *RetryPolicy `json:"retry_policy,omitempty"`
 }
 
@@ -976,7 +978,7 @@ type UpdateJobDefinitionRequest struct {
 	// CronSchedule: configure a cron for the job.
 	CronSchedule *UpdateJobDefinitionRequestCronScheduleConfig `json:"cron_schedule,omitempty"`
 
-	// RetryPolicy: retry behaviour in case of job failure.
+	// RetryPolicy: retry policy upon a job failure.
 	RetryPolicy *UpdateJobDefinitionRequestUpdateRetryPolicy `json:"retry_policy,omitempty"`
 }
 

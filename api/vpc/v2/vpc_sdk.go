@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -566,6 +567,41 @@ type Subnet struct {
 
 	// Region: region in which the Subnet can be used.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Subnet) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Subnet
+		Platform string
+	}{
+		Subnet:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/subnets/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PrivateNetwork: private network.
@@ -605,6 +641,44 @@ type PrivateNetwork struct {
 
 	// DefaultRoutePropagationEnabled: defines whether default v4 and v6 routes are propagated for this Private Network.
 	DefaultRoutePropagationEnabled bool `json:"default_route_propagation_enabled"`
+
+	// HasS3Integration: defines whether this Private Network is enabled for S3 integration.
+	HasS3Integration bool `json:"has_s3_integration"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PrivateNetwork) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PrivateNetwork
+		Platform string
+	}{
+		PrivateNetwork: *m,
+		Platform:       platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/private-networks/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Route: route.
@@ -648,6 +722,41 @@ type Route struct {
 
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Route) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Route
+		Platform string
+	}{
+		Route:    *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VPCConnectorPeerInfo: vpc connector peer info.
@@ -693,32 +802,79 @@ type ACLRule struct {
 
 // IngressRule: ingress rule.
 type IngressRule struct {
+	// ID: ID of the ingress rule.
 	ID string `json:"id"`
 
+	// VpcID: ID of the VPC this rule belongs to.
 	VpcID string `json:"vpc_id"`
 
+	// CreatedAt: date the ingress rule was created.
 	CreatedAt *time.Time `json:"created_at"`
 
+	// UpdatedAt: date the ingress rule was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
 
+	// IsIPv6: whether this rule applies to IPv4 or IPv6 traffic.
 	IsIPv6 bool `json:"is_ipv6"`
 
+	// Source: source network to apply this rule on.
 	Source scw.IPNet `json:"source"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to.
 	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
 
+	// Description: description of this ingress rule.
 	Description *string `json:"description"`
 
+	// Tags: tags of this ingress rule.
 	Tags []string `json:"tags"`
 
+	// OrganizationID: scaleway Organization the ingress rule belongs to.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: scaleway Project the ingress rule belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region of the ingress rule.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *IngressRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		IngressRule
+		Platform string
+	}{
+		IngressRule: *m,
+		Platform:    platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ingress-rules/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RouteWithNexthop: route with nexthop.
@@ -786,6 +942,41 @@ type VPCConnector struct {
 
 	// UpdatedAt: date the VPC connector was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *VPCConnector) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		VPCConnector
+		Platform string
+	}{
+		VPCConnector: *m,
+		Platform:     platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/vpc-connectors/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VPC: vpc.
@@ -825,23 +1016,68 @@ type VPC struct {
 
 	// CustomRoutesPropagationEnabled: defines whether the VPC advertises custom routes between its Private Networks.
 	CustomRoutesPropagationEnabled bool `json:"custom_routes_propagation_enabled"`
+
+	// TransitivityEnabled: defines whether the VPC allows packets from peered VPCs to transit through.
+	TransitivityEnabled bool `json:"transitivity_enabled"`
+
+	// S3IntegrationEnabled: defines whether the S3 integration is enabled for the VPC.
+	S3IntegrationEnabled bool `json:"s3_integration_enabled"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
 }
 
-// AddSubnetsRequest: add subnets request.
-type AddSubnetsRequest struct {
+func (m *VPC) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		VPC
+		Platform string
+	}{
+		VPC:      *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/vpcs/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
+// AddPrivateNetworkS3EndpointRequest: add private network s3 endpoint request.
+type AddPrivateNetworkS3EndpointRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
+	// VpcID: ID of the VPC containing the S3 Endpoint.
+	VpcID string `json:"-"`
 
-	// Subnets: private Network subnets CIDR.
-	Subnets []scw.IPNet `json:"subnets"`
+	// PrivateNetworkID: ID of the Private Network to add to the S3 Endpoint.
+	PrivateNetworkID string `json:"private_network_id"`
 }
 
-// AddSubnetsResponse: add subnets response.
-type AddSubnetsResponse struct {
-	Subnets []scw.IPNet `json:"subnets"`
+// AddPrivateNetworkS3EndpointResponse: add private network s3 endpoint response.
+type AddPrivateNetworkS3EndpointResponse struct {
+	// VpcID: ID of the VPC containing the S3 Endpoint.
+	VpcID string `json:"vpc_id"`
+
+	// PrivateNetworkIDs: iDs of the Private Networks associated with the S3 Endpoint.
+	PrivateNetworkIDs []string `json:"private_network_ids"`
 }
 
 // CreateIngressRuleRequest: create ingress rule request.
@@ -849,16 +1085,22 @@ type CreateIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// VpcID: ID of the VPC this rule will belong to.
 	VpcID string `json:"vpc_id"`
 
+	// Source: source network to match ingress traffic on. Can be IPv6 or IPv4.
 	Source scw.IPNet `json:"source"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network.
 	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
 
+	// Description: description for this ingress rule.
 	Description *string `json:"description,omitempty"`
 
+	// Tags: tags for this ingress rule.
 	Tags []string `json:"tags"`
 }
 
@@ -947,6 +1189,9 @@ type CreateVPCRequest struct {
 
 	// EnableRouting: enable routing between Private Networks in the VPC.
 	EnableRouting bool `json:"enable_routing"`
+
+	// EnableTransitivity: enable packets from peered VPCs to transit through this VPC.
+	EnableTransitivity bool `json:"enable_transitivity"`
 }
 
 // DeleteIngressRuleRequest: delete ingress rule request.
@@ -954,6 +1199,7 @@ type DeleteIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to delete.
 	RuleID string `json:"-"`
 }
 
@@ -966,6 +1212,18 @@ type DeletePrivateNetworkRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
+// DeletePrivateNetworkS3EndpointRequest: delete private network s3 endpoint request.
+type DeletePrivateNetworkS3EndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC containing the S3 Endpoint.
+	VpcID string `json:"-"`
+
+	// PrivateNetworkID: ID of the Private Network to remove from the S3 Endpoint.
+	PrivateNetworkID string `json:"-"`
+}
+
 // DeleteRouteRequest: delete route request.
 type DeleteRouteRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -973,23 +1231,6 @@ type DeleteRouteRequest struct {
 
 	// RouteID: route ID.
 	RouteID string `json:"-"`
-}
-
-// DeleteSubnetsRequest: delete subnets request.
-type DeleteSubnetsRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
-
-	// Subnets: private Network subnets CIDR.
-	Subnets []scw.IPNet `json:"subnets"`
-}
-
-// DeleteSubnetsResponse: delete subnets response.
-type DeleteSubnetsResponse struct {
-	Subnets []scw.IPNet `json:"subnets"`
 }
 
 // DeleteVPCConnectorRequest: delete vpc connector request.
@@ -1007,6 +1248,15 @@ type DeleteVPCRequest struct {
 	Region scw.Region `json:"-"`
 
 	// VpcID: vPC ID.
+	VpcID string `json:"-"`
+}
+
+// DisableS3EndpointRequest: disable s3 endpoint request.
+type DisableS3EndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC for which to disable S3 integration.
 	VpcID string `json:"-"`
 }
 
@@ -1037,6 +1287,18 @@ type EnableRoutingRequest struct {
 	VpcID string `json:"-"`
 }
 
+// EnableS3EndpointRequest: enable s3 endpoint request.
+type EnableS3EndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC for which to enable S3 integration.
+	VpcID string `json:"-"`
+
+	// PrivateNetworkIDs: iDs of the Private Networks for which to enable S3 integration.
+	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
 // GetACLRequest: get acl request.
 type GetACLRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1062,6 +1324,7 @@ type GetIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to return.
 	RuleID string `json:"-"`
 }
 
@@ -1106,25 +1369,35 @@ type ListIngressRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// OrderBy: default value: created_at_asc
+	// OrderBy: sort order of the returned ingress rules.
+	// Default value: created_at_asc
 	OrderBy ListIngressRulesRequestOrderBy `json:"-"`
 
+	// Page: page number to return, from the paginated results.
 	Page *int32 `json:"-"`
 
+	// PageSize: maximum number of ingress rules to return per page.
 	PageSize *uint32 `json:"-"`
 
+	// VpcID: ID of the VPC to filter for.
 	VpcID *string `json:"-"`
 
+	// NexthopResourceIP: next hop IP to filter for.
 	NexthopResourceIP *net.IP `json:"-"`
 
+	// NexthopPrivateNetworkID: next hop Private Network ID to filter for. Only ingress rules with this Private Network as next hop will be returned.
 	NexthopPrivateNetworkID *string `json:"-"`
 
+	// IsIPv6: whether to return only IPv4 or IPv6 ingress rules.
 	IsIPv6 *bool `json:"-"`
 
+	// Tags: tags to filter for. Only ingress rules with one or more matching tags will be returned.
 	Tags []string `json:"-"`
 
+	// OrganizationID: organization ID to filter for. Only ingress rules belonging to this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
+	// ProjectID: project ID to filter for. Only ingress rules belonging to this Project will be returned.
 	ProjectID *string `json:"-"`
 }
 
@@ -1189,6 +1462,9 @@ type ListPrivateNetworksRequest struct {
 
 	// DHCPEnabled: DHCP status to filter for. When true, only Private Networks with managed DHCP enabled will be returned.
 	DHCPEnabled *bool `json:"-"`
+
+	// S3IntegrationEnabled: filter by whether S3 integration is enabled. When set, only matching Private Networks will be returned.
+	S3IntegrationEnabled *bool `json:"-"`
 }
 
 // ListPrivateNetworksResponse: list private networks response.
@@ -1250,7 +1526,7 @@ type ListSubnetOverlapsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// VpcConnectorID: vPCConnector ID.
+	// VpcConnectorID: vPC Peering connector ID.
 	VpcConnectorID string `json:"-"`
 
 	// OrderBy: sort order of the returned Subnet overlaps.
@@ -1440,6 +1716,9 @@ type ListVPCsRequest struct {
 
 	// RoutingEnabled: defines whether to filter only for VPCs which route traffic between their Private Networks.
 	RoutingEnabled *bool `json:"-"`
+
+	// S3IntegrationEnabled: defines whether to filter only for VPCs with S3 integration enabled.
+	S3IntegrationEnabled *bool `json:"-"`
 }
 
 // ListVPCsResponse: list vp cs response.
@@ -1536,21 +1815,48 @@ type SetACLResponse struct {
 	DefaultPolicy Action `json:"default_policy"`
 }
 
+// SetPrivateNetworksS3EndpointRequest: set private networks s3 endpoint request.
+type SetPrivateNetworksS3EndpointRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC containing the S3 Endpoint.
+	VpcID string `json:"-"`
+
+	// PrivateNetworkIDs: iDs of the Private Networks to associate with the S3 Endpoint.
+	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
+// SetPrivateNetworksS3EndpointResponse: set private networks s3 endpoint response.
+type SetPrivateNetworksS3EndpointResponse struct {
+	// VpcID: ID of the VPC containing the S3 Endpoint.
+	VpcID string `json:"vpc_id"`
+
+	// PrivateNetworkIDs: iDs of the Private Networks associated with the S3 Endpoint.
+	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
 // UpdateIngressRuleRequest: update ingress rule request.
 type UpdateIngressRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// RuleID: ID of the ingress rule to update.
 	RuleID string `json:"-"`
 
+	// Source: source network to match ingress traffic on. Can be IPv4 or IPv6.
 	Source *scw.IPNet `json:"source,omitempty"`
 
+	// NexthopResourceIP: IP of the local resource to redirect ingress traffic to. IP version must be consistent with the source network.
 	NexthopResourceIP *net.IP `json:"nexthop_resource_ip,omitempty"`
 
+	// NexthopPrivateNetworkID: ID of the Private Network the destination resource is in.
 	NexthopPrivateNetworkID *string `json:"nexthop_private_network_id,omitempty"`
 
+	// Description: description to set for this ingress rule.
 	Description *string `json:"description,omitempty"`
 
+	// Tags: tags to set for this ingress rule.
 	Tags *[]string `json:"tags,omitempty"`
 }
 
@@ -1669,6 +1975,7 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "is_default", req.IsDefault)
 	parameter.AddToQuery(query, "routing_enabled", req.RoutingEnabled)
+	parameter.AddToQuery(query, "s3_integration_enabled", req.S3IntegrationEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1685,6 +1992,12 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Vpcs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1727,6 +2040,10 @@ func (s *API) CreateVPC(req *CreateVPCRequest, opts ...scw.RequestOption) (*VPC,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1757,6 +2074,10 @@ func (s *API) GetVPC(req *GetVPCRequest, opts ...scw.RequestOption) (*VPC, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1793,6 +2114,10 @@ func (s *API) UpdateVPC(req *UpdateVPCRequest, opts ...scw.RequestOption) (*VPC,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1851,6 +2176,7 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "dhcp_enabled", req.DHCPEnabled)
+	parameter.AddToQuery(query, "s3_integration_enabled", req.S3IntegrationEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1867,6 +2193,12 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PrivateNetworks {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1909,6 +2241,10 @@ func (s *API) CreatePrivateNetwork(req *CreatePrivateNetworkRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1939,6 +2275,10 @@ func (s *API) GetPrivateNetwork(req *GetPrivateNetworkRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1975,6 +2315,10 @@ func (s *API) UpdatePrivateNetwork(req *UpdatePrivateNetworkRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2041,6 +2385,10 @@ func (s *API) EnableDHCP(req *EnableDHCPRequest, opts ...scw.RequestOption) (*Pr
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2077,6 +2425,10 @@ func (s *API) EnableRouting(req *EnableRoutingRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2112,6 +2464,10 @@ func (s *API) EnableCustomRoutesPropagation(req *EnableCustomRoutesPropagationRe
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2155,77 +2511,11 @@ func (s *API) ListSubnets(req *ListSubnetsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	return &resp, nil
-}
-
-// AddSubnets: Add new subnets to an existing Private Network.
-func (s *API) AddSubnets(req *AddSubnetsRequest, opts ...scw.RequestOption) (*AddSubnetsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/subnets",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp AddSubnetsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-// DeleteSubnets: Delete the specified subnets from a Private Network.
-func (s *API) DeleteSubnets(req *DeleteSubnetsRequest, opts ...scw.RequestOption) (*DeleteSubnetsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PrivateNetworkID) == "" {
-		return nil, errors.New("field PrivateNetworkID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "DELETE",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "/subnets",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp DeleteSubnetsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Subnets {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -2259,6 +2549,10 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2289,6 +2583,10 @@ func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2325,6 +2623,10 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2471,6 +2773,12 @@ func (s *API) ListVPCConnectors(req *ListVPCConnectorsRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.VpcConnectors {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2507,6 +2815,10 @@ func (s *API) CreateVPCConnector(req *CreateVPCConnectorRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2537,6 +2849,10 @@ func (s *API) GetVPCConnector(req *GetVPCConnectorRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2574,6 +2890,10 @@ func (s *API) UpdateVPCConnector(req *UpdateVPCConnectorRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2606,7 +2926,7 @@ func (s *API) DeleteVPCConnector(req *DeleteVPCConnectorRequest, opts ...scw.Req
 	return nil
 }
 
-// ListSubnetOverlaps: List subnet overlaps between the VPCConnector VPC and the target VPC or for a specific subnet if specified.
+// ListSubnetOverlaps: List subnet overlaps between the VPCs on both sides of a connector, or for a specific subnet if specified.
 func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.RequestOption) (*ListSubnetOverlapsResponse, error) {
 	var err error
 
@@ -2648,7 +2968,7 @@ func (s *API) ListSubnetOverlaps(req *ListSubnetOverlapsRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// ListIngressRules:
+// ListIngressRules: List existing ingress rules in the specified region.
 func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.RequestOption) (*ListIngressRulesResponse, error) {
 	var err error
 
@@ -2690,10 +3010,16 @@ func (s *API) ListIngressRules(req *ListIngressRulesRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Rules {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
-// CreateIngressRule:
+// CreateIngressRule: Create an ingress rule in the specified region.
 func (s *API) CreateIngressRule(req *CreateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2722,10 +3048,14 @@ func (s *API) CreateIngressRule(req *CreateIngressRuleRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
-// GetIngressRule:
+// GetIngressRule: Retrieve details of an existing ingress rule, specified by its ingress rule ID.
 func (s *API) GetIngressRule(req *GetIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2753,10 +3083,14 @@ func (s *API) GetIngressRule(req *GetIngressRuleRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
-// UpdateIngressRule:
+// UpdateIngressRule: Update an ingress rule specified by its ingress rule ID.
 func (s *API) UpdateIngressRule(req *UpdateIngressRuleRequest, opts ...scw.RequestOption) (*IngressRule, error) {
 	var err error
 
@@ -2789,10 +3123,14 @@ func (s *API) UpdateIngressRule(req *UpdateIngressRuleRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
-// DeleteIngressRule:
+// DeleteIngressRule: Delete an ingress rule specified by its ingress rule ID.
 func (s *API) DeleteIngressRule(req *DeleteIngressRuleRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -2812,6 +3150,185 @@ func (s *API) DeleteIngressRule(req *DeleteIngressRuleRequest, opts ...scw.Reque
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
 		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/ingress-rules/" + fmt.Sprint(req.RuleID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// EnableS3Endpoint: Enable S3 integration for a VPC.
+func (s *API) EnableS3Endpoint(req *EnableS3EndpointRequest, opts ...scw.RequestOption) (*VPC, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/enable",
+		Query:  query,
+	}
+
+	var resp VPC
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// DisableS3Endpoint: Disable S3 integration for a VPC.
+func (s *API) DisableS3Endpoint(req *DisableS3EndpointRequest, opts ...scw.RequestOption) (*VPC, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/disable",
+	}
+
+	var resp VPC
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// AddPrivateNetworkS3Endpoint: Add a Private Network to the S3 Endpoint to enable S3 integration for its resources.
+func (s *API) AddPrivateNetworkS3Endpoint(req *AddPrivateNetworkS3EndpointRequest, opts ...scw.RequestOption) (*AddPrivateNetworkS3EndpointResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp AddPrivateNetworkS3EndpointResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// SetPrivateNetworksS3Endpoint: Set the Private Networks associated with the S3 Endpoint to enable S3 integration for their resources.
+func (s *API) SetPrivateNetworksS3Endpoint(req *SetPrivateNetworksS3EndpointRequest, opts ...scw.RequestOption) (*SetPrivateNetworksS3EndpointResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return nil, errors.New("field VpcID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetPrivateNetworksS3EndpointResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeletePrivateNetworkS3Endpoint: Remove a Private Network from the S3 Endpoint to disable S3 integration for its resources.
+func (s *API) DeletePrivateNetworkS3Endpoint(req *DeletePrivateNetworkS3EndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.VpcID) == "" {
+		return errors.New("field VpcID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkID) == "" {
+		return errors.New("field PrivateNetworkID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)

@@ -1854,7 +1854,8 @@ type SecurityGroup struct {
 	// Stateful: defines whether the security group is stateful.
 	Stateful bool `json:"stateful"`
 
-	// State: security group state.
+	// State: are applied) when the security group is updated (e.g., rules added, modified, or deleted)
+	// or when it is attached to or detached from a server's public network interface.
 	// Default value: available
 	State SecurityGroupState `json:"state"`
 
@@ -1963,30 +1964,31 @@ type Snapshot struct {
 
 // Task: task.
 type Task struct {
-	// ID: unique ID of the task.
+	// Deprecated: ID: unique ID of the task.
 	ID string `json:"id"`
 
-	// Description: description of the task.
+	// Deprecated: Description: description of the task.
 	Description string `json:"description"`
 
-	// Progress: progress of the task in percent.
+	// Deprecated: Progress: progress of the task in percent.
 	Progress int32 `json:"progress"`
 
-	// StartedAt: task start date.
+	// Deprecated: StartedAt: task start date.
 	StartedAt *time.Time `json:"started_at"`
 
-	// TerminatedAt: task end date.
+	// Deprecated: TerminatedAt: task end date.
 	TerminatedAt *time.Time `json:"terminated_at"`
 
-	// Status: task status.
+	// Deprecated: Status: task status.
 	// Default value: pending
 	Status TaskStatus `json:"status"`
 
 	HrefFrom string `json:"href_from"`
 
+	// HrefResult: location of the resulting resource.
 	HrefResult string `json:"href_result"`
 
-	// Zone: zone in which the task is executed.
+	// Deprecated: Zone: zone in which the task is executed.
 	Zone scw.Zone `json:"zone"`
 }
 

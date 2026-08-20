@@ -1585,7 +1585,7 @@ type ACLMatch struct {
 	// IPSubnet: list of IPs or CIDR v4/v6 addresses to filter for from the client side.
 	IPSubnet []*string `json:"ip_subnet"`
 
-	// IPsEdgeServices: defines whether Edge Services IPs should be matched.
+	// IPsEdgeServices: defines whether Edge Services IPs should be matched. If set to `true`, restricts all connections except for Edge Services.
 	IPsEdgeServices bool `json:"ips_edge_services"`
 
 	// HTTPFilter: type of HTTP filter to match. Extracts the request's URL path, which starts at the first slash and ends before the question mark (without the host part). Defines where to filter for the http_filter_value. Only supported for HTTP backends.
@@ -2822,6 +2822,9 @@ type ListLBsRequest struct {
 
 	// Tags: filter by tag, only Load Balancers with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// LBIDs: filter by lb_ids, only Load Balancers with these IDs will be returned.
+	LBIDs []string `json:"-"`
 }
 
 // ListLBsResponse: list l bs response.
@@ -4139,6 +4142,9 @@ type ZonedAPIListLBsRequest struct {
 
 	// Tags: filter by tag, only Load Balancers with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// LBIDs: filter by lb_ids, only Load Balancers with these IDs will be returned.
+	LBIDs []string `json:"-"`
 }
 
 // ZonedAPIListRoutesRequest: zoned api list routes request.
@@ -4673,6 +4679,7 @@ func (s *ZonedAPI) ListLBs(req *ZonedAPIListLBsRequest, opts ...scw.RequestOptio
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "lb_ids", req.LBIDs)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -6727,6 +6734,7 @@ func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsR
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "lb_ids", req.LBIDs)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

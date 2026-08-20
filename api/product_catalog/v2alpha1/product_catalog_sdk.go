@@ -80,6 +80,16 @@ const (
 	ListPublicCatalogProductsRequestProductTypeServerlessContainers = ListPublicCatalogProductsRequestProductType("serverless_containers")
 	// Include the Serverless Jobs information in the response.
 	ListPublicCatalogProductsRequestProductTypeServerlessJobs = ListPublicCatalogProductsRequestProductType("serverless_jobs")
+	// Include the Kafka information in the response.
+	ListPublicCatalogProductsRequestProductTypeApacheKafka = ListPublicCatalogProductsRequestProductType("apache_kafka")
+	// Include the OpenSearch DB information in the response.
+	ListPublicCatalogProductsRequestProductTypeOpenSearch = ListPublicCatalogProductsRequestProductType("open_search")
+	// Include the Instance Local SSD Snapshot information in the response.
+	ListPublicCatalogProductsRequestProductTypeInstanceLocalSSDSnapshot = ListPublicCatalogProductsRequestProductType("instance_local_ssd_snapshot")
+	// Include the Instance Local SSD Storage information in the response.
+	ListPublicCatalogProductsRequestProductTypeInstanceLocalSSDStorage = ListPublicCatalogProductsRequestProductType("instance_local_ssd_storage")
+	// The properties of File Storage products.
+	ListPublicCatalogProductsRequestProductTypeFileStorage = ListPublicCatalogProductsRequestProductType("file_storage")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -111,6 +121,11 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"serverless_functions",
 		"serverless_containers",
 		"serverless_jobs",
+		"apache_kafka",
+		"open_search",
+		"instance_local_ssd_snapshot",
+		"instance_local_ssd_storage",
+		"file_storage",
 	}
 }
 
@@ -246,6 +261,45 @@ func (enum *PublicCatalogProductProductBadge) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType string
+
+const (
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeUnknownType = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("unknown_type")
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeSbs5k       = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("sbs_5k")
+	PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeSbs15k      = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType("sbs_15k")
+)
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesApacheKafkaAvailableVolumeTypeUnknownType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) Values() []PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType {
+	return []PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType{
+		"unknown_type",
+		"sbs_5k",
+		"sbs_15k",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType(PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType(tmp).String())
+	return nil
+}
+
 type PublicCatalogProductPropertiesGenerativeAPIsConsumptionMode string
 
 const (
@@ -337,6 +391,8 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputToken       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeOutputToken      = PublicCatalogProductPropertiesGenerativeAPIsTokenType("output_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputDuration    = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_duration")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputCachedToken = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_cached_token")
+	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputAudio       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_audio")
 )
 
 func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) String() string {
@@ -353,6 +409,8 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) Values() []Pub
 		"input_token",
 		"output_token",
 		"input_duration",
+		"input_cached_token",
+		"input_audio",
 	}
 }
 
@@ -416,6 +474,48 @@ func (enum *PublicCatalogProductPropertiesHardwareCPUArch) UnmarshalJSON(data []
 	}
 
 	*enum = PublicCatalogProductPropertiesHardwareCPUArch(PublicCatalogProductPropertiesHardwareCPUArch(tmp).String())
+	return nil
+}
+
+type PublicCatalogProductPropertiesHardwareRAMECCType string
+
+const (
+	// Unknown ECC type.
+	PublicCatalogProductPropertiesHardwareRAMECCTypeUnknownEccType = PublicCatalogProductPropertiesHardwareRAMECCType("unknown_ecc_type")
+	// Standard ECC.
+	PublicCatalogProductPropertiesHardwareRAMECCTypeStandard = PublicCatalogProductPropertiesHardwareRAMECCType("standard")
+	// On Die ECC (ODECC).
+	PublicCatalogProductPropertiesHardwareRAMECCTypeOnDie = PublicCatalogProductPropertiesHardwareRAMECCType("on_die")
+)
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(PublicCatalogProductPropertiesHardwareRAMECCTypeUnknownEccType)
+	}
+	return string(enum)
+}
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) Values() []PublicCatalogProductPropertiesHardwareRAMECCType {
+	return []PublicCatalogProductPropertiesHardwareRAMECCType{
+		"unknown_ecc_type",
+		"standard",
+		"on_die",
+	}
+}
+
+func (enum PublicCatalogProductPropertiesHardwareRAMECCType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *PublicCatalogProductPropertiesHardwareRAMECCType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = PublicCatalogProductPropertiesHardwareRAMECCType(PublicCatalogProductPropertiesHardwareRAMECCType(tmp).String())
 	return nil
 }
 
@@ -863,6 +963,49 @@ type PublicCatalogProductPropertiesHardwareCPUVirtual struct {
 	Count uint32 `json:"count"`
 }
 
+// PublicCatalogProductPropertiesApacheKafkaNodeType: public catalog product properties apache kafka node type.
+type PublicCatalogProductPropertiesApacheKafkaNodeType struct {
+	// Versions: the list of available versions for the Kafka node.
+	Versions []string `json:"versions"`
+
+	// VcpuCount: number of virtual CPUs.
+	VcpuCount uint32 `json:"vcpu_count"`
+
+	// IsMultiAz: whether or not this Kafka product is multi AZ.
+	IsMultiAz bool `json:"is_multi_az"`
+
+	// MemorySize: memory size in bytes.
+	MemorySize scw.Size `json:"memory_size"`
+}
+
+// PublicCatalogProductPropertiesApacheKafkaStorageType: public catalog product properties apache kafka storage type.
+type PublicCatalogProductPropertiesApacheKafkaStorageType struct {
+	// Type: the type of volume.
+	// Default value: unknown_type
+	Type PublicCatalogProductPropertiesApacheKafkaAvailableVolumeType `json:"type"`
+
+	// MinSize: the minimum size of the volume in bytes.
+	MinSize scw.Size `json:"min_size"`
+
+	// MaxSize: the maximum size of the volume in bytes.
+	MaxSize scw.Size `json:"max_size"`
+
+	// IsMultiAz: whether or not this Kafka product is multi AZ.
+	IsMultiAz bool `json:"is_multi_az"`
+}
+
+// PublicCatalogProductPropertiesBlockStorageSnapshotType: public catalog product properties block storage snapshot type.
+type PublicCatalogProductPropertiesBlockStorageSnapshotType struct{}
+
+// PublicCatalogProductPropertiesBlockStorageVolumeType: public catalog product properties block storage volume type.
+type PublicCatalogProductPropertiesBlockStorageVolumeType struct {
+	// MinSize: the minimum size of storage volume for this product in bytes.
+	MinSize scw.Size `json:"min_size"`
+
+	// MaxSize: the maximum size of storage volume for this product in bytes.
+	MaxSize scw.Size `json:"max_size"`
+}
+
 // PublicCatalogProductPropertiesHardwareCPU: public catalog product properties hardware cpu.
 type PublicCatalogProductPropertiesHardwareCPU struct {
 	// Description: a human readable description of the CPU.
@@ -885,6 +1028,9 @@ type PublicCatalogProductPropertiesHardwareCPU struct {
 
 	// Threads: the total number of threads.
 	Threads uint32 `json:"threads"`
+
+	// Shared: indicates whether the CPU is shared or not.
+	Shared bool `json:"shared"`
 }
 
 // PublicCatalogProductPropertiesHardwareGPU: public catalog product properties hardware gpu.
@@ -924,6 +1070,10 @@ type PublicCatalogProductPropertiesHardwareRAM struct {
 
 	// Type: the type of the RAM.
 	Type string `json:"type"`
+
+	// EccType: eCC type.
+	// Default value: unknown_ecc_type
+	EccType *PublicCatalogProductPropertiesHardwareRAMECCType `json:"ecc_type"`
 }
 
 // PublicCatalogProductPropertiesHardwareStorage: public catalog product properties hardware storage.
@@ -1024,6 +1174,62 @@ type PublicCatalogProductPropertiesObjectStorageRestoreType struct {
 	RestoreType PublicCatalogProductPropertiesObjectStorageRestoreTypeRestoreType `json:"restore_type"`
 }
 
+// PublicCatalogProductPropertiesServerlessContainersCPUType: public catalog product properties serverless containers cpu type.
+type PublicCatalogProductPropertiesServerlessContainersCPUType struct {
+	// MvcpuCounts: the list of available number of milli-vCPUs.
+	MvcpuCounts []uint64 `json:"mvcpu_counts"`
+}
+
+// PublicCatalogProductPropertiesServerlessContainersMemoryType: public catalog product properties serverless containers memory type.
+type PublicCatalogProductPropertiesServerlessContainersMemoryType struct {
+	// Sizes: the list of available memory size in bytes.
+	Sizes []scw.Size `json:"sizes"`
+}
+
+// PublicCatalogProductPropertiesServerlessFunctionsConsumptionType: public catalog product properties serverless functions consumption type.
+type PublicCatalogProductPropertiesServerlessFunctionsConsumptionType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsFreeTierType: public catalog product properties serverless functions free tier type.
+type PublicCatalogProductPropertiesServerlessFunctionsFreeTierType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsProvisionType: public catalog product properties serverless functions provision type.
+type PublicCatalogProductPropertiesServerlessFunctionsProvisionType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsRequestType: public catalog product properties serverless functions request type.
+type PublicCatalogProductPropertiesServerlessFunctionsRequestType struct{}
+
+// PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource: public catalog product properties serverless functions runtime resource.
+type PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource struct {
+	// MemorySize: the memory size in bytes.
+	MemorySize scw.Size `json:"memory_size"`
+
+	// MvcpuCount: the number of milli-vCPUs.
+	MvcpuCount uint64 `json:"mvcpu_count"`
+}
+
+// PublicCatalogProductPropertiesServerlessJobsCPUType: public catalog product properties serverless jobs cpu type.
+type PublicCatalogProductPropertiesServerlessJobsCPUType struct {
+	// MvcpuCounts: the list of available number of milli-vCPUs.
+	MvcpuCounts []uint64 `json:"mvcpu_counts"`
+}
+
+// PublicCatalogProductPropertiesServerlessJobsMemoryType: public catalog product properties serverless jobs memory type.
+type PublicCatalogProductPropertiesServerlessJobsMemoryType struct {
+	// Sizes: the list of available memory size in bytes.
+	Sizes []scw.Size `json:"sizes"`
+}
+
+// PublicCatalogProductPropertiesApacheKafka: public catalog product properties apache kafka.
+type PublicCatalogProductPropertiesApacheKafka struct {
+	// Node: the properties related to Kafka node products.
+	// Precisely one of Node, Storage must be set.
+	Node *PublicCatalogProductPropertiesApacheKafkaNodeType `json:"node,omitempty"`
+
+	// Storage: the properties related to Kafka storage products.
+	// Precisely one of Node, Storage must be set.
+	Storage *PublicCatalogProductPropertiesApacheKafkaStorageType `json:"storage,omitempty"`
+}
+
 // PublicCatalogProductPropertiesAppleSilicon: public catalog product properties apple silicon.
 type PublicCatalogProductPropertiesAppleSilicon struct {
 	// Range: the range of the Apple Silicon server.
@@ -1040,6 +1246,14 @@ type PublicCatalogProductPropertiesBlockStorage struct {
 
 	// Deprecated: MaxVolumeSize: the maximum size of storage volume for this product in bytes. Deprecated.
 	MaxVolumeSize *scw.Size `json:"max_volume_size,omitempty"`
+
+	// Snapshot: the properties related to Block Storage snapshot.
+	// Precisely one of Snapshot, Volume must be set.
+	Snapshot *PublicCatalogProductPropertiesBlockStorageSnapshotType `json:"snapshot,omitempty"`
+
+	// Volume: the properties related to Block Storage volume.
+	// Precisely one of Snapshot, Volume must be set.
+	Volume *PublicCatalogProductPropertiesBlockStorageVolumeType `json:"volume,omitempty"`
 }
 
 // PublicCatalogProductPropertiesDedibox: public catalog product properties dedibox.
@@ -1060,6 +1274,15 @@ type PublicCatalogProductPropertiesElasticMetal struct {
 	OfferID string `json:"offer_id"`
 }
 
+// PublicCatalogProductPropertiesFileStorage: public catalog product properties file storage.
+type PublicCatalogProductPropertiesFileStorage struct {
+	// MinSize: the minimum size of storage volume for this product in bytes.
+	MinSize scw.Size `json:"min_size"`
+
+	// MaxSize: the maximum size of storage volume for this product in bytes.
+	MaxSize scw.Size `json:"max_size"`
+}
+
 // PublicCatalogProductPropertiesGenerativeAPIs: public catalog product properties generative ap is.
 type PublicCatalogProductPropertiesGenerativeAPIs struct {
 	Reasoning bool `json:"reasoning"`
@@ -1077,6 +1300,8 @@ type PublicCatalogProductPropertiesGenerativeAPIs struct {
 	TokenType PublicCatalogProductPropertiesGenerativeAPIsTokenType `json:"token_type"`
 
 	SupportedReasoningValues []string `json:"supported_reasoning_values"`
+
+	DefaultReasoningValue *string `json:"default_reasoning_value"`
 }
 
 // PublicCatalogProductPropertiesHardware: public catalog product properties hardware.
@@ -1108,6 +1333,12 @@ type PublicCatalogProductPropertiesInstance struct {
 	// RecommendedReplacementOfferIDs: the recommended replacement offer IDs of the Instance server.
 	RecommendedReplacementOfferIDs []string `json:"recommended_replacement_offer_ids"`
 }
+
+// PublicCatalogProductPropertiesInstanceLocalSSDSnapshot: public catalog product properties instance local ssd snapshot.
+type PublicCatalogProductPropertiesInstanceLocalSSDSnapshot struct{}
+
+// PublicCatalogProductPropertiesInstanceLocalSSDStorage: public catalog product properties instance local ssd storage.
+type PublicCatalogProductPropertiesInstanceLocalSSDStorage struct{}
 
 // PublicCatalogProductPropertiesKeyManager: public catalog product properties key manager.
 type PublicCatalogProductPropertiesKeyManager struct{}
@@ -1208,17 +1439,55 @@ type PublicCatalogProductPropertiesObjectStorage struct {
 	RegionTraffic *PublicCatalogProductPropertiesObjectStorageRegionTrafficType `json:"region_traffic,omitempty"`
 }
 
+// PublicCatalogProductPropertiesOpenSearch: public catalog product properties open search.
+type PublicCatalogProductPropertiesOpenSearch struct{}
+
 // PublicCatalogProductPropertiesSecretManager: public catalog product properties secret manager.
 type PublicCatalogProductPropertiesSecretManager struct{}
 
 // PublicCatalogProductPropertiesServerlessContainers: public catalog product properties serverless containers.
-type PublicCatalogProductPropertiesServerlessContainers struct{}
+type PublicCatalogProductPropertiesServerlessContainers struct {
+	// Memory: the properties related to Serverless containers memory products.
+	// Precisely one of Memory, CPU must be set.
+	Memory *PublicCatalogProductPropertiesServerlessContainersMemoryType `json:"memory,omitempty"`
+
+	// CPU: the properties related to Serverless containers CPU products.
+	// Precisely one of Memory, CPU must be set.
+	CPU *PublicCatalogProductPropertiesServerlessContainersCPUType `json:"cpu,omitempty"`
+}
 
 // PublicCatalogProductPropertiesServerlessFunctions: public catalog product properties serverless functions.
-type PublicCatalogProductPropertiesServerlessFunctions struct{}
+type PublicCatalogProductPropertiesServerlessFunctions struct {
+	// Resources: the serverless functions runtime resources sorted by memory size and then by milli-vCPU count.
+	Resources []*PublicCatalogProductPropertiesServerlessFunctionsRuntimeResource `json:"resources"`
+
+	// Consumption: the properties related to Serverless functions consumption products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Consumption *PublicCatalogProductPropertiesServerlessFunctionsConsumptionType `json:"consumption,omitempty"`
+
+	// Request: the properties related to Serverless functions request products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Request *PublicCatalogProductPropertiesServerlessFunctionsRequestType `json:"request,omitempty"`
+
+	// Provision: the properties related to Serverless functions provision products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	Provision *PublicCatalogProductPropertiesServerlessFunctionsProvisionType `json:"provision,omitempty"`
+
+	// FreeTier: the properties related to Serverless functions free tier products.
+	// Precisely one of Consumption, Request, Provision, FreeTier must be set.
+	FreeTier *PublicCatalogProductPropertiesServerlessFunctionsFreeTierType `json:"free_tier,omitempty"`
+}
 
 // PublicCatalogProductPropertiesServerlessJobs: public catalog product properties serverless jobs.
-type PublicCatalogProductPropertiesServerlessJobs struct{}
+type PublicCatalogProductPropertiesServerlessJobs struct {
+	// Memory: the properties related to Serverless containers memory products.
+	// Precisely one of Memory, CPU must be set.
+	Memory *PublicCatalogProductPropertiesServerlessJobsMemoryType `json:"memory,omitempty"`
+
+	// CPU: the properties related to Serverless containers CPU products.
+	// Precisely one of Memory, CPU must be set.
+	CPU *PublicCatalogProductPropertiesServerlessJobsCPUType `json:"cpu,omitempty"`
+}
 
 // PublicCatalogProductEnvironmentalImpactEstimation: public catalog product environmental impact estimation.
 type PublicCatalogProductEnvironmentalImpactEstimation struct {
@@ -1258,73 +1527,93 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 
 	// LoadBalancer: the properties of Load Balancer products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	SecretManager *PublicCatalogProductPropertiesSecretManager `json:"secret_manager,omitempty"`
 
 	// ManagedRedisDatabase: the properties of Managed Redis Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ManagedRedisDatabase *PublicCatalogProductPropertiesManagedRedisDatabase `json:"managed_redis_database,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	KeyManager *PublicCatalogProductPropertiesKeyManager `json:"key_manager,omitempty"`
 
 	// Kubernetes: the properties of Kubernetes products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	Kubernetes *PublicCatalogProductPropertiesKubernetes `json:"kubernetes,omitempty"`
 
 	// ManagedRelationalDatabase: the properties of Managed Relational Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ManagedRelationalDatabase *PublicCatalogProductPropertiesManagedRelationalDatabase `json:"managed_relational_database,omitempty"`
 
 	// ServerlessFunctions: the properties of Serverless Functions products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ServerlessFunctions *PublicCatalogProductPropertiesServerlessFunctions `json:"serverless_functions,omitempty"`
 
 	// ServerlessContainers: the properties of Serverless Containers products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ServerlessContainers *PublicCatalogProductPropertiesServerlessContainers `json:"serverless_containers,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ManagedMongodb *PublicCatalogProductPropertiesManagedMongoDB `json:"managed_mongodb,omitempty"`
 
 	// ServerlessJobs: the properties of Serverless Jobs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
 	ServerlessJobs *PublicCatalogProductPropertiesServerlessJobs `json:"serverless_jobs,omitempty"`
+
+	// ApacheKafka: the properties of Apache Kafka products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	ApacheKafka *PublicCatalogProductPropertiesApacheKafka `json:"apache_kafka,omitempty"`
+
+	// OpenSearch: the properties of OpenSearch DB products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	OpenSearch *PublicCatalogProductPropertiesOpenSearch `json:"open_search,omitempty"`
+
+	// InstanceLocalSSDSnapshot: the properties of Instance Local SSD Snapshot products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	InstanceLocalSSDSnapshot *PublicCatalogProductPropertiesInstanceLocalSSDSnapshot `json:"instance_local_ssd_snapshot,omitempty"`
+
+	// InstanceLocalSSDStorage: the properties of Instance Local SSD Storage products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	InstanceLocalSSDStorage *PublicCatalogProductPropertiesInstanceLocalSSDStorage `json:"instance_local_ssd_storage,omitempty"`
+
+	// FileStorage: the properties of File Storage products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	FileStorage *PublicCatalogProductPropertiesFileStorage `json:"file_storage,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.

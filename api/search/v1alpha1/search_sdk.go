@@ -38,87 +38,6 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
-type Locality string
-
-const (
-	LocalityUnknownLocality = Locality("unknown_locality")
-	LocalityGlobal          = Locality("global")
-	LocalityFrRz            = Locality("fr_rz")
-	LocalityFrSrr           = Locality("fr_srr")
-	LocalityFrSrr1          = Locality("fr_srr_1")
-	LocalityFrPar           = Locality("fr_par")
-	LocalityFrPar1          = Locality("fr_par_1")
-	LocalityFrPar2          = Locality("fr_par_2")
-	LocalityFrPar3          = Locality("fr_par_3")
-	LocalityFrPar4          = Locality("fr_par_4")
-	LocalityNlAms           = Locality("nl_ams")
-	LocalityNlAms1          = Locality("nl_ams_1")
-	LocalityNlAms2          = Locality("nl_ams_2")
-	LocalityNlAms3          = Locality("nl_ams_3")
-	LocalityPlWaw           = Locality("pl_waw")
-	LocalityPlWaw1          = Locality("pl_waw_1")
-	LocalityPlWaw2          = Locality("pl_waw_2")
-	LocalityPlWaw3          = Locality("pl_waw_3")
-	LocalityFrInt           = Locality("fr_int")
-	LocalityFrInt1          = Locality("fr_int_1")
-	LocalityFrLab           = Locality("fr_lab")
-	LocalityFrLab1          = Locality("fr_lab_1")
-	LocalityItMil           = Locality("it_mil")
-	LocalityItMil1          = Locality("it_mil_1")
-)
-
-func (enum Locality) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(LocalityUnknownLocality)
-	}
-	return string(enum)
-}
-
-func (enum Locality) Values() []Locality {
-	return []Locality{
-		"unknown_locality",
-		"global",
-		"fr_rz",
-		"fr_srr",
-		"fr_srr_1",
-		"fr_par",
-		"fr_par_1",
-		"fr_par_2",
-		"fr_par_3",
-		"fr_par_4",
-		"nl_ams",
-		"nl_ams_1",
-		"nl_ams_2",
-		"nl_ams_3",
-		"pl_waw",
-		"pl_waw_1",
-		"pl_waw_2",
-		"pl_waw_3",
-		"fr_int",
-		"fr_int_1",
-		"fr_lab",
-		"fr_lab_1",
-		"it_mil",
-		"it_mil_1",
-	}
-}
-
-func (enum Locality) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *Locality) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = Locality(Locality(tmp).String())
-	return nil
-}
-
 type ObsDatasourceInfoDataType string
 
 const (
@@ -214,6 +133,7 @@ const (
 	ResourceTypeInstancePrivateNic     = ResourceType("instance_private_nic")
 	ResourceTypeInstanceSnapshot       = ResourceType("instance_snapshot")
 	ResourceTypeInstancePlacementGroup = ResourceType("instance_placement_group")
+	ResourceTypeInstanceTemplate       = ResourceType("instance_template")
 	// K8S cluster.
 	ResourceTypeK8sCluster = ResourceType("k8s_cluster")
 	// K8S pool.
@@ -289,6 +209,7 @@ const (
 	ResourceTypeIamGroup            = ResourceType("iam_group")
 	ResourceTypeIamPolicy           = ResourceType("iam_policy")
 	ResourceTypeSedbCluster         = ResourceType("sedb_cluster")
+	ResourceTypeAutoscalingGroup    = ResourceType("autoscaling_group")
 )
 
 func (enum ResourceType) String() string {
@@ -309,6 +230,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_private_nic",
 		"instance_snapshot",
 		"instance_placement_group",
+		"instance_template",
 		"k8s_cluster",
 		"k8s_pool",
 		"k8s_node",
@@ -357,6 +279,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"iam_group",
 		"iam_policy",
 		"sedb_cluster",
+		"autoscaling_group",
 	}
 }
 
@@ -372,6 +295,65 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ResourceType(ResourceType(tmp).String())
+	return nil
+}
+
+type SearchResourcesRequestOrderBy string
+
+const (
+	SearchResourcesRequestOrderByRelevance = SearchResourcesRequestOrderBy("relevance")
+	// Sort by creation date in ascending order.
+	SearchResourcesRequestOrderByCreatedAtAsc = SearchResourcesRequestOrderBy("created_at_asc")
+	// Sort by creation date in descending order.
+	SearchResourcesRequestOrderByCreatedAtDesc = SearchResourcesRequestOrderBy("created_at_desc")
+	// Sort by modification date in ascending order.
+	SearchResourcesRequestOrderByModifiedAtAsc = SearchResourcesRequestOrderBy("modified_at_asc")
+	// Sort by modification date in descending order.
+	SearchResourcesRequestOrderByModifiedAtDesc = SearchResourcesRequestOrderBy("modified_at_desc")
+	// Sort by resource name in alphabetical order.
+	SearchResourcesRequestOrderByNameAsc = SearchResourcesRequestOrderBy("name_asc")
+	// Sort by resource name in reverse alphabetical order.
+	SearchResourcesRequestOrderByNameDesc = SearchResourcesRequestOrderBy("name_desc")
+	// Sort by resource type in alphabetical order.
+	SearchResourcesRequestOrderByTypeAsc = SearchResourcesRequestOrderBy("type_asc")
+	// Sort by resource type in reverse alphabetical order.
+	SearchResourcesRequestOrderByTypeDesc = SearchResourcesRequestOrderBy("type_desc")
+)
+
+func (enum SearchResourcesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SearchResourcesRequestOrderByRelevance)
+	}
+	return string(enum)
+}
+
+func (enum SearchResourcesRequestOrderBy) Values() []SearchResourcesRequestOrderBy {
+	return []SearchResourcesRequestOrderBy{
+		"relevance",
+		"created_at_asc",
+		"created_at_desc",
+		"modified_at_asc",
+		"modified_at_desc",
+		"name_asc",
+		"name_desc",
+		"type_asc",
+		"type_desc",
+	}
+}
+
+func (enum SearchResourcesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SearchResourcesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SearchResourcesRequestOrderBy(SearchResourcesRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -457,6 +439,12 @@ type Resource struct {
 	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	ServerlessContainersContainerInfo *ServerlessContainersContainerInfo `json:"serverless_containers_container_info,omitempty"`
 
+	// CreatedAt: creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
 	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	BaremetalServerInfo *BrmServerInfo `json:"baremetal_server_info,omitempty"`
 
@@ -485,7 +473,7 @@ type SearchResourcesRequest struct {
 	Types []ResourceType `json:"-"`
 
 	// Localities: list of scopes (zones, regions, or global) to filter the resources by.
-	Localities []Locality `json:"-"`
+	Localities []string `json:"-"`
 
 	// CreatedAfter: filter resources created after this timestamp.
 	CreatedAfter *time.Time `json:"-"`
@@ -498,12 +486,25 @@ type SearchResourcesRequest struct {
 
 	// ModifiedBefore: filter resources modified before this timestamp.
 	ModifiedBefore *time.Time `json:"-"`
+
+	// PageToken: leave empty or omit to fetch the first page.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of resources to retrieve per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: sort order in the response.
+	// Default value: relevance
+	OrderBy SearchResourcesRequestOrderBy `json:"-"`
 }
 
 // SearchResourcesResponse: search resources response.
 type SearchResourcesResponse struct {
 	// Resources: top resources found.
 	Resources []*Resource `json:"resources"`
+
+	// NextPageToken: if this string is empty, it means there are no more pages available.
+	NextPageToken string `json:"next_page_token"`
 }
 
 type API struct {
@@ -526,6 +527,11 @@ func (s *API) SearchResources(req *SearchResourcesRequest, opts ...scw.RequestOp
 		req.OrganizationID = defaultOrganizationID
 	}
 
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
 	query := url.Values{}
 	parameter.AddToQuery(query, "query", req.Query)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
@@ -536,6 +542,9 @@ func (s *API) SearchResources(req *SearchResourcesRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "created_before", req.CreatedBefore)
 	parameter.AddToQuery(query, "modified_after", req.ModifiedAfter)
 	parameter.AddToQuery(query, "modified_before", req.ModifiedBefore)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -197,6 +198,41 @@ type Attachment struct {
 
 	// Region: the region where the attachment is located.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Attachment) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Attachment
+		Platform string
+	}{
+		Attachment: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://file.{{ notempty .Platform }}/regions/{{ notempty .Region }}/attachments/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // FileSystemType: file system type.
@@ -249,6 +285,41 @@ type FileSystem struct {
 
 	// FilesystemTypeID: UUID of the filesystem type.
 	FilesystemTypeID string `json:"filesystem_type_id"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *FileSystem) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		FileSystem
+		Platform string
+	}{
+		FileSystem: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://file.{{ notempty .Platform }}/regions/{{ notempty .Region }}/file-systems/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateFileSystemRequest: Request to create a new filesystem.
@@ -262,7 +333,7 @@ type CreateFileSystemRequest struct {
 	// ProjectID: UUID of the project the filesystem belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Size: must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size uint64 `json:"size"`
 
 	// Type: type of the filesystem.
@@ -456,8 +527,8 @@ type UpdateFileSystemRequest struct {
 	// Name: when defined, is the new name of the filesystem.
 	Name *string `json:"name,omitempty"`
 
-	// Size: size in bytes, with a granularity of 100 GB (10^11 bytes).
-	// Must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: size in bytes, with a granularity in GB (10^9 bytes).
+	// Must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size *uint64 `json:"size,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
@@ -544,6 +615,10 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -637,6 +712,12 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Filesystems {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -684,6 +765,12 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Attachments {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -720,6 +807,10 @@ func (s *API) CreateFileSystem(req *CreateFileSystemRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -785,6 +876,10 @@ func (s *API) UpdateFileSystem(req *UpdateFileSystemRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

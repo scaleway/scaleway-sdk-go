@@ -275,6 +275,47 @@ func (enum *ListSettingsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type MemoryEccType string
+
+const (
+	MemoryEccTypeUnknownEccType = MemoryEccType("unknown_ecc_type")
+	MemoryEccTypeNone           = MemoryEccType("none")
+	MemoryEccTypeStandard       = MemoryEccType("standard")
+	MemoryEccTypeOnDie          = MemoryEccType("on_die")
+)
+
+func (enum MemoryEccType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(MemoryEccTypeUnknownEccType)
+	}
+	return string(enum)
+}
+
+func (enum MemoryEccType) Values() []MemoryEccType {
+	return []MemoryEccType{
+		"unknown_ecc_type",
+		"none",
+		"standard",
+		"on_die",
+	}
+}
+
+func (enum MemoryEccType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *MemoryEccType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = MemoryEccType(MemoryEccType(tmp).String())
+	return nil
+}
+
 type OfferStock string
 
 const (
@@ -1118,6 +1159,10 @@ type Memory struct {
 
 	// IsEcc: true if the memory is an error-correcting code memory.
 	IsEcc bool `json:"is_ecc"`
+
+	// EccType: type of ECC memory.
+	// Default value: unknown_ecc_type
+	EccType MemoryEccType `json:"ecc_type"`
 }
 
 // OfferOptionOffer: offer option offer.

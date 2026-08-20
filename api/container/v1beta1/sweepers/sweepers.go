@@ -20,6 +20,7 @@ func SweepTrigger(scwClient *scw.Client, region scw.Region, projectScoped bool) 
 	if projectScoped {
 		projectID = &defaultProjectID
 	}
+	//nolint:staticcheck // ListTriggers is deprecated but still required for sweeper functionality
 	listTriggers, err := containerAPI.ListTriggers(
 		&container.ListTriggersRequest{
 			Region:    region,
@@ -30,6 +31,7 @@ func SweepTrigger(scwClient *scw.Client, region scw.Region, projectScoped bool) 
 	}
 
 	for _, trigger := range listTriggers.Triggers {
+		//nolint:staticcheck // DeleteTrigger is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteTrigger(&container.DeleteTriggerRequest{
 			TriggerID: trigger.ID,
 			Region:    region,
@@ -55,6 +57,7 @@ func SweepContainer(scwClient *scw.Client, region scw.Region, projectScoped bool
 		projectID = &defaultProjectID
 	}
 
+	//nolint:staticcheck // ListContainers is deprecated but still required for sweeper functionality
 	listNamespaces, err := containerAPI.ListContainers(
 		&container.ListContainersRequest{
 			Region:    region,
@@ -65,6 +68,7 @@ func SweepContainer(scwClient *scw.Client, region scw.Region, projectScoped bool
 	}
 
 	for _, cont := range listNamespaces.Containers {
+		//nolint:staticcheck // DeleteContainer is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteContainer(&container.DeleteContainerRequest{
 			ContainerID: cont.ID,
 			Region:      region,
@@ -90,6 +94,7 @@ func SweepNamespace(scwClient *scw.Client, region scw.Region, projectScoped bool
 		projectID = &defaultProjectID
 	}
 
+	//nolint:staticcheck // ListNamespaces is deprecated but still required for sweeper functionality
 	listNamespaces, err := containerAPI.ListNamespaces(
 		&container.ListNamespacesRequest{
 			Region:    region,
@@ -100,6 +105,7 @@ func SweepNamespace(scwClient *scw.Client, region scw.Region, projectScoped bool
 	}
 
 	for _, ns := range listNamespaces.Namespaces {
+		//nolint:staticcheck // DeleteNamespace is deprecated but still required for sweeper functionality
 		_, err := containerAPI.DeleteNamespace(&container.DeleteNamespaceRequest{
 			NamespaceID: ns.ID,
 			Region:      region,

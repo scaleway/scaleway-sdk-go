@@ -16,34 +16,44 @@ func TestLoadEnvProfile(t *testing.T) {
 		expectedAccessKey             *string
 		expectedSecretKey             *string
 		expectedAPIURL                *string
+		expectedS3Endpoint            *string
+		expectedS3UsePathStyle        *bool
 		expectedInsecure              *bool
 		expectedDefaultOrganizationID *string
 		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
+		expectedUserAgent             *string
 	}{
-		// up-to-date env variables
+		// Up-to-date env variables
 		{
 			name: "No config with env variables",
 			env: map[string]string{
 				ScwAccessKeyEnv:             v2ValidAccessKey,
 				ScwSecretKeyEnv:             v2ValidSecretKey,
 				ScwAPIURLEnv:                v2ValidAPIURL,
+				ScwS3EndpointEnv:            v2ValidS3Endpoint,
+				ScwS3UsePathStyleEnv:        v2ValidS3UsePathStyle,
 				ScwInsecureEnv:              "false",
 				ScwDefaultOrganizationIDEnv: v2ValidDefaultOrganizationID,
 				ScwDefaultProjectIDEnv:      v2ValidDefaultProjectID,
 				ScwDefaultRegionEnv:         v2ValidDefaultRegion,
 				ScwDefaultZoneEnv:           v2ValidDefaultZone,
+				ScwUserAgentEnv:             v2ValidUserAgent,
 			},
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
+			expectedUserAgent:             s(v2ValidUserAgent),
 		},
+
 		{
 			name: "No config with terraform legacy env variables",
 			env: map[string]string{
@@ -58,6 +68,7 @@ func TestLoadEnvProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "No config with CLI legacy env variables",
 			env: map[string]string{
@@ -94,10 +105,81 @@ func TestLoadEnvProfile(t *testing.T) {
 			testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 			testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 			testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
+			testhelpers.Equals(t, test.expectedS3Endpoint, p.S3Endpoint)
+			testhelpers.Equals(t, test.expectedS3UsePathStyle, p.S3UsePathStyle)
 			testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 			testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
 			testhelpers.Equals(t, test.expectedDefaultZone, p.DefaultZone)
 			testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
+			testhelpers.Equals(t, test.expectedUserAgent, p.UserAgent)
+		})
+	}
+}
+
+// TestGetS3EndpointFromAWSConf tests config getters return correct values
+func TestGetS3EndpointFromAWSConf(t *testing.T) {
+	tests := []struct {
+		name string
+		env  map[string]string
+
+		expectedS3EndpointFromAWSConf *string
+	}{
+		{
+			name: "empty environment variables",
+			env: map[string]string{
+				AwsEndpointURLS3: "",
+				AwsEndpointURL:   "",
+			},
+
+			expectedS3EndpointFromAWSConf: s(""),
+		},
+		{
+			name: "only url s3",
+			env: map[string]string{
+				AwsEndpointURLS3: "test_aws_url_s3",
+				AwsEndpointURL:   "",
+			},
+
+			expectedS3EndpointFromAWSConf: s("test_aws_url_s3"),
+		},
+		{
+			name: "only url",
+			env: map[string]string{
+				AwsEndpointURLS3: "",
+				AwsEndpointURL:   "test_aws_url",
+			},
+
+			expectedS3EndpointFromAWSConf: s("test_aws_url"),
+		},
+		{
+			name: "both, url s3 should take priority",
+			env: map[string]string{
+				AwsEndpointURLS3: "test_aws_url_s3",
+				AwsEndpointURL:   "test_aws_url",
+			},
+
+			expectedS3EndpointFromAWSConf: s("test_aws_url_s3"),
+		},
+	}
+
+	// create home dir
+	dir := initEnv(t)
+
+	// delete home dir and reset env variables
+	defer resetEnv(t, os.Environ(), dir)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// set up env and config file(s)
+			setEnv(t, test.env, nil, dir)
+
+			// remove config file(s)
+			defer cleanEnv(t, nil, dir)
+
+			// load config
+			s3Endpoint := GetS3EndpointFromAWSConf()
+
+			// assert getters
+			testhelpers.Equals(t, *test.expectedS3EndpointFromAWSConf, s3Endpoint)
 		})
 	}
 }
