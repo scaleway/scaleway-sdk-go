@@ -642,8 +642,8 @@ type PrivateNetwork struct {
 	// DefaultRoutePropagationEnabled: defines whether default v4 and v6 routes are propagated for this Private Network.
 	DefaultRoutePropagationEnabled bool `json:"default_route_propagation_enabled"`
 
-	// HasS3Integration: defines whether this Private Network is enabled for S3 integration.
-	HasS3Integration bool `json:"has_s3_integration"`
+	// HasObjectStoragePrivateAccess: defines whether this Private Network is enabled for Object Storage private access.
+	HasObjectStoragePrivateAccess bool `json:"has_object_storage_private_access"`
 
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
@@ -1020,8 +1020,8 @@ type VPC struct {
 	// TransitivityEnabled: defines whether the VPC allows packets from peered VPCs to transit through.
 	TransitivityEnabled bool `json:"transitivity_enabled"`
 
-	// S3IntegrationEnabled: defines whether the S3 integration is enabled for the VPC.
-	S3IntegrationEnabled bool `json:"s3_integration_enabled"`
+	// ObjectStoragePrivateAccessEnabled: defines whether the Object Storage private access is enabled for the VPC.
+	ObjectStoragePrivateAccessEnabled bool `json:"object_storage_private_access_enabled"`
 
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
@@ -1059,24 +1059,24 @@ func (m *VPC) setSRN(platform string) {
 	// note: if the error was not nil, we simply don't set the SRN
 }
 
-// AddPrivateNetworkS3EndpointRequest: add private network s3 endpoint request.
-type AddPrivateNetworkS3EndpointRequest struct {
+// AddPrivateNetworkObjectStoragePrivateAccessRequest: add private network object storage private access request.
+type AddPrivateNetworkObjectStoragePrivateAccessRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// VpcID: ID of the VPC containing the S3 Endpoint.
+	// VpcID: ID of the VPC containing the Object Storage private access.
 	VpcID string `json:"-"`
 
-	// PrivateNetworkID: ID of the Private Network to add to the S3 Endpoint.
+	// PrivateNetworkID: ID of the Private Network to add to the Object Storage private access.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
-// AddPrivateNetworkS3EndpointResponse: add private network s3 endpoint response.
-type AddPrivateNetworkS3EndpointResponse struct {
-	// VpcID: ID of the VPC containing the S3 Endpoint.
+// AddPrivateNetworkObjectStoragePrivateAccessResponse: add private network object storage private access response.
+type AddPrivateNetworkObjectStoragePrivateAccessResponse struct {
+	// VpcID: ID of the VPC containing the Object Storage private access.
 	VpcID string `json:"vpc_id"`
 
-	// PrivateNetworkIDs: iDs of the Private Networks associated with the S3 Endpoint.
+	// PrivateNetworkIDs: iDs of the Private Networks associated with the Object Storage private access.
 	PrivateNetworkIDs []string `json:"private_network_ids"`
 }
 
@@ -1203,24 +1203,24 @@ type DeleteIngressRuleRequest struct {
 	RuleID string `json:"-"`
 }
 
+// DeletePrivateNetworkObjectStoragePrivateAccessRequest: delete private network object storage private access request.
+type DeletePrivateNetworkObjectStoragePrivateAccessRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC containing the Object Storage private access.
+	VpcID string `json:"-"`
+
+	// PrivateNetworkID: ID of the Private Network to remove from the Object Storage private access.
+	PrivateNetworkID string `json:"-"`
+}
+
 // DeletePrivateNetworkRequest: delete private network request.
 type DeletePrivateNetworkRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
 	// PrivateNetworkID: private Network ID.
-	PrivateNetworkID string `json:"-"`
-}
-
-// DeletePrivateNetworkS3EndpointRequest: delete private network s3 endpoint request.
-type DeletePrivateNetworkS3EndpointRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// VpcID: ID of the VPC containing the S3 Endpoint.
-	VpcID string `json:"-"`
-
-	// PrivateNetworkID: ID of the Private Network to remove from the S3 Endpoint.
 	PrivateNetworkID string `json:"-"`
 }
 
@@ -1251,12 +1251,12 @@ type DeleteVPCRequest struct {
 	VpcID string `json:"-"`
 }
 
-// DisableS3EndpointRequest: disable s3 endpoint request.
-type DisableS3EndpointRequest struct {
+// DisableObjectStoragePrivateAccessRequest: disable object storage private access request.
+type DisableObjectStoragePrivateAccessRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// VpcID: ID of the VPC for which to disable S3 integration.
+	// VpcID: ID of the VPC for which to disable Object Storage private access.
 	VpcID string `json:"-"`
 }
 
@@ -1278,6 +1278,18 @@ type EnableDHCPRequest struct {
 	PrivateNetworkID string `json:"-"`
 }
 
+// EnableObjectStoragePrivateAccessRequest: enable object storage private access request.
+type EnableObjectStoragePrivateAccessRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// VpcID: ID of the VPC for which to enable Object Storage private access.
+	VpcID string `json:"-"`
+
+	// PrivateNetworkIDs: iDs of the Private Networks for which to enable Object Storage private access.
+	PrivateNetworkIDs []string `json:"private_network_ids"`
+}
+
 // EnableRoutingRequest: enable routing request.
 type EnableRoutingRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1285,18 +1297,6 @@ type EnableRoutingRequest struct {
 
 	// VpcID: vPC ID.
 	VpcID string `json:"-"`
-}
-
-// EnableS3EndpointRequest: enable s3 endpoint request.
-type EnableS3EndpointRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	// VpcID: ID of the VPC for which to enable S3 integration.
-	VpcID string `json:"-"`
-
-	// PrivateNetworkIDs: iDs of the Private Networks for which to enable S3 integration.
-	PrivateNetworkIDs []string `json:"private_network_ids"`
 }
 
 // GetACLRequest: get acl request.
@@ -1463,8 +1463,8 @@ type ListPrivateNetworksRequest struct {
 	// DHCPEnabled: DHCP status to filter for. When true, only Private Networks with managed DHCP enabled will be returned.
 	DHCPEnabled *bool `json:"-"`
 
-	// S3IntegrationEnabled: filter by whether S3 integration is enabled. When set, only matching Private Networks will be returned.
-	S3IntegrationEnabled *bool `json:"-"`
+	// ObjectStoragePrivateAccessEnabled: filter by whether Object Storage private access is enabled. When set, only matching Private Networks will be returned.
+	ObjectStoragePrivateAccessEnabled *bool `json:"-"`
 }
 
 // ListPrivateNetworksResponse: list private networks response.
@@ -1717,8 +1717,8 @@ type ListVPCsRequest struct {
 	// RoutingEnabled: defines whether to filter only for VPCs which route traffic between their Private Networks.
 	RoutingEnabled *bool `json:"-"`
 
-	// S3IntegrationEnabled: defines whether to filter only for VPCs with S3 integration enabled.
-	S3IntegrationEnabled *bool `json:"-"`
+	// ObjectStoragePrivateAccessEnabled: defines whether to filter only for VPCs with Object Storage private access enabled.
+	ObjectStoragePrivateAccessEnabled *bool `json:"-"`
 }
 
 // ListVPCsResponse: list vp cs response.
@@ -1815,24 +1815,24 @@ type SetACLResponse struct {
 	DefaultPolicy Action `json:"default_policy"`
 }
 
-// SetPrivateNetworksS3EndpointRequest: set private networks s3 endpoint request.
-type SetPrivateNetworksS3EndpointRequest struct {
+// SetPrivateNetworksObjectStoragePrivateAccessRequest: set private networks object storage private access request.
+type SetPrivateNetworksObjectStoragePrivateAccessRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// VpcID: ID of the VPC containing the S3 Endpoint.
+	// VpcID: ID of the VPC containing the Object Storage private access.
 	VpcID string `json:"-"`
 
-	// PrivateNetworkIDs: iDs of the Private Networks to associate with the S3 Endpoint.
+	// PrivateNetworkIDs: iDs of the Private Networks to associate with the Object Storage private access.
 	PrivateNetworkIDs []string `json:"private_network_ids"`
 }
 
-// SetPrivateNetworksS3EndpointResponse: set private networks s3 endpoint response.
-type SetPrivateNetworksS3EndpointResponse struct {
-	// VpcID: ID of the VPC containing the S3 Endpoint.
+// SetPrivateNetworksObjectStoragePrivateAccessResponse: set private networks object storage private access response.
+type SetPrivateNetworksObjectStoragePrivateAccessResponse struct {
+	// VpcID: ID of the VPC containing the Object Storage private access.
 	VpcID string `json:"vpc_id"`
 
-	// PrivateNetworkIDs: iDs of the Private Networks associated with the S3 Endpoint.
+	// PrivateNetworkIDs: iDs of the Private Networks associated with the Object Storage private access.
 	PrivateNetworkIDs []string `json:"private_network_ids"`
 }
 
@@ -1975,7 +1975,7 @@ func (s *API) ListVPCs(req *ListVPCsRequest, opts ...scw.RequestOption) (*ListVP
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "is_default", req.IsDefault)
 	parameter.AddToQuery(query, "routing_enabled", req.RoutingEnabled)
-	parameter.AddToQuery(query, "s3_integration_enabled", req.S3IntegrationEnabled)
+	parameter.AddToQuery(query, "object_storage_private_access_enabled", req.ObjectStoragePrivateAccessEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2176,7 +2176,7 @@ func (s *API) ListPrivateNetworks(req *ListPrivateNetworksRequest, opts ...scw.R
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "vpc_id", req.VpcID)
 	parameter.AddToQuery(query, "dhcp_enabled", req.DHCPEnabled)
-	parameter.AddToQuery(query, "s3_integration_enabled", req.S3IntegrationEnabled)
+	parameter.AddToQuery(query, "object_storage_private_access_enabled", req.ObjectStoragePrivateAccessEnabled)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3159,8 +3159,8 @@ func (s *API) DeleteIngressRule(req *DeleteIngressRuleRequest, opts ...scw.Reque
 	return nil
 }
 
-// EnableS3Endpoint: Enable S3 integration for a VPC.
-func (s *API) EnableS3Endpoint(req *EnableS3EndpointRequest, opts ...scw.RequestOption) (*VPC, error) {
+// EnableObjectStoragePrivateAccess: Enable Object Storage private access for a VPC.
+func (s *API) EnableObjectStoragePrivateAccess(req *EnableObjectStoragePrivateAccessRequest, opts ...scw.RequestOption) (*VPC, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3181,7 +3181,7 @@ func (s *API) EnableS3Endpoint(req *EnableS3EndpointRequest, opts ...scw.Request
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/enable",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/enable",
 		Query:  query,
 	}
 
@@ -3198,8 +3198,8 @@ func (s *API) EnableS3Endpoint(req *EnableS3EndpointRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// DisableS3Endpoint: Disable S3 integration for a VPC.
-func (s *API) DisableS3Endpoint(req *DisableS3EndpointRequest, opts ...scw.RequestOption) (*VPC, error) {
+// DisableObjectStoragePrivateAccess: Disable Object Storage private access for a VPC.
+func (s *API) DisableObjectStoragePrivateAccess(req *DisableObjectStoragePrivateAccessRequest, opts ...scw.RequestOption) (*VPC, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3217,7 +3217,7 @@ func (s *API) DisableS3Endpoint(req *DisableS3EndpointRequest, opts ...scw.Reque
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/disable",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/disable",
 	}
 
 	var resp VPC
@@ -3233,8 +3233,8 @@ func (s *API) DisableS3Endpoint(req *DisableS3EndpointRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// AddPrivateNetworkS3Endpoint: Add a Private Network to the S3 Endpoint to enable S3 integration for its resources.
-func (s *API) AddPrivateNetworkS3Endpoint(req *AddPrivateNetworkS3EndpointRequest, opts ...scw.RequestOption) (*AddPrivateNetworkS3EndpointResponse, error) {
+// AddPrivateNetworkObjectStoragePrivateAccess: Add a Private Network to the Object Storage private access to enable Object Storage integration for its resources.
+func (s *API) AddPrivateNetworkObjectStoragePrivateAccess(req *AddPrivateNetworkObjectStoragePrivateAccessRequest, opts ...scw.RequestOption) (*AddPrivateNetworkObjectStoragePrivateAccessResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3252,7 +3252,7 @@ func (s *API) AddPrivateNetworkS3Endpoint(req *AddPrivateNetworkS3EndpointReques
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/private-networks",
 	}
 
 	err = scwReq.SetBody(req)
@@ -3260,7 +3260,7 @@ func (s *API) AddPrivateNetworkS3Endpoint(req *AddPrivateNetworkS3EndpointReques
 		return nil, err
 	}
 
-	var resp AddPrivateNetworkS3EndpointResponse
+	var resp AddPrivateNetworkObjectStoragePrivateAccessResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3269,8 +3269,8 @@ func (s *API) AddPrivateNetworkS3Endpoint(req *AddPrivateNetworkS3EndpointReques
 	return &resp, nil
 }
 
-// SetPrivateNetworksS3Endpoint: Set the Private Networks associated with the S3 Endpoint to enable S3 integration for their resources.
-func (s *API) SetPrivateNetworksS3Endpoint(req *SetPrivateNetworksS3EndpointRequest, opts ...scw.RequestOption) (*SetPrivateNetworksS3EndpointResponse, error) {
+// SetPrivateNetworksObjectStoragePrivateAccess: Set the Private Networks associated with the Object Storage private access to enable Object Storage integration for their resources.
+func (s *API) SetPrivateNetworksObjectStoragePrivateAccess(req *SetPrivateNetworksObjectStoragePrivateAccessRequest, opts ...scw.RequestOption) (*SetPrivateNetworksObjectStoragePrivateAccessResponse, error) {
 	var err error
 
 	if req.Region == "" {
@@ -3288,7 +3288,7 @@ func (s *API) SetPrivateNetworksS3Endpoint(req *SetPrivateNetworksS3EndpointRequ
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PUT",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/private-networks",
 	}
 
 	err = scwReq.SetBody(req)
@@ -3296,7 +3296,7 @@ func (s *API) SetPrivateNetworksS3Endpoint(req *SetPrivateNetworksS3EndpointRequ
 		return nil, err
 	}
 
-	var resp SetPrivateNetworksS3EndpointResponse
+	var resp SetPrivateNetworksObjectStoragePrivateAccessResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3305,8 +3305,8 @@ func (s *API) SetPrivateNetworksS3Endpoint(req *SetPrivateNetworksS3EndpointRequ
 	return &resp, nil
 }
 
-// DeletePrivateNetworkS3Endpoint: Remove a Private Network from the S3 Endpoint to disable S3 integration for its resources.
-func (s *API) DeletePrivateNetworkS3Endpoint(req *DeletePrivateNetworkS3EndpointRequest, opts ...scw.RequestOption) error {
+// DeletePrivateNetworkObjectStoragePrivateAccess: Remove a Private Network from the Object Storage private access to disable Object Storage integration for its resources.
+func (s *API) DeletePrivateNetworkObjectStoragePrivateAccess(req *DeletePrivateNetworkObjectStoragePrivateAccessRequest, opts ...scw.RequestOption) error {
 	var err error
 
 	if req.Region == "" {
@@ -3328,7 +3328,7 @@ func (s *API) DeletePrivateNetworkS3Endpoint(req *DeletePrivateNetworkS3Endpoint
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "DELETE",
-		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/s3-integration/" + fmt.Sprint(req.VpcID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
+		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/private-networks/" + fmt.Sprint(req.PrivateNetworkID) + "",
 	}
 
 	err = s.client.Do(scwReq, nil, opts...)
