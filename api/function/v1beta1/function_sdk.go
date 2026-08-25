@@ -978,13 +978,17 @@ type CreateTriggerRequestMnqSqsClientConfig struct {
 
 // CreateTriggerRequestSqsClientConfig: create trigger request sqs client config.
 type CreateTriggerRequestSqsClientConfig struct {
-	Endpoint string `json:"endpoint"`
+	// Deprecated
+	Endpoint string `json:"endpoint,omitempty"`
 
-	QueueURL string `json:"queue_url"`
+	// Deprecated
+	QueueURL string `json:"queue_url,omitempty"`
 
-	AccessKey string `json:"access_key"`
+	// Deprecated
+	AccessKey string `json:"access_key,omitempty"`
 
-	SecretKey string `json:"secret_key"`
+	// Deprecated
+	SecretKey string `json:"secret_key,omitempty"`
 }
 
 // Cron: cron.
@@ -1267,9 +1271,11 @@ type Trigger struct {
 
 // UpdateTriggerRequestSqsClientConfig: update trigger request sqs client config.
 type UpdateTriggerRequestSqsClientConfig struct {
-	AccessKey *string `json:"access_key"`
+	// Deprecated
+	AccessKey *string `json:"access_key,omitempty"`
 
-	SecretKey *string `json:"secret_key"`
+	// Deprecated
+	SecretKey *string `json:"secret_key,omitempty"`
 }
 
 // CreateCronRequest: create cron request.
@@ -1429,7 +1435,7 @@ type CreateTriggerRequest struct {
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	ScwNatsConfig *CreateTriggerRequestMnqNatsClientConfig `json:"scw_nats_config,omitempty"`
 
-	// SqsConfig: configuration for an AWS SQS queue.
+	// Deprecated: SqsConfig: configuration for an AWS SQS queue.
 	// Precisely one of ScwSqsConfig, ScwNatsConfig, SqsConfig must be set.
 	SqsConfig *CreateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
@@ -2046,7 +2052,7 @@ type UpdateTriggerRequest struct {
 	// Description: description of the trigger.
 	Description *string `json:"description,omitempty"`
 
-	// SqsConfig: configuration for an AWS SQS queue.
+	// Deprecated: SqsConfig: configuration for an AWS SQS queue.
 	// Precisely one of SqsConfig must be set.
 	SqsConfig *UpdateTriggerRequestSqsClientConfig `json:"sqs_config,omitempty"`
 }
